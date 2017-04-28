@@ -37,4 +37,3 @@ Description: The package provides procedures for selecting sites for spatial
     survey designs.
 License: GPL (>= 2)
 LazyData: TRUE
-RoxygenNote: 6.0.1
