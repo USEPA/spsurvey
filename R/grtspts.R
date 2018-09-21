@@ -61,10 +61,8 @@
 grtspts <- function(ptsframe,samplesize=100, SiteBegin=1, shift.grid=TRUE, do.sample=TRUE, startlev=NULL,
                     maxlev=11) {
 
-# If src.frame is not "shapefile", determine the minimum and maximum values for
-# the grid and extent of the grid
+# Determine the minimum and maximum values for the grid and extent of the grid
 
-   if(src.frame != "shapefile") {
       rx <- range (ptsframe$x)
       ry <- range (ptsframe$y)
       grid.extent <- max(rx[2] - rx[1], ry[2] - ry[1])
@@ -74,7 +72,6 @@ grtspts <- function(ptsframe,samplesize=100, SiteBegin=1, shift.grid=TRUE, do.sa
       grid.extent <- 1.08*grid.extent
       grid.xmax <- grid.xmin + grid.extent
       grid.ymax <- grid.ymin + grid.extent
-   }
 
 # Determine the number of levels for hierarchical randomization
 
