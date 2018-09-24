@@ -1,0 +1,123 @@
+---
+title: "Testing Simple Features"
+author: "Marc Weber"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: 
+  html_document:
+    theme: yeti
+    highlighted: default 
+    toc: yes
+    toc_float:
+      collapsed: no
+      smooth_scroll: yes
+---
+
+## Purpose
+From Tony's email on 2/15/2017:
+
+"Some example files are in L:\Priv\ARM Data\NARS Statistics Research\spsurvey2\Test_Data
+
+SFS….  Is a stream network.
+Grid….  Is a 4 by 4 grid that covers the bbox of SFS….
+Red….  Is a polygon file of Delaware wetlands.
+Nc….  Is polygons of counties of North Carolina (used in sf examples)
+
+I can use st_read read these files and st_write was used to create nc….   I created the grid using st_makegrid function.
+
+Questions:
+•	How do I find the midpoint (or “centroid”) of a stream feature.  Allows me to treat the stream features as points for some operations.
+•	How do I split stream features into two features.  I can use st_segmentize to make any segment < specified length but it does not split feature into two features.
+•	How do I intersect the polygons in a file with a grid and split the polygons into parts of the polygons within each grid cell.  Need to be able to select cell size of the grid (raster?)
+•	I do not understand the function st_intersect.  I used the Grid and SFS sf objects expecting that it would tell me which grid cell each stream feature belonged to.  Results seemed to put a segment that was clearly only in one grid cell into several grid cells.  At least that is how I interpreted the T/F output table.  Worked when I did it using Red… polygons.
+"
+
+
+### Read in stream network and and explore
+```{r, eval=F}
+library(sf)
+streams <- st_read('L:/Priv/ARM Data/NARS Statistics Research/spsurvey2/Test_Data/SFS_FinalFrame_HUC5_20120705.shp')
+# This sample network is overly-chopped up - let's just find corresponding NHDPlus streamlines that are cleaner to play with
+nhdlines <- st_read('H:/NHDPlusV21/NHDPlusPN/NHDPlus17/NHDSnapshot/Hydrography/NHDFlowline.shp')
+nhdlines <- nhdlines[nhdlines$COMID %in% streams$COMID,]
+nhdlines <- st_transform(nhdlines, st_crs(streams))
+streams <- nhdlines
+attr(streams, "sf_column")
+head(streams$geometry) # just geometry column
+methods(class='sf')
+stream.geom <- st_geometry(streams)
+# or
+stream.geom <- streams$geom
+# or 
+stream.geom <- streams[[15]]
+# look at first geometry / first feature
+stream.geom[[1]]
+stream.geom[[1]][1]
+methods(class = 'sfc')
+
+# drop z and m values
+streams <- st_zm(streams)
+stream.geom[[1]][1]
+```
+
+### Questioin 1
+How do I find the midpoint (or “centroid”) of a stream feature.  Allows me to treat the stream features as points for some operations.  Answer pulled from my question on [gis stack exchange](https://gis.stackexchange.com/questions/277219/sf-equivalent-of-r-maptools-packages-spatiallinesmidpoints)
+```{r, eval=F}
+st_line_midpoints <- function(sf_lines = NULL) {
+
+  g <- st_geometry(sf_lines)
+
+  g_mids <- lapply(g, function(x) {
+
+    coords <- as.matrix(x)
+
+    # this is just a copypaste of View(maptools:::getMidpoints):
+    get_mids <- function (coords) {
+      dist <- sqrt((diff(coords[, 1])^2 + (diff(coords[, 2]))^2))
+      dist_mid <- sum(dist)/2
+      dist_cum <- c(0, cumsum(dist))
+      end_index <- which(dist_cum > dist_mid)[1]
+      start_index <- end_index - 1
+      start <- coords[start_index, ]
+      end <- coords[end_index, ]
+      dist_remaining <- dist_mid - dist_cum[start_index]
+      mid <- start + (end - start) * (dist_remaining/dist[start_index])
+      return(mid)
+    }
+
+    mids <- st_point(get_mids(coords))
+    })
+
+  out <- st_sfc(g_mids, crs = st_crs(sf_lines))
+  out <- st_sf(out)
+}
+
+stream_mids <- st_line_midpoints(streams)
+names(stream_mids)[1] <- 'geometry'
+st_geometry(stream_mids) <- 'geometry'
+# add COMID to the points we created
+row.names(streams) <- 1:nrow(streams)
+stream_mids$COMID <- streams$COMID[match(row.names(stream_mids), row.names(streams))]
+
+# did it work?
+plot(streams$geometry, axes=T)
+plot(stream_mids$out, add=T, col='blue')
+```
+
+### Question 2
+How do I intersect the polygons in a file with a grid and split the polygons into parts of the polygons within each grid cell.  Need to be able to select cell size of the grid (raster?).
+```{r, eval=F}
+# made grid using Fishnet in ArcMap - R method...?
+grid <- st_read('L:/Priv/ARM Data/NARS Statistics Research/spsurvey2/Test_Data/Red Lion Palustrine Test Grid.shp')
+grid$Id <- row.names(grid)
+polygons <- st_read('L:/Priv/ARM Data/NARS Statistics Research/spsurvey2/Test_Data/Red Lion Palustrine Design.shp')
+grid <- st_transform(grid, st_crs(polygons))
+plot(grid$geometry)
+plot(polygons$geometry, add=T, col='red')
+test <- st_intersection(polygons, grid)
+
+# and streams
+grid <- st_read('L:/Priv/ARM Data/NARS Statistics Research/spsurvey2/Test_Data/Grid_4x4.shp')
+streams <- st_transform(streams, st_crs(grid))
+test <- st_intersection(streams, grid)
+
+```
