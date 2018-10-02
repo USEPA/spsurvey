@@ -1,9 +1,23 @@
 Package: spsurvey
-Title: What the Package Does (one line, title case)
+Title: Spatial Survey Design and Analysis
 Version: 0.0.0.9000
-Authors@R: person("First", "Last", email = "first.last@example.com", role = c("aut", "cre"))
+Authors@R: c(
+    person("Tom", "Kincaid", role=c("aut", "cre"),
+           email = "Kincaid.Tom@epa.gov"),
+    person("Tony", "Olsen",  role="aut",
+           email = "Olsen.Tony@epa.gov"),
+    person("Marc", "Weber",  role="aut",
+           email = "Weber.Marc@epa.gov"),
+    person("Karen", "Blocksom",  role="aut",
+           email = "Blocksom.Karen@epa.gov"),
+    person("Don", "Stevens",  role="ctb"),
+    person("Christian", "Platt",  role="ctb"),
+    person("Denis", "White",  role="ctb"),
+    person("Richard", "Remington",  role="ctb")
+    )
 Description: What the package does (one paragraph).
-Depends: R (>= 3.5.1)
-License: What license is it under?
+Depends: R (>= 3.5.1), sf
+Imports: methods, deldir, graphics, grDevices, Hmisc, MASS,stats
+License: GPL (>= 2)
 Encoding: UTF-8
 LazyData: true

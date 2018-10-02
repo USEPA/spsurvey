@@ -122,7 +122,6 @@
 #'      over=10), "Stratum 2"=list(panel=c("Panel One"=50, "Panel Two"=50),
 #'      seltype="Unequal", caty.n=c(CatyOne=25, CatyTwo=25, CatyThree=25,
 #'      CatyFour=25), over=75))
-#'   test.attframe <- read.dbf("test.shapefile")
 #'   test.sample <- grts(design=test.design, DesignID="Test.Site",
 #'      type.frame="area", src.frame="shapefile", in.shape="test.shapefile",
 #'      att.frame=test.attframe, stratum="test.stratum", mdcaty="test.mdcaty",
@@ -132,15 +131,10 @@
 #'
 ################################################################################
 grts <- function(design, DesignID="Site", SiteBegin=1, type.frame="finite",
-                 src.frame="shapefile", in.shape=NULL, sp.object=NULL, att.frame=NULL,
-                 id=NULL, xcoord=NULL, ycoord=NULL, stratum=NULL, mdcaty=NULL, startlev=NULL,
+                 src.frame=NULL, id=NULL, stratum=NULL, mdcaty=NULL, startlev=NULL,
                  maxlev=11, maxtry=1000, shift.grid=TRUE, do.sample=rep(TRUE, length(design)),
-                 shapefile=TRUE, prjfilename=NULL, out.shape="sample") {
+                 shapefile=TRUE, out.shape="sample") {
 
-# Ensure that the processor is little-endian
-
-if(.Platform$endian == "big")
-   stop("\nA little-endian processor is required for the grts function.")
 
 # Ensure that a design list is provided
 
