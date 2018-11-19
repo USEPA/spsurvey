@@ -155,75 +155,6 @@ if(is.null(strata.names)) {
    }
 }
 
-# Ensure that src.frame contains a valid value
-
-temp <- match(src.frame, c("shapefile", "sp.object", "att.frame"), nomatch=0)
-if(temp == 0)
-   stop(paste("\nThe value provided for argument src.frame, \"", src.frame, "\" is not a valid value.", sep=""))
-
-# If src,frame equals "sp.object", then create a temporary shapefile
-
-sp.ind <- FALSE
-if(src.frame == "sp.object") {
-   if(is.null(sp.object))
-      stop("\nAn sp package object is required when the value provided for argument src.frame \nequals \"sp.object\".")
-   sp.ind <- TRUE
-   src.frame <- "shapefile"
-   in.shape <- "tempfile0921"
-   sp2shape(sp.object, in.shape)
-}
-
-# If src.frame equals "shapefile" and att.frame equals NULL, then create
-# att.frame
-
-if(src.frame == "shapefile" && is.null(att.frame))
-   att.frame <- read.dbf(in.shape)
-
-# If src.frame equals "att.frame", ensure that type.frame equals "finite" and to
-# ensure that a data frame object is assigned to argument att.frame
-
-if(src.frame == "att.frame" && type.frame != "finite")
-   stop(paste("\nThe value provided for argument type.frame must equal \"finite\" when argument \nsrc.frame equals \"att.frame\"  The value provided for argument type.frame was \n\"", type.frame, "\".", sep=""))
-if(src.frame == "att.frame" && is.null(att.frame))
-   stop(paste("\nA data frame object must be assigned to argument att.frame when argument\nsrc.frame equals \"att.frame\"."))
-
-# If id equals NULL, create ID values
-# Otherwise, ensure that the name provided for id identifies a column in
-# the attributes data frame, values in the column are unique, the column is
-# not a factor (when src.frame equals "att.frame"), and the column contains
-# valid values (when src.frame does not equals "att.frame")
-
-if(is.null(id)) {
-   id <- "id"
-   att.frame$id <- 1:nrow(att.frame)
-} else {
-   temp <- match(id, names(att.frame), nomatch=0)
-   if(temp == 0)
-      stop(paste("\nThe value provided for the column from att.frame that identifies ID value for \neach element in the frame, \"", id, "\", does not occur among the columns in \natt.frame.", sep=""))
-   if(length(unique(att.frame[, id])) != nrow(att.frame))
-      stop(paste("\nThe ID values for elements of the frame that are provided in att.frame are not \nunique.", sep=""))
-   if(src.frame == "att.frame") {
-      if(is.factor(att.frame[, id]))
-         att.frame[, id] <- as.character(att.frame[, id])
-   } else {
-      if(sp.ind) {
-         src.temp <- "sp.object"
-      } else {
-         src.temp <- "shapefile"
-      }
-      if(!is.numeric(att.frame[, id]))
-         stop(paste("\nThe ID values in column \"", id, "\" of att.frame must be numeric when argument \nsrc.frame equals \"", src.temp, "\".", sep=""))
-      if(any(att.frame[, id] < 1))
-         stop(paste("\nThe ID values in column \"", id, "\" of att.frame must be positive integers when \nargument src.frame equals \"", src.temp, "\".", sep=""))
-      att.temp <- read.dbf(in.shape)
-      if(any(att.frame[, id] > nrow(att.temp)))
-         stop(paste("\nThe ID values in column \"", id, "\" of att.frame must not exceed the number of \nrecords when argument src.frame equals \"", src.temp, "\".", sep=""))
-      rm(att.temp)
-      if(!is.integer(att.frame[, id]))
-         att.frame[, id] <- as.integer(att.frame[, id])
-   }
-}
-
 # If stratum equals NULL, ensure that the design list specifies a single stratum
 # and add a column named "stratum" to the attributes data frame
 # Otherwise, ensure that the name provided for stratum identifies a column in
@@ -242,8 +173,8 @@ if(is.null(stratum)) {
 
 # Ensure that the stratum variable in the attributes data frame is a factor
 
-if(!is.factor(att.frame[,stratum]))
-   att.frame[,stratum] <- as.factor(att.frame[,stratum])
+if(!is.factor(att.frame[[stratum]]))
+   att.frame[[stratum]] <- as.factor(att.frame[[stratum]])
 
 # If seltype is not "Equal" for every stratum, then do the following: (1) ensure
 # that mdcaty is not NULL and (2) ensure that the name provided for mdcaty
@@ -290,28 +221,6 @@ if(type.frame == "finite") {
    first <- TRUE
    SiteBegin <- SiteBegin
 
-# If src.frame equals "shapefile", then add x-coordinates and y-coordinates to
-# att.frame
-
-   if(src.frame == "shapefile") {
-      temp <- .Call("readShapeFilePts", in.shape)
-      xcoord <- "x"
-      ycoord <- "y"
-      att.frame$x <- temp$x[att.frame[,id]]
-      att.frame$y <- temp$y[att.frame[,id]]
-
-# If src.frame equals "att.frame", ensure that att.frame includes columns
-# containing x-coordinates and y-coordinates
-
-   } else if(src.frame == "att.frame") {
-      if(is.null(xcoord))
-         xcoord <- "x"
-      if(is.null(ycoord))
-         ycoord <- "y"
-      temp <- match(c(xcoord, ycoord), names(att.frame), nomatch=0)
-      if(any(temp == 0))
-         stop(paste("\nThe names for one or both of the columns containing the x-coordinates and \ny-coordinates, \"", xcoord, "\" and \"", ycoord, "\", \ndo not occur among the column names in att.frame.", sep=""))
-   }
 
 # Ensure that do.sample is the correct length and is named
 

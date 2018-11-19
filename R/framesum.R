@@ -109,7 +109,7 @@
 #' @export
 #'
 ################################################################################
-framesum <- function(frame, design, type.frame="finite", stratum=NULL,
+framesum <- function(att.frame, design, type.frame="finite", stratum=NULL,
                      mdcaty=NULL, auxvar=NULL, units.in="Number", scale=1, units.out="Number") {
 
 # Determine whether stratum and mdcaty are present
