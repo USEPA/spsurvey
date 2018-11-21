@@ -17,7 +17,7 @@ Authors@R: c(
     )
 Description: What the package does (one paragraph).
 Depends: R (>= 3.5.1), sf
-Imports: methods, deldir, graphics, grDevices, Hmisc, MASS,stats
+Imports: methods, deldir, graphics, grDevices, Hmisc, MASS,stats, lazyeval
 License: GPL (>= 2)
 Encoding: UTF-8
 LazyData: true

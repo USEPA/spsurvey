@@ -155,6 +155,29 @@ if(is.null(strata.names)) {
    }
 }
 
+# If id equals NULL, create ID values
+# Otherwise, ensure that the name provided for id identifies a column in
+# the attributes data frame, values in the column are unique, the column is
+# not a factor (when src.frame equals "att.frame"), and the column contains
+# valid values (when src.frame does not equals "att.frame")
+
+if(is.null(id)) {
+   id <- "id"
+   att.frame$id <- 1:nrow(att.frame)
+} else {
+   temp <- match(id, names(att.frame), nomatch=0)
+   if(temp == 0)
+      stop(paste("\nThe value provided for the column from att.frame that identifies ID value for \neach element in the frame, \"", id, "\", does not occur among the columns in \natt.frame.", sep=""))
+   if(length(unique(att.frame[[id]])) != nrow(att.frame))
+      stop(paste("\nThe ID values for elements of the frame that are provided in att.frame are not \nunique.", sep=""))
+      if(is.factor(att.frame[, id]))
+         att.frame[, id] <- as.character(att.frame[, id])
+}
+
+# get x,y coord values from geometry column
+att.frame$xcoord <- st_coordinates(att.frame)[,1]
+att.frame$ycoord <- st_coordinates(att.frame)[,2]
+
 # If stratum equals NULL, ensure that the design list specifies a single stratum
 # and add a column named "stratum" to the attributes data frame
 # Otherwise, ensure that the name provided for stratum identifies a column in
@@ -247,7 +270,7 @@ if(type.frame == "finite") {
 
 # Create the sample frame
 
-      temp <- att.frame[,stratum] == s
+      # temp <- att.frame[[stratum]] == s
       grtspts.ind <- TRUE
       if(sum(temp) == 0) {
          warning(paste("\nThe stratum column in the attributes data frame contains no values that match \nthe stratum named \"", s, "\" in the design list.\n", sep=""))
@@ -258,15 +281,14 @@ if(type.frame == "finite") {
       }
 
       if(design[[s]]$seltype == "Equal") {
-         sframe <- data.frame(id=I(att.frame[temp, id]),
-            x=att.frame[temp, xcoord], y=att.frame[temp, ycoord],
-            mdcaty=rep("Equal", nrow(att.frame[temp,])))
-      } else if(design[[s]]$seltype == "Unequal") {
-         sframe <- data.frame(id=I(att.frame[temp, id]), x=att.frame[temp, xcoord],
-            y=att.frame[temp, ycoord], mdcaty=factor(att.frame[temp, mdcaty]))
-      } else if(design[[s]]$seltype == "Continuous") {
-         sframe <- data.frame(id=I(att.frame[temp, id]), x=att.frame[temp, xcoord],
-            y=att.frame[temp, ycoord], mdcaty=att.frame[temp, mdcaty])
+         sframe <- att.frame %>%
+            filter_(interp(~v==s, v=as.name(stratum))) %>%
+            mutate(mdcaty="Equal") %>%
+            select(id, mdcaty)
+      } else if(design[[s]]$seltype %in% c("Unequal","Continuous")) {
+         sframe <- att.frame %>%
+            filter_(interp(~v==s, v=as.name(stratum))) %>%
+            select(id, mdcaty)
       } else {
          stop(paste("\nThe value provided for the type of random selection, \"", design[[s]]$seltype, "\", \nfor stratum \"", s, "\" is not valid.", sep=""))
       }

@@ -21,7 +21,11 @@ tail(NE_lakes)
 
 ### Equal Probability GRTS survey design for all lakes and reservoirs
 # Create the design list
-Equaldsgn <- list(None=list(panel=c(Base=300), seltype="Equal"))
+
+
+Equaldsgn <- list(CT=list(panel=c(Base=100), seltype="Equal"),
+                  MA=list(panel=c(Base=100), seltype="Equal"),
+                  RI=list(panel=c(Base=100), seltype="Equal"))
 
 # Summarize the sample frame
 framesum(NE_lakes,Equaldsgn, type='finite')
@@ -33,10 +37,8 @@ set.seed(764966)  # Don't change unless want a different set of sites
 Equalsites <- grts(design=Equaldsgn,
                    DesignID="NELakesEQ",
                    type.frame="finite",
-                   src.frame="shapefile",
-                   in.shape="reg1_lakes",
-                   att.frame=att,
-                   prjfilename="reg1_lakes",
+                   att.frame=NE_lakes,
+                   stratum = "State",
                    out.shape="NELakes_EqualSites" )
 
 # summary of sites selected
