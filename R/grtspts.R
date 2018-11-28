@@ -61,8 +61,8 @@
 grtspts <- function(ptsframe,samplesize=100, SiteBegin=1, shift.grid=TRUE, do.sample=TRUE, startlev=NULL,
                     maxlev=11) {
   # Determine the minimum and maximum values for the grid and extent of the grid
-  rx <- range (ptsframe$x)
-  ry <- range (ptsframe$y)
+  rx <- range(st_coordinates(ptsframe)[,1])
+  ry <- range(st_coordinates(ptsframe)[,2])
   # grid.extent <- max(rx[2] - rx[1], ry[2] - ry[1])
   grid.extent <- max(st_bbox(ptsframe)[[3]] - st_bbox(ptsframe)[[1]], 
                      st_bbox(ptsframe)[[4]] - st_bbox(ptsframe)[[2]])
@@ -76,7 +76,6 @@ grtspts <- function(ptsframe,samplesize=100, SiteBegin=1, shift.grid=TRUE, do.sa
   r <- raster(ncol=2, nrow = 2, xmx=grid.xmax,xmn=grid.xmin,ymn=grid.ymin,ymx=grid.ymax,
               crs=st_crs(ptsframe), vals = c(0,0,0,0))
   
-  nlv2 <- nlv ^ 2
 # Determine the number of levels for hierarchical randomiz0ation
 
   

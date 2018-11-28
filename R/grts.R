@@ -130,8 +130,8 @@
 #' @export
 #'
 ################################################################################
-grts <- function(design, DesignID="Site", SiteBegin=1, type.frame="finite",
-                 src.frame=NULL, id=NULL, stratum=NULL, mdcaty=NULL, startlev=NULL,
+grts <- function(design, DesignID="Site", SiteBegin=1, type.frame="finite",id=NULL, 
+                 stratum=NULL, mdcaty=NULL, startlev=NULL,
                  maxlev=11, maxtry=1000, shift.grid=TRUE, do.sample=rep(TRUE, length(design)),
                  shapefile=TRUE, out.shape="sample") {
 
@@ -158,8 +158,8 @@ if(is.null(strata.names)) {
 # If id equals NULL, create ID values
 # Otherwise, ensure that the name provided for id identifies a column in
 # the attributes data frame, values in the column are unique, the column is
-# not a factor (when src.frame equals "att.frame"), and the column contains
-# valid values (when src.frame does not equals "att.frame")
+# not a factor, and the column contains
+# valid values 
 
 if(is.null(id)) {
    id <- "id"
@@ -383,7 +383,7 @@ if(type.frame == "finite") {
 # Select the sample
 
       if(grtspts.ind) {
-         stmp <- grtspts(src.frame, in.shape, sframe, sum(n.desired), SiteBegin,
+         stmp <- grtspts(sframe, sum(n.desired), SiteBegin,
             shift.grid, do.sample[s], startlev, maxlev)
       } else {
          stmp <- data.frame(siteID=SiteBegin, id=sframe$id, xcoord=sframe$x,

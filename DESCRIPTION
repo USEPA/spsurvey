@@ -15,9 +15,11 @@ Authors@R: c(
     person("Denis", "White",  role="ctb"),
     person("Richard", "Remington",  role="ctb")
     )
-Description: What the package does (one paragraph).
+Description: This group of functions implements algorithms for design and
+    analysis of probability surveys.  The functions are tailored for Generalized
+    Random Tessellation Stratified survey designs.
 Depends: R (>= 3.5.1), sf
-Imports: methods, deldir, graphics, grDevices, Hmisc, MASS,stats, lazyeval
+Imports: methods, deldir, graphics, grDevices, Hmisc, MASS, stats, dplyr, lazyeval
 License: GPL (>= 2)
 Encoding: UTF-8
 LazyData: true
