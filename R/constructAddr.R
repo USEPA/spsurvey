@@ -24,7 +24,9 @@
 #'
 ################################################################################
 constructAddr(xcVec, ycVec, dxVec, dyVec, nlevVec ) {
-
+for (i in 1:length(xcVec))
+   x = int(xcVec)[i] / dxVec[1] )
+   y = (int) ceil( REAL( ycVec )[i] / REAL( dyVec )[1] )
 }
 
 
