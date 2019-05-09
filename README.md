@@ -1,11 +1,10 @@
-# R-spsurvey-package-development
+# spsurvey
 
+`spsurvey` is comprised of functions which implement algorithms for design and analysis of probability surveys.  The functions are tailored for Generalized Random Tessellation Stratified survey designs.
 
-This repository is for development of the USEPA R spsurvey package.   If you would like to contribute to this repository please follow the guidelines in [CONTRIBUTING](CONTRIBUTING.md).
+## Installation
 
-### Installing the original spsurvey package
-
-Version 3.3 of spsurvey is the stable version on CRAN and can be installed as follows.
+You can install the released version from CRAN using:
 
 ```r
 # install from CRAN
@@ -13,7 +12,7 @@ install.packages('spsurvey')
 library(spsurvey)
 ```
 
-The development version, spsurvey2, can be installed from the development branch on the repository.
+You can install `spsurvey` from github with:
 
 ```r
 # requires devtools to install
@@ -21,11 +20,21 @@ install.packages('devtools')
 library(devtools)
 
 # install from repository
-install_github('USEPA/R-spsurvey-package-development', ref = 'development')
-library(spsurvey2)
+install_github('USEPA/spsurvey')
+library(spsurvey)
 ```
 
-### Citation
+## Example
+
+
+## Citation
+
+## Package Contributions
+We encourage users to submit issues and enhancement requests so we may
+continue to improve our package.
+
+## EPA Disclaimer
+The United States Environmental Protection Agency (EPA) GitHub project code is provided on an "as is" basis and the user assumes responsibility for its use. EPA has relinquished control of the information and no longer has responsibility to protect the integrity , confidentiality, or availability of the information. Any reference to specific commercial products, processes, or services by service mark, trademark, manufacturer, or otherwise, does not constitute or imply their endorsement, recommendation or favoring by EPA. The EPA seal and logo shall not be used in any manner to imply endorsement of any commercial product or activity by EPA or the United States Government.
 
 
 ```r

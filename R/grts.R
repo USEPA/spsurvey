@@ -54,8 +54,27 @@
 #' @param  type.frame  The type of frame, which must be one of following:
 #'   "finite", "linear", or "area".  The default is "finite".
 #'
-#' @param  src.frame  An `sf` simple features sample frame.
+#' @param  src.frame  Source of the frame, which equals "shapefile" if the frame
+#'   is to be read from a shapefile, "sp.object" if the frame is obtained from
+#'   an sp package object, or "att.frame" if type.frame equals "finite" and the
+#'   frame is included in att.frame.  The default is "shapefile".
 #'
+#' @param  in.shape  Name (without any extension) of the input shapefile.  If
+#'   src.frame equal "shapefile" and in.shape equals NULL, then the shapefile or
+#'   shapefiles in the working directory are used.  The default is NULL.
+#'
+#' @param  sp.object  Name of the sp package object when src.frame equals
+#'   "sp.object". The default is NULL.
+#'
+#' @param  att.frame  Data frame composed of attributes associated with elements
+#'   in the frame, which must contain the columns used for stratum and mdcaty
+#'   (if required).  If src.frame equals "shapefile" and att.frame equals NULL,
+#'   then att.frame is created from the dbf file(s) in the working directory. If
+#'   src.frame equals "sp.object" and att.frame equals NULL, then att.frame is
+#'   created from the sp object.  If src.frame equals "att.frame", then
+#'   att.frame must include columns that contain x-coordinates and y-coordinates
+#'   for each element in the frame.  The default is NULL.
+#'   
 #' @param  id  Character string containing the name of the column from src.frame
 #'   that identifies the ID value for each element in the frame.  If id equals
 #'   NULL, a column named "id" that contains values from one through the number
@@ -113,7 +132,7 @@
 #'   grtspts - select a GRTS sample of a finite resource\cr
 #'
 #' @author Tom Kincaid  email{Kincaid.Tom@epa.gov}
-#' @author Marc Weber  \email{Weber.Marc@epa.gov}
+#' @author Marc Weber  email{Weber.Marc@epa.gov}
 #'
 #' @keywords survey
 #'
@@ -122,6 +141,7 @@
 #'      over=10), "Stratum 2"=list(panel=c("Panel One"=50, "Panel Two"=50),
 #'      seltype="Unequal", caty.n=c(CatyOne=25, CatyTwo=25, CatyThree=25,
 #'      CatyFour=25), over=75))
+#'   test.attframe <- st_read("test.shapefile")
 #'   test.sample <- grts(design=test.design, DesignID="Test.Site",
 #'      type.frame="area", src.frame="shapefile", in.shape="test.shapefile",
 #'      att.frame=test.attframe, stratum="test.stratum", mdcaty="test.mdcaty",
@@ -130,10 +150,11 @@
 #' @export
 #'
 ################################################################################
-grts <- function(design, DesignID="Site", SiteBegin=1, type.frame="finite",id=NULL, 
-                 stratum=NULL, mdcaty=NULL, startlev=NULL,
+grts <- function(design, DesignID="Site", SiteBegin=1, type.frame="finite",
+                 src.frame="shapefile", in.shape=NULL, sp.object=NULL, att.frame=NULL,
+                 id=NULL, xcoord=NULL, ycoord=NULL, stratum=NULL, mdcaty=NULL, startlev=NULL,
                  maxlev=11, maxtry=1000, shift.grid=TRUE, do.sample=rep(TRUE, length(design)),
-                 shapefile=TRUE, out.shape="sample") {
+                 shapefile=TRUE, prjfilename=NULL, out.shape="sample"){
 
 
 # Ensure that a design list is provided

@@ -1,11 +1,10 @@
 # File: NELakes.R
 # Purpose: Example finite GRTS survey designs for Northeast lakes
-# Programmers: Tony Olsen and Tom Kincaid
+# Programmers: Tony Olsen, Tom Kincaid, Marc Weber
 # Date: April 17, 2005
-# Last Modified: May 12, 2008
+# Last Modified: May 9, 2018
 
-# Load the spsurvey library
-library(spsurvey)
+
 
 # load the sf data frame as a .rda file (save as package dataset soon)
 load("data/NE_lakes.rda")
