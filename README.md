@@ -25,7 +25,7 @@ library(spsurvey)
 ```
 
 ## Example
-A overview of the spsurvey package is provided a users guide that is included with the package.  The documentation includes a number of vignettes for the design and analysis of survey designs for point (finite), linear and area (polygons) spatial features.  Vignettes are also available for typical survey analyses.
+An overview of the spsurvey package is provided in the users guide that is included with the package.  The documentation includes a number of vignettes for the design and analysis of survey designs for point (finite), linear and area (polygons) spatial features.  Vignettes are also available for typical survey analyses.
 
 ## Citation
 ```r

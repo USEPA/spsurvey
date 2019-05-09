@@ -59,9 +59,9 @@
 #'   an sp package object, or "att.frame" if type.frame equals "finite" and the
 #'   frame is included in att.frame.  The default is "shapefile".
 #'
-#' @param  in.shape  Name (without any extension) of the input shapefile.  If
-#'   src.frame equal "shapefile" and in.shape equals NULL, then the shapefile or
-#'   shapefiles in the working directory are used.  The default is NULL.
+#' @param  in.shape  Name of the input shapefile.  If src.frame equal "shapefile"
+#'   and in.shape equals NULL, then the shapefile or shapefiles in the
+#'   working directory are used.  The default is NULL.
 #'
 #' @param  sp.object  Name of the sp package object when src.frame equals
 #'   "sp.object". The default is NULL.
@@ -69,7 +69,7 @@
 #' @param  att.frame  Data frame composed of attributes associated with elements
 #'   in the frame, which must contain the columns used for stratum and mdcaty
 #'   (if required).  If src.frame equals "shapefile" and att.frame equals NULL,
-#'   then att.frame is created from the dbf file(s) in the working directory. If
+#'   then att.frame is the dbf file(s) in the working directory that go with the shapefile(s). If
 #'   src.frame equals "sp.object" and att.frame equals NULL, then att.frame is
 #'   created from the sp object.  If src.frame equals "att.frame", then
 #'   att.frame must include columns that contain x-coordinates and y-coordinates
@@ -162,6 +162,11 @@ grts <- function(design, DesignID="Site", SiteBegin=1, type.frame="finite",
 if(is.null(design))
    stop("\nA design list must be provided.")
 
+# Make sure shapefile extension is there for reading using sf
+
+if(!grepl(".shp",in.shape))
+   in.shape <- paste0(in.shape, '.shp')
+   
 # Ensure that the design list is named and determine strata names from the
 # design list
 
@@ -195,10 +200,35 @@ if(is.null(id)) {
          att.frame[, id] <- as.character(att.frame[, id])
 }
 
-# get x,y coord values from geometry column
-att.frame$xcoord <- st_coordinates(att.frame)[,1]
-att.frame$ycoord <- st_coordinates(att.frame)[,2]
+# If src.frame equals "sp.object", then create a temporary shapefile
 
+sp.ind <- FALSE
+if(src.frame == "sp.object") {
+   if(is.null(sp.object))
+      stop("\nAn sp package object is required when the value provided for argument src.frame \nequals \"sp.object\".")
+   sp.ind <- TRUE
+   src.frame <- "shapefile"
+   in.shape <- "tempfile0921"
+   sp2shape(sp.object, in.shape)
+}
+
+# If src.frame equals "shapefile" and att.frame equals NULL, then create
+# att.frame
+
+if(src.frame == "shapefile" && is.null(att.frame))
+   att.frame <- in.shape
+   # get x,y coord values from geometry column
+   att.frame$xcoord <- st_coordinates(att.frame)[,1]
+   att.frame$ycoord <- st_coordinates(att.frame)[,2]
+
+# If src.frame equals "att.frame", ensure that type.frame equals "finite" and to
+# ensure that a data frame object is assigned to argument att.frame
+
+if(src.frame == "att.frame" && type.frame != "finite")
+   stop(paste("\nThe value provided for argument type.frame must equal \"finite\" when argument \nsrc.frame equals \"att.frame\"  The value provided for argument type.frame was \n\"", type.frame, "\".", sep=""))
+if(src.frame == "att.frame" && is.null(att.frame))
+   stop(paste("\nA data frame object must be assigned to argument att.frame when argument\nsrc.frame equals \"att.frame\"."))
+   
 # If stratum equals NULL, ensure that the design list specifies a single stratum
 # and add a column named "stratum" to the attributes data frame
 # Otherwise, ensure that the name provided for stratum identifies a column in
@@ -216,7 +246,6 @@ if(is.null(stratum)) {
 }
 
 # Ensure that the stratum variable in the attributes data frame is a factor
-
 if(!is.factor(att.frame[[stratum]]))
    att.frame[[stratum]] <- as.factor(att.frame[[stratum]])
 
@@ -291,7 +320,7 @@ if(type.frame == "finite") {
 
 # Create the sample frame
 
-      # temp <- att.frame[[stratum]] == s
+      temp <- att.frame[[stratum]] == s
       grtspts.ind <- TRUE
       if(sum(temp) == 0) {
          warning(paste("\nThe stratum column in the attributes data frame contains no values that match \nthe stratum named \"", s, "\" in the design list.\n", sep=""))
@@ -300,7 +329,8 @@ if(type.frame == "finite") {
          warning(paste("\nThe stratum column in the attributes data frame contains a single value that \nmatches the stratum named \"", s, "\" in the design list. \nThe sample for this stratum will be composed of a single point.\n", sep=""))
          grtspts.ind <- FALSE
       }
-
+      
+      # Using non-standard-evaluation with dplyr and lazyeval
       if(design[[s]]$seltype == "Equal") {
          sframe <- att.frame %>%
             filter_(interp(~v==s, v=as.name(stratum))) %>%
@@ -394,13 +424,13 @@ if(type.frame == "finite") {
 
 # Calculate mdm - inclusion probabilities
 
-      if(design[[s]]$seltype == "Equal")
-         	sframe$mdm <- mdmpts(sframe$mdcaty, c(Equal=n.desired))
-      else if(design[[s]]$seltype == "Unequal")
+      if (design[[s]]$seltype == "Equal") {
+         sframe$mdm <- mdmpts(sframe$mdcaty, c(Equal=n.desired))
+      } else if (design[[s]]$seltype == "Unequal") {
          sframe$mdm <- mdmpts(sframe$mdcaty, n.desired)
-      else
-         sframe$mdm <- n.desired * sframe$mdcaty / sum(sframe$mdcaty)
-
+      } else {
+        sframe$mdm <- n.desired * sframe$mdcaty / sum(sframe$mdcaty)
+      }
 # Select the sample
 
       if(grtspts.ind) {
