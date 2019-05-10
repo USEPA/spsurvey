@@ -77,8 +77,6 @@ grtspts <- function(ptsframe,samplesize=100, SiteBegin=1, shift.grid=TRUE, do.sa
               crs=st_crs(ptsframe), vals = c(0,0,0,0))
   
 # Determine the number of levels for hierarchical randomiz0ation
-
-  
   if(is.null(startlev)) {
      nlev <- ceiling(logb(samplesize, 4))
      if(nlev == 0)
@@ -145,11 +143,11 @@ grtspts <- function(ptsframe,samplesize=100, SiteBegin=1, shift.grid=TRUE, do.sa
 
 # Construct the hierarchical address for all cells
 
- hadr <- .Call("constructAddr", xc, yc, dx, dy, as.integer(nlev))
+ hadr <- constructAddr(xc, yc, dx, dy, as.integer(nlev))
 
 # Construct randomized hierarchical addresses
 
- ranhadr <- .C("ranho", hadr, as.integer(length(hadr)))[[1]]
+ ranhadr <- ranho(hadr, as.integer(length(hadr))[[1]])
 
 # Determine order of the randomized hierarchical addresses
 

@@ -59,9 +59,9 @@
 #'   an sp package object, or "att.frame" if type.frame equals "finite" and the
 #'   frame is included in att.frame.  The default is "shapefile".
 #'
-#' @param  in.shape  Name of the input shapefile.  If src.frame equal "shapefile"
-#'   and in.shape equals NULL, then the shapefile or shapefiles in the
-#'   working directory are used.  The default is NULL.
+#' @param  in.shape  Name of the input shapefile (will handle with or w/out extension).  
+#'   If src.frame equal "shapefile" then a value must be provided for in.shape.The 
+#'   default is NULL.  
 #'
 #' @param  sp.object  Name of the sp package object when src.frame equals
 #'   "sp.object". The default is NULL.
@@ -181,6 +181,27 @@ if(is.null(strata.names)) {
    }
 }
 
+# If src.frame equals "sp.object", then create a temporary shapefile
+sp.ind <- FALSE
+if(src.frame == "sp.object") {
+   if(is.null(sp.object))
+      stop("\nAn sp package object is required when the value provided for argument src.frame \nequals \"sp.object\".")
+   sp.ind <- TRUE
+   src.frame <- "shapefile"
+   in.shape <- "tempfile0921"
+   sp2shape(sp.object, in.shape)
+}
+
+# If src.frame equals "shapefile" and att.frame equals NULL, then create
+# att.frame
+
+if(src.frame == "shapefile" && is.null(att.frame))
+   att.frame <- st_read(paste0(getwd(),'/',in.shape))
+# get x,y coord values from geometry column
+att.frame$xcoord <- st_coordinates(att.frame)[,1]
+att.frame$ycoord <- st_coordinates(att.frame)[,2]
+
+
 # If id equals NULL, create ID values
 # Otherwise, ensure that the name provided for id identifies a column in
 # the attributes data frame, values in the column are unique, the column is
@@ -199,27 +220,6 @@ if(is.null(id)) {
       if(is.factor(att.frame[, id]))
          att.frame[, id] <- as.character(att.frame[, id])
 }
-
-# If src.frame equals "sp.object", then create a temporary shapefile
-
-sp.ind <- FALSE
-if(src.frame == "sp.object") {
-   if(is.null(sp.object))
-      stop("\nAn sp package object is required when the value provided for argument src.frame \nequals \"sp.object\".")
-   sp.ind <- TRUE
-   src.frame <- "shapefile"
-   in.shape <- "tempfile0921"
-   sp2shape(sp.object, in.shape)
-}
-
-# If src.frame equals "shapefile" and att.frame equals NULL, then create
-# att.frame
-
-if(src.frame == "shapefile" && is.null(att.frame))
-   att.frame <- in.shape
-   # get x,y coord values from geometry column
-   att.frame$xcoord <- st_coordinates(att.frame)[,1]
-   att.frame$ycoord <- st_coordinates(att.frame)[,2]
 
 # If src.frame equals "att.frame", ensure that type.frame equals "finite" and to
 # ensure that a data frame object is assigned to argument att.frame

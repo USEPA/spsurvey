@@ -1,32 +1,52 @@
 ################################################################################
-# File: constructAddr.r
-# Purpose: To construct the hierarchical addresses
-# Programmer: Tom Kincaid, Marc Weber
-# Date: November 27, 2018
+# Function: constructAddr
+# Programmer: Tom Kincaid
+# Date: May 10, 2019
+#
+#' Construct the Hierarchical Addresses for a Generalized Random-Tesselation
+#' Stratified (GRTS) Survey Design
 #'
-#' Vector of strings representing the hierarchical address
+#' This function constructS the hierarchical addresses for a GRTS survey design.
 #'
-#' @param xcVec  vector of x coordinates for the cells
+#' @param xc Vector of x-coordinates for the grid cells.
 #'
-#' @param ycVec vector of y coordinates for the cells
+#' @param yc Vector of y-coordinates for the grid cells.
 #'
-#' @param dxVec x offset 
-#' 
-#' @param dyVec y offset
-#' 
-#' @param nlevVec number of levels
-#' 
-#' @return results, vector of strings representing the hierarchical address
+#' @param dx The x-axis grid cell dimension.
 #'
-#' @author Marc Weber  \email{Weber.marc@epa.gov}
+#' @param dy The y-axis grid cell dimension.
+#'
+#' @param nlev Number of hierarchical levels for the grid.
+#'
+#' @return Vector of hierarchical addresses.
+#'
+#' @author Tom Kincaid \email{Kincaid.Tom@epa.gov}
+#'
+#' @keywords survey
 #'
 #' @export
-#'
 ################################################################################
-constructAddr(xcVec, ycVec, dxVec, dyVec, nlevVec ) {
-for (i in 1:length(xcVec))
-   x = int(xcVec)[i] / dxVec[1] )
-   y = (int) ceil( REAL( ycVec )[i] / REAL( dyVec )[1] )
+
+constructAddr <- function(xc, yc, dx, dy, nlev) {
+  
+  # Construct the matrix containing hierarchical address values
+  
+  hadrmat <- matrix(0, length(xc), nlev)
+  x <- ceiling(xc/dx)
+  y <- ceiling(yc/dy)
+  for (j in nlev:1){
+    hadrmat[,j] <- 2 * (x %% 2) + (y %% 2) + 1
+    x <- x %/% 2
+    y <- y %/% 2
+  }
+  
+  # Paste the row values in hadrmat to construct the hierarchical addresses
+  
+  hadr <- apply(hadrmat, 1, paste, collapse="")
+  
+  # Return the addresses
+  
+  return(hadr)
 }
 
 
