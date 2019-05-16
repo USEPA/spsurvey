@@ -109,8 +109,14 @@ grtspts <- function(ptsframe,samplesize=100, SiteBegin=1, shift.grid=TRUE, do.sa
 # Determine total inclusion probability for each grid cell and, as necessary,
 # adjust the indicator for whether maximum of the total inclusion probabilities
 # is changing
-
-       cel.wt <- sapply(1:length(xc), cell.wt, xc, yc, dx, dy, ptsframe)
+       start_time <- Sys.time()
+       cel.wt <- rep(0,length(xc))
+       samp_grd <- st_make_grid(ptsframe, cellsize =dx, what='polygons')
+       samp_grd <- st_sfc(poly=seq(1, length(samp_grd), by=1), samp_grd)
+       samp_grd <- st_join(samp_grd, ptsframe)
+       cel.wt <- sapply(1:length(xc), cellWeight, xc, yc, dx, dy, ptsframe)
+       end_time <- Sys.time()
+       end_time - start_time
        if(max(cel.wt) == celmax) {
           celmax.ind <- celmax.ind + 1
   	       if(celmax.ind == 2)
