@@ -16,7 +16,8 @@
 #' @return An object belonging to class sf.
 #'
 #' @author Tom Kincaid \email{Kincaid.Tom@epa.gov}
-#'
+#' @author Marc Weber  \email{Weber.Marc@epa.gov}
+#' 
 #' @export
 ################################################################################
 
@@ -24,14 +25,8 @@ read.shape <- function(filename) {
 
 # Ensure that the file extension is ".shp"
 
-   nc <- nchar(filename)
-   if(substr(filename, nc-3, nc) != ".shp") {
-      if(substr(filename, nc-3, nc-3) == ".") {
-         filename <- paste(substr(filename, 1, nc-4), ".shp", sep="")
-      } else {
-         filename <- paste(filename, ".shp", sep="")
-      }
-   }
+   if(!grepl(".shp",filename))
+      filename <- paste0(filename, '.shp')
 
 # Read the shapefile
 

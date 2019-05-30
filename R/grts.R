@@ -131,8 +131,8 @@
 #'   grtslin - select a GRTS sample of a linear resource\cr
 #'   grtspts - select a GRTS sample of a finite resource\cr
 #'
-#' @author Tom Kincaid  email{Kincaid.Tom@epa.gov}
-#' @author Marc Weber  email{Weber.Marc@epa.gov}
+#' @author Tom Kincaid  \email{Kincaid.Tom@epa.gov}
+#' @author Marc Weber  \email{Weber.Marc@epa.gov}
 #'
 #' @keywords survey
 #'
@@ -161,11 +161,6 @@ grts <- function(design, DesignID="Site", SiteBegin=1, type.frame="finite",
 
 if(is.null(design))
    stop("\nA design list must be provided.")
-
-# Make sure shapefile extension is there for reading using sf
-
-if(!grepl(".shp",in.shape))
-   in.shape <- paste0(in.shape, '.shp')
    
 # Ensure that the design list is named and determine strata names from the
 # design list
@@ -196,7 +191,7 @@ if(src.frame == "sp.object") {
 # att.frame
 
 if(src.frame == "shapefile" && is.null(att.frame))
-   att.frame <- st_read(paste0(getwd(),'/',in.shape))
+   att.frame <- st_read(paste0(getwd(),'/',in.shape), quiet = TRUE)
 # get x,y coord values from geometry column
 att.frame$xcoord <- st_coordinates(att.frame)[,1]
 att.frame$ycoord <- st_coordinates(att.frame)[,2]
