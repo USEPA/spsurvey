@@ -7,8 +7,8 @@
 
 
 # load the sf data frame as a .rda file (save as package dataset soon)
-load("data/NE_lakes.rda")
-plot(NE_lakes$geometry, axes=T)
+NE_Lakes <- readRDS("F:/Git Projects/spsurvey/data/NE_Lakes.rds")
+plot(NE_Lakes$geometry, axes=T)
 
 # print first six lines of file
 head(NE_lakes)
@@ -24,7 +24,10 @@ tail(NE_lakes)
 
 Equaldsgn <- list(CT=list(panel=c(Base=100), seltype="Equal"),
                   MA=list(panel=c(Base=100), seltype="Equal"),
-                  RI=list(panel=c(Base=100), seltype="Equal"))
+                  ME=list(panel=c(Base=100), seltype="Equal"),
+                  NH=list(panel=c(Base=100), seltype="Equal"),
+                  RI=list(panel=c(Base=100), seltype="Equal"),
+                  VT=list(panel=c(Base=100), seltype="Equal"))
 
 # Summarize the sample frame
 framesum(NE_lakes,Equaldsgn, type='finite')
