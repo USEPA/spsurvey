@@ -13,6 +13,8 @@
 #' This function select a GRTS sample of a finite resource.  This function uses
 #' hierarchical randomization to ensure that the sample will include no more
 #' than one point per cell and then picks a point in selected cells.
+#' @param  src.frame  source of the frame, which equals "shapefile" if the frame is to be read 
+#'  from a shapefile, or "att.frame" if the frame is included in ptsframe. The default is "shapefile" 
 #'
 #' @param  ptsframe  Simple features (sf) data frame containing id, mdcaty, mdm and x,y coordinate column.
 #'
@@ -39,14 +41,14 @@
 #'   and weight.
 #'
 #' Other Functions Required:
-#'   numLevels - C function to determine the number of levels for hierarchical
+#'   numLevels - function to determine the number of levels for hierarchical
 #'     randomization
 #'   cell.wt - calculates total inclusion probability for a cell
-#'   constructAddr - C function to construct the hierarchical address for all
+#'   constructAddr - to construct the hierarchical address for all
 #'     points
-#'   ranho - C function to construct the randomized hierarchical address for all
+#'   ranho - to construct the randomized hierarchical address for all
 #'     points
-#'   pickGridCells - C function to select grid cells that get a sample point
+#'   pickGridCells - to select grid cells that get a sample point
 #'   selectpts - pick sample point(s) from selected cells
 #'
 #' @author Tony Olsen  \email{Olsen.Tony@epa.gov}
@@ -60,52 +62,68 @@
 ################################################################################
 grtspts <- function(ptsframe,samplesize=100, SiteBegin=1, shift.grid=TRUE, do.sample=TRUE, startlev=NULL,
                     maxlev=11) {
-  # Determine the minimum and maximum values for the grid and extent of the grid
-  rx <- range(st_coordinates(ptsframe)[,1])
-  ry <- range(st_coordinates(ptsframe)[,2])
-  # grid.extent <- max(rx[2] - rx[1], ry[2] - ry[1])
-  grid.extent <- max(st_bbox(ptsframe)[[3]] - st_bbox(ptsframe)[[1]], 
-                     st_bbox(ptsframe)[[4]] - st_bbox(ptsframe)[[2]])
-  temp <- 0.04*grid.extent
-  grid.xmin <- rx[1] - temp
-  grid.ymin <- ry[1] - temp
-  grid.extent <- 1.08*grid.extent
-  grid.xmax <- grid.xmin + grid.extent
-  grid.ymax <- grid.ymin + grid.extent
 
-  r <- raster(ncol=2, nrow = 2, xmx=grid.xmax,xmn=grid.xmin,ymn=grid.ymin,ymx=grid.ymax,
-              crs=st_crs(ptsframe), vals = c(0,0,0,0))
+# If src.frame is not "shapefile", determine the minimum and maximum values for
+# the grid and extent of the grid
   
-# Determine the number of levels for hierarchical randomiz0ation
-  if(is.null(startlev)) {
-     nlev <- ceiling(logb(samplesize, 4))
-     if(nlev == 0)
-        nlev <- 1
+  if(src.frame != "shapefile") {
+    rx <- range (ptsframe$x)
+    ry <- range (ptsframe$y)
+    grid.extent <- max(rx[2] - rx[1], ry[2] - ry[1])
+    temp <- 0.04*grid.extent
+    grid.xmin <- rx[1] - temp
+    grid.ymin <- ry[1] - temp
+    grid.extent <- 1.08*grid.extent
+    grid.xmax <- grid.xmin + grid.extent
+    grid.ymax <- grid.ymin + grid.extent
+  }
+  
+  
+# Determine the number of levels for hierarchical randomization
+  
+  if(src.frame == "shapefile") {
+    temp <- read.shape(in.shape)
+    temp <- numLevels(samplesize, shift.grid,
+                  startlev, maxlev, ptsframe$mdm, temp)
+    if(is.null(temp[[1]]))
+      stop("\nAn error occured while determining the number of levels for hierarchical \nrandomization.") 
+    nlev <- temp$nlev
+    dx <- temp$dx
+    dy <- temp$dy
+    xc <- temp$xc
+    yc <- temp$yc
+    cel.wt <- temp$cel.wt
+    sint <- temp$sint
   } else {
-     nlev <- startlev
-  }
-  cel.wt <- 99999
-  celmax.ind <- 0
-  sint <- 1
-  if(shift.grid) {
-     roff.x <- runif(1, 0, 1)
-     roff.y <- runif(1, 0, 1)
-  }
-  while (any(cel.wt/sint > 1) && celmax.ind < 2 && nlev <= maxlev) {
-     cat( "Current number of levels:", nlev, "\n");
-     celmax <- max(cel.wt)
-     nlv2 <- 2^nlev
-     dx <- dy <- grid.extent/nlv2
-     xc <- seq(grid.xmin, grid.xmax, length=nlv2+1)
-     yc <- seq(grid.ymin, grid.ymax, length=nlv2+1)
-     if(shift.grid) {
+    if(is.null(startlev)) {
+      nlev <- ceiling(logb(samplesize, 4))
+      if(nlev == 0)
+        nlev <- 1
+    } else {
+      nlev <- startlev
+    }
+    cel.wt <- 99999
+    celmax.ind <- 0
+    sint <- 1
+    if(shift.grid) {
+      roff.x <- runif(1, 0, 1)
+      roff.y <- runif(1, 0, 1)
+    }
+    while (any(cel.wt/sint > 1) && celmax.ind < 2 && nlev <= maxlev) {
+      cat( "Current number of levels:", nlev, "\n");
+      celmax <- max(cel.wt)
+      nlv2 <- 2^nlev
+      dx <- dy <- grid.extent/nlv2
+      xc <- seq(grid.xmin, grid.xmax, length=nlv2+1)
+      yc <- seq(grid.ymin, grid.ymax, length=nlv2+1)
+      if(shift.grid) {
         xc <- rep(xc, nlv2+1) + (roff.x * dx)
         yc <- rep(yc, rep(nlv2+1, nlv2+1)) + (roff.y * dy)
-     } else {
+      } else {
         xc <- rep(xc, nlv2+1)
         yc <- rep(yc, rep(nlv2+1, nlv2+1))
-     }
-
+      }
+      
 # Determine total inclusion probability for each grid cell and, as necessary,
 # adjust the indicator for whether maximum of the total inclusion probabilities
 # is changing

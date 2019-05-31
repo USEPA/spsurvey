@@ -17,6 +17,8 @@
 #' @param startlev The initial number of levels for the GRTS grid.
 #'
 #' @param maxlev The maximum number of levels for the GRTS grid.
+#' 
+#' @param mdm The inclusion probabilities.
 #'
 #' @param sfobject The sf object containing the survey design frame.
 #'
@@ -31,7 +33,7 @@
 #' @export
 ################################################################################
 
-numLevels <- function(samplesize, shift.grid, startlev, maxlev, sfobject) {
+numLevels <- function(samplesize, shift.grid, startlev, maxlev, mdm, sfobject) {
 
 # Determine the number of levels for hierarchical randomization
 
@@ -76,7 +78,7 @@ numLevels <- function(samplesize, shift.grid, startlev, maxlev, sfobject) {
 # adjust the indicator for whether maximum of the total inclusion probabilities
 # is changing
 
-         cel.wt <- cellWeight(xc, yc, dx, dy, sfobject)
+         cel.wt <- cellWeight(xc, yc, dx, dy, sfobject, mdm)
          if(max(cel.wt) == celmax) {
             celmax.ind <- celmax.ind + 1
     	       if(celmax.ind == 2)

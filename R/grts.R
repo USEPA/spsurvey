@@ -176,6 +176,14 @@ if(is.null(strata.names)) {
    }
 }
 
+# Ensure that src.frame contains a valid value
+
+temp <- match(src.frame, c("shapefile", "sp.object", "att.frame"), nomatch=0)
+if(temp == 0)
+   stop(paste("\nThe value provided for argument src.frame, \"", src.frame, "\" is not a valid value.", sep=""))
+
+# If src,frame equals "sp.object", then create a temporary shapefile
+
 # If src.frame equals "sp.object", then create a temporary shapefile
 sp.ind <- FALSE
 if(src.frame == "sp.object") {
@@ -191,11 +199,7 @@ if(src.frame == "sp.object") {
 # att.frame
 
 if(src.frame == "shapefile" && is.null(att.frame))
-   att.frame <- st_read(paste0(getwd(),'/',in.shape), quiet = TRUE)
-# get x,y coord values from geometry column
-att.frame$xcoord <- st_coordinates(att.frame)[,1]
-att.frame$ycoord <- st_coordinates(att.frame)[,2]
-
+   att.frame <- read.dbf(in.shape)
 
 # If id equals NULL, create ID values
 # Otherwise, ensure that the name provided for id identifies a column in
@@ -289,7 +293,27 @@ if(type.frame == "finite") {
    first <- TRUE
    SiteBegin <- SiteBegin
 
-
+   # If src.frame equals "shapefile", then add x-coordinates and y-coordinates to
+   # att.frame
+   
+   if(src.frame == "shapefile") {
+      temp <- read.shape(in.shape)
+      att.frame$x <- st_coordinates(temp)[,1]
+      att.frame$y <- st_coordinates(temp)[,2]
+      
+      # If src.frame equals "att.frame", ensure that att.frame includes columns
+      # containing x-coordinates and y-coordinates
+      
+   } else if(src.frame == "att.frame") {
+      if(is.null(xcoord))
+         xcoord <- "x"
+      if(is.null(ycoord))
+         ycoord <- "y"
+      temp <- match(c(xcoord, ycoord), names(att.frame), nomatch=0)
+      if(any(temp == 0))
+         stop(paste("\nThe names for one or both of the columns containing the x-coordinates and \ny-coordinates, \"", xcoord, "\" and \"", ycoord, "\", \ndo not occur among the column names in att.frame.", sep=""))
+   }
+   
 # Ensure that do.sample is the correct length and is named
 
    if(length(do.sample) > 1) {

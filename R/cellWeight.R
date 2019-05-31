@@ -27,7 +27,7 @@
 #' @export
 ################################################################################
 
-cellWeight <- function(xc, yc, dx, dy, sfobject) {
+cellWeight <- function(xc, yc, dx, dy, sfobject, mdm) {
 
 # Create an sf polygon object for the grid
 
