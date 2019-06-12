@@ -1,7 +1,7 @@
 ################################################################################
 # Function: ranho
 # Programmer: Tom Kincaid using original code by Denis White
-# Date: April 25, 2019
+# Date: May 13, 2019
 #
 #' Construct Randomized Hierarchical Addresses for a Generalized
 #' Random-Tesselation Stratified (GRTS) Survey Design
@@ -24,34 +24,34 @@ ranho <- function(hadr) {
 
 # Construct the randomized hierarchical addresses
 
-  perm <- function (level, ind) {
+  perm <- function (level, indx, fin, hadr) {
     if (level > fin) return
     perms <- as.character (sample (1:4))
-    a <- substr (hadr[ind], level, level)
-    b <- ind[which (a == "1")]
+    a <- substr (hadr[indx], level, level)
+    b <- indx[which (a == "1")]
     if (length (b) > 0) {
-      perm (level+1, b)
+      perm (level+1, b, fin, hadr)
       substr (hadr[b], level, level) <<- perms[1]
     }
-    b <- ind[which (a == "2")]
+    b <- indx[which (a == "2")]
     if (length (b) > 0) {
-      perm (level+1, b)
+      perm (level+1, b, fin, hadr)
       substr (hadr[b], level, level) <<- perms[2]
     }
-    b <- ind[which (a == "3")]
+    b <- indx[which (a == "3")]
     if (length (b) > 0) {
-      perm (level+1, b)
+      perm (level+1, b, fin, hadr)
       substr (hadr[b], level, level) <<- perms[3]
     }
-    b <- ind[which (a == "4")]
+    b <- indx[which (a == "4")]
     if (length (b) > 0) {
-      perm (level+1, b)
+      perm (level+1, b, fin, hadr)
       substr (hadr[b], level, level) <<- perms[4]
     }
     invisible ()
   }
   fin <- nchar (hadr[1])
-  perm (1, 1:length(hadr))
+  perm (1, 1:length(hadr), fin, hadr)
 
 # Return the addresses
  

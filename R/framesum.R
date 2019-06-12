@@ -1,15 +1,14 @@
 ################################################################################
 # Function: framesum
-# Purpose: Summarize frame size for a survey design
 # Programmers: Tony Olsen, Tom Kincaid
 # Date: April 27, 2005
-# Last Revised: September 24, 2018
+# Last Revised: February 27, 2006
 #'
-#' Summary of Sample Frame for Survey Design
+#' Summary of the Sample Frame for a Survey Design
 #'
 #' This function summarizes the frame for a survey design.  When type.frame
 #' equals "finite", summary is a count of number of units in att.frame for
-#' cross-tabulation of stratum, mdcaty, and auxvar.  REVISE-When type.frame equals
+#' cross-tabulation of stratum, mdcaty, and auxvar.  When type.frame equals
 #' "linear" or "area", summary is the sum of length or area for units for cross-
 #' tabulation of stratum, mdcaty, and auxvar.  Note that length and area are
 #' taken from length_mdm and area_mdm, which are calculated by the function
@@ -17,56 +16,58 @@
 #' equals NULL or if both arguments equal NULL, then the cross-tabulation is
 #' performed without use of the design variable(s).
 #'
-#' @param  frame  An `sf` simple features data frame containing attributes associated with
+#' @param att.frame Data frame composed of attributes associated with
 #'   elements in the frame, which must contain the columns used for stratum and
 #'   mdcaty (if required by the survey design).
 #'
-#' @param  design  Named list of stratum design specifications which are also
-#'   lists. Stratum names must be subset of values in stratum argument.  Each
-#'   stratum list has four list components:
-#'
-#'       panel = named vector of sample sizes for each panel in stratum
-#'       seltype = the type of random selection, which must be one of following:
+#' @param design Named list of stratum design specifications which are also
+#'   lists.  Stratum names must be subset of values in stratum argument.  Each
+#'   stratum list has four components:
+#'   \describe{
+#'     \item{panel}{named vector of sample sizes for each panel in stratum}
+#'     \item{seltype}{the type of random selection, which must be one of following:
 #'         "Equal" - equal probability selection, "Unequal" - unequal probability
 #'         selection by the categories specified in caty.n and mdcaty, or
 #'         "Continuous" - unequal probability selection proportional to auxiliary
-#'         variable mdcaty
-#'       caty.n = if seltype equals "Unequal", a named vector of sample sizes for
+#'         variable mdcaty}
+#'     \item{caty.n}{if seltype equals "Unequal", a named vector of sample sizes for
 #'         each category specified by mdcaty, where sum of the sample sizes must
 #'         equal sum of the panel sample sizes, and names must be a subset of
-#'         values in mdcaty
-#'       over = number of replacement sites ("oversample" sites) for the entire
-#'         design, which is set equal to 0 if none are required.
-#'     Example design:
-#'       design=list(Stratum1=list(panel=c(PanelOne=50), seltype="Equal",
-#'         over=10), Stratum2=list(panel=c(PanelOne=50, PanelTwo=50),
-#'         seltype="Unequal", caty.n=c(CatyOne=25, CatyTwo=25, CatyThree=25,
-#'         CatyFour=25), over=75))
+#'         values in mdcaty}
+#'     \item{over}{number of replacement sites ("oversample" sites) for the entire
+#'         design, which is set equal to 0 if none are required)}
+#'   }
+#'   Example design:\cr
+#'     design=list(
+#'       Stratum1=list(panel=c(PanelOne=50), seltype="Equal", over=10),
+#'       Stratum2=list(panel=c(PanelOne=50, PanelTwo=50), seltype="Unequal",
+#'         caty.n=c(CatyOne=25, CatyTwo=25, CatyThree=25, CatyFour=25),
+#'         over=75))
 #'
-#' @param  type.frame  The type of frame, which must be one of following:
+#' @param type.frame The type of frame, which must be one of following:
 #'   "finite", "linear", or "area".  The default is "finite".
 #'
-#' @param  stratum  Name of the column from att.frame that identifies stratum
+#' @param stratum Name of the column from att.frame that identifies stratum
 #'   membership for each element in the frame.  If stratum equals NULL, the
 #'   design is unstratified.  The default is NULL.
 #'
-#' @param  mdcaty  Name of the column from att.frame that identifies the unequal
+#' @param mdcaty Name of the column from att.frame that identifies the unequal
 #'   probability category for each element in the frame.  The default is NULL.
 #'
-#' @param  auxvar  Vector containing the names of columns from att.frame that
+#' @param auxvar Vector containing the names of columns from att.frame that
 #'   identify auxiliary variables to be used to summarize frame size.  The
 #'   default is NULL.
 #'
-#' @param  units.in  Character string giving the name of units used to measure
+#' @param units.in Character string giving the name of units used to measure
 #'   size in the frame.  The default is "Number".
 #'
-#' @param  scale  The scale factor used to change units.in to units.out.  For
+#' @param scale The scale factor used to change units.in to units.out.  For
 #'   example, use 1000 to change "Meters" to "Kilometers".  The default is 1.
 #'
-#' @param  units.out  Character string giving the name of units used to measure
+#' @param units.out Character string giving the name of units used to measure
 #'   size in the results.  The default is "Number".
 #'
-#' @return  A list containing two components named DesignSize and AuxVarSize.
+#' @return A list containing two components named DesignSize and AuxVarSize.
 #'   DesignSize summarizes the frame for survey design variables, and AuxVarSize
 #'   summarizes the frame for auxiliary variables.  DesignSize is either a table
 #'   (for type.frame equals "finite") or an array (for type.frame equals
@@ -87,30 +88,34 @@
 #'   In addition the output list plus labeling information is printed to the
 #'   console.
 #'
-#' Other Functions Required:
-#'   vecprint - takes an input vector and outputs a character string with
-#'     line breaks inserted.
+#' @section Other Functions Required:
+#'   \describe{
+#'     \item{\code{\link{vecprint}}}{takes an input vector and outputs a
+#'       character string with line breaks inserted}
+#'   }
 #'
-#' @author Tom Kincaid  \email{Kincaid.Tom@epa.gov}
-#' @author Marc Weber  \email{Weber.Marc@epa.gov}
+#' @author Tom Kincaid \email{Kincaid.Tom@epa.gov}
 #'
 #' @keywords survey
 #'
 #' @examples
-#'   frame <- st_read("shapefile")
-#'   design <- list(Stratum1=list(panel=c(PanelOne=50), seltype="Equal",
-#'      over=10), Stratum2=list(panel=c(PanelOne=50, PanelTwo=50),
-#'      seltype="Unequal", caty.n=c(CatyOne=25, CatyTwo=25, CatyThree=25,
-#'      CatyFour=25), over=75))
-#'   framesum(frame=attframe, design=design, type.frame="area",
-#'      stratum="stratum", mdcaty="mdcaty", auxvar=c("ecoregion",
-#'      "state"), units.in="Meters", scale=1000, units.out="Kilometers")
+#' \dontrun{
+#' attframe <- read.dbf("shapefile")
+#' design <- list(
+#'   Stratum1=list(panel=c(PanelOne=50), seltype="Equal", over=10),
+#'   Stratum2=list(panel=c(PanelOne=50, PanelTwo=50), seltype="Unequal",
+#'     caty.n=c(CatyOne=25, CatyTwo=25, CatyThree=25, CatyFour=25), over=75))
+#' framesum(att.frame=attframe, design=design, type.frame="area",
+#'   stratum="stratum", mdcaty="mdcaty", auxvar=c("ecoregion",
+#'   "state"), units.in="Meters", scale=1000, units.out="Kilometers")
+#' }
 #'
 #' @export
-#'
 ################################################################################
-framesum <- function(att.frame, design, type.frame="finite", stratum=NULL,
-                     mdcaty=NULL, auxvar=NULL, units.in="Number", scale=1, units.out="Number") {
+
+framesum <- function(att.frame, design, type.frame = "finite", stratum = NULL,
+   mdcaty = NULL, auxvar = NULL, units.in = "Number", scale = 1,
+   units.out = "Number") {
 
 # Determine whether stratum and mdcaty are present
 

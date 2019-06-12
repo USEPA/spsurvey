@@ -1,7 +1,7 @@
 ################################################################################
 # Function: numLevels
 # Programmer: Tom Kincaid
-# Date: May 17, 2019
+# Date: June 4, 2019
 #
 #' Determine the Number of Levels for Hierarchical Randomization for a
 #' Generalized Random-Tesselation Stratified (GRTS) Survey Design
@@ -17,14 +17,18 @@
 #' @param startlev The initial number of levels for the GRTS grid.
 #'
 #' @param maxlev The maximum number of levels for the GRTS grid.
-#' 
-#' @param mdm The inclusion probabilities.
 #'
-#' @param sfobject The sf object containing the survey design frame.
+#' @param sfobject The sf object containing the survey frame.
 #'
 #' @return A list containing the number of levels, x-coordinates, y-coordinates,
 #'  x-axis grid cell dimension, y-axis grid cell dimension, cell total weights,
 #'  and sampling interval.
+#'
+#' @section Other Functions Required:
+#'   \describe{
+#'     \item{\code{\link{cellWeight}}}{calculates total inclusion probability
+#'       for each cell in a grid}
+#'   }
 #'
 #' @author Tom Kincaid \email{Kincaid.Tom@epa.gov}
 #'
@@ -33,7 +37,7 @@
 #' @export
 ################################################################################
 
-numLevels <- function(samplesize, shift.grid, startlev, maxlev, mdm, sfobject) {
+numLevels <- function(samplesize, shift.grid, startlev, maxlev, sfobject) {
 
 # Determine the number of levels for hierarchical randomization
 
@@ -63,7 +67,7 @@ numLevels <- function(samplesize, shift.grid, startlev, maxlev, mdm, sfobject) {
          cat( "Current number of levels:", nlev, "\n");
          celmax <- max(cel.wt)
          nlv2 <- 2^nlev
-         dx <- dy <- grid.extent/(nlv2+1)
+         dx <- dy <- grid.extent/nlv2
          xc <- seq(grid.xmin, grid.xmax, length=nlv2+1)
          yc <- seq(grid.ymin, grid.ymax, length=nlv2+1)
          if(shift.grid) {
@@ -78,7 +82,7 @@ numLevels <- function(samplesize, shift.grid, startlev, maxlev, mdm, sfobject) {
 # adjust the indicator for whether maximum of the total inclusion probabilities
 # is changing
 
-         cel.wt <- cellWeight(xc, yc, dx, dy, sfobject, mdm)
+         cel.wt <- cellWeight(xc, yc, dx, dy, sfobject)
          if(max(cel.wt) == celmax) {
             celmax.ind <- celmax.ind + 1
     	       if(celmax.ind == 2)
