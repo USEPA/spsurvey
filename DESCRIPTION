@@ -53,13 +53,11 @@ Description: These functions provide procedures for selecting sites for spatial
 License: GPL (>= 3)
 Imports:
     crossdes,
-    deldir,
-    dplyr,
+    deldir,,
     foreign,
     graphics,
     grDevices,
     Hmisc,
-    lazyeval,
     MASS,
     rgeos,
     stats
