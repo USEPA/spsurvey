@@ -205,9 +205,8 @@ framesum <- function(att.frame, design, type.frame = "finite", stratum = NULL,
    } else if(type.frame == "linear") {
 
 # Summarize design variables
-
+      att.frame$length_mdm <- st_length(att.frame)
       if(!seltype.ind && mdcaty.ind) {
-         att.frame$length_mdm <- st_length(att.frame)
          if(stratum.ind) {
             allsize <- sum(att.frame$length_mdm)
             mdsize <- tapply(att.frame$length_mdm, att.frame[,mdcaty], sum)
@@ -328,9 +327,8 @@ framesum <- function(att.frame, design, type.frame = "finite", stratum = NULL,
    } else if(type.frame == "area") {
 
 # Summarize design variables
-
+      att.frame$area_mdm <- st_area(att.frame)
       if(!seltype.ind && mdcaty.ind) {
-         att.frame$area_mdm <- st_area(att.frame)
          if(stratum.ind) {
             allsize <- sum(att.frame$area_mdm)
             mdsize <- tapply(att.frame$area_mdm, att.frame[,mdcaty], sum)
