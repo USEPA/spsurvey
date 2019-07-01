@@ -1,12 +1,11 @@
 ################################################################################
 # Function: grts
-# Purpose: Select a generalized random-tesselation stratified (GRTS) sample
 # Programmers: Tony Olsen, Tom Kincaid, Don Stevens, Christian Platt,
 #              Denis White, Richard Remington
 # Date: October 8, 2002
-# Last Revised: June 10, 2019
+# Last Revised: June 18, 2019
 #'
-#' Select a generalized random-tesselation stratified (GRTS) sample
+#' Select a Generalized Random-Tesselation Stratified (GRTS) Sample
 #'
 #' This function select a GRTS sample of a finite, linear, or area resource.
 #' Frame elements must be located in 1- or 2-dimensional coordinate system.
@@ -44,13 +43,13 @@
 #'         caty.n=c("Caty 1"=50, "Caty 2"=25, "Caty 3"=25, "Caty 4"=25,
 #'         "Caty 5"=75), over=100))
 #'
-#' @param  DesignID  Name for the design, which is used to create a site ID for
+#' @param DesignID Name for the design, which is used to create a site ID for
 #'   each site.  The default is "Site".
 #'
-#' @param  SiteBegin  Number to use for first site in the design.  The default
+#' @param SiteBegin Number to use for first site in the design.  The default
 #'   is 1.
 #'
-#' @param  type.frame  The type of frame, which must be one of following:
+#' @param type.frame The type of frame, which must be one of following:
 #'   "finite", "linear", or "area".  The default is "finite".
 #'
 #' @param src.frame Source of the frame, which equals "sf.object" if the frame
@@ -59,15 +58,15 @@
 #'   package object, or "att.frame" if type.frame equals "finite" and the
 #'   frame is included in att.frame.  The default is "shapefile".
 #'
-#' @param  in.shape  Name of a shapefile containing the frame, which is required
+#' @param in.shape Name of a shapefile containing the frame, which is required
 #'   when src.frame equals "shapefile".  The shapefile name should include the
 #'   ".shp" extension.  If the name does not include that extension, it will be
-#'   added.  The default is NULL.  
+#'   added.  The default is NULL.
 #'
 #' @param sf.object An sf package object containing the frame, which is required
 #'   when src.frame equals "sf.object".  The default is NULL.
-#'   
-#' @param  sp.object  Name of the sp package object when src.frame equals
+#'
+#' @param sp.object Name of the sp package object when src.frame equals
 #'   "sp.object". The default is NULL.
 #'
 #' @param att.frame Data frame composed of attributes associated with elements
@@ -78,7 +77,7 @@
 #'   created from the sp object.  If src.frame equals "att.frame", then
 #'   att.frame must include columns that contain x-coordinates and y-coordinates
 #'   for each element in the frame.  The default is NULL.
-#'   
+#'
 #' @param id This argument is depricated.
 #'
 #' @param xcoord Character string containing the name of the column from
@@ -164,21 +163,20 @@
 #' }
 #'
 #' @export
-#'
 ################################################################################
-grts <- function(design, DesignID = "Site", SiteBegin = 1, type.frame =
-                 "finite", src.frame = "shapefile", in.shape = NULL, sf.object = NULL,
-                 sp.object = NULL, att.frame = NULL, id = NULL, xcoord = NULL, ycoord = NULL,
-                 stratum = NULL, mdcaty = NULL, startlev = NULL, maxlev = 11, maxtry = NULL,
-                 shift.grid = TRUE, do.sample = rep(TRUE, length(design)), shapefile = TRUE,
-                 prjfilename = NULL, out.shape = "sample.shp"){
 
+grts <- function(design, DesignID = "Site", SiteBegin = 1, type.frame =
+   "finite", src.frame = "shapefile", in.shape = NULL, sf.object = NULL,
+   sp.object = NULL, att.frame = NULL, id = NULL, xcoord = NULL, ycoord = NULL,
+   stratum = NULL, mdcaty = NULL, startlev = NULL, maxlev = 11, maxtry = NULL,
+   shift.grid = TRUE, do.sample = rep(TRUE, length(design)), shapefile = TRUE,
+   prjfilename = NULL, out.shape = "sample.shp") {
 
 # Ensure that a design list is provided
 
 if(is.null(design))
    stop("\nA design list must be provided.")
-   
+
 # Ensure that the design list is named and determine strata names from the
 # design list
 
@@ -196,7 +194,7 @@ if(is.null(strata.names)) {
 # Ensure that src.frame contains a valid value
 
 temp <- match(src.frame, c("sf.object", "shapefile", "sp.object", "att.frame"),
-              nomatch=0)
+   nomatch=0)
 if(temp == 0)
    stop(paste("\nThe value provided for argument src.frame, \"", src.frame, "\" is not a valid value.", sep=""))
 
@@ -249,8 +247,8 @@ if(src.frame == "att.frame") {
 
 temp <- st_geometry_type(sf.object)
 tst <- all(temp %in% c("POINT", "MULTIPOINT")) |
-   all(temp %in% c("LINESTRING", "MULTILINESTRING")) |
-   all(temp %in% c("POLYGON", "MULTIPOLYGON"))
+       all(temp %in% c("LINESTRING", "MULTILINESTRING")) |
+       all(temp %in% c("POLYGON", "MULTIPOLYGON"))
 if(!tst) {
    stop(paste("\nThe geometry types for the survey frame object passed to function IRS: \n\"", unique(st_geometry_type(sf.object)), "\" are not consistent.", sep=""))
 }
@@ -284,7 +282,7 @@ if(!is.factor(sf.object$stratum))
 # stratum attribute in sf.object
 
 temp <- match(strata.names, levels(sf.object[, stratum, drop = TRUE]),
-              nomatch=0)
+   nomatch=0)
 if(any(temp == 0)) {
    temp.str <- vecprint(strata.names[temp == 0])
    stop(paste("\nThe following strata names in the design list do not occur among the strata \nnames in the stratum attribute in sf.object:\n", temp.str, sep=""))
@@ -328,15 +326,31 @@ if(!is.null(startlev)) {
       stop("\nThe value for maxlev cannot be greater than 11")
 }
 
+# As necessary, initialize parallel processing
+
+if(type.frame != "finite") {
+   ncore <- detectCores()
+   tst <- Sys.getenv("_R_CHECK_LIMIT_CORES_", "")
+   if(tst == "TRUE") {
+      ncore <- ifelse(ncore == 1, 1, 2)
+   } else {
+      temp <- floor(0.1 * ncore)
+      ncore <- ifelse(ncore == 1, 1, ifelse(temp == 0, ncore - 1, ncore - temp))
+   }
+   cl <- makeCluster(ncore, methods=FALSE)
+   invisible(clusterEvalQ(cl, library(sf)))
+   setDefaultCluster(cl)
+}
+
 # Begin the section for a finite population (discrete points)
 
 if(type.frame == "finite") {
-   
+
    first <- TRUE
    SiteBegin <- SiteBegin
-   
-   # Ensure that do.sample is the correct length and is named
-   
+
+# Ensure that do.sample is the correct length and is named
+
    if(length(do.sample) > 1) {
       if(length(do.sample) != length(design))
          stop("\nArgument do.sample must be the same length as the design list.")
@@ -346,20 +360,20 @@ if(type.frame == "finite") {
          temp <- match(names(do.sample), strata.names, nomatch=0)
          if(any(temp) == 0)
             temp.str <- vecprint(names(do.sample)[temp == 0])
-         stop(paste("\nThe following names in do.sample do not occur among the names in design:\n", temp.str, sep=""))
+            stop(paste("\nThe following names in do.sample do not occur among the names in design:\n", temp.str, sep=""))
       }
    } else if(is.null(names(do.sample))) {
       names(do.sample) <- strata.names
    }
-   
-   # Begin the loop for strata
-   
+
+# Begin the loop for strata
+
    for(s in strata.names) {
-      
+
       cat(paste("\nStratum:", s, "\n"))
-      
-      # Create the sample frame
-      
+
+# Create the sample frame
+
       temp <- sf.object[, stratum, drop = TRUE] == s
       grtspts.ind <- TRUE
       if(sum(temp) == 0) {
@@ -369,7 +383,7 @@ if(type.frame == "finite") {
          warning(paste("\nThe stratum column in the attributes data frame contains a single value that \nmatches the stratum named \"", s, "\" in the design list. \nThe sample for this stratum will be composed of a single point.\n", sep=""))
          grtspts.ind <- FALSE
       }
-      
+
       sframe <- subset(sf.object, temp)
       if(design[[s]]$seltype == "Equal") {
          sframe$mdcaty <- "Equal"
@@ -380,9 +394,9 @@ if(type.frame == "finite") {
       } else {
          stop(paste("\nThe value provided for the type of random selection, \"", design[[s]]$seltype, "\", \nfor stratum \"", s, "\" is not valid.", sep=""))
       }
-      
-      # If seltype is not "Equal", ensure that mdcaty contains valid values
-      
+
+# If seltype is not "Equal", ensure that mdcaty contains valid values
+
       if(design[[s]]$seltype == "Unequal") {
          if(any(is.na(sframe$mdcaty)))
             stop(paste("\nMissing values were detected among the unequal probability category values for \nstratum \"", s, "\".", sep=""))
@@ -394,30 +408,30 @@ if(type.frame == "finite") {
          if(any(sframe$mdcaty < 0))
             stop(paste("\nNonpositive values were detected among the unequal probability category values \nfor stratum \"", s, "\".", sep=""))
       }
-      
-      # If seltype is "Unequal", ensure that caty.n is provided and that the names
-      # in caty.n are included amont the levels of mdcaty
-      
+
+# If seltype is "Unequal", ensure that caty.n is provided and that the names
+# in caty.n are included amont the levels of mdcaty
+
       if(design[[s]]$seltype == "Unequal") {
          if(is.null(design[[s]]$caty.n))
             stop(paste("The type of random selection was set to \"Unequal\", but caty.n was not \nprovided for stratum \"", s, "\".", sep=""))
          temp <- match(names(design[[s]]$caty.n),
-                       levels(as.factor(sframe$mdcaty)), nomatch=0)
+            levels(as.factor(sframe$mdcaty)), nomatch=0)
          if(any(temp == 0)) {
             temp.str <- vecprint(names(design[[s]]$caty.n)[temp == 0])
             stop(paste("\nThe following names in caty.n for stratum \"", s, "\" do not occur \namong the levels of the mdcaty variable in att.frame:\n", temp.str, sep=""))
          }
       }
-      
-      # Ensure that panel and caty.n contain valid values
-      
+
+# Ensure that panel and caty.n contain valid values
+
       if(!is.numeric(design[[s]]$panel))
          stop(paste(" The design list must contain numeric values in the panel argument for \nstratum \"", s, "\".\n", sep=""))
       design[[s]]$panel <- round(design[[s]]$panel)
       design[[s]]$panel <- design[[s]]$panel[design[[s]]$panel > 0]
       if(length(design[[s]]$panel) == 0)
          stop(paste(" The design list does not not contain any valid values of the panel \nargument for stratum \"", s, "\".\n", sep=""))
-      
+
       if(design[[s]]$seltype == "Unequal") {
          if(!is.numeric(design[[s]]$caty.n))
             stop(paste(" The design list must contain numeric values in the caty.n argument for \nstratum \"", s, "\".\n", sep=""))
@@ -426,19 +440,19 @@ if(type.frame == "finite") {
          if(length(design[[s]]$caty.n) == 0)
             stop(paste(" The design list does not not contain any valid values of the caty.n \nargument for stratum \"", s, "\".\n", sep=""))
       }
-      
-      # As necessary, remove rows from sframe that have values of mdcaty which are not
-      # included among the names in caty.n
-      
+
+# As necessary, remove rows from sframe that have values of mdcaty which are not
+# included among the names in caty.n
+
       if(design[[s]]$seltype == "Unequal") {
          temp <- sframe$mdcaty %in% names(design[[s]]$caty.n)
          if(any(!temp)) {
             sframe <- sframe[temp,]
          }
       }
-      
-      # Determine overall sample size for the stratum
-      
+
+# Determine overall sample size for the stratum
+
       if(is.null(design[[s]]$over))
          design[[s]]$over <- 0
       if(design[[s]]$seltype != "Unequal") {
@@ -458,21 +472,21 @@ if(type.frame == "finite") {
             n.desired <- design[[s]]$caty.n + ceiling(over.n)
          }
       }
-      
-      # Calculate mdm - inclusion probabilities
-      
+
+# Calculate mdm - inclusion probabilities
+
       if(design[[s]]$seltype == "Equal")
-         sframe$mdm <- mdmpts(sframe$mdcaty, c(Equal=n.desired))
+         	sframe$mdm <- mdmpts(sframe$mdcaty, c(Equal=n.desired))
       else if(design[[s]]$seltype == "Unequal")
          sframe$mdm <- mdmpts(sframe$mdcaty, n.desired)
       else
          sframe$mdm <- n.desired * sframe$mdcaty / sum(sframe$mdcaty)
-      
-      # Select the sample
-      
+
+# Select the sample
+
       if(grtspts.ind) {
          stmp <- grtspts(sframe, sum(n.desired), SiteBegin,
-                         shift.grid, do.sample[s], startlev, maxlev)
+            shift.grid, do.sample[s], startlev, maxlev)
       } else {
          stmp <- sframe
          stmp$siteID <- SiteBegin
@@ -481,18 +495,18 @@ if(type.frame == "finite") {
          row.names(stmp) <- 1
          attr(stmp, "nlev") <- NA
       }
-      
-      # Determine whether the realized sample size is less than the desired size
-      
+
+# Determine whether the realized sample size is less than the desired size
+
       if(nrow(stmp) < sum(n.desired))
          warning(paste("\nThe size of the selected sample was less than the desired size for stratum\n\"", s, "\".\n", sep=""))
-      
-      # Add the stratum variable
-      
+
+# Add the stratum variable
+
       stmp$stratum <- as.factor(rep(s,nrow(stmp)))
-      
-      # Add panel and oversample structure
-      
+
+# Add panel and oversample structure
+
       stmp$panel <- as.character(rep("OverSamp",nrow(stmp)))
       n.panel <- length(design[[s]]$panel)
       if(nrow(stmp) < samplesize) {
@@ -512,10 +526,10 @@ if(type.frame == "finite") {
       }
       for(i in 1:n.panel)
          stmp$panel[(np[i]+1):np[i+1]] <- names(design[[s]]$panel[i])
-      
-      # If an oversample is present or the realized sample size is less than the
-      # desired size, then adjust the weights
-      
+
+# If an oversample is present or the realized sample size is less than the
+# desired size, then adjust the weights
+
       if(design[[s]]$over > 0 || nrow(stmp) < samplesize) {
          if(design[[s]]$seltype != "Unequal") {
             if(nrow(stmp) < samplesize) {
@@ -537,9 +551,9 @@ if(type.frame == "finite") {
             }
          }
       }
-      
-      # Add stratum sample to the output object
-      
+
+# Add stratum sample to the output object
+
       if(first) {
          sites <- stmp
          levels(sites$stratum) <- strata.names
@@ -548,35 +562,35 @@ if(type.frame == "finite") {
          sites <- rbind(sites, stmp)
       }
       SiteBegin <- SiteBegin + nrow(stmp)
-      
-      # End the loop for strata
-      
+
+# End the loop for strata
+
    }
-   
-   # End the section for a finite population (discrete points)
-   
+
+# End the section for a finite population (discrete points)
+
 } else if(type.frame == "linear") {
-   
-   # Begin the section for a linear network
-   
+
+# Begin the section for a linear network
+
    first <- TRUE
    SiteBegin <- SiteBegin
    sf.object$length_mdm <- st_length(sf.object)
-   
-   # Begin the loop for strata
-   
+
+# Begin the loop for strata
+
    for(s in strata.names) {
-      
+
       cat(paste("\nStratum:", s, "\n"))
-      
-      # Create the sample frame
-      
+
+# Create the sample frame
+
       temp <- sf.object[, stratum, drop = TRUE] == s
       if(sum(temp) == 0) {
          warning(paste("\nThe stratum column in the attributes data frame contains no values that match \nthe stratum named \"", s, "\" in the design list.\n", sep=""))
          next
       }
-      
+
       sframe <- subset(sf.object, temp)
       if(design[[s]]$seltype == "Equal") {
          sframe$mdcaty <- "Equal"
@@ -587,9 +601,9 @@ if(type.frame == "finite") {
       } else {
          stop(paste("\nThe value provided for the type of random selection, \"", design[[s]]$seltype, "\", \nfor stratum \"", s, "\" is not valid.", sep=""))
       }
-      
-      # If seltype is not "Equal", ensure that mdcaty contains valid values
-      
+
+# If seltype is not "Equal", ensure that mdcaty contains valid values
+
       if(design[[s]]$seltype == "Unequal") {
          if(any(is.na(sframe$mdcaty)))
             stop(paste("\nMissing values were detected among the unequal probability category values for \nstratum \"", s, "\".", sep=""))
@@ -601,30 +615,30 @@ if(type.frame == "finite") {
          if(any(sframe$mdcaty < 0))
             stop(paste("\nNonpositive values were detected among the unequal probability category values \nfor stratum \"", s, "\".", sep=""))
       }
-      
-      # If seltype is "Unequal", ensure that caty.n is provided and that the names
-      # in caty.n and the levels of mdcaty are equivalent
-      
+
+# If seltype is "Unequal", ensure that caty.n is provided and that the names
+# in caty.n and the levels of mdcaty are equivalent
+
       if(design[[s]]$seltype == "Unequal") {
          if(is.null(design[[s]]$caty.n))
             stop(paste("The type of random selection was set to \"Unequal\", but caty.n was not \nprovided for stratum \"", s, "\".", sep=""))
          temp <- match(names(design[[s]]$caty.n),
-                       levels(as.factor(sframe$mdcaty)), nomatch=0)
+            levels(as.factor(sframe$mdcaty)), nomatch=0)
          if(any(temp == 0)) {
             temp.str <- vecprint(names(design[[s]]$caty.n)[temp == 0])
             stop(paste("\nThe following names in caty.n for stratum \"", s, "\" do not occur \namong the levels of the mdcaty variable in att.frame:\n", temp.str, sep=""))
          }
       }
-      
-      # Ensure that panel and caty.n contain valid values
-      
+
+# Ensure that panel and caty.n contain valid values
+
       if(!is.numeric(design[[s]]$panel))
          stop(paste(" The design list must contain numeric values in the panel argument for \nstratum \"", s, "\".\n", sep=""))
       design[[s]]$panel <- round(design[[s]]$panel)
       design[[s]]$panel <- design[[s]]$panel[design[[s]]$panel > 0]
       if(length(design[[s]]$panel) == 0)
          stop(paste(" The design list does not not contain any valid values of the panel \nargument for stratum \"", s, "\".\n", sep=""))
-      
+
       if(design[[s]]$seltype == "Unequal") {
          if(!is.numeric(design[[s]]$caty.n))
             stop(paste(" The design list must contain numeric values in the caty.n argument for \nstratum \"", s, "\".\n", sep=""))
@@ -633,19 +647,19 @@ if(type.frame == "finite") {
          if(length(design[[s]]$caty.n) == 0)
             stop(paste(" The design list does not not contain any valid values of the caty.n \nargument for stratum \"", s, "\".\n", sep=""))
       }
-      
-      # As necessary, remove rows from sframe that have values of mdcaty which are not
-      # included among the names in caty.n
-      
+
+# As necessary, remove rows from sframe that have values of mdcaty which are not
+# included among the names in caty.n
+
       if(design[[s]]$seltype == "Unequal") {
          temp <- sframe$mdcaty %in% names(design[[s]]$caty.n)
          if(any(!temp)) {
             sframe <- sframe[temp,]
          }
       }
-      
-      # Determine overall sample size for the stratum
-      
+
+# Determine overall sample size for the stratum
+
       if(is.null(design[[s]]$over))
          design[[s]]$over <- 0
       if(design[[s]]$seltype != "Unequal") {
@@ -665,35 +679,35 @@ if(type.frame == "finite") {
             n.desired <- design[[s]]$caty.n + ceiling(over.n)
          }
       }
-      
-      # Calculate mdm - inclusion probabilities
-      
+
+# Calculate mdm - inclusion probabilities
+
       if(design[[s]]$seltype == "Equal")
          sframe$mdm <- mdmlin(sframe$len, sframe$mdcaty, c(Equal=n.desired))
       else if(design[[s]]$seltype == "Unequal")
          sframe$mdm <- mdmlin(sframe$len, sframe$mdcaty, n.desired)
       else
          sframe$mdm <- n.desired * sframe$mdcaty /
-         sum(sframe$len * sframe$mdcaty)
-      
-      # Select the sample
-      
+                       sum(sframe$len * sframe$mdcaty)
+
+# Select the sample
+
       stmp <- grtslin(sframe, sum(n.desired), SiteBegin, shift.grid, startlev,
-                      maxlev)
-      
-      # Add the stratum variable
-      
+         maxlev)
+
+# Add the stratum variable
+
       stmp$stratum <- as.factor(rep(s,nrow(stmp)))
-      
-      # Add panel and oversample structure
-      
+
+# Add panel and oversample structure
+
       stmp$panel <- rep("OverSamp",nrow(stmp))
       np <- c(0,cumsum(design[[s]]$panel))
       for(i in 1:length(design[[s]]$panel))
          stmp$panel[(np[i]+1):np[i+1]] <- names(design[[s]]$panel[i])
-      
-      # If an oversample is present, then adjust the weights
-      
+
+# If an oversample is present, then adjust the weights
+
       if(design[[s]]$over > 0) {
          if(design[[s]]$seltype != "Unequal") {
             stmp$wgt <- n.desired * stmp$wgt / samplesize
@@ -705,9 +719,9 @@ if(type.frame == "finite") {
             }
          }
       }
-      
-      # Add stratum sample to the output data frame
-      
+
+# Add stratum sample to the output data frame
+
       if(first) {
          sites <- stmp
          levels(sites$stratum) <- strata.names
@@ -716,35 +730,35 @@ if(type.frame == "finite") {
          sites <- rbind(sites, stmp)
       }
       SiteBegin <- SiteBegin + nrow(stmp)
-      
-      # End the loop for strata
-      
+
+# End the loop for strata
+
    }
-   
-   # End the section for a linear network
-   
+
+# End the section for a linear network
+
 } else if(type.frame == "area") {
-   
-   # Begin the section for a polygonal area
-   
+
+# Begin the section for a polygonal area
+
    first <- TRUE
    SiteBegin <- SiteBegin
    sf.object$area_mdm <- st_area(sf.object)
-   
-   # Begin the loop for strata
-   
+
+# Begin the loop for strata
+
    for(s in strata.names) {
-      
+
       cat(paste("\nStratum:", s, "\n"))
-      
-      # Create the sample frame
-      
+
+# Create the sample frame
+
       temp <- sf.object[, stratum, drop = TRUE] == s
       if(sum(temp) == 0) {
          warning(paste("\nThe stratum column in the attributes data frame contains no values that match \nthe stratum named \"", s, "\" in the design list.\n", sep=""))
          next
       }
-      
+
       sframe <- subset(sf.object, temp)
       if(design[[s]]$seltype == "Equal") {
          sframe$mdcaty <- "Equal"
@@ -755,9 +769,9 @@ if(type.frame == "finite") {
       } else {
          stop(paste("\nThe value provided for the type of random selection, \"", design[[s]]$seltype, "\", \nfor stratum \"", s, "\" is not valid.", sep=""))
       }
-      
-      # If seltype is not "Equal", ensure that mdcaty contains valid values
-      
+
+# If seltype is not "Equal", ensure that mdcaty contains valid values
+
       if(design[[s]]$seltype == "Unequal") {
          if(any(is.na(sframe$mdcaty)))
             stop(paste("\nMissing values were detected among the unequal probability category values for \nstratum \"", s, "\".", sep=""))
@@ -769,30 +783,30 @@ if(type.frame == "finite") {
          if(any(sframe$mdcaty < 0))
             stop(paste("\nNonpositive values were detected among the unequal probability category values \nfor stratum \"", s, "\".", sep=""))
       }
-      
-      # If seltype is "Unequal", ensure that caty.n is provided and that the names
-      # in caty.n and the levels of mdcaty are equivalent
-      
+
+# If seltype is "Unequal", ensure that caty.n is provided and that the names
+# in caty.n and the levels of mdcaty are equivalent
+
       if(design[[s]]$seltype == "Unequal") {
          if(is.null(design[[s]]$caty.n))
             stop(paste("The type of random selection was set to \"Unequal\", but caty.n was not \nprovided for stratum \"", s, "\".", sep=""))
          temp <- match(names(design[[s]]$caty.n),
-                       levels(as.factor(sframe$mdcaty)), nomatch=0)
+            levels(as.factor(sframe$mdcaty)), nomatch=0)
          if(any(temp == 0)) {
             temp.str <- vecprint(names(design[[s]]$caty.n)[temp == 0])
             stop(paste("\nThe following names in caty.n for stratum \"", s, "\" do not occur \namong the levels of the mdcaty variable in att.frame:\n", temp.str, sep=""))
          }
       }
-      
-      # Ensure that panel and caty.n contain valid values
-      
+
+# Ensure that panel and caty.n contain valid values
+
       if(!is.numeric(design[[s]]$panel))
          stop(paste(" The design list must contain numeric values in the panel argument for \nstratum \"", s, "\".\n", sep=""))
       design[[s]]$panel <- round(design[[s]]$panel)
       design[[s]]$panel <- design[[s]]$panel[design[[s]]$panel > 0]
       if(length(design[[s]]$panel) == 0)
          stop(paste(" The design list does not not contain any valid values of the panel \nargument for stratum \"", s, "\".\n", sep=""))
-      
+
       if(design[[s]]$seltype == "Unequal") {
          if(!is.numeric(design[[s]]$caty.n))
             stop(paste(" The design list must contain numeric values in the caty.n argument for \nstratum \"", s, "\".\n", sep=""))
@@ -801,19 +815,19 @@ if(type.frame == "finite") {
          if(length(design[[s]]$caty.n) == 0)
             stop(paste(" The design list does not not contain any valid values of the caty.n \nargument for stratum \"", s, "\".\n", sep=""))
       }
-      
-      # As necessary, remove rows from sframe that have values of mdcaty which are not
-      # included among the names in caty.n
-      
+
+# As necessary, remove rows from sframe that have values of mdcaty which are not
+# included among the names in caty.n
+
       if(design[[s]]$seltype == "Unequal") {
          temp <- sframe$mdcaty %in% names(design[[s]]$caty.n)
          if(any(!temp)) {
             sframe <- sframe[temp,]
          }
       }
-      
-      # Determine overall sample size for the stratum
-      
+
+# Determine overall sample size for the stratum
+
       if(is.null(design[[s]]$over))
          design[[s]]$over <- 0
       if(design[[s]]$seltype != "Unequal") {
@@ -833,33 +847,33 @@ if(type.frame == "finite") {
             n.desired <- design[[s]]$caty.n + ceiling(over.n)
          }
       }
-      
-      # Calculate mdm - inclusion probabilities
-      
+
+# Calculate mdm - inclusion probabilities
+
       if(design[[s]]$seltype == "Equal")
          sframe$mdm <- mdmarea(sframe$area_mdm, sframe$mdcaty, c(Equal=n.desired))
       else if(design[[s]]$seltype == "Unequal")
          sframe$mdm <- mdmarea(sframe$area, sframe$mdcaty, n.desired)
       else
          sframe$mdm <- n.desired * sframe$mdcaty /
-         sum(sframe$area * sframe$mdcaty)
-      
-      # Select the sample
-      
+                       sum(sframe$area * sframe$mdcaty)
+
+# Select the sample
+
       stmp <- grtsarea(sframe, sum(n.desired), SiteBegin, shift.grid,
-                       startlev, maxlev, maxtry)
-      
-      # Determine whether the realized sample size is less than the desired size
-      
+         startlev, maxlev, maxtry)
+
+# Determine whether the realized sample size is less than the desired size
+
       if(nrow(stmp) < sum(n.desired))
          warning(paste("\nThe size of the selected sample was less than the desired size for stratum \n\"", s, "\".\n", sep=""))
-      
-      # Add the stratum variable
-      
+
+# Add the stratum variable
+
       stmp$stratum <- as.factor(rep(s, nrow(stmp)))
-      
-      # Add panel and oversample structure
-      
+
+# Add panel and oversample structure
+
       stmp$panel <- as.character(rep("OverSamp",nrow(stmp)))
       n.panel <- length(design[[s]]$panel)
       if(nrow(stmp) < samplesize) {
@@ -879,10 +893,10 @@ if(type.frame == "finite") {
       }
       for(i in 1:n.panel)
          stmp$panel[(np[i]+1):np[i+1]] <- names(design[[s]]$panel[i])
-      
-      # If an oversample is present or the realized sample size is less than the
-      # desired size, then adjust the weights
-      
+
+# If an oversample is present or the realized sample size is less than the
+# desired size, then adjust the weights
+
       if(design[[s]]$over > 0 || nrow(stmp) < samplesize) {
          if(design[[s]]$seltype != "Unequal") {
             if(nrow(stmp) < samplesize) {
@@ -904,9 +918,9 @@ if(type.frame == "finite") {
             }
          }
       }
-      
-      # Add stratum sample to the output data frame
-      
+
+# Add stratum sample to the output data frame
+
       if(first) {
          sites <- stmp
          levels(sites$stratum) <- strata.names
@@ -915,23 +929,29 @@ if(type.frame == "finite") {
          sites <- rbind(sites, stmp)
       }
       SiteBegin <- SiteBegin + nrow(stmp)
-      
-      # End the loop for strata
-      
+
+# End the loop for strata
+
    }
-   
-   # End the section for a polygonal area
-   
+
+# End the section for a polygonal area
+
 } else {
-   
+
    stop(paste("\nThe value provided for the type of frame, \"", type.frame, "\", is not valid.", sep=""))
-   
+
+}
+
+# As necessary, terminate parallel processing
+
+if(type.frame != "finite") {
+   stopCluster(cl)
 }
 
 # Add DesignID name to the numeric siteID value to create a new siteID
 
 sites$siteID <- as.character(gsub(" ","0", paste(DesignID,"-",
-                                                 format(sites$siteID), sep="")))
+   format(sites$siteID), sep="")))
 
 # Add Evaluation Status and Evaluation Reason variables to the output data frame
 
@@ -943,10 +963,10 @@ sites$EvalReason <- rep(" ", nrow(sites))
 tm <- match(sites$id, sf.object$id)
 if(design[[s]]$seltype == "Equal") {
    td <- match(c(id, stratum, "length_mdm", "area_mdm", "geometry"),
-               names(sf.object), nomatch=0)
+      names(sf.object), nomatch=0)
 } else {
    td <- match(c(id, stratum, mdcaty, "length_mdm", "area_mdm", "geometry"),
-               names(sf.object), nomatch=0)
+      names(sf.object), nomatch=0)
 }
 temp <- names(sf.object)[-td]
 if(length(temp) > 0) {
@@ -970,11 +990,11 @@ row.names(sites) <- IDs
 # Assign attributes to sites
 
 ifelse(is.null(startlev),
-       attr(sites, "startlev") <- "Not specified",
-       attr(sites, "startlev") <- startlev)
+   attr(sites, "startlev") <- "Not specified",
+   attr(sites, "startlev") <- startlev)
 ifelse(is.null(maxlev),
-       attr(sites, "maxlev") <- "Not specified",
-       attr(sites, "maxlev") <- maxlev)
+   attr(sites, "maxlev") <- "Not specified",
+   attr(sites, "maxlev") <- maxlev)
 attr(sites, "endlev") <- attributes(stmp)$nlev
 attr(sites, "shift.grid") <- shift.grid
 attr(sites, "do.sample") <- do.sample
@@ -1003,7 +1023,7 @@ if(shapefile == TRUE) {
 SpointsMat <- st_coordinates(sites)
 rownames(SpointsMat) <- IDs
 sp_obj <- SpatialPointsDataFrame(SpatialPoints(SpointsMat),
-                                 data = sites[, 1:(ncol(sites)-1), drop = TRUE])
+   data = sites[, 1:(ncol(sites)-1), drop = TRUE])
 rslt <- SpatialDesign(design = design, sp_obj = sp_obj)
 
 # Return the SpatialDesign object

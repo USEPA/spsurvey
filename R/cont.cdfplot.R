@@ -3,7 +3,7 @@
 # Programmers: Tony Olsen
 #              Tom Kincaid
 # Date: March 26, 2007
-# Last Revised: June 23, 2014
+# Last Revised: June 26, 2019
 #'
 #' Plot Multiple Cumulative Distribution Functions
 #'
@@ -81,6 +81,7 @@
 #' @keywords survey, plot
 #'
 #' @examples
+#' \dontrun{
 #' mysiteID <- paste("Site", 1:100, sep="")
 #' mysites <- data.frame(siteID=mysiteID, Active=rep(TRUE, 100))
 #' mysubpop <- data.frame(
@@ -102,6 +103,7 @@
 #' myanalysis <- cont.analysis(sites=mysites, subpop=mysubpop, design=mydesign,
 #'      data.cont=mydata.cont, popsize=mypopsize)
 #' cont.cdfplot("myanalysis.pdf", myanalysis$CDF, ylbl.r="Stream Length (km)")
+#' }
 #'
 #' @export
 ################################################################################

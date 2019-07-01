@@ -2,7 +2,7 @@
 # Function: dsgnsum
 # Programmers: Tony Olsen, Tom Kincaid
 # Date: April 26, 2005
-# Last Revised: May 4, 2015
+# Last Revised: June 21, 2019
 #
 #' Summary of a Survey Design
 #'
@@ -51,11 +51,9 @@
 #'   Stratum1=list(panel=c(PanelOne=50), seltype="Equal", over=10),
 #'   Stratum2=list(panel=c(PanelOne=50, PanelTwo=50), seltype="Unequal",
 #'     caty.n=c(CatyOne=25, CatyTwo=25, CatyThree=25, CatyFour=25), over=75))
-#' attframe <- read.dbf("shapefile")
 #' samp <- grts(design=design, DesignID="Test.Site", type.frame="area",
-#'   src.frame="shapefile", in.shape="shapefile", att.frame=attframe,
-#'   stratum="stratum", mdcaty="mdcaty", shapefile=TRUE,
-#'   shapefilename="sample")
+#'   src.frame="shapefile", in.shape="shapefile", stratum="stratum",
+#'   mdcaty="mdcaty", shapefile=TRUE, out.shape="sample.shp")
 #' dsgnsum(samp, auxvar=c("ecoregion", "state"))
 #' }
 #'

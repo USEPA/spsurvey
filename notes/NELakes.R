@@ -7,7 +7,7 @@
 
 
 # load the sf data frame as a .rda file (save as package dataset soon)
-NE_Lakes <- readRDS("F:/Git Projects/spsurvey/data/NE_Lakes.rds")
+load("F:/Git Projects/spsurvey/data/NE_Lakes.rda")
 plot(NE_Lakes$geometry, axes=T)
 
 # print first six lines of file
@@ -30,18 +30,20 @@ Equaldsgn <- list(CT=list(panel=c(Base=100), seltype="Equal"),
                   VT=list(panel=c(Base=100), seltype="Equal"))
 
 # Summarize the sample frame
-framesum(NE_lakes,Equaldsgn, type='finite')
+framesum(NE_lakes,Equaldsgn, type.frame='finite')
 
 # Create the GRTS survey design
 sample(1000000,1) # run once to get random seed and put result into set.seed
 # Reason is so that can reproduce exactly same sites if rerun it.
 set.seed(764966)  # Don't change unless want a different set of sites
-Equalsites <- grts(design=Equaldsgn,
-                   DesignID="NELakesEQ",
-                   type.frame="finite",
-                   att.frame=NE_lakes,
-                   stratum = "State",
-                   out.shape="NELakes_EqualSites" )
+
+Equalsites <- grts(design=Equaldsgn, 
+                    DesignID="NELakesEQ",
+                    type.frame="finite", 
+                    src.frame="sf.object",
+                    sf.object=NE_lakes,
+                    out.shape="test_sample.shp")
+
 
 # summary of sites selected
 dsgnsum(Equalsites)

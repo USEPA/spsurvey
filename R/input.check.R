@@ -2,7 +2,7 @@
 # Function: input.check
 # Programmer: Tom Kincaid
 # Date: September 25, 2003
-# Last Revised: November 11, 2015
+# Last Revised: July 1, 2019
 #'
 #' Check Input Values for Analytical Functions
 #'
@@ -192,11 +192,17 @@ if(vartype == "Local") {
    if(cluster.ind) {
       if(is.null(xcoord) || is.null(ycoord))
          stop("\nStage two x-coordinates and y-coordinates for location are required for the \nlocal mean variance estimator.")
+      if(any(is.na(xcoord) || is.na(ycoord)))
+         stop("\nAt least one missing value was detected among the stage two x-coordinates and \ny-coordinates for location, which are required for the local mean variance \nestimator.")
       if(is.null(xcoord1) || is.null(ycoord1))
          stop("\nStage one x-coordinates and y-coordinates for location are required for the \nlocal mean variance estimator.")
+      if(any(is.na(xcoord1) || is.na(ycoord1)))
+         stop("\nAt least one missing value was detected among the stage one x-coordinates and \ny-coordinates for location, which are required for the local mean variance \nestimator.")
    } else {
       if(is.null(xcoord) || is.null(ycoord))
          stop("\nx-coordinates and y-coordinates for location are required for the local mean \nvariance estimator.")
+      if(any(is.na(xcoord) || is.na(ycoord)))
+         stop("\nAt least one missing value was detected among the x-coordinates and \ny-coordinates for location, which are required for the local mean variance \nestimator.")
    }
 }
 

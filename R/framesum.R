@@ -2,7 +2,7 @@
 # Function: framesum
 # Programmers: Tony Olsen, Tom Kincaid
 # Date: April 27, 2005
-# Last Revised: February 27, 2006
+# Last Revised: June 21, 2019
 #'
 #' Summary of the Sample Frame for a Survey Design
 #'
@@ -10,11 +10,9 @@
 #' equals "finite", summary is a count of number of units in att.frame for
 #' cross-tabulation of stratum, mdcaty, and auxvar.  When type.frame equals
 #' "linear" or "area", summary is the sum of length or area for units for cross-
-#' tabulation of stratum, mdcaty, and auxvar.  Note that length and area are
-#' taken from length_mdm and area_mdm, which are calculated by the function
-#' read.dbf and added to att.frame.  If argument mdcaty or argument stratum
-#' equals NULL or if both arguments equal NULL, then the cross-tabulation is
-#' performed without use of the design variable(s).
+#' tabulation of stratum, mdcaty, and auxvar.  If argument mdcaty or argument
+#' stratum equals NULL or if both arguments equal NULL, then the cross-tabulation
+#' is performed without use of the design variable(s).
 #'
 #' @param att.frame Data frame composed of attributes associated with
 #'   elements in the frame, which must contain the columns used for stratum and
@@ -100,7 +98,7 @@
 #'
 #' @examples
 #' \dontrun{
-#' attframe <- read.dbf("shapefile")
+#' attframe <- read.dbf("shapefile.shp")
 #' design <- list(
 #'   Stratum1=list(panel=c(PanelOne=50), seltype="Equal", over=10),
 #'   Stratum2=list(panel=c(PanelOne=50, PanelTwo=50), seltype="Unequal",
@@ -209,6 +207,7 @@ framesum <- function(att.frame, design, type.frame = "finite", stratum = NULL,
 # Summarize design variables
 
       if(!seltype.ind && mdcaty.ind) {
+         att.frame$length_mdm <- st_length(att.frame)
          if(stratum.ind) {
             allsize <- sum(att.frame$length_mdm)
             mdsize <- tapply(att.frame$length_mdm, att.frame[,mdcaty], sum)
@@ -331,6 +330,7 @@ framesum <- function(att.frame, design, type.frame = "finite", stratum = NULL,
 # Summarize design variables
 
       if(!seltype.ind && mdcaty.ind) {
+         att.frame$area_mdm <- st_area(att.frame)
          if(stratum.ind) {
             allsize <- sum(att.frame$area_mdm)
             mdsize <- tapply(att.frame$area_mdm, att.frame[,mdcaty], sum)

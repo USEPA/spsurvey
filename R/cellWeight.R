@@ -1,7 +1,7 @@
 ################################################################################
 # Function: cellWeight
 # Programmer: Tom Kincaid
-# Date: June 12, 2019
+# Date: June 17, 2019
 #
 #' Total Inclusion Probablity for a Grid Cell
 #'
@@ -38,7 +38,9 @@ cellWeight <- function(xc, yc, dx, dy, sfobject) {
     wgtsum[is.na(wgtsum)] <- 0
   } else {
     samp_grd <- make_grid(xc, yc, dx, dy, sfobject)
-    temp <- by(samp_grd, 1:nrow(samp_grd), function(x) st_intersection(x, sfobject))
+    temp <- by(samp_grd, 1:nrow(samp_grd), function(x) x)
+    cl <- getDefaultCluster()
+    temp <-  parLapply(cl, temp, function(x) st_intersection(x, sfobject))
     wgtsum <- sapply(temp, celwt)
   }
 
