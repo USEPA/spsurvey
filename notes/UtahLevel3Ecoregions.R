@@ -34,11 +34,9 @@ set.seed(656633)  # Don't change unless want a different set of sites
 Equalsites <- grts(design=Equaldsgn,
                    src.frame="shapefile",
                    in.shape="eco_l3_ut", 
-                   att.frame=att,
                    type.frame="area",
                    DesignID="UTEco3EQ",
                    shapefile=TRUE,
-                   prj="eco_l3_ut",
                    out.shape="Eco3_EqualSites")
 
 # print summary of sites selected

@@ -1,7 +1,7 @@
 ################################################################################
 # Function: make_grid
 # Programmer: Tom Kincaid
-# Date: May 17, 2019
+# Date: July 2, 2019
 #
 #' Create the Grid for a GRTS Survey Design
 #'
@@ -38,6 +38,7 @@ make_grid <- function(xc, yc, dx, dy, sfobject) {
   }
   grd <- st_sfc(grd, crs = st_crs(sfobject))
   grd <- st_sf(poly = 1:n, geometry = grd)
+  st_agr(grd) <- "constant"
   return(grd)
 }
       

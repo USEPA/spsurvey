@@ -2,7 +2,7 @@
 # Function: irs
 # Programmer: Tom Kincaid
 # Date: November 28, 2005
-# Last Revised: June 10, 2019
+# Last Revised: July 2, 2019
 #'
 #' Select an Independent Random Sample (IRS)
 #'
@@ -405,6 +405,7 @@ if(type.frame == "finite") {
 
 # Select the sample
 
+      st_agr(sframe) <- "constant"
       if(irspts.ind) {
          stmp <- irspts(sframe, sum(n.desired), SiteBegin)
       } else {
@@ -611,6 +612,7 @@ if(type.frame == "finite") {
 
 # Select the sample
 
+      st_agr(sframe) <- "constant"
       stmp <- irslin(sframe, sum(n.desired), SiteBegin)
 
 # Add the stratum variable
@@ -778,6 +780,7 @@ if(type.frame == "finite") {
 
 # Select the sample
 
+      st_agr(sframe) <- "constant"
       stmp <- irsarea(sframe, sum(n.desired), SiteBegin)
 
 # Determine whether the sample size is less than the desired size

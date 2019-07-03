@@ -3,7 +3,7 @@
 # Programmers: Tony Olsen, Tom Kincaid, Don Stevens, Christian Platt,
 #              Denis White, Richard Remington
 # Date: October 8, 2002
-# Last Revised: June 18, 2019
+# Last Revised: July 2, 2019
 #'
 #' Select a Generalized Random-Tesselation Stratified (GRTS) Sample
 #'
@@ -484,6 +484,7 @@ if(type.frame == "finite") {
 
 # Select the sample
 
+      st_agr(sframe) <- "constant"
       if(grtspts.ind) {
          stmp <- grtspts(sframe, sum(n.desired), SiteBegin,
             shift.grid, do.sample[s], startlev, maxlev)
@@ -692,6 +693,7 @@ if(type.frame == "finite") {
 
 # Select the sample
 
+      st_agr(sframe) <- "constant"
       stmp <- grtslin(sframe, sum(n.desired), SiteBegin, shift.grid, startlev,
          maxlev)
 
@@ -860,6 +862,7 @@ if(type.frame == "finite") {
 
 # Select the sample
 
+      st_agr(sframe) <- "constant"
       stmp <- grtsarea(sframe, sum(n.desired), SiteBegin, shift.grid,
          startlev, maxlev, maxtry)
 
