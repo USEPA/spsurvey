@@ -2,7 +2,7 @@
 # Function: framesum
 # Programmers: Tony Olsen, Tom Kincaid
 # Date: April 27, 2005
-# Last Revised: June 21, 2019
+# Last Revised: July 8, 2019
 #'
 #' Summary of the Sample Frame for a Survey Design
 #'
@@ -205,7 +205,8 @@ framesum <- function(att.frame, design, type.frame = "finite", stratum = NULL,
    } else if(type.frame == "linear") {
 
 # Summarize design variables
-      att.frame$length_mdm <- st_length(att.frame)
+
+      att.frame$length_mdm <- as.numeric(st_length(att.frame))
       if(!seltype.ind && mdcaty.ind) {
          if(stratum.ind) {
             allsize <- sum(att.frame$length_mdm)
@@ -327,7 +328,8 @@ framesum <- function(att.frame, design, type.frame = "finite", stratum = NULL,
    } else if(type.frame == "area") {
 
 # Summarize design variables
-      att.frame$area_mdm <- st_area(att.frame)
+
+      att.frame$area_mdm <- as.numeric(st_area(att.frame))
       if(!seltype.ind && mdcaty.ind) {
          if(stratum.ind) {
             allsize <- sum(att.frame$area_mdm)

@@ -3,7 +3,7 @@
 # Programmers: Tony Olsen, Tom Kincaid, Don Stevens, Christian Platt,
 #              Denis White, Richard Remington
 # Date: October 8, 2002
-# Last Revised: July 2, 2019
+# Last Revised: July 8, 2019
 #'
 #' Select a Generalized Random-Tesselation Stratified (GRTS) Sample
 #'
@@ -205,7 +205,11 @@ if(src.frame == "shapefile") {
       stop("\nA shapefile name is required when the value provided for argument src.frame \nequals \"shapefile\".")
    nc <- nchar(in.shape)
    if(substr(in.shape, nc-3, nc) != ".shp") {
-      in.shape <- paste(in.shape, ".shp", sep="")
+      if(substr(in.shape, nc-3, nc-3) == ".") {
+         in.shape <- paste(substr(in.shape, 1, nc-4), ".shp", sep="")
+      } else {
+         in.shape <- paste(in.shape, ".shp", sep="")
+      }
    }
    sf.object <- st_read(in.shape, quiet = TRUE)
 }
@@ -576,7 +580,7 @@ if(type.frame == "finite") {
 
    first <- TRUE
    SiteBegin <- SiteBegin
-   sf.object$length_mdm <- st_length(sf.object)
+   sf.object$length_mdm <- as.numeric(st_length(sf.object))
 
 # Begin the loop for strata
 
@@ -745,7 +749,7 @@ if(type.frame == "finite") {
 
    first <- TRUE
    SiteBegin <- SiteBegin
-   sf.object$area_mdm <- st_area(sf.object)
+   sf.object$area_mdm <- as.numeric(st_area(sf.object))
 
 # Begin the loop for strata
 
@@ -1007,7 +1011,7 @@ attr(sites, "do.sample") <- do.sample
 if(shapefile == TRUE) {
    nc <- nchar(out.shape)
    if(substr(out.shape, nc-3, nc) != ".shp") {
-      if(substr(in.shape, nc-3, nc-3) == ".") {
+      if(substr(out.shape, nc-3, nc-3) == ".") {
          out.shape <- paste(substr(out.shape, 1, nc-4), ".shp", sep="")
       } else {
          out.shape <- paste(out.shape, ".shp", sep="")

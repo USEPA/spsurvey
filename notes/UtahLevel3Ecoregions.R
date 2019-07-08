@@ -32,8 +32,8 @@ sample(1000000,1) # run once to get random seed and put result into set.seed
 # Reason is so that can reproduce exactly same sites if rerun it.
 set.seed(656633)  # Don't change unless want a different set of sites
 Equalsites <- grts(design=Equaldsgn,
-                   src.frame="shapefile",
-                   in.shape="eco_l3_ut", 
+                   src.frame="sf.object",
+                   sf.object = UT_ecoregions,
                    type.frame="area",
                    DesignID="UTEco3EQ",
                    shapefile=TRUE,

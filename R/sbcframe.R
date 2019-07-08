@@ -2,7 +2,7 @@
 # Function: sbcframe
 # Programmer: Tom Kincaid
 # Date: September 29, 2011
-# Date: June 7, 2019
+# Date: July 8, 2019
 #
 #' Calculate Spatial Balance Grid Cell Extent and Proportion for a Survey Frame
 #'
@@ -86,7 +86,7 @@ sbcframe <- function(sfobject, nrows = 5, dxdy = TRUE) {
       if(nrow(tempsf == 0)) {
         extent[i] <- 0
       } else {
-        extent[i] <- sum(st_length(tempsf))
+        extent[i] <- sum(as.numeric(st_length(tempsf)))
       }
     }
   } else {
@@ -100,7 +100,7 @@ sbcframe <- function(sfobject, nrows = 5, dxdy = TRUE) {
       if(nrow(tempsf == 0)) {
         extent[i] <- 0
       } else {
-        extent[i] <- sum(st_area(tempsf))
+        extent[i] <- sum(as.numeric(st_area(tempsf)))
       }
     }
   }

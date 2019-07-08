@@ -1,7 +1,7 @@
 ################################################################################
 # Function: insideAreaGridCell
 # Programmer: Tom Kincaid
-# Date: June 4, 2019
+# Date: July 8, 2019
 #
 #' Calculate Clipped Feature Areas in a Set of Grid Cells
 #'
@@ -46,7 +46,7 @@ insideAreaGridCell <- function(sfobject, rdx.u, xc, yc, dx, dy) {
     tempsf <- st_intersection(sfobject, sfcell)
     cell.df <- rbind(cell.df, cbind(
                        cellID = rdx.u[i],
-                       featureArea = st_area(tempsf),
+                       featureArea = as.numeric(st_area(tempsf)),
                        featureID = tempsf$id))
   }
 

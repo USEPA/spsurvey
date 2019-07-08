@@ -1,7 +1,7 @@
 ################################################################################
 # Function: cellWeight
 # Programmer: Tom Kincaid
-# Date: June 17, 2019
+# Date: July 8, 2019
 #
 #' Total Inclusion Probablity for a Grid Cell
 #'
@@ -55,9 +55,9 @@ celwt <- function(sfcell) {
     cellsum <- 0
   } else {
     if(all(st_geometry_type(sfcell) %in% c("LINESTRING", "MULTILINESTRING"))) {
-      cellsum <- sum(st_length(sfcell) * sfcell$mdm)
+      cellsum <- sum(as.numeric(st_length(sfcell)) * sfcell$mdm)
     } else {
-     cellsum <- sum(st_area(sfcell) * sfcell$mdm)
+     cellsum <- sum(as.numeric(st_area(sfcell)) * sfcell$mdm)
     }
   }
   cellsum

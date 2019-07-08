@@ -1,7 +1,7 @@
 ################################################################################
 # Function: insideLinearGridCell
 # Programmer: Tom Kincaid
-# Date: June 4, 2019
+# Date: July 8, 2019
 #
 #' Calculate Clipped Feature Lengths in a Set of Grid Cells
 #'
@@ -46,7 +46,7 @@ insideLinearGridCell <- function(sfobject, rdx.u, xc, yc, dx, dy) {
     tempsf <- st_intersection(sfobject, sfcell)
     cell.df <- rbind(cell.df, cbind(
                        cellID = rdx.u[i],
-                       featureLength = st_length(tempsf),
+                       featureLength = as.numeric(st_length(tempsf)),
                        featureID = tempsf$id))
   }
 

@@ -2,7 +2,7 @@
 # Function: irs
 # Programmer: Tom Kincaid
 # Date: November 28, 2005
-# Last Revised: July 2, 2019
+# Last Revised: July 8, 2019
 #'
 #' Select an Independent Random Sample (IRS)
 #'
@@ -908,7 +908,7 @@ row.names(sites) <- IDs
 if(shapefile == TRUE) {
    nc <- nchar(out.shape)
    if(substr(out.shape, nc-3, nc) != ".shp") {
-      if(substr(in.shape, nc-3, nc-3) == ".") {
+      if(substr(out.shape, nc-3, nc-3) == ".") {
          out.shape <- paste(substr(out.shape, 1, nc-4), ".shp", sep="")
       } else {
          out.shape <- paste(out.shape, ".shp", sep="")
