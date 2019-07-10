@@ -1,0 +1,32 @@
+\documentclass[12pt]{article}
+% \VignetteIndexEntry{Analysis of a GRTS survey design for an area resource}
+\author{Thomas Kincaid}
+\title{Analysis of a GRTS Survey Design for an Area Resource}
+\usepackage[colorlinks=true, urlcolor=blue]{hyperref}
+\usepackage{Sweave}
+\textwidth=6.5in
+\textheight=9.0in
+\oddsidemargin=.1in
+\evensidemargin=.1in
+\headheight=-.5in
+\setlength{\parindent}{0in}
+\setlength{\parskip}{.1in}
+
+\begin{document}
+\input{Area_Analysis-concordance}
+\maketitle
+\tableofcontents
+\setkeys{Gin}{width=1.0\textwidth}
+
+\section{Preliminaries}
+
+This document presents analysis of a GRTS survey design for an area resource.  The area resource used in the analysis is estuaries in South Carolina.  Although a stratified survey design was used to sample estuaries, analyses will be conducted as if the design was unstratified.  Instead, strata will be used to define subpopulations for analysis.  The strata employed in the survey were: (1) open water and (2) tidal creeks.  The analysis will include calculation of three types of population estimates: (1) estimation of proportion and size (area of estuaries) for site evaluation status categorical variables; (2) estimation of proportion and size for estuary condition categorical variables; and (3) estimation of the cumulative distribution function (CDF) and percentiles for quantitative variables.  Testing for difference between CDFs from subpopulations also will be presented.
+
+The initial step is to use the library function to load the spsurvey package.  After the package is loaded, a message is printed to the R console indicating that the spsurvey package was loaded successfully.
+
+Load the spsurvey package.
+
+\begin{Schunk}
+\begin{Sinput}
+> # Load the spsurvey package
+> library(spsurvey)

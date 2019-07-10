@@ -7,7 +7,7 @@
 #'
 #' Select a Generalized Random-Tesselation Stratified (GRTS) Sample
 #'
-#' This function select a GRTS sample of a finite, linear, or area resource.
+#' This function selects a GRTS sample of a finite, linear, or area resource.
 #' Frame elements must be located in 1- or 2-dimensional coordinate system.
 #' Random selection may be generalized random tessellation stratified (GRTS),
 #' independent random sample (IRS), or systematic sample.  Sample may be equal
@@ -146,7 +146,7 @@
 #'       an object of class SpatialPointsDataFrame}
 #'   }
 #'
-#' @author Tom Kincaid  email{Kincaid.Tom@epa.gov}
+#' @author Tom Kincaid  \email{Kincaid.Tom@epa.gov}
 #'
 #' @keywords survey
 #'

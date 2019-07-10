@@ -16,21 +16,15 @@ Authors@R: c(
     person("Denis", "White",  role="ctb"),
     person("Richard", "Remington",  role="ctb")
     )
-Author: Tom Kincaid [aut, cre],
-    Tony Olsen [aut],
-    Marc Weber [aut],
-    Karen Blocksom [aut],
-    Don Stevens [ctb],
-    Christian Platt [ctb],
-    Denis White [ctb],
-    Richard Remington [ctb]
 Maintainer: Marc Weber <Weber.Marc@epa.gov>
 Depends:
     R (>= 2.10),
     methods,
     sf,
     sp
-Suggests: knitr (>= 1.19)
+Suggests: 
+    knitr (>= 1.19),
+    testthat
 Description: These functions provide procedures for selecting sites for spatial
     surveys using spatially balanced algorithms applied to discrete points,
     linear networks, or polygons. The probability survey designs available
@@ -52,8 +46,7 @@ Description: These functions provide procedures for selecting sites for spatial
     <Online ISBN:9781139022422>).
 License: GPL (>= 3)
 Imports:
-    crossdes,
-    deldir,,
+    deldir,
     foreign,
     graphics,
     grDevices,
