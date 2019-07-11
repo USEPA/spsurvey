@@ -1,0 +1,512 @@
+Finite: reg1_lakes Point shapefile
+
+Equal random selection using a shapefile frame:
+
+Stratum: None 
+Current number of levels: 2 
+Current number of levels: 3 
+Current number of levels: 4 
+Final number of levels: 4 
+    siteID  xcoord  ycoord mdcaty    wgt stratum    panel EvalStatus EvalReason
+1  Site-01 2122974 2318684  Equal 1317.3    None PanelOne    NotEval           
+2  Site-02 1978713 2433683  Equal 1317.3    None PanelOne    NotEval           
+3  Site-03 2100641 2897690  Equal 1317.3    None PanelOne    NotEval           
+4  Site-04 2026754 2746683  Equal 1317.3    None PanelOne    NotEval           
+5  Site-05 1848894 2235495  Equal 1317.3    None PanelOne    NotEval           
+6  Site-06 1914472 2595180  Equal 1317.3    None PanelOne    NotEval           
+7  Site-07 1965881 2379342  Equal 1317.3    None PanelOne    NotEval           
+8  Site-08 2071317 2827605  Equal 1317.3    None PanelOne    NotEval           
+9  Site-09 1942172 2281473  Equal 1317.3    None PanelOne    NotEval           
+10 Site-10 2002042 2522860  Equal 1317.3    None PanelOne    NotEval           
+
+Equal random selection using an attributes frame:
+
+Stratum: None 
+Current number of levels: 2 
+Current number of levels: 3 
+Current number of levels: 4 
+Final number of levels: 4 
+    siteID  xcoord  ycoord     mdcaty    wgt stratum    panel EvalStatus EvalReason
+1  Site-01 2051686 2372293 0.15252798 1317.3    None PanelOne    NotEval           
+2  Site-02 1880507 2303859 0.93870774 1317.3    None PanelOne    NotEval           
+3  Site-03 2108295 2914379 0.08555975 1317.3    None PanelOne    NotEval           
+4  Site-04 1890479 2616982 0.18688625 1317.3    None PanelOne    NotEval           
+5  Site-05 2015400 2436394 0.87045337 1317.3    None PanelOne    NotEval           
+6  Site-06 1919097 2715789 0.80964937 1317.3    None PanelOne    NotEval           
+7  Site-07 1909184 2324634 0.20282683 1317.3    None PanelOne    NotEval           
+8  Site-08 1880839 2554076 0.36549636 1317.3    None PanelOne    NotEval           
+9  Site-09 1979163 2370654 0.26489272 1317.3    None PanelOne    NotEval           
+10 Site-10 2044104 2845794 0.15920242 1317.3    None PanelOne    NotEval           
+
+Equal random selection using an sp object frame:
+
+Stratum: None 
+Current number of levels: 2 
+Current number of levels: 4 
+Final number of levels: 4 
+    siteID  xcoord  ycoord    mdcaty    wgt stratum    panel EvalStatus EvalReason
+1  Site-01 1855584 2353189 0.4303446 1317.3    None PanelOne    NotEval           
+2  Site-02 1866997 2431423 0.1284630 1317.3    None PanelOne    NotEval           
+3  Site-03 2105112 2640807 0.2887723 1317.3    None PanelOne    NotEval           
+4  Site-04 1982828 2507067 0.7660874 1317.3    None PanelOne    NotEval           
+5  Site-05 1984453 2396560 0.8024129 1317.3    None PanelOne    NotEval           
+6  Site-06 1839278 2543514 0.3878596 1317.3    None PanelOne    NotEval           
+7  Site-07 1940141 2359929 0.6131828 1317.3    None PanelOne    NotEval           
+8  Site-08 2079943 2869041 0.7602752 1317.3    None PanelOne    NotEval           
+9  Site-09 2051554 2397109 0.5490616 1317.3    None PanelOne    NotEval           
+10 Site-10 1988029 2697829 0.5466943 1317.3    None PanelOne    NotEval           
+
+Equal random selection using an sf object frame:
+
+Stratum: None 
+Current number of levels: 2 
+Current number of levels: 3 
+Current number of levels: 4 
+Final number of levels: 4 
+    siteID  xcoord  ycoord    mdcaty    wgt stratum    panel EvalStatus EvalReason
+1  Site-01 2138050 2650296 0.2458876 1317.3    None PanelOne    NotEval           
+2  Site-02 2068430 2787239 0.6236904 1317.3    None PanelOne    NotEval           
+3  Site-03 2016635 2343299 0.5700294 1317.3    None PanelOne    NotEval           
+4  Site-04 2001349 2314853 0.3818666 1317.3    None PanelOne    NotEval           
+5  Site-05 1821920 2543874 0.2975753 1317.3    None PanelOne    NotEval           
+6  Site-06 1919326 2282866 0.6015407 1317.3    None PanelOne    NotEval           
+7  Site-07 2183974 2728986 0.6865340 1317.3    None PanelOne    NotEval           
+8  Site-08 1861165 2259221 0.5415872 1317.3    None PanelOne    NotEval           
+9  Site-09 1924725 2586933 0.5993329 1317.3    None PanelOne    NotEval           
+10 Site-10 1926590 2382969 0.1986205 1317.3    None PanelOne    NotEval           
+
+Unequal random selection using a shapefile frame:
+
+Stratum: LAKE/POND 
+Current number of levels: 2 
+Current number of levels: 4 
+Final number of levels: 4 
+
+Stratum: RESERVOIR 
+Current number of levels: 2 
+Current number of levels: 3 
+Current number of levels: 4 
+Current number of levels: 5 
+Current number of levels: 6 
+Current number of levels: 7 
+Final number of levels: 7 
+    siteID  xcoord  ycoord mdcaty    wgt   stratum    panel EvalStatus EvalReason
+1  Site-01 2058648 2948911      5 1246.6 LAKE/POND PanelOne    NotEval           
+2  Site-02 2011315 2748383      5 1246.6 LAKE/POND PanelOne    NotEval           
+3  Site-03 2117266 2369493      8 1371.0 LAKE/POND PanelOne    NotEval           
+4  Site-04 1987423 2431546      8 1371.0 LAKE/POND PanelOne    NotEval           
+5  Site-05 1852735 2546934      5 1246.6 LAKE/POND PanelOne    NotEval           
+6  Site-06 2085079 2816871      5 1246.6 LAKE/POND PanelOne    NotEval           
+7  Site-07 1979944 2333071      8 1371.0 LAKE/POND PanelOne    NotEval           
+8  Site-08 1862656 2398341      5 1246.6 LAKE/POND PanelOne    NotEval           
+9  Site-09 1839747 2666546      5 1246.6 LAKE/POND PanelOne    NotEval           
+10 Site-10 2216147 2793357      5 1246.6 LAKE/POND PanelOne    NotEval           
+11 Site-11 2001969 2377486      8 1371.0 LAKE/POND OverSamp    NotEval           
+12 Site-12 1855235 2326076      5 1246.6 LAKE/POND OverSamp    NotEval           
+13 Site-13 2008983 2571281      5 1246.6 LAKE/POND OverSamp    NotEval           
+14 Site-14 2064929 2785482      5 1246.6 LAKE/POND OverSamp    NotEval           
+15 Site-15 2010271 2444947      8 1371.0 LAKE/POND OverSamp    NotEval           
+16 Site-16 1934298 2354557      8 1371.0 LAKE/POND OverSamp    NotEval           
+17 Site-17 2082091 2696836      8   11.2 RESERVOIR PanelOne    NotEval           
+18 Site-18 1903666 2504665      5    5.8 RESERVOIR PanelOne    NotEval           
+19 Site-19 2012383 2374450      8   11.2 RESERVOIR PanelOne    NotEval           
+20 Site-20 1946195 2383412      8   11.2 RESERVOIR PanelOne    NotEval           
+21 Site-21 1998886 2516767      8   11.2 RESERVOIR PanelOne    NotEval           
+22 Site-22 1914847 2322676      8   11.2 RESERVOIR PanelOne    NotEval           
+23 Site-23 1933734 2549012      5    5.8 RESERVOIR PanelOne    NotEval           
+24 Site-24 1935949 2419840      5    5.8 RESERVOIR PanelOne    NotEval           
+25 Site-25 1917540 2649146      5    5.8 RESERVOIR PanelOne    NotEval           
+26 Site-26 2101733 2820868      5    5.8 RESERVOIR PanelOne    NotEval           
+
+Continuous random selection using an sf object frame:
+
+Stratum: None 
+Current number of levels: 2 
+Current number of levels: 3 
+Current number of levels: 4 
+Final number of levels: 4 
+    siteID  xcoord  ycoord    mdcaty       wgt stratum    panel EvalStatus EvalReason
+1  Site-01 2055203 2392914 0.6653652  997.4941    None PanelOne    NotEval           
+2  Site-02 1984798 2309848 0.9119671  727.7652    None PanelOne    NotEval           
+3  Site-03 1997114 2495737 0.9623509  689.6631    None PanelOne    NotEval           
+4  Site-04 1983875 2766422 0.4951558 1340.3818    None PanelOne    NotEval           
+5  Site-05 1880767 2267564 0.9617645  690.0835    None PanelOne    NotEval           
+6  Site-06 2234126 2767679 0.4577910 1449.7835    None PanelOne    NotEval           
+7  Site-07 1996270 2432062 0.1107795 5991.1609    None PanelOne    NotEval           
+8  Site-08 1980119 2612181 0.8340659  795.7380    None PanelOne    NotEval           
+9  Site-09 1874586 2430028 0.6743782  984.1627    None PanelOne    NotEval           
+10 Site-10 2135080 2718468 0.7922684  837.7185    None PanelOne    NotEval           
+
+
+Finite: NHDPoint PointZ shapefile
+
+Stratum: None 
+Current number of levels: 2 
+Current number of levels: 4 
+Current number of levels: 5 
+Current number of levels: 6 
+Current number of levels: 7 
+Final number of levels: 7 
+    siteID    xcoord   ycoord mdcaty  wgt stratum    panel EvalStatus EvalReason    ComID FDate RESOLUTION  GNIS_ID      GNIS_Name ReachCode          FTYPE
+1  Site-01 -110.9595 44.42082  Equal 16.4    None PanelOne    NotEval            12794341  <NA>     Medium     <NA>           <NA>      <NA>     SpringSeep
+2  Site-02 -120.1139 41.93664  Equal 16.4    None PanelOne    NotEval            20314934  <NA>     Medium     <NA>           <NA>      <NA>     SpringSeep
+3  Site-03 -119.6204 41.80637  Equal 16.4    None PanelOne    NotEval            20317074  <NA>     Medium     <NA>           <NA>      <NA>     SpringSeep
+4  Site-04 -110.9033 42.67195  Equal 16.4    None PanelOne    NotEval            18350185  <NA>     Medium     <NA>           <NA>      <NA>     SpringSeep
+5  Site-05 -119.8962 41.97735  Equal 16.4    None PanelOne    NotEval            20316942  <NA>     Medium     <NA>           <NA>      <NA>     SpringSeep
+6  Site-06 -110.7136 42.63366  Equal 16.4    None PanelOne    NotEval            18350209  <NA>     Medium     <NA>           <NA>      <NA>     SpringSeep
+7  Site-07 -119.3185 41.66449  Equal 16.4    None PanelOne    NotEval            20317358  <NA>     Medium 00857530 Crystal Spring      <NA>     SpringSeep
+8  Site-08 -110.9943 43.15064  Equal 16.4    None PanelOne    NotEval            18345637  <NA>     Medium     <NA>           <NA>      <NA> Gaging Station
+9  Site-09 -119.5794 41.84850  Equal 16.4    None PanelOne    NotEval            20317008  <NA>     Medium     <NA>           <NA>      <NA>     SpringSeep
+10 Site-10 -112.2703 42.33116  Equal 16.4    None PanelOne    NotEval             1184619  <NA>     Medium     <NA>           <NA>      <NA>     SpringSeep
+   FCode
+1  45800
+2  45800
+3  45800
+4  45800
+5  45800
+6  45800
+7  45800
+8  36700
+9  45800
+10 45800
+
+
+Linear: ryan_len Polyline shapefile
+
+Equal random selection using a shapefile frame:
+
+Stratum: None 
+Current number of levels: 2 
+Current number of levels: 3 
+Final number of levels: 3 
+    siteID    xcoord   ycoord mdcaty      wgt stratum    panel EvalStatus EvalReason FNODE_ TNODE_ LPOLY_ RPOLY_    LENGTH RYAN_SPC_ RYAN_SPC_I
+1  Site-01 -348152.8 311040.9  Equal 4757.726    None PanelOne    NotEval                35     36      0      0 1698.8580        33         33
+2  Site-02 -349902.6 308784.4  Equal 4757.726    None PanelOne    NotEval                 5     19      0      0  926.7551        18         18
+3  Site-03 -346598.5 310193.2  Equal 4757.726    None PanelOne    NotEval                31     33      0      0 1658.4259        30         30
+4  Site-04 -346892.5 312370.5  Equal 4757.726    None PanelOne    NotEval                44     50      0      0 2905.8799        48         48
+5  Site-05 -349606.3 310608.2  Equal 4757.726    None PanelOne    NotEval                46     28      0      0 1874.0768        43         43
+6  Site-06 -348749.6 312818.3  Equal 4757.726    None PanelOne    NotEval                53     47      0      0 2617.5491        51         51
+7  Site-07 -348899.7 307921.4  Equal 4757.726    None PanelOne    NotEval                 6      7      0      0  993.3864         6          6
+8  Site-08 -347594.3 309886.3  Equal 4757.726    None PanelOne    NotEval                31     32      0      0  973.9687        29         29
+9  Site-09 -346283.0 307595.3  Equal 4757.726    None PanelOne    NotEval                 8      9      0      0 1961.9923         7          7
+10 Site-10 -348813.3 313420.3  Equal 4757.726    None PanelOne    NotEval                53     47      0      0 2617.5491        51         51
+
+Equal random selection using an sp object frame:
+
+Stratum: None 
+Current number of levels: 2 
+Current number of levels: 3 
+Final number of levels: 3 
+    siteID    xcoord   ycoord mdcaty      wgt stratum    panel EvalStatus EvalReason
+1  Site-01 -351017.3 308534.4  Equal 4757.726    None PanelOne    NotEval           
+2  Site-02 -348872.7 310248.6  Equal 4757.726    None PanelOne    NotEval           
+3  Site-03 -345914.1 307433.7  Equal 4757.726    None PanelOne    NotEval           
+4  Site-04 -348768.9 313498.4  Equal 4757.726    None PanelOne    NotEval           
+5  Site-05 -347574.2 309810.0  Equal 4757.726    None PanelOne    NotEval           
+6  Site-06 -348032.7 311564.9  Equal 4757.726    None PanelOne    NotEval           
+7  Site-07 -349393.9 306945.7  Equal 4757.726    None PanelOne    NotEval           
+8  Site-08 -349569.0 312229.4  Equal 4757.726    None PanelOne    NotEval           
+9  Site-09 -347081.4 308482.4  Equal 4757.726    None PanelOne    NotEval           
+10 Site-10 -348073.3 311057.8  Equal 4757.726    None PanelOne    NotEval           
+
+Equal random selection using an sf object frame:
+
+Stratum: None 
+Current number of levels: 2 
+Current number of levels: 3 
+Final number of levels: 3 
+    siteID    xcoord   ycoord mdcaty      wgt stratum    panel EvalStatus EvalReason
+1  Site-01 -348872.9 311086.2  Equal 4757.726    None PanelOne    NotEval           
+2  Site-02 -347658.4 312422.8  Equal 4757.726    None PanelOne    NotEval           
+3  Site-03 -347705.4 308521.2  Equal 4757.726    None PanelOne    NotEval           
+4  Site-04 -348796.2 307736.7  Equal 4757.726    None PanelOne    NotEval           
+5  Site-05 -347777.6 311398.0  Equal 4757.726    None PanelOne    NotEval           
+6  Site-06 -350430.9 308129.4  Equal 4757.726    None PanelOne    NotEval           
+7  Site-07 -349898.8 312039.1  Equal 4757.726    None PanelOne    NotEval           
+8  Site-08 -346041.5 308508.3  Equal 4757.726    None PanelOne    NotEval           
+9  Site-09 -346957.1 308509.8  Equal 4757.726    None PanelOne    NotEval           
+10 Site-10 -349674.9 310039.1  Equal 4757.726    None PanelOne    NotEval           
+
+Unequal random selection using an sp object frame:
+
+Stratum: A 
+Current number of levels: 2 
+Current number of levels: 3 
+Current number of levels: 4 
+Final number of levels: 4 
+
+Stratum: B 
+Current number of levels: 2 
+Current number of levels: 3 
+Final number of levels: 3 
+    siteID    xcoord   ycoord mdcaty      wgt stratum    panel EvalStatus EvalReason FNODE_ TNODE_ LPOLY_ RPOLY_    LENGTH RYAN_SPC_ RYAN_SPC_I    mdcaty2
+1  Site-01 -346493.3 310870.3      b 2212.032       A PanelOne    NotEval                44     50      0      0 2905.8799        48         48 0.88868832
+2  Site-02 -346510.0 309327.7      a 2219.565       A PanelOne    NotEval                16     25      0      0 2865.8006        24         24 0.69361900
+3  Site-03 -348575.8 309209.4      a 2219.565       A PanelOne    NotEval                20     23      0      0  632.8388        22         22 0.81559621
+4  Site-04 -349646.9 309955.1      b 2212.032       A PanelOne    NotEval                28     30      0      0  507.8796        28         28 0.09092302
+5  Site-05 -346714.0 311917.6      b 2212.032       A PanelOne    NotEval                44     50      0      0 2905.8799        48         48 0.88868832
+6  Site-06 -349856.7 312887.9      b 2212.032       A PanelOne    NotEval                48     52      0      0  951.1108        50         50 0.91378755
+7  Site-07 -350074.6 307934.3      a 2219.565       A PanelOne    NotEval                 5      1      0      0  184.4448         4          4 0.47124470
+8  Site-08 -349703.6 312620.6      b 2212.032       A PanelOne    NotEval                48     52      0      0  951.1108        50         50 0.91378755
+9  Site-09 -346800.1 312165.7      b 2212.032       A PanelOne    NotEval                44     50      0      0 2905.8799        48         48 0.88868832
+10 Site-10 -350669.4 308872.1      a 2219.565       A PanelOne    NotEval                11     21      0      0  828.0937        20         20 0.32533629
+11 Site-11 -347932.9 309702.2      b 2212.032       A OverSamp    NotEval                26     27      0      0 1075.7356        26         26 0.64282344
+12 Site-12 -347118.6 311161.1      b 2212.032       A OverSamp    NotEval                39     40      0      0  554.2990        36         36 0.86004701
+13 Site-13 -346801.4 308499.0      a 2219.565       A OverSamp    NotEval                16     12      0      0  282.0105        14         14 0.71472619
+14 Site-14 -349479.2 307041.1      a 2219.565       A OverSamp    NotEval                 1      2      0      0 1654.9373         1          1 0.82894445
+15 Site-15 -348163.1 310703.5      b 2212.032       A OverSamp    NotEval                34     31      0      0 1468.9703        32         32 0.63491450
+16 Site-16 -347422.6 312086.0      b 2212.032       A OverSamp    NotEval                44     50      0      0 2905.8799        48         48 0.88868832
+17 Site-17 -350619.6 308366.2      a 2136.193       B PanelOne    NotEval                 3     11      0      0  695.6179         9          9 0.10485573
+18 Site-18 -349901.0 311989.6      b 2947.663       B PanelOne    NotEval                48     49      0      0  754.9212        47         47 0.64203705
+19 Site-19 -348520.4 308353.2      a 2136.193       B PanelOne    NotEval                15     13      0      0 2003.0106        15         15 0.28237897
+20 Site-20 -349381.4 307880.1      a 2136.193       B PanelOne    NotEval                 6      5      0      0 1051.7496         5          5 0.24034472
+21 Site-21 -347919.5 311973.5      b 2947.663       B PanelOne    NotEval                41     51      0      0 1748.4072        49         49 0.72895022
+22 Site-22 -346936.0 308515.6      a 2136.193       B PanelOne    NotEval                13     16      0      0  210.4605        13         13 0.87108147
+23 Site-23 -348206.4 311348.3      b 2947.663       B PanelOne    NotEval                35     41      0      0  675.1618        37         37 0.70071940
+24 Site-24 -348722.9 309367.6      b 2947.663       B PanelOne    NotEval                26     20      0      0  973.4206        25         25 0.41787269
+25 Site-25 -350042.8 309933.5      b 2947.663       B PanelOne    NotEval                28     29      0      0  454.8051        27         27 0.03973707
+26 Site-26 -345846.5 307463.7      a 2136.193       B PanelOne    NotEval                 8      9      0      0 1961.9923         7          7 0.20299464
+
+Continuous random selection using an sf object frame:
+
+Stratum: None 
+Current number of levels: 2 
+Current number of levels: 3 
+Final number of levels: 3 
+    siteID    xcoord   ycoord    mdcaty      wgt stratum    panel EvalStatus EvalReason FNODE_ TNODE_ LPOLY_ RPOLY_    LENGTH RYAN_SPC_ RYAN_SPC_I mdcaty1
+1  Site-01 -347066.0 308163.5 0.9741770 2590.395    None PanelOne    NotEval                13     14      0      0  753.4280        11         11       a
+2  Site-02 -347746.4 310711.4 0.8277158 3048.756    None PanelOne    NotEval                34     31      0      0 1468.9703        32         32       b
+3  Site-03 -348575.4 309141.8 0.9781227 2579.946    None PanelOne    NotEval                20     15      0      0  725.4539        19         19       a
+4  Site-04 -347426.7 311437.0 0.8144521 3098.406    None PanelOne    NotEval                39     40      0      0  554.2990        36         36       b
+5  Site-05 -350074.3 307517.5 0.8665293 2912.196    None PanelOne    NotEval                 1      2      0      0 1654.9373         1          1       a
+6  Site-06 -347373.1 312097.1 0.6595519 3826.088    None PanelOne    NotEval                44     50      0      0 2905.8799        48         48       b
+7  Site-07 -345883.9 309615.8 0.7565686 3335.459    None PanelOne    NotEval                16     25      0      0 2865.8006        24         24       a
+8  Site-08 -349131.0 307943.0 0.7118237 3545.124    None PanelOne    NotEval                 6      5      0      0 1051.7496         5          5       a
+9  Site-09 -348592.4 309254.8 0.5973308 4224.633    None PanelOne    NotEval                26     20      0      0  973.4206        25         25       b
+10 Site-10 -349913.1 312903.2 0.4007866 6296.377    None PanelOne    NotEval                48     52      0      0  951.1108        50         50       b
+
+
+Linear: NHDTanana_main_ALB PolylineZ shapefile
+
+Stratum: None 
+Current number of levels: 2 
+Current number of levels: 3 
+Current number of levels: 4 
+Final number of levels: 4 
+    siteID   xcoord  ycoord mdcaty      wgt stratum    panel EvalStatus EvalReason    ComID      FDate Resolution  GNIS_ID    GNIS_Name LengthKM
+1  Site-01 561399.8 1537448  Equal 91083.85    None PanelOne    NotEval            47519610 2003-05-27          2 01416408 Tanana River    8.900
+2  Site-02 591892.1 1518954  Equal 91083.85    None PanelOne    NotEval            47519436 2003-05-27          2 01416408 Tanana River    4.720
+3  Site-03 344432.7 1614534  Equal 91083.85    None PanelOne    NotEval            60741749 2003-06-16          2 01416408 Tanana River    2.025
+4  Site-04 231042.0 1649206  Equal 91083.85    None PanelOne    NotEval            36675739 2002-09-24          2 01416408 Tanana River    4.132
+5  Site-05 443192.1 1583758  Equal 91083.85    None PanelOne    NotEval            47548983 2003-08-14          2 01416408 Tanana River    2.544
+6  Site-06 168736.3 1669861  Equal 91083.85    None PanelOne    NotEval            36675539 2002-09-24          2 01416408 Tanana River    0.648
+7  Site-07 504666.6 1547120  Equal 91083.85    None PanelOne    NotEval            47549423 2003-08-14          2 01416408 Tanana River    1.485
+8  Site-08 231497.3 1663832  Equal 91083.85    None PanelOne    NotEval            36675691 2002-09-24          2 01416408 Tanana River    3.559
+9  Site-09 388078.2 1606435  Equal 91083.85    None PanelOne    NotEval            60741157 2003-06-16          2 01416408 Tanana River    1.334
+10 Site-10 115233.8 1674826  Equal 91083.85    None PanelOne    NotEval            36675369 2002-09-24          2 01416408 Tanana River    0.524
+        ReachCode FlowDir WBAreaComI FType FCode  Shape_Leng Enabled
+1  19040502000142       1  120009705   558 55800 0.112123824       1
+2  19040502000028       1  120009705   558 55800 0.079819473       1
+3  19040507000263       1  120006430   558 55800 0.041307985       1
+4  19040511000148       1  120009691   558 55800 0.063496416       1
+5  19040503000115       1  120006086   558 55800 0.034026596       1
+6  19040511000079       1  120009686   558 55800 0.008925114       1
+7  19040503000274       1  120006107   558 55800 0.015299573       1
+8  19040511000135       1  120009686   558 55800 0.060839256       1
+9  19040507008742       1   26593425   558 55800 0.026299366       1
+10 19040511000022       1  120009685   558 55800 0.005978881       1
+
+
+Area: eco_l3_ut Polygon shapefile
+
+Equal random selection using a shapefile frame:
+
+Stratum: None 
+Current number of levels: 2 
+Current number of levels: 3 
+Final number of levels: 3 
+    siteID   xcoord  ycoord mdcaty         wgt stratum    panel EvalStatus EvalReason        AREA PERIMETER USECO_ USECO_ID ECO LEVEL3
+1  Site-01 -1453583 1756712  Equal 21982984349    None PanelOne    NotEval            4.47240e+10   2722190    208      206  19     19
+2  Site-02 -1123195 1940285  Equal 21982984349    None PanelOne    NotEval            1.26379e+11   3388270    247      245  20     20
+3  Site-03 -1207475 1648463  Equal 21982984349    None PanelOne    NotEval            1.26379e+11   3388270    247      245  20     20
+4  Site-04 -1340057 1723330  Equal 21982984349    None PanelOne    NotEval            1.26379e+11   3388270    247      245  20     20
+5  Site-05 -1321209 2201023  Equal 21982984349    None PanelOne    NotEval            3.09949e+11   4412500    204      201  13     13
+6  Site-06 -1368687 1910847  Equal 21982984349    None PanelOne    NotEval            3.09949e+11   4412500    204      201  13     13
+7  Site-07 -1498369 1866617  Equal 21982984349    None PanelOne    NotEval            3.09949e+11   4412500    204      201  13     13
+8  Site-08 -1150024 1830012  Equal 21982984349    None PanelOne    NotEval            1.26379e+11   3388270    247      245  20     20
+9  Site-09 -1323580 1983857  Equal 21982984349    None PanelOne    NotEval            4.47240e+10   2722190    208      206  19     19
+10 Site-10 -1510330 2038281  Equal 21982984349    None PanelOne    NotEval            3.09949e+11   4412500    204      201  13     13
+                    LEVEL3_NAM
+1  Wasatch and Uinta Mountains
+2            Colorado Plateaus
+3            Colorado Plateaus
+4            Colorado Plateaus
+5      Central Basin and Range
+6      Central Basin and Range
+7      Central Basin and Range
+8            Colorado Plateaus
+9  Wasatch and Uinta Mountains
+10     Central Basin and Range
+
+Equal random selection using an sp object frame:
+
+Stratum: None 
+Current number of levels: 2 
+Current number of levels: 3 
+Final number of levels: 3 
+    siteID   xcoord  ycoord mdcaty         wgt stratum    panel EvalStatus EvalReason
+1  Site-01 -1469264 1765683  Equal 21982984349    None PanelOne    NotEval           
+2  Site-02 -1215718 2029984  Equal 21982984349    None PanelOne    NotEval           
+3  Site-03 -1108147 2037949  Equal 21982984349    None PanelOne    NotEval           
+4  Site-04 -1151968 1776039  Equal 21982984349    None PanelOne    NotEval           
+5  Site-05 -1292604 1909962  Equal 21982984349    None PanelOne    NotEval           
+6  Site-06 -1250164 1675454  Equal 21982984349    None PanelOne    NotEval           
+7  Site-07 -1451002 2135842  Equal 21982984349    None PanelOne    NotEval           
+8  Site-08 -1321094 1800231  Equal 21982984349    None PanelOne    NotEval           
+9  Site-09 -1457282 2052559  Equal 21982984349    None PanelOne    NotEval           
+10 Site-10 -1474003 2209312  Equal 21982984349    None PanelOne    NotEval           
+
+Equal random selection using an sf object frame:
+
+Stratum: None 
+Current number of levels: 2 
+Current number of levels: 3 
+Final number of levels: 3 
+    siteID   xcoord  ycoord mdcaty         wgt stratum    panel EvalStatus EvalReason
+1  Site-01 -1249496 1764226  Equal 21982984349    None PanelOne    NotEval           
+2  Site-02 -1422550 1903591  Equal 21982984349    None PanelOne    NotEval           
+3  Site-03 -1451862 1912071  Equal 21982984349    None PanelOne    NotEval           
+4  Site-04 -1168156 2072236  Equal 21982984349    None PanelOne    NotEval           
+5  Site-05 -1505384 1777809  Equal 21982984349    None PanelOne    NotEval           
+6  Site-06 -1423847 2092504  Equal 21982984349    None PanelOne    NotEval           
+7  Site-07 -1158037 1660620  Equal 21982984349    None PanelOne    NotEval           
+8  Site-08 -1414065 2049953  Equal 21982984349    None PanelOne    NotEval           
+9  Site-09 -1481395 2064021  Equal 21982984349    None PanelOne    NotEval           
+10 Site-10 -1341059 2111974  Equal 21982984349    None PanelOne    NotEval           
+
+Unequal random selection using an sp object frame:
+
+Stratum: A 
+Current number of levels: 2 
+Current number of levels: 3 
+Final number of levels: 3 
+
+Stratum: B 
+Current number of levels: 2 
+Current number of levels: 3 
+Current number of levels: 4 
+Final number of levels: 4 
+    siteID   xcoord  ycoord mdcaty         wgt stratum    panel EvalStatus EvalReason        AREA PERIMETER USECO_ USECO_ID ECO LEVEL3
+1  Site-01 -1140215 1693901      b 17687430706       A PanelOne    NotEval            1.26379e+11   3388270    247      245  20     20
+2  Site-02 -1301949 1848610      b 17687430706       A PanelOne    NotEval            1.26379e+11   3388270    247      245  20     20
+3  Site-03 -1375207 1936466      a 16924501890       A PanelOne    NotEval            3.09949e+11   4412500    204      201  13     13
+4  Site-04 -1521237 1775902      a 16924501890       A PanelOne    NotEval            3.09949e+11   4412500    204      201  13     13
+5  Site-05 -1257004 1835025      b 17687430706       A PanelOne    NotEval            1.26379e+11   3388270    247      245  20     20
+6  Site-06 -1381447 1710711      b 17687430706       A PanelOne    NotEval            1.26379e+11   3388270    247      245  20     20
+7  Site-07 -1418768 2014474      a 16924501890       A PanelOne    NotEval            3.09949e+11   4412500    204      201  13     13
+8  Site-08 -1459864 1882127      a 16924501890       A PanelOne    NotEval            3.09949e+11   4412500    204      201  13     13
+9  Site-09 -1122728 1826461      b 17687430706       A PanelOne    NotEval            1.26379e+11   3388270    247      245  20     20
+10 Site-10 -1176573 1935025      b 17687430706       A PanelOne    NotEval            1.26379e+11   3388270    247      245  20     20
+11 Site-11 -1348779 2097111      a 16924501890       A OverSamp    NotEval            3.09949e+11   4412500    204      201  13     13
+12 Site-12 -1497173 2034743      a 16924501890       A OverSamp    NotEval            3.09949e+11   4412500    204      201  13     13
+13 Site-13 -1314634 1774966      b 17687430706       A OverSamp    NotEval            1.26379e+11   3388270    247      245  20     20
+14 Site-14 -1254123 1918054      b 17687430706       A OverSamp    NotEval            1.26379e+11   3388270    247      245  20     20
+15 Site-15 -1368753 2218362      a 16924501890       A OverSamp    NotEval            3.09949e+11   4412500    204      201  13     13
+16 Site-16 -1482176 2146433      a 16924501890       A OverSamp    NotEval            3.09949e+11   4412500    204      201  13     13
+17 Site-17 -1090515 2065988      b   771406344       B PanelOne    NotEval            1.33312e+11   3689180    170      216  18     18
+18 Site-18 -1258700 2166974      b   771406344       B PanelOne    NotEval            1.33312e+11   3689180    170      216  18     18
+19 Site-19 -1302582 1980877      a  8582629759       B PanelOne    NotEval            4.47240e+10   2722190    208      206  19     19
+20 Site-20 -1287679 2010057      a  8582629759       B PanelOne    NotEval            4.47240e+10   2722190    208      206  19     19
+21 Site-21 -1242888 2190731      b   771406344       B PanelOne    NotEval            1.33312e+11   3689180    170      216  18     18
+22 Site-22 -1460485 1768132      a  8582629759       B PanelOne    NotEval            4.47240e+10   2722190    208      206  19     19
+23 Site-23 -1140964 1785401      b   771406344       B PanelOne    NotEval            5.40909e+08    111432    367      366  21     21
+24 Site-24 -1297712 2078734      a  8582629759       B PanelOne    NotEval            4.47240e+10   2722190    208      206  19     19
+25 Site-25 -1242537 2192528      b   771406344       B PanelOne    NotEval            1.33312e+11   3689180    170      216  18     18
+26 Site-26 -1407814 1772492      a  8582629759       B PanelOne    NotEval            4.47240e+10   2722190    208      206  19     19
+                    LEVEL3_NAM   mdcaty2
+1            Colorado Plateaus 0.4489260
+2            Colorado Plateaus 0.4489260
+3      Central Basin and Range 0.5863082
+4      Central Basin and Range 0.5863082
+5            Colorado Plateaus 0.4489260
+6            Colorado Plateaus 0.4489260
+7      Central Basin and Range 0.5863082
+8      Central Basin and Range 0.5863082
+9            Colorado Plateaus 0.4489260
+10           Colorado Plateaus 0.4489260
+11     Central Basin and Range 0.5863082
+12     Central Basin and Range 0.5863082
+13           Colorado Plateaus 0.4489260
+14           Colorado Plateaus 0.4489260
+15     Central Basin and Range 0.5863082
+16     Central Basin and Range 0.5863082
+17               Wyoming Basin 0.9801627
+18               Wyoming Basin 0.9801627
+19 Wasatch and Uinta Mountains 0.3643628
+20 Wasatch and Uinta Mountains 0.3643628
+21               Wyoming Basin 0.9801627
+22 Wasatch and Uinta Mountains 0.3643628
+23            Southern Rockies 0.5610290
+24 Wasatch and Uinta Mountains 0.3643628
+25               Wyoming Basin 0.9801627
+26 Wasatch and Uinta Mountains 0.3643628
+
+Continuous random selection using an sf object frame:
+
+Stratum: None 
+Current number of levels: 2 
+Current number of levels: 3 
+Final number of levels: 3 
+    siteID   xcoord  ycoord    mdcaty               wgt stratum    panel EvalStatus EvalReason        AREA PERIMETER USECO_ USECO_ID ECO LEVEL3
+1  Site-01 -1376086 2231108 0.7871685 14949420001 [m^2]    None PanelOne    NotEval            3.09949e+11   4412500    204      201  13     13
+2  Site-02 -1366994 1937367 0.7871685 14949420001 [m^2]    None PanelOne    NotEval            3.09949e+11   4412500    204      201  13     13
+3  Site-03 -1452623 2054254 0.7871685 14949420001 [m^2]    None PanelOne    NotEval            3.09949e+11   4412500    204      201  13     13
+4  Site-04 -1381119 1841215 0.4829190 24367882905 [m^2]    None PanelOne    NotEval            4.47240e+10   2722190    208      206  19     19
+5  Site-05 -1374703 1862465 0.7871685 14949420001 [m^2]    None PanelOne    NotEval            3.09949e+11   4412500    204      201  13     13
+6  Site-06 -1205308 1824538 0.3022769 38930242354 [m^2]    None PanelOne    NotEval            1.26379e+11   3388270    247      245  20     20
+7  Site-07 -1282340 2045747 0.4829190 24367882905 [m^2]    None PanelOne    NotEval            4.47240e+10   2722190    208      206  19     19
+8  Site-08 -1495985 1733919 0.3022769 38930242354 [m^2]    None PanelOne    NotEval            1.26379e+11   3388270    247      245  20     20
+9  Site-09 -1411302 2133177 0.7871685 14949420001 [m^2]    None PanelOne    NotEval            3.09949e+11   4412500    204      201  13     13
+10 Site-10 -1522708 1907623 0.7871685 14949420001 [m^2]    None PanelOne    NotEval            3.09949e+11   4412500    204      201  13     13
+                    LEVEL3_NAM mdcaty1
+1      Central Basin and Range       a
+2      Central Basin and Range       a
+3      Central Basin and Range       a
+4  Wasatch and Uinta Mountains       a
+5      Central Basin and Range       a
+6            Colorado Plateaus       b
+7  Wasatch and Uinta Mountains       a
+8            Colorado Plateaus       b
+9      Central Basin and Range       a
+10     Central Basin and Range       a
+
+
+Area: NHDArea PolygonZ shapefile
+
+Stratum: None 
+Current number of levels: 2 
+Current number of levels: 4 
+Current number of levels: 5 
+Final number of levels: 5 
+    siteID    xcoord   ycoord mdcaty        wgt stratum    panel EvalStatus EvalReason    COMID FDATE RESOLUTION GNIS_ID GNIS_NAME AREASQKM ELEVATION
+1  Site-01 -124.5004 47.66587  Equal 1577741453    None PanelOne    NotEval            23842116  <NA>     Medium    <NA>      <NA>  647.495     -9999
+2  Site-02 -124.6217 41.93096  Equal 1577741453    None PanelOne    NotEval             8315457  <NA>     Medium    <NA>      <NA> 3849.809     -9999
+3  Site-03 -122.2319 47.97117  Equal 1577741453    None PanelOne    NotEval            23993325  <NA>     Medium    <NA>      <NA> 2352.633     -9999
+4  Site-04 -122.8386 48.46071  Equal 1577741453    None PanelOne    NotEval            23955021  <NA>     Medium    <NA>      <NA> 1181.715     -9999
+5  Site-05 -124.5682 41.64571  Equal 1577741453    None PanelOne    NotEval             8315457  <NA>     Medium    <NA>      <NA> 3849.809     -9999
+6  Site-06 -123.1577 48.63433  Equal 1577741453    None PanelOne    NotEval            23955021  <NA>     Medium    <NA>      <NA> 1181.715     -9999
+7  Site-07 -124.1753 46.86334  Equal 1577741453    None PanelOne    NotEval            23868520  <NA>     Medium    <NA>      <NA>  761.714     -9999
+8  Site-08 -122.9136 48.37092  Equal 1577741453    None PanelOne    NotEval            23955021  <NA>     Medium    <NA>      <NA> 1181.715     -9999
+9  Site-09 -117.0402 46.39206  Equal 1577741453    None PanelOne    NotEval            24231039  <NA>     Medium    <NA>      <NA>   13.541     -9999
+10 Site-10 -122.8201 47.34117  Equal 1577741453    None PanelOne    NotEval            23993325  <NA>     Medium    <NA>      <NA> 2352.633     -9999
+         FTYPE FCODE SHAPE_LENG  SHAPE_AREA
+1     SeaOcean 44500   2.883335 0.078002896
+2     SeaOcean 44500   3.203299 0.416684475
+3     SeaOcean 44500  20.298906 0.282484641
+4     SeaOcean 44500   9.080253 0.143903997
+5     SeaOcean 44500   3.203299 0.416684475
+6     SeaOcean 44500   9.080253 0.143903997
+7     SeaOcean 44500   3.486446 0.089426341
+8     SeaOcean 44500   9.080253 0.143903997
+9  StreamRiver 46006   1.700275 0.001578009
+10    SeaOcean 44500  20.298906 0.282484641
