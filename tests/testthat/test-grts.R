@@ -57,3 +57,28 @@ test_that("test equal random selection using an sf frame and no output shapefile
   expect_equal(attributes(testsample)$class[1],"SpatialDesign")
   expect_equal(nrow(testsample@data),10)
 })
+
+# Finite: reg1_lakes point shapefile with unequal random selection using a shapefile frame:
+testsample <- grts(design=list("LAKE/POND"=list(panel=c(PanelOne=10), over=6,
+                                                caty.n=c("5"=5, "8"=5), seltype="Unequal"),
+                               "RESERVOIR"=list(panel=c(PanelOne=10), over=0, caty.n=c("5"=5, "8"=5),
+                                                seltype="Unequal")), type.frame="finite", 
+                   in.shape=system.file("extdata", "reg1_lakes.shp", package="spsurvey"),
+                   stratum="FTYPE", mdcaty="LEVEL1", shapefile=FALSE)
+
+test_that("test unequal random selection using shapefile and no output shapefile",{
+  expect_true(exists("testsample"))
+  expect_equal(attributes(testsample)$class[1],"SpatialDesign")
+  expect_equal(nrow(testsample@data),26)
+})
+
+# Finite: continuous random selection using an sf object frame:
+testsample <- grts(design=list(None=list(panel=c(PanelOne=10), over=0,
+                                         seltype="Continuous")), type.frame="finite", src.frame="sf.object",
+                   sf.object=sf.finite, mdcaty="mdcaty", shapefile=FALSE)
+
+test_that("test unequal random selection using shapefile and no output shapefile",{
+  expect_true(exists("testsample"))
+  expect_equal(attributes(testsample)$class[1],"SpatialDesign")
+  expect_equal(nrow(testsample@data),10)
+})
