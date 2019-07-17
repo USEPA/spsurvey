@@ -82,3 +82,9 @@ test_that("test unequal random selection using shapefile and no output shapefile
   expect_equal(attributes(testsample)$class[1],"SpatialDesign")
   expect_equal(nrow(testsample@data),10)
 })
+
+# Finite: NHDPoint PointZ shapefile:
+testsample <- grts(design=list(None=list(panel=c(PanelOne=10), over=0,
+                                         seltype="Equal")), type.frame="finite", 
+                   in.shape=system.file("extdata", "NHDPoint.shp", package="spsurvey"),
+                   shapefile=FALSE)

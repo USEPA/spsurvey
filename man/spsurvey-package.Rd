@@ -40,7 +40,6 @@ Authors:
 \itemize{
   \item Tony Olsen \email{Olsen.Tony@epa.gov}
   \item Marc Weber \email{Weber.Marc@epa.gov}
-  \item Karen Blocksom \email{Blocksom.Karen@epa.gov}
 }
 
 Other contributors:
