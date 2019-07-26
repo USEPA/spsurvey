@@ -88,3 +88,44 @@ testsample <- grts(design=list(None=list(panel=c(PanelOne=10), over=0,
                                          seltype="Equal")), type.frame="finite", 
                    in.shape=system.file("extdata", "NHDPoint.shp", package="spsurvey"),
                    shapefile=FALSE)
+test_that("test equal random selection using NHDPointZ shapefile and no output shapefile",{
+  expect_true(exists("testsample"))
+  expect_equal(attributes(testsample)$class[1],"SpatialDesign")
+  expect_equal(nrow(testsample@data),10)
+})
+
+# Linear: fp_len Polyline shapefile no output shapefile:
+testsample <- grts(design=list(None=list(panel=c(PanelOne=10), over=0,
+                                         seltype="Equal")), type.frame="linear", 
+                   in.shape=system.file("extdata", "fp_len.shp", package="spsurvey"),
+                   shapefile=FALSE)
+test_that("test equal random selection using fp_len linear shapefile and no output shapefile",{
+  expect_true(exists("testsample"))
+  expect_equal(attributes(testsample)$class[1],"SpatialDesign")
+  expect_equal(nrow(testsample@data),10)
+})
+
+# Linear: ryan_len Polyline shapefile:
+testsample <- grts(design=list(None=list(panel=c(PanelOne=10), over=0,
+                                         seltype="Equal")), type.frame="linear", 
+                   in.shape=system.file("extdata", "ryan_len.shp", package="spsurvey"),
+                   shapefile=TRUE)
+test_that("test equal random selection using ryan_len linear shapefile and output shapefile",{
+  expect_true(exists("testsample"))
+  expect_equal(attributes(testsample)$class[1],"SpatialDesign")
+  expect_equal(nrow(testsample@data),10)
+})
+
+cat("\nEqual random selection using an sp object frame:\n")
+sp.linear <- read.shape(system.file("extdata", "ryan_len.shp", package="spsurvey"))
+sp.linear$stratum <- c("A", rep(c("A", "B"), 25))
+sp.linear$mdcaty1 <- ifelse(sp.linear$FNODE_ < 26, "a", "b")
+sp.linear$mdcaty2 <- runif(nrow(sp.linear))
+testsample <- grts(design=list(None=list(panel=c(PanelOne=10), over=0,
+                                         seltype="Equal")), type.frame="linear", src.frame="sp.object",
+                   sp.object=sp.linear, shapefile=FALSE)
+test_that("test equal random selection using ryan_len linear shapefile and output shapefile",{
+expect_true(exists("testsample"))
+expect_equal(attributes(testsample)$class[1],"SpatialDesign")
+expect_equal(nrow(testsample@data),10)
+})
