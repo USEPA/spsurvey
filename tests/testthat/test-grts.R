@@ -116,7 +116,7 @@ test_that("test equal random selection using ryan_len linear shapefile and outpu
   expect_equal(nrow(testsample@data),10)
 })
 
-cat("\nEqual random selection using an sp object frame:\n")
+# Linear: ryan_len Polyline shapefile with output shapefile:
 sp.linear <- read.shape(system.file("extdata", "ryan_len.shp", package="spsurvey"))
 sp.linear$stratum <- c("A", rep(c("A", "B"), 25))
 sp.linear$mdcaty1 <- ifelse(sp.linear$FNODE_ < 26, "a", "b")
