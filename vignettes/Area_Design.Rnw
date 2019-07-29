@@ -13,6 +13,7 @@
 \setlength{\parskip}{.1in}
 
 \begin{document}
+\SweaveOpts{concordance=TRUE}
 \maketitle
 \tableofcontents
 \setkeys{Gin}{width=1.0\textwidth}
@@ -59,7 +60,7 @@ Summarize frame area by ecoregion
 
 <<att>>=
 # Summarize frame area by ecoregion
-temp <- with(UT_ecoregions, tapply(Area_ha, Level3_Nm, sum))
+temp <- with(UT_ecoregions, tapply(Area_ha, Level3_Nam, sum))
 temp <- round(addmargins(temp), 0)
 temp
 
@@ -177,7 +178,7 @@ Select the sample
 +                      type.frame="area",
 +                      src.frame="shapefile",
 +                      in.shape="UT_ecoregions.shp",
-+                      mdcaty="Level3_Nm",
++                      mdcaty="Level3_Nam",
 +                      shapefile=FALSE)
 \end{verbatim}
 
@@ -188,7 +189,7 @@ Unequalsites <- grts(design=Unequaldsgn,
                      type.frame="area",
                      src.frame="shapefile",
                      in.shape="UT_ecoregions.shp",
-                     mdcaty="Level3_Nm",									
+                     mdcaty="Level3_Nam",									
                      shapefile=FALSE)
 
 @
@@ -260,7 +261,7 @@ Select the sample
 +                    type.frame="area",
 +                    src.frame="sp.object",
 +                    sp.object=UT_ecoregions_sp,
-+                    stratum="Level3_Nm",
++                    stratum="Level3_Nam",
 +                    shapefile=FALSE)
 \end{verbatim}
 
@@ -271,7 +272,7 @@ Stratsites <- grts(design=Stratdsgn,
                    type.frame="area",
                    src.frame="sp.object",
                    sp.object=UT_ecoregions_sp,
-                   stratum="Level3_Nm",									
+                   stratum="Level3_Nam",									
                    shapefile=FALSE)
 
 @
@@ -332,7 +333,7 @@ Select the sample
 +                    type.frame="area",
 +                    src.frame="sf.object",
 +                    sf.object=UT_ecoregions,
-+                    mdcaty="Level3_Nm",
++                    mdcaty="Level3_Nam",
 +                    shapefile=FALSE)
 \end{verbatim}
 
@@ -343,7 +344,7 @@ Panelsites <- grts(design=Paneldsgn,
                    type.frame="area",
                    src.frame="sf.object",
                    sf.object=UT_ecoregions,
-                   mdcaty="Level3_Nm",									
+                   mdcaty="Level3_Nam",									
                    shapefile=FALSE)
 
 @
