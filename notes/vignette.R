@@ -1,0 +1,5 @@
+library(spsurvey)
+library(tools)
+Sweave("Vignettes/Risk_Analysis.Rnw")
+texi2pdf("Risk_Analysis.tex")
+Stangle("Finite_Design.Rnw", annotate=FALSE)
