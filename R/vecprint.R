@@ -3,7 +3,7 @@
 # Programmer: Tom Kincaid
 # Date: February 6, 2004
 # Last Revised:  May 3, 2004
-#'
+#
 #' Internal Function: Create Vector to Print
 #'
 #' This function takes an input vector and outputs a character string with line
@@ -13,32 +13,29 @@
 #' greater than n.char characters in length, then that element is inserted in
 #' the output character string as an individual line.
 #'
-#' @param  x  A character vector.
+#' @param x Character vector.
 #'
-#' @param  n.char  The maximum number of characters per line.  The default is
-#'   78.
+#' @param n.char The maximum number of characters per line.  The default is 78.
 #'
-#' @return  A character string that is suitable for printing by the functions:
+#' @return  Character string that is suitable for printing by the functions:
 #'   stop, warning, or cat.
 #'
-#'   Other Functions Required: None
-#'
-#' @author Tom Kincaid  \email{Kincaid.Tom@epa.gov}
+#' @author Tom Kincaid \email{Kincaid.Tom@epa.gov}
 #'
 #' @examples
-#'      sites <- paste("Site Number", 1:50)
-#'      sites.str <- vecprint(sites)
-#'      cat(sites.str)
+#' sites <- paste("Site Number", 1:50)
+#' sites.str <- vecprint(sites)
+#' cat(sites.str)
 #'
-#'      temp <- c(1, 5, 21:25, 33:37)
-#'      sites.str <- vecprint(sites[temp])
-#'      warning(paste("\nThe following site ID values were removed from the
-#'         analysis:\n", sites.str, sep=""))
+#' temp <- c(1, 5, 21:25, 33:37)
+#' sites.str <- vecprint(sites[temp])
+#' warning(paste("\nThe following site ID values were removed from the
+#'   analysis:\n", sites.str, sep=""))
 #'
 #' @export
-#'
 ################################################################################
-vecprint <- function(x, n.char=78) {
+
+vecprint <- function(x, n.char = 78) {
 
    x <- as.character(x)
    n <- length(x)

@@ -1,3 +1,5 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^notes$
+^vignettes_plots$
+^vignettes_prep$

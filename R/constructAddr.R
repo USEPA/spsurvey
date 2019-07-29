@@ -28,25 +28,23 @@
 ################################################################################
 
 constructAddr <- function(xc, yc, dx, dy, nlev) {
-  
-  # Construct the matrix containing hierarchical address values
-  
+
+# Construct the matrix containing hierarchical address values
+
   hadrmat <- matrix(0, length(xc), nlev)
   x <- ceiling(xc/dx)
   y <- ceiling(yc/dy)
   for (j in nlev:1){
-    hadrmat[,j] <- 2 * (x %% 2) + (y %% 2) + 1
-    x <- x %/% 2
-    y <- y %/% 2
+	  hadrmat[,j] <- 2 * (x %% 2) + (y %% 2) + 1
+	  x <- x %/% 2
+	  y <- y %/% 2
   }
-  
-  # Paste the row values in hadrmat to construct the hierarchical addresses
-  
+
+# Paste the row values in hadrmat to construct the hierarchical addresses
+
   hadr <- apply(hadrmat, 1, paste, collapse="")
-  
-  # Return the addresses
-  
+
+# Return the addresses
+ 
   return(hadr)
 }
-
-
