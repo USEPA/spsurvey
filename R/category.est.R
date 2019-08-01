@@ -179,7 +179,7 @@
 #'
 #' @author Tom Kincaid \email{Kincaid.Tom@epa.gov}
 #'
-#' @keywords survey, univar
+#' @keywords survey univar
 #'
 #' @examples
 #' catvar <- rep(c("north", "south", "east", "west"), rep(25, 4))

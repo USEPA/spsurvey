@@ -78,7 +78,7 @@
 #'  Tony Olsen \email{Olsen.Tony@epa.gov}\cr
 #'  Tom Kincaid \email{Kincaid.Tom@epa.gov}
 #'
-#' @keywords survey, plot
+#' @keywords survey plot
 #'
 #' @examples
 #' \dontrun{

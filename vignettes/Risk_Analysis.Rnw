@@ -3,8 +3,11 @@
 \author{Thomas Kincaid}
 \title{Relative Risk and Attributable Risk Analysis}
 \usepackage[colorlinks=true, citecolor=blue, urlcolor=red]{hyperref}
-\usepackage{chicago}
-\bibliographystyle{chicago}
+% \usepackage[backend=bibtex]{biblatex}
+\usepackage{natbib}
+\bibliographystyle{plain}
+% \usepackage{chicago}
+% \bibliographystyle{chicago}
 \usepackage{Sweave}
 \textwidth=6.5in
 \textheight=9.0in
@@ -13,7 +16,7 @@
 \headheight=-.5in
 \setlength{\parindent}{0in}
 \setlength{\parskip}{.1in}
-
+           
 \begin{document}
 \SweaveOpts{concordance=TRUE}
 \maketitle

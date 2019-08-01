@@ -13,7 +13,7 @@
 \setlength{\parskip}{.1in}
 
 \begin{document}
-\SweaveOpts{concordance=TRUE}
+% \SweaveOpts{concordance=TRUE}
 \maketitle
 \tableofcontents
 \setkeys{Gin}{width=1.0\textwidth}
