@@ -163,7 +163,7 @@
 #'
 #' @author Tom Kincaid \email{Kincaid.Tom@epa.gov}
 #'
-#' @keywords survey, survival
+#' @keywords survey survival
 #'
 #' @examples
 #' response <- sample(c("Poor", "Good"), 100, replace=TRUE)

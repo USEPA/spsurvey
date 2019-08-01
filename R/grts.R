@@ -3,11 +3,11 @@
 # Programmers: Tony Olsen, Tom Kincaid, Don Stevens, Christian Platt,
 #              Denis White, Richard Remington
 # Date: October 8, 2002
-# Last Revised: July 8, 2019
+# Last Revised: July 31, 2019
 #'
 #' Select a Generalized Random-Tesselation Stratified (GRTS) Sample
 #'
-#' This function selects a GRTS sample of a finite, linear, or area resource.
+#' This function select a GRTS sample of a finite, linear, or area resource.
 #' Frame elements must be located in 1- or 2-dimensional coordinate system.
 #' Random selection may be generalized random tessellation stratified (GRTS),
 #' independent random sample (IRS), or systematic sample.  Sample may be equal
@@ -146,7 +146,7 @@
 #'       an object of class SpatialPointsDataFrame}
 #'   }
 #'
-#' @author Tom Kincaid  \email{Kincaid.Tom@epa.gov}
+#' @author Tom Kincaid  email{Kincaid.Tom@epa.gov}
 #'
 #' @keywords survey
 #'
@@ -335,11 +335,11 @@ if(!is.null(startlev)) {
 if(type.frame != "finite") {
    ncore <- detectCores()
    tst <- Sys.getenv("_R_CHECK_LIMIT_CORES_", "")
-   if(tst == "TRUE") {
-      ncore <- ifelse(ncore == 1, 1, 2)
+   if(nzchar(tst)) {
+      ncore <- ifelse(ncore == 1L, 1L, 2L)
    } else {
-      temp <- floor(0.1 * ncore)
-      ncore <- ifelse(ncore == 1, 1, ifelse(temp == 0, ncore - 1, ncore - temp))
+      temp <- as.integer(floor(0.1 * ncore))
+      ncore <- ifelse(ncore == 1L, 1L, ifelse(temp == 0, ncore - 1L, ncore - temp))
    }
    cl <- makeCluster(ncore, methods=FALSE)
    invisible(clusterEvalQ(cl, library(sf)))

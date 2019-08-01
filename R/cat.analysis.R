@@ -181,7 +181,7 @@
 #'
 #' @seealso \code{\link{category.est}}
 #'
-#' @keywords survey, univar
+#' @keywords survey univar
 #'
 #' @examples
 #' # Categorical variable example for two resource classes:

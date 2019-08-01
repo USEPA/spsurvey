@@ -1,5 +1,6 @@
 library(spsurvey)
 library(tools)
-Sweave("Vignettes/Risk_Analysis.Rnw")
-texi2pdf("Risk_Analysis.tex")
+setwd("C:/Users/mweber/Downloads")
+Sweave("C:/Users/mweber/Downloads/test2.Rnw")
+texi2pdf("C:/Users/mweber/Downloads/test2.tex")
 Stangle("Finite_Design.Rnw", annotate=FALSE)
