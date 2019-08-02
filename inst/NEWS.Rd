@@ -1,7 +1,7 @@
 \name{NEWS}
 \title{News for Package \pkg{spsurvey}}
 
-\section{CHANGES IN spsurvey VERSION 4.1.0 (Released 2019-06-19)}{
+\section{CHANGES IN spsurvey VERSION 4.1.0 (Released 2019-08-02)}{
   \subsection{NEW FEATURES}{
     \itemize{
       \item Functions that create survey designs were modified to replace use of
