@@ -3,3 +3,4 @@
 ^notes$
 ^vignettes_plots$
 ^vignettes_prep$
+^\.travis\.yml$

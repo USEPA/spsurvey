@@ -1,3 +1,8 @@
+<!-- badges: start -->
+[![Travis build status](https://travis-ci.org/USEPA/spsurvey.svg?branch=master)](https://travis-ci.org/USEPA/spsurvey)
+<!-- badges: end -->
+
+
 # spsurvey
 
 `spsurvey` is comprised of functions which implement algorithms for design and analysis of probability surveys.  The functions are tailored for Generalized Random Tessellation Stratified survey designs.
