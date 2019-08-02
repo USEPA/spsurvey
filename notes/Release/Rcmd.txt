@@ -1,0 +1,51 @@
+# Add a new section to the NEWS.Rd file
+\section{CHANGES IN spsurvey VERSION 4.x (Released 2019-xx-xx)}{
+  \subsection{NEW FEATURES}{
+    \itemize{
+      \item None.
+    }
+  }
+
+  \subsection{BUG FIXES}{
+    \itemize{
+      \item None.
+    }
+  }
+}
+
+# Create the CHANGES.pdf file from NEWS.Rd
+PATH C:\Program Files\R\R-3.5.3\bin\x64;%PATH%
+cd D:\MyDocs\spsurvey\Release
+Rcmd Rd2pdf --no-preview --output=CHANGES.pdf --force --title="Changes in Package spsurvey" --no-index NEWS.Rd
+
+# Compact files in the vignettes directory
+tools::compactPDF("./vignettes",
+   qpdf="C:/Users/mweber/Downloads/qpdf-8.4.2-bin-mingw64/qpdf-8.4.2/bin/qpdf.exe",
+   gs_cmd="C:/Program Files/gs/gs9.27/bin/gswin64c.exe",
+   gs_quality="screen")
+
+# Check the size of files in the data directory
+tools::checkRdaFiles("./data")
+
+# Resave files in the data directory
+tools::resaveRdaFiles("./data", compress="xz")
+
+# Add qpdf and GhostScript to the PATH environment variable
+temp <- Sys.getenv("PATH")
+Sys.setenv(PATH = paste("C:/Users/mweber/Downloads/qpdf-8.4.2-bin-mingw64/qpdf-8.4.2/bin;C:/Program Files/gs/gs9.27/bin;", temp, sep=""))
+
+# Check the package using the WinBuilder site
+devtools::check_win_devel()
+devtools::check_win_release()
+devtools::check_win_oldrelease()
+
+# Release the package to CRAN
+devtools::release()
+
+# Build, check, and install the package using a command window
+PATH C:\Program Files\R\qpdf\bin;C:\Program Files\gs\gs9.26\bin;C:\Program Files\R\R-3.5.3\bin\x64;C:\Rtools\bin;%PATH%
+cd C:\Program Files\R\R-3.5.3\src\library\spsurvey2
+Rcmd build --resave-data --compact-vignettes="both" C:/Progra~1/R/R-3.5.3/src/library/spsurvey2
+Rcmd build --resave-data --no-build-vignettes C:/Progra~1/R/R-3.5.3/src/library/spsurvey2
+Rcmd check --as-cran C:/Progra~1/R/R-3.5.3/src/library/spsurvey2/spsurvey_4.1.0.tar.gz
+Rcmd INSTALL --build --resave-data --compact-docs C:/Progra~1/R/R-3.5.3/src/library/spsurvey2/spsurvey_4.1.0.tar.gz

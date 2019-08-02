@@ -3,11 +3,11 @@ Title: Spatial Survey Design and Analysis
 Version: 4.1.0
 Date: 2019-06-12
 Authors@R: c(
-    person("Tom", "Kincaid", role=c("aut", "cre"),
+    person("Tom", "Kincaid", role="aut",
            email = "Kincaid.Tom@epa.gov"),
     person("Tony", "Olsen",  role="aut",
            email = "Olsen.Tony@epa.gov"),
-    person("Marc", "Weber",  role="aut",
+    person("Marc", "Weber",  role=c("aut","cre"),
            email = "Weber.Marc@epa.gov"),
     person("Don", "Stevens",  role="ctb"),
     person("Christian", "Platt",  role="ctb"),
