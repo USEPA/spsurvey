@@ -1,8 +1,17 @@
-# R for travis: see documentation at https://docs.travis-ci.com/user/languages/r
-
 language: R
 cache: packages
+
+before_install:
+  - R -e 'install.packages("rgdal", repos="http://R-Forge.R-project.org")'
+  - R -q -e 'install.packages("remotes"); remotes::install_github("ropenscilabs/tic"); tic::prepare_all_stages()'
+
 addons:
   apt:
+    sources:
+      - sourceline: 'ppa:ubuntugis/ppa'
     packages:
       - libudunits2-dev
+      - libproj-dev
+      - libgeos-dev
+      - libgdal-dev
+  
