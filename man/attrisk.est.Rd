@@ -184,5 +184,5 @@ Van Sickle, J. and S. G. Paulsen. (2008). Assessing the attributable risks,
 \author{
 Tom Kincaid \email{Kincaid.Tom@epa.gov}
 }
-\keyword{survey,}
+\keyword{survey}
 \keyword{survival}
