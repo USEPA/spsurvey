@@ -1,5 +1,5 @@
 <!-- badges: start -->
-[![Travis build status](https://travis-ci.org/mhweber/spsurvey.svg?branch=master)](https://travis-ci.org/mhweber/spsurvey)
+[![](https://cranlogs.r-pkg.org/badges/grand-total/spsurvey)](https://cran.rstudio.com/web/packages/spsurvey/index.html)[![Travis build status](https://travis-ci.org/mhweber/spsurvey.svg?branch=master)](https://travis-ci.org/mhweber/spsurvey)
 <!-- badges: end -->
 
 
