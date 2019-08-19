@@ -1,15 +1,26 @@
 language: R
 cache: packages
 
-r_build_args: --no-build-vignettes --no-manual --no-resave-data
-r_check_args: --no-build-vignettes --no-manual
+sudo: required
+dist: trusty
+
+r_github_packages:
+  - r-spatial/sf
+  - r-spatial/lwgeom
+
 addons:
   apt:
     sources:
-    - sourceline: 'ppa:ubuntugis/ubuntugis-unstable'
+      - sourceline: 'ppa:ubuntugis/ubuntugis-unstable'
     packages:
       - libudunits2-dev
       - libproj-dev
       - libgeos-dev
       - libgdal-dev
+      - libjson-c-dev
+
+before_install:
+  # activate liblwgeom by:
+  - sudo ldconfig
+  - R -e 'install.packages("rgdal", repos="http://R-Forge.R-project.org")'
   
