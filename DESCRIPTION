@@ -22,7 +22,8 @@ Depends:
     sp
 Suggests: 
     knitr (>= 1.19),
-    testthat
+    testthat,
+    rmarkdown
 Description: These functions provide procedures for selecting sites for spatial
     surveys using spatially balanced algorithms applied to discrete points,
     linear networks, or polygons. The probability survey designs available
