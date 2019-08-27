@@ -5,7 +5,7 @@ date: '`r Sys.Date()`'
 output: rmarkdown::html_vignette
 bibliography: spsurvey.bib
 vignette: >
-  %\VignetteIndexEntry{Change_Analysis}
+  %\VignetteIndexEntry{CDF_Analysis}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
