@@ -4,7 +4,7 @@ author: "Tom Kincaid"
 date: '`r Sys.Date()`'
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Linear_Design}
+  %\VignetteIndexEntry{Linear Design}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

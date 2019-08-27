@@ -4,7 +4,7 @@ author: "Tom Kincaid"
 date: '`r Sys.Date()`'
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Finite_Analysis}
+  %\VignetteIndexEntry{Finite Analysis}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

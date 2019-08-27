@@ -5,7 +5,7 @@ date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 bibliography: spsurvey.bib
 vignette: >
-  %\VignetteIndexEntry{Risk_Analysis}
+  %\VignetteIndexEntry{Risk Analysis}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
