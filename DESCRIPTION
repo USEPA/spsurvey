@@ -21,7 +21,7 @@ Depends:
     sf,
     sp
 Suggests: 
-    knitr (>= 1.19),
+    knitr,
     testthat,
     rmarkdown
 Description: These functions provide procedures for selecting sites for spatial

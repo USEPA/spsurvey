@@ -22,10 +22,10 @@ This document presents analysis of a GRTS survey design for an area resource.  T
 The initial step is to use the library function to load the `spsurvey` package.  After the package is loaded, a message is printed to the R console indicating that the spsurvey package was loaded successfully.
 
 Load the spsurvey package:
-
 ```{r load-spsurvey}
 library(spsurvey)
 ```
+
 ## Load the survey design and analytical variables data set
 The next step is to load the data set, which includes both survey design variables and analytical variables.  The data function is used to load the data set and assign it to a data frame named `SC_estuaries`.  The nrow function is used to determine the number of rows in the `SC_estuaries` data frame, and the resulting value is assigned to an object named `nr`. Finally, the initial six lines and the final six lines in the `SC_estuaries` data frame are printed using the head and tail functions, respectively.
 
