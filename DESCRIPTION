@@ -1,7 +1,7 @@
 Package: spsurvey
 Title: Spatial Survey Design and Analysis
 Version: 4.1.0
-Date: 2019-06-12
+Date: 2019-08-09
 Authors@R: c(
     person("Tom", "Kincaid", role="aut",
            email = "Kincaid.Tom@epa.gov"),
@@ -22,7 +22,8 @@ Depends:
     sp
 Suggests: 
     knitr (>= 1.19),
-    testthat
+    testthat,
+    rmarkdown
 Description: These functions provide procedures for selecting sites for spatial
     surveys using spatially balanced algorithms applied to discrete points,
     linear networks, or polygons. The probability survey designs available

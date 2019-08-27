@@ -154,7 +154,7 @@ Create the design list
 +                                        "Northern Basin and Range"=5,
 +                                        "Southern Rockies"=5,
 +                                        "Wasatch and Uinta Mountains"=10,
- +                                       "Wyoming Basin"=5)))
++                                        "Wyoming Basin"=5)))
 \end{verbatim}
 
 <<Unequalsites, echo=FALSE>>=

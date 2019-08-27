@@ -1,4 +1,35 @@
-# R for travis: see documentation at https://docs.travis-ci.com/user/languages/r
-
 language: R
 cache: packages
+
+sudo: required
+dist: trusty
+
+r_github_packages:
+  - r-spatial/sf
+  - r-spatial/lwgeom
+r: 
+  - release
+addons:
+  apt:
+    sources:
+      - sourceline: 'ppa:ubuntugis/ubuntugis-unstable'
+    packages:
+      - libudunits2-dev
+      - libproj-dev
+      - libgeos-dev
+      - libgdal-dev
+
+before_install:
+  - tlmgr install chicago.sty
+  # activate liblwgeom by:
+  - sudo ldconfig
+  - R -e 'install.packages("rgdal", repos="http://R-Forge.R-project.org")'
+
+r_build_args: "--no-build-vignettes --no-manual"
+r_check_args: "no-build-vignettes --no-manual --as-cran"
+
+warnings_are_errors: false
+
+env:
+  global:
+    -_R_CHECK_FORCE_SUGGESTS_=false

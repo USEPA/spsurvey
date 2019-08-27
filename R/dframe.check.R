@@ -2,7 +2,7 @@
 # Function: dframe.check
 # Programmer: Tom Kincaid
 # Date: September 26, 2003
-# Last Revised: October 10, 2012
+# Last Revised: August 7, 2019
 #
 #' Internal Check on Survey Analysis Data Frames
 #'
@@ -76,6 +76,8 @@ dframe.check <- function(sites, design, subpop, data.cat, data.cont, data.risk,
       }
       if(!is.logical(sites[,2]))
          stop("\nThe second variable in the sites data frame is not a logical variable.")
+      if(all(sites[,2] == FALSE))
+         stop("\nAll values of the second variable in the sites data frame equal FALSE.")
       siteID <- uniqueID(sites[,1])[sites[,2]]
       sites <- sites[sites[,2],]
       temp <- sapply(split(sites[,1], sites[,1]), length)

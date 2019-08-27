@@ -1,5 +1,7 @@
 <!-- badges: start -->
-[![Travis build status](https://travis-ci.org/USEPA/spsurvey.svg?branch=master)](https://travis-ci.org/USEPA/spsurvey)
+[![](https://cranlogs.r-pkg.org/badges/grand-total/spsurvey)](https://cran.rstudio.com/web/packages/spsurvey/index.html)[![Travis build status](https://travis-ci.org/mhweber/spsurvey.svg?branch=master)](https://travis-ci.org/mhweber/spsurvey)[![License](http://img.shields.io/badge/license-GPL%20%28%3E=%202%29-brightgreen.svg?style=flat)](http://www.gnu.org/licenses/gpl-2.0.html)
+[![CRAN](http://www.r-pkg.org/badges/version/spsurvey)](https://cran.r-project.org/package=spsurvey)
+[![cran checks](https://cranchecks.info/badges/worst/spsurvey)](https://cran.r-project.org/web/checks/check_results_spsurvey.html)
 <!-- badges: end -->
 
 
