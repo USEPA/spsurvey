@@ -201,5 +201,5 @@ Division.
 \author{
 Tom Kincaid \email{Kincaid.Tom@epa.gov}
 }
-\keyword{survey,}
+\keyword{survey}
 \keyword{univar}

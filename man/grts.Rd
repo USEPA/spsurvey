@@ -136,7 +136,7 @@ An object of class SpatialDesign containing the survey design
   information.
 }
 \description{
-This function selects a GRTS sample of a finite, linear, or area resource.
+This function select a GRTS sample of a finite, linear, or area resource.
 Frame elements must be located in 1- or 2-dimensional coordinate system.
 Random selection may be generalized random tessellation stratified (GRTS),
 independent random sample (IRS), or systematic sample.  Sample may be equal
@@ -170,6 +170,6 @@ auxiliary variable).  May designate panels of sites for surveys over time.
 
 }
 \author{
-Tom Kincaid  \email{Kincaid.Tom@epa.gov}
+Tom Kincaid  email{Kincaid.Tom@epa.gov}
 }
 \keyword{survey}

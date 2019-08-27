@@ -224,5 +224,5 @@ Diaz-Ramos, S., D.L. Stevens, Jr., and A.R. Olsen. (1996). \emph{EMAP
 Tony Olsen \email{Olsen.Tony@epa.gov}\cr
   Tom Kincaid \email{Kincaid.Tom@epa.gov}
 }
-\keyword{survey,}
+\keyword{survey}
 \keyword{univar}

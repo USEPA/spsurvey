@@ -34,12 +34,12 @@ continuous data, estimation of the deconvoluted CDF and estimation of
 percentiles using the deconvoluted CDF are available.
 }
 \author{
-\strong{Maintainer}: Tom Kincaid \email{Kincaid.Tom@epa.gov}
+\strong{Maintainer}: Marc Weber \email{Weber.Marc@epa.gov}
 
 Authors:
 \itemize{
+  \item Tom Kincaid \email{Kincaid.Tom@epa.gov}
   \item Tony Olsen \email{Olsen.Tony@epa.gov}
-  \item Marc Weber \email{Weber.Marc@epa.gov}
 }
 
 Other contributors:

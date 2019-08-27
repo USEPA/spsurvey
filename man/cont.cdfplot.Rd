@@ -113,4 +113,4 @@ Tony Olsen \email{Olsen.Tony@epa.gov}\cr
  Tom Kincaid \email{Kincaid.Tom@epa.gov}
 }
 \keyword{plot}
-\keyword{survey,}
+\keyword{survey}

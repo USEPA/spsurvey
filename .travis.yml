@@ -20,7 +20,6 @@ addons:
       - libgdal-dev
 
 before_install:
-  - tlmgr install chicago.sty
   # activate liblwgeom by:
   - sudo ldconfig
   - R -e 'install.packages("rgdal", repos="http://R-Forge.R-project.org")'
