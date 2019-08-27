@@ -24,9 +24,6 @@ before_install:
   - sudo ldconfig
   - R -e 'install.packages("rgdal", repos="http://R-Forge.R-project.org")'
 
-r_build_args: "--no-build-vignettes --no-manual"
-r_check_args: "no-build-vignettes --no-manual --as-cran"
-
 warnings_are_errors: false
 
 env:
