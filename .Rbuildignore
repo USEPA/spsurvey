@@ -6,3 +6,4 @@
 ^vignettes_prep$
 ^\.travis\.yml$
 ^CRAN-RELEASE$
+^cran-comments.md$
