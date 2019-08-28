@@ -1,6 +1,7 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
 ^notes$
+^release$
 ^vignettes_plots$
 ^vignettes_prep$
 ^\.travis\.yml$
