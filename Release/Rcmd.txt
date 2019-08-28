@@ -32,7 +32,7 @@ tools::resaveRdaFiles("./data", compress="xz")
 
 # Add qpdf and GhostScript to the PATH environment variable
 temp <- Sys.getenv("PATH")
-Sys.setenv(PATH = paste("C:/Program Files (x86)/qpdf/bin;C:/Program Files/gs/gs9.26/bin;", temp, sep=""))
+Sys.setenv(PATH = paste("C:/Program Files/gs/gs9.27/bin;", temp, sep=""))
 
 # Check the package using the WinBuilder site
 devtools::check_win_devel()
