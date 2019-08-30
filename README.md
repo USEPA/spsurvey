@@ -19,7 +19,7 @@ install.packages('spsurvey')
 library(spsurvey)
 ```
 
-You can install `spsurvey` from github with:
+You can install development version of`spsurvey` from GitHub with the following:
 
 ```r
 # requires devtools to install
@@ -28,6 +28,13 @@ library(devtools)
 
 # install from repository
 install_github('USEPA/spsurvey')
+library(spsurvey)
+```
+
+To install from GitHub with package vignettes:
+```r
+library(devtools)
+install_github('USEPA/spsurvey', build_vignettes=TRUE)
 library(spsurvey)
 ```
 
