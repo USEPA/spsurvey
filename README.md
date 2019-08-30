@@ -43,16 +43,17 @@ citation(package = 'spsurvey')
 ## 
 ## To cite the spsurvey package in publications use:
 ## 
-##   Kincaid, T. M. and Olsen, A. R. (2016). spsurvey: Spatial Survey
-##   Design and Analysis. R package version 3.3.
+##   Kincaid, T. M., Olsen, A. R., and Weber, M. H. (2019).
+##   spsurvey: Spatial Survey Design and Analysis. R package
+##  version 4.1.0.
 ## 
 ## A BibTeX entry for LaTeX users is
 ## 
-##   @Manual{,
+##  @Manual{,
 ##     title = {spsurvey: Spatial Survey Design and Analysis},
-##     author = {Thomas M. Kincaid and Anthony R. Olsen},
-##     year = {2016},
-##     note = {R package version 3.3},
+##     author = {Thomas M. Kincaid and Anthony R. Olsen and Marc H. Weber},
+##     year = {2019},
+##     note = {R package version 4.1.0},
 ##   }
 ```
 
