@@ -3,7 +3,7 @@
 # Programmers: Tony Olsen, Tom Kincaid, Don Stevens, Christian Platt,
 #              Denis White, Richard Remington
 # Date: October 8, 2002
-# Last Revised: July 31, 2019
+# Last Revised: September 24, 2019
 #'
 #' Select a Generalized Random-Tesselation Stratified (GRTS) Sample
 #'
@@ -50,7 +50,7 @@
 #'   is 1.
 #'
 #' @param type.frame The type of frame, which must be one of following:
-#'   "finite", "linear", or "area".  The default is "finite".
+#'   "finite", "linear", or "area".  The default is NULL.
 #'
 #' @param src.frame Source of the frame, which equals "sf.object" if the frame
 #'   is contained in an sf package object, "shapefile" if the frame is to be
@@ -165,12 +165,12 @@
 #' @export
 ################################################################################
 
-grts <- function(design, DesignID = "Site", SiteBegin = 1, type.frame =
-   "finite", src.frame = "shapefile", in.shape = NULL, sf.object = NULL,
-   sp.object = NULL, att.frame = NULL, id = NULL, xcoord = NULL, ycoord = NULL,
-   stratum = NULL, mdcaty = NULL, startlev = NULL, maxlev = 11, maxtry = NULL,
-   shift.grid = TRUE, do.sample = rep(TRUE, length(design)), shapefile = TRUE,
-   prjfilename = NULL, out.shape = "sample.shp") {
+grts <- function(design, DesignID = "Site", SiteBegin = 1, type.frame = NULL,
+   src.frame = "shapefile", in.shape = NULL, sf.object = NULL, sp.object = NULL,
+   att.frame = NULL, id = NULL, xcoord = NULL, ycoord = NULL, stratum = NULL,
+   mdcaty = NULL, startlev = NULL, maxlev = 11, maxtry = NULL, shift.grid =
+   TRUE, do.sample = rep(TRUE, length(design)), shapefile = TRUE, prjfilename =
+   NULL, out.shape = "sample.shp") {
 
 # Ensure that a design list is provided
 
@@ -191,12 +191,20 @@ if(is.null(strata.names)) {
    }
 }
 
+# Ensure that type.frame contains a valid value
+
+if(is.null(type.frame))
+   stop("\nA value must be provided for argument type.frame.")
+temp <- match(type.frame, c("finite", "linear", "area"), nomatch=0)
+if(temp == 0)
+   stop(paste("\nThe value provided for argument type.frame, \"", type.frame, "\", is not a valid value.", sep=""))
+
 # Ensure that src.frame contains a valid value
 
 temp <- match(src.frame, c("sf.object", "shapefile", "sp.object", "att.frame"),
    nomatch=0)
 if(temp == 0)
-   stop(paste("\nThe value provided for argument src.frame, \"", src.frame, "\" is not a valid value.", sep=""))
+   stop(paste("\nThe value provided for argument src.frame, \"", src.frame, "\", is not a valid value.", sep=""))
 
 # If src.frame equals "shapefile", then create an sf object from the shapefile
 
@@ -942,10 +950,6 @@ if(type.frame == "finite") {
    }
 
 # End the section for a polygonal area
-
-} else {
-
-   stop(paste("\nThe value provided for the type of frame, \"", type.frame, "\", is not valid.", sep=""))
 
 }
 
