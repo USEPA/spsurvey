@@ -3,7 +3,7 @@
 # Programmers: Tony Olsen, Tom Kincaid, Don Stevens, Christian Platt,
 #              Denis White, Richard Remington
 # Date: October 8, 2002
-# Last Revised: September 24, 2019
+# Last Revised: October 22, 2019
 #'
 #' Select a Generalized Random-Tesselation Stratified (GRTS) Sample
 #'
@@ -70,13 +70,12 @@
 #'   "sp.object". The default is NULL.
 #'
 #' @param att.frame Data frame composed of attributes associated with elements
-#'   in the frame, which must contain the columns used for stratum and mdcaty
-#'   (if required).  If src.frame equals "shapefile" and att.frame equals NULL,
-#'   then att.frame is created from the dbf file(s) in the working directory. If
-#'   src.frame equals "sp.object" and att.frame equals NULL, then att.frame is
-#'   created from the sp object.  If src.frame equals "att.frame", then
-#'   att.frame must include columns that contain x-coordinates and y-coordinates
-#'   for each element in the frame.  The default is NULL.
+#'   in the frame.  If src.frame equals "att.frame", then att.frame must include
+#'   columns that contain x-coordinates and y-coordinates for each element in
+#'   the frame.  If src.frame does not equal "att.frame" and att.frame is not
+#'   equal to NULL, then an sf object is created from att.frame and the geometry
+#'   column from the object named "sf.object" that is created by the function.
+#'   The default is NULL.
 #'
 #' @param id This argument is depricated.
 #'
@@ -229,6 +228,8 @@ if(src.frame == "sf.object") {
       stop("\nAn sf package object is required when the value provided for argument src.frame \nequals \"sf.object\".")
 }
 
+# If src.frame equals "sp.object", then create an sf object from the sp object
+
 if(src.frame == "sp.object") {
    if(is.null(sp.object))
       stop("\nAn sp package object is required when the value provided for argument src.frame \nequals \"sp.object\".")
@@ -253,6 +254,14 @@ if(src.frame == "att.frame") {
       stop(paste("\nThe values provided for arguments xcoord and ycoord do not occur among the \nnames for att.frame."))
    }
    sf.object <- st_as_sf(att.frame, coords = c(xcoord, ycoord))
+}
+
+# If src.frame does not equal "att.frame" and att.frame is not NULL, create an
+# sf object composed of att.frame and the geometry column from sf.object
+
+if(src.frame != "att.frame" & !is.null(att.frame)) {
+   geom <- st_geometry(sf.object)
+   sf.object <- st_set_geometry(att.frame, geom)
 }
 
 # Check that the geometry types for the survey frame object are consistent
@@ -972,11 +981,12 @@ sites$EvalReason <- rep(" ", nrow(sites))
 # Add attributes from sf.object that are not included in sites
 
 tm <- match(sites$id, sf.object$id)
+geom_name <- attr(sf.object, "sf_column")
 if(design[[s]]$seltype == "Equal") {
-   td <- match(c(id, stratum, "length_mdm", "area_mdm", "geometry"),
+   td <- match(c(id, stratum, "length_mdm", "area_mdm", geom_name),
       names(sf.object), nomatch=0)
 } else {
-   td <- match(c(id, stratum, mdcaty, "length_mdm", "area_mdm", "geometry"),
+   td <- match(c(id, stratum, mdcaty, "length_mdm", "area_mdm", geom_name),
       names(sf.object), nomatch=0)
 }
 temp <- names(sf.object)[-td]
@@ -989,7 +999,7 @@ if(length(temp) > 0) {
 # Remove the id attribute from sites
 
 temp <- names(sites)
-temp <- temp[!(temp %in% c("id", "geometry"))]
+temp <- temp[!(temp %in% c("id", geom_name))]
 sites <- subset(sites, select=temp)
 
 # Add row names to sites

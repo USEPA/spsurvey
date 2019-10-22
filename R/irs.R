@@ -2,7 +2,7 @@
 # Function: irs
 # Programmer: Tom Kincaid
 # Date: November 28, 2005
-# Last Revised: July 8, 2019
+# Last Revised: October 22, 2019
 #'
 #' Select an Independent Random Sample (IRS)
 #'
@@ -67,10 +67,13 @@
 #' @param sp.object An sp package object containing the frame, which is required
 #'   when src.frame equals "sp.object".  The default is NULL.
 #'
-#' @param att.frame Data frame containing the frame for a finite resource, which
-#'   is required when src.frame equals "att.frame".  The data frame must include
-#'   x-coordinates and y-coordinates for each element in the frame.  The default
-#'   is NULL.
+#' @param att.frame Data frame composed of attributes associated with elements
+#'   in the frame.  If src.frame equals "att.frame", then att.frame must include
+#'   columns that contain x-coordinates and y-coordinates for each element in
+#'   the frame.  If src.frame does not equal "att.frame" and att.frame is not
+#'   equal to NULL, then an sf object is created from att.frame and the geometry
+#'   column from the object named "sf.object" that is created by the function.
+#'   The default is NULL.
 #'
 #' @param id This argument is depricated.
 #'
@@ -220,6 +223,14 @@ if(src.frame == "att.frame") {
       stop(paste("\nThe values provided for arguments xcoord and ycoord do not occur among the \nnames for att.frame."))
    }
    sf.object <- st_as_sf(att.frame, coords = c(xcoord, ycoord))
+}
+
+# If src.frame does not equal "att.frame" and att.frame is not NULL, create an
+# sf object composed of att.frame and the geometry column from sf.object
+
+if(src.frame != "att.frame" & !is.null(att.frame)) {
+   geom <- st_geometry(sf.object)
+   sf.object <- st_set_geometry(att.frame, geom)
 }
 
 # Check that the geometry types for the survey frame object are consistent
