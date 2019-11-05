@@ -2,7 +2,7 @@
 # Function: irs
 # Programmer: Tom Kincaid
 # Date: November 28, 2005
-# Last Revised: October 22, 2019
+# Last Revised: October 30, 2019
 #'
 #' Select an Independent Random Sample (IRS)
 #'
@@ -233,14 +233,19 @@ if(src.frame != "att.frame" & !is.null(att.frame)) {
    sf.object <- st_set_geometry(att.frame, geom)
 }
 
-# Check that the geometry types for the survey frame object are consistent
+# Ensure that the class attribute for sf.object contains only the values "sf"
+# and "data.frame"
+
+class(sf.object) <- c("sf", "data.frame")
+
+# Ensure that the geometry types for sf.object are consistent
 
 temp <- st_geometry_type(sf.object)
 tst <- all(temp %in% c("POINT", "MULTIPOINT")) |
        all(temp %in% c("LINESTRING", "MULTILINESTRING")) |
        all(temp %in% c("POLYGON", "MULTIPOLYGON"))
 if(!tst) {
-   stop(paste("\nThe geometry types for the survey frame object passed to function IRS: \n\"", unique(st_geometry_type(sf.object)), "\" are not consistent.", sep=""))
+   stop(paste("\nThe geometry types for the survey frame object passed to function irs: \n\"", unique(st_geometry_type(sf.object)), "\" are not consistent.", sep=""))
 }
 
 # Create ID values

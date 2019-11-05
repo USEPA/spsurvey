@@ -3,16 +3,15 @@
 # Programmers: Tony Olsen, Tom Kincaid, Don Stevens, Christian Platt,
 #              Denis White, Richard Remington
 # Date: October 8, 2002
-# Last Revised: October 22, 2019
+# Last Revised: October 30, 2019
 #'
 #' Select a Generalized Random-Tesselation Stratified (GRTS) Sample
 #'
 #' This function select a GRTS sample of a finite, linear, or area resource.
 #' Frame elements must be located in 1- or 2-dimensional coordinate system.
-#' Random selection may be generalized random tessellation stratified (GRTS),
-#' independent random sample (IRS), or systematic sample.  Sample may be equal
-#' probability or unequal probability (either categorical or proportional to
-#' auxiliary variable).  May designate panels of sites for surveys over time.
+#' Sample may be equal probability or unequal probability (either categorical or
+#' proportional to auxiliary variable).  May designate panels of sites for
+#' surveys over time.
 #'
 #' @param design Named list of stratum design specifications which are also
 #'   lists.  Stratum names must be subset of values in stratum argument.  Each
@@ -264,14 +263,19 @@ if(src.frame != "att.frame" & !is.null(att.frame)) {
    sf.object <- st_set_geometry(att.frame, geom)
 }
 
-# Check that the geometry types for the survey frame object are consistent
+# Ensure that the class attribute for sf.object contains only the values "sf"
+# and "data.frame"
+
+class(sf.object) <- c("sf", "data.frame")
+
+# Ensure that the geometry types for sf.object are consistent
 
 temp <- st_geometry_type(sf.object)
 tst <- all(temp %in% c("POINT", "MULTIPOINT")) |
        all(temp %in% c("LINESTRING", "MULTILINESTRING")) |
        all(temp %in% c("POLYGON", "MULTIPOLYGON"))
 if(!tst) {
-   stop(paste("\nThe geometry types for the survey frame object passed to function IRS: \n\"", unique(st_geometry_type(sf.object)), "\" are not consistent.", sep=""))
+   stop(paste("\nThe geometry types for the survey frame object passed to function grts: \n\"", unique(st_geometry_type(sf.object)), "\" are not consistent.", sep=""))
 }
 
 # Create ID values
