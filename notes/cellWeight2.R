@@ -32,7 +32,7 @@ cellWeight <- function(xc, yc, dx, dy, sfobject) {
   
   # Calculate the total inclusion probability for each grid cell
   
-  if(all(st_geometry_type(sfobject) %in% c("POINT", "MULTIPOINT"))) {
+  if (all(st_geometry_type(sfobject) %in% c("POINT", "MULTIPOINT"))) {
     samp_grd <- make_grid2(xc, yc, dx, dy, sfobject)
     e <- raster::extract(samp_grd,sfobject)
     samp_df <- as.data.frame(samp_grd)
@@ -43,7 +43,9 @@ cellWeight <- function(xc, yc, dx, dy, sfobject) {
     sample_df_dt <- sfobject_dt[sample_df_dt, on='gridval'] # data.table left join
     wgtsum <- with(sample_df_dt, tapply(mdm, gridval, sum))
     wgtsum[is.na(wgtsum)] <- 0
-  } else {
+  } else if (all(st_geometry_type(sfobject) %in% c("LINESTRING", "MULTILINESTRING"))){
+    
+  } else if (all(st_geometry_type(sfobject) %in% c("POLYGON", "MULTIPOLYGON"))){
     samp_grd <- make_grid2(xc, yc, dx, dy, sfobject)
     temp <- by(samp_grd, 1:nrow(sample_df_dt), 
                function(x) st_as_sf(rasterToPolygons(rasterFromCells(x))))

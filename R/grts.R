@@ -1040,11 +1040,10 @@ if(shapefile == TRUE) {
 }
 
 # Create an object of class SpatialDesign
-
 SpointsMat <- st_coordinates(sites)
 rownames(SpointsMat) <- IDs
-sp_obj <- SpatialPointsDataFrame(SpatialPoints(SpointsMat),
-   data = sites[, 1:(ncol(sites)-1), drop = TRUE])
+dat <- st_set_geometry(sites, NULL)
+sp_obj <- SpatialPointsDataFrame(SpatialPoints(SpointsMat),data=dat)
 rslt <- SpatialDesign(design = design, sp_obj = sp_obj)
 
 # Return the SpatialDesign object
