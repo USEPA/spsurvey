@@ -52,8 +52,8 @@ cellWeight <- function(xc, yc, dx, dy, sfobject) {
     test <- sf::st_as_sf(test, merge = FALSE, as_points = FALSE)
 
     # test2 <- sf::st_as_sf(stars::st_as_stars(!is.na(sf_grd[])), merge = FALSE, as_points = FALSE)
-    temp <- by(samp_grd, 1:nrow(sample_df_dt), 
-               function(x) st_as_sf(rasterToPolygons(rasterFromCells(x))))
+    # temp <- by(samp_grd, 1:nrow(sample_df_dt), 
+               # function(x) st_as_sf(rasterToPolygons(rasterFromCells(x))))
     cl <- getDefaultCluster()
     temp <-  parLapply(cl, temp, function(x) st_intersection(x, sfobject))
     wgtsum <- sapply(temp, celwt)

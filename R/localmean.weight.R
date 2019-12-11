@@ -2,7 +2,7 @@
 # Function: localmean.weight
 # Programmers: Don Stevens and Tom Kincaid
 # Date: September 5, 2001
-# Last Revised: September 27, 2013
+# Last Revised: December 11, 2019
 #
 #' Internal Function: Local Mean Variance Neighbors and Weights
 #'
@@ -65,7 +65,7 @@ localmean.weight <- function(x, y, prb, nbh = 4, vincr = 0.00001*abs(mean(y))) {
    hij <- matrix(0, n, n)
    hij[ij] <- 0.5
    a22 <- try(ginv(diag(gct/2) - hij %*% diag(2/gct) %*% hij), TRUE)
-   ind <- class(a22) == "try-error"
+   ind <- "try-error" %in% class(a22)
    iter <- 1
    v <- 0
    while(ind & iter < 11) {
@@ -73,7 +73,7 @@ localmean.weight <- function(x, y, prb, nbh = 4, vincr = 0.00001*abs(mean(y))) {
       xt <- x + rnorm(n, 0, v)
       yt <- y + rnorm(n, 0, v)
       a22 <- localmean.weight2(xt, yt, prb, nbh)
-      ind <- class(a22) == "try-error"
+      ind <- "try-error" %in% class(a22)
       iter <- iter+1
    }
    if(ind)
