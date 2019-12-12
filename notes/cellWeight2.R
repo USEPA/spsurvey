@@ -48,14 +48,13 @@ cellWeight <- function(xc, yc, dx, dy, sfobject) {
   } else if (all(st_geometry_type(sfobject) %in% c("POLYGON", "MULTIPOLYGON"))){
     samp_grd <- make_grid2(xc, yc, dx, dy, sfobject)
     sf_grd <- fasterize::fasterize(sfobject, samp_grd, field='id')
-    test <- stars::st_as_stars(sf_grd)
-    test <- sf::st_as_sf(test, merge = FALSE, as_points = FALSE)
-
-    # test2 <- sf::st_as_sf(stars::st_as_stars(!is.na(sf_grd[])), merge = FALSE, as_points = FALSE)
+    sf_grd <- stars::st_as_stars(sf_grd)
+    temp <- sf::st_as_sf(sf_grd, merge = FALSE, as_points = FALSE)
+    temp$mdm <- sfobject$mdm[match(temp$layer, sfobject$id)]
     # temp <- by(samp_grd, 1:nrow(sample_df_dt), 
                # function(x) st_as_sf(rasterToPolygons(rasterFromCells(x))))
-    cl <- getDefaultCluster()
-    temp <-  parLapply(cl, temp, function(x) st_intersection(x, sfobject))
+    # cl <- getDefaultCluster()
+    # temp <-  parLapply(cl, temp, function(x) st_intersection(x, sfobject))
     wgtsum <- sapply(temp, celwt)
   }
   
