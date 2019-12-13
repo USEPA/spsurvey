@@ -5,9 +5,6 @@ sudo: required
 dist: xenial
 latex: false
 
-r_github_packages:
-  - r-spatial/sf
-  - r-spatial/lwgeom
 r: 
   - release
 addons:
