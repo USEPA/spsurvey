@@ -2,7 +2,7 @@ language: R
 cache: packages
 
 sudo: required
-dist: trusty
+dist: xenial
 latex: false
 
 r_github_packages:
