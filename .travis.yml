@@ -2,9 +2,12 @@ language: R
 cache: packages
 
 sudo: required
-dist: xenial
+dist: trusty
 latex: false
 
+r_github_packages:
+  - r-spatial/sf
+  - r-spatial/lwgeom
 r: 
   - release
 addons:
@@ -17,11 +20,15 @@ addons:
       - libgeos-dev
       - libgdal-dev
 
+before_install:
+  - sudo apt-get update
+  # activate liblwgeom by:
+  - sudo ldconfig
+  - R -e 'install.packages("rgdal", repos="http://R-Forge.R-project.org")'
+
 warnings_are_errors: false
 
 env:
   global:
     -_R_CHECK_FORCE_SUGGESTS_=false
 
-before_install:
-  - sudo apt-get update
