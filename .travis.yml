@@ -25,3 +25,6 @@ warnings_are_errors: false
 env:
   global:
     -_R_CHECK_FORCE_SUGGESTS_=false
+
+before_install:
+  - sudo apt-get update
