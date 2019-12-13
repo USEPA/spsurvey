@@ -66,10 +66,13 @@ when src.frame equals "sf.object".  The default is NULL.}
 \item{sp.object}{An sp package object containing the frame, which is required
 when src.frame equals "sp.object".  The default is NULL.}
 
-\item{att.frame}{Data frame containing the frame for a finite resource, which
-is required when src.frame equals "att.frame".  The data frame must include
-x-coordinates and y-coordinates for each element in the frame.  The default
-is NULL.}
+\item{att.frame}{Data frame composed of attributes associated with elements
+in the frame.  If src.frame equals "att.frame", then att.frame must include
+columns that contain x-coordinates and y-coordinates for each element in
+the frame.  If src.frame does not equal "att.frame" and att.frame is not
+equal to NULL, then an sf object is created from att.frame and the geometry
+column from the object named "sf.object" that is created by the function.
+The default is NULL.}
 
 \item{id}{This argument is depricated.}
 

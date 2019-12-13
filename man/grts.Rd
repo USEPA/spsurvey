@@ -4,7 +4,7 @@
 \alias{grts}
 \title{Select a Generalized Random-Tesselation Stratified (GRTS) Sample}
 \usage{
-grts(design, DesignID = "Site", SiteBegin = 1, type.frame = "finite",
+grts(design, DesignID = "Site", SiteBegin = 1, type.frame = NULL,
   src.frame = "shapefile", in.shape = NULL, sf.object = NULL,
   sp.object = NULL, att.frame = NULL, id = NULL, xcoord = NULL,
   ycoord = NULL, stratum = NULL, mdcaty = NULL, startlev = NULL,
@@ -49,7 +49,7 @@ each site.  The default is "Site".}
 is 1.}
 
 \item{type.frame}{The type of frame, which must be one of following:
-"finite", "linear", or "area".  The default is "finite".}
+"finite", "linear", or "area".  The default is NULL.}
 
 \item{src.frame}{Source of the frame, which equals "sf.object" if the frame
 is contained in an sf package object, "shapefile" if the frame is to be
@@ -69,13 +69,12 @@ when src.frame equals "sf.object".  The default is NULL.}
 "sp.object". The default is NULL.}
 
 \item{att.frame}{Data frame composed of attributes associated with elements
-in the frame, which must contain the columns used for stratum and mdcaty
-(if required).  If src.frame equals "shapefile" and att.frame equals NULL,
-then att.frame is created from the dbf file(s) in the working directory. If
-src.frame equals "sp.object" and att.frame equals NULL, then att.frame is
-created from the sp object.  If src.frame equals "att.frame", then
-att.frame must include columns that contain x-coordinates and y-coordinates
-for each element in the frame.  The default is NULL.}
+in the frame.  If src.frame equals "att.frame", then att.frame must include
+columns that contain x-coordinates and y-coordinates for each element in
+the frame.  If src.frame does not equal "att.frame" and att.frame is not
+equal to NULL, then an sf object is created from att.frame and the geometry
+column from the object named "sf.object" that is created by the function.
+The default is NULL.}
 
 \item{id}{This argument is depricated.}
 
@@ -138,10 +137,9 @@ An object of class SpatialDesign containing the survey design
 \description{
 This function select a GRTS sample of a finite, linear, or area resource.
 Frame elements must be located in 1- or 2-dimensional coordinate system.
-Random selection may be generalized random tessellation stratified (GRTS),
-independent random sample (IRS), or systematic sample.  Sample may be equal
-probability or unequal probability (either categorical or proportional to
-auxiliary variable).  May designate panels of sites for surveys over time.
+Sample may be equal probability or unequal probability (either categorical or
+proportional to auxiliary variable).  May designate panels of sites for
+surveys over time.
 }
 \section{Other Functions Required}{
 

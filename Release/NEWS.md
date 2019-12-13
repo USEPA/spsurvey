@@ -1,3 +1,9 @@
+# spsurvey 4.1.1 (2019-12-12)
+
+## Bug fix
+
+* Fix to `localmean.weight` function to correct when class for matrix objects was causing an indicator variable to have length two rather than length one, which caused an error in a while statement.
+
 # spsurvey 4.1.0 (2019-07-11)
 
 ## Breaking changes
