@@ -1,4 +1,4 @@
-This is a release of spsurvey to get rid of underlying C code and move this code to use `sf`.  We are also switching CRAN maintainer from Tom Kincaid (Kincaid.Tom@epa.gov) to Marc Weber (Weber.Marc@epa.gov).
+This is a bug-fix release to specifically address problem [here](https://cran.r-project.org/web/checks/check_results_spsurvey.html), and more specifically the problems shown for r-devel-linux-x86_64-debian-clang.
 
 -------
 
