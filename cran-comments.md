@@ -1,5 +1,6 @@
 This is a bug-fix release to specifically address problem [here](https://cran.r-project.org/web/checks/check_results_spsurvey.html), and more specifically the problems shown for r-devel-linux-x86_64-debian-clang.
 
+We also adusted two of our vignettes to do a more limited design to reduce vignette build time.
 -------
 
 ## Test environments
