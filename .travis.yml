@@ -6,31 +6,18 @@ dist: trusty
 cache: false
 latex: false
 
-r_github_packages:
-  - r-spatial/sf
-  - r-spatial/lwgeom
 r: 
   - release
-  - devel
 
 addons:
   apt:
     sources:
-      - sourceline: 'ppa: opencpu/jq'
       - sourceline: 'ppa:ubuntugis/ubuntugis-unstable'
     packages:
       - libudunits2-dev
       - libproj-dev
       - libgeos-dev
       - libgdal-dev
-      - libv8-dev
-      - libjq-dev
-
-before_install:
-  - sudo apt-get update
-  # activate liblwgeom by:
-  - sudo ldconfig
-  - R -e 'install.packages("rgdal", repos="http://R-Forge.R-project.org")'
 
 warnings_are_errors: false
 
