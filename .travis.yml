@@ -3,6 +3,7 @@ cache: packages
 
 sudo: required
 dist: trusty
+cache: false
 latex: false
 
 r_github_packages:
@@ -10,15 +11,20 @@ r_github_packages:
   - r-spatial/lwgeom
 r: 
   - release
+  - devel
+
 addons:
   apt:
     sources:
+      - sourceline: 'ppa: opencpu/jq'
       - sourceline: 'ppa:ubuntugis/ubuntugis-unstable'
     packages:
       - libudunits2-dev
       - libproj-dev
       - libgeos-dev
       - libgdal-dev
+      - libv8-dev
+      - libjq-dev
 
 before_install:
   - sudo apt-get update
