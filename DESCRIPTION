@@ -16,10 +16,11 @@ Authors@R: c(
     )
 Maintainer: Marc Weber <Weber.Marc@epa.gov>
 Depends:
-    R (>= 2.10),
+    R (>= 3.3.0),
     methods,
     sf,
-    sp
+    sp,
+    lwgeom
 Suggests: 
     knitr,
     testthat,
