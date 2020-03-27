@@ -100,12 +100,12 @@ test_that("test equal random selection using NHDPointZ shapefile and no output s
   expect_equal(nrow(testsample@data),10)
 })
 
-# Linear: fp_len Polyline shapefile no output shapefile:
-load(system.file("extdata", "fp_len.rda", package="spsurvey"))
-st_write(fp_len, "fp_len.shp", quiet = TRUE, delete_dsn = TRUE)
+# Linear: Butte Creek polyline shapefile no output shapefile:
+load(system.file("extdata", "ButteCreek.rda", package="spsurvey"))
+st_write(ButteCreek, "ButteCreek.shp", quiet = TRUE, delete_dsn = TRUE)
 testsample <- grts(design=list(None=list(panel=c(PanelOne=10), over=0,
                                          seltype="Equal")), type.frame="linear",
-                   in.shape="./fp_len.shp",
+                   in.shape="./ButteCreek.shp",
                    shapefile=FALSE)
 test_that("test equal random selection using fp_len linear shapefile and no output shapefile",{
   expect_true(exists("testsample"))
@@ -113,27 +113,4 @@ test_that("test equal random selection using fp_len linear shapefile and no outp
   expect_equal(nrow(testsample@data),10)
 })
 
-# Linear: ryan_len Polyline shapefile:
-testsample <- grts(design=list(None=list(panel=c(PanelOne=10), over=0,
-                                         seltype="Equal")), type.frame="linear",
-                   in.shape="./fp_len.shp",
-                   shapefile=TRUE)
-test_that("test equal random selection using ryan_len linear shapefile and output shapefile",{
-  expect_true(exists("testsample"))
-  expect_equal(attributes(testsample)$class[1],"SpatialDesign")
-  expect_equal(nrow(testsample@data),10)
-})
 
-# Linear: ryan_len Polyline shapefile with output shapefile:
-sp.linear <- read.shape("./fp_len.shp")
-sp.linear$stratum <- c("A", rep(c("A", "B"), 50))
-sp.linear$mdcaty1 <- ifelse(sp.linear$FNODE_ < 26, "a", "b")
-sp.linear$mdcaty2 <- runif(nrow(sp.linear))
-testsample <- grts(design=list(None=list(panel=c(PanelOne=10), over=0,
-                                         seltype="Equal")), type.frame="linear", src.frame="sp.object",
-                   sp.object=sp.linear, shapefile=FALSE)
-test_that("test equal random selection using ryan_len linear shapefile and output shapefile",{
-expect_true(exists("testsample"))
-expect_equal(attributes(testsample)$class[1],"SpatialDesign")
-expect_equal(nrow(testsample@data),10)
-})
