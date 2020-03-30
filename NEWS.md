@@ -1,3 +1,9 @@
+# spsurvey 4.1.2 (2020-3-20)
+
+## Bug fix
+
+* Update test data and Description file to handle changes in `sf` and changes to `crs` described [here](https://www.r-spatial.org/r/2020/03/17/wkt.html)
+
 # spsurvey 4.1.1 (2019-12-12)
 
 ## Bug fix

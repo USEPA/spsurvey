@@ -3,9 +3,10 @@ context("grts")
 set.seed(52468110)
 # Create sp object
 load(system.file("extdata", "reg1_lakes.rda", package="spsurvey"))
-st_write(reg1_lakes, "reg1_lakes.shp", quiet = TRUE, delete_dsn = TRUE)
+write_sf(reg1_lakes, paste0(getwd(),"/reg1_lakes.shp"))
 sp.finite <- read.shape("./reg1_lakes.shp")
 sp.finite$mdcaty <- runif(nrow(sp.finite))
+
 
 # Finite: reg1_lakes point shapefile with equal random selection using a shapefile frame:
 testsample <- grts(design=list(None=list(panel=c(PanelOne=10), 
@@ -88,7 +89,7 @@ test_that("test unequal random selection using shapefile and no output shapefile
 # Finite: NHDPoint PointZ shapefile:
 load(system.file("extdata", "NHDPoint.rda", package="spsurvey"))
 NHDPoint <- st_zm(NHDPoint, drop=TRUE)
-st_write(NHDPoint, "NHDPoint.shp", quiet = TRUE, delete_dsn = TRUE)
+write_sf(NHDPoint, paste0(getwd(),"/NHDPoint.shp"))
 
 testsample <- grts(design=list(None=list(panel=c(PanelOne=10), over=0,
                                          seltype="Equal")), type.frame="finite",
@@ -102,7 +103,7 @@ test_that("test equal random selection using NHDPointZ shapefile and no output s
 
 # Linear: Butte Creek polyline shapefile no output shapefile:
 load(system.file("extdata", "ButteCreek.rda", package="spsurvey"))
-st_write(ButteCreek, "ButteCreek.shp", quiet = TRUE, delete_dsn = TRUE)
+write_sf(ButteCreek, paste0(getwd(),"/ButteCreek.shp"))
 testsample <- grts(design=list(None=list(panel=c(PanelOne=10), over=0,
                                          seltype="Equal")), type.frame="linear",
                    in.shape="./ButteCreek.shp",
@@ -112,5 +113,4 @@ test_that("test equal random selection using fp_len linear shapefile and no outp
   expect_equal(attributes(testsample)$class[1],"SpatialDesign")
   expect_equal(nrow(testsample@data),10)
 })
-
 

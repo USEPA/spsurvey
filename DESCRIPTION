@@ -19,12 +19,12 @@ Depends:
     R (>= 3.3.0),
     methods,
     sf,
-    sp,
-    lwgeom
+    sp
 Suggests: 
     knitr,
     testthat,
-    rmarkdown
+    rmarkdown,
+    lwgeom (>= 0.2-1)
 Description: These functions provide procedures for selecting sites for spatial
     surveys using spatially balanced algorithms applied to discrete points,
     linear networks, or polygons. The probability survey designs available
