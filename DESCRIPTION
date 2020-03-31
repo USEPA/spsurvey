@@ -1,7 +1,7 @@
 Package: spsurvey
 Title: Spatial Survey Design and Analysis
-Version: 4.1.1
-Date: 2019-12-17
+Version: 4.1.2
+Date: 2020-3-31
 Authors@R: c(
     person("Tom", "Kincaid", role="aut",
            email = "Kincaid.Tom@epa.gov"),
