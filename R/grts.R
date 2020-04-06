@@ -3,7 +3,7 @@
 # Programmers: Tony Olsen, Tom Kincaid, Don Stevens, Christian Platt,
 #              Denis White, Richard Remington
 # Date: October 8, 2002
-# Last Revised: October 30, 2019
+# Last Revised: April 1, 2020
 #'
 #' Select a Generalized Random-Tesselation Stratified (GRTS) Sample
 #'
@@ -516,8 +516,12 @@ if(type.frame == "finite") {
       } else {
          stmp <- sframe
          stmp$siteID <- SiteBegin
+         temp <- st_coordinates(stmp)
+         stmp$xcoord <- temp[,1]
+         stmp$ycoord <- temp[,2]
          stmp$wgt <- 1/sframe$mdm
-         stmp <- subset(stmp, select = c("siteID", "id", "mdcaty", "wgt"))
+         stmp <- subset(stmp, select = c("siteID", "id", "xcoord", "ycoord",
+            "mdcaty", "wgt"))
          row.names(stmp) <- 1
          attr(stmp, "nlev") <- NA
       }
@@ -1044,10 +1048,11 @@ if(shapefile == TRUE) {
 }
 
 # Create an object of class SpatialDesign
+
 SpointsMat <- st_coordinates(sites)
 rownames(SpointsMat) <- IDs
 dat <- st_set_geometry(sites, NULL)
-sp_obj <- SpatialPointsDataFrame(SpatialPoints(SpointsMat),data=dat)
+sp_obj <- SpatialPointsDataFrame(SpatialPoints(SpointsMat), data = dat)
 rslt <- SpatialDesign(design = design, sp_obj = sp_obj)
 
 # Return the SpatialDesign object

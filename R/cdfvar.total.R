@@ -2,7 +2,7 @@
 # Function: cdfvar.total
 # Programmer: Tom Kincaid
 # Date: July 12, 2000
-# Last Revised: August 18, 2010
+# Last Revised: March 27, 2020
 #
 #' Variance Estimate for Cumulative Distribution Function for a Total
 #'
@@ -230,16 +230,6 @@ cdfvar.total <- function(z, wgt, x, y, val, cdfest, stratum.ind, stratum.level,
                if(SRSind)
                   vartype <- "Local"
             }
-         }
-      }
-
-# Assign the mean variance to stage one sampling units with a single stage two
-# sampling unit
-      for(j in 1:m) {
-         ind <- var2est[,j] == 0
-         if(sum(ind) > 0) {
-            var.mean <- mean(var2est[!ind,j])
-            var2est[ind,j] <- var.mean
          }
       }
 

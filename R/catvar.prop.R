@@ -2,7 +2,7 @@
 # Function: catvar.prop
 # Programmer: Tom Kincaid
 # Date: September 27, 2002
-# Last Revised: August 18, 2010
+# Last Revised: March 27, 2020
 #
 #' Variance Estimates of Estimated Proportions
 #'
@@ -205,16 +205,6 @@ catvar.prop <- function(z, wgt, x, y, prop, stratum.ind, stratum.level,
                if(SRSind)
                   vartype <- "Local"
             }
-         }
-      }
-
-# Assign the mean variance to stage one sampling units with a single stage two
-# sampling unit
-      for(j in 1:m) {
-         ind <- var2est[,j] == 0
-         if(sum(ind) > 0) {
-            var.mean <- mean(var2est[!ind,j])
-            var2est[ind,j] <- var.mean
          }
       }
 

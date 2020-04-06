@@ -2,6 +2,7 @@
 # Function: changevar.size
 # Programmer: Tom Kincaid
 # Date: March 8, 2012
+# Revised: March 27, 2020
 #'
 #' Covariance or Correlation Matrix Estimate of Change in Class Resource Sizes
 #' between Two Surveys
@@ -248,16 +249,6 @@ if(cluster.ind) {
                if(SRSind)
                   vartype <- "Local"
             }
-         }
-      }
-
-# Assign the mean variance to stage one sampling units with a single stage two
-# sampling unit
-      for(j in 1:2) {
-         ind <- var2est[,j] == 0
-         if(sum(ind) > 0) {
-            var.mean <- mean(var2est[!ind,j])
-            var2est[ind,j] <- var.mean
          }
       }
 

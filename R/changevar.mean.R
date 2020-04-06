@@ -2,6 +2,7 @@
 # Function: changevar.mean
 # Programmer: Tom Kincaid
 # Date: May 23, 2012
+# Revised: March 27, 2020
 #'
 #' Covariance or Correlation Matrix Estimate of Change in Means between Two
 #' Surveys
@@ -237,16 +238,6 @@ if(cluster.ind) {
                if(SRSind)
                   vartype <- "Local"
             }
-         }
-      }
-
-# Assign the mean variance to stage one sampling units with a single stage two
-# sampling unit
-      for(j in 1:2) {
-         ind <- var2est[,j] == 0
-         if(sum(ind) > 0) {
-            var.mean <- mean(var2est[!ind,j])
-            var2est[ind,j] <- var.mean
          }
       }
 

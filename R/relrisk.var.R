@@ -2,7 +2,7 @@
 # Function: relrisk.var
 # Programmer: Tom Kincaid
 # Date: March 9, 2005
-# Last Revised: November 2, 2010
+# Revised: March 27, 2020
 #
 #' Variance-Covariance Estimate for the Relative Risk Estimator
 #'
@@ -170,7 +170,7 @@ relrisk.var <- function(response, stressor, response.levels, stressor.levels,
 # sampling unit
 
       total2est <- matrix(0, ncluster, 4)
-      var2est <- array(0, c(4, 4, ncluster))
+      var2est <- matrix(0, ncluster, 16)
       for(i in 1:ncluster) {
 
 # Calculate the number of response values
@@ -226,23 +226,14 @@ relrisk.var <- function(response, stressor, response.levels, stressor.levels,
 
          if(var.ind[i]) {
             if(vartype == "Local") {
-               weight.lst <- localmean.weight(x2.lst[[i]], y2.lst[[i]], 1/wgt2.lst[[i]])
-               var2est[i,] <- pcfactor*localmean.cov(rm, weight.lst)
+               weight.lst <- localmean.weight(x2.lst[[i]], y2.lst[[i]],
+                  1/wgt2.lst[[i]])
+               var2est[i, ] <- as.vector(pcfactor*localmean_cov(rm, weight.lst))
             } else {
-               var2est[i,] <- pcfactor*nresp*var(rm)
+               var2est[i, ] <- as.vector(pcfactor*nresp*var(rm))
                if(SRSind)
                   vartype <- "Local"
             }
-         }
-      }
-
-# Assign the mean variance to stage one sampling units with a single stage two
-# sampling unit
-      for(j in 1:4) {
-         ind <- var2est[,j] == 0
-         if(sum(ind) > 0) {
-            var.mean <- mean(var2est[!ind,j])
-            var2est[ind,j] <- var.mean
          }
       }
 
@@ -273,16 +264,15 @@ relrisk.var <- function(response, stressor, response.levels, stressor.levels,
 
 # Calculate the variance-covariance estimate
 
-      temp <- 0
-      for(i in 1:ncluster)
-         temp <- temp + var2est[,,i]*wgt1.u[i]
       if(vartype == "Local") {
          weight.lst <- localmean.weight(x1.u, y1.u, 1/wgt1.u)
-         varest <- pcfactor*localmean.cov(total2est*matrix(rep(wgt1.u, 4),
-            nrow=ncluster), weight.lst) + temp
+         varest <- pcfactor*localmean_cov(total2est*matrix(rep(wgt1.u, 4),
+            nrow=ncluster), weight.lst) + matrix(apply(var2est *
+            matrix(rep(wgt1.u, 16), nrow = ncluster), 2, sum), nrow=4)
       } else {
          varest <- pcfactor*ncluster*var(total2est*matrix(rep(wgt1.u, 4),
-            nrow=ncluster)) + temp
+            nrow=ncluster)) + matrix(apply(var2est*matrix(rep(wgt1.u, 16),
+            nrow = ncluster), 2, sum), nrow=4)
       }
 
 # End the section for a two-stage sample
