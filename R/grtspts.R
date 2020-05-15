@@ -1,164 +1,390 @@
-################################################################################
-# Function: grtspts.r
-# Programmers: Tony Olsen, Tom Kincaid, Don Stevens, Christian Platt,
-#   			Denis White, Richard Remington
-# Date: October 8, 2002
-# Last Revised: June 10, 2019
-#
-#' Select a Generalized Random-Tesselation Stratified (GRTS) Sample of a Finite Resource
+###################################################################################
+# Function: grtspts
+# Programmers: Tony Olsen, Tom Kincaid
+# Date: "`r format(Sys.time(),  '%B %d, %Y')`"
 #'
-#' This function select a GRTS sample of a finite resource.  This function uses
-#' hierarchical randomization to ensure that the sample will include no more
-#' than one point per grid cell and then picks a point in selected cells.
+#' Select a finite population spatially balanced sample using generalized random tessalation
+#' stratified algorithm from a point sample frame based on a survey design specification.
 #'
-#' @param ptsframe The sf object containing attributes: id, x, y, mdcaty, and
-#'   mdm.
+#' @param dsgn Named list of stratum design specifications which are also
+#'   lists.  Stratum names must be subset of values in stratum argument.  Each
+#'   stratum list has four components:
+#'   \describe{
+#'     \item{seltype}{the type of random selection, which must be one of
+#'       following: "equal" - equal probability selection, "unequal" - unequal
+#'       probability selection by the categories specified in caty.n and caty,
+#'       or "proportional" - unequal probability selection proportional to
+#'       auxiliary variable aux}
 #'
-#' @param samplesize Number of points to select in the sample.  The default is
-#'   100.
+#'     \item{panel}{named vector of sample sizes for each panel in stratum}
 #'
-#' @param SiteBegin First number to start siteID numbering.  The default is 1.
+#'     \item{caty.n}{if seltype equals "unequal", a named vector of sample sizes
+#'       for each category specified by caty, where sum of the sample sizes
+#'       must equal sum of the panel sample sizes, and names must be a subset of
+#'       values in caty}
 #'
-#' @param shift.grid Option to randomly shift the hierarchical grid.  The
-#'   default is TRUE.
+#'     \item{over}{number of replacement sites ("over sample" sites) for the
+#'       design, which is set equal to 0 if none are required. if seltype is unequal, then
+#'       must be a named vector of over sample sizes for each category specified by caty
+#'       and names must be the same as caty.n names)}
+#'   }
+#'   Example design for a stratified sample:\cr
+#'     design=list(
+#'       Stratum1=list(seltype="equal", panel=c(PanelOne=50), over=10),
+#'       Stratum2=list(seltype="unequal", panel=c(PanelOne=50, PanelTwo=50),
+#'         caty.n=c(CatyOne=25, CatyTwo=25, CatyThree=25, CatyFour=25),
+#'         over=c(CatyOne=10, CatyTwo=10, CatyThree=5, CatyFour=5))
+#'   Example design for an unstratified sample:\cr
+#'     design <- list(
+#'       None=list(seltype="unequal", panel=c(Panel1=50, Panel2=100, Panel3=50),
+#'         caty.n=c("Caty 1"=50, "Caty 2"=25, "Caty 3"=25, "Caty 4"=25,"Caty 5"=75),
+#'         over=c("Caty 1"=10, "Caty 2"=10, "Caty 3"=20, "Caty 4"=20,"Caty 5"=20)))
 #'
-#' @param do.sample Option to select a sample, where TRUE means select a
-#'   sample and FALSE means return the entire sample frame in reverse
-#'   hierarchical order. The default is TRUE.
+#' @param sframe Sample frame for points as an sf object. If the design is stratified,
+#'   unequal probability or has legacy sites, then sample frame must include variables
+#'   that identify the stratum; category or auxillary variables for unequal
+#'   selection; or which elements are legacy sites. The coordinate system for sframe
+#'   must be one where distance for coordinates are meaningful.
+#'
+#' @param DesignID Name for the design, which is used to create a site ID for
+#'   each site.  The default is "Site".
+#'
+#' @param SiteBegin Number to use for first site in the design.  The default
+#'   is 1.
+#'
+#' @param strata_var Character string containing the name of the column from
+#'   sframe that identifies stratum membership for each element in the frame.
+#'   If stratum equals NULL, the design is unstratified.  The default is NULL.
+#'
+#' @param caty_var Character string containing the name of the column from
+#'   sframe that identifies the unequal probability category for each element
+#'   in the frame.  The default is NULL.
+#'
+#' @param aux_var Character string that is the name of the column from sframe that
+#'   identifies the auxiliary variable value for each element in the sample frame
+#'   that will be used to calculate inclusion probabilities when the survey design
+#'   specifies that the selection type (seltype) is "proportional". Default is NULL.
+#'
+#' @param legacy_var Character string that is the name of the logical variable in sframe that
+#'   identifies which elements in the sample frame are legacy elements. The logical
+#'   variable equals TRUE if element is a legacy site and FALSE otherwise. Default is NULL.
+#'
+#' @param mindis Numeric value for the minimum distance required between elements
+#'   in the sample.  Units must be the same units as in sf geometry. Default is NULL.
+#'
+#'@param maxtry Number of maximum attempts to ensure minimum distance between sites.
+#'   Default is 10.
 #'
 #' @param startlev Initial number of hierarchical levels to use for the GRTS
 #'   grid, which must be less than or equal to maxlev (if maxlev is specified)
 #'   and cannot be greater than 11.  The default is NULL.
 #'
-#' @param maxlev Maximum number of hierarchical levels to use for the GRTS
+#' @param maxlev Maxmum number of hierarchical levels to use for the GRTS
 #'   grid, which cannot be greater than 11.  The default is 11.
 #'
-#' @return Data frame of sample points containing: siteID, id, x, y, mdcaty,
-#'   and weight.
+#' @param shift.grid Logical value. If TRUE, then hierarchical grid is shifted. If
+#'   FALSE, then hierarchical grid not shifted.
 #'
-#' @section Other Functions Required:
+#' @return Return A class sf object containing the sites selected to meet the
+#'   survey design requirements.
+#'
+#' @section Other functions required:
 #'   \describe{
-#'     \item{\code{numLevels}}{determines the number of levels for hierarchical
-#'       randomization}
-#'     \item{\code{constructAddr}}{constructs the hierarchical address for
-#'       sample points}
-#'     \item{\code{ranho}}{constructs the randomized hierarchical address for
-#'       sample points}
-#'     \item{\code{pickGridCells}}{selects grid cells that get a sample point}
-#'     \item{\code{\link{pickFiniteSamplePoints}}}{pick sample point(s) from
-#'       selected cells}
-#'   }
+#'     \item{\code{{\link{junk}}}{What it does}
+#'     }
 #'
-#' @author
-#'  Tom Kincaid \email{Kincaid.Tom@epa.gov}
-#'  Tony Olsen \email{Olsen.Tony@epa.gov}\cr
+#' @author Tony Olsen email{olsen.tony@epa.gov}
 #'
 #' @keywords survey
 #'
+#' @examples
+#' \dontrun{
+#'   test_design <- list(
+#'     Stratum1=list(panel=c(PanelOne=50), seltype="Equal", over=10),
+#'     Stratum2=list(panel=c(PanelOne=50, PanelTwo=50), seltype="Unequal",
+#'       caty.n=c(CatyOne=25, CatyTwo=25, CatyThree=25, CatyFour=25),
+#'       over=c(CatyOne=10, CatyTwo=10, CatyThree=5, CatyFour=5)))
+#'   test.sample <- grts(dsgn=test_design, sframe = "test_sf" DesignID="TestSite",
+#'     stratum="test_stratum", mdcaty="test_mdcaty")
+#' }
+#'
 #' @export
-################################################################################
+#################################################################################
 
-grtspts <- function(ptsframe, samplesize = 100, SiteBegin = 1,
-   shift.grid = TRUE, do.sample = TRUE, startlev = NULL, maxlev = 11) {
+grtspts <- function(dsgn, sframe, DesignID = "Site", SiteBegin = 1, stratum_var = NULL ,
+                    caty_var = NULL, aux_var = NULL, legacy_var = NULL, mindis = NULL,
+                    maxtry = 10, startlev = NULL, maxlev = 11, shift.grid = TRUE) {
 
-# Determine the number of levels for hierarchical randomization
 
-      temp <- numLevels(samplesize, shift.grid,
-         startlev, maxlev, ptsframe)
-      nlev <- temp$nlev
-      dx <- temp$dx
-      dy <- temp$dy
-      xc <- temp$xc
-      yc <- temp$yc
-      cel.wt <- temp$cel.wt
-      sint <- temp$sint
+  # check input. If errors, dsgn_check will stop grtspts and report errors.
+  dsgn_check(dsgn, sframe, DesignID, SiteBegin, stratum_var, caty_var, aux_var,
+             legacy_var, mindis, startlev, maxlev)
 
-# Assign the final number of levels
+  # Create warning indicator and data frame to collect all potential issues during
+  # sample selection
+  warn.ind <- FALSE
+  warn.df <- data.frame(stratum = "Stratum", func = "Calling Function", warn = "Message")
 
-   endlev <- nlev - 1
+  # Create unique ID values
+  sframe$id <- 1:nrow(sframe)
 
-# Remove cells with zero weight
+  # Assign stratum variable or create it if design not stratified and variable not provided.
+  if(is.null(stratum_var)) {
+    stratum_var <- "stratum_var"
+    sframe$stratum <- "None"
+  } else {
+    sframe$stratum <- sframe[[stratum_var]]
+  }
 
-   indx <- cel.wt > 0
-   xc <- xc[indx]
-   yc <- yc[indx]
-   cel.wt <- cel.wt[indx]
+  # set caty, aux and legacy variables if needed
+  if(!is.null(caty_var)) {
+    sframe$caty <- sframe[[caty_var]]
+  }
+  if(!is.null(aux_var)) {
+    sframe$aux <- sframe[[aux_var]]
+  }
+  if(!is.null(legacy_var)) {
+    sframe$legacy <- sframe[[legacy_var]]
+  }
 
-# Construct the hierarchical address for all cells
 
-   hadr <- constructAddr(xc, yc, dx, dy, nlev)
+  # Begin the loop for strata
+  strata.names <- names(dsgn)
+  # initialize first stratum
+  first <- TRUE
 
-# Construct randomized hierarchical addresses
+  for(s in strata.names) {
 
-   ranhadr <- ranho(hadr)
-
-# Determine order of the randomized hierarchical addresses
-
-   rord <- order(ranhadr)
-
-   if(do.sample) {
-
-# Select grid cells that get a sample point
-
-      rstrt <- runif(1, 0, sint)
-      ttl.wt <- c(0, cumsum(cel.wt[rord]))
-      idx <- ceiling((ttl.wt - rstrt)/sint)
-      smpdx <- pickGridCells(samplesize, idx)
-      rdx <- rord[smpdx]
-      n.cells <- length(unique(rdx))
-      if(length(rdx) > n.cells) {
-         temp <- sum(sapply(split(rdx, rdx), length) > 1)
-         warning(paste("\nOf the ", n.cells, " grid cells from which sample points were selected,\n", temp, " (", round(100*temp/n.cells, 1), "%) of the cells contained more than one sample point.\n", sep=""))
+    # detemine overall sample size required from dsgn for s stratum
+    # if over sample is NULL set to zero
+    if(is.null(dsgn[[s]]$over.n)) dsgn[[s]]$over.n <- 0
+    if(dsgn[[s]]$seltype == "equal" | dsgn[[s]]$seltype == "proportional"){
+      nsamp <- sum(dsgn[[s]]$panel) + dsgn[[s]]$over.n
+      } else {
+      nsamp <- dsgn[[s]]$caty.n + dsgn[[s]]$over.n
       }
 
-# Pick sample point(s) in selected cells
+    # subset sframe to s stratum
+    sftmp <- sframe[sframe$stratum == s, ]
 
-      id <- pickFiniteSamplePoints(rdx, xc, yc, dx, dy, ptsframe)
-      rho <- ptsframe[match(id, ptsframe$id), ]
+    # Determine number of elements in stratum
+    Nstratum <- NROW(sftmp)
 
-   } else {
+    # Basic GRTS sample: no legacy sites or minimum distance
+    if(is.null(legacy_var) & is.null(mindis)) {
+      # compute inclusion probabilities
+      ip <- grtspts_ip(type = dsgn[[s]]$seltype, nsamp = nsamp,
+                             Nstratum = Nstratum, caty = sftmp$caty, aux = sftmp$aux,
+                            warn.ind = warn.ind,  warn.df = warn.df)
+      sftmp$ip <- ip$ip
+      if(ip$warn.ind) {
+        warn.ind <- ip$warn.ind
+        warn.df <- ip$warn.df
+        warn.df$stratum <- ifelse(is.na(warn.df$stratum), s, warn.df$stratum)
+      }
 
-# Pick all points in the frame
+      # Create hierarchical grid based on number of levels required
+      grts_grid <- numLevels(sum(nsamp), sftmp, shift.grid, startlev, maxlev,
+                            warn.ind = warn.ind,  warn.df = warn.df)
+      if(grts_grid$warn.ind) {
+        warn.ind <- grts_grid$warn.ind
+        warn.df <- grts_grid$warn.df
+        warn.df$stratum <- ifelse(is.na(warn.df$stratum), s, warn.df$stratum)
+      }
 
-      id <- selectframe(rord, xc, yc, dx, dy, ptsframe)
-      rho <- ptsframe[match(id, ptsframe$id), ]
-   }
+      # select sites
+      sites <- grtspts_select(sftmp, grts_grid, samplesize = sum(nsamp),
+                              SiteBegin = SiteBegin, warn.ind = warn.ind, warn.df = warn.df)
+      warn.ind <- sites$warn.ind
+      warn.df <- sites$warn.df
+      if(warn.ind) {
+        warn.df$stratum <- ifelse(is.na(warn.df$stratum), s, warn.df$stratum)
+      }
+      sites <- sites$rho
+    }
+    # End of Basic GRTS sample
 
-# Construct sample hierarchical address
+    # GRTS sample with legacy sites and no minimum distance
+    if(!is.null(legacy_var) & is.null(mindis)) {
 
-   np <- nrow(rho)
-   nlev <- max(1, trunc(logb(np,4)))
-   ifelse(np == 4^nlev, nlev, nlev <- nlev + 1)
-   ad <- matrix(0, 4^nlev, nlev)
-   rv4 <- 0:3
-   pwr4 <- 4.^(0.:(nlev - 1.))
-   for(i in 1:nlev)
-      ad[, i] <- rep(rep(rv4, rep(pwr4[i], 4.)),pwr4[nlev]/pwr4[i])
-   rho4 <- as.vector(ad%*%matrix(rev(pwr4), nlev, 1))
+     # compute inclusion probabilities ignoring legacy sites
+     ip <- grtspts_ip(type = dsgn[[s]]$seltype, nsamp = nsamp,
+                            Nstratum = Nstratum, caty = sftmp$caty, aux = sftmp$aux,
+                            warn.ind = warn.ind, warn.df = warn.df)
+     sftmp$ip <- ip$ip
+     if(ip$warn.ind) {
+       warn.ind <- ip$warn.ind
+       warn.df <- ip$warn.df
+       warn.df$stratum <- ifelse(is.na(warn.df$stratum), s, warn.df$stratum)
+     }
 
-# Place sample in reverse hierarchical order
+      # Create hierarchical grid based on number of levels required
+      grts_grid <- numLevels(nsamp, sftmp, shift.grid, startlev, maxlev,
+                             warn.ind = warn.ind,  warn.df = warn.df)
+      if(grts_grid$warn.ind) {
+        warn.ind <- grts_grid$warn.ind
+        warn.df <- grts_grid$warn.df
+        warn.df$stratum <- ifelse(is.na(warn.df$stratum), s, warn.df$stratum)
+      }
 
-   rho <- rho[unique(floor(rho4 * np/4^nlev)) + 1.,]
+      # Adjust inclusion probabilities to account for legacy sites
+      # save ip
+      sftmp$ip_init <- sftmp$ip
+      sftmp$ip <- grtspts_ipleg(sftmp$ip, sftmp$legacy)
 
-# Create desired attributes
+      # adjust cell weights to use legacy inclusion probabilities
+      grts_grid$cel.wt <- cellWeight(grts_grid$xc, grts_grid$yc,
+                                     grts_grid$dx, grts_grid$dy, sftmp)
 
-   rho$siteID <- SiteBegin - 1 + 1:nrow(rho)
-   temp <- st_coordinates(rho)
-   rho$xcoord <- temp[,1]
-   rho$ycoord <- temp[,2]
-   rho$wgt <- 1/rho$mdm
+      # Select sites using adjusted inclusion probabilities
+      sites <- grtspts_select(sftmp, grts_grid, samplesize = sum(nsamp),
+                              SiteBegin = SiteBegin,  warn.ind = warn.ind,
+                              warn.df = warn.df)
+      if(sites$warn.ind) {
+        warn.ind <- sites$warn.ind
+        warn.df <- sites$warn.df
+        warn.df$stratum <- ifelse(is.na(warn.df$stratum), s, warn.df$stratum)
+      }
+      sites <- sites$rho
 
-# Create the output sf object
+      # Assign original inclusion probabilites to sites and drop legacy ip variable
+      sites$ip <- sites$ip_init
+      tmp <- names(sites)
+      sites <- subset(sites, select = tmp[!(tmp %in% c("ip_init", "geometry"))])
+    }
 
-   rho <- subset(rho, select = c("siteID", "id", "xcoord", "ycoord", "mdcaty",
-      "wgt"))
-   row.names(rho) <- 1:nrow(rho)
+    # GRTS sample with no legacy sites but minimum distance
+    if(is.null(legacy_var) & !is.null(mindis)) {
 
-# Assign the final number of levels as an attribute of the output object
+      # compute inclusion probabilities
+      ip <- grtspts_ip(type = dsgn[[s]]$seltype, nsamp = nsamp,
+                             Nstratum = Nstratum, caty = sftmp$caty, aux = sftmp$aux,
+                             warn.ind = warn.ind, warn.df = warn.df)
+      sftmp$ip <- ip$ip
+      if(ip$warn.ind) {
+        warn.ind <- ip$warn.ind
+        warn.df <- ip$warn.df
+        warn.df$stratum <- ifelse(is.na(warn.df$stratum), s, warn.df$stratum)
+      }
 
-   attr(rho, "nlev") <- endlev
+      # Create hierarchical grid based on number of levels required
+      grts_grid <- numLevels(sum(nsamp), sftmp, shift.grid, startlev, maxlev,
+                             warn.ind = warn.ind,  warn.df = warn.df)
+      if(grts_grid$warn.ind) {
+        warn.ind <- grts_grid$warn.ind
+        warn.df <- grts_grid$warn.df
+        warn.df$stratum <- ifelse(is.na(warn.df$stratum), s, warn.df$stratum)
+      }
 
-# Return the sample
+      # Given hierarchical grid, select sites then check sites for mindis, delete
+      # and add sites as necessary
+      sites <- grtspts_mindis(mindis, sftmp, grts_grid, samplesize = sum(nsamp),
+                              SiteBegin = SiteBegin, stratum = s,  warn.ind = warn.ind,
+                              warn.df = warn.df)
+      if(sites$warn.ind) {
+        warn.ind <- sites$warn.ind
+        warn.df <- sites$warn.df
+        warn.df$stratum <- ifelse(is.na(warn.df$stratum), s, warn.df$stratum)
+      }
+      sites <- sites$sites
 
-   rho
+    } # end section on mindis and no legacy site option
+
+
+    # GRTS sample with minimum distance and with or without legacy sites
+    if(!is.null(mindis)) {
+
+      # compute inclusion probabilities assuming no legacy sites
+      ip <- grtspts_ip(type = dsgn[[s]]$seltype, nsamp = nsamp,
+                       Nstratum = Nstratum, caty = sftmp$caty, aux = sftmp$aux,
+                       warn.ind = warn.ind, warn.df = warn.df)
+      # save initial ip and set ip based on no legacy sites
+      sftmp$ip_init <- sftmp$ip
+      sftmp$ip <- sftmp$ip_init
+      # check for warning messages
+      if(ip$warn.ind) {
+        warn.ind <- ip$warn.ind
+        warn.df <- ip$warn.df
+        warn.df$stratum <- ifelse(is.na(warn.df$stratum), s, warn.df$stratum)
+      }
+
+      # Create hierarchical grid based on number of levels required
+      grts_grid <- numLevels(nsamp, sftmp, shift.grid, startlev, maxlev,
+                             warn.ind = warn.ind,  warn.df = warn.df)
+      if(grts_grid$warn.ind) {
+        warn.ind <- grts_grid$warn.ind
+        warn.df <- grts_grid$warn.df
+        warn.df$stratum <- ifelse(is.na(warn.df$stratum), s, warn.df$stratum)
+      }
+
+      # compute inclusion probabilies when have legacy sites
+      if(!is.null(legacy_var)) {
+        # Adjust inclusion probabilities to account for legacy sites
+        sftmp$ip <- grtspts_ipleg(sftmp$ip, sftmp$legacy)
+      }
+
+      sftmp$ip <- ip$ip
+      if(ip$warn.ind) {
+        warn.ind <- ip$warn.ind
+        warn.df <- ip$warn.df
+        warn.df$stratum <- ifelse(is.na(warn.df$stratum), s, warn.df$stratum)
+      }
+
+      # adjust cell weights to use legacy inclusion probabilities
+      grts_grid$cel.wt <- cellWeight(grts_grid$xc, grts_grid$yc,
+                                     grts_grid$dx, grts_grid$dy, sftmp)
+
+      # Given hierarchical grid, select sites then check sites for mindis, delete
+      # and add sites as necessary
+      sites <- grtspts_mindis(mindis, sftmp, grts_grid, samplesize = sum(nsamp),
+                              SiteBegin = SiteBegin, stratum = s, legacy_var = legacy,
+                              maxtry = maxtry, warn.ind = warn.ind, warn.df = warn.df)
+
+      # check for warning messages
+      if(sites$warn.ind) {
+        warn.ind <- sites$warn.ind
+        warn.df <- sites$warn.df
+        warn.df$stratum <- ifelse(is.na(warn.df$stratum), s, warn.df$stratum)
+      }
+      sites <- sites$rho
+
+    } # end section on mindis and legacy site option
+
+  # Add sample for s stratum to the output object
+
+  if(first) {
+    rslts <- sites
+    first <- FALSE
+  } else {
+    rslts <- rbind(rslts, sites)
+  }
+  SiteBegin <- SiteBegin + nrow(sites)
 }
+  # End the loop for strata
+
+  # Remove the id attribute from rslts
+  tmp <- names(rslts)
+  rslts <- subset(rslts, select = tmp[!(tmp %in% c("id", "geometry"))])
+
+  # Add DesignID name to the numeric siteID value to create a new siteID
+  rslts$siteID <- as.character(gsub(" ","0", paste(DesignID,"-",
+                                                   format(rslts$siteID), sep="")))
+
+
+  # As necessary, output a message indicating that warning messages were generated
+  # during execution of the program
+
+  if(warn.ind) {
+    warn.df <<- warn.df
+    if(nrow(warn.df) == 1){
+      cat("During execution of the program, a warning message was generated.  The warning \nmessage is stored in a data frame named 'warn.df'.  Enter the following command \nto view the warning message: warnprnt()\n")
+    } else {
+      cat(paste("During execution of the program,", nrow(warn.df), "warning messages were generated.  The warning \nmessages are stored in a data frame named 'warn.df'.  Enter the following \ncommand to view the warning messages: warnprnt() \nTo view a subset of the warning messages (say, messages number 1, 3, and 5), \nenter the following command: warnprnt(m=c(1,3,5))\n"))
+    }
+  }
+
+  # return the survey design sf object
+  invisible(rslts)
+}
+
+
