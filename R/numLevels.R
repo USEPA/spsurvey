@@ -1,7 +1,7 @@
 ################################################################################
 # Function: numLevels
 # Programmer: Tom Kincaid
-# Date: June 17, 2019
+# Date: April 30, 2020
 #
 #' Determine the Number of Levels for Hierarchical Randomization for a
 #' Generalized Random-Tesselation Stratified (GRTS) Survey Design
@@ -9,7 +9,7 @@
 #' This function determine the bumber of levels of hierarchical randomization
 #'  for a GRTS survey design.
 #'
-#' @param samplesize The desired smaple size.
+#' @param samplesize The desired sample size.
 #'
 #' @param shift.grid Logical value indicating whether the GRTS grid should be
 #'  randomly shifted.
@@ -20,9 +20,15 @@
 #'
 #' @param sfobject The sf object containing the survey frame.
 #'
+#' @param warn.ind  A logical value where TRUE indicates a warning message.
+#'   Used for internal collection of messages only.
+#'
+#' @param warn.df A data frame containing messages warning of potential issues.
+#'   Used for internal collection of messages only.
+#'
 #' @return A list containing the number of levels, x-coordinates, y-coordinates,
 #'  x-axis grid cell dimension, y-axis grid cell dimension, cell total weights,
-#'  and sampling interval.
+#'  sampling interval, and warning messages.
 #'
 #' @section Other Functions Required:
 #'   \describe{
@@ -37,16 +43,17 @@
 #' @export
 ################################################################################
 
-numLevels <- function(samplesize, shift.grid, startlev, maxlev, sfobject) {
+numLevels <- function(samplesize, sframe, shift.grid, startlev, maxlev,
+                      warn.ind = NULL, warn.df = NULL) {
 
-# As necessary, export sfobject to the parallel processing cluster
+  # As necessary, export sframe to the parallel processing cluster
 
-  if(!all(st_geometry_type(sfobject) %in% c("POINT", "MULTIPOINT"))) {
+  if(!all(st_geometry_type(sframe) %in% c("POINT", "MULTIPOINT"))) {
     cl <- getDefaultCluster()
-    clusterExport(cl, "sfobject", envir=environment())
+    clusterExport(cl, "sframe", envir=environment())
   }
 
-# Determine the number of levels for hierarchical randomization
+  # Determine the number of levels for hierarchical randomization
 
   if(is.null(startlev)) {
     nlev <- ceiling(logb(samplesize, 4))
@@ -63,7 +70,7 @@ numLevels <- function(samplesize, shift.grid, startlev, maxlev, sfobject) {
     roff.x <- runif(1, 0, 1)
     roff.y <- runif(1, 0, 1)
   }
-  bbox <- st_bbox(sfobject)
+  bbox <- st_bbox(sframe)
   grid.extent <- max(bbox$xmax - bbox$xmin, bbox$ymax - bbox$ymin)
   temp <- 0.04*grid.extent
   grid.xmin <- bbox$xmin - temp
@@ -72,7 +79,6 @@ numLevels <- function(samplesize, shift.grid, startlev, maxlev, sfobject) {
   grid.xmax <- grid.xmin + grid.extent
   grid.ymax <- grid.ymin + grid.extent
   while (any(cel.wt/sint > 1) && celmax.ind < 2 && nlev <= maxlev) {
-    cat( "Current number of levels:", nlev, "\n");
     celmax <- max(cel.wt)
     nlv2 <- 2^nlev
     dx <- dy <- grid.extent/nlv2
@@ -86,19 +92,27 @@ numLevels <- function(samplesize, shift.grid, startlev, maxlev, sfobject) {
       yc <- rep(yc, rep(nlv2+1, nlv2+1))
     }
 
-# Determine total inclusion probability for each grid cell and, as necessary,
-# adjust the indicator for whether maximum of the total inclusion probabilities
-# is changing
+    # Determine total inclusion probability for each grid cell and, as necessary,
+    # adjust the indicator for whether maximum of the total inclusion probabilities
+    # is changing
 
-    cel.wt <- cellWeight(xc, yc, dx, dy, sfobject)
+    cel.wt <- cellWeight(xc, yc, dx, dy, sframe)
     if(max(cel.wt) == celmax) {
       celmax.ind <- celmax.ind + 1
-  	  if(celmax.ind == 2) {
-  	    warning("\nSince the maximum value of total inclusion probability for the grid cells was \nnot changing, the algorithm for determining the number of levels for \nhierarchical randomization was terminated.\n")
+      if(celmax.ind == 2) {
+        warn <- "Since the maximum value of total inclusion probability for the grid cells was not changing, the algorithm for determining the number of levels for hierarchical randomization was terminated."
+        if(warn.ind){
+          warn.df <- rbind(warn.df, data.frame(stratum = NA, func = I("numLevels"),
+                                               warning = warn))
+
+        } else {
+          warn.ind <- TRUE
+          warn.df <- data.frame(stratum = NA, func = I("numLevels"), warning = warn)
+        }
       }
     }
 
-# Adjust sampling interval and number of hierarchical levels
+    # Adjust sampling interval and number of hierarchical levels
 
     sint <- sum(cel.wt)/samplesize
     if(nlev == maxlev) {
@@ -111,15 +125,12 @@ numLevels <- function(samplesize, shift.grid, startlev, maxlev, sfobject) {
     }
   }
 
-#  Print the final number of levels
+  # Create the output list
 
-  cat( "Final number of levels:", nlev-1, "\n");
+  rslt <- list(nlev = nlev, xc = xc, yc = yc, dx = dx, dy = dy, cel.wt = cel.wt,
+               sint = sint, warn.ind = warn.ind, warn.df = warn.df)
 
-# Create the output list
+  # Return the list
 
-  rslt <- list(nlev=nlev, xc=xc, yc=yc, dx=dx, dy=dy, cel.wt=cel.wt, sint=sint)
-
-# Return the list
- 
-  return(rslt)
+  invisible(rslt)
 }
