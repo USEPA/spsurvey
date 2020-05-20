@@ -253,43 +253,6 @@ grtspts <- function(dsgn, sframe, DesignID = "Site", SiteBegin = 1, stratum_var 
       sites <- subset(sites, select = tmp[!(tmp %in% c("ip_init", "geometry"))])
     }
 
-    # GRTS sample with no legacy sites but minimum distance
-    if(is.null(legacy_var) & !is.null(mindis)) {
-
-      # compute inclusion probabilities
-      ip <- grtspts_ip(type = dsgn[[s]]$seltype, nsamp = nsamp,
-                             Nstratum = Nstratum, caty = sftmp$caty, aux = sftmp$aux,
-                             warn.ind = warn.ind, warn.df = warn.df)
-      sftmp$ip <- ip$ip
-      if(ip$warn.ind) {
-        warn.ind <- ip$warn.ind
-        warn.df <- ip$warn.df
-        warn.df$stratum <- ifelse(is.na(warn.df$stratum), s, warn.df$stratum)
-      }
-
-      # Create hierarchical grid based on number of levels required
-      grts_grid <- numLevels(sum(nsamp), sftmp, shift.grid, startlev, maxlev,
-                             warn.ind = warn.ind,  warn.df = warn.df)
-      if(grts_grid$warn.ind) {
-        warn.ind <- grts_grid$warn.ind
-        warn.df <- grts_grid$warn.df
-        warn.df$stratum <- ifelse(is.na(warn.df$stratum), s, warn.df$stratum)
-      }
-
-      # Given hierarchical grid, select sites then check sites for mindis, delete
-      # and add sites as necessary
-      sites <- grtspts_mindis(mindis, sftmp, grts_grid, samplesize = sum(nsamp),
-                              SiteBegin = SiteBegin, stratum = s,  warn.ind = warn.ind,
-                              warn.df = warn.df)
-      if(sites$warn.ind) {
-        warn.ind <- sites$warn.ind
-        warn.df <- sites$warn.df
-        warn.df$stratum <- ifelse(is.na(warn.df$stratum), s, warn.df$stratum)
-      }
-      sites <- sites$sites
-
-    } # end section on mindis and no legacy site option
-
 
     # GRTS sample with minimum distance and with or without legacy sites
     if(!is.null(mindis)) {
@@ -299,7 +262,7 @@ grtspts <- function(dsgn, sframe, DesignID = "Site", SiteBegin = 1, stratum_var 
                        Nstratum = Nstratum, caty = sftmp$caty, aux = sftmp$aux,
                        warn.ind = warn.ind, warn.df = warn.df)
       # save initial ip and set ip based on no legacy sites
-      sftmp$ip_init <- sftmp$ip
+      sftmp$ip_init <- ip$ip
       sftmp$ip <- sftmp$ip_init
       # check for warning messages
       if(ip$warn.ind) {
@@ -323,7 +286,6 @@ grtspts <- function(dsgn, sframe, DesignID = "Site", SiteBegin = 1, stratum_var 
         sftmp$ip <- grtspts_ipleg(sftmp$ip, sftmp$legacy)
       }
 
-      sftmp$ip <- ip$ip
       if(ip$warn.ind) {
         warn.ind <- ip$warn.ind
         warn.df <- ip$warn.df
@@ -337,7 +299,7 @@ grtspts <- function(dsgn, sframe, DesignID = "Site", SiteBegin = 1, stratum_var 
       # Given hierarchical grid, select sites then check sites for mindis, delete
       # and add sites as necessary
       sites <- grtspts_mindis(mindis, sftmp, grts_grid, samplesize = sum(nsamp),
-                              SiteBegin = SiteBegin, stratum = s, legacy_var = legacy,
+                              SiteBegin = SiteBegin, stratum = s, legacy_var = legacy_var,
                               maxtry = maxtry, warn.ind = warn.ind, warn.df = warn.df)
 
       # check for warning messages
@@ -346,7 +308,7 @@ grtspts <- function(dsgn, sframe, DesignID = "Site", SiteBegin = 1, stratum_var 
         warn.df <- sites$warn.df
         warn.df$stratum <- ifelse(is.na(warn.df$stratum), s, warn.df$stratum)
       }
-      sites <- sites$rho
+      sites <- sites$sites
 
     } # end section on mindis and legacy site option
 
@@ -359,8 +321,7 @@ grtspts <- function(dsgn, sframe, DesignID = "Site", SiteBegin = 1, stratum_var 
     rslts <- rbind(rslts, sites)
   }
   SiteBegin <- SiteBegin + nrow(sites)
-}
-  # End the loop for strata
+} # End the loop for strata
 
   # Remove the id attribute from rslts
   tmp <- names(rslts)
@@ -369,6 +330,8 @@ grtspts <- function(dsgn, sframe, DesignID = "Site", SiteBegin = 1, stratum_var 
   # Add DesignID name to the numeric siteID value to create a new siteID
   rslts$siteID <- as.character(gsub(" ","0", paste(DesignID,"-",
                                                    format(rslts$siteID), sep="")))
+  
+  # Calculate weights, asssign panels and over samples
 
 
   # As necessary, output a message indicating that warning messages were generated

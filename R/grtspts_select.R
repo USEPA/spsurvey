@@ -80,7 +80,7 @@ grtspts_select <- function(sframe, grts_grid, samplesize, SiteBegin,
   n.cells <- length(unique(rdx))
   if(length(rdx) > n.cells) {
     temp <- sum(sapply(split(rdx, rdx), length) > 1)
-    warn <- paste0("Of the ", n.cells, " grid cells from which sample points were selected,",
+    warn <- paste0("Of the ", n.cells, " grid cells from which sample points were selected, ",
                    temp, " (", round(100*temp/n.cells, 1),
                    "%) of the cells contained more than one sample point.")
     if(warn.ind) {

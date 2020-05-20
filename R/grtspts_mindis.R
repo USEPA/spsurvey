@@ -64,33 +64,45 @@ grtspts_mindis <- function(mindis, sframe, grts_grid, samplesize, SiteBegin, max
   if(sites$warn.ind) {
     warn.ind <- sites$warn.ind
     warn.df <- sites$warn.df
-    warn.df$stratum <- ifelse(is.na(warn.df$stratum), s, warn.df$stratum)
+    warn.df$stratum <- ifelse(is.na(warn.df$stratum), stratum, warn.df$stratum)
   }
   sites <- sites$rho
 
-  # check distance between sites
-  # below_min is TRUE if less than mindis
+  # calculate distance between sites
   site_dist <- st_distance(sites)
   class(site_dist) <- "numeric"
-  below_min <- site_dist < mindis
-  diag(below_min) <- FALSE
-
-  # drop sites less than mindis in reverse hierarchical order
-  # keep is TRUE if no site is within mindis and FALSE means drop site
-  keep <- rep(TRUE, NROW(sites))
-  nr <- NROW(sites)
-  for (i in 1:nr) {
-    for (j in nr:i) {
-      if(below_min[i, j] == TRUE) {
-        keep[j] <- FALSE
-      }
-    }
-  }
-
-  # if any legacy sites make sure they are included
+  nr <- nrow(sites)
+  
+  # create data frame of upper triangle with i j denoting row/column of matrix
+  to.upper<-function(X) X[upper.tri(X,diag=FALSE)]
+  dist.df <- data.frame(i = sequence(1:(nr-1)), j = rep.int(2:nr, 1:(nr-1)),
+                        dist = site_dist[upper.tri(site_dist)])
+  # order from smallest to largest distance
+  dist.df <- dist.df[order(dist.df$dist), ]
+  
+  # initialize keep vector as NA. Change to TRUE if any legacy sites
+  keep <- rep(NA, NROW(sites))
   if(!is.null(legacy_var)) {
     keep[sites$legacy == TRUE] <- TRUE
   }
+  # find sites less than mindis and change keep status
+  for(k in 1:nrow(dist.df)){
+    if(dist.df$dist[k] < mindis) {
+      i <- dist.df$i[k]
+      j <- dist.df$j[k]
+      if(is.na(keep[i]) &  is.na(keep[j])) { 
+        keep[c(i, j)] <- sample(c(TRUE, FALSE))
+      } else {
+        if(is.na(keep[i]) & !is.na(keep[j])) { keep[i] <- FALSE
+        } else {
+          if(!is.na(keep[i]) & is.na(keep[j])) {keep[j] <- FALSE
+          }
+        }
+      }
+    }
+  }
+  # If any sites are NA set to TRUE as they are greater than mindis
+  keep[is.na(keep)] <- TRUE
 
   # see if any sites are less than mindis and check until none or max tries
   ntry <- 1
@@ -98,11 +110,6 @@ grtspts_mindis <- function(mindis, sframe, grts_grid, samplesize, SiteBegin, max
     # identify sites that will be treated as legacy probability sites in sample frame
     sframe$probdis <- FALSE
     sframe$probdis[sframe$LAKE_ID %in% sites$LAKE_ID[keep]] <- TRUE
-
-    # if any true legacy sites add them to sites to be kept
-    if(!is.null(legacy_var)){
-      sframe$probdis[sframe$legacy == TRUE] <- TRUE
-    }
 
     # Adjust initial inclusion probabilities to account for current mindis sites
     # and any legacy sites
@@ -124,33 +131,45 @@ grtspts_mindis <- function(mindis, sframe, grts_grid, samplesize, SiteBegin, max
     }
     sites <- sites$rho
 
-    # check distance between sites
+    # calculate distance between sites
     site_dist <- st_distance(sites)
     class(site_dist) <- "numeric"
-    below_min <- site_dist < mindis
-    diag(below_min) <- FALSE
-
-    # identify sites less than mindis in reverse hierarchical order
-    keep <- rep(TRUE, NROW(sites))
-    nr <- NROW(sites)
-    for (i in 1:nr) {
-      for (j in nr:i) {
-        if(below_min[i, j] == TRUE) {keep[j] <- FALSE}
-      }
-    }
-    # if any legacy sites make sure they are included
+    nr <- nrow(sites)
+    
+    # create data frame of upper triangle with i j denoting row/column of matrix
+    to.upper<-function(X) X[upper.tri(X,diag=FALSE)]
+    dist.df <- data.frame(i = sequence(1:(nr-1)), j = rep.int(2:nr, 1:(nr-1)),
+                          dist = site_dist[upper.tri(site_dist)])
+    # order from smallest to largest distance
+    dist.df <- dist.df[order(dist.df$dist), ]
+    
+    # initialize keep vector as NA. Change to TRUE if any legacy sites
+    keep <- rep(NA, NROW(sites))
     if(!is.null(legacy_var)) {
       keep[sites$legacy == TRUE] <- TRUE
     }
-
-    if(ntry < maxtry){
-      ntry <- ntry + 1
-    } else {
-      keep <- rep(TRUE, nr)
+    # find sites less than mindis and change keep status
+    for(k in 1:nrow(dist.df)){
+      if(dist.df$dist[k] < mindis) {
+        i <- dist.df$i[k]
+        j <- dist.df$j[k]
+        if(is.na(keep[i]) &  is.na(keep[j])) { 
+          keep[c(i, j)] <- sample(c(TRUE, FALSE))
+        } else {
+          if(is.na(keep[i]) & !is.na(keep[j])) { keep[i] <- FALSE
+          } else {
+            if(!is.na(keep[i]) & is.na(keep[j])) {keep[j] <- FALSE
+            }
+          }
+        }
+      }
     }
+    # If any sites are NA set to TRUE as they are greater than mindis
+    keep[is.na(keep)] <- TRUE
 
     # check if maxtry reached. If so write out warning message
-    if(ntry > maxtry) {
+    if(ntry >= maxtry) {
+      keep <- rep(TRUE, nr)
       warn <- paste0("Minimum distance between sites not attained after ", maxtry, " attempts.")
       if(warn.ind){
         warn.df <- rbind(warn.df, data.frame(stratum = stratum, func = I("grtspts_mindis"),
@@ -159,7 +178,7 @@ grtspts_mindis <- function(mindis, sframe, grts_grid, samplesize, SiteBegin, max
         warn.ind <- TRUE
         warn.df <- data.frame(stratum = stratum, func = I("grtspts_mindis"), warning = warn)
       }
-    }
+    } else { ntry <- ntry + 1}
   } # end of ntry loop
 
   # drop internal variables and replace ip with ip_init
