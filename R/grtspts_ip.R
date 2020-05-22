@@ -56,9 +56,7 @@
 
 grtspts_ip <- function(type = "equal", nsamp, Nstratum = NULL, caty = NULL,
                        aux = NULL, warn.ind = NULL, warn.df = NULL) {
-  if(!(type %in% c("equal", "unequal", "proportional"))) {
-    stop("\nThe type of inclusion probability must be equal, unequal or proportional.")
-  }
+
   # equal inclusion probabilities
   if(type == "equal") {
     ip <- rep(nsamp/Nstratum, Nstratum)

@@ -82,10 +82,8 @@
 #' @param maxlev Maxmum number of hierarchical levels to use for the GRTS
 #'   grid, which cannot be greater than 11.  The default is 11.
 #'
-#' @param shift.grid Logical value. If TRUE, then hierarchical grid is shifted. If
-#'   FALSE, then hierarchical grid not shifted.
 #'
-#' @return Return A class sf object containing the sites selected to meet the
+#' @return An sf object containing the sites selected that meet the
 #'   survey design requirements.
 #'
 #' @section Other functions required:
@@ -113,7 +111,7 @@
 
 grtspts <- function(dsgn, sframe, DesignID = "Site", SiteBegin = 1, stratum_var = NULL ,
                     caty_var = NULL, aux_var = NULL, legacy_var = NULL, mindis = NULL,
-                    maxtry = 10, startlev = NULL, maxlev = 11, shift.grid = TRUE) {
+                    maxtry = 10, startlev = NULL, maxlev = 11) {
 
 
   # check input. If errors, dsgn_check will stop grtspts and report errors.
@@ -125,7 +123,9 @@ grtspts <- function(dsgn, sframe, DesignID = "Site", SiteBegin = 1, stratum_var 
   warn.ind <- FALSE
   warn.df <- data.frame(stratum = "Stratum", func = "Calling Function", warn = "Message")
 
-  # Create unique ID values
+  # Create unique ID values and save variable names in sample frame provided on input
+  geom_name <- attr(sframe, "sf_column")
+  names.sframe <- names(sframe)[names(sframe) != geom_name]
   sframe$id <- 1:nrow(sframe)
 
   # Assign stratum variable or create it if design not stratified and variable not provided.
@@ -159,16 +159,24 @@ grtspts <- function(dsgn, sframe, DesignID = "Site", SiteBegin = 1, stratum_var 
     # if over sample is NULL set to zero
     if(is.null(dsgn[[s]]$over.n)) dsgn[[s]]$over.n <- 0
     if(dsgn[[s]]$seltype == "equal" | dsgn[[s]]$seltype == "proportional"){
-      nsamp <- sum(dsgn[[s]]$panel) + dsgn[[s]]$over.n
+      n.desired <- sum(dsgn[[s]]$panel)
+      nsamp <- n.desired + dsgn[[s]]$over.n
       } else {
-      nsamp <- dsgn[[s]]$caty.n + dsgn[[s]]$over.n
+        n.desired <- dsgn[[s]]$caty.n
+      nsamp <- n.desired + dsgn[[s]]$over.n
       }
+    
 
     # subset sframe to s stratum
     sftmp <- sframe[sframe$stratum == s, ]
 
     # Determine number of elements in stratum
     Nstratum <- NROW(sftmp)
+
+    # If sel.type is "equal" or "proportional", set caty to same as stratum
+    if(dsgn[[s]]$seltype == "equal" | dsgn[[s]]$seltype == "proportional") {
+      sftmp$caty <- sftmp$stratum
+    }
 
     # Basic GRTS sample: no legacy sites or minimum distance
     if(is.null(legacy_var) & is.null(mindis)) {
@@ -184,7 +192,7 @@ grtspts <- function(dsgn, sframe, DesignID = "Site", SiteBegin = 1, stratum_var 
       }
 
       # Create hierarchical grid based on number of levels required
-      grts_grid <- numLevels(sum(nsamp), sftmp, shift.grid, startlev, maxlev,
+      grts_grid <- numLevels(sum(nsamp), sftmp, startlev, maxlev,
                             warn.ind = warn.ind,  warn.df = warn.df)
       if(grts_grid$warn.ind) {
         warn.ind <- grts_grid$warn.ind
@@ -201,8 +209,7 @@ grtspts <- function(dsgn, sframe, DesignID = "Site", SiteBegin = 1, stratum_var 
         warn.df$stratum <- ifelse(is.na(warn.df$stratum), s, warn.df$stratum)
       }
       sites <- sites$rho
-    }
-    # End of Basic GRTS sample
+    } # End of Basic GRTS sample
 
     # GRTS sample with legacy sites and no minimum distance
     if(!is.null(legacy_var) & is.null(mindis)) {
@@ -219,7 +226,7 @@ grtspts <- function(dsgn, sframe, DesignID = "Site", SiteBegin = 1, stratum_var 
      }
 
       # Create hierarchical grid based on number of levels required
-      grts_grid <- numLevels(nsamp, sftmp, shift.grid, startlev, maxlev,
+      grts_grid <- numLevels(nsamp, sftmp, startlev, maxlev,
                              warn.ind = warn.ind,  warn.df = warn.df)
       if(grts_grid$warn.ind) {
         warn.ind <- grts_grid$warn.ind
@@ -272,7 +279,7 @@ grtspts <- function(dsgn, sframe, DesignID = "Site", SiteBegin = 1, stratum_var 
       }
 
       # Create hierarchical grid based on number of levels required
-      grts_grid <- numLevels(nsamp, sftmp, shift.grid, startlev, maxlev,
+      grts_grid <- numLevels(nsamp, sftmp, startlev, maxlev,
                              warn.ind = warn.ind,  warn.df = warn.df)
       if(grts_grid$warn.ind) {
         warn.ind <- grts_grid$warn.ind
@@ -311,29 +318,92 @@ grtspts <- function(dsgn, sframe, DesignID = "Site", SiteBegin = 1, stratum_var 
       sites <- sites$sites
 
     } # end section on mindis and legacy site option
+    
 
-  # Add sample for s stratum to the output object
+    # Add panel and oversample structure
+    sites$panel <- as.character(rep("OverSamp", nrow(sites)))
+    n.panel <- length(dsgn[[s]]$panel)
+    samplesize <- sum(nsamp)
+    if(nrow(sites) < samplesize) {
+      n.short <- samplesize - nrow(sites)
+      n.temp <- n.short / n.panel
+      if(n.temp != floor(n.temp)) {
+        n.temp <- c(ceiling(n.temp), rep(floor(n.temp), n.panel-1))
+        i <- 1
+        while(sum(n.temp) != n.short) {
+          i <- i+1
+          n.temp[i] <- n.temp[i] + 1
+        }
+      }
+      np <- c(0, cumsum(dsgn[[s]]$panel - n.temp))
+    } else {
+      np <- c(0, cumsum(dsgn[[s]]$panel))
+    }
+    for(i in 1:n.panel) {
+      sites$panel[(np[i]+1):np[i+1]] <- names(dsgn[[s]]$panel[i])
+    }
+    
+    # create weights based on inclusion probability
+    sites$wgt <- 1/sites$ip
+    
+    # If an oversample is present or the realized sample size is less than the
+    # desired size, then adjust the weights
+    if(sum(dsgn[[s]]$over.n) > 0 || nrow(sites) < samplesize) {
+      if(dsgn[[s]]$seltype %in% c("equal", "proportional")) {
+        sites$wgt <- n.desired * sites$wgt / nrow(sites)
+        } 
+      if(dsgn[[s]]$seltype == "unequal") {
+        if(nrow(sites) < samplesize) {
+          n.caty <- length(dsgn[[s]]$caty.n)
+          n.temp <- n.short / n.caty
+          nc <- dsgn[[s]]$caty.n - n.temp
+        } else {
+          nc <- dsgn[[s]]$caty.n
+        }
+        for(i in names(nsamp)) {
+          sites$wgt[sites$caty == i] <- nsamp[i] * 
+            sites$wgt[sites$caty == i] / nc[i]
+        }
+      }
+    }
 
-  if(first) {
-    rslts <- sites
-    first <- FALSE
-  } else {
-    rslts <- rbind(rslts, sites)
-  }
-  SiteBegin <- SiteBegin + nrow(sites)
-} # End the loop for strata
-
-  # Remove the id attribute from rslts
-  tmp <- names(rslts)
-  rslts <- subset(rslts, select = tmp[!(tmp %in% c("id", "geometry"))])
-
+    # Add sample for s stratum to the output object
+    if(first) {
+      rslts <- sites
+      first <- FALSE
+      } else {
+        rslts <- rbind(rslts, sites)
+      }
+    
+    # update site number for use in next stratum.
+    SiteBegin <- SiteBegin + nrow(sites)
+    
+    } # End the loop for strata
+  
   # Add DesignID name to the numeric siteID value to create a new siteID
   rslts$siteID <- as.character(gsub(" ","0", paste(DesignID,"-",
                                                    format(rslts$siteID), sep="")))
   
-  # Calculate weights, asssign panels and over samples
+  # Remove temporary variables and reorder variables in rslts
+  if(is.null(legacy_var) & is.null(aux_var)) {
+    rslts <- subset(rslts, select = c("siteID", "panel", "stratum", "caty", "wgt",
+                                      names.sframe ))
+  }
+  if(is.null(legacy_var) & !is.null(aux_var)) {
+    rslts <- subset(rslts, select = c("siteID", "panel", "stratum", "caty", "aux", 
+                                      "wgt", names.sframe ))
+  }
+  if(!is.null(legacy_var) & is.null(aux_var)) {
+    rslts <- subset(rslts, select = c("siteID", "panel", "stratum", "caty", "legacy", 
+                                      "wgt", names.sframe ))
+  }
+  if(!is.null(legacy_var) & !is.null(aux_var)) {
+    rslts <- subset(rslts, select = c("siteID", "panel", "stratum", "caty", "aux", 
+                                      "legacy", "wgt", names.sframe ))
+  }
 
-
+  
+  
   # As necessary, output a message indicating that warning messages were generated
   # during execution of the program
 

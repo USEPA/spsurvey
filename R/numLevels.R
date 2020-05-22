@@ -11,8 +11,6 @@
 #'
 #' @param samplesize The desired sample size.
 #'
-#' @param shift.grid Logical value indicating whether the GRTS grid should be
-#'  randomly shifted.
 #'
 #' @param startlev The initial number of levels for the GRTS grid.
 #'
@@ -43,7 +41,7 @@
 #' @export
 ################################################################################
 
-numLevels <- function(samplesize, sframe, shift.grid, startlev, maxlev,
+numLevels <- function(samplesize, sframe, startlev, maxlev,
                       warn.ind = NULL, warn.df = NULL) {
 
   # As necessary, export sframe to the parallel processing cluster
@@ -66,10 +64,10 @@ numLevels <- function(samplesize, sframe, shift.grid, startlev, maxlev,
   cel.wt <- 99999
   celmax.ind <- 0
   sint <- 1
-  if(shift.grid) {
-    roff.x <- runif(1, 0, 1)
-    roff.y <- runif(1, 0, 1)
-  }
+  # shift grid
+  roff.x <- runif(1, 0, 1)
+  roff.y <- runif(1, 0, 1)
+
   bbox <- st_bbox(sframe)
   grid.extent <- max(bbox$xmax - bbox$xmin, bbox$ymax - bbox$ymin)
   temp <- 0.04*grid.extent
@@ -84,13 +82,9 @@ numLevels <- function(samplesize, sframe, shift.grid, startlev, maxlev,
     dx <- dy <- grid.extent/nlv2
     xc <- seq(grid.xmin, grid.xmax, length=nlv2+1)
     yc <- seq(grid.ymin, grid.ymax, length=nlv2+1)
-    if(shift.grid) {
-      xc <- rep(xc, nlv2+1) + (roff.x * dx)
-      yc <- rep(yc, rep(nlv2+1, nlv2+1)) + (roff.y * dy)
-    } else {
-      xc <- rep(xc, nlv2+1)
-      yc <- rep(yc, rep(nlv2+1, nlv2+1))
-    }
+    # shift grid
+    xc <- rep(xc, nlv2+1) + (roff.x * dx)
+    yc <- rep(yc, rep(nlv2+1, nlv2+1)) + (roff.y * dy)
 
     # Determine total inclusion probability for each grid cell and, as necessary,
     # adjust the indicator for whether maximum of the total inclusion probabilities
