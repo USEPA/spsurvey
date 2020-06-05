@@ -148,7 +148,7 @@ grtslin <- function (linframe, samplesize = 100, SiteBegin = 1,
 
    rho <- data.frame(siteID=siteID, id=id, xcoord=x, ycoord=y, mdcaty=mdcaty,
       wgt=1/mdm)
-   rho <- st_as_sf(rho, coords = c("xcoord", "ycoord"), remove = FALSE)
+   rho <- st_as_sf(rho, coords = c("xcoord", "ycoord"), remove = FALSE,crs=st_crs(linframe))
    row.names(rho) <- 1:nrow(rho)
 
 # Assign the final number of levels as an attribute of the output object
