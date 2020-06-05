@@ -713,12 +713,12 @@ if(type.frame == "finite") {
 # Calculate mdm - inclusion probabilities
 
       if(design[[s]]$seltype == "Equal")
-         sframe$mdm <- mdmlin(sframe$len, sframe$mdcaty, c(Equal=n.desired))
+         sframe$mdm <- mdmlin(sframe$length_mdm, sframe$mdcaty, c(Equal=n.desired))
       else if(design[[s]]$seltype == "Unequal")
-         sframe$mdm <- mdmlin(sframe$len, sframe$mdcaty, n.desired)
+         sframe$mdm <- mdmlin(sframe$length_mdm, sframe$mdcaty, n.desired)
       else
          sframe$mdm <- n.desired * sframe$mdcaty /
-                       sum(sframe$len * sframe$mdcaty)
+                       sum(sframe$length_mdm * sframe$mdcaty)
 
 # Select the sample
 
