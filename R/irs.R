@@ -413,9 +413,9 @@ if(type.frame == "finite") {
 # Calculate mdm - inclusion probabilities
 
       if(design[[s]]$seltype == "Equal")
-         	sframe$mdm <- mdmpts(sframe$mdcaty, c(Equal=n.desired))
+         	sframe$mdm <- mdm(sframe$mdcaty, c(Equal=n.desired))
       else if(design[[s]]$seltype == "Unequal")
-         sframe$mdm <- mdmpts(sframe$mdcaty, n.desired)
+         sframe$mdm <- mdm(sframe$mdcaty, n.desired)
       else
          sframe$mdm <- n.desired * sframe$mdcaty / sum(sframe$mdcaty)
 
@@ -619,9 +619,9 @@ if(type.frame == "finite") {
 # Calculate mdm - inclusion probabilities
 
       if(design[[s]]$seltype == "Equal")
-         sframe$mdm <- mdmlin(sframe$len, sframe$mdcaty, c(Equal=n.desired))
+         sframe$mdm <- mdm(sframe$mdcaty, c(Equal=n.desired), sframe$len)
       else if(design[[s]]$seltype == "Unequal")
-         sframe$mdm <- mdmlin(sframe$len, sframe$mdcaty, n.desired)
+         sframe$mdm <- mdm(sframe$mdcaty, n.desired, sframe$len)
       else
          sframe$mdm <- n.desired * sframe$mdcaty /
                        sum(sframe$len * sframe$mdcaty)
@@ -787,9 +787,9 @@ if(type.frame == "finite") {
 # Calculate mdm - inclusion probabilities
 
       if(design[[s]]$seltype == "Equal")
-         sframe$mdm <- mdmarea(sframe$area, sframe$mdcaty, c(Equal=n.desired))
+         sframe$mdm <- mdm(sframe$mdcaty, c(Equal=n.desired), sframe$area)
       else if(design[[s]]$seltype == "Unequal")
-         sframe$mdm <- mdmarea(sframe$area, sframe$mdcaty, n.desired)
+         sframe$mdm <- mdm(sframe$mdcaty, n.desired, sframe$area)
       else
          sframe$mdm <- n.desired * sframe$mdcaty /
                        sum(sframe$area * sframe$mdcaty)
