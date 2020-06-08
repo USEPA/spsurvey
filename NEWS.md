@@ -1,3 +1,11 @@
+# spsurvey 4.1.3 (2020-6-05)
+
+## Bug fix
+
+* Fixed code so that sp design objects inherit CRS of input files and shapefiles written out also have inherited projection from input file. (#2)
+
+* Variable sframe$len was used in grts function and never defined. Now uses length_mdm that is calculated earlier. (#6)
+
 # spsurvey 4.1.2 (2020-3-31)
 
 ## Bug fix
