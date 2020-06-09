@@ -1052,8 +1052,8 @@ if(shapefile == TRUE) {
 SpointsMat <- st_coordinates(sites)
 rownames(SpointsMat) <- IDs
 dat <- st_set_geometry(sites, NULL)
-sp_obj <- SpatialPointsDataFrame(SpatialPoints(SpointsMat),data = dat)
-proj4string(sp_obj) <-  CRS(st_crs(sites)$proj4string)
+sp_obj <- sp::SpatialPointsDataFrame(SpatialPoints(SpointsMat),data = dat)
+sp::proj4string(sp_obj) <-  sp::CRS(st_crs(sites)$proj4string)
 rslt <- SpatialDesign(design = design, sp_obj = sp_obj)
 
 # Return the SpatialDesign object

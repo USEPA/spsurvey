@@ -17,9 +17,7 @@ Authors@R: c(
 Maintainer: Marc Weber <Weber.Marc@epa.gov>
 Depends:
     R (>= 3.3.0),
-    methods,
-    sf,
-    sp
+    methods
 Suggests: 
     knitr,
     testthat,
@@ -56,6 +54,7 @@ Imports:
     parallel,
     rgeos,
     stats,
+    sf,
     sp
 VignetteBuilder: knitr
 Encoding: UTF-8
