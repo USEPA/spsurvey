@@ -25,6 +25,7 @@ Load the `spsurvey` package:
 ```{r load-spsurvey}
 library(spsurvey)
 library(sf)
+library(sp)
 ```
 
 ## Read the sf object
@@ -111,7 +112,7 @@ For this survey design, a shapefile will be used as the sampling frame.  The `sf
 
 Create the shapefile:
 ```{r create_shapefile}
-st_write(Luck_Ash_streams, "Luck_Ash_streams.shp", quiet = TRUE, delete_dsn = TRUE)
+sf::st_write(Luck_Ash_streams, "Luck_Ash_streams.shp", quiet = TRUE, delete_dsn = TRUE)
 ```
 
 Create the design list:
@@ -131,7 +132,7 @@ Stratsites <- grts(design=Stratdsgn,
                    type.frame="linear",
                    src.frame="shapefile",
                    in.shape="Luck_Ash_streams.shp",
-                   maxlev = 5,
+                   maxlev = 3,
                    stratum="Per_Int",
                    shapefile=FALSE)
 ```
@@ -153,7 +154,8 @@ For this survey design, an `sp` package object will be used as the sampling fram
 
 Create the `sp` object:
 ```{r create.sp.object}
-Luck_Ash_streams_sp <- as_Spatial(Luck_Ash_streams)
+Luck_Ash_streams_sp <- sf::as_Spatial(Luck_Ash_streams)
+proj4string(Luck_Ash_streams_sp) <- sp::CRS(st_crs(Luck_Ash_streams)$proj4string)@projargs
 ```
 
 Create the design list:

@@ -25,6 +25,7 @@ Load the spsurvey package:
 ```{r load-spsurvey}
 library(spsurvey)
 library(sf)
+library(sp)
 ```
 
 ## Read the sf object
@@ -123,7 +124,7 @@ Unequalsites <- grts(design=Unequaldsgn,
                      src.frame="shapefile",
                      in.shape="UT_ecoregions.shp",
                      mdcaty="Level3_Nam",	
-                     maxlev = 5,
+                     maxlev = 3,
                      shapefile=FALSE)
 ```
 
@@ -144,7 +145,8 @@ For this survey design, an `sp` package object will be used as the sampling fram
 
 Create the sp object:
 ```{r create_spobject}
-UT_ecoregions_sp <- as_Spatial(UT_ecoregions)
+UT_ecoregions_sp <- sf::as_Spatial(UT_ecoregions)
+proj4string(UT_ecoregions_sp) <- sp::CRS(st_crs(UT_ecoregions)$proj4string)@projargs
 ```
 
 Create the design list:
@@ -173,7 +175,7 @@ Stratsites <- grts(design=Stratdsgn,
                    src.frame="sp.object",
                    sp.object=UT_ecoregions_sp,
                    stratum="Level3_Nam",	
-                   maxlev = 5,
+                   maxlev = 3,
                    shapefile=FALSE)
 ```
 
