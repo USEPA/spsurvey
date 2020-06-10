@@ -3,7 +3,7 @@ context("grts")
 set.seed(52468110)
 # Create sp object
 load(system.file("extdata", "reg1_lakes.rda", package="spsurvey"))
-write_sf(reg1_lakes, paste0(getwd(),"/reg1_lakes.shp"))
+sf::write_sf(reg1_lakes, paste0(getwd(),"/reg1_lakes.shp"))
 sp.finite <- read.shape("./reg1_lakes.shp")
 sp.finite$mdcaty <- runif(nrow(sp.finite))
 
@@ -88,7 +88,7 @@ test_that("test unequal random selection using shapefile and no output shapefile
 
 # Finite: NHDPoint PointZ shapefile:
 load(system.file("extdata", "NHDPoint.rda", package="spsurvey"))
-NHDPoint <- st_zm(NHDPoint, drop=TRUE)
+NHDPoint <- sf::st_zm(NHDPoint, drop=TRUE)
 write_sf(NHDPoint, paste0(getwd(),"/NHDPoint.shp"))
 
 testsample <- grts(design=list(None=list(panel=c(PanelOne=10), over=0,
