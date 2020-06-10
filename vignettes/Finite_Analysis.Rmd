@@ -24,6 +24,7 @@ The initial step is to use the `library` function to load the `spsurvey` package
 Load the `spsurvey` package:
 ```{r load-spsurvey}
 library(spsurvey)
+library(sf)
 ```
 
 ## Load the survey design and analytical variables data set
