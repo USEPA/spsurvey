@@ -30,7 +30,8 @@
 #'
 #' @return Data frame of sample points containing: siteID, id, x, y, mdcaty,
 #'   and weight.
-#'
+#' @importFrom sf st_as_sf st_crs
+#' 
 #' @section Other Functions Required:
 #'   \describe{
 #'     \item{\code{numLevels}}{determines the number of levels for hierarchical

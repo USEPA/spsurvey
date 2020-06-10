@@ -147,7 +147,11 @@
 #' @author Tom Kincaid  email{Kincaid.Tom@epa.gov}
 #'
 #' @keywords survey
-#'
+#' 
+#' @importFrom sf st_read st_as_sf st_geometry st_coordinates st_set_geometry st_geometry_type st_agr st_length st_area st_write st_crs
+#'  
+#' @importFrom sp SpatialPoints SpatialPointsDataFrame proj4string CRS
+#' 
 #' @examples
 #' \dontrun{
 #'   test_design <- list(
@@ -1052,8 +1056,8 @@ if(shapefile == TRUE) {
 SpointsMat <- st_coordinates(sites)
 rownames(SpointsMat) <- IDs
 dat <- st_set_geometry(sites, NULL)
-sp_obj <- sp::SpatialPointsDataFrame(SpatialPoints(SpointsMat),data = dat)
-sp::proj4string(sp_obj) <-  sp::CRS(st_crs(sites)$proj4string)
+sp_obj <- SpatialPointsDataFrame(SpatialPoints(SpointsMat),data = dat)
+proj4string(sp_obj) <-  CRS(st_crs(sites)$proj4string)
 rslt <- SpatialDesign(design = design, sp_obj = sp_obj)
 
 # Return the SpatialDesign object
