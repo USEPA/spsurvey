@@ -228,7 +228,7 @@ relrisk.var <- function(response, stressor, response.levels, stressor.levels,
             if(vartype == "Local") {
                weight.lst <- localmean.weight(x2.lst[[i]], y2.lst[[i]],
                   1/wgt2.lst[[i]])
-               var2est[i, ] <- as.vector(pcfactor*localmean_cov(rm, weight.lst))
+               var2est[i, ] <- as.vector(pcfactor*localmean.cov(rm, weight.lst))
             } else {
                var2est[i, ] <- as.vector(pcfactor*nresp*var(rm))
                if(SRSind)
@@ -266,7 +266,7 @@ relrisk.var <- function(response, stressor, response.levels, stressor.levels,
 
       if(vartype == "Local") {
          weight.lst <- localmean.weight(x1.u, y1.u, 1/wgt1.u)
-         varest <- pcfactor*localmean_cov(total2est*matrix(rep(wgt1.u, 4),
+         varest <- pcfactor*localmean.cov(total2est*matrix(rep(wgt1.u, 4),
             nrow=ncluster), weight.lst) + matrix(apply(var2est *
             matrix(rep(wgt1.u, 16), nrow = ncluster), 2, sum), nrow=4)
       } else {
