@@ -9,22 +9,30 @@ latex: false
 r: 
   - release
 
-addons:
-  apt:
-    sources:
-      - sourceline: 'ppa:ubuntugis/ubuntugis-unstable'
-    packages:
-      - libudunits2-dev
-      - libproj-dev
-      - libgeos-dev
-      - libgdal-dev
+matrix:
+  include:
+    - name: release
+      r: release
+      r_check_args: --as-cran --no-build-vignettes --ignore-vignettes
+    - name: devel
+      r: devel
+      r_check_args: --as-cran --no-build-vignettes --use-valgrind --ignore-vignettes
+      env:
+        global:
+          -_R_CHECK_FORCE_SUGGESTS_=false
+      addons:
+        apt:
+          sources:
+            - sourceline: 'ppa:ubuntugis/ubuntugis-unstable'
+          packages:
+            - libudunits2-dev
+            - libproj-dev
+            - libgeos-dev
+            - libgdal-dev
+
+r_build_args: --no-resave-data --no-build-vignettes
 
 warnings_are_errors: false
 
 before_install:
   - R -e 'install.packages("rgdal", repos="http://R-Forge.R-project.org")'
- s
-env:
-  global:
-    -_R_CHECK_FORCE_SUGGESTS_=false
-
