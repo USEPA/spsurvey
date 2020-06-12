@@ -59,7 +59,7 @@ grtspts_ip <- function(type = "equal", nsamp, Nstratum = NULL, caty = NULL,
 
   # equal inclusion probabilities
   if(type == "equal") {
-    ip <- rep(nsamp/Nstratum, Nstratum)
+    ip <- rep(sum(nsamp, na.rm = TRUE)/Nstratum, Nstratum)
   }
   # unequal inclusion probabilities
   if(type == "unequal") {

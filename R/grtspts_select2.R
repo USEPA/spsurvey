@@ -1,9 +1,10 @@
 ################################################################################
 # Function: grtspts_select
 # Programmer:  Marc Weber, Tony Olsen
-# Date: April 27, 2020
+# Date: June 5, 2020
 #
-#' Select a grts sample.
+#' Select a grts sample of size "samplesize" and with option to select "over.near" sites
+#'   within each cell.
 #'
 #' @param sframe The sf object containing variables: id and ip.
 #'
@@ -11,13 +12,9 @@
 #'
 #' @param samplesize Sample size required.
 #' 
-#' @param over number of nearby sites to be used as potential replacement(s) 
-#'       if a site cannot be sampled for any reason. If specified, typically 1 to 3.
-#'       Default is NULL. In this function treated as either NULL or not NULL.
-#'
-#' @param SiteBegin Number to use for first site selected.
-#' 
-#' @param OverBegin Number to use for first over sample site selected.
+#' @param over.near number of nearby sites to be used as potential replacement(s) 
+#'       if a site cannot be sampled for any reason. If specified, must 1, 2 or 3.
+#'       Default is NULL.
 #'
 #' @param warn.ind  A logical value where TRUE indicates a warning message.
 #'   Used for internal collection of messages only.
@@ -25,7 +22,7 @@
 #' @param warn.df A data frame containing messages warning of potential issues.
 #'   Used for internal collection of messages only.
 #'
-#' @return A list of sf object of sample points, over sample points if any,
+#' @return sites A list of sf object of sample points, over sample points if any,
 #'   warning indicator and warning messages
 #'
 #' @section Other Functions Required:
@@ -42,12 +39,15 @@
 #' @author Marc Weber \email{Weber.Marc@epa.gov}
 #'
 #' @keywords survey
+#' 
+#' @return sites A list with components site.base for base sites, site.near for 
+#'   replacement sites within each cell (NULL if none), warn.ind and warn.df 
 #'
 #' @export
 ################################################################################
 
-grtspts_select2 <- function(sframe, grts_grid, samplesize, over = NULL, SiteBegin,
-                           OverBegin = NULL, warn.ind = NULL, warn.df = NULL) {
+grtspts_select2 <- function(sframe, grts_grid, samplesize, over.near = NULL, 
+                           warn.ind = NULL, warn.df = NULL) {
 
   # simplify variables
   nlev <- grts_grid$nlev
@@ -101,11 +101,18 @@ grtspts_select2 <- function(sframe, grts_grid, samplesize, over = NULL, SiteBegi
 
   # Pick sample point(s) in selected cells
 
-  id <- pickFiniteSamplePoints2(rdx, xc, yc, dx, dy, sframe, over = over)
-  rho <- sframe[match(id$id, sframe$id), ]
-  over.samp <- NULL
-  if(!is.null(over)) {
-    over.samp <- sframe[match(id$id.over, sframe$id), ]
+  id.samp <- pickFiniteSamplePoints2(rdx, xc, yc, dx, dy, sframe, over.near = over.near,
+                                warn.ind = warn.ind, warn.df = warn.df)
+  idmatch <- match(id.samp[["id"]]$id, sframe$id)
+  rho <- sframe[idmatch, ]
+  rho$siteuse <- id.samp[["id"]]$siteuse
+  rho$replsite <- id.samp[["id"]]$replsite
+  sites.near <- NULL
+  if(!is.null(over.near)) {
+    idmatch <- match(id.samp[["id.near"]]$id.near, sframe$id)
+    sites.near <- sframe[idmatch, ]
+    sites.near$siteuse <- id.samp[["id.near"]]$siteuse.near
+    sites.near$replsite <- id.samp[["id.near"]]$replsite.near
   }
 
   # Construct sample hierarchical address
@@ -122,17 +129,11 @@ grtspts_select2 <- function(sframe, grts_grid, samplesize, over = NULL, SiteBegi
 
   # Place sample in reverse hierarchical order
 
-  rho <- rho[unique(floor(rho4 * np/4^nlev)) + 1.,]
-
-  # Create siteID
-
-  rho$siteID <- SiteBegin - 1 + 1:nrow(rho)
-  if(!is.null(over)) {
-    over.samp$siteID <- OverBegin - 1 + 1:nrow(over.samp)
-  }
+  sites.base <- rho[unique(floor(rho4 * np/4^nlev)) + 1.,]
 
   # Return as a list the sample, plus over sample and warning messages
-  rho <- list(rho = rho, over.samp = over.samp, warn.ind = warn.ind, warn.df = warn.df)
+  sites <- list(sites.base = sites.base, sites.near = sites.near, 
+              warn.ind = warn.ind, warn.df = warn.df)
 
-  invisible(rho)
+  invisible(sites)
 }

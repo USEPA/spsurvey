@@ -14,8 +14,6 @@
 #'
 #' @param grts_grid The hierarchical grid as a list required for GRTS design
 #'
-#' @param SiteBegin Number to use for first site selected.
-#'
 #' @param maxtry Number of maximum attempts to ensure minimum distance between sites.
 #'   Default is 10.
 #'
@@ -51,27 +49,29 @@
 #' @export
 ################################################################################
 
-grtspts_mindis <- function(mindis, sframe, grts_grid, samplesize, SiteBegin, maxtry = 10,
+grtspts_mindis <- function(mindis, sframe, grts_grid, samplesize, over.near = NULL, maxtry = 10,
                            stratum = NULL, legacy_var = NULL, warn.ind = NULL, warn.df = NULL) {
 
   # save current ip as it will not change due to mindis site selection.
   # sframe$ip_init <- sframe$ip
 
   # select initial set of sites
-  sites <- grtspts_select(sframe, grts_grid, samplesize = samplesize,
-                          SiteBegin = SiteBegin,  warn.ind = warn.ind,
-                          warn.df = warn.df)
+  sites <- grtspts_select2(sframe, grts_grid, samplesize = samplesize, over.near = over.near,
+                          warn.ind = warn.ind, warn.df = warn.df)
   if(sites$warn.ind) {
     warn.ind <- sites$warn.ind
     warn.df <- sites$warn.df
     warn.df$stratum <- ifelse(is.na(warn.df$stratum), stratum, warn.df$stratum)
   }
-  sites <- sites$rho
+  sites.base <- sites$sites.base
+  if(!is.null(over.near)){
+    sites.near <- sites$sites.near
+  }
 
   # calculate distance between sites
-  site_dist <- st_distance(sites)
+  site_dist <- st_distance(sites.base)
   class(site_dist) <- "numeric"
-  nr <- nrow(sites)
+  nr <- nrow(sites.base)
   
   # create data frame of upper triangle with i j denoting row/column of matrix
   to.upper<-function(X) X[upper.tri(X,diag=FALSE)]
@@ -81,9 +81,9 @@ grtspts_mindis <- function(mindis, sframe, grts_grid, samplesize, SiteBegin, max
   dist.df <- dist.df[order(dist.df$dist), ]
   
   # initialize keep vector as NA. Change to TRUE if any legacy sites
-  keep <- rep(NA, NROW(sites))
+  keep <- rep(NA, NROW(sites.base))
   if(!is.null(legacy_var)) {
-    keep[sites$legacy == TRUE] <- TRUE
+    keep[sites.base$legacy == TRUE] <- TRUE
   }
   # find sites less than mindis and change keep status
   for(k in 1:nrow(dist.df)){
@@ -120,21 +120,23 @@ grtspts_mindis <- function(mindis, sframe, grts_grid, samplesize, SiteBegin, max
                                    grts_grid$dx, grts_grid$dy, sframe)
 
     # select new sites that include legacy sites
-    sites <- grtspts_select(sframe, grts_grid, samplesize = samplesize,
-                            SiteBegin = SiteBegin,  warn.ind = warn.ind,
-                            warn.df = warn.df)
+    sites <- grtspts_select2(sframe, grts_grid, samplesize = samplesize, over.near = over.near,
+                            warn.ind = warn.ind, warn.df = warn.df)
     # check for warnings
     if(sites$warn.ind) {
       warn.ind <- sites$warn.ind
       warn.df <- sites$warn.df
       warn.df$stratum <- ifelse(is.na(warn.df$stratum), stratum, warn.df$stratum)
     }
-    sites <- sites$rho
+    sites.base <- sites$sites.base
+    if(!is.null(over.near)) {
+      sites.near <- sites$sites.near
+    }
 
     # calculate distance between sites
-    site_dist <- st_distance(sites)
+    site_dist <- st_distance(sites.base)
     class(site_dist) <- "numeric"
-    nr <- nrow(sites)
+    nr <- nrow(sites.base)
     
     # create data frame of upper triangle with i j denoting row/column of matrix
     to.upper<-function(X) X[upper.tri(X,diag=FALSE)]
@@ -144,9 +146,9 @@ grtspts_mindis <- function(mindis, sframe, grts_grid, samplesize, SiteBegin, max
     dist.df <- dist.df[order(dist.df$dist), ]
     
     # initialize keep vector as NA. Change to TRUE if any legacy sites
-    keep <- rep(NA, NROW(sites))
+    keep <- rep(NA, NROW(sites.base))
     if(!is.null(legacy_var)) {
-      keep[sites$legacy == TRUE] <- TRUE
+      keep[sites.base$legacy == TRUE] <- TRUE
     }
     # find sites less than mindis and change keep status
     for(k in 1:nrow(dist.df)){
@@ -182,11 +184,12 @@ grtspts_mindis <- function(mindis, sframe, grts_grid, samplesize, SiteBegin, max
   } # end of ntry loop
 
   # drop internal variables and replace ip with ip_init
-  sites$ip <- sites$ip_init
-  tmp <- names(sites)
-  sites <- subset(sites, select = tmp[!(tmp %in% c("ip_init", "probdis", "geometry"))])
+  sites.base$ip <- sites.base$ip_init
+  tmp <- names(sites.base)
+  sites.base <- subset(sites.base, select = tmp[!(tmp %in% c("ip_init", "probdis", "geometry"))])
 
-  sites <- list(sites = sites,  warn.ind = warn.ind, warn.df = warn.df)
+  sites <- list(sites.base = sites.base, sites.near = sites.near,
+                warn.ind = warn.ind, warn.df = warn.df)
 
   invisible(sites)
 
