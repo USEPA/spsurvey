@@ -1,4 +1,6 @@
 context("grts")
+library(sf)
+library(lwgeom)
 
 set.seed(52468110)
 # Create sp object
