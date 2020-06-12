@@ -1,7 +1,7 @@
 This is a bug-fix release to specifically address issues 
 
 - [(#6)](https://github.com/USEPA/spsurvey/issues/6)
-- [(#2)](https://github.com/USEPA/spsurvey/issues/2).
+- [(#2)](https://github.com/USEPA/spsurvey/issues/2)
 
 -------
 
