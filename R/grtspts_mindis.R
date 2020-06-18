@@ -1,24 +1,27 @@
 ################################################################################
 # Function: grtspts_mindis
 # Programmer:  Tony Olsen
-# Date: May 11, 2020
+# Date: June 18, 2020
 #
 #' Select a grts sample with minimum distance between sites.
 #'
 #' @param mindis Minimum distance required between sites in sample.
 #'
-#' @param sites sf object with initial sites selected for survey design when
-#'   mindis is ignored.
-#'
 #' @param sframe The sf object containing variables: id and ip.
 #'
 #' @param grts_grid The hierarchical grid as a list required for GRTS design
+#' 
+#' @param samplesize The sample size required for the 
+#' 
+#' @param over.near Numeric value specifying the number of nearby points to select as
+#'   possible replacement sites if a site cannot be sampled. Default is NULL. If specified,
+#'   possible values are 1, 2 or 3.
 #'
 #' @param maxtry Number of maximum attempts to ensure minimum distance between sites.
 #'   Default is 10.
 #'
-#' @param stratum Character value for name of stratum.
-#'   Used for internal collection of messages only.
+#' @param stratum Character string that identifies stratum membership for each element 
+#'   in the frame. Cannot be NULL.
 #'
 #' @param legacy_var Character value for name of column for legacy site variable.
 #'   Default is NULL.
@@ -29,7 +32,8 @@
 #' @param warn.df A data frame containing messages warning of potential issues.
 #'   Used for internal collection of messages only.
 #'
-#' @return sf object of sample points.
+#' @return sites A list of sf object of sample points, an sf object of over sample
+#'   points if any, warning indicator and warning messages data.frame
 #'
 #' @section Other Functions Required:
 #'   \describe{
@@ -50,13 +54,13 @@
 ################################################################################
 
 grtspts_mindis <- function(mindis, sframe, grts_grid, samplesize, over.near = NULL, maxtry = 10,
-                           stratum = NULL, legacy_var = NULL, warn.ind = NULL, warn.df = NULL) {
+                           stratum, legacy_var = NULL, warn.ind = NULL, warn.df = NULL) {
 
   # save current ip as it will not change due to mindis site selection.
   # sframe$ip_init <- sframe$ip
 
   # select initial set of sites
-  sites <- grtspts_select2(sframe, grts_grid, samplesize = samplesize, over.near = over.near,
+  sites <- grtspts_select(sframe, grts_grid, samplesize = samplesize, over.near = over.near,
                           warn.ind = warn.ind, warn.df = warn.df)
   if(sites$warn.ind) {
     warn.ind <- sites$warn.ind
@@ -110,6 +114,11 @@ grtspts_mindis <- function(mindis, sframe, grts_grid, samplesize, over.near = NU
     # identify sites that will be treated as legacy probability sites in sample frame
     sframe$probdis <- FALSE
     sframe$probdis[sframe$LAKE_ID %in% sites$LAKE_ID[keep]] <- TRUE
+    
+    # if any true legacy sites add them to sites to be kept
+    if(!is.null(legacy_var)) {
+      sframe$probdis[sframe$legacy == TRUE] <- TRUE
+    }
 
     # Adjust initial inclusion probabilities to account for current mindis sites
     # and any legacy sites
@@ -120,7 +129,7 @@ grtspts_mindis <- function(mindis, sframe, grts_grid, samplesize, over.near = NU
                                    grts_grid$dx, grts_grid$dy, sframe)
 
     # select new sites that include legacy sites
-    sites <- grtspts_select2(sframe, grts_grid, samplesize = samplesize, over.near = over.near,
+    sites <- grtspts_select(sframe, grts_grid, samplesize = samplesize, over.near = over.near,
                             warn.ind = warn.ind, warn.df = warn.df)
     # check for warnings
     if(sites$warn.ind) {
@@ -183,16 +192,16 @@ grtspts_mindis <- function(mindis, sframe, grts_grid, samplesize, over.near = NU
     } else { ntry <- ntry + 1}
   } # end of ntry loop
 
-  # drop internal variables and replace ip with ip_init
-  sites.base$ip <- sites.base$ip_init
+  # drop internal variables
   tmp <- names(sites.base)
-  sites.base <- subset(sites.base, select = tmp[!(tmp %in% c("ip_init", "probdis", "geometry"))])
+  sites.base <- subset(sites.base, select = tmp[!(tmp %in% c("probdis", "geometry"))])
+  tmp <- names(sites.near)
+  sites.near <- subset(sites.near, select = tmp[!(tmp %in% c("probdis", "geometry"))])
 
   sites <- list(sites.base = sites.base, sites.near = sites.near,
                 warn.ind = warn.ind, warn.df = warn.df)
 
   invisible(sites)
-
 }
 
 

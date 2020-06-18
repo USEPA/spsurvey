@@ -1,7 +1,7 @@
 ###################################################################################
 # Function: grtspts_stratum
 # Programmers: Tony Olsen
-# Date: "`r format(Sys.time(),  '%B %d, %Y')`"
+# Date: June 18, 2020
 #'
 #' For a single stratum, select a spatially balanced sample from a finite population using 
 #' generalized random tessalation stratified algorithm from a point sample frame based on a 
@@ -10,6 +10,7 @@
 #' @param stratum Character value for the stratum name.
 #' 
 #' @param dsgn List of componenents that specify the survey design. Includes all strata.
+#'   See grtspts for contents of dsgn.
 #' 
 #' @param sframe Sample frame for points as an sf object. If the design is stratified,
 #'   unequal probability, proportional probability or has legacy sites, then sample frame 
@@ -33,9 +34,10 @@
 #' @param warn.df A data frame containing messages warning of potential issues.
 #'   Used for internal collection of messages only.
 #'   
-#' @return rslts A list consisting of elements for base sites, over.n  sites (if any) and
-#'   over.near sites (if any) as sf objects containing the sites selected that meet the 
-#'   survey design requirements and logical value for warning indicator and data.frame
+#' @return rslts A list consisting of an sf object for base sites, an sf object of 
+#'   over.n sites (NULL if none) an sf object of over.near sites (NULL if none) where
+#'   the sf objects containing the sites selected that meet the survey design requirements 
+#'   and warn.ind - logical value for warning indicator and warn.df - a data.frame
 #'   for warning messages.
 #'
 #' @section Other functions required:
@@ -102,16 +104,7 @@ grtspts_stratum <- function(stratum, dsgn, sframe, maxtry = 10, startlev = NULL,
     warn.df$stratum <- ifelse(is.na(warn.df$stratum), stratum, warn.df$stratum)
   }
   
-  # If legacy sites, adjust inclusion probabilities
-  if(!is.null(dsgn[["legacy_var"]])){
-    sftmp$ip <- grtspts_ipleg(sftmp$ip_init, sftmp$legacy)
-    # accumulate warning messages if any
-    if(ip$warn.ind) {
-      warn.ind <- ip$warn.ind
-      warn.df <- ip$warn.df
-      warn.df$stratum <- ifelse(is.na(warn.df$stratum), stratum, warn.df$stratum)
-    }
-  }
+
   
   # Create hierarchical grid based on number of levels required
   grts_grid <- numLevels(n.total, sftmp, startlev, maxlev,
@@ -122,15 +115,23 @@ grtspts_stratum <- function(stratum, dsgn, sframe, maxtry = 10, startlev = NULL,
     warn.df$stratum <- ifelse(is.na(warn.df$stratum), stratum, warn.df$stratum)
   }
   
-  # If legacy sites, adjust cell weights to use legacy inclusion probabilities
+  # If legacy sites, adjust inclusion probabilities adjust cell weights to use 
+  # legacy inclusion probabilities
   if(!is.null(dsgn[["legacy_var"]])) {
+    sftmp$ip <- grtspts_ipleg(sftmp$ip_init, sftmp$legacy)
+    # accumulate warning messages if any
+    if(ip$warn.ind) {
+      warn.ind <- ip$warn.ind
+      warn.df <- ip$warn.df
+      warn.df$stratum <- ifelse(is.na(warn.df$stratum), stratum, warn.df$stratum)
+      }
     grts_grid$cel.wt <- cellWeight(grts_grid$xc, grts_grid$yc, 
                                    grts_grid$dx, grts_grid$dy, sftmp)
   }
   
   # select sites if no minimum distance between sites
   if(is.null(dsgn[["mindis"]])) {
-    sites <- grtspts_select2(sftmp, grts_grid, samplesize = n.total, 
+    sites <- grtspts_select(sftmp, grts_grid, samplesize = n.total, 
                              over.near = dsgn[["over.near"]][[stratum]],
                              warn.ind = warn.ind, warn.df = warn.df)
   }
@@ -138,7 +139,7 @@ grtspts_stratum <- function(stratum, dsgn, sframe, maxtry = 10, startlev = NULL,
   if(!is.null(dsgn[["mindis"]])) {
     sites <- grtspts_mindis(dsgn[["mindis"]], sftmp, grts_grid, samplesize = n.total, 
                             over = dsgn[["over.near"]][[stratum]],
-                            stratum = stratum, legacy_var = legacy_var,
+                            stratum = stratum, legacy_var = dsgn[["legacy_var"]],
                             maxtry = maxtry, warn.ind = warn.ind, warn.df = warn.df)
   }
   # check for warning messages
@@ -171,7 +172,7 @@ grtspts_stratum <- function(stratum, dsgn, sframe, maxtry = 10, startlev = NULL,
   sites.base <- subset(sites.base, select = tmp[!(tmp %in% c("ip_init", "geometry"))])
   
   # Do same for sites.over if any
-  if(!is.null(dsgn[["over.near"]][[stratum]])) {
+  if(!is.null(dsgn[["over.n"]][[stratum]])) {
     sites.over$ip <- sites.over$ip_init
     sites.over$wgt <- 1/sites.over$ip
     tmp <- names(sites.over)
