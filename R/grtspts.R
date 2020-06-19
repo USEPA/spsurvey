@@ -43,9 +43,7 @@
 #'
 #' @param over.near Numeric value specifying the number of nearby points to select as
 #'   possible replacement sites if a site cannot be sampled. Default is NULL. If specified,
-#'   possible values are 1, 2 or 3.
-#'   
-#' @param panel To be defined. Default is NULL.
+#'   must be integer from 1 to 10.
 #'  
 #' @param stratum_var Character string containing the name of the column from
 #'   sframe that identifies stratum membership for each element in the frame.
@@ -74,7 +72,7 @@
 #'
 #' @param SiteBegin Number to use for first site in the design.  Default is 1.
 #'
-#' @param maxtry Number of maximum attempts to ensure minimum distance between sites.
+#' @param maxtry Number of maximum attempts to ensure minimum distance (mindis) between sites.
 #'   Default is 10.
 #'
 #' @param startlev Initial number of hierarchical levels to use for the GRTS
@@ -87,7 +85,8 @@
 #'
 #' @return sites A list of three sf objects containing the base sites (sites.base),
 #'   the over.n sites (sites.over) and the over.near sites (sites.near) selected 
-#'   that meet the survey design requirements.
+#'   that meet the survey design requirementse plus a design list object that documents
+#'   the survey design used.
 #'
 #' @section Other functions required:
 #'   \describe{
@@ -108,21 +107,23 @@
 #################################################################################
 
 grtspts <- function(sframe, stratum = NULL, seltype = "equal", nsamp, caty.n = NULL, 
-                     over.n = NULL, over.near = NULL, panel = NULL, stratum_var = NULL, 
+                     over.n = NULL, over.near = NULL, stratum_var = NULL, 
                      caty_var = NULL, aux_var = NULL, legacy_var = NULL, mindis = NULL, 
                      DesignID = "Site", SiteBegin = 1,  maxtry = 10, 
                      startlev = NULL, maxlev = 11) {
 
-
   # check input. If errors, dsgn_check will stop grtspts and report errors.
-#  dsgn_check(sframe, seltype, nsamp, caty.n, over.n, over.near, panel, stratum_var, 
-#             caty_var, aux_var, legacy_var, mindis, DesignID, SiteBegin, maxtry,
-#             startlev, maxlev)
+  dsgn_check(sframe, stratum, seltype, nsamp, caty.n, over.n, over.near, stratum_var, 
+             caty_var, aux_var, legacy_var, mindis, DesignID, SiteBegin, maxtry,
+             startlev, maxlev)
 
   # Create warning indicator and data frame to collect all potential issues during
   # sample selection
   warn.ind <- FALSE
   warn.df <- data.frame(stratum = "Stratum", func = "Calling Function", warn = "Message")
+  
+  # preserve original sframe names
+  sframe.names <- names(sframe)
 
   ## Create variables in sample frame if needed.
   # Create unique ID values and save variable names in sample frame provided on input
@@ -136,11 +137,12 @@ grtspts <- function(sframe, stratum = NULL, seltype = "equal", nsamp, caty.n = N
     sframe$stratum <- "None"
     stratum <- c("None")
   } else {
-    sframe$stratum <- sframe[[stratum_var]]
+    # ensure class for stratum variable is character and assign to stratum
+    sframe$stratum <- as.character(sframe[[stratum_var]])
   }
 
   # set caty, aux and legacy variables in sample frame if needed
-  if(!is.null(caty_var)) sframe$caty <- sframe[[caty_var]]
+  if(!is.null(caty_var)) sframe$caty <- as.character(sframe[[caty_var]])
   if(!is.null(aux_var)) sframe$aux <- sframe[[aux_var]]
   if(!is.null(legacy_var)) sframe$legacy <- sframe[[legacy_var]]
   
@@ -195,9 +197,6 @@ grtspts <- function(sframe, stratum = NULL, seltype = "equal", nsamp, caty.n = N
   names(tmp) <- stratum
   dsgn$over.near <- tmp
   
-  # panel
-  dsgn$panel <- panel
-  
   # mindis
   dsgn$mindis <- mindis
   
@@ -227,26 +226,66 @@ grtspts <- function(sframe, stratum = NULL, seltype = "equal", nsamp, caty.n = N
                                    format(SiteBegin - 1 + 1:nrow(sites.base), sep="")))
   # create siteID for over.n sites if any
   if(!is.null(over.n)) {
-  sites.over$siteID <- gsub(" ","0", paste0(DesignID,"-", 
-                                            format(nrow(sites.base) + 1:nrow(sites.over), 
-                                                   sep="")))
-  }
-  # create siteID for over.near sites if any
-  if(!is.null(over.near)) {
-    ntmp <- sum(nrow(sites.base), nrow(sites.over), na.rm = TRUE)
-    sites.near$siteID <- gsub(" ","0", paste0(DesignID,"-", 
-                                              format(ntmp + 1:nrow(sites.near), sep="")))
+    jnk <- max(nchar(sites.base$siteID))
+    nlast <- max(as.numeric(substr(sites.base$siteID, nchar(DesignID)+2, jnk)))
+    sites.over$siteID <- gsub(" ","0", 
+                              paste0(DesignID,"-", format(nlast + 1:nrow(sites.over), sep="")))
   }
   
-  # if over.near sample sites, assign base siteIDs to the replacement sites
+  # if over.near sample sites, assign base ids to the replacement sites. then add siteIDs
   if(!is.null(over.near)) {
     tst <- match(sites.near$replsite, sites.base$id, nomatch = 0)
     sites.near$replsite[tst > 0] <- sites.base$siteID[tst]
     tst <- match(sites.near$replsite, sites.over$id, nomatch = 0)
     sites.near$replsite[tst > 0] <- sites.over$siteID[tst]
+    
+    # sort by id so that sites.near in same order as sites in sites.base and sites.over
+    n.use <- length(unique(sites.near$siteuse))
+    # set  possible levels for siteuse
+    names.siteuse <- c("First", "Second", "Third", "Fourth", "Fifth", "Six",
+                       "Seventh", "Eigth", "Ninth", "Tenth")
+    tmp <- factor(sites.near$siteuse, levels = names.siteuse[1:n.use], ordered = TRUE)
+    sites.near <- sites.near[order(sites.near$replsite, tmp),]
+    # assign siteIDs
+    jnk <- max(nchar(sites.base$siteID), nchar(sites.over$siteID), na.rm = TRUE)
+    nlast <- max(as.numeric(substr(sites.base$siteID, nchar(DesignID)+2, jnk)),
+                 as.numeric(substr(sites.over$siteID, nchar(DesignID)+2, jnk)))
+    sites.near$siteID <- gsub(" ","0", 
+                              paste0(DesignID,"-", format(nlast + 1:nrow(sites.near), sep="")))
   }
   
-  sites <- list(sites.base = sites.base, sites.over = sites.over, sites.near = sites.near)
+  # reorder sf object variables by first specifying design names excluding unique 
+  # feature ID id as it is internal
+  dsgn.names <- c("siteID", "replsite", "siteuse", "stratum", "wgt", "ip", "caty", "aux",
+                  "legacy")
+  # check what design variables are present in sf objects and add if missing
+  tmp.names <- names(sites.base)
+  add.names <- dsgn.names[!(dsgn.names %in% tmp.names)]
+  if( !is.null(add.names)) {
+    tmp <- matrix(NA, nrow = nrow(sites.base), ncol = length(add.names), 
+                  dimnames = list(NULL, add.names))
+    sites.base <- cbind(sites.base, tmp)
+    if(!is.null(sites.over)){
+      tmp <- matrix(NA, nrow = nrow(sites.over), ncol = length(add.names), 
+                  dimnames = list(NULL, add.names))
+      sites.over <- cbind(sites.over, tmp)
+    }
+    if(!is.null(sites.near)){
+      tmp <- matrix(NA, nrow = nrow(sites.near), ncol = length(add.names), 
+                  dimnames = list(NULL, add.names))
+      sites.near <- cbind(sites.near, tmp)
+    }
+  }
+  # check if any dsgn.names occur in sframe names and drop in sframe names if duplicated
+  sframe.names <- sframe.names[!(sframe.names %in% dsgn.names)]
+  # use subset to reorder variables and drop internal variables and duplicated variables
+  sites.base <- subset(sites.base, select = c(dsgn.names, sframe.names))
+  if(!is.null(sites.over)) sites.over <- subset(sites.over, select = c(dsgn.names, sframe.names))
+  if(!is.null(sites.near)) sites.near <- subset(sites.near, select = c(dsgn.names, sframe.names))
+  
+  # create output list
+  sites <- list(sites.base = sites.base, sites.over = sites.over, sites.near = sites.near,
+                dsgn = dsgn)
   
   # As necessary, output a message indicating that warning messages were generated
   # during execution of the program

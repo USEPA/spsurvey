@@ -158,6 +158,7 @@ grtspts_stratum <- function(stratum, dsgn, sframe, maxtry = 10, startlev = NULL,
   sites.over <- NULL
   if(!is.null(dsgn[["over.n"]][[stratum]])) {
     sites.over <- sites$sites.base[(n.base + 1):n.total,]
+    sites.over$siteuse <- "Over"
   }
   # save over.near sites
   sites.near <- NULL

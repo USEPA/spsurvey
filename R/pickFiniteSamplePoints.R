@@ -19,8 +19,8 @@
 #' @param sfobject The sf point object.
 #' 
 #' @param over.near number of nearby sites to be used as potential replacement(s) 
-#'       if a site cannot be sampled for any reason. If specified, must be 1, 2 or 3.
-#'       Default is NULL.
+#'       if a site cannot be sampled for any reason. If specified, must be integer
+#'       from 1 to 10. Default is NULL.
 #'
 #' @param warn.ind  A logical value where TRUE indicates a warning message.
 #'   Used for internal collection of messages only.
@@ -34,7 +34,7 @@
 #'   all values equal to NA. Second item is a list of three vectors: id.near - vector of feature
 #'   IDs for replacement sites within each cell if any requested (NULL otherwise), 
 #'   siteuse.near - character vector designating order replacement sites will be used (potential
-#'   values are First, Second, Third, Fourth, Fifth), replsite.near - vector same length as id.near
+#'   values are First, Second, Third, ..., Tenth), replsite.near - vector same length as id.near
 #'   with feature IDs of id that replacement sites may be used to replace sites that cannot be
 #'   sampled. Last two items in the list are warn.ind that is logical value indicating whether
 #'   warning messages were created during execution of function and warn.df as a data.frame 
@@ -49,6 +49,10 @@
 
 pickFiniteSamplePoints <- function(rdx, xc, yc, dx, dy, sfobject, over.near = NULL,
                                    warn.ind = warn.ind, warn.df = warn.df) {
+  
+  # set names for siteuse
+  names.siteuse <- c("First", "Second", "Third", "Fourth", "Fifth", "Six",
+                     "Seventh", "Eigth", "Ninth", "Tenth")
 
   # Determine feature IDs for selected sample points
 
@@ -84,8 +88,12 @@ pickFiniteSamplePoints <- function(rdx, xc, yc, dx, dy, sfobject, over.near = NU
     
     # select sites required from available points in cell
     if(length(sfcell$id) > 1) {
-      tmp <- sample(sfcell$id, n.select, prob = sfcell$ip)
-      if(all(!(tmp %in% id.ip1))) tmp <- sample(sfcell$id, n.select, prob = sfcell$ip)
+      tmp <- NULL
+      keep <- sfcell$ip == 1
+      if(nip1 > 0) tmp <- sfcell$id[keep]
+      if(n.select - nip1 > 1) {
+        tmp <- c(tmp, sample(sfcell$id[!keep], n.select - nip1, prob = sfcell$ip[!keep]))
+      } else {tmp <- c(tmp, sfcell$id[!keep])}
     } else { tmp <- sfcell$id}
     
     # if n.select == npt.sample + over.near - Great!
@@ -102,7 +110,7 @@ pickFiniteSamplePoints <- function(rdx, xc, yc, dx, dy, sfobject, over.near = NU
       if(n.over > 0) {
         id.near <- c(id.near, rep(tmp[!(tmp %in% tmp.nsamp)][1:n.over], npt.sample))
         siteuse.near <- c(siteuse.near, 
-                          rep(c("First", "Second", "Third", "Fourth", "Fifth")[1:n.over], 
+                          rep(names.siteuse[1:n.over], 
                               npt.sample))
         replsite.near <- c(replsite.near, rep(tmp.nsamp, each = n.over))
       }
