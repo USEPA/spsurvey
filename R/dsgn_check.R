@@ -152,34 +152,41 @@ dsgn_check <- function(sframe, stratum, seltype, nsamp, caty.n, over.n, over.nea
   }
   
   # check caty.n
-  if(!is.list(caty.n)) {
-    if(any(caty.n %in% unique(sframe[[caty_var]]) == FALSE)) {
-      stop.ind <-  TRUE
-      stop.mess <- paste0("Not all caty.n values are in sample frame.\n")
-      stop.df <- rbind(stop.df, data.frame(func = I(fname), I(stop.mess)))
-    }
-    if(nsamp != sum(caty.n)) {
-      stop.ind <-  TRUE
-      stop.mess <- paste0("Sum of caty.n values do not equal nsamp.\n")
-      stop.df <- rbind(stop.df, data.frame(func = I(fname), I(stop.mess)))
-    }
-  } 
+  if(!is.null(caty.n)) {
+    if(!is.list(caty.n)) {
+      if(any(caty.n %in% unique(sframe[[caty_var]]) == FALSE)) {
+        stop.ind <-  TRUE
+        stop.mess <- paste0("Not all caty.n values are in sample frame.\n")
+        stop.df <- rbind(stop.df, data.frame(func = I(fname), I(stop.mess)))
+      }
+      if(nsamp != sum(caty.n)) {
+        stop.ind <-  TRUE
+        stop.mess <- paste0("Sum of caty.n values do not equal nsamp.\n")
+        stop.df <- rbind(stop.df, data.frame(func = I(fname), I(stop.mess)))
+      }
+    } 
+  }
   
   # check over.n
-  if(!is.list(over.n)) {
-    if(any(over.n < 0)) {
-      stop.ind <-  TRUE
-      stop.mess <- paste0("over.n values must be zero or positive.\n")
-      stop.df <- rbind(stop.df, data.frame(func = I(fname), I(stop.mess)))
+  if(!is.null(caty.n)) {
+    if(!is.list(over.n)) {
+      if(any(over.n < 0)) {
+        stop.ind <-  TRUE
+        stop.mess <- paste0("over.n values must be zero or positive.\n")
+        stop.df <- rbind(stop.df, data.frame(func = I(fname), I(stop.mess)))
+      }
     }
   }
   
+  
 
   # check over.near
-  if(!(over.near %in% 1:10)) {
-    stop.ind <-  TRUE
-    stop.mess <- paste0("over.near must be from 1 to 10.\n")
-    stop.df <- rbind(stop.df, data.frame(func = I(fname), I(stop.mess)))
+  if(!is.null(over.near)) {
+    if(!(over.near %in% 1:10)) {
+      stop.ind <-  TRUE
+      stop.mess <- paste0("over.near must be from 1 to 10.\n")
+      stop.df <- rbind(stop.df, data.frame(func = I(fname), I(stop.mess)))
+    }
   }
   
 
