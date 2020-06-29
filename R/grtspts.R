@@ -35,11 +35,16 @@
 #'   List must be in same order as the "stratum" variable. For each stratum, the sum of
 #'   caty.n values must equal nsamp for that stratum. Default is NULL.
 #'   
-#' @param over.n Numeric value specifying the over sample size requested. Default in NULL.
-#'   If design is stratified, then either a named character vector with the over sample size 
-#'   for each category where categories are the same for all strata or a list of character 
-#'   vectors with the over sample size. List must be in same order as the "stratum" variable.
-#'   Default is NULL.
+#' @param over.n If seltype is "equal" and is not stratified, a numeric value specifying the 
+#'   over sample size requested. If seltype is "equal" and is stratified either a numeric value
+#'   specifying the over sample size that will be applied to each stratum or a numeric vector
+#'   specifying the over sample size for each stratum listed in same order as "strata".  
+#'   If seltype is "unequal" and is not stratified, a named character vector with the over sample size 
+#'   for each category where names are the same as "caty.n". If seltype is "unequal" and is 
+#'   stratified,  either a numeric vector specifying the over sample size for each category in
+#'   "caty.n" that will be applied to each stratum or a list of named numeric vectors with 
+#'   the over sample size for each "caty.n" category for each stratum. List must be in same order
+#'   as the "stratum" variable order. Default is NULL.
 #'
 #' @param over.near Numeric value specifying the number of nearby points to select as
 #'   possible replacement sites if a site cannot be sampled. Default is NULL. If specified,

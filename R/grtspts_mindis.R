@@ -56,8 +56,8 @@
 grtspts_mindis <- function(mindis, sframe, grts_grid, samplesize, over.near = NULL, maxtry = 10,
                            stratum, legacy_var = NULL, warn.ind = NULL, warn.df = NULL) {
 
-  # save current ip as it will not change due to mindis site selection.
-  # sframe$ip_init <- sframe$ip
+  # set sites.near to NULL. If required created by grtspts_select
+  sites.near <- NULL
 
   # select initial set of sites
   sites <- grtspts_select(sframe, grts_grid, samplesize = samplesize, over.near = over.near,
@@ -195,8 +195,10 @@ grtspts_mindis <- function(mindis, sframe, grts_grid, samplesize, over.near = NU
   # drop internal variables
   tmp <- names(sites.base)
   sites.base <- subset(sites.base, select = tmp[!(tmp %in% c("probdis", "geometry"))])
-  tmp <- names(sites.near)
-  sites.near <- subset(sites.near, select = tmp[!(tmp %in% c("probdis", "geometry"))])
+  if(!is.null(over.near)){
+    tmp <- names(sites.near)
+    sites.near <- subset(sites.near, select = tmp[!(tmp %in% c("probdis", "geometry"))])
+  }
 
   sites <- list(sites.base = sites.base, sites.near = sites.near,
                 warn.ind = warn.ind, warn.df = warn.df)

@@ -138,7 +138,7 @@ grtspts_stratum <- function(stratum, dsgn, sframe, maxtry = 10, startlev = NULL,
   # If minimum distance between sites, select sites
   if(!is.null(dsgn[["mindis"]])) {
     sites <- grtspts_mindis(dsgn[["mindis"]], sftmp, grts_grid, samplesize = n.total, 
-                            over = dsgn[["over.near"]][[stratum]],
+                            over.near = dsgn[["over.near"]][[stratum]],
                             stratum = stratum, legacy_var = dsgn[["legacy_var"]],
                             maxtry = maxtry, warn.ind = warn.ind, warn.df = warn.df)
   }
