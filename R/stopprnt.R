@@ -22,9 +22,10 @@
 
 stopprnt <- function(stop.df=get("stop.df", envir = .GlobalEnv),
                      m = 1:nrow(stop.df)) {
+  cat(paste("Input      ", "Error Message\n"))
 
   for(i in m) {
-    cat(paste("Issue:", stop.df$stop.mess[i]))
+    cat(paste(stop.df[i, 1], ": ", stop.df[i, 2], "\n"))
   }
 
   invisible(NULL)

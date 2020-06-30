@@ -28,12 +28,13 @@
 #'   If sample is stratified, then numeric vector with same length as "stratum" and sample sizes
 #'   required in same order as strata in "stratum". Must be specified.
 #' 
-#' @param caty.n If seltype is "unequal", a named character vector with the expected sample size
-#'   for each category specified in variable caty_var. If design is stratified, then either
-#'   a named character vector with the expected sample size for each category where categories 
-#'   are the same for all strata or a list of character vectors with the expected sample size.
-#'   List must be in same order as the "stratum" variable. For each stratum, the sum of
-#'   caty.n values must equal nsamp for that stratum. Default is NULL.
+#' @param caty.n If design is not stratified and seltype is "unequal", a named character vector
+#'   with the expected sample size for each category specified in variable caty_var. If design
+#'   is stratified, then either a named character vector with the expected sample size for each
+#'   category for all strata or if the expected sample size for each category may differ, then
+#'   a list of named character vectors with the expected sample size for each category in the
+#'   stratum. The list must be in same order as the "stratum" variable. For each stratum, 
+#'   the sum of caty.n values must equal nsamp for that stratum. Default is NULL.
 #'   
 #' @param over.n If seltype is "equal" and is not stratified, a numeric value specifying the 
 #'   over sample size requested. If seltype is "equal" and is stratified either a numeric value
