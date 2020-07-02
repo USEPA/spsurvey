@@ -155,17 +155,15 @@ grtspts <- function(sframe, stratum = NULL, seltype = "equal", nsamp, caty.n = N
   ## Create a dsgn list object
   # variable assignments to dsgn list object
   dsgn <- list(stratum_var = stratum_var, caty_var = caty_var, aux_var = aux_var,
-               legacy_var = legacy_var)
-  
-  # stratum
-  dsgn$stratum <- stratum
+               legacy_var = legacy_var, stratum = stratum, seltype = NULL,
+               nsamp = NULL, caty.n = NULL, over.n = NULL, over.near = NULL, mindis = mindis)
   
   # seltype
   if(length(seltype) == length(stratum)) {
     dsgn$seltype <- seltype
     names(dsgn$seltype) <- stratum
   } else {
-    tmp <- lapply(stratum, function(x, seltype) { x = seltype}, seltype)
+    tmp <- sapply(stratum, function(x, seltype) { x = seltype}, seltype)
     names(tmp) <- stratum
     dsgn$seltype <- tmp
   }
@@ -175,7 +173,7 @@ grtspts <- function(sframe, stratum = NULL, seltype = "equal", nsamp, caty.n = N
     dsgn$nsamp <- nsamp
     names(dsgn$nsamp) <- stratum
   } else {
-    tmp <- lapply(stratum, function(x, nsamp) { x = nsamp}, nsamp)
+    tmp <- sapply(stratum, function(x, nsamp) { x = nsamp}, nsamp)
     names(tmp) <- stratum
     dsgn$nsamp <- tmp
   }
@@ -190,21 +188,22 @@ grtspts <- function(sframe, stratum = NULL, seltype = "equal", nsamp, caty.n = N
   }
   
   # over.n
-  if(is.list(over.n)) {
-    dsgn$over.n <- over.n
-  } else {
-    tmp <- lapply(stratum, function(x, over.n) { x = over.n}, over.n)
-    names(tmp) <- stratum
-    dsgn$over.n <- tmp
+  if(!is.null(over.n)) {
+    if(is.list(over.n)) {
+      dsgn$over.n <- over.n
+    } else {
+      tmp <- lapply(stratum, function(x, over.n) { x = over.n}, over.n)
+      names(tmp) <- stratum
+      dsgn$over.n <- tmp
+    }
   }
   
   # over.near
-  tmp <- lapply(stratum, function(x, over.near) { x = over.near}, over.near)
-  names(tmp) <- stratum
-  dsgn$over.near <- tmp
-  
-  # mindis
-  dsgn$mindis <- mindis
+  if(!is.null(over.near)) {
+    tmp <- sapply(stratum, function(x, over.near) { x = over.near}, over.near)
+    names(tmp) <- stratum
+    dsgn$over.near <- tmp
+  }
   
   ## select sites for each stratum
   rslts <- lapply(dsgn$stratum, grtspts_stratum, dsgn, sframe, maxtry = maxtry,
