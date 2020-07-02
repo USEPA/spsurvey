@@ -94,7 +94,7 @@ pickFiniteSamplePoints <- function(rdx, xc, yc, dx, dy, sfobject, over.near = NU
       if(nip1 > 0) tmp <- sfcell$id[keep]
       # select any additional sites that have ip less than 1 if any required.
       if(n.select - nip1 >= 1) {
-        if(nrow(sfcell) > 1) {
+        if(nrow(sfcell[!keep,]) > 1) {
           tmp <- c(tmp, sample(sfcell$id[!keep], n.select - nip1, prob = sfcell$ip[!keep]))
         } else {
           tmp <- c(tmp, sfcell$id[!keep])

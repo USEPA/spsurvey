@@ -178,14 +178,14 @@ dsgn_check <- function(sframe, stratum, seltype, nsamp, caty.n, over.n, over.nea
   # check over.n
   if(!is.null(over.n)){
     if(is.null(stratum) | length(stratum) == 1) {
-      if( seltype %in% c("equal", "proportional")) {
+      if( any(seltype %in% c("equal", "proportional"))) {
         if(over.n < 0){
           stop.ind <-  TRUE
           stop.mess <- paste0("over.n value must be zero or positive.")
           stop.df <- rbind(stop.df, data.frame(func = I("over.n"), I(stop.mess)))
         }
       }
-      if(seltype == "unequal"){
+      if(any(seltype == "unequal")){
         if(!is.null(caty.n)) {
           if(!is.list(over.n)) {
             if(any(over.n < 0)) {
@@ -198,7 +198,7 @@ dsgn_check <- function(sframe, stratum, seltype, nsamp, caty.n, over.n, over.nea
       }
     }
     if(length(stratum) > 1) {
-      if( seltype %in% c("equal", "proportional")) {
+      if( any(seltype %in% c("equal", "proportional", "unequal"))) {
         if(!is.list(over.n)) {
           if(any(over.n < 0)) {
             stop.ind <-  TRUE
@@ -216,16 +216,13 @@ dsgn_check <- function(sframe, stratum, seltype, nsamp, caty.n, over.n, over.nea
           }
         }
       }
-      if(seltype == "unequal"){
-        
-      }
     }
   }
 
 
   # check over.near
   if(!is.null(over.near)) {
-    if(!(over.near %in% 1:10)) {
+    if(!(any(over.near %in% 1:10))) {
       stop.ind <-  TRUE
       stop.mess <- paste0("over.near must be from 1 to 10.\n")
       stop.df <- rbind(stop.df, data.frame(func = I("over.near"), I(stop.mess)))
