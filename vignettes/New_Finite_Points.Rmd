@@ -1,0 +1,168 @@
+---
+title: "New_Finite_Points"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{New_Finite_Points}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>", 
+  warning = FALSE, 
+  message = FALSE
+)
+set.seed(1)
+```
+
+# Finite Designs
+
+In this vignette, you will learn how to:
+
+* Select a variety of probability samples using the GRTS algorithm.
+* Analyze those probability samples.
+
+First, you will load the `spsurvey` package:
+```{r setup}
+# loading spsurvey
+library(spsurvey)
+```
+
+You will explore the NLA Lakes 2007 dataset throughout this vignette. More information can be found using `?NLA_2007`.
+```{r load NLA}
+# loading the data
+data(NLA_2007)
+
+# printing the first few rows
+head(NLA_2007)
+```
+
+Beforing moving forward, we must store this data as an `sf` object. For more information about converting your data to an `sf` object, please visit the INSERT NAME vignette using INSERT VIGNETTE ACCESS CODE.
+
+```{r}
+# storing the data frame as an sf object
+NLA_2007 <- st_as_sf(NLA_2007, coords = c("xcoord", "ycoord"), crs = 5069)
+```
+
+You will only a few of the column variables throughout this vignette. To subset the data, run:
+```{r}
+# subsetting the data to include relevant columns
+NLA_2007 <- NLA_2007[, c("siteID", "wgt", "Lake_Origin", "Chla_cond", "Chla")]
+```
+
+
+```{r, include = FALSE}
+# this will get taken out once I realize how to use the proper functions
+pathgrts <- "C:/Users/mdumelle/Documents/grts_dev/grts_pts_test/test_07032020/"
+source(paste0(pathgrts, "grtspts.R"))
+source(paste0(pathgrts, "grtspts_returnused.R"))
+source(paste0(pathgrts, "grtspts_ip.R"))
+source(paste0(pathgrts, "grtspts_stratum.R"))
+source(paste0(pathgrts, "grtspts_ipleg.R"))
+source(paste0(pathgrts, "grtspts_select.R"))
+source(paste0(pathgrts, "grtspts_mindis.R"))
+source(paste0(pathgrts, "make_grid.R"))
+source(paste0(pathgrts, "numLevels.R"))
+source(paste0(pathgrts, "cellWeight.R"))
+source(paste0(pathgrts, "dsgn_check.R"))
+source(paste0(pathgrts, "stopprnt.R"))
+source(paste0(pathgrts, "warnprnt.R"))
+source(paste0(pathgrts, "constructAddr.R"))
+source(paste0(pathgrts, "ranho.R"))
+source(paste0(pathgrts, "pickGridCells.R"))
+source(paste0(pathgrts, "pickFiniteSamplePoints.R"))
+source(paste0(pathgrts, "replace_sites.R"))
+```
+
+## Using the GRTS Algorithm
+
+
+The GRTS algorithm is a flexible tool you can use for a variety of contexts. You will first learn a variety of selection methods for single-strata designs:
+
+* Equal probability of selection.
+* Unequal probability of selection.
+* Probability of selection proportional to an auxiliary variable.
+
+You will then use the same selection methods for stratified designs.  Then, you use some of the additional features available in the GRTS algorithm to learn how to:
+
+* Incorporate legacy sites (existing sites).
+* Ensure a minimum distance between any two sites.
+* Select replacement sites in the event that you are unable to visit originally sampled sites.
+
+### Single-Strata Designs
+
+#### Equal Probability of Selection
+
+To select an equal proability GRTS sample, run:
+```{r}
+# equal probability design
+eqprob <- grtspts(sframe = NLA_2007, seltype = "equal", nsamp = 30)
+```
+The function arguments are:
+
+* `sframe` the `sf` object
+* `seltype` the type of selection. `seltype = "equal"` is the default, so this argument did not need to be explicitly specified.
+* `nsamp` the desired sample size
+
+The output is a list containing two objects: `sites:base` and `dsgn`. `sites:base` is an `sf` object containing information about the sample.
+```{r}
+# storing the sites:base information
+eqprob_sites <- eqprob$sites.base
+# printing the first few rows
+eqprob_sites
+```
+
+* The rownames of `eqprob_sites` match the rows locations from the original `sf` object. 
+* `siteID` is the ID used to identify the ordering of sites in the GRTS sample.  This is a different variable than the `siteID` from the original `sf` object. These indices can be accessed with and used to recover the original site ID's using 
+`NLA_2007[as.numeric(rownames(eqprob_sites)), "siteID"]`
+* `replsite` is NA for all rows because we did not implement the replacement site option.  
+* `siteuse` is `"Base"` for all rows because these samples are all part of the base sample (i.e. there are no replacement sites)
+* `stratum` equals `None` for all rows because this is not a stratified design
+* `wgt` is the vector of probability weights indicating the number of population units the site represents (equal to $N/n$, where $N$ is the number of population units and $n$ is the sample size). This is a different variable than the `wgt` from the original `sf` object.
+* `ip` is the vector of inclusion probabilities indicating the probability of each unit being selected in the design (equal to $n/N$)
+* `caty` equals `None` for all rows because this design does not incorporate unequal selection probabilities
+* `aux` is NA for all rows because we did not implement the auxiliary site option for proportional sampling. 
+* `legacy` is NA for all rows because we did not implement the legacy site option.  
+* The rest of the variables are from the original `sf` object.
+
+`dsgn` is a list containing information about the design specificiations. You should use this to verify the algorithm used reflects the intended design.
+
+```{r}
+# storing the design information
+eqprob_dsgn <- eqprob$dsgn
+
+# printing the output
+eqprob_dsgn
+```
+
+* `stratum_var` The stratum variable in `eqprob_sites` indicating the name of the stratum variable.
+* `caty_var`: The unequal probability variable in `eqprob_sites`.
+* `aux_var` The auxiliary variabile `eqprob_sites` for proportional sampling.
+* `legacy_var` The legacy variable in `eqprob_sites`.
+* `stratum` The names of the strata
+* `seltype` The selection type for each strata
+* `nsamp` The sample size for each strata
+* `caty.n` The expected sample size for each unequal probability category within each strata
+* `over.n` The number of replacement sites using method1 for each strata
+* `over.near`The number of replacement sites using method2 for each strata
+* `mindis` The minimum distance between sites for each strata
+
+### Unequal Probability of Selection
+
+Suppose we want to sample natural lakes twice as often as man-made lakes. To select this unequal probability GRTS sample, run:
+```{r}
+caty.n <- c(20, 10)
+names(caty.n) <- c("Natural", "Man-Made")
+uneqprob <- grtspts(sframe = NLA_2007, seltype = "unequal", 
+                          nsamp = 30, caty_var = "Lake_Origin", 
+                          caty.n = caty.n)
+```
+
+
+```{r, include = FALSE}
+# need to do define arguments to grtspts from previous example before proceeding further here
+uneqprob_sites <- uneqprob$sites.base
+```
+
