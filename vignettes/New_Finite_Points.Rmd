@@ -1,5 +1,5 @@
 ---
-title: "New_Finite_Points"
+title: "Selecting and Analyzing Finite Population Designs using the spsurvey R package"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{New_Finite_Points}
@@ -149,20 +149,116 @@ eqprob_dsgn
 * `over.near`The number of replacement sites using method2 for each strata
 * `mindis` The minimum distance between sites for each strata
 
-### Unequal Probability of Selection
+#### Unequal Probability of Selection
 
-Suppose we want to sample natural lakes twice as often as man-made lakes. To select this unequal probability GRTS sample, run:
+Suppose we want to sample natural lakes twice as often as man-made lakes. To select an unequal probability GRTS sample, run:
 ```{r}
+# expected sample size for each group
 caty.n <- c(20, 10)
+# names of the categories
 names(caty.n) <- c("Natural", "Man-Made")
+# selecting the unequal probability sample
 uneqprob <- grtspts(sframe = NLA_2007, seltype = "unequal", 
                           nsamp = 30, caty_var = "Lake_Origin", 
                           caty.n = caty.n)
 ```
 
+The new function arguments are:
+
+* `caty_var`: A character vector specifying the name of the variable containing the unequal probability categories.
+* `caty.n`: A character vector specifying the number of expected samples for each unequal probability category. This vector must be named, and the names must match the names the `"Lake_Origin"` variable of `NLA_2007`.
+
+`uneqprob$sites.base` and `uneqprob$dsgn` contain the sampled site and design information, respectively.
+
+#### Probability of Selection Proportional to an Auxiliary Variable
+
+It is useful to sample proportional to a continuous auxiliary variable when there is a positive correlation between the response variable and the auxiliary variable because this can yield more precise estimates. To select a sample proportional to a continuous auxiliary variable, run:
 
 ```{r, include = FALSE}
-# need to do define arguments to grtspts from previous example before proceeding further here
-uneqprob_sites <- uneqprob$sites.base
+# selection probability proportional to the Chla variable 
+propprob <- grtspts(sframe = NLA_2007, seltype = "proportional", 
+                          nsamp = 30, aux_var = "Chla") 
+
 ```
 
+The new function arguments are:
+
+* `aux_var`: A categorical variable specifying the continuous variable in `NLA_2007` to use for proportional selection.
+
+`propprob$sites.base` and `propprob$dsgn` contain the sampled site and design information, respectively.
+
+### Stratified Designs
+
+#### Equal Probability of Selection
+
+To select a stratified GRTS sample with equal probabilities of selection within strata, run:
+
+```{r}
+# names of the strata
+strata <- c("Natural", "Man-Made")
+# sample sizes of the strata
+strata.n <- c(15, 15)
+# selecting the stratified, equal probability sample
+strat_eqprob <- grtspts(sframe = NLA_2007, stratum_var = "Lake_Origin",
+                        stratum = strata, seltype = "equal", 
+                        nsamp = strata.n)
+```
+
+The new function arguments are:
+
+* `stratum_var`: The name of the strata variable in `NLA_2007`.
+* `stratum`: The names of the strata in `"Lake_Origin"`
+* `nsamp`: A vector whose elements specify the sample size in each strata as defined by the `stratum` argument
+
+`strat_eqprob$sites.base` and `strat_eqprob$dsgn` contain the sampled site and design information, respectively.
+
+#### Unequal Probability of Selection
+
+To select a stratified GRTS sample with unequal (and possibly varying) unequal probabilities within strata, run:
+```{r}
+# names of the strata
+strata <- c("Natural", "Man-Made")
+# sample sizes of the strata
+strata.n <- c(15, 15)
+# expected number of samples in the natural strata for the Chla_cond variable
+natural_caty.n <- c(9, 6)
+# names of the Chla_cond variable
+names(natural_caty.n) <- c("Good", "Poor")
+# expected number of samples in the man-made strata for the Chla_cond variable
+manmade_caty.n <- c(7, 8)
+# names of the Chla_cond variable
+names(manmade_caty.n) <- c("Good", "Poor")
+# list of the unequal probability expected samples for each strata
+caty.n_list <- list(natural_caty.n, manmade_caty.n)
+# names of the strata
+names(caty.n_list) <- c("Natural", "Man-Made")
+# selecting the stratified, unequal probability sample
+strat_uneqprob <- grtspts(sframe = NLA_2007, stratum_var = "Lake_Origin",
+                        stratum = strata, seltype = "unequal", 
+                        nsamp = strata.n, caty_var = "Chla_cond", 
+                        caty.n = caty.n_list)
+```
+
+The new function arguments are:
+
+* `caty_var`: The variable in the dataset for the unequal probability categories
+* `caty.n`: A list whose names match the names of the `stratum` variable.  The elements of the list are vectors whose entries represent the expected sample sizes for the unequal probability classes within strata.  The names of these vectors must equal the names of the unqeual probability categories.
+
+`strat_uneqprob$sites.base` and `strat_uneqprob$dsgn` contain the sampled site and design information, respectively.
+
+#### Probability of Selection Proportional to an Auxiliary Variable
+
+To select a stratified GRTS sample where each strata is sampled proportionally to a continuous auxiliary variable, run:
+
+```{r}
+# selecting the stratified, proportional probability sample
+strat_propprob <-  grtspts(sframe = NLA_2007, stratum_var = "Lake_Origin",
+                        stratum = strata, seltype = "proportional", 
+                        nsamp = strata.n, aux_var = "Chla")
+```
+
+The new function arguments are:
+
+* `aux_var`: The auxiliary variable in the dataset
+
+`strat_propprob$sites.base` and `strat_propprob$dsgn` contain the sampled site and design information, respectively. It is not currently possible to choose different auxiliary variables for different strata.
