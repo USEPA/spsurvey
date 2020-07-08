@@ -262,3 +262,80 @@ The new function arguments are:
 * `aux_var`: The auxiliary variable in the dataset
 
 `strat_propprob$sites.base` and `strat_propprob$dsgn` contain the sampled site and design information, respectively. It is not currently possible to choose different auxiliary variables for different strata.
+
+### Incorporating Legacy Sites
+
+A legacy site is a site that must be selected in the sample.  Often, legacy sites are used because they have been previously sampled or their inclusion is important for a specific reason.  We focus on legacy sites that have been previously obtained as part of a probability sample. For purposes of illustration, we will add a new variable, `legacy`, which treats 10 randomly selected sites as legacy sites.
+
+```{r}
+NLA_2007$legacy <- FALSE
+NLA_2007$legacy[sample(1:nrow(NLA_2007), size = 10)] <- TRUE
+```
+
+To include legacy sites in an unstratified, unequal probability sample, run:
+```{r}
+eqprob_legacy <- grtspts(NLA_2007, seltype = "equal", nsamp = 30,
+                         legacy_var = "legacy")
+```
+
+The new function argument is `"legacy"`, which specifies the name of the legacy variable in the `sf` object. 
+
+`eqprob_legacy$sites.base` and `eqprob_legacy$dsgn` contain the sampled site and design information, respectively. It is possible you encounter a warning message saying `Of the x grid cells from which sample poits were selected, y (y/x%) of the cells contained more than one sample point.  This warning message exists because sometimes the requirement that legacy sites must be included prevents the sample from being as spread out as a sample from a standard GRTS algorithm.
+
+### Incorporating Minimum Distance
+
+The standard GRTS algorithm may select sites that are closer together than desired. You can adjust the algorithm to incorporate some minimum distance between sites.  Supppose we requires sites be 43,208.78 meters apart, which is 0.01 quantile of all possible distances between population units in the `NLA_2007` dataset.
+
+```{r}
+mindis <- 43208.78
+```
+
+To include the minimum distance requirement in an unstratified, equal probability design, run:
+```{r}
+eqprob_mindis <- grtspts(NLA_2007, seltype = "equal", nsamp = 30,
+                         mindis = mindis)
+```
+
+The new function argument is `mindis`, which specifies the minimum distance requirement.
+
+It is possible that the GRTS algorithm will not be able to ensure the minimum distance is met for all sampled sites.  In this context, the algorithm will attempt to ensure the minimum distance is met for as many sites as possible and return a warning stating that the requirement was not met after 10 attempts.
+
+### Replacement Sites
+
+It is often of interest to select a number of replacement sites that can be used if sites selected from the GRTS algorithm are unable to be sampled.  This can happen for a variety of reasons: landowner deinial, lack of funding, lack of resources, to name a few. We discuss two methods of selecting replacment sites you can specify in the GRTS algorithm. 
+
+#### Method 1 - Reverse Heirarchical Ordering
+
+The first method of selecting replacement sites follows Stevens and Olsen (2004). The sample size $n$, and the number of replacement sites, $n_r$, are pre-specified. The GRTS algorithm then selects a sample of $n + n_r$.  These sites are placed in reverse heirarchical order and then first $n$ are considered part of the base sample and the next $n_r$ are the replacement sites. To incorporate this method of selecting replacement sites in an unstratified, equal probability design, run:
+```{r}
+eqprob_replace1 <- grtspts(NLA_2007, seltype = "equal", nsamp = 30,
+                         over.n = 10)
+```
+
+The new function argument is `over.n`, which equals $n_r$, the number of required replacement sites.
+
+The `eqprob_replace1$sites.base` `sf` object still contains the information for the $n$ base samples. The `eqprob_replace1$sites.over` `sf` object is now non-NULL, and contains information for the $n_r$ replacement sites.
+
+#### Method 2 - GRTS Subsetting
+
+The second method of selecting replacement sites follows Dumelle et al (2020). The sample size $n$ is prespecified. Instead of selecting random locations as replacement sites, this method assigns replacement sites using locations that are nearby each site that cannot be sampled. For each site in teh base sample, you may choose up to 10 additional sites, which are randomly ordered, to use as replacement sites if that particular site in the base sample cannot be sampled. As long as there are enough sites, each replacement site can be combined with the base site the entire sample may viewed as a GRTS sample. This is not true for Method 1, because the method for replacement sites gives a subset of the original GRTS sample, which is not usually a GRTS sample. To incorporate this method of selecting replacement sites in an unstratified, equal probability design, run:
+```{r}
+eqprob_replace2 <- grtspts(NLA_2007, seltype = "equal", nsamp = 30,
+                         over.near = 10, over.n = 10)
+```
+
+The new function argument is `over.n`, which equals the number of replacement sites desired for each base site.
+
+The `eqprob_replace2$sites.base` `sf` object still contains the information for the $n$ base samples. The `eqprob_replace2$sites.near` `sf` object is now non-NULL, and contains information for the replacement sites.  The `replsite` variable indicates what base site the original site is replacing, and the `siteuse` variable indicates the order replacement sites should be used for the base site. 
+
+#### Combining Method 1 and Method 2 for Replacement Sites
+
+Method 1 and Method 2 have their own drawbacks in specifying the replacement sites. For Method 1, you must prespecify the number of replacement sites.  It is not possible to generate additional replacement sites after the sample is selected, so it may not be feasible to attain the desired sample size.  For Method 2, it is possible there are not enough replacement sites for each base site.  These drawbacks can be overcome by combining Method 1 and Method 2 and running:
+```{r}
+eqprob_replace12 <- grtspts(NLA_2007, seltype = "equal", nsamp = 30,
+                         over.near = 10, over.n = 10)
+```
+
+The `eqprob_replace2$sites.over` and `eqprob_replace2$sites.near` are now both non-NULL. We recommend using Method 2's replacement sites if possible.  If using Method 2's replacement sites is not possible, you can add Method 1's replacement sites. 
+
+## Analyzing Probability Samples
