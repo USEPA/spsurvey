@@ -72,6 +72,14 @@ If you want to replicate the results in the vignette exactly, run:
 set.seed(1)
 ```
 
+You will be plotting several side-by-side plots of populatoin sites and sampled sites.  To have R properly display the plots side-by-side, specify this in the global plotting options by running:
+```{r}
+par(mfrow = c(1, 2), pch = 19)
+```
+You can reset these any global plotting options by running `dev.off()`.
+
+
+
 # Data
 
 You will use the NLA Lakes 2007 dataset throughout this vignette. More information can be found by running `?NLA_2007`. To load the data into your workspace, run:
@@ -89,6 +97,17 @@ Beforing moving forward, you will need to store the data as an `sf` object by ru
 NLA_2007 <- st_as_sf(NLA_2007, coords = c("xcoord", "ycoord"), crs = 5069)
 ```
 For more information about converting your data to an `sf` object, please visit the INSERT NAME vignette using INSERT VIGNETTE ACCESS CODE. 
+
+You will also save the bounding box of coordinates from the data. This will be useful when plotting later.
+
+```{r}
+boundbox <- st_bbox(NLA_2007)
+xmin <- boundbox["xmin"]
+xmax <- boundbox["xmax"]
+ymin <- boundbox["ymin"]
+ymax <- boundbox["ymax"]
+```
+
 
 # The `grtspts` Function 
 
@@ -151,6 +170,22 @@ for (s in names(eqprob$dsgn)) {
 eqprob$dsgn
 ```
 
+To plot the population sites next to the sampled sites, run:
+```{r, fig.show = "hold", out.width = "50%"}
+plot(st_coordinates(NLA_2007),
+     pch = 19, 
+     xlim = c(xmin, xmax), 
+     ylim = c(ymin, ymax))
+title("Population Sites", 
+      adj = 0)
+plot(st_coordinates(eqprob$sites.base), 
+     pch = 19, 
+     xlim = c(xmin, xmax), 
+     ylim = c(ymin, ymax))
+title("Sampled Sites", 
+      adj = 0)
+```
+
 ## Unequal Probability
 
 Suppose we want to sample natural lakes twice as often as man-made lakes. To select an unequal probability GRTS sample, run:
@@ -173,6 +208,84 @@ for (s in names(uneqprob$dsgn)) {
 uneqprob$dsgn
 ```
 
+To plot the population sites next to the sampled sites, run:
+```{r, fig.show = "hold", out.width = "50%"}
+plot(st_coordinates(subset(NLA_2007, Lake_Origin == "Man-Made")), 
+     xaxt = "n", 
+     yaxt = "n",
+     pch = 19,
+     xlim = c(xmin, xmax),
+     ylim = c(ymin, ymax))
+points(st_coordinates(subset(NLA_2007, Lake_Origin == "Natural")), 
+       col = "orange",
+       pch = 19)
+title("Population Sites",
+      adj = 0)
+legend(x = "topright", 
+       legend = c("Man-Made", "Natural"), 
+       col = c("black", "orange"), 
+       pch = 19, 
+       inset = c(0,-0.25), 
+       xpd = TRUE, 
+       cex = 1.15)
+plot(st_coordinates(subset(uneqprob$sites.base, Lake_Origin == "Man-Made")), 
+     xaxt = "n", 
+     yaxt = "n", 
+     pch = 19,
+     xlim = c(xmin, xmax),
+     ylim = c(ymin, ymax))
+points(st_coordinates(subset(uneqprob$sites.base, Lake_Origin == "Natural")), 
+       col = "orange", 
+       pch = 19)
+title("Sampled Sites",
+      adj = 0)
+legend(x = "topright", 
+       legend = c("Man-Made", "Natural"), 
+       col = c("black", "orange"), 
+       pch = 19, 
+       inset = c(0,-0.25), 
+       xpd = TRUE, 
+       cex = 1.15)
+```
+
+
+```{r, fig.show = "hold", out.width = "50%"}
+plot(st_coordinates(subset(NLA_2007, Lake_Origin == "Man-Made")), 
+     xaxt = "n", 
+     yaxt = "n",
+     pch = 1,
+     xlim = c(xmin, xmax),
+     ylim = c(ymin, ymax))
+points(st_coordinates(subset(uneqprob$sites.base, Lake_Origin == "Man-Made")), 
+       pch = 19)
+title("Man-Made Lakes",
+      adj = 0)
+legend(x = "topright", 
+       legend = c("Population Lakes", "Sampled Lakes"), 
+       pch = c(1, 19), 
+       inset = c(0,-0.25), 
+       xpd = TRUE, 
+       cex = 1.15)
+plot(st_coordinates(subset(NLA_2007, Lake_Origin == "Natural")), 
+     xaxt = "n", 
+     yaxt = "n", 
+     pch = 1,
+     xlim = c(xmin, xmax),
+     ylim = c(ymin, ymax))
+points(st_coordinates(subset(uneqprob$sites.base, Lake_Origin == "Natural")), 
+       pch = 19)
+title("Man-Made Lakes",
+      adj = 0)
+legend(x = "topright", 
+       legend = c("Population Lakes", "Sampled Lakes"), 
+       pch = c(1, 19), 
+       inset = c(0,-0.25), 
+       xpd = TRUE, 
+       cex = 1.15)
+```
+
+
+
 ## Proportional Probability
 
 It is useful to sample proportional to a continuous auxiliary variable when there is a positive correlation between the response variable and the auxiliary variable because this can yield more precise estimates. To select a sample proportional to a continuous auxiliary variable, run:
@@ -191,6 +304,21 @@ for (s in names(propprob$dsgn)) {
 }
 propprob$dsgn
 ```
+
+```{r, fig.show = "hold", out.width = "50%", error = TRUE}
+plot(st_geometry(NLA_2007))
+points(st_coordinates(propprob$sites.base), pch = 19)
+
+plot(st_geometry(NLA_2007))
+plot(st_coordinates(propprob$sites.base), pch = 19)
+
+plot(st_geometry(NLA_2007))
+plot(st_geometry(propprob$sites.base), pch = 19, add = TRUE)
+
+
+```
+
+
 
 # Stratified Designs
 
@@ -216,6 +344,26 @@ for (s in names(strat_eqprob$dsgn)) {
 }
 strat_eqprob$dsgn
 ```
+
+
+```{r}
+#aspect ratio gets all messed up
+plot(NLA_2007["Lake_Origin"], key.pos = 1)
+plot(strat_eqprob$sites.base["stratum"], pch = 19, add = TRUE)
+
+#aspect ratio gets all messed up
+plot(NLA_2007["Lake_Origin"], key.pos = 1, rest = FALSE)
+plot(strat_eqprob$sites.base["stratum"], pch = 19, add = TRUE, reset = FALSE)
+
+#aspect ratio gets all messed up
+plot(NLA_2007["Lake_Origin"], key.pos = 1, reset = FALSE)
+plot(strat_eqprob$sites.base["stratum"], pch = 19, add = TRUE)
+
+#aspect ratio gets all messed up
+plot(NLA_2007["Lake_Origin"], key.pos = 1)
+plot(strat_eqprob$sites.base["stratum"], pch = 19, add = TRUE, reset = FALSE)
+```
+
 
 ## Unequal Probability
 
@@ -250,6 +398,111 @@ for (s in names(strat_uneqprob$dsgn)) {
     if (length(Filter(Negate(is.null), strat_uneqprob$dsgn[[s]])) == 0) strat_uneqprob$dsgn[[s]] <- NULL
 }
 strat_uneqprob$dsgn
+```
+
+```{r, fig.show = "hold", out.width = "50%"}
+plot((subset(NLA_2007, Lake_Origin == "Man-Made"))["Chla_cond"], key.pos = 1)
+plot(subset(strat_uneqprob$sites.base, Lake_Origin == "Man-Made")["Chla_cond"], pch = 19, add = TRUE)
+```
+
+
+```{r, fig.show = "hold", out.width = "50%"}
+plot(st_coordinates(subset(NLA_2007, Lake_Origin == "Man-Made" & 
+                           Chla_cond == "Good")),
+     xaxt = "n", 
+     yaxt = "n", 
+     pch = 19,
+     xlim = c(xmin, xmax),
+     ylim = c(ymin, ymax))
+points(st_coordinates(subset(NLA_2007, Lake_Origin == "Natural" & Chla_cond == "Good")), 
+       col = "orange", 
+       pch = 19)
+points(st_coordinates(subset(NLA_2007, Lake_Origin == "Man-Made" & Chla_cond == "Poor")), 
+       col = "green", 
+       pch = 19)
+points(st_coordinates(subset(NLA_2007, Lake_Origin == "Natural" & Chla_cond == "Poor")), 
+       col = "blue", 
+       pch = 19)
+title("Population Sites",
+      adj = 0)
+legend(x = "topright", 
+       legend = c("Man-Made, Good", "Natural, Good", "Man-Made, Poor", "Natural, Poor"), 
+       col = c("black", "orange", "green", "blue"), 
+       pch = 19, 
+       inset = c(0,-0.25), 
+       xpd = TRUE, 
+       cex = 1.15)
+
+
+plot(st_coordinates(subset(strat_uneqprob$sites.base, Lake_Origin == "Man-Made" & 
+                           Chla_cond == "Good")),
+     xaxt = "n", 
+     yaxt = "n", 
+     pch = 19,
+     xlim = c(xmin, xmax),
+     ylim = c(ymin, ymax))
+points(st_coordinates(subset(strat_uneqprob$sites.base, Lake_Origin == "Natural" & Chla_cond == "Good")), 
+       col = "orange", 
+       pch = 19)
+points(st_coordinates(subset(strat_uneqprob$sites.base, Lake_Origin == "Man-Made" & Chla_cond == "Poor")), 
+       col = "green", 
+       pch = 19)
+points(st_coordinates(subset(strat_uneqprob$sites.base, Lake_Origin == "Natural" & Chla_cond == "Poor")), 
+       col = "blue", 
+       pch = 19)
+title("Sampled Sites",
+      adj = 0)
+legend(x = "topright", 
+       legend = c("Man-Made, Good", "Natural, Good", "Man-Made, Poor", "Natural, Poor"), 
+       col = c("black", "orange", "green", "blue"), 
+       pch = 19, 
+       inset = c(0,-0.25), 
+       xpd = TRUE, 
+       cex = 1.15)
+```
+
+
+```{r}
+plot(st_coordinates(subset(NLA_2007, Lake_Origin == "Man-Made" & 
+                           Chla_cond == "Good")),
+     xaxt = "n", 
+     yaxt = "n", 
+     pch = 19,
+     xlim = c(xmin, xmax),
+     ylim = c(ymin, ymax))
+points(st_coordinates(subset(NLA_2007, Lake_Origin == "Natural" & Chla_cond == "Good")), 
+       col = "orange", 
+       pch = 19)
+title("Population Sites - Good Chla_cond",
+      adj = 0)
+legend(x = "topright", 
+       legend = c("Man-Made", "Natural"), 
+       col = c("black", "orange"), 
+       pch = 19, 
+       inset = c(0,-0.25), 
+       xpd = TRUE, 
+       cex = 1.15)
+
+
+plot(st_coordinates(subset(strat_uneqprob$sites.base, Lake_Origin == "Man-Made" & 
+                           Chla_cond == "Good")),
+     xaxt = "n", 
+     yaxt = "n", 
+     pch = 19,
+     xlim = c(xmin, xmax),
+     ylim = c(ymin, ymax))
+points(st_coordinates(subset(strat_uneqprob$sites.base, Lake_Origin == "Natural" & Chla_cond == "Good")), 
+       col = "orange", 
+       pch = 19)
+title("Sampled Sites - Good Chla_cond",
+      adj = 0)
+legend(x = "topright", 
+       legend = c("Man-Made", "Natural"), 
+       col = c("black", "orange"), 
+       pch = 19, 
+       inset = c(0,-0.25), 
+       xpd = TRUE, 
+       cex = 1.15)
 ```
 
 ## Proportional Probability
