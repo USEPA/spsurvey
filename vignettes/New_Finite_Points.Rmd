@@ -2,7 +2,8 @@
 title: "Selecting and Analyzing Finite Population Designs using the spsurvey Package"
 output: 
   html_document:
-    theme: spacelab
+    theme: flatly
+    number_sections: true
     highlighted: default 
     toc: yes
     toc_float:
@@ -69,16 +70,8 @@ library(spsurvey)
 ```
 If you want to replicate the results in the vignette exactly, run:
 ```{r}
-set.seed(1)
+set.seed(42)
 ```
-
-You will be plotting several side-by-side plots of populatoin sites and sampled sites.  To have R properly display the plots side-by-side, specify this in the global plotting options by running:
-```{r}
-par(mfrow = c(1, 2), pch = 19)
-```
-You can reset these any global plotting options by running `dev.off()`.
-
-
 
 # Data
 
@@ -98,8 +91,7 @@ NLA_2007 <- st_as_sf(NLA_2007, coords = c("xcoord", "ycoord"), crs = 5069)
 ```
 For more information about converting your data to an `sf` object, please visit the INSERT NAME vignette using INSERT VIGNETTE ACCESS CODE. 
 
-You will also save the bounding box of coordinates from the data. This will be useful when plotting later.
-
+You will also need save the bounding box of coordinates from the data. To save this bounding box, run:
 ```{r}
 boundbox <- st_bbox(NLA_2007)
 xmin <- boundbox["xmin"]
@@ -108,6 +100,7 @@ ymin <- boundbox["ymin"]
 ymax <- boundbox["ymax"]
 ```
 
+This will be useful when plotting later to maintain consistent aspect ratios.
 
 # The `grtspts` Function 
 
@@ -131,8 +124,9 @@ Additional arguments influence specific parts of the GRTS algorithm's behavior a
 
 ## Output
 
-The `grtspts` function returns a list with four sub-lists: `sites.base`, `sites.over`, `sites.near`, and `dsgn`. `sites.base` contains information about the sites selected in the base GRTS sample. You can also select [Replacement Sites] to use if the sites in your base sample can no longer be sampled.  Sites may not be able to be sampled due to landowner denial, a lack of resources, or some other reason. `sites.over` and `sites.near` contain information about replacement sites. `dsgn` contains information about the design. This should be checked to make sure that the `grtspts` function returns the output you intended. More information about `sites.base`, `sites.over`, `sites.near`, and `dsgn` is provided below.
+The `grtspts` function returns a list with four sub-lists: `sites.base`, `sites.over`, `sites.near`, and `dsgn`. `sites.base` contains information about the sites selected in the base GRTS sample. You can also select [Replacement Sites] to use if the sites in your base sample can no longer be sampled.  Sites may not be able to be sampled due to landowner denial, a lack of resources, or some other reason. `sites.over` and `sites.near` contain information about replacement sites. `dsgn` contains information about the design.  More information about `sites.base`, `sites.over`, `sites.near`, and `dsgn` is provided below.
 
+### `sites.base`
 
 The `sites.base` list returns information regarding the sites selected in the base GRTS sample. `sites.base` is an `sf` object having the same geomertry type and CRS as your dataset. The rownames of `sites.base` equal the row locations from your dataset. `sites.base` contains variables from your dataset as well as several new variables:
 
@@ -146,11 +140,29 @@ The `sites.base` list returns information regarding the sites selected in the ba
 * `aux`: Contains the auxiliary variable information.
 * `legacy`: Contains the legacy site indicator.
 
+### `sites.over`
+
 The `sites.over` list returns the same columns as `sites.base`, but `sites.over` returns information for relacement sites generated using [Method 1 - Reverse Heirarchical Ordering]. This sub-list is `NULL` if `over.n` is not an argument to `grtspts`.
+
+### `sites.near`
 
 The `sites.near` list returns the same columns as `sites.base`, but `sites.near` returns information for relacement sites generated using [Method 2 - GRTS Subsetting]. This sub-list is `NULL` if `over.near` is not an argument to `grtspts`.
 
-The `dsgn` list
+### `dsgn`
+
+The `dsgn` list returns specifications of the particular design you chose. This should be checked to make sure that the `grtspts` function returns the output you intended. There are several sub-lists in `dsgn`.
+
+* `stratum_var`: A character vector indicating the name of the stratum variable provided to `grtspts()`. If there is only one strata, this equals `"stratum"`.
+* `caty_var`: A character vector indicating the name of the unequal proability variable provided to `grtspts()`. If the design is not an unequal probability design, this equals `NULL`.
+* `aux_var`: A character vector indicating the name of the proportional proability variable provided to `grtspts()`. If the design is not a proportional probability design, this equals `NULL`.
+* `legacy_var`: A character vector indicating the name of the legacy variable provided to `grtspts()`. If the design does not include legacy sites, this equals `NULL`.
+* `stratum`: A character vector indicating the strata.
+* `seltype`: A character vector indicating the selection type (equal, unequal, or proportional) for each strata.
+* `nsamp`: A numeric vector indiating the sample size for each strata.
+* `caty.n`: A sublist indicating the expected sample sizes for each strata.
+* `over.n`: A numeric vector indicating the replacment sample size using [Method 1 - Reverse Heirarchical Ordering]. If the design does not use this replacement site method, this equals `NULL`.
+* `over.near`: A numeric vector indicating the replacement sample size using [Method 2 - GRTS Subsetting]. If the design does not use this replacement site method, this equals `NULL`.
+* `mindis`: A numeric vector indicating the minimum distance required between sites. If the design does not require minimum distances between sites, this equals `NULL`.
 
 # Single-Strata Designs
 
@@ -171,19 +183,17 @@ eqprob$dsgn
 ```
 
 To plot the population sites next to the sampled sites, run:
-```{r, fig.show = "hold", out.width = "50%"}
-plot(st_coordinates(NLA_2007),
-     pch = 19, 
-     xlim = c(xmin, xmax), 
-     ylim = c(ymin, ymax))
-title("Population Sites", 
-      adj = 0)
-plot(st_coordinates(eqprob$sites.base), 
-     pch = 19, 
-     xlim = c(xmin, xmax), 
-     ylim = c(ymin, ymax))
-title("Sampled Sites", 
-      adj = 0)
+```{r, fig.show = "hold"}
+# plot the population sites
+plot(st_geometry(NLA_2007), main = "NLA 2007 Lakes", reset = FALSE, 
+     xlim = c(xmin, xmax), ylim = c(ymin, ymax), cex = 1.2)
+# add the sampled sites
+plot(st_geometry(eqprob$sites.base), pch = 19, add = TRUE, cex = 1, col = "aquamarine")
+# add a legend
+legend(x = "topright", legend = c("Population Sites", "Sampled Sites"),
+       pch = c(1, 19), col = c("black", "aquamarine"))
+
+
 ```
 
 ## Unequal Probability
@@ -208,83 +218,6 @@ for (s in names(uneqprob$dsgn)) {
 uneqprob$dsgn
 ```
 
-To plot the population sites next to the sampled sites, run:
-```{r, fig.show = "hold", out.width = "50%"}
-plot(st_coordinates(subset(NLA_2007, Lake_Origin == "Man-Made")), 
-     xaxt = "n", 
-     yaxt = "n",
-     pch = 19,
-     xlim = c(xmin, xmax),
-     ylim = c(ymin, ymax))
-points(st_coordinates(subset(NLA_2007, Lake_Origin == "Natural")), 
-       col = "orange",
-       pch = 19)
-title("Population Sites",
-      adj = 0)
-legend(x = "topright", 
-       legend = c("Man-Made", "Natural"), 
-       col = c("black", "orange"), 
-       pch = 19, 
-       inset = c(0,-0.25), 
-       xpd = TRUE, 
-       cex = 1.15)
-plot(st_coordinates(subset(uneqprob$sites.base, Lake_Origin == "Man-Made")), 
-     xaxt = "n", 
-     yaxt = "n", 
-     pch = 19,
-     xlim = c(xmin, xmax),
-     ylim = c(ymin, ymax))
-points(st_coordinates(subset(uneqprob$sites.base, Lake_Origin == "Natural")), 
-       col = "orange", 
-       pch = 19)
-title("Sampled Sites",
-      adj = 0)
-legend(x = "topright", 
-       legend = c("Man-Made", "Natural"), 
-       col = c("black", "orange"), 
-       pch = 19, 
-       inset = c(0,-0.25), 
-       xpd = TRUE, 
-       cex = 1.15)
-```
-
-
-```{r, fig.show = "hold", out.width = "50%"}
-plot(st_coordinates(subset(NLA_2007, Lake_Origin == "Man-Made")), 
-     xaxt = "n", 
-     yaxt = "n",
-     pch = 1,
-     xlim = c(xmin, xmax),
-     ylim = c(ymin, ymax))
-points(st_coordinates(subset(uneqprob$sites.base, Lake_Origin == "Man-Made")), 
-       pch = 19)
-title("Man-Made Lakes",
-      adj = 0)
-legend(x = "topright", 
-       legend = c("Population Lakes", "Sampled Lakes"), 
-       pch = c(1, 19), 
-       inset = c(0,-0.25), 
-       xpd = TRUE, 
-       cex = 1.15)
-plot(st_coordinates(subset(NLA_2007, Lake_Origin == "Natural")), 
-     xaxt = "n", 
-     yaxt = "n", 
-     pch = 1,
-     xlim = c(xmin, xmax),
-     ylim = c(ymin, ymax))
-points(st_coordinates(subset(uneqprob$sites.base, Lake_Origin == "Natural")), 
-       pch = 19)
-title("Man-Made Lakes",
-      adj = 0)
-legend(x = "topright", 
-       legend = c("Population Lakes", "Sampled Lakes"), 
-       pch = c(1, 19), 
-       inset = c(0,-0.25), 
-       xpd = TRUE, 
-       cex = 1.15)
-```
-
-
 
 ## Proportional Probability
 
@@ -304,21 +237,6 @@ for (s in names(propprob$dsgn)) {
 }
 propprob$dsgn
 ```
-
-```{r, fig.show = "hold", out.width = "50%", error = TRUE}
-plot(st_geometry(NLA_2007))
-points(st_coordinates(propprob$sites.base), pch = 19)
-
-plot(st_geometry(NLA_2007))
-plot(st_coordinates(propprob$sites.base), pch = 19)
-
-plot(st_geometry(NLA_2007))
-plot(st_geometry(propprob$sites.base), pch = 19, add = TRUE)
-
-
-```
-
-
 
 # Stratified Designs
 
@@ -345,25 +263,37 @@ for (s in names(strat_eqprob$dsgn)) {
 strat_eqprob$dsgn
 ```
 
-
-```{r}
-#aspect ratio gets all messed up
-plot(NLA_2007["Lake_Origin"], key.pos = 1)
-plot(strat_eqprob$sites.base["stratum"], pch = 19, add = TRUE)
-
-#aspect ratio gets all messed up
-plot(NLA_2007["Lake_Origin"], key.pos = 1, rest = FALSE)
-plot(strat_eqprob$sites.base["stratum"], pch = 19, add = TRUE, reset = FALSE)
-
-#aspect ratio gets all messed up
-plot(NLA_2007["Lake_Origin"], key.pos = 1, reset = FALSE)
-plot(strat_eqprob$sites.base["stratum"], pch = 19, add = TRUE)
-
-#aspect ratio gets all messed up
-plot(NLA_2007["Lake_Origin"], key.pos = 1)
-plot(strat_eqprob$sites.base["stratum"], pch = 19, add = TRUE, reset = FALSE)
+To plot the man-made lakes, run:
+```{r, fig.show = "hold"}
+# subset the population to include man-made lakes
+man_made <- subset(NLA_2007, Lake_Origin == "Man-Made")
+# subset the sample to include man-made lakes
+man_made_sample <- subset(strat_eqprob$sites.base, Lake_Origin == "Man-Made")
+# plot the population man-made lakes
+plot(st_geometry(man_made), main = "Man-Made Lakes", reset = FALSE, 
+     xlim = c(xmin, xmax), ylim = c(ymin, ymax), cex = 1.2)
+# add the sampe man-made lakes
+plot(st_geometry(man_made_sample), pch = 19, add = TRUE, cex = 1, col = "aquamarine")
+# add a legend
+legend(x = "topright", legend = c("Population Sites", "Sampled Sites"),
+       pch = c(1, 19), col = c("black", "aquamarine"))
 ```
 
+To plot the natural lakes, run:
+```{r}
+# subset the population to include natural lakes
+natural <- subset(NLA_2007, Lake_Origin == "Natural")
+# subset the sample to include natural lakes
+natural_sample <- subset(strat_eqprob$sites.base, Lake_Origin == "Natural")
+# plot the population natural lakes
+plot(st_geometry(natural), main = "Natural Lakes", reset = FALSE, 
+     xlim = c(xmin, xmax), ylim = c(ymin, ymax), cex = 1.2)
+# plot the sample natural lakes
+plot(st_geometry(natural_sample), pch = 19, add = TRUE, cex = 1, col = "aquamarine")
+# add a legend
+legend(x = "topright", legend = c("Population Sites", "Sampled Sites"),
+       pch = c(1, 19), col = c("black", "aquamarine"))
+```
 
 ## Unequal Probability
 
@@ -400,110 +330,7 @@ for (s in names(strat_uneqprob$dsgn)) {
 strat_uneqprob$dsgn
 ```
 
-```{r, fig.show = "hold", out.width = "50%"}
-plot((subset(NLA_2007, Lake_Origin == "Man-Made"))["Chla_cond"], key.pos = 1)
-plot(subset(strat_uneqprob$sites.base, Lake_Origin == "Man-Made")["Chla_cond"], pch = 19, add = TRUE)
-```
 
-
-```{r, fig.show = "hold", out.width = "50%"}
-plot(st_coordinates(subset(NLA_2007, Lake_Origin == "Man-Made" & 
-                           Chla_cond == "Good")),
-     xaxt = "n", 
-     yaxt = "n", 
-     pch = 19,
-     xlim = c(xmin, xmax),
-     ylim = c(ymin, ymax))
-points(st_coordinates(subset(NLA_2007, Lake_Origin == "Natural" & Chla_cond == "Good")), 
-       col = "orange", 
-       pch = 19)
-points(st_coordinates(subset(NLA_2007, Lake_Origin == "Man-Made" & Chla_cond == "Poor")), 
-       col = "green", 
-       pch = 19)
-points(st_coordinates(subset(NLA_2007, Lake_Origin == "Natural" & Chla_cond == "Poor")), 
-       col = "blue", 
-       pch = 19)
-title("Population Sites",
-      adj = 0)
-legend(x = "topright", 
-       legend = c("Man-Made, Good", "Natural, Good", "Man-Made, Poor", "Natural, Poor"), 
-       col = c("black", "orange", "green", "blue"), 
-       pch = 19, 
-       inset = c(0,-0.25), 
-       xpd = TRUE, 
-       cex = 1.15)
-
-
-plot(st_coordinates(subset(strat_uneqprob$sites.base, Lake_Origin == "Man-Made" & 
-                           Chla_cond == "Good")),
-     xaxt = "n", 
-     yaxt = "n", 
-     pch = 19,
-     xlim = c(xmin, xmax),
-     ylim = c(ymin, ymax))
-points(st_coordinates(subset(strat_uneqprob$sites.base, Lake_Origin == "Natural" & Chla_cond == "Good")), 
-       col = "orange", 
-       pch = 19)
-points(st_coordinates(subset(strat_uneqprob$sites.base, Lake_Origin == "Man-Made" & Chla_cond == "Poor")), 
-       col = "green", 
-       pch = 19)
-points(st_coordinates(subset(strat_uneqprob$sites.base, Lake_Origin == "Natural" & Chla_cond == "Poor")), 
-       col = "blue", 
-       pch = 19)
-title("Sampled Sites",
-      adj = 0)
-legend(x = "topright", 
-       legend = c("Man-Made, Good", "Natural, Good", "Man-Made, Poor", "Natural, Poor"), 
-       col = c("black", "orange", "green", "blue"), 
-       pch = 19, 
-       inset = c(0,-0.25), 
-       xpd = TRUE, 
-       cex = 1.15)
-```
-
-
-```{r}
-plot(st_coordinates(subset(NLA_2007, Lake_Origin == "Man-Made" & 
-                           Chla_cond == "Good")),
-     xaxt = "n", 
-     yaxt = "n", 
-     pch = 19,
-     xlim = c(xmin, xmax),
-     ylim = c(ymin, ymax))
-points(st_coordinates(subset(NLA_2007, Lake_Origin == "Natural" & Chla_cond == "Good")), 
-       col = "orange", 
-       pch = 19)
-title("Population Sites - Good Chla_cond",
-      adj = 0)
-legend(x = "topright", 
-       legend = c("Man-Made", "Natural"), 
-       col = c("black", "orange"), 
-       pch = 19, 
-       inset = c(0,-0.25), 
-       xpd = TRUE, 
-       cex = 1.15)
-
-
-plot(st_coordinates(subset(strat_uneqprob$sites.base, Lake_Origin == "Man-Made" & 
-                           Chla_cond == "Good")),
-     xaxt = "n", 
-     yaxt = "n", 
-     pch = 19,
-     xlim = c(xmin, xmax),
-     ylim = c(ymin, ymax))
-points(st_coordinates(subset(strat_uneqprob$sites.base, Lake_Origin == "Natural" & Chla_cond == "Good")), 
-       col = "orange", 
-       pch = 19)
-title("Sampled Sites - Good Chla_cond",
-      adj = 0)
-legend(x = "topright", 
-       legend = c("Man-Made", "Natural"), 
-       col = c("black", "orange"), 
-       pch = 19, 
-       inset = c(0,-0.25), 
-       xpd = TRUE, 
-       cex = 1.15)
-```
 
 ## Proportional Probability
 
@@ -528,38 +355,74 @@ strat_propprob$dsgn
 
 ## Legacy Sites
 
-A legacy site is a site that must be selected in the sample.  Often, legacy sites are used because they have been previously sampled or their inclusion is important for a specific reason.  We focus on legacy sites that have been previously obtained as part of a probability sample. For purposes of illustration, we will add a new variable, `legacy`, which treats 10 randomly selected sites as legacy sites.
+A legacy site is a site that must be selected in the sample.  Often, legacy sites are used because they have been previously sampled or their inclusion is important for a specific reason.  We focus on legacy sites that have been previously obtained as part of a probability sample. For purposes of illustration, we will add a new variable, `legacy`, which treats 5 randomly selected sites as legacy sites.
 
 ```{r}
+# creating a new legacy variable where each value is FALSE
 NLA_2007$legacy <- FALSE
-NLA_2007$legacy[sample(1:nrow(NLA_2007), size = 10)] <- TRUE
+# randomly choosing 5 observations to treat as legacy sites
+NLA_2007$legacy[sample(1:nrow(NLA_2007), size = 5)] <- TRUE
 ```
 
 To include legacy sites in an unstratified, unequal probability sample, run:
+
+```{r, include = FALSE}
+defaultW <- getOption("warn") 
+options(warn = -1) 
+```
+
 ```{r}
 eqprob_legacy <- grtspts(NLA_2007, seltype = "equal", nsamp = 30,
                          legacy_var = "legacy")
 ```
 
-The new function argument is `"legacy"`, which specifies the name of the legacy variable in the `sf` object. 
+```{r, include = FALSE}
+options(warn = defaultW)
+```
 
-`eqprob_legacy$sites.base` and `eqprob_legacy$dsgn` contain the sampled site and design information, respectively. It is possible you encounter a warning message saying `Of the x grid cells from which sample poits were selected, y (y/x%) of the cells contained more than one sample point.  This warning message exists because sometimes the requirement that legacy sites must be included prevents the sample from being as spread out as a sample from a standard GRTS algorithm.
+
+To plot the population sites next to the sampled sites, run:
+```{r, fig.show = "hold"}
+# subsetting the legacy sites
+sampled_legacy <- subset(eqprob_legacy$sites.base, legacy == TRUE)
+# subsetting the sampled nonlegacy sites
+sampled_nonlegacy <- subset(eqprob_legacy$sites.base, legacy == FALSE)
+# plotting the population sites
+plot(st_geometry(NLA_2007), main = "NLA 2007 Lakes", reset = FALSE, 
+     xlim = c(xmin, xmax), ylim = c(ymin, ymax), cex = 1.2)
+# adding the nonlegacy sampled sites
+plot(st_geometry(sampled_nonlegacy), pch = 19, add = TRUE, cex = 1, col = "aquamarine")
+# adding the legacy sites
+plot(st_geometry(sampled_legacy), pch = 19, add = TRUE, cex = 1, col = "orange")
+# adding a legend
+legend(x = "topright", legend = c("Population Sites", "Sampled Sites (Non-Legacy)", "Sampled Sites (Legacy)"), pch = c(1, 19, 19), col = c("black", "aquamarine", "orange"))
+```
+
+It is somewhat common to encounter a warning message saying `Of the x grid cells from which sample points were selected, y (y/x%) of the cells contained more than one sample point. In fact, this example includes that warning message.  This warning message exists because sometimes the requirement that legacy sites must be included prevents the sample from being as spread out as a sample from a standard GRTS algorithm. 
 
 ## Minimum Distance Between Sites
 
-The standard GRTS algorithm may select sites that are closer together than desired. You can adjust the algorithm to incorporate some minimum distance between sites.  Supppose we requires sites be 43,208.78 meters apart, which is 0.01 quantile of all possible distances between population units in the `NLA_2007` dataset.
-
+The standard GRTS algorithm may select sites that are closer together than desired. You can adjust the algorithm to incorporate some minimum distance between sites.  Supppose we requires sites be 8,000. meters (5 miles) apart. To include the minimum distance requirement in an unstratified, equal probability design, run:
 ```{r}
-mindis <- 43208.78
-```
-
-To include the minimum distance requirement in an unstratified, equal probability design, run:
-```{r}
+# setting the minimum distance
+mindis <- 8000
 eqprob_mindis <- grtspts(NLA_2007, seltype = "equal", nsamp = 30,
                          mindis = mindis)
 ```
 
-The new function argument is `mindis`, which specifies the minimum distance requirement.
+To plot the population sites next to the sampled sites, run:
+
+```{r}
+# plotting the population sites
+plot(st_geometry(NLA_2007), main = "NLA 2007 Lakes", reset = FALSE, 
+     xlim = c(xmin, xmax), ylim = c(ymin, ymax), cex = 1.2)
+# adding the sampled sites
+plot(st_geometry(eqprob_mindis$sites.base), pch = 19, add = TRUE, cex = 1, col = "aquamarine")
+# adding a legend
+legend(x = "topright", legend = c("Population Sites", "Sampled Sites"),
+       pch = c(1, 19), col = c("black", "aquamarine"))
+```
+
 
 It is possible that the GRTS algorithm will not be able to ensure the minimum distance is met for all sampled sites.  In this context, the algorithm will attempt to ensure the minimum distance is met for as many sites as possible and return a warning stating that the requirement was not met after 10 attempts.
 
@@ -571,35 +434,70 @@ It is often of interest to select a number of replacement sites that can be used
 
 The first method of selecting replacement sites follows Stevens and Olsen (2004). The sample size $n$, and the number of replacement sites, $n_r$, are pre-specified. The GRTS algorithm then selects a sample of $n + n_r$.  These sites are placed in reverse heirarchical order and then first $n$ are considered part of the base sample and the next $n_r$ are the replacement sites. To incorporate this method of selecting replacement sites in an unstratified, equal probability design, run:
 ```{r}
-eqprob_replace1 <- grtspts(NLA_2007, seltype = "equal", nsamp = 30,
+eqprob_replace_m1 <- grtspts(NLA_2007, seltype = "equal", nsamp = 30,
                          over.n = 10)
 ```
 
-The new function argument is `over.n`, which equals $n_r$, the number of required replacement sites.
-
-The `eqprob_replace1$sites.base` `sf` object still contains the information for the $n$ base samples. The `eqprob_replace1$sites.over` `sf` object is now non-NULL, and contains information for the $n_r$ replacement sites.
+To plot the population sites next to the sampled sites and the replacement sites, run:
+```{r, fig.show = "hold"}
+# plotting the population sites
+plot(st_geometry(NLA_2007), main = "NLA 2007 Lakes", reset = FALSE, 
+     xlim = c(xmin, xmax), ylim = c(ymin, ymax), cex = 1.4)
+# adding the base sample sites
+plot(st_geometry(eqprob_replace_m1$sites.base), pch = 19, add = TRUE, cex = 1.3, col = "aquamarine")
+# adding the replacement sites
+plot(st_geometry(eqprob_replace_m1$sites.over), pch = 19, add = TRUE, cex = 1, col = "orange")
+# adding a legend
+legend(x = "topright", legend = c("Population Sites", "Sampled Sites", "Replacement Sites"), pch = c(1, 19, 19), col = c("black", "aquamarine", "orange"))
+```
 
 ### Method 2 - GRTS Subsetting
 
 The second method of selecting replacement sites follows Dumelle et al (2020). The sample size $n$ is prespecified. Instead of selecting random locations as replacement sites, this method assigns replacement sites using locations that are nearby each site that cannot be sampled. For each site in teh base sample, you may choose up to 10 additional sites, which are randomly ordered, to use as replacement sites if that particular site in the base sample cannot be sampled. As long as there are enough sites, each replacement site can be combined with the base site the entire sample may viewed as a GRTS sample. This is not true for Method 1, because the method for replacement sites gives a subset of the original GRTS sample, which is not usually a GRTS sample. To incorporate this method of selecting replacement sites in an unstratified, equal probability design, run:
 ```{r}
-eqprob_replace2 <- grtspts(NLA_2007, seltype = "equal", nsamp = 30,
-                         over.near = 10, over.n = 10)
+eqprob_replace_m2 <- grtspts(NLA_2007, seltype = "equal", nsamp = 30,
+                         over.near = 10)
 ```
 
-The new function argument is `over.n`, which equals the number of replacement sites desired for each base site.
+To plot the population sites next to the sampled sites and the first replacement sites for each sampled site, run:
+```{r, fig.show = "hold"}
+# plotting the population sites
+plot(st_geometry(NLA_2007), main = "NLA 2007 Lakes", reset = FALSE, 
+     xlim = c(xmin, xmax), ylim = c(ymin, ymax), cex = 1.4)
+# adding the sampled sites
+plot(st_geometry(eqprob_replace_m2$sites.near), pch = 19, add = TRUE, cex = 1.3, col = "aquamarine")
+# adding the first replacement site
+plot(st_geometry(subset(eqprob_replace_m2$sites.near, siteuse == "First")), pch = 19, add = TRUE, cex = 1, col = "orange")
+# adding a legend
+legend(x = "topright", legend = c("Population Sites", "Sampled Sites", "Replacement Sites"), pch = c(1, 19, 19), col = c("black", "aquamarine", "orange"))
+```
 
-The `eqprob_replace2$sites.base` `sf` object still contains the information for the $n$ base samples. The `eqprob_replace2$sites.near` `sf` object is now non-NULL, and contains information for the replacement sites.  The `replsite` variable indicates what base site the original site is replacing, and the `siteuse` variable indicates the order replacement sites should be used for the base site. 
+You will notice that in general, replacement sites are near a sampled site.
 
 ### Combining Method 1 and Method 2 for Replacement Sites
 
-Method 1 and Method 2 have their own drawbacks in specifying the replacement sites. For Method 1, you must prespecify the number of replacement sites.  It is not possible to generate additional replacement sites after the sample is selected, so it may not be feasible to attain the desired sample size.  For Method 2, it is possible there are not enough replacement sites for each base site.  These drawbacks can be overcome by combining Method 1 and Method 2 and running:
+Method 1 and Method 2 have their own drawbacks in specifying the replacement sites. For Method 1, you must prespecify the number of replacement sites.  It is not possible to generate additional replacement sites after the sample is selected, so it may not be feasible to attain the desired sample size.  For Method 2, it is possible there are not enough replacement sites for each base site. It is also possible that no additional sites are close enough to quality as replacement sites. These drawbacks can be overcome through combining Method 1 and Method 2 by running:
 ```{r}
-eqprob_replace12 <- grtspts(NLA_2007, seltype = "equal", nsamp = 30,
+eqprob_replace_m1_m2 <- grtspts(NLA_2007, seltype = "equal", nsamp = 30,
                          over.near = 10, over.n = 10)
 ```
 
-The `eqprob_replace2$sites.over` and `eqprob_replace2$sites.near` are now both non-NULL. We recommend using Method 2's replacement sites if possible.  If using Method 2's replacement sites is not possible, you can add Method 1's replacement sites. 
+To plot the population sites next to the sampled sites, the replacement sites using method 1, and the first replacement sites for each sampled site using method 2, run:
+```{r, fig.show = "hold"}
+# plot the population sites
+plot(st_geometry(NLA_2007), main = "NLA 2007 Lakes", reset = FALSE, 
+     xlim = c(xmin, xmax), ylim = c(ymin, ymax), cex = 1.4)
+# add the sampled sites
+plot(st_geometry(eqprob_replace_m1_m2$sites.base), pch = 16, add = TRUE, cex = 1.3, col = "aquamarine")
+# add the replacement sites (method 1)
+plot(st_geometry(eqprob_replace_m1$sites.over), pch = 16, add = TRUE, cex = 1, col = "brown")
+# add the replacement sites (method 2)
+plot(st_geometry(subset(eqprob_replace_m2$sites.near, siteuse == "First")), pch = 16, add = TRUE, cex = 1, col = "orange")
+# add a legend
+legend(x = "topright", legend = c("Population Sites", "Sampled Sites", "Replacement Sites (M1)", "Replacement Sites (M2)"), pch = c(1, 16, 16, 16), col = c("black", "aquamarine", "brown", "orange"))
+```
+
+We recommend using Method 2's replacement sites if possible.  If using Method 2's replacement sites is not possible, you can add Method 1's replacement sites. 
 
 # Analyzing GRTS Probability Samples
 
