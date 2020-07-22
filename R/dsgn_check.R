@@ -150,13 +150,6 @@ dsgn_check <- function(sframe, stratum, seltype, nsamp, caty.n, over.n, over.nea
     stop.df <- rbind(stop.df, data.frame(func = I("nsamp"), I(stop.mess)))
   }
   
-  # check if caty.n present when seltype is equal or proportional
-  if(seltype %in% c("equal", "proportional") & !is.null(caty.n)) {
-    stop.ind <-  TRUE
-    stop.mess <- paste0("caty.n should not be provided for seltypes equal or proportional.")
-    stop.df <- rbind(stop.df, data.frame(func = I("caty.n"), I(stop.mess)))
-  }
-  
   # check caty.n
   if(!is.null(caty.n)) {
     if(!is.list(caty.n)) {
