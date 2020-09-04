@@ -1,0 +1,119 @@
+---
+title: "Testing get.address function"
+author: "Marc Weber"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: 
+  html_document:
+    theme: yeti
+    highlighted: default 
+---
+
+### Test point sample frame
+Using NLA_2007
+```{r, warning=FALSE, message=FALSE, error=FALSE, fig.width=11}
+library(gstat)
+library(dplyr)
+library(spsurvey)
+library(sampling)
+library(ggplot2)
+library(sf)
+# remotes::install_github("r-spatial/mapview")
+library(mapview)
+
+data(NLA_2007)
+glimpse(NLA_2007)
+
+### source new function
+source("C:/Users/mweber/GitProjects/spsurvey/R/get.address.R")
+
+### We sort the sampling frame using function get_address
+start_time <- Sys.time()
+data <- NLA_2007[get_address(NLA_2007$xcoord, NLA_2007$ycoord, rand = FALSE), ]
+
+### Select a sample of size n = 50 among the N = 236 
+### locations with probabilities proportional to the 
+### Chla amount using the pivotal method
+
+# Inclusion probabilities
+data$p <- 50*data$Chla/sum(data$Chla)
+
+# Selection of a sample
+s <- UPpivotal(data$p)
+samp <- data[round(s) == 1, ]
+end_time <- Sys.time()
+print(paste0('get.address time ',end_time - start_time))
+
+# grab new crs spec for the coordinates in NLA_2007 data
+test <- read_sf('L:/Priv/ARM Data/NRSA 2008-9/Design/nfwa08_handpicked_sites.shp')
+
+grts_data <- st_as_sf(data, coords = c("xcoord", "ycoord"), 
+                      crs = st_crs(test)$wkt,agr = "constant", remove=FALSE)
+mapview(grts_data)
+grts_data <- grts_data %>% 
+  dplyr::select(-wgt)
+start_time <- Sys.time()
+testsample <- grts(design=list(None=list(panel=c(PanelOne=50), over=0,
+                                         seltype="Continuous")), type.frame="finite", src.frame="sf.object",
+                   sf.object=grts_data, mdcaty="Chla", shapefile=FALSE)
+end_time <- Sys.time()
+print(paste0('grts method time: ',end_time - start_time))
+
+testsample@data$p2 <- 1/testsample$wgt
+ggplot(testsample@data, aes(x=p, y=p2)) + geom_point()
+```
+
+### Test area sample frame
+Using SC_estuaries
+```{r, warning=FALSE, message=FALSE, error=FALSE, fig.width=11}
+SC_estuaries <- read_sf('L:/Priv/ARM Data/Designs & Analyses States Tribes Territories/South Carolina/Designs/11 SC Estuaries/SCECAP_2010_Estuary.shp')
+glimpse(SC_estuaries)
+SC_estuaries$ID <- 1:nrow(SC_estuaries)
+
+# generate a fixed hexagon-based point tessellation over polygons
+start_time <- Sys.time()
+SC_points <- st_sample(SC_estuaries, size=100000,type='hexagonal')
+end_time <- Sys.time()
+print(paste0('time to generate points from polygons:  ',end_time - start_time))
+
+mapview(SC_estuaries) + SC_points
+
+#Pull out coordinates of points to just a data frame
+SC_points <- st_sf(SC_points)
+SC_points <- SC_points %>% as_tibble() %>% st_as_sf()
+SC_points <- st_join(SC_points, SC_estuaries)
+SC_points$xcoord <- st_coordinates(SC_points)[,1]
+SC_points$ycoord <- st_coordinates(SC_points)[,2]
+
+SC_points <- st_drop_geometry(SC_points)
+### We sort the sampling frame using function get_address
+start_time <- Sys.time()
+data <- SC_points[get_address(SC_points$xcoord, SC_points$ycoord, rand = FALSE), ]
+
+### Select a sample of size n = 50 among the N = 236 
+### locations with probabilities proportional to the 
+### Chla amount using the pivotal method
+
+# Inclusion probabilities
+data$p <- 50*data$AreaSQM/sum(data$AreaSQM)
+
+# Selection of a sample
+s <- UPpivotal(data$p)
+samp <- data[round(s) == 1, ]
+end_time <- Sys.time()
+print(paste0('get.address time ',end_time - start_time))
+
+#fix any polygon errors
+SC_estuaries <- st_make_valid(SC_estuaries)
+start_time <- Sys.time()
+testsample <- grts(design=list(None=list(panel=c(PanelOne=50), over=0,
+                                         seltype="Continuous")), type.frame="area", src.frame="sf.object",
+                   sf.object=SC_estuaries, mdcaty="AreaSQM", shapefile=FALSE)
+end_time <- Sys.time()
+print(paste0('grts method time: ',end_time - start_time))
+
+testsample$p <- data$p[match(testsample$ID, data$ID)]
+testsample@data$p2 <- 1/testsample$wgt
+ggplot(testsample@data, aes(x=p, y=p2)) + geom_point()
+```
+
+
