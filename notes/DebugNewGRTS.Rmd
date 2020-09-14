@@ -1,0 +1,102 @@
+---
+title: "Debug New GRTS"
+author: "Tony Olsen"
+date: "`r format(Sys.time(),  '%B %d, %Y')`"
+output: 
+  html_document:
+    highlighted: default
+    number_sections: true
+    theme: cosmo
+    toc: yes
+    code_folding: show
+    toc_float:
+      collapsed: no
+      smooth_scroll: yes
+    df_print: paged
+    fig_caption: yes
+    depth: 2
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r library paths}
+library(sf)
+library(dplyr)
+
+```
+
+Source grtspts files
+```{r}
+pathgrts <- "C:/Users/tolsen/Documents/spsurvey/R/"
+source(paste0(pathgrts, "dsgn_check.R"))
+source(paste0(pathgrts, "grtspts.R"))
+source(paste0(pathgrts, "grtspts_ip.R"))
+source(paste0(pathgrts, "grts_stratum.R"))
+source(paste0(pathgrts, "grtspts_ipleg.R"))
+source(paste0(pathgrts, "get.address.R"))
+source(paste0(pathgrts, "UPpivotal.R"))
+source(paste0(pathgrts, "rho.R"))
+source(paste0(pathgrts, "stopprnt.R"))
+
+
+```
+
+
+```{r}
+path <- "C:/Users/tolsen/Documents/spsurvey_test/"
+
+sframe <- read_sf(paste0(path, "PointDesign/Lakes.shp"))
+st_crs(sframe) <- 5069
+
+glimpse(sframe)
+sframe
+```
+
+
+```{r}
+Equalsites <- grtspts(sframe = sframe, nsamp = 100)
+plot(st_geometry(sframe), pch = "+")
+plot(st_geometry(Equalsites$sites.base), pch = "+", col = 'red', add = TRUE)
+```
+
+
+# test for areas
+
+```{r}
+path <- "C:/Users/tolsen/Documents/spsurvey_test/"
+
+sframe <- read_sf(paste0(path, "SCECAP_2010_Estuary.shp"))
+
+sum(st_length(sframe))
+
+Equalsites <- grtspts(sframe = sframe, pt_density = 1/1000000, nsamp = 100)
+plot(st_geometry(sframe), pch = "+")
+plot(st_geometry(Equalsites$sites.base), pch = "+", col = 'red', add = TRUE)
+```
+
+
+# test for linear
+
+```{r}
+path <- "C:/Users/tolsen/Documents/spsurvey_test/"
+
+sframe <- read_sf(paste0(path, "Delaware_flowlines.shp"))
+
+sum(st_length(sframe))
+
+# get error with this
+set.seed(473)
+Equalsites <- grtspts(sframe = sframe, pt_density = 1/10000, nsamp = 50)
+
+
+plot(st_geometry(sframe))
+plot(st_geometry(Equalsites$sites.base), pch = 16, col = 'red', add = TRUE)
+```
+
+
+
+
+
+

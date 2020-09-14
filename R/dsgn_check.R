@@ -25,7 +25,6 @@
 #'
 #' @param sframe Sample frame for points as an sf object
 #'
-#'
 #' @param ipcaty The categorical character variable in the sample frame that
 #'   identifies the category for each element that will be used for calculating
 #'   the unequal inclusion probabilities for the stratum.
@@ -51,16 +50,6 @@ dsgn_check <- function(sframe, stratum, seltype, nsamp, caty.n, over.n, over.nea
   # Create a data frame for stop messages
   stop.ind <- FALSE
   stop.df <- NULL
-
-  ## Check Sample frame and that it has variables that are as required
-  # check that sframe is an sf point geometry
-  tmp <- st_geometry_type(sframe)
-  tst <- all(tmp %in% c("POINT", "MULTIPOINT"))
-  if(!tst) {
-    stop.ind <- TRUE
-    stop.mess <- "The geometry type for the sample frame is not POINT or MULTIPOINT."
-    stop.df <- rbind(stop.df, data.frame(func = I("Sample Frame"), I(stop.mess)))
-  }
 
   # check that sframe has required variables for stratum, caty, aux and legacy
   # If stratum_var is provided, does the attribute exist in sframe

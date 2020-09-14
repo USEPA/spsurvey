@@ -23,6 +23,9 @@
 #'   "proportional" for unequal probability selection proportional to the auxiliary variable
 #'   aux_var. If single character, then seltype applies to all strata. If vector, then each 
 #'   stratum may have different selection type. Default is single character value of "equal".
+#'
+#' @param pt_density For linear and area sample frame, the point density for the systematic
+#'   sample. Must be in units of the sframe sf.object. Default is NULL.
 #'   
 #' @param nsamp The sample size required. If single stratum, then single numeric value.
 #'   If sample is stratified, then numeric vector with same length as "stratum" and sample sizes
@@ -112,12 +115,28 @@
 #' @export
 #################################################################################
 
-grtspts <- function(sframe, stratum = NULL, seltype = "equal", nsamp, caty.n = NULL, 
+grtspts <- function(sframe, stratum = NULL, seltype = "equal", pt_density = NULL,
+                    nsamp, caty.n = NULL, 
                      over.n = NULL, over.near = NULL, stratum_var = NULL, 
                      caty_var = NULL, aux_var = NULL, legacy_var = NULL, mindis = NULL, 
                      DesignID = "Site", SiteBegin = 1,  maxtry = 10, 
                      startlev = NULL, maxlev = 11) {
+  
+  # Ensure that the geometry types for sframe are consistent
+  
+  temp <- st_geometry_type(sframe)
+  tst <- all(temp %in% c("POINT", "MULTIPOINT")) |
+    all(temp %in% c("LINESTRING", "MULTILINESTRING")) |
+    all(temp %in% c("POLYGON", "MULTIPOLYGON"))
+  if(!tst) {
+    stop(paste("\nThe geometry types for the survey frame object passed to function grts: \n\"", unique(st_geometry_type(sf.object)), "\" are not consistent.", sep=""))
+  }
 
+  # Determine type of sample frame: point, line, polygon
+  if(all(temp %in% c("POINT", "MULTIPOINT"))) sf_type <- "sf_point"
+  if(all(temp %in% c("LINESTRING", "MULTILINESTRING"))) sf_type <- "sf_linear"
+  if(all(temp %in% c("POLYGON", "MULTIPOLYGON"))) sf_type <- "sf_area"
+  
   # check input. If errors, dsgn_check will stop grtspts and report errors.
   dsgn_check(sframe, stratum, seltype, nsamp, caty.n, over.n, over.near, stratum_var, 
              caty_var, aux_var, legacy_var, mindis, DesignID, SiteBegin, maxtry,
@@ -206,9 +225,10 @@ grtspts <- function(sframe, stratum = NULL, seltype = "equal", nsamp, caty.n = N
   }
   
   ## select sites for each stratum
-  rslts <- lapply(dsgn$stratum, grtspts_stratum, dsgn, sframe, maxtry = maxtry,
-                  startlev = startlev, maxlev = 11, warn.ind, warn.df)
+  rslts <- lapply(dsgn$stratum, grts_stratum, dsgn, sframe, sf_type = sf_type, 
+                  pt_density = pt_density, maxtry = maxtry, warn.ind, warn.df)
   names(rslts) <- stratum
+  
 
   # combine across strata
   sites.base <- NULL
@@ -298,9 +318,9 @@ grtspts <- function(sframe, stratum = NULL, seltype = "equal", nsamp, caty.n = N
   if(warn.ind) {
     warn.df <<- warn.df
     if(nrow(warn.df) == 1){
-      cat("During execution of the program, a warning message was generated.  The warning \nmessage is stored in a data frame named 'warn.df'.  Enter the following command \nto view the warning message: warnprnt()\n")
+      cat("During execution of the program, a warning message was generated.  The warning \nmessage is stored in a data frame named 'warn.df'.  Enter the following command \nto view the warning message: warndsgnprnt()\n")
     } else {
-      cat(paste("During execution of the program,", nrow(warn.df), "warning messages were generated.  The warning \nmessages are stored in a data frame named 'warn.df'.  Enter the following \ncommand to view the warning messages: warnprnt() \nTo view a subset of the warning messages (say, messages number 1, 3, and 5), \nenter the following command: warnprnt(m=c(1,3,5))\n"))
+      cat(paste("During execution of the program,", nrow(warn.df), "warning messages were generated.  The warning \nmessages are stored in a data frame named 'warn.df'.  Enter the following \ncommand to view the warning messages: warndsgnprnt() \nTo view a subset of the warning messages (say, messages number 1, 3, and 5), \nenter the following command: warnprnt(m=c(1,3,5))\n"))
     }
   }
 
