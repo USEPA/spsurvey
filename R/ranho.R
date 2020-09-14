@@ -25,7 +25,7 @@ ranho <- function(hadr) {
 # Construct the randomized hierarchical addresses
 
   perm <- function (level, indx, fin, hadr) {
-    if (level > fin) return
+    if (level > fin) return(hadr)
     perms <- as.character (sample (1:4))
     a <- substr (hadr[indx], level, level)
     b <- indx[which (a == "1")]
