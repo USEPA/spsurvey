@@ -1,3 +1,11 @@
+# spsurvey 4.1.4 (2020-9-15)
+
+## Bug fix
+
+* This is a bug-fix release to specifically address issue:  
+A new check in R-devel (part of --as-cran) looks for return without (): 
+this is reported on the CRAN results pages for fedora-clang and fedora-gcc.
+
 # spsurvey 4.1.3 (2020-6-15)
 
 ## Bug fix
