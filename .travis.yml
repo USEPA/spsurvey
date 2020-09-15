@@ -5,7 +5,7 @@ cache:
   - ccache
 
 sudo: required
-dist: trusty
+dist: xenial
 latex: false
 
 r: 
@@ -34,3 +34,4 @@ warnings_are_errors: false
 env:
    global:
      - _R_CHECK_FORCE_SUGGESTS_=false
+     - _R_CHECK_DONTTEST_EXAMPLES_=false
