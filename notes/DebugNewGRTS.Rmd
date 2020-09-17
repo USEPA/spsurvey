@@ -29,7 +29,7 @@ library(dplyr)
 
 Source grtspts files
 ```{r}
-pathgrts <- "C:/Users/tolsen/Documents/spsurvey/R/"
+pathgrts <- "C:/Users/mweber/gitprojects/spsurvey/R/"
 source(paste0(pathgrts, "dsgn_check.R"))
 source(paste0(pathgrts, "grtspts.R"))
 source(paste0(pathgrts, "grtspts_ip.R"))
@@ -82,8 +82,10 @@ plot(st_geometry(Equalsites$sites.base), pch = "+", col = 'red', add = TRUE)
 ```{r}
 path <- "C:/Users/tolsen/Documents/spsurvey_test/"
 
-sframe <- read_sf(paste0(path, "Delaware_flowlines.shp"))
-
+# sframe <- read_sf(paste0(path, "Delaware_flowlines.shp"))
+sframe <- read_sf('notes/Delaware_flowlines.shp')
+sframe <- sframe %>% 
+  distinct(geometry, .keep_all = TRUE) 
 sum(st_length(sframe))
 
 # get error with this
