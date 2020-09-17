@@ -169,8 +169,7 @@ grts_stratum <- function(stratum, dsgn, sframe, sf_type, pt_density = NULL, maxt
   }
   # If minimum distance between sites, select sites
   if(!is.null(dsgn[["mindis"]])) {
-    sites <- grtspts_mindis(dsgn[["mindis"]], sftmp, grts_grid, samplesize = n.total, 
-                            over.near = dsgn[["over.near"]][[stratum]],
+    sites <- grtspts_mindis(dsgn[["mindis"]], sftmp, samplesize = n.total, 
                             stratum = stratum, legacy_var = dsgn[["legacy_var"]],
                             maxtry = maxtry, warn.ind = warn.ind, warn.df = warn.df)
   }
@@ -192,12 +191,7 @@ grts_stratum <- function(stratum, dsgn, sframe, sf_type, pt_density = NULL, maxt
     sites.over <- sites$sites.base[(n.base + 1):n.total,]
     sites.over$siteuse <- "Over"
   }
-  # save over.near sites
-  sites.near <- NULL
-  if(!is.null(dsgn[["over.near"]][[stratum]])) {
-    sites.near <- sites$sites.near
-  }
-  
+
   # Assign original inclusion probabilites to sites, create weights and drop legacy ip variable
   sites.base$ip <- sites.base$ip_init * ip_step1
   sites.base$wgt <- 1/sites.base$ip
@@ -212,14 +206,10 @@ grts_stratum <- function(stratum, dsgn, sframe, sf_type, pt_density = NULL, maxt
     sites.over <- subset(sites.over, select = tmp[!(tmp %in% c("ip_init", "geometry"))])
   }
   
-  # Do same for sites.near if any
-  if(!is.null(dsgn[["over.near"]][[stratum]])) {
-    sites.near$ip <- sites.near$ip_init * ip_step1
-    sites.near$wgt <- 1/sites.near$ip
-    tmp <- names(sites.near)
-    sites.near <- subset(sites.near, select = tmp[!(tmp %in% c("ip_init", "geometry"))])
-  }
-  
+  # Select over.near sites for stratum
+  sites.near <- NULL
+
+  # create list for output and return result
   rslts <- list(sites.base = sites.base, sites.over = sites.over, sites.near = sites.near,
                 warn.ind = warn.ind, warn.df = warn.df)
   

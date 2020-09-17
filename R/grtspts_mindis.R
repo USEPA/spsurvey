@@ -1,21 +1,15 @@
 ################################################################################
 # Function: grtspts_mindis
 # Programmer:  Tony Olsen
-# Date: June 18, 2020
+# Date: September 16, 2020
 #
 #' Select a grts sample with minimum distance between sites.
 #'
 #' @param mindis Minimum distance required between sites in sample.
 #'
 #' @param sframe The sf object containing variables: id and ip.
-#'
-#' @param grts_grid The hierarchical grid as a list required for GRTS design
 #' 
 #' @param samplesize The sample size required for the 
-#' 
-#' @param over.near Numeric value specifying the number of nearby points to select as
-#'   possible replacement sites if a site cannot be sampled. Default is NULL. If specified,
-#'   possible values are 1, 2 or 3.
 #'
 #' @param maxtry Number of maximum attempts to ensure minimum distance between sites.
 #'   Default is 10.
@@ -37,13 +31,9 @@
 #'
 #' @section Other Functions Required:
 #'   \describe{
-#'     \item{\code{constructAddr}}{constructs the hierarchical address for
+#'     \item{\code{get_address}}{constructs the hierarchical address for
 #'       sample points}
-#'     \item{\code{ranho}}{constructs the randomized hierarchical address for
-#'       sample points}
-#'     \item{\code{pickGridCells}}{selects grid cells that get a sample point}
-#'     \item{\code{\link{pickFiniteSamplePoints}}}{pick sample point(s) from
-#'       selected cells}
+#'     \item{\code{UPpivotal}}{selects sample point(s)}
 #'   }
 #'
 #' @author Tony Olsen \email{Olsen.Tony@epa.gov}
@@ -53,25 +43,14 @@
 #' @export
 ################################################################################
 
-grtspts_mindis <- function(mindis, sframe, grts_grid, samplesize, over.near = NULL, maxtry = 10,
+grtspts_mindis <- function(mindis, sframe, samplesize, maxtry = 10,
                            stratum, legacy_var = NULL, warn.ind = NULL, warn.df = NULL) {
 
-  # set sites.near to NULL. If required created by grtspts_select
-  sites.near <- NULL
-
   # select initial set of sites
-  sites <- grtspts_select(sframe, grts_grid, samplesize = samplesize, over.near = over.near,
-                          warn.ind = warn.ind, warn.df = warn.df)
-  if(sites$warn.ind) {
-    warn.ind <- sites$warn.ind
-    warn.df <- sites$warn.df
-    warn.df$stratum <- ifelse(is.na(warn.df$stratum), stratum, warn.df$stratum)
-  }
-  sites.base <- sites$sites.base
-  if(!is.null(over.near)){
-    sites.near <- sites$sites.near
-  }
-
+  sites <- sframe[get_address(sframe$xcoord, sframe$ycoord, rand = TRUE), ]
+  s <- UPpivotal(sites$ip)
+  sites.base <- sites[round(s) == 1, ]
+  
   # calculate distance between sites
   site_dist <- st_distance(sites.base)
   class(site_dist) <- "numeric"
@@ -124,23 +103,10 @@ grtspts_mindis <- function(mindis, sframe, grts_grid, samplesize, over.near = NU
     # and any legacy sites
     sframe$ip <- grtspts_ipleg(sframe$ip_init, sframe$probdis)
 
-    # adjust cell weights to use new inclusion probabilities
-    grts_grid$cel.wt <- cellWeight(grts_grid$xc, grts_grid$yc,
-                                   grts_grid$dx, grts_grid$dy, sframe)
-
     # select new sites that include legacy sites
-    sites <- grtspts_select(sframe, grts_grid, samplesize = samplesize, over.near = over.near,
-                            warn.ind = warn.ind, warn.df = warn.df)
-    # check for warnings
-    if(sites$warn.ind) {
-      warn.ind <- sites$warn.ind
-      warn.df <- sites$warn.df
-      warn.df$stratum <- ifelse(is.na(warn.df$stratum), stratum, warn.df$stratum)
-    }
-    sites.base <- sites$sites.base
-    if(!is.null(over.near)) {
-      sites.near <- sites$sites.near
-    }
+    sites <- sframe[get_address(sframe$xcoord, sframe$ycoord, rand = TRUE), ]
+    s <- UPpivotal(sites$ip)
+    sites.base <- sites[round(s) == 1, ]
 
     # calculate distance between sites
     site_dist <- st_distance(sites.base)
@@ -195,12 +161,13 @@ grtspts_mindis <- function(mindis, sframe, grts_grid, samplesize, over.near = NU
   # drop internal variables
   tmp <- names(sites.base)
   sites.base <- subset(sites.base, select = tmp[!(tmp %in% c("probdis", "geometry"))])
-  if(!is.null(over.near)){
-    tmp <- names(sites.near)
-    sites.near <- subset(sites.near, select = tmp[!(tmp %in% c("probdis", "geometry"))])
-  }
 
-  sites <- list(sites.base = sites.base, sites.near = sites.near,
+  # Put sites in reverse hierarchical order
+  sites.base <- rho(sites.base)
+  sites.base$siteuse <- NA
+  sites.base$replsite <- NA
+
+  sites <- list(sites.base = sites.base, 
                 warn.ind = warn.ind, warn.df = warn.df)
 
   invisible(sites)
