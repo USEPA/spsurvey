@@ -83,14 +83,13 @@ grts_stratum <- function(stratum, dsgn, sframe, sf_type, pt_density = NULL, maxt
     n_size <- as.integer(pt_density * stratum_len)
     sfpts <- st_sample(sftmp, size = n_size, type = 'regular')
     sfpts <- st_as_sf(as_tibble(sfpts), crs = st_crs(sftmp))
+    sfpts <- st_cast(sfpts, to ="POINT")
     # drop features with no points
-    sfpts <- sfpts[!st_is_empty(sfpts),, drop = FALSE]
+    sfpts <- sfpts[!st_is_empty(sfpts),]
     # join sites with linear features
     sftmp <- st_join(sfpts, sftmp, join = st_nearest_feature)
     sftmp$xcoord <- st_coordinates(sftmp)[,"X"]
     sftmp$ycoord <- st_coordinates(sftmp)[,"Y"]
-    # drop features with no points
-    sftmp <- sftmp[!st_is_empty(sftmp),]
     # calculate step 1 inclusion probability based on realized sample size
     ip_step1 <- nrow(sftmp)/stratum_len
   }

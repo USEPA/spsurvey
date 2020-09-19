@@ -225,7 +225,7 @@ grtspts <- function(sframe, stratum = NULL, seltype = "equal", pt_density = NULL
   }
   
   ## select sites for each stratum
-  rslts <- lapply(dsgn$stratum, grts_stratum, dsgn, sframe, sf_type = sf_type, 
+  rslts <- lapply(dsgn$stratum, grts_stratum, dsgn = dsgn, sframe = sframe, sf_type = sf_type, 
                   pt_density = pt_density, maxtry = maxtry, warn.ind, warn.df)
   names(rslts) <- stratum
   
