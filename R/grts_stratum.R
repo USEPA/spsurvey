@@ -179,6 +179,11 @@ grts_stratum <- function(stratum, dsgn, sframe, sf_type, pt_density = NULL, maxt
       warn.df$stratum <- ifelse(is.na(warn.df$stratum), stratum, warn.df$stratum)
   }
   
+  # Select replacement sites if over.near not NULL
+  if(!is.null(dsgn[["over.near"]])) {
+    sites.near <- replace_near(dsgn[["over.near"]], sites$sites.base, sframe = sftmp)
+  }
+  
   # adjust inclusion probabilities when over sample sites present
   n.base <- dsgn[["nsamp"]][[stratum]]
   sites[["sites.base"]]$ip <- sites[["sites.base"]]$ip * n.total / n.base
@@ -205,8 +210,14 @@ grts_stratum <- function(stratum, dsgn, sframe, sf_type, pt_density = NULL, maxt
     sites.over <- subset(sites.over, select = tmp[!(tmp %in% c("ip_init", "geometry"))])
   }
   
-  # Select over.near sites for stratum
-  sites.near <- NULL
+  # Do same for sites.near if any
+  if(is.null(dsgn[["over.near"]][[stratum]])) {sites.near <- NULL }
+  if(!is.null(dsgn[["over.near"]][[stratum]])) {
+    sites.near$ip <- sites.near$ip_init * ip_step1
+    sites.near$wgt <- 1/sites.near$ip
+    tmp <- names(sites.near)
+    sites.near <- subset(sites.near, select = tmp[!(tmp %in% c("ip_init", "geometry"))])
+  }
 
   # create list for output and return result
   rslts <- list(sites.base = sites.base, sites.over = sites.over, sites.near = sites.near,

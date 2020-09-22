@@ -29,15 +29,16 @@ library(dplyr)
 
 Source grtspts files
 ```{r}
-pathgrts <- "C:/Users/mweber/gitprojects/spsurvey/R/"
+pathgrts <- "C:/Users/tolsen/Documents/spsurvey/R/"
 source(paste0(pathgrts, "dsgn_check.R"))
 source(paste0(pathgrts, "grtspts.R"))
 source(paste0(pathgrts, "grtspts_ip.R"))
 source(paste0(pathgrts, "grts_stratum.R"))
 source(paste0(pathgrts, "grtspts_mindis.R"))
 source(paste0(pathgrts, "grtspts_ipleg.R"))
-source(paste0(pathgrts, "get.address.R"))
+source(paste0(pathgrts, "get_address.R"))
 source(paste0(pathgrts, "UPpivotal.R"))
+source(paste0(pathgrts, "replace_near.R"))
 source(paste0(pathgrts, "rho.R"))
 source(paste0(pathgrts, "stopprnt.R"))
 source(paste0(pathgrts, "warndsgnprnt.R"))
@@ -54,13 +55,22 @@ st_crs(sframe) <- 5069
 
 glimpse(sframe)
 sframe
-```
 
-
-```{r}
 Equalsites <- grtspts(sframe = sframe, nsamp = 100)
 plot(st_geometry(sframe), pch = "+")
+plot(st_geometry(Equalsites$sites.base), pch = 16, col = 'red', add = TRUE)
+
+# with over.n
+Equalsites <- grtspts(sframe = sframe, nsamp = 100, over.n = 10)
+plot(st_geometry(sframe), pch = "+")
+plot(st_geometry(Equalsites$sites.base), pch = 16, col = 'red', add = TRUE)
+plot(st_geometry(Equalsites$sites.over), pch = 16, col = 'blue', add = TRUE)
+
+# with over.near
+Equalsites <- grtspts(sframe = sframe, nsamp = 100, over.near = 5)
+plot(st_geometry(sframe), pch = "+")
 plot(st_geometry(Equalsites$sites.base), pch = "+", col = 'red', add = TRUE)
+plot(st_geometry(Equalsites$sites.near), pch = 16, col = 'blue', add = TRUE)
 ```
 
 
@@ -91,16 +101,22 @@ plot(st_geometry(Equalsites$sites.base), pch = 16, col = 'red', add = TRUE)
 ```{r}
 path <- "C:/Users/tolsen/Documents/spsurvey_test/"
 
-# sframe <- read_sf(paste0(path, "Delaware_flowlines.shp"))
-sframe <- read_sf('notes/Delaware_flowlines.shp')
+sframe <- read_sf(paste0(path, "Delaware_flowlines.shp"))
+
 sframe <- sframe %>% 
   distinct(geometry, .keep_all = TRUE) 
 sum(st_length(sframe))
 
 # get error with this
-set.seed(473)
-Equalsites <- grtspts(sframe = sframe, pt_density = 1/10000, nsamp = 50)
+set.seed(291829)
+Equalsites <- grtspts(sframe = sframe, pt_density = 1/10000, nsamp = 10)
 
+set.seed(291829)
+Equalsites <- grtspts(sframe = sframe, pt_density = 1/10000, nsamp = 10)
+
+# mindis option
+set.seed(291829)
+Equalsites <- grtspts(sframe = sframe, pt_density = 1/10000, mindis = 10000, nsamp = 10)
 
 plot(st_geometry(sframe))
 plot(st_geometry(Equalsites$sites.base), pch = 16, col = 'red', add = TRUE)

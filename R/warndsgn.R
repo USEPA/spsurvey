@@ -1,5 +1,5 @@
 ################################################################################
-# Function: warndsgnprnt
+# Function: warndsgn
 # Programmer: Tony Olsen
 # Date: September 9, 2020
 #
@@ -20,7 +20,7 @@
 #' @export
 ################################################################################
 
-warndsgnprnt <- function(warn.df=get("warn.df", envir = .GlobalEnv),
+warndsgn <- function(warn.df=get("warn.df", envir = .GlobalEnv),
                      m = 1:nrow(warn.df)) {
 
   for(i in m) {
