@@ -61,43 +61,20 @@ grtspts_mindis <- function(mindis, sframe, samplesize, stratum, maxtry = 10,
   class(site_dist) <- "numeric"
   nr <- nrow(sites.base)
   
-  # create data frame of upper triangle with i j denoting row/column of matrix
-  to.upper<-function(X) X[upper.tri(X,diag=FALSE)]
-  dist.df <- data.frame(i = sequence(1:(nr-1)), j = rep.int(2:nr, 1:(nr-1)),
-                        dist = site_dist[upper.tri(site_dist)])
-  # order from smallest to largest distance
-  dist.df <- dist.df[order(dist.df$dist), ]
+  # find sites less than mindis and set to FALSE otherwise set to TRUE
+  keep <- apply(site_dist, 1, function(x){ifelse(any(x[x>0] < mindis), FALSE, TRUE)})
   
-  # initialize keep vector as NA. Change to TRUE if any legacy sites
-  keep <- rep(NA, NROW(sites.base))
+  # if any legacy sites keep those sites
   if(legacy_option == TRUE) {
     keep[!is.na(sites.base$legacy)] <- TRUE
   }
-  # find sites less than mindis and change keep status
-  for(k in 1:nrow(dist.df)){
-    if(dist.df$dist[k] < mindis) {
-      i <- dist.df$i[k]
-      j <- dist.df$j[k]
-      if(is.na(keep[i]) &  is.na(keep[j])) { 
-        keep[c(i, j)] <- sample(c(TRUE, FALSE))
-      } else {
-        if(is.na(keep[i]) & !is.na(keep[j])) { keep[i] <- FALSE
-        } else {
-          if(!is.na(keep[i]) & is.na(keep[j])) {keep[j] <- FALSE
-          }
-        }
-      }
-    }
-  }
-  # If any sites are NA set to TRUE as they are greater than mindis
-  keep[is.na(keep)] <- TRUE
 
   # see if any sites are less than mindis and check until none or max tries
   ntry <- 1
   while(any(!keep)) {
     # identify sites that will be treated as legacy probability sites in sample frame
     sframe$probdis <- FALSE
-    sframe$probdis[sframe$legacy %in% sites$legacy[keep]] <- TRUE
+    sframe$probdis[sframe$idpts %in% sites.base$idpts[keep]] <- TRUE
     
     # if any true legacy sites add them to sites to be kept
     if(legacy_option == TRUE) {
@@ -118,36 +95,13 @@ grtspts_mindis <- function(mindis, sframe, samplesize, stratum, maxtry = 10,
     class(site_dist) <- "numeric"
     nr <- nrow(sites.base)
     
-    # create data frame of upper triangle with i j denoting row/column of matrix
-    to.upper<-function(X) X[upper.tri(X,diag=FALSE)]
-    dist.df <- data.frame(i = sequence(1:(nr-1)), j = rep.int(2:nr, 1:(nr-1)),
-                          dist = site_dist[upper.tri(site_dist)])
-    # order from smallest to largest distance
-    dist.df <- dist.df[order(dist.df$dist), ]
+    # identify sites less than mindis
+    keep <- apply(site_dist, 1, function(x){ifelse(any(x[x>0] < mindis), FALSE, TRUE)})
     
-    # initialize keep vector as NA. Change to TRUE if any legacy sites
-    keep <- rep(NA, NROW(sites.base))
+    # Change to TRUE if any legacy sites
     if(legacy_option == TRUE) {
       keep[!is.na(sites.base$legacy)] <- TRUE
     }
-    # find sites less than mindis and change keep status
-    for(k in 1:nrow(dist.df)){
-      if(dist.df$dist[k] < mindis) {
-        i <- dist.df$i[k]
-        j <- dist.df$j[k]
-        if(is.na(keep[i]) &  is.na(keep[j])) { 
-          keep[c(i, j)] <- sample(c(TRUE, FALSE))
-        } else {
-          if(is.na(keep[i]) & !is.na(keep[j])) { keep[i] <- FALSE
-          } else {
-            if(!is.na(keep[i]) & is.na(keep[j])) {keep[j] <- FALSE
-            }
-          }
-        }
-      }
-    }
-    # If any sites are NA set to TRUE as they are greater than mindis
-    keep[is.na(keep)] <- TRUE
 
     # check if maxtry reached. If so write out warning message
     if(ntry >= maxtry) {

@@ -61,7 +61,7 @@ plot(st_geometry(sframe), pch = "+")
 plot(st_geometry(Equalsites$sites.base), pch = 16, col = 'red', add = TRUE)
 
 # mindis
-Equalsites <- grts(sframe = sframe, n.samp = 100, mindis = 1000)
+Equalsites <- grts(sframe = sframe, n.samp = 100, mindis = 7000)
 plot(st_geometry(sframe), pch = "+")
 plot(st_geometry(Equalsites$sites.base), pch = 16, col = 'red', add = TRUE)
 
@@ -83,6 +83,15 @@ plot(st_geometry(sframe), pch = "+")
 plot(st_geometry(Equalsites$sites.base), pch = "+", col = 'red', add = TRUE)
 plot(st_geometry(subset(Equalsites$sites.base, !is.na(Equalsites$sites.base$legacy))), 
                  pch = 16, col = 'red', add = TRUE)
+
+# with legacy sites and mindis
+Equalsites <- grts(sframe = sframe, n.samp = 100, legacy_option = TRUE, legacy_var = "HIST_LAKE",
+                   mindis = 5000)
+plot(st_geometry(sframe), pch = "+")
+plot(st_geometry(Equalsites$sites.base), pch = "+", col = 'red', add = TRUE)
+plot(st_geometry(subset(Equalsites$sites.base, !is.na(Equalsites$sites.base$legacy))), 
+                 pch = 16, col = 'red', add = TRUE)
+
 ```
 
 
@@ -102,7 +111,6 @@ plot(st_geometry(Equalsites$sites.base), pch = "+", col = 'red', add = TRUE)
 
 # mindis option
 Equalsites <- grts(sframe = sframe, pt_density = 1/1000000, mindis = 1000, n.samp = 100)
-
 plot(st_geometry(sframe))
 plot(st_geometry(Equalsites$sites.base), pch = 16, col = 'red', add = TRUE)
 
@@ -143,7 +151,7 @@ plot(st_geometry(sframe))
 plot(st_geometry(Equalsites$sites.base), pch = 16, col = 'red', add = TRUE)
 
 # mindis option
-Equalsites <- grts(sframe = sframe, pt_density = 1/10000, mindis = 1000, n.samp = 100)
+Equalsites <- grts(sframe = sframe, pt_density = 1/1000, mindis = 5000, n.samp = 100)
 plot(st_geometry(sframe))
 plot(st_geometry(Equalsites$sites.base), pch = 16, col = 'red', add = TRUE)
 

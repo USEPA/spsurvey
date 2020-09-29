@@ -300,7 +300,7 @@ grts <- function(sframe, n.samp, stratum = NULL, seltype = "equal", pt_density =
   }
   
   # reorder sf object variables by first specifying design names excluding unique 
-  # feature ID id as it is internal
+  # feature ID id and idpts as they are internal
   dsgn.names <- c("siteID", "replsite", "siteuse", "stratum", "wgt", "ip", "caty", "aux",
                   "legacy")
   # check what design variables are present in sf objects and add if missing
@@ -338,7 +338,7 @@ grts <- function(sframe, n.samp, stratum = NULL, seltype = "equal", pt_density =
   if(warn.ind) {
     warn.df <<- warn.df
     if(nrow(warn.df) == 1){
-      cat("During execution of the program, a warning message was generated. The warning \nmessage is stored in a data frame named 'warn.df'.  Enter the following command \nto view the warning message: warndsg()\n")
+      cat("During execution of the program, a warning message was generated. The warning \nmessage is stored in a data frame named 'warn.df'.  Enter the following command \nto view the warning message: warndsgn()\n")
     } else {
       cat(paste("During execution of the program,", nrow(warn.df), "warning messages were generated.  The warning \nmessages are stored in a data frame named 'warn.df'.  Enter the following \ncommand to view the warning messages: warndsgn() \nTo view a subset of the warning messages (say, messages number 1, 3, and 5), \nenter the following command: warnprnt(m=c(1,3,5))\n"))
     }

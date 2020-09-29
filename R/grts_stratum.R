@@ -80,6 +80,7 @@ grts_stratum <- function(stratum, dsgn, sframe, sf_type, pt_density = NULL,
     ip_step1 <- 1
     sftmp$xcoord <- st_coordinates(sftmp)[,"X"]
     sftmp$ycoord <- st_coordinates(sftmp)[,"Y"]
+    sftmp$idpts <- 1:nrow(sftmp)
   }
   
   # sf_type equals linear
@@ -96,6 +97,7 @@ grts_stratum <- function(stratum, dsgn, sframe, sf_type, pt_density = NULL,
     sftmp <- st_join(sfpts, sftmp, join = st_nearest_feature)
     sftmp$xcoord <- st_coordinates(sftmp)[,"X"]
     sftmp$ycoord <- st_coordinates(sftmp)[,"Y"]
+    sftmp$idpts <- 1:nrow(sftmp)
     # calculate step 1 inclusion probability based on realized sample size
     ip_step1 <- nrow(sftmp)/stratum_len
   }
@@ -115,6 +117,7 @@ grts_stratum <- function(stratum, dsgn, sframe, sf_type, pt_density = NULL,
     names(sftmp)[names(sftmp) == "sfpts"] <- "geometry"
     sftmp$xcoord <- st_coordinates(sftmp)[,"X"]
     sftmp$ycoord <- st_coordinates(sftmp)[,"Y"]
+    sftmp$idpts <- 1:nrow(sftmp)
     # calculate step 1 inclusion probability based on realized sample size
     ip_step1 <- nrow(sftmp)/stratum_area
   }
