@@ -19,7 +19,7 @@
 #'   are included in a finite sample frame, then a legacy variable must be provided to
 #'   identify elements that are legacy sites.
 #'    
-#' @param nsamp The sample size required. If single stratum, then single numeric value.
+#' @param n.samp The sample size required. If single stratum, then single numeric value.
 #'   If sample is stratified, then numeric vector with same length as "stratum" and sample sizes
 #'   required in same order as strata in "stratum". Must be specified.
 #'
@@ -43,9 +43,9 @@
 #'   category for all strata or if the expected sample size for each category may differ, then
 #'   a list of named character vectors with the expected sample size for each category in the
 #'   stratum. The list must be in same order as the "stratum" variable. For each stratum, 
-#'   the sum of caty.n values must equal nsamp for that stratum. Default is NULL.
+#'   the sum of caty.n values must equal n.samp for that stratum. Default is NULL.
 #'   
-#' @param over.n If seltype is "equal" and is not stratified, a numeric value specifying the 
+#' @param n.over If seltype is "equal" and is not stratified, a numeric value specifying the 
 #'   over sample size requested. If seltype is "equal" and is stratified either a numeric value
 #'   specifying the over sample size that will be applied to each stratum or a numeric vector
 #'   specifying the over sample size for each stratum listed in same order as "strata".  
@@ -56,7 +56,7 @@
 #'   the over sample size for each "caty.n" category for each stratum. List must be in same order
 #'   as the "stratum" variable order. Default is NULL.
 #'
-#' @param over.near Numeric value specifying the number of nearby points to select as
+#' @param n.near Numeric value specifying the number of nearby points to select as
 #'   possible replacement sites if a site cannot be sampled. Default is NULL. If specified,
 #'   must be integer from 1 to 10.
 #'  
@@ -75,20 +75,20 @@
 #'   specifies that the selection type (seltype) is "proportional". Default is NULL.
 #'
 #' @param legacy_option Logical variable that when TRUE legacy sites are to be included 
-#'   in the survey design. 
+#'   in the survey design. Default is FALSE
 #'   
-#' @param legacy_sites sf object of legacy sites to be included in the survey design. Note
-#'   legacy_option must be equal to TRUE. For finite populations, legacy sites may be
-#'   included in the sample frame where they are identified by the legacy variable. For linear
-#'   and area sample frames, a legacy_sites sf object must be provided. For finite populations
-#'   legacy sites may either be included in sample frame with a legacy variable or as a 
-#'   separate sf point object. The latter will not guarantee that the sites selected will be
-#'   unique, i.e., a legacy site may be included twice.
+#' @param legacy_sites sf object of legacy sites to be included in the survey design when 
+#'   sample frame is linear or area. Note legacy_option must be equal to TRUE. The sf object 
+#'   must include the variables stratum_var, caty_variable and aux_variable if required by 
+#'   the survey design.  The legacy_var is required and the contents of the variable must 
+#'   either be a legacy siteID if the sample frame element is a legacy site or must 
+#'   be equal to NA otherwise.
 #'   
-#' @param legacy_var For finite sample frames when legacy sites are included with the sample
-#'   frame, a character string that is the name of the logical variable in sframe that
-#'   identifies which elements in the sample frame are legacy elements. The logical
-#'   variable equals TRUE if element is a legacy site and FALSE otherwise. Default is NULL.
+#' @param legacy_var For finite sample frames when legacy sites are to be included in the 
+#'   survey design, a character string that is the name of the character variable in sframe that
+#'   identifies which elements in the sample frame are legacy sites. The contents of the
+#'   variable must either be a legacy siteID if the sample frame element is a legacy site or must 
+#'   be equal to NA otherwise. Default is NULL.
 #'
 #' @param mindis Numeric value for the minimum distance required between elements
 #'   in the sample. If design is stratified, then mindis applies only within each stratum.
@@ -104,13 +104,14 @@
 #'
 #'
 #' @return sites A list of three sf objects containing the base sites (sites.base),
-#'   the over.n sites (sites.over) and the over.near sites (sites.near) selected 
+#'   the n.over sites (sites.over) and the n.near sites (sites.near) selected 
 #'   that meet the survey design requirementse plus a design list object that documents
 #'   the survey design used.
 #'
 #' @section Other functions required:
 #'   \describe{
-#'     \item{\code{{\link{junk}}}{What it does}
+#'     \item{\code{{\link{grts_stratum}}}{Selects sample for a stratum}
+#'     \item{\code{{\link{dsgn_check}}}{Checks input}
 #'     }
 #'
 #' @author Tony Olsen email{olsen.tony@epa.gov}
@@ -119,17 +120,16 @@
 #'
 #' @examples
 #' \dontrun{
-#'   test.sample <- grts(dsgn=test_design, sframe = "test_sf" DesignID="TestSite",
-#'     stratum="test_stratum", mdcaty="test_mdcaty")
+#'   test.sample <- grts(sframe = "test_sf", n.samp = 100)
 #' }
 #'
 #' @export
 #################################################################################
 
-grts <- function(sframe, nsamp, stratum = NULL, seltype = "equal", pt_density = NULL,
-                 caty.n = NULL, over.n = NULL, over.near = NULL, stratum_var = NULL, 
+grts <- function(sframe, n.samp, stratum = NULL, seltype = "equal", pt_density = NULL,
+                 caty.n = NULL, n.over = NULL, n.near = NULL, stratum_var = NULL, 
                  caty_var = NULL, aux_var = NULL, legacy_option = FALSE,
-                 legacy.sites = NULL, legacy_var = NULL, mindis = NULL, 
+                 legacy_sites = NULL, legacy_var = NULL, mindis = NULL, 
                  DesignID = "Site", SiteBegin = 1,  maxtry = 10) {
   
   # Ensure that the geometry types for sframe are consistent
@@ -148,9 +148,9 @@ grts <- function(sframe, nsamp, stratum = NULL, seltype = "equal", pt_density = 
   if(all(temp %in% c("POLYGON", "MULTIPOLYGON"))) sf_type <- "sf_area"
   
   # check input. If errors, dsgn_check will stop grtspts and report errors.
-  dsgn_check(sframe, stratum, seltype, nsamp, caty.n, over.n, over.near, stratum_var, 
-             caty_var, aux_var, legacy_var, mindis, DesignID, SiteBegin, maxtry,
-             startlev, maxlev)
+  dsgn_check(sframe, sf_type, legacy_sites, legacy_option, stratum, seltype, n.samp, caty.n,
+             n.over, n.near, stratum_var,  caty_var, aux_var, legacy_var, mindis, 
+             DesignID, SiteBegin, maxtry)
 
   # Create warning indicator and data frame to collect all potential issues during
   # sample selection
@@ -159,18 +159,16 @@ grts <- function(sframe, nsamp, stratum = NULL, seltype = "equal", pt_density = 
   
   # preserve original sframe names
   sframe.names <- names(sframe)
-
+  
   ## Create variables in sample frame if needed.
-  # Create unique ID values and save variable names in sample frame provided on input
+  # Create unique sample frame ID values
   sframe$id <- 1:nrow(sframe)
-  geom_name <- attr(sframe, "sf_column")
-  names.sframe <- names(sframe)[names(sframe) != geom_name]
   
   # Assign stratum variable or create it if design not stratified and variable not provided.
   if(is.null(stratum_var)) {
     stratum_var <- "stratum"
     sframe$stratum <- "None"
-    stratum <- c("None")
+    stratum <- c("None")  # names of all strata
   } else {
     # ensure class for stratum variable is character and assign to stratum
     sframe$stratum <- as.character(sframe[[stratum_var]])
@@ -181,11 +179,20 @@ grts <- function(sframe, nsamp, stratum = NULL, seltype = "equal", pt_density = 
   if(!is.null(aux_var)) sframe$aux <- sframe[[aux_var]]
   if(!is.null(legacy_var)) sframe$legacy <- sframe[[legacy_var]]
   
+  # set stratum, caty, aux and legacy variables in legacy_sites if needed
+  if(legacy_option == TRUE) {
+    if(!is.null(stratum_var)) legacy_sites$stratum <- as.character(legacy_sites[[stratum_var]])
+    if(!is.null(caty_var)) legacy_sites$caty <- as.character(legacy_sites[[caty_var]])
+    if(!is.null(aux_var)) legacy_sites$aux <- legacy_sites[[aux_var]]
+    if(!is.null(legacy_var)) legacy_sites$legacy <- legacy_sites[[legacy_var]]
+  }
+  
   ## Create a dsgn list object
   # variable assignments to dsgn list object
   dsgn <- list(stratum_var = stratum_var, caty_var = caty_var, aux_var = aux_var,
-               legacy_var = legacy_var, stratum = stratum, seltype = NULL,
-               nsamp = NULL, caty.n = NULL, over.n = NULL, over.near = NULL, mindis = mindis)
+               legacy_option = legacy_option, legacy_var = legacy_var, stratum = stratum, 
+               seltype = NULL, n.samp = NULL, caty.n = NULL, n.over = NULL, 
+               n.near = NULL, mindis = mindis)
   
   # seltype
   if(length(seltype) == length(stratum)) {
@@ -197,14 +204,14 @@ grts <- function(sframe, nsamp, stratum = NULL, seltype = "equal", pt_density = 
     dsgn$seltype <- tmp
   }
   
-  # nsamp
-  if(length(nsamp) == length(stratum)) {
-    dsgn$nsamp <- nsamp
-    names(dsgn$nsamp) <- stratum
+  # n.samp
+  if(length(n.samp) == length(stratum)) {
+    dsgn$n.samp <- n.samp
+    names(dsgn$n.samp) <- stratum
   } else {
-    tmp <- sapply(stratum, function(x, nsamp) { x = nsamp}, nsamp)
+    tmp <- sapply(stratum, function(x, n.samp) { x = n.samp}, n.samp)
     names(tmp) <- stratum
-    dsgn$nsamp <- tmp
+    dsgn$n.samp <- tmp
   }
   
   # caty.n
@@ -216,27 +223,35 @@ grts <- function(sframe, nsamp, stratum = NULL, seltype = "equal", pt_density = 
     dsgn$caty.n <- tmp
   }
   
-  # over.n
-  if(!is.null(over.n)) {
-    if(is.list(over.n)) {
-      dsgn$over.n <- over.n
+  # n.over
+  if(!is.null(n.over)) {
+    if(is.list(n.over)) {
+      dsgn$n.over <- n.over
     } else {
-      tmp <- lapply(stratum, function(x, over.n) { x = over.n}, over.n)
+      tmp <- lapply(stratum, function(x, n.over) { x = n.over}, n.over)
       names(tmp) <- stratum
-      dsgn$over.n <- tmp
+      dsgn$n.over <- tmp
     }
   }
   
-  # over.near
-  if(!is.null(over.near)) {
-    tmp <- sapply(stratum, function(x, over.near) { x = over.near}, over.near)
+  # n.near
+  if(!is.null(n.near)) {
+    tmp <- sapply(stratum, function(x, n.near) { x = n.near}, n.near)
     names(tmp) <- stratum
-    dsgn$over.near <- tmp
+    dsgn$n.near <- tmp
+  }
+  
+  # legacy_option
+  if(legacy_option == TRUE) {
+    tmp <- sapply(stratum, function(x, legacy_option) { x = legacy_option}, legacy_option)
+    names(tmp) <- stratum
+    dsgn$legacy_option <- tmp
   }
   
   ## select sites for each stratum
   rslts <- lapply(dsgn$stratum, grts_stratum, dsgn = dsgn, sframe = sframe, sf_type = sf_type, 
-                  pt_density = pt_density, maxtry = maxtry, warn.ind, warn.df)
+                  pt_density = pt_density, legacy_option = legacy_option,
+                  legacy_sites = legacy_sites, maxtry = maxtry, warn.ind, warn.df)
   names(rslts) <- stratum
   
 
@@ -259,16 +274,16 @@ grts <- function(sframe, nsamp, stratum = NULL, seltype = "equal", pt_density = 
   # Create siteID for base sites using DesignID and SiteBegin
   sites.base$siteID <- gsub(" ","0", paste0(DesignID,"-",
                                    format(SiteBegin - 1 + 1:nrow(sites.base), sep="")))
-  # create siteID for over.n sites if any
-  if(!is.null(over.n)) {
+  # create siteID for n.over sites if any
+  if(!is.null(n.over)) {
     jnk <- max(nchar(sites.base$siteID))
     nlast <- max(as.numeric(substr(sites.base$siteID, nchar(DesignID)+2, jnk)))
     sites.over$siteID <- gsub(" ","0", 
                               paste0(DesignID,"-", format(nlast + 1:nrow(sites.over), sep="")))
   }
   
-  # if over.near sample sites, assign base ids to the replacement sites. then add siteIDs
-  if(!is.null(over.near)) {
+  # if n.near sample sites, assign base ids to the replacement sites. then add siteIDs
+  if(!is.null(n.near)) {
     tst <- match(sites.near$replsite, sites.base$id, nomatch = 0)
     sites.near$replsite[tst > 0] <- sites.base$siteID[tst]
     tst <- match(sites.near$replsite, sites.over$id, nomatch = 0)

@@ -1,7 +1,7 @@
 ################################################################################
 # Function: grtspts_mindis
 # Programmer:  Tony Olsen
-# Date: September 16, 2020
+# Date: September 28, 2020
 #
 #' Select a grts sample with minimum distance between sites.
 #'
@@ -9,13 +9,16 @@
 #'
 #' @param sframe The sf object containing variables: id and ip.
 #' 
-#' @param samplesize The sample size required for the 
+#' @param samplesize The sample size required for the stratum.
+#' 
+#' @param stratum Character string that identifies stratum membership for each element 
+#'   in the frame. Cannot be NULL.
 #'
 #' @param maxtry Number of maximum attempts to ensure minimum distance between sites.
 #'   Default is 10.
-#'
-#' @param stratum Character string that identifies stratum membership for each element 
-#'   in the frame. Cannot be NULL.
+#'   
+#' @param legacy_option Logical variable where if equal to TRUE, legacy sites are
+#'   to be incorporated into survey design.
 #'
 #' @param legacy_var Character value for name of column for legacy site variable.
 #'   Default is NULL.
@@ -25,6 +28,7 @@
 #'
 #' @param warn.df A data frame containing messages warning of potential issues.
 #'   Used for internal collection of messages only.
+#'
 #'
 #' @return sites A list of sf object of sample points, an sf object of over sample
 #'   points if any, warning indicator and warning messages data.frame
@@ -43,8 +47,9 @@
 #' @export
 ################################################################################
 
-grtspts_mindis <- function(mindis, sframe, samplesize, maxtry = 10,
-                           stratum, legacy_var = NULL, warn.ind = NULL, warn.df = NULL) {
+grtspts_mindis <- function(mindis, sframe, samplesize, stratum, maxtry = 10,
+                           legacy_option = NULL, legacy_var = NULL, 
+                           warn.ind = NULL, warn.df = NULL) {
 
   # select initial set of sites
   sites <- sframe[get_address(sframe$xcoord, sframe$ycoord, rand = TRUE), ]
@@ -65,8 +70,8 @@ grtspts_mindis <- function(mindis, sframe, samplesize, maxtry = 10,
   
   # initialize keep vector as NA. Change to TRUE if any legacy sites
   keep <- rep(NA, NROW(sites.base))
-  if(!is.null(legacy_var)) {
-    keep[sites.base$legacy == TRUE] <- TRUE
+  if(legacy_option == TRUE) {
+    keep[!is.na(sites.base$legacy)] <- TRUE
   }
   # find sites less than mindis and change keep status
   for(k in 1:nrow(dist.df)){
@@ -92,11 +97,11 @@ grtspts_mindis <- function(mindis, sframe, samplesize, maxtry = 10,
   while(any(!keep)) {
     # identify sites that will be treated as legacy probability sites in sample frame
     sframe$probdis <- FALSE
-    sframe$probdis[sframe$LAKE_ID %in% sites$LAKE_ID[keep]] <- TRUE
+    sframe$probdis[sframe$legacy %in% sites$legacy[keep]] <- TRUE
     
     # if any true legacy sites add them to sites to be kept
-    if(!is.null(legacy_var)) {
-      sframe$probdis[sframe$legacy == TRUE] <- TRUE
+    if(legacy_option == TRUE) {
+      sframe$probdis[!is.na(sframe$legacy)] <- TRUE
     }
 
     # Adjust initial inclusion probabilities to account for current mindis sites
@@ -122,8 +127,8 @@ grtspts_mindis <- function(mindis, sframe, samplesize, maxtry = 10,
     
     # initialize keep vector as NA. Change to TRUE if any legacy sites
     keep <- rep(NA, NROW(sites.base))
-    if(!is.null(legacy_var)) {
-      keep[sites.base$legacy == TRUE] <- TRUE
+    if(legacy_option == TRUE) {
+      keep[!is.na(sites.base$legacy)] <- TRUE
     }
     # find sites less than mindis and change keep status
     for(k in 1:nrow(dist.df)){
