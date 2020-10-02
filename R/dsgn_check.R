@@ -227,7 +227,8 @@ dsgn_check <- function(sframe, sf_type, legacy_sites, legacy_option, stratum, se
         stop.mess <- paste0("Not all caty.n values are in sample frame.")
         stop.df <- rbind(stop.df, data.frame(func = I("caty.n"), I(stop.mess)))
       }
-      if(n.samp != sum(caty.n)) {
+      tst <- function(x, caty.n){x != sum(caty.n)}
+      if(any(sapply(n.samp,tst, caty.n)) ) {
         stop.ind <-  TRUE
         stop.mess <- paste0("Sum of caty.n values do not equal n.samp.")
         stop.df <- rbind(stop.df, data.frame(func = I("caty.n"), I(stop.mess)))

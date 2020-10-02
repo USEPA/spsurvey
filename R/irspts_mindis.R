@@ -1,0 +1,140 @@
+################################################################################
+# Function: grtspts_mindis
+# Programmer:  Tony Olsen
+# Date: September 28, 2020
+#
+#' Select an irs sample with minimum distance between sites.
+#'
+#' @param mindis Minimum distance required between sites in sample.
+#'
+#' @param sframe The sf object containing variables: id and ip.
+#' 
+#' @param samplesize The sample size required for the stratum.
+#' 
+#' @param stratum Character string that identifies stratum membership for each element 
+#'   in the frame. Cannot be NULL.
+#'
+#' @param maxtry Number of maximum attempts to ensure minimum distance between sites.
+#'   Default is 10.
+#'   
+#' @param legacy_option Logical variable where if equal to TRUE, legacy sites are
+#'   to be incorporated into survey design.
+#'
+#' @param legacy_var Character value for name of column for legacy site variable.
+#'   Default is NULL.
+#'
+#' @param warn.ind  A logical value where TRUE indicates a warning message.
+#'   Used for internal collection of messages only.
+#'
+#' @param warn.df A data frame containing messages warning of potential issues.
+#'   Used for internal collection of messages only.
+#'
+#'
+#' @return sites A list of sf object of sample points, an sf object of over sample
+#'   points if any, warning indicator and warning messages data.frame
+#'
+#' @section Other Functions Required:
+#'   \describe{
+#'     \item{\code{get_address}}{constructs the hierarchical address for
+#'       sample points}
+#'     \item{\code{UPpivotal}}{selects sample point(s)}
+#'   }
+#'
+#' @author Tony Olsen \email{Olsen.Tony@epa.gov}
+#'
+#' @keywords survey
+#'
+#' @export
+################################################################################
+
+irspts_mindis <- function(mindis, sframe, samplesize, stratum, maxtry = 10,
+                           legacy_option = NULL, legacy_var = NULL, 
+                           warn.ind = NULL, warn.df = NULL) {
+
+  # select initial set of sites
+  if(nrow(sframe) <= samplesize) {
+    samp.id <- sframe$idpts
+  } else {
+    samp.id <- sample(sframe$idpts, samplesize, prob=sframe$ip)
+  }
+  # extract sites from sample frame
+  sites <- sftmp[sftmp$idpts %in% samp.id, ]
+  
+  # calculate distance between sites
+  site_dist <- st_distance(sites.base)
+  class(site_dist) <- "numeric"
+  nr <- nrow(sites.base)
+  
+  # find sites less than mindis and set to FALSE otherwise set to TRUE
+  keep <- apply(site_dist, 1, function(x){ifelse(any(x[x>0] < mindis), FALSE, TRUE)})
+  
+  # if any legacy sites keep those sites
+  if(legacy_option == TRUE) {
+    keep[!is.na(sites.base$legacy)] <- TRUE
+  }
+
+  # see if any sites are less than mindis and check until none or max tries
+  ntry <- 1
+  while(any(!keep)) {
+    # identify sites that will be treated as legacy probability sites in sample frame
+    sframe$probdis <- FALSE
+    sframe$probdis[sframe$idpts %in% sites.base$idpts[keep]] <- TRUE
+    
+    # if any true legacy sites add them to sites to be kept
+    if(legacy_option == TRUE) {
+      sframe$probdis[!is.na(sframe$legacy)] <- TRUE
+    }
+
+    # Adjust initial inclusion probabilities to account for current mindis sites
+    # and any legacy sites
+    sframe$ip <- grtspts_ipleg(sframe$ip_init, sframe$probdis)
+
+    # select new sites that include legacy sites
+    samp.id <- sample(sframe$idpts, samplesize, prob=sframe$ip)
+    # extract sites from sample frame
+    sites <- sftmp[sftmp$idpts %in% samp.id, ]
+
+    # calculate distance between sites
+    site_dist <- st_distance(sites.base)
+    class(site_dist) <- "numeric"
+    nr <- nrow(sites.base)
+    
+    # identify sites less than mindis
+    keep <- apply(site_dist, 1, function(x){ifelse(any(x[x>0] < mindis), FALSE, TRUE)})
+    
+    # Change to TRUE if any legacy sites
+    if(legacy_option == TRUE) {
+      keep[!is.na(sites.base$legacy)] <- TRUE
+    }
+
+    # check if maxtry reached. If so write out warning message
+    if(ntry >= maxtry) {
+      keep <- rep(TRUE, nr)
+      warn <- paste0("Minimum distance between sites not attained after ", maxtry, " attempts.")
+      if(warn.ind){
+        warn.df <- rbind(warn.df, data.frame(stratum = stratum, func = I("grtspts_mindis"),
+                                             warning = warn))
+      } else {
+        warn.ind <- TRUE
+        warn.df <- data.frame(stratum = stratum, func = I("grtspts_mindis"), warning = warn)
+      }
+    } else { ntry <- ntry + 1}
+  } # end of ntry loop
+
+  # drop internal variables
+  tmp <- names(sites.base)
+  sites.base <- subset(sites.base, select = tmp[!(tmp %in% c("probdis", "geometry"))])
+
+  # Put sites in reverse hierarchical order
+  sites.base <- rho(sites.base)
+  sites.base$siteuse <- NA
+  sites.base$replsite <- NA
+
+  sites <- list(sites.base = sites.base, 
+                warn.ind = warn.ind, warn.df = warn.df)
+
+  invisible(sites)
+}
+
+
+
