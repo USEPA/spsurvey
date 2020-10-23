@@ -38,6 +38,7 @@ source(paste0(pathgrts, "grtspts_ipleg.R"))
 source(paste0(pathgrts, "get.address.R"))
 source(paste0(pathgrts, "UPpivotal.R"))
 source(paste0(pathgrts, "rho.R"))
+source(paste0(pathgrts, "grts_stratum.R"))
 source(paste0(pathgrts, "stopprnt.R"))
 
 
@@ -89,7 +90,7 @@ sframe <- sframe %>%
 sum(st_length(sframe))
 
 # get error with this
-set.seed(473)
+set.seed(291829)
 Equalsites <- grtspts(sframe = sframe, pt_density = 1/10000, nsamp = 50)
 
 
