@@ -2,6 +2,8 @@
 # Function: cat_localmean_prop
 # Programmer: Tom Kincaid
 # Date: July 23, 2020
+# Revised: October 23, 2020 to correct a coding error when calculating
+#          proportion estimates for a stratum
 #'
 #' Local Mean Variance Estimates of Estimated Proportions for Categorical Data
 #'
@@ -179,13 +181,6 @@ cat_localmean_prop <- function(itype, lev_itype, nlev_itype, ivar, lev_ivar,
 # Calculate proportion estimates for the stratum
 
         stratum.i <- tst & stratumID == stratum.levels[i]
-        if(cluster.ind) {
-          prop_st <- tapply(wgt1[stratum.i] * wgt2[stratum.i],
-            factor(catvar[stratum.i]), sum) / popsize.hat[i]
-        } else {
-          prop_st <- tapply(wgt[stratum.i], factor(catvar[stratum.i]), sum) /
-            popsize.hat[i]
-        }
         prop_st <- t(as.data.frame(svymean(make.formula(ivar),
           design = subset(design, stratum.i), na.rm = TRUE))[1])
 
