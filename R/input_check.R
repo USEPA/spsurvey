@@ -1,7 +1,7 @@
 ################################################################################
 # Function: input_check
 # Programmer: Tom Kincaid
-# Date: July 16, 2020
+# Date: October 9, 2020
 #'
 #' Check Input Values for Analytical Functions
 #'
@@ -90,7 +90,6 @@ input_check <- function(dframe, design_names, vars_cat, vars_cont,
     } else {
       if(!(design_names[[i]] %in% names(dframe))) {
         if(!(i %in% temp)) {
-          print(design_names[[i]])
           error.ind <- TRUE
           msg <- paste0("The name provided for the ", i, " argument, \"", design_names[[i]], "\", does not occur among \nthe names for the dframe data frame.\n")
           error.vec <- c(error.vec, msg)
@@ -268,10 +267,23 @@ input_check <- function(dframe, design_names, vars_cat, vars_cont,
 
   if(!is.null(clusterID)) {
     if(!is.null(weight)) {
-      if(min(weight) <= 0) {
+      if(min(weight, na.rm=TRUE) <= 0) {
         error.ind <- TRUE
         msg <- "Stage two weights must be positive.\n"
         error.vec <- c(error.vec, msg)
+      }
+    }
+    if(sizeweight) {
+      if(is.null(sweight)) {
+        error.ind <- TRUE
+        msg <- "Argument sweight was not supplied.\n"
+        error.vec <- c(error.vec, msg)
+      } else {
+        if(min(sweight, na.rm=TRUE) <= 0) {
+          error.ind <- TRUE
+          msg <- "Stage two size-weights must be positive.\n"
+          error.vec <- c(error.vec, msg)
+        }
       }
     }
     if(is.null(weight1)) {
@@ -279,16 +291,13 @@ input_check <- function(dframe, design_names, vars_cat, vars_cont,
       msg <- "Argument weight1 was not supplied.\n"
       error.vec <- c(error.vec, msg)
     } else {
-      if(min(weight1) <= 0) {
+      if(min(weight1, na.rm=TRUE) <= 0) {
         error.ind <- TRUE
         msg <- "Stage one weights must be positive.\n"
         error.vec <- c(error.vec, msg)
       }
       if(!is.null(stratumID)) {
         temp.weight1 <- split(weight1, stratumID)
-        if(sizeweight) {
-          temp.sweight1 <- split(sweight1, stratumID)
-        }
         for(i in 1:nstrata) {
           tst <- stratumID == stratum.levels[i]
           temp.clusterID <- clusterID[tst]
@@ -298,14 +307,6 @@ input_check <- function(dframe, design_names, vars_cat, vars_cont,
             msg <- paste0("\nThe stage one weight must be constant for all stage two sampling units within \neach stage one sampling unit of stratum ", stratum.levels[i], ".\n")
             error.vec <- c(error.vec, msg)
           }
-          if(sizeweight) {
-            if(any(sapply(tapply(temp.sweight1[[i]], temp.clusterID, unique),
-              length) > 1)) {
-              error.ind <- TRUE
-              msg <- paste0("\nThe stage one size-weight must be constant for all stage two sampling units \nwithin each stage one sampling unit of stratum ", stratum.levels[i], ".\n")
-              error.vec <- c(error.vec, msg)
-            }
-          }
         }
       } else {
         if(any(sapply(tapply(weight1, clusterID, unique), length) > 1)) {
@@ -313,21 +314,57 @@ input_check <- function(dframe, design_names, vars_cat, vars_cont,
           msg <- "The stage one weight must be constant for all stage two sampling units within \neach stage one sampling unit.\n"
           error.vec <- c(error.vec, msg)
         }
-        if(sizeweight) {
-          if(any(sapply(tapply(sweight1, clusterID, unique), length) > 1)) {
+      }
+    }
+    if(is.null(sweight1)) {
+      error.ind <- TRUE
+      msg <- "Argument sweight1 was not supplied.\n"
+      error.vec <- c(error.vec, msg)
+    } else {
+      if(min(sweight1, na.rm=TRUE) <= 0) {
+        error.ind <- TRUE
+        msg <- "Stage one size-weights must be positive.\n"
+        error.vec <- c(error.vec, msg)
+      }
+      if(!is.null(stratumID)) {
+        temp.sweight1 <- split(sweight1, stratumID)
+        for(i in 1:nstrata) {
+          tst <- stratumID == stratum.levels[i]
+          temp.clusterID <- clusterID[tst]
+          if(any(sapply(tapply(temp.sweight1[[i]], temp.clusterID, unique),
+              length) > 1)) {
+              error.ind <- TRUE
+              msg <- paste0("\nThe stage one size-weight must be constant for all stage two sampling units \nwithin each stage one sampling unit of stratum ", stratum.levels[i], ".\n")
+              error.vec <- c(error.vec, msg)
+          }
+        }
+      } else {
+        if(any(sapply(tapply(sweight1, clusterID, unique), length) > 1)) {
             error.ind <- TRUE
             msg <- "The stage one size-weight must be constant for all stage two sampling units \nwithin each stage one sampling unit.\n"
             error.vec <- c(error.vec, msg)
-          }
         }
       }
     }
   } else {
     if(!is.null(weight)) {
-      if(min(weight) <= 0) {
+      if(min(weight, na.rm=TRUE) <= 0) {
         error.ind <- TRUE
         msg <- "Weights must be positive.\n"
         error.vec <- c(error.vec, msg)
+      }
+    }
+    if(sizeweight) {
+      if(is.null(sweight)) {
+        error.ind <- TRUE
+        msg <- "Argument sweight was not supplied.\n"
+        error.vec <- c(error.vec, msg)
+      } else {
+        if(min(sweight, na.rm=TRUE) <= 0) {
+          error.ind <- TRUE
+          msg <- "Size-weights must be positive.\n"
+          error.vec <- c(error.vec, msg)
+        }
       }
     }
   }
@@ -341,30 +378,47 @@ input_check <- function(dframe, design_names, vars_cat, vars_cont,
         msg <- "Stage two x-coordinates and y-coordinates for location are required for the \nlocal mean variance estimator.\n"
         error.vec <- c(error.vec, msg)
       }
-      if(any(is.na(xcoord)) || any(is.na(ycoord))) {
-        error.ind <- TRUE
-        msg <- "At least one missing value was detected among the stage two x-coordinates and \ny-coordinates for location, which are required for the local mean variance \nestimator.\n"
-        error.vec <- c(error.vec, msg)
-      }
       if(is.null(xcoord1) || is.null(ycoord1)) {
         error.ind <- TRUE
         msg <- "Stage one x-coordinates and y-coordinates for location are required for the \nlocal mean variance estimator.\n"
         error.vec <- c(error.vec, msg)
-      }
-      if(any(is.na(xcoord1)) || any(is.na(ycoord1))) {
-        error.ind <- TRUE
-        msg <- "At least one missing value was detected among the stage one x-coordinates and \ny-coordinates for location, which are required for the local mean variance \nestimator.\n"
-        error.vec <- c(error.vec, msg)
+      } else {
+        if(!is.null(stratumID)) {
+          temp.xcoord1 <- split(xcoord1, stratumID)
+          temp.ycoord1 <- split(ycoord1, stratumID)
+          for(i in 1:nstrata) {
+            tst <- stratumID == stratum.levels[i]
+            temp.clusterID <- clusterID[tst]
+            if(any(sapply(tapply(temp.xcoord1[[i]], temp.clusterID, unique),
+              length) > 1)) {
+              error.ind <- TRUE
+              msg <- paste0("\nThe stage one x-coordinate must be constant for all stage two sampling units within \neach stage one sampling unit of stratum ", stratum.levels[i], ".\n")
+              error.vec <- c(error.vec, msg)
+            }
+            if(any(sapply(tapply(temp.ycoord1[[i]], temp.clusterID, unique),
+              length) > 1)) {
+              error.ind <- TRUE
+              msg <- paste0("\nThe stage one y-coordinate must be constant for all stage two sampling units within \neach stage one sampling unit of stratum ", stratum.levels[i], ".\n")
+              error.vec <- c(error.vec, msg)
+            }
+          }
+        } else {
+          if(any(sapply(tapply(xcoord1, clusterID, unique), length) > 1)) {
+            error.ind <- TRUE
+            msg <- "The stage one x-coordinate must be constant for all stage two sampling units within \neach stage one sampling unit.\n"
+            error.vec <- c(error.vec, msg)
+          }
+          if(any(sapply(tapply(ycoord1, clusterID, unique), length) > 1)) {
+            error.ind <- TRUE
+            msg <- "The stage one y-coordinate must be constant for all stage two sampling units within \neach stage one sampling unit.\n"
+            error.vec <- c(error.vec, msg)
+          }
+        }
       }
     } else {
       if(is.null(xcoord) || is.null(ycoord)) {
         error.ind <- TRUE
         msg <- "x-coordinates and y-coordinates for location are required for the local mean \nvariance estimator.\n"
-        error.vec <- c(error.vec, msg)
-      }
-      if(any(is.na(xcoord)) || any(is.na(ycoord))) {
-        error.ind <- TRUE
-        msg <- "At least one missing value was detected among the x-coordinates and \ny-coordinates for location, which are required for the local mean variance \nestimator.\n"
         error.vec <- c(error.vec, msg)
       }
     }
@@ -612,50 +666,6 @@ input_check <- function(dframe, design_names, vars_cat, vars_cont,
               error.vec <- c(error.vec, msg)
             }
           }
-        }
-      }
-    }
-  }
-
-# Check the size-weight arguments
-
-  if(sizeweight) {
-    if(!is.null(stratumID)) {
-      if(!is.null(clusterID)) {
-        if(min(sweight) <= 0) {
-          error.ind <- TRUE
-          msg <- "Stage two size-weights must be positive.\n"
-          error.vec <- c(error.vec, msg)
-        }
-        if(min(sweight1) <= 0){
-          error.ind <- TRUE
-          msg <- "Stage one size-weights must be positive.\n"
-          error.vec <- c(error.vec, msg)
-        }
-      } else {
-        if(min(sweight) <= 0) {
-          error.ind <- TRUE
-          msg <- "Size-weights must be positive.\n"
-          error.vec <- c(error.vec, msg)
-        }
-      }
-    } else {
-      if(!is.null(clusterID)) {
-        if(min(sweight) <= 0) {
-          error.ind <- TRUE
-          msg <- "Stage two size-weights must be positive.\n"
-          error.vec <- c(error.vec, msg)
-        }
-        if(min(sweight1) <= 0) {
-          error.ind <- TRUE
-          msg <- "Stage one size-weights must be positive.\n"
-          error.vec <- c(error.vec, msg)
-        }
-      } else {
-        if(min(sweight) <= 0) {
-          error.ind <- TRUE
-          msg <- "Size-weights must be positive.\n"
-          error.vec <- c(error.vec, msg)
         }
       }
     }
