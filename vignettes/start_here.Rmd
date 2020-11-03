@@ -1,0 +1,65 @@
+---
+title: "spsurvey - Start Here"
+author: "Michael Dumelle, Tony Olsen, Tom Kincaid, and Marc Weber"
+output: 
+  html_document:
+    theme: flatly
+    number_sections: true
+    highlighted: default 
+    toc: yes
+    toc_float:
+      collapsed: no
+      smooth_scroll: no
+    toc_depth: 2
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>", 
+  warning = FALSE, 
+  message = FALSE
+)
+library(tidyverse)
+library(devtools)
+load_all()
+```
+
+# Installing and Loading `spsurvey`
+
+If this is your first time using the `spsurvey` package, you will need to run:
+```{r, eval = FALSE}
+install.packages("spsurvey")
+```
+to install the package. You only need to run this code once per machine.
+
+Then, to load the `spsurvey` package into R, run:
+```{r setup, eval = FALSE}
+library(spsurvey)
+```
+You need to run this code every time you start a new R session.
+
+If you want to replicate the exact results in any of these the vignette at a later time, you will need to set a "seed" just after the `library(spsurvey)` statement. To set this seed, run:
+```{r}
+set.seed(42)
+```
+
+# `sf` Objects
+
+To obtain random samples using the algorithms in `spsurvey`, your data needs to be stored as an `sf` object. An `sf` object, short for a "simple features" object, is a object with a unique structure used to conveniently store spatial data in R. `sf` objects are constructed using the `sf` package in R (Pebesma, 2018). The `sf` package is loaded and installed alongside `spsurvey`, so you do not need to run `install.packages("sf")` or `library(spsurvey)` to access the `sf` package if `spsurvey` is already installed and loaded. 
+
+There are two common ways to construct `sf` objects in R. The first is to read a shapefile directly into R using `st_read()`. The second is to input an appropriate R object (like a data frame or an `sp` object) and an appropriate geometry into the `st_sf()` or `st_as_sf()` functions. For more information regarding `sf` objects, see Pebesma (2018) and Lovelace et al. (2019).
+
+# Coordinate Reference Systems
+
+Coordinate reference systems (CRS) identify a unique location on Earth's surface. There are two CRSs: geographic and projected. A geographic CRS uses longitude (east-west direction) and latitude (north-south direction) coordinates. Geographic CRSs are measured in degrees, *not meters*. This has important consequences; for example, a one degree difference in latitude is different at different longitudes. Projected CRSs are measured in standard cartesian coordinates with respect to a flat surface. They have x and y locations, an origin, and a unit of measurement (like meters). 
+
+In R, CRS information is stored in EPSG codes. This means that in order to transform your coordinates from one CRS to another, you need two EPSG codes: one for each CRS. For more information on CRSs and EPSG codes, see Lovelace et al. (2019), and to search for various EPSG codes, visit https://epsg.io/ .
+
+It is important that you use appropriate CRS (via an EPSG code) in your `sf` object. If your CRS is misspecified, you may get misleading results. `spsurvey` will use the raw coodinates stored in your `sf` object, so it is your responsibility to make sure they have the correct CRS.
+
+# References
+
+Lovelace, R., Nowosad, J., & Muenchow, J. (2019). Geocomputation with R. CRC Press.
+
+Pebesma, E., (2018). Simple Features for R: Standardized Support for Spatial Vector Data. *The R Journal*, 10 (1):439-446. https://doi.org/10.32614/RJ-2018-009
