@@ -2,6 +2,8 @@
 # Function: cdftest_localmean_total
 # Programmer: Tom Kincaid
 # Date: October 23, 2020
+# Revised: November 2, 2020 to correctly process the column variable when it
+#          includes missing (NA) values
 #'
 #' Local Mean Variance/Covarince Estimates of Estimated Population Totals
 #'
@@ -59,7 +61,7 @@ cdftest_localmean_total <- function(design, design_names,  popcorrect, vartype,
 # For variables that exist in the design$variables data frame, assign survey
 # design variables
 
-  dframe <- subset(design$variables, !is.na(rowvar))
+  dframe <- subset(design$variables, !(is.na(rowvar) | is.na(colvar)))
   for(i in names(design_names)) {
     if(is.null(design_names[[i]])) {
       eval(parse(text=paste0(i, " <- NULL")))
