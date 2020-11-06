@@ -2,6 +2,8 @@
 # Function: input_check
 # Programmer: Tom Kincaid
 # Date: October 9, 2020
+# Revised: November 5, 2020 to correct an error when checking size-weights for
+#          two-stage samples
 #'
 #' Check Input Values for Analytical Functions
 #'
@@ -316,33 +318,35 @@ input_check <- function(dframe, design_names, vars_cat, vars_cont,
         }
       }
     }
-    if(is.null(sweight1)) {
-      error.ind <- TRUE
-      msg <- "Argument sweight1 was not supplied.\n"
-      error.vec <- c(error.vec, msg)
-    } else {
-      if(min(sweight1, na.rm=TRUE) <= 0) {
+    if(sizeweight) {
+      if(is.null(sweight1)) {
         error.ind <- TRUE
-        msg <- "Stage one size-weights must be positive.\n"
+        msg <- "Argument sweight1 was not supplied.\n"
         error.vec <- c(error.vec, msg)
-      }
-      if(!is.null(stratumID)) {
-        temp.sweight1 <- split(sweight1, stratumID)
-        for(i in 1:nstrata) {
-          tst <- stratumID == stratum.levels[i]
-          temp.clusterID <- clusterID[tst]
-          if(any(sapply(tapply(temp.sweight1[[i]], temp.clusterID, unique),
+      } else {
+        if(min(sweight1, na.rm=TRUE) <= 0) {
+          error.ind <- TRUE
+          msg <- "Stage one size-weights must be positive.\n"
+          error.vec <- c(error.vec, msg)
+        }
+        if(!is.null(stratumID)) {
+          temp.sweight1 <- split(sweight1, stratumID)
+          for(i in 1:nstrata) {
+            tst <- stratumID == stratum.levels[i]
+            temp.clusterID <- clusterID[tst]
+            if(any(sapply(tapply(temp.sweight1[[i]], temp.clusterID, unique),
               length) > 1)) {
               error.ind <- TRUE
               msg <- paste0("\nThe stage one size-weight must be constant for all stage two sampling units \nwithin each stage one sampling unit of stratum ", stratum.levels[i], ".\n")
               error.vec <- c(error.vec, msg)
+            }
           }
-        }
-      } else {
-        if(any(sapply(tapply(sweight1, clusterID, unique), length) > 1)) {
+        } else {
+          if(any(sapply(tapply(sweight1, clusterID, unique), length) > 1)) {
             error.ind <- TRUE
             msg <- "The stage one size-weight must be constant for all stage two sampling units \nwithin each stage one sampling unit.\n"
             error.vec <- c(error.vec, msg)
+          }
         }
       }
     }
