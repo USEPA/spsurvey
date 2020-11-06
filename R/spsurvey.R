@@ -28,8 +28,8 @@
 #' percentiles using the deconvoluted CDF are available.
 #'
 # Import all packages listed as Depends or Imports
-#' @import methods
 #' @import sf
+#' @import survey
 #' @importFrom crossdes find.BIB
 #' @importFrom deldir deldir tile.list
 #' @importFrom foreign read.ssd read.xport
@@ -41,7 +41,8 @@
 #'   makeCluster parLapply setDefaultCluster stopCluster
 #' @importFrom rgeos gIntersection
 #' @importFrom sp SpatialPoints SpatialPointsDataFrame
-#' @importFrom stats addmargins dist dnorm ftable model.frame optimize pchisq pf
-#'   pnorm qnorm rnorm runif var
+#' @importFrom stats addmargins chisq.test confint dist dnorm ftable model.frame
+#'             model.matrix na.pass optimize pchisq pf pnorm qnorm rnorm runif
+#'             update var weights
 #'
 "_PACKAGE"
