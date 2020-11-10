@@ -5,6 +5,8 @@
 # Date: January 7, 2014
 # Revised: October 23, 2020 to accomodate use of the local mean variance
 #          estimator
+# Revised: October 30, 2020 to correctly process the column variable  when it
+#          includes missing (NA) values
 #'
 #' Design-Based Contingency Table Tests
 #'
@@ -133,6 +135,7 @@ svychisq_localmean <- function(formula, design, statistic = c("F", "Chisq",
   rowvar <- unique(design$variables[, as.character(rows)])
   rowvar <- rowvar[!is.na(rowvar)]
   colvar <- unique(design$variables[, as.character(cols)])
+  colvar <- colvar[!is.na(colvar)]
   nr <- length(rowvar)
   nc <- length(colvar)
   mf1 <- expand.grid(rows = 1:nr, cols = 1:nc)

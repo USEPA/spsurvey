@@ -2,6 +2,8 @@
 # Function: cdftestvar_prop
 # Programmer: Tom Kincaid
 # Date: October 23, 2020
+# Revised: November 2, 2020 to correctly process the column variable when it
+#          includes missing (NA) values
 #'
 #' Local Mean Variance/Covariance Estimates of Estimated Population Proportions
 #'
@@ -154,7 +156,7 @@ cdftestvar_prop <- function(design, wgt, x, y, stratum.ind,
 # Create the model matrix for the contingency table using using a single cluster
 
       design.var <- subset(design$variables, cluster == cluster.levels[i] &
-          !is.na(rowvar))
+          !(is.na(rowvar) | is.na(colvar)))
       mm_cluster <- model.matrix(frm_cells, model.frame(frm_cells, design.var,
         na.action = na.pass))
 
@@ -268,7 +270,8 @@ cdftestvar_prop <- function(design, wgt, x, y, stratum.ind,
 
 # Calculate the weighted residuals matrix
 
-    mm_cells <- subset(mm_cells, !is.na(design$variables$rowvar))
+    mm_cells <- subset(mm_cells, !(is.na(design$variables$rowvar) |
+        is.na(design$variables$colvar)))
     n <- nrow(mm_cells)
     rm <- (mm_cells - matrix(rep(means, n), nrow=n, byrow=TRUE)) *
       matrix(rep(wgt, m), nrow=n)
