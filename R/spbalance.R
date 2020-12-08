@@ -21,7 +21,7 @@
 #' @export
 #'
 #' @examples
-spbalance <- function(sample, population, stratum_sample = "stratum", stratum_population, metrics = "pielou", return_extent = TRUE) {
+spbalance <- function(sample, population, stratum_sample = "stratum", stratum_population, metrics = "pielou", return_extent = FALSE) {
    
    stratum <- sort(as.character(unique(sample[[stratum_sample]])))
    
