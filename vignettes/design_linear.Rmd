@@ -20,74 +20,80 @@ knitr::opts_chunk$set(
   warning = FALSE, 
   message = FALSE
 )
-library(tidyverse)
 library(devtools)
 load_all()
-load("C:/Users/mdumelle/Documents/software/spsurvey/spsurvey/data/NE_lakes.rda")
-NE_lakes <- NE_lakes %>%
-  mutate(Area_Cat = case_when(
-    Area_Cat %in% c("(0,1]", "(1,5]") ~ "small",
-    Area_Cat %in% c("(5,10]", "(10,50]") ~ "medium",
-    Area_Cat %in% c("(50,500]", "(500,1e+04]") ~ "large"
-                    )
-  ) %>%
-  sample_n(1000)
+data("NE_lakes")
 ```
 
 # Introduction
 
-In this vignette, you will use the GRTS algorithm (Stevens and Olsen, 2004) to select spatially balanced samples from a finite population of lakes. Specifically, you will explore:
+In this vignette, you will use `spsurvey` to select probability samples. To select probability samples, you will mostly use the GRTS algorithm (Stevens and Olsen, 2004) so these probability samples are spatially balanced, but you will also use Independent Random Sampling. More specifically, throughout this vignette you will explore:
 
 * [The `NE_Lakes` Data] 
-* [An Equal Probability Design]
-* [An Unequal Probability Design]
-* [A Stratified, Equal Probability Design]
-* [A Stratified, Unequal Probability Design]
+* [GRTS Designs]
+    * [An Equal Probability GRTS Design] 
+    * [An Unequal Probability GRTS Design]
+    * [A Stratified, Equal Probability GRTS Design]
+    * [A Stratified, Proportional Probability GRTS Design]
+* [Independent Random Sampling Designs]
 * [Additional Design Features]
     * [Legacy Sites]
     * [Minimum Distance Between Sites]
     * [Replacement Sites]
+* [Calculating the Spatial Balance of a Sample]
 
-If this is your first time using the `spsurvey` package, you will need to run:
-```{r, eval = FALSE}
-install.packages("spsurvey")
-```
-to install the package. You only need to run this code once per machine.
-
-Then, to load the `spsurvey` package into R, run:
+To follow along on your machine, you must load `spsurvey` and set a seed: 
 ```{r setup, eval = FALSE}
 library(spsurvey)
+set.seed(1)
 ```
-You need to run this code every time you start a new R session.
 
-If you want to replicate the exact results in the vignette at a later time, you will need to set a ``seed.'' To do so, run:
-```{r}
-set.seed(42)
+```{r, echo = FALSE}
+# actually setting seed on our end
+set.seed(1)
 ```
+
+If you need to review Coordinate Reference Systems (CRS), `sf` objects, or installing and loading the `spsurvey` package, please visit the "Start Here" vignette, accessed [here](dummy link for now) or by running `vignette("start_here", package = spsurvey)`.
 
 # The `NE_Lakes` Data
 
-You will use the NE Lakes dataset throughout this vignette. The NE Lakes dataset contains variables for lakes in the Southern New England Region of the United States of America. To load the data into your workspace, run:
+Throughout this vignette, you will use select probability samples from the `NE_Lakes` dataset. The `NE_lakes` dataset is made up of 5328 lakes in the Southern New England Region of the United States of America. To load the data into your workspace, run:
 ```{r load NLA, eval = FALSE}
-data(NE_lakes)
+data("NE_lakes")
 ```
 
-This data set is an `sf` object. `sf` stands for "simple features." `sf` objects useful because they provide a convenient framework for storing and manipulating spatially referenced data. Before selecting a GRTS sample using your own data, your data must be an `sf` object. For more information about `sf` objects, please visit the INSERT NAME vignette using INSERT VIGNETTE ACCESS CODE. 
-
-
-There are two variables in the `NE_lakes` dataset:
-
-* `State`: The state containing the lake
-* `Area_Cat`: A lake surface area category in hectares
-
-To view the first few rows, run:
+To view the first few rows of the `NE_lakes` dataset, run:
 ```{r}
 head(NE_lakes)
 ```
 
-You will also notice the coordinates of the `NE_lakes` dataset are stored in the `geometry` column. These are `POINT` referenced data because each lake has a unique set of `x` and `y` coordinates. The coordinates have the NAD83 Geodetic CRS with corresponding EPSG code 5070. As the user, it is your responsibility to ensure that the coordinates of your `sf` object are properly projected.
+The first few lines of this output returns geometry information.
 
-Next we save the bounding box of coordinates from the data for maintaining consistent aspect ratios across plots generated throught this vignette:
+* `geometry type`: This is a `POINT` geometry because each lake has a unique spatial location.
+* `dimension`: There are two dimensions, `X` (east-west) and `Y` (north-south).
+* `bbox`: The bounding box of the spatial locations.
+* `projected CRS`: The coordinates in a USA Contiguous Albers Equal Area Conic Projection.
+
+The next few lines contain variable information. You will also notice the projected coordinates of the `NE_lakes` dataset are stored in the `geometry` column. These are `POINT` referenced data because each lake has a unique set of `x` and `y` coordinates. The coordinates have the NAD83 Geodetic CRS with corresponding EPSG code 5070. As the user, it is your responsibility to ensure that the coordinates of your `sf` object are properly projected. For more CRS, EPSG, and `sf` information, see the "Start Here" vignette `vignette("Start Here", package = "spsurvey")`.
+
+* `LAT_DD_N83`: The latitute coordinate for each lake centroid using the NAD83 CRS (EPSG: 5070)
+* `LON_DD_N83`: The longitude coordinate for each lake centroid using the NAD83 CRS (EPSG: 5070)
+* `AREA_HA`: The area (in hectares) of each lake.
+* `ELEVATION`: The elevation (in meters) of each lake.
+* `geometry`: The projected spatial coordinates for each lake centroid.
+
+The `ELEVATION` column has continuous elevation measurements, but throughout the rest of the vignette you will use a categorical grouping of this variable based on elevation. Lakes having an elevation from 0 to 50 meters will be in the "low" group, lakes having an elevation from 50 meters to 200 meters will be in the "medium" group, and lakes having an elevation greater than 5 hectares will be in the "high" group. To convert `ELEVATION` into this new categorical grouping, run:
+```{r}
+max_elevation <- max(NE_lakes$ELEVATION)
+NE_lakes$ELEVATION <- cut(NE_lakes$ELEVATION, breaks = c(0, 50, 200, max_elevation), labels = c("low", "medium", "high"), include.lowest = TRUE)
+```
+
+To see how many lakes are in each category, run:
+```{r}
+table(NE_lakes$ELEVATION)
+```
+
+Next, we save the bounding box of coordinates from the data for maintaining consistent aspect ratios across plots generated throught this vignette:
 
 ```{r}
 boundbox <- st_bbox(NE_lakes)
@@ -99,8 +105,9 @@ ymax <- boundbox["ymax"]
 
 Throughout this vignette, you will use the `grts()` function to use the GRTS algorithm. For more information on the `grts()` function that won't be covered in this vignette, we encourage you to run `?grts`.
 
+# GRTS Designs
 
-# An Equal Probability Design
+## An Equal Probability GRTS Design
 
 To select an equal proability GRTS sample, run:
 ```{r}
@@ -113,23 +120,23 @@ eqprob <- grts(sframe = NE_lakes, seltype = "equal", n.samp = 60)
 head(eqprob$sites.base)
 ```
 
-You will notice several variables are contained in `eqprob$sites.base`. The rownames of `eqprob$sites.base` match the row locations in `NLA_2007`. `stratum` indicates the strata of each row; for this non-stratifiede design, all entries in `stratum` are `"None"`. `wgt` and `ip` give the survey design weights and inclusion probabilities of each site, respectively. Because this is an equal probability design, `wgt = 1/ip`. `caty` indicates the unequal probability cateogry; for this equal probability design, all entries in `caty` are `"None"`.
+You will notice several variables are contained in `eqprob$sites.base`. The rownames of `eqprob$sites.base` match the row locations in `NLA_2007`. `stratum` indicates the strata of each row; for this non-stratified design, all entries in `stratum` are `"None"`. `wgt` and `ip` give the survey design weights and inclusion probabilities of each site, respectively. `caty` indicates the unequal probability cateogry; for this equal probability design, all entries in `caty` are `"None"`.
 
-To overlay the spatially balanced sample on the original population,
-```{r, fig.show = "hold", fig.align = "center"}
+To overlay the spatially balanced sample on the original population, run
+```{r, fig.show = "hold", fig.align = "center", fig.cap = "Population sites (black) and sampled sites (red) obtained for an equal probability GRTS design."}
 # gray background
 par(bg = "gray95")
 # plot the population sites
-plot(st_geometry(NE_lakes), main = "NE Lakes", reset = FALSE, 
-     xlim = c(xmin, xmax), ylim = c(ymin, ymax), cex = 1.2)
+plot(st_geometry(NE_lakes), main = "", reset = FALSE, 
+     xlim = c(xmin, xmax), ylim = c(ymin, ymax), cex = 0.5)
 # add the sampled sites
-plot(st_geometry(eqprob$sites.base), pch = 19, add = TRUE, cex = 1, col = "red")
+plot(st_geometry(eqprob$sites.base), pch = 19, add = TRUE, cex = 1.5, col = "red")
 # add a legend
-legend(x = "topright", legend = c("Population Sites", "Sampled Sites"),
-       pch = c(1, 19), col = c("black", "red"))
+legend(x = "bottomright", legend = c("Population Sites", "Sampled Sites"),
+       pch = c(1, 19), col = c("black", "red"), cex = 1.25)
 ```
 
-`grts` returns several design elements used by the function as a tool to both keep track of and to verify the specifications of your design. You can access this information by running `eqprob$dsgn`. A list is printed containing several pieces of information. It is often the case that several of these pieces of information will be `NULL`. That is to be expected if you did not specify that charactersitic of the design. More details on some of those extra design characteristics are discussed later. For now, you will focus on the relevant non-`NULL` information.
+`grts` returns several design elements used by the function as a tool to both keep track of and to verify the specifications of your design. You can access this information by running `eqprob$dsgn`. A list is printed containing several pieces of information -- several of which may be `NULL`. These `NULL` values are expected and change based on the specifications of your design; this will be made more clear later on. For now, you will focus on the relevant non-`NULL` information.
 ```{r, echo = FALSE}
 eqprob$dsgn$legacy_option <- NULL
 for (s in names(eqprob$dsgn)) {
@@ -138,27 +145,26 @@ for (s in names(eqprob$dsgn)) {
 eqprob$dsgn
 ```
 
-Notice that
-
-*  The `stratum` variable (`stratum_var`) in `eqprob$sites.base` is given the name `stratum`
-*  All entries in stratum are given the same value: `"None"`
-*  The selection type for each stratum (the only stratum being `"None"` in this case) is equal probability, as indicated by `"equal"`
-* The number of samples in each stratum (`n.samp`) equals 60
+The `stratum` variable (the `stratum_var` argument to `grts()`) in `eqprob$sites.base` is given the name `stratum`.  All entries in `stratum` are given the same value: `"None"`.  The selection type for the `"None"` stratum is equal probability -- as indicated by `"equal"`. There are 60 (`n.samp`) samples in the `"None"` stratum
 
 
-# An Unequal Probability Design
+## An Unequal Probability GRTS Design
 
-Suppose we wish to sample the smallest lakes twice as often as all other lakes. To select an unequal probability GRTS sample by state, run:
+Suppose we wish to sample the lakes in the highest elevation group with a higher probability than all other lakes. To select an unequal probability GRTS sample by elevation group, run:
 ```{r}
 # expected sample size for each group with names
-caty.n <- c(small = 30, medium = 15, large = 15)
+caty.n <- c(low = 15, medium = 15, high = 30)
+# printing caty.n
+caty.n
 # selecting the unequal probability sample
 uneqprob <- grts(sframe = NE_lakes, seltype = "unequal", 
-                          n.samp = 60, caty_var = "Area_Cat", 
+                          n.samp = 60, caty_var = "ELEVATION", 
                           caty.n = caty.n)
 ```
 
-The non-NULL `dsgn` output is:
+The `seltype` argument is "unequal" for an unequal probaility design, the `caty_var` argument is the variable in `NE_lakes` for which uneuqal probaiblity sampling is desired, and the `caty.n` argument is a vector with names equal to the categories in `caty_var` and values indicating the expected samples sizes desired in each category. The sum of the values in `caty.n` must add up to the total desired sample size indicated by the `n.samp` argument. Though the expected sample sizes are given by `caty.n`, there is no guarantee your sample will contain within-group sample sizes equaling these values. 
+
+The non-NULL `dsgn` output is
 ```{r, echo = FALSE}
 uneqprob$dsgn$legacy_option <- NULL
 for (s in names(uneqprob$dsgn)) {
@@ -168,19 +174,21 @@ uneqprob$dsgn
 ```
 
 
-# A Stratified, Equal Probability Design
+## A Stratified, Equal Probability GRTS Design
 
-Connecticut, Massascusetts, and Rhode Island have vastly different numbers of lakes. An equal probability sample would yield a sample with more Massaschusetts lakes than Connecticut or Rhode Island lakes. If you want to ensure an equal number of lakes are selected in each state, you need to use a stratified design. To select a spatially balanced, stratified design with equal probabilities of selection within each strata (state), run:
-```{r}
+Unlike unequal probability designs, stratified designs ensure each within-group sample size equals the expected sample size. To select a spatially balanced, stratified design having equal probabilities of selection within each strata (state), run:
+```{r, fig.show = "hold", fig.align = "center", fig.cap = "Population sites (black) and sampled sites (red) obtained for the medium `ELEVATION` group using stratified GRTS design having equal selection probabilities within strata."}
 # names of the strata
-strata <- c("CT", "MA", "RI")
+strata <- c("low", "medium", "high")
 # sample sizes of the strata
-strata.n <- c(CT = 20, MA = 20, RI = 20)
+strata.n <- c(low = 20, medium = 20, high = 20)
 # selecting the stratified, equal probability sample
-strat_eqprob <- grts(sframe = NE_lakes, stratum_var = "State",
+strat_eqprob <- grts(sframe = NE_lakes, stratum_var = "ELEVATION",
                         stratum = strata, seltype = "equal", 
                         n.samp = strata.n)
 ```
+
+The arguments are similar to the `caty` arguments from [An Unequal Probability GRTS Design]; `stratum` is used instead of `caty`. The argument to `stratum_var` is the name of the `stratum` variable in `NE_lakes` (`ELEVATION`), the argument to `stratum` is a vector containing the name of each strata, and the argument to `n.samp` a named vector indicating sample sizes for each strata. The argument to `seltype` is `"equal"`, which indicates equal selection probabilities within strata.
 
 The non-NULL `dsgn` output is:
 ```{r, echo = FALSE}
@@ -191,44 +199,39 @@ for (s in names(strat_eqprob$dsgn)) {
 strat_eqprob$dsgn
 ```
 
-The stratified sample is obtained by selecting a standard GRTS spatially balanced sample within each strata. To visualize this, you can plot only the Massachusetts lakes:
+To visuzlize the sample for the medium `ELEVATION` category, run
 ```{r, fig.show = "hold", fig.align = "center"}
 # gray background
 par(bg = "gray95")
 # subset the population to include ma lakes
-ma_pop <- subset(NE_lakes, State == "MA")
+low_pop <- subset(NE_lakes, ELEVATION == "low")
 # subset the sample to include ma lakes
-ma_samp <- subset(strat_eqprob$sites.base, State == "MA")
+low_samp <- subset(strat_eqprob$sites.base, ELEVATION == "low")
 # plot the population man-made lakes
-plot(st_geometry(ma_pop), main = "Massassachusetts Lakes", reset = FALSE, 
-     xlim = c(xmin, xmax), ylim = c(ymin, ymax), cex = 1.2)
+plot(st_geometry(low_pop), main = "", reset = FALSE, 
+     xlim = c(xmin, xmax), ylim = c(ymin, ymax), cex = 0.5)
 # add the sampe man-made lakes
-plot(st_geometry(ma_samp), pch = 19, add = TRUE, cex = 1, col = "red")
+plot(st_geometry(low_samp), pch = 19, add = TRUE, cex = 1.5, col = "red")
 # add a legend
-legend(x = "topright", legend = c("Population Sites", "Sampled Sites"),
-       pch = c(1, 19), col = c("black", "red"))
+legend(x = "bottomright", legend = c("Population Sites", "Sampled Sites"),
+       pch = c(1, 19), col = c("black", "red"), cex = 1.25)
 ```
 
-# A Stratified, Unequal Probability Design
+## A Stratified, Proportional Probability GRTS Design
 
-To select a spatially balanced, stratified design with unequal probabilities of selection within each strata (`State`) that correspond to an auxiliary variable (`Area_Cat`), run:
+The previous stratified design can be further generalized by proportional selection within strata. To select a stratified design where in each strata, lakes are sample proportionally to their area (in hectares; `AREA_HA`), run
 ```{r}
 # names of the strata
-strata <- c("CT", "MA", "RI")
+strata <- c("low", "medium", "high")
 # sample sizes of the strata
-strata.n <- c(CT = 20, MA = 20, RI = 20)
-# expected number of samples in the CT strata for the Chla_cond variable
-ct_caty.n <- c(small = 10, medium = 5, large = 5)
-ma_caty.n <- c(small = 10, medium = 5, large = 5)
-ri_caty.n <- c(small = 10, medium = 5, large = 5)
-# list of the unequal probability expected samples for each strata
-caty.n_list <- list(CT = ct_caty.n, MA = ma_caty.n, RI = ri_caty.n)
+strata.n <- c(low = 20, medium = 20, high = 20)
 # selecting the stratified, unequal probability sample
-strat_uneqprob <- grts(sframe = NE_lakes, stratum_var = "State",
-                        stratum = strata, seltype = "unequal", 
-                        n.samp = strata.n, caty_var = "Area_Cat", 
-                        caty.n = caty.n_list)
+strat_uneqprob <- grts(sframe = NE_lakes, stratum_var = "ELEVATION",
+                        stratum = strata, seltype = "proportional", 
+                        n.samp = strata.n, aux_var = "AREA_HA")
 ```
+
+The `seltype` argument indicates proportional sampling within strata, and the `aux_var` argument indicates the variable in `NE_lake` to proportionally sample by. Proportional sampling is appropriate when the proportional variable is positive -- for example, all lake areas are greater than zero.
 
 The non-NULL `dsgn` output is:
 ```{r, echo = FALSE}
@@ -239,13 +242,35 @@ for (s in names(strat_uneqprob$dsgn)) {
 strat_uneqprob$dsgn
 ```
 
+# Independent Random Sampling Designs
+
+If you want to conduct an independent random sample (IRS) instead of a GRTS sample, simply replace the `grts()` function with the `irs()` function. All of the arguments are identical, so any of the aforementioned examples can be easily applied to the IRS scenario as well. For example, to select an equal probability IRS, run
+```{r}
+# equal probability design
+eqprob_irs <- irs(sframe = NE_lakes, seltype = "equal", n.samp = 60)
+```
+
+To overlay the IRS on the original population, run
+```{r, fig.show = "hold", fig.align = "center", fig.cap = "Population sites (black) and sampled sites (red) obtained for an equal probability IRS design."}
+# gray background
+par(bg = "gray95")
+# plot the population sites
+plot(st_geometry(NE_lakes), main = "", reset = FALSE, 
+     xlim = c(xmin, xmax), ylim = c(ymin, ymax), cex = 0.5)
+# add the sampled sites
+plot(st_geometry(eqprob_irs$sites.base), pch = 19, add = TRUE, cex = 1.5, col = "red")
+# add a legend
+legend(x = "bottomright", legend = c("Population Sites", "Sampled Sites"),
+       pch = c(1, 19), col = c("black", "red"), cex = 1.25)
+```
+
 # Additional Design Features
 
-The newest version of spsurvey (5.0) added and tweaked several features that GRTS designs can accomodate: legacy (or historical) sites, a minimum distance between sites, and replacement sites.
+Besides selection probability type and stratification, there are several other special cases that GRTS and IRS designs now accomodate: [Legacy Sites], [Minimum Distance Between Sites], and [Replacement Sites]. The following examples are shown using the `grts()` function, but the `irs()` function can replace `grts()` if so desired; the function arguments are identical.
 
 ## Legacy Sites
 
-A legacy site is a site that must be incorporated in a sample.  Often, legacy sites are used because they have been previously sampled or their inclusion is important for a specific reason.  We focus on legacy sites that have been previously obtained as part of a probability sample. For purposes of illustration, we will add a new variable, `legacy`, which treats 5 randomly selected sites as legacy sites.
+It is often the case that a user wants to wants to make sure a specific set of sites are guaranteed to be included in the sample; these are known as legacy sites.  It is often the case that legacy sites were selected as part of a previous probability sample; this is the scenario we turn our attention to.  Suppose a new variable, `legacy`, is added to `NE_lakes` and contains five randomly selected legacy sites.
 
 ```{r}
 # creating a new legacy variable where each value is FALSE
@@ -254,25 +279,14 @@ NE_lakes$legacy <- NA
 NE_lakes$legacy[sample(1:nrow(NE_lakes), size = 5)] <- TRUE
 ```
 
-To include legacy sites in an unstratified, equal probability sample, run:
-
-```{r, include = FALSE}
-# defaultW <- getOption("warn") 
-# options(warn = -1) 
-```
-
+To accomodate legacy sites in an unstratified, equal probability sample, run:
 ```{r}
 eqprob_legacy <- grts(NE_lakes, seltype = "equal", n.samp = 60,
                          legacy_option = TRUE, legacy_var = "legacy")
 ```
 
-```{r, include = FALSE}
-# options(warn = defaultW)
-```
-
-
 To plot the population sites next to the sampled sites, run:
-```{r, fig.show = "hold"}
+```{r, fig.show = "hold", fig.align = "center", fig.cap = "Population sites (black) and sampled non-legacy sites (aquamarine), and sampled legacy sites (orange) obtained for an equal probability GRTS design."}
 # subsetting the legacy sites
 sampled_legacy <- subset(eqprob_legacy$sites.base, legacy == TRUE)
 # subsetting the sampled nonlegacy sites
@@ -280,21 +294,21 @@ sampled_nonlegacy <- subset(eqprob_legacy$sites.base, is.na(legacy))
 # gray background
 par(bg = "gray95")
 # plotting the population sites
-plot(st_geometry(NE_lakes), main = "NE Lakes", reset = FALSE, 
-     xlim = c(xmin, xmax), ylim = c(ymin, ymax), cex = 1.2)
+plot(st_geometry(NE_lakes), main = "", reset = FALSE, 
+     xlim = c(xmin, xmax), ylim = c(ymin, ymax), cex = 0.5)
 # adding the nonlegacy sampled sites
-plot(st_geometry(sampled_nonlegacy), pch = 19, add = TRUE, cex = 1, col = "aquamarine")
+plot(st_geometry(sampled_nonlegacy), pch = 19, add = TRUE, cex = 1.5, col = "aquamarine")
 # adding the legacy sites
-plot(st_geometry(sampled_legacy), pch = 19, add = TRUE, cex = 1, col = "orange")
+plot(st_geometry(sampled_legacy), pch = 19, add = TRUE, cex = 1.5, col = "orange")
 # adding a legend
-legend(x = "topright", legend = c("Population Sites", "Sampled Sites (Non-Legacy)", "Sampled Sites (Legacy)"), pch = c(1, 19, 19), col = c("black", "aquamarine", "orange"))
+legend(x = "bottomright", legend = c("Population Sites", "Sampled Sites (Non-Legacy)", "Sampled Sites (Legacy)"), pch = c(1, 19, 19), col = c("black", "aquamarine", "orange"), cex = 1.25)
 ```
 
-With some data, you may encounter a warning message saying `Of the x grid cells from which sample points were selected, y (y/x%) of the cells contained more than one sample point. This warning message exists because sometimes the requirement that legacy sites must be included prevents the sample from being as spread out as a sample from a standard GRTS algorithm. 
+With some data, you may encounter a warning message saying `Of the x grid cells from which sample points were selected, y (y/x%) of the cells contained more than one sample point. This warning message exists because sometimes the requirement that legacy sites must be included prevents the sample from being as spatially balanced as a sample from a standard GRTS algorithm. 
 
 ## Minimum Distance Between Sites
 
-The standard GRTS algorithm may select sites that are closer together than desired. You can adjust the algorithm to incorporate some minimum distance between sites.  Supppose we requires sites be 8,000. meters (5 miles) apart. To include the minimum distance requirement in an unstratified, equal probability design, run:
+The standard GRTS algorithm may select sites that are closer together than desired. You can adjust the algorithm to require some minimum distance between sites.  Supppose we requires sites be 5,000. meters ($\approx$ 5 miles) apart. To include this requirement in an unstratified, equal probability design, run:
 ```{r}
 # setting the minimum distance
 mindis <- 5000
@@ -303,22 +317,19 @@ eqprob_mindis <- grts(NE_lakes, seltype = "equal", n.samp = 60,
 ```
 
 To plot the population sites next to the sampled sites, run:
-
-```{r}
+```{r, fig.show = "hold", fig.align = "center", fig.cap = "Population sites (black) and sampled sites (red) for an equal probability GRTS design having a minimum distance between sites of 500 meters."}
 # gray background
 par(bg = "gray95")
 # plotting the population sites
-plot(st_geometry(NE_lakes), main = "NE Lakes", reset = FALSE, 
-     xlim = c(xmin, xmax), ylim = c(ymin, ymax), cex = 1.2)
+plot(st_geometry(NE_lakes), main = "", reset = FALSE, 
+     xlim = c(xmin, xmax), ylim = c(ymin, ymax), cex = 0.5)
 # adding the sampled sites
-plot(st_geometry(eqprob_mindis$sites.base), pch = 19, add = TRUE, cex = 1, col = "red")
+plot(st_geometry(eqprob_mindis$sites.base), pch = 19, add = TRUE, cex = 1.5, col = "red")
 # adding a legend
-legend(x = "topright", legend = c("Population Sites", "Sampled Sites"),
-       pch = c(1, 19), col = c("black", "red"))
+legend(x = "bottomright", legend = c("Population Sites", "Sampled Sites"),
+       pch = c(1, 19), col = c("black", "red"), cex = 1.25)
 ```
-
-
-It is possible that the GRTS algorithm will not be able to ensure the minimum distance is met for all sampled sites.  In this context, the algorithm will attempt to ensure the minimum distance is met for as many sites as possible and return a warning stating that the requirement was not met after 10 attempts.
+It is possible that the GRTS algorithm will not be able to ensure the minimum distance is met for all sampled sites.  In this context, the algorithm will attempt to ensure the minimum distance is met for as many sites as possible and return a warning stating that the requirement was not met after several iterations of the algorithm.
 
 ## Replacement Sites
 
@@ -338,11 +349,11 @@ To plot the population sites next to the sampled sites and the replacement sites
 par(bg = "gray95")
 # plotting the population sites
 plot(st_geometry(NE_lakes), main = "NE Lakes", reset = FALSE, 
-     xlim = c(xmin, xmax), ylim = c(ymin, ymax), cex = 1.4)
+     xlim = c(xmin, xmax), ylim = c(ymin, ymax), cex = 1)
 # adding the base sample sites
-plot(st_geometry(eqprob_replace1$sites.base), pch = 19, add = TRUE, cex = 1.3, col = "aquamarine")
+plot(st_geometry(eqprob_replace1$sites.base), pch = 19, add = TRUE, cex = 1.5, col = "aquamarine")
 # adding the replacement sites
-plot(st_geometry(eqprob_replace1$sites.over), pch = 19, add = TRUE, cex = 1, col = "orange")
+plot(st_geometry(eqprob_replace1$sites.over), pch = 19, add = TRUE, cex = 1.5, col = "orange")
 # adding a legend
 legend(x = "topright", legend = c("Population Sites", "Sampled Sites", "Replacement Sites"), pch = c(1, 19, 19), col = c("black", "aquamarine", "orange"))
 ```
@@ -361,16 +372,18 @@ To plot the population sites next to the sampled sites and the first replacement
 par(bg = "gray95")
 # plotting the population sites
 plot(st_geometry(NE_lakes), main = "NLA 2007 Lakes", reset = FALSE, 
-     xlim = c(xmin, xmax), ylim = c(ymin, ymax), cex = 1.4)
+     xlim = c(xmin, xmax), ylim = c(ymin, ymax), cex = 0.5)
 # adding the sampled sites
-plot(st_geometry(eqprob_replace2$sites.base), pch = 19, add = TRUE, cex = 1.3, col = "aquamarine")
+plot(st_geometry(eqprob_replace2$sites.base), pch = 19, add = TRUE, cex = 2.25, col = "aquamarine")
 # adding the first replacement site
-plot(st_geometry(subset(eqprob_replace2$sites.near, siteuse == "Near__1st")), pch = 19, add = TRUE, cex = 1, col = "orange")
+plot(st_geometry(subset(eqprob_replace2$sites.near, siteuse == "Near__1st")), pch = 19, add = TRUE, cex = 1.25, col = "orange")
 # adding a legend
 legend(x = "topright", legend = c("Population Sites", "Sampled Sites", "Replacement Sites"), pch = c(1, 19, 19), col = c("black", "aquamarine", "orange"))
 ```
 
 You will notice that in general, replacement sites are near a sampled site.
+
+# Calculating the Spatial Balance of a Sample
 
 # References
 
