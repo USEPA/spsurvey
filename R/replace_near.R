@@ -35,11 +35,11 @@ replace_near <- function(over.near, sites, sframe) {
     keep <- sframe$id == sites$id[i]
     tmp <- site_dist[keep,]
     tmp.id <- order(tmp)[2:(over.near + 1)]
-    sites.tmp <- sframe[sframe$id == sframe$id[tmp.id[1]],]
+    sites.tmp <- sframe[sframe$id == sframe$id[tmp.id[1]],] #think you just need tmp.id[[1]] here
     sites.tmp$siteuse <- "Near__1st"
     sites.tmp$replsite <- sites$id[i]
     for( k in 2:over.near){
-      jnk <- sframe[sframe$id == sframe$id[tmp.id[k]],]
+      jnk <- sframe[sframe$id == sframe$id[tmp.id[k]],] #think you just need tmp.id[[1]] here
       jnk$siteuse <- names.siteuse[k]
       jnk$replsite <- sites$id[i]
       sites.tmp <- rbind(sites.tmp, jnk)
