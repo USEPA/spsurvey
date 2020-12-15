@@ -96,7 +96,7 @@ calculate_spbalance <- function(stratum, sample, population, stratum_sample, str
       ## adding in poly as a variable and storing as an sf object
       st_sf(poly = 1:n, geometry = .) %>%
       ## joining the polygon bounds with the population data
-      st_join(., population)
+      st_join(population, .)
    
    # calculate counts 
    
