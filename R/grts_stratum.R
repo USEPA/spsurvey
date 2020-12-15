@@ -89,7 +89,7 @@ grts_stratum <- function(stratum, dsgn, sframe, sf_type, pt_density = NULL,
     stratum_len <- sum(st_length(sftmp))
     n_size <- as.integer(pt_density * stratum_len)
     sfpts <- st_sample(sftmp, size = n_size, type = 'regular')
-    sfpts <- st_as_sf(as_tibble(sfpts), crs = st_crs(sftmp))
+    sfpts <- st_as_sf(as.data.frame(sfpts), crs = st_crs(sftmp))
     sfpts <- st_cast(sfpts, to ="POINT")
     # drop features with no points
     sfpts <- sfpts[!st_is_empty(sfpts),]
@@ -110,7 +110,7 @@ grts_stratum <- function(stratum, dsgn, sframe, sf_type, pt_density = NULL,
     stratum_area <- sum(st_area(sftmp))
     n_size <- as.integer(pt_density * stratum_area)
     sfpts <- st_sample(sftmp, size = n_size, type = 'hexagonal')
-    sfpts <- st_as_sf(as_tibble(sfpts), crs = st_crs(sftmp))
+    sfpts <- st_as_sf(as.data.frame(sfpts), crs = st_crs(sftmp))
     sfpts <- st_cast(sfpts, to ="POINT")
     # drop features with no points
     sfpts <- sfpts[!st_is_empty(sfpts),]
