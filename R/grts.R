@@ -181,7 +181,12 @@ grts <- function(sframe, n.samp, stratum = NULL, seltype = "equal", pt_density =
   
   # set stratum, caty, aux and legacy variables in legacy_sites if needed
   if(legacy_option == TRUE) {
-    if(!is.null(stratum_var)) legacy_sites$stratum <- as.character(legacy_sites[[stratum_var]])
+    if (stratum == "None") {
+      legacy_sites$stratum <- "None"
+    } else {
+      legacy_sites$stratum <- as.character(legacy_sites[[stratum_var]])
+    }
+    #if(!is.null(stratum_var)) legacy_sites$stratum <- as.character(legacy_sites[[stratum_var]])
     if(!is.null(caty_var)) legacy_sites$caty <- as.character(legacy_sites[[caty_var]])
     if(!is.null(aux_var)) legacy_sites$aux <- legacy_sites[[aux_var]]
     if(!is.null(legacy_var)) legacy_sites$legacy <- legacy_sites[[legacy_var]]
