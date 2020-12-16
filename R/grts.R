@@ -191,6 +191,7 @@ grts <- function(sframe, n.samp, stratum = NULL, seltype = "equal", pt_density =
     if(!is.null(aux_var)) legacy_sites$aux <- legacy_sites[[aux_var]]
     if (is.null(legacy_var)) {
       legacy_sites$legacy <- TRUE
+      legacy_var <- "legacy"
     } else {
       legacy_sites$legacy <- legacy_sites[[legacy_var]]
     }
