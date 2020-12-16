@@ -157,7 +157,7 @@ To overlay the spatially balanced sample on the original population, run
 # gray background
 par(bg = "gray95")
 # plot the population sites
-plot(st_geometry(Illinois_River), main = "", reset = FALSE, 
+plot(st_geometry(NE_lakes), main = "", reset = FALSE, 
      xlim = c(xmin, xmax), ylim = c(ymin, ymax), cex = 0.5)
 # add the sampled sites
 plot(st_geometry(eqprob$sites.base), pch = 19, add = TRUE, cex = 1.5, col = "red")
@@ -217,21 +217,17 @@ uneqprob$dsgn
 
 Unlike unequal probability designs, stratified designs ensure each within-group sample size equals the expected sample size. To select a spatially balanced, stratified design having equal probabilities of selection within each elevation group, run
 ```{r}
-# names of the strata
-strata <- c("low", "medium", "high")
 # sample sizes of the strata
 strata.n <- c(low = 20, medium = 20, high = 20)
 # selecting the stratified, equal probability sample
 strat_eqprob <- grts(sframe = NE_lakes, stratum_var = "ELEVATION",
-                        stratum = strata, seltype = "equal", 
+                        seltype = "equal", 
                         n.samp = strata.n)
 ```
 
-
-* `stratum` contains the names of each strata
 * `seltype` is "equal" for equal probability of selection within strata
 * `stratum_var` matches the name of the variable in `NE_lakes` with the strata
-* `n.samp` is the desired sample size within each strata
+* `n.samp` is a names vector whose names identify strata and whose values inidicate the within-strata sample sizes
 
 The relevant non-NULL `dsgn` output is
 ```{r, echo = FALSE}
@@ -264,19 +260,16 @@ legend(x = "bottomright", legend = c("Population Sites", "Sampled Sites"),
 
 We can alter the previous design to accomodate proportional probability sampling within strata, where each strata's sample is proportional to lake area (in hectares; `AREA_HA`); larger lakes have a higher probability of being sampled. 
 ```{r}
-# names of the strata
-strata <- c("low", "medium", "high")
 # sample sizes of the strata
 strata.n <- c(low = 20, medium = 20, high = 20)
 # selecting the stratified, unequal probability sample
 strat_uneqprob <- grts(sframe = NE_lakes, stratum_var = "ELEVATION",
-                        stratum = strata, seltype = "proportional", 
+                        seltype = "proportional", 
                         n.samp = strata.n, aux_var = "AREA_HA")
 ```
 
-* `stratum` contains the names of each strata
 * `stratum_var` matches the name of the variable in `NE_lakes` with the strata
-* `n.samp` is the desired sample size within each strata
+* `n.samp` is a names vector whose names identify strata and whose values inidicate the within-strata sample sizes
 * `seltype` is "proportional" for proportional probability of selection within strata
 * `aux_var` matches the name of the variable in `NE_lakes` to sample proportionally by
     
