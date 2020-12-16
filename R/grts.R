@@ -25,7 +25,7 @@
 #'
 #' @param stratum Single character value or character vector that identifies the strata for
 #'   the design.  Default is NULL which means no stratification and all elements in the sample
-#'   frame are assumed to be included.
+#'   frame are assumed to be included. 12-16 -- this needs to be edited (it has been removed)
 #'   
 #' @param seltype Single character value or character vector that identifies the type of 
 #'   random selection, which must be one of following: "equal" for equal probability selection, 
@@ -75,7 +75,7 @@
 #'   specifies that the selection type (seltype) is "proportional". Default is NULL.
 #'
 #' @param legacy_option Logical variable that when TRUE legacy sites are to be included 
-#'   in the survey design. Default is FALSE
+#'   in the survey design. Default is FALSE 12-16 -- this needs to be edited (it has been removed)
 #'   
 #' @param legacy_sites sf object of legacy sites to be included in the survey design when 
 #'   sample frame is linear or area. Note legacy_option must be equal to TRUE. The sf object 
@@ -152,6 +152,13 @@ grts <- function(sframe, n.samp, stratum = NULL, seltype = "equal", pt_density =
   } else {
     legacy_option <- TRUE
   }
+  
+  if (is.null(stratum_var)) {
+    stratum <- NULL
+  } else {
+    stratum <- names(n.samp)
+  }
+
   
   # check input. If errors, dsgn_check will stop grtspts and report errors.
   dsgn_check(sframe, sf_type, legacy_sites, legacy_option, stratum, seltype, n.samp, caty.n,
