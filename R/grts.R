@@ -189,7 +189,11 @@ grts <- function(sframe, n.samp, stratum = NULL, seltype = "equal", pt_density =
     #if(!is.null(stratum_var)) legacy_sites$stratum <- as.character(legacy_sites[[stratum_var]])
     if(!is.null(caty_var)) legacy_sites$caty <- as.character(legacy_sites[[caty_var]])
     if(!is.null(aux_var)) legacy_sites$aux <- legacy_sites[[aux_var]]
-    if(!is.null(legacy_var)) legacy_sites$legacy <- legacy_sites[[legacy_var]]
+    if (is.null(legacy_var)) {
+      legacy_sites$legacy <- TRUE
+    } else {
+      legacy_sites$legacy <- legacy_sites[[legacy_var]]
+    }
   }
   
   ## Create a dsgn list object
