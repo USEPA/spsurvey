@@ -121,9 +121,23 @@ irs_stratum <- function(stratum, dsgn, sframe, sf_type, pt_density = NULL,
   if(sf_type == "sf_area") {
     # determine sample size from pt_density and total area of sample frame in stratum
     stratum_area <- sum(st_area(sftmp))
+    # set default equal to 10 population sites per requested sample site
+    if (is.null(pt_density)) {
+      popmatch <- 10
+      n_base <- dsgn[["n.samp"]][[stratum]]
+      n_over <- dsgn[["n.over"]][[stratum]]
+      if (is.null(n_over)) {
+        n_over <- 0
+      }
+      n_near <- dsgn[["n.near"]][[stratum]]
+      if (is.null(n_near)) {
+        n_near <- 0
+      }
+      pt_density <- ((n_base + n_over + n_near) * popmatch) / stratum_area
+    }
     n_size <- as.integer(pt_density * stratum_area)
     sfpts <- st_sample(sftmp, size = n_size, type = 'hexagonal')
-    sfpts <- st_as_sf(as_tibble(sfpts), crs = st_crs(sftmp))
+    sfpts <- st_as_sf(as.data.frame(sfpts), crs = st_crs(sftmp))
     sfpts <- st_cast(sfpts, to ="POINT")
     # drop features with no points
     sfpts <- sfpts[!st_is_empty(sfpts),]
