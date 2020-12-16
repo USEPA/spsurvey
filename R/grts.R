@@ -128,7 +128,7 @@
 
 grts <- function(sframe, n.samp, stratum = NULL, seltype = "equal", pt_density = NULL,
                  caty.n = NULL, n.over = NULL, n.near = NULL, stratum_var = NULL, 
-                 caty_var = NULL, aux_var = NULL, legacy_option = FALSE,
+                 caty_var = NULL, aux_var = NULL,
                  legacy_sites = NULL, legacy_var = NULL, mindis = NULL, 
                  DesignID = "Site", SiteBegin = 1,  maxtry = 10) {
   
@@ -146,6 +146,12 @@ grts <- function(sframe, n.samp, stratum = NULL, seltype = "equal", pt_density =
   if(all(temp %in% c("POINT", "MULTIPOINT"))) sf_type <- "sf_point"
   if(all(temp %in% c("LINESTRING", "MULTILINESTRING"))) sf_type <- "sf_linear"
   if(all(temp %in% c("POLYGON", "MULTIPOLYGON"))) sf_type <- "sf_area"
+  
+  if (all(is.null(legacy_sites), is.null(legacy_var))) {
+    legacy_option <- FALSE
+  } else {
+    legacy_option <- TRUE
+  }
   
   # check input. If errors, dsgn_check will stop grtspts and report errors.
   dsgn_check(sframe, sf_type, legacy_sites, legacy_option, stratum, seltype, n.samp, caty.n,
