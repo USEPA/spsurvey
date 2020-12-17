@@ -271,15 +271,24 @@ cont_analysis <- function(dframe, vars, vars_nondetect = NULL, subpops = NULL,
 
   dframe <- droplevels(dframe)
 
-# Ensure that the dframe data frame contains the site ID variable
-
-  if(!(siteID %in% names(dframe))) {
-    ind <- FALSE
-    error.ind <- TRUE
-    msg <- paste0("The name provided for the siteID argument, \"", siteID, "\", does not occur among \nthe names for the dframe data frame.\n")
-    error.vec <- c(error.vec, msg)
-  } else {
+# Provide default site ID's if site ID is missing
+  
+  if (missing(siteID)) {
+    siteID <- "siteID"
+    dframe$siteID <- paste0(siteID, 1:nrow(dframe))
     ind <- TRUE
+  } else {
+    
+    # If site ID is not missing, ensure that the dframe data frame contains the site ID variable
+    
+    if(!(siteID %in% names(dframe))) {
+      ind <- FALSE
+      error.ind <- TRUE
+      msg <- paste0("The name provided for the siteID argument, \"", siteID, "\", does not occur among \nthe names for the dframe data frame.\n")
+      error.vec <- c(error.vec, msg)
+    } else {
+      ind <- TRUE
+    }
   }
 
 # Check site IDs for repeat values and, as necessary, create unique site IDs and
