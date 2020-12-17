@@ -4,6 +4,9 @@
 # Date: July 23, 2020
 # Revised: August 14, 2020 to allow use of an sf object as the input data
 #          argument (dframe)
+# Revised: December 15, 2020 to allow use of the Horvitz-Thompson and
+#          Yates-Grundy variance estimators and to use a new function named
+#          survey_design to create the survey design object
 #'
 #' Categorical Data Analysis for Probability Survey Data
 #'
@@ -135,9 +138,16 @@
 #'   Example popsize for post-stratification using an xtabs object:\cr
 #'     popsize <- xtabs(~Ecoregion + Type, data = MySurveyFrame)\cr
 #'
-#' @param vartype  Character value identifying the choice for variance
-#'   estimator, where "Local" = local mean estimator and "SRS" = simple random
-#'   sampling estimator.  The default value is "Local".
+#' @param vartype Character value providing choice of the variance estimator,
+#'   where "Local" = the local mean estimator, "SRS" = the simple random
+#'   sampling estimator, "HT" = the Horvitz-Thompson estimator, and "YG" = the
+#'   Yates-Grundy estimator.  The default value is "Local".
+#'
+#' @param jointprob Character value providing choice of joint inclusion
+#'   probability approximation for use with Horvitz-Thompson and Yates-Grundy
+#'   variance estimators, where "overton" indicates the Overton approximation,
+#'   "hr" indicates the Hartley_Rao approximation, and "brewer" equals the
+#'   Brewer approximation.  The default value is "overton".
 #'
 #' @param conf Numeric value providing the confidence level.  The default value
 #'   is 95.
@@ -157,7 +167,7 @@
 #'       consistency, and compatibility with analytical functions}
 #'     \item{\code{\link{postStratify}}}{conduct post-stratification for survey
 #'       data}
-#'     \item{\code{\link{svydesign}}}{specifies a complex survey design}
+#'     \item{\code{\link{survey_design}}}{creates a survey design object}
 #'     \item{\code{\link{uniqueID}}}{creates unique site IDs by appending a
 #'       unique number to each occurrence of a site ID}
 #'     \item{\code{\link{vecprint}}}{takes an input vector and outputs a
@@ -170,7 +180,7 @@
 #'   \code{\link{calibrate}}
 #'   \code{\link{category_est}}
 #'   \code{\link{postStratify}}
-#'   \code{\link{svydesign}}
+#'   \code{\link{survey_design}}
 #'
 #' @keywords survey univar
 #'
@@ -201,7 +211,7 @@ cat_analysis <- function(dframe, vars, subpops = NULL, siteID = "siteID",
   clusterID = NULL, weight1 = NULL, xcoord1 = NULL, ycoord1 = NULL,
   sizeweight = FALSE, sweight = NULL, sweight1 = NULL, popcorrect = FALSE,
   fpcsize = NULL, Ncluster = NULL, stage1size = NULL, popsize = NULL,
-  vartype = "Local", conf = 95) {
+  vartype = "Local", jointprob = "overton", conf = 95) {
 
 # Create a vector for error messages
 
@@ -313,13 +323,14 @@ cat_analysis <- function(dframe, vars, subpops = NULL, siteID = "siteID",
 
 # Check input arguments
   temp <- input_check(dframe, design_names, vars, NULL, NULL, NULL, subpops,
-    sizeweight, popcorrect, popsize, vartype, conf, error.ind = error.ind,
-    error.vec = error.vec)
+    sizeweight, popcorrect, popsize, vartype, jointprob, conf,
+    error.ind = error.ind, error.vec = error.vec)
   dframe <- temp$dframe
   vars <- temp$vars_cat
   subpops <- temp$subpops
   popsize <- temp$popsize
   vartype <- temp$vartype
+  jointprob <- temp$jointprob
   error.ind <- temp$error.ind
   error.vec <- temp$error.vec
 
@@ -381,147 +392,9 @@ cat_analysis <- function(dframe, vars, subpops = NULL, siteID = "siteID",
 
 # Create the survey design object
 
-  if(stratum.ind) {
-    if(cluster.ind) {
-      if(sizeweight) {
-        dframe$wgt1 <- dframe[, weight1] * dframe[, sweight1]
-        dframe$wgt2 <- dframe[, weight] * dframe[, sweight]
-        if(popcorrect) {
-          design <- svydesign(
-            ids = make.formula(paste(clusterID, siteID, sep=" + ")),
-            weights = ~wgt1 + wgt2,
-            strata = make.formula(stratumID),
-            nest = TRUE,
-            fpc = make.formula(paste(Ncluster, stage1size, sep=" + ")),
-            data = dframe)
-        } else {
-          design <- svydesign(
-            ids = make.formula(paste(clusterID, siteID, sep=" + ")),
-            weights = ~wgt1 + wgt2,
-            strata = make.formula(stratumID),
-            nest = TRUE,
-            data = dframe)
-        }
-      } else {
-        dframe$wgt1 <- dframe[, weight1]
-        dframe$wgt2 <- dframe[, weight]
-        if(popcorrect) {
-          design <- svydesign(
-            ids = make.formula(paste(clusterID, siteID, sep=" + ")),
-            weights = ~wgt1 + wgt2,
-            strata = make.formula(stratumID),
-            nest = TRUE,
-            fpc = make.formula(paste(Ncluster, stage1size, sep=" + ")),
-            data = dframe)
-        } else {
-          design <- svydesign(
-            ids = make.formula(paste(clusterID, siteID, sep=" + ")),
-            weights = ~wgt1 + wgt2,
-            strata = make.formula(stratumID),
-            nest = TRUE,
-            data = dframe)
-        }
-      }
-    } else {
-      if(sizeweight) {
-        dframe$wgt <- dframe[, weight] * dframe[, sweight]
-        if(popcorrect) {
-          design <- svydesign(
-            ids = make.formula(siteID),
-            weights = ~wgt,
-            strata = make.formula(stratumID),
-            fpc = make.formula(fpcsize),
-            data = dframe)
-        } else {
-          design <- svydesign(
-            ids = make.formula(siteID),
-            weights = ~wgt,
-            strata = make.formula(stratumID),
-            data = dframe)
-        }
-      } else {
-        dframe$wgt <- dframe[, weight]
-        if(popcorrect) {
-          design <- svydesign(
-            ids = make.formula(siteID),
-            weights = ~wgt,
-            strata = make.formula(stratumID),
-            fpc = make.formula(fpcsize),
-            data = dframe)
-        } else {
-          design <- svydesign(
-            ids = make.formula(siteID),
-            weights = ~wgt,
-            strata = make.formula(stratumID),
-            data = dframe)
-        }
-      }
-    }
-  } else {
-    if(cluster.ind) {
-      if(sizeweight) {
-        dframe$wgt1 <- dframe[, weight1] * dframe[, sweight1]
-        dframe$wgt2 <- dframe[, weight] * dframe[, sweight]
-        if(popcorrect) {
-          design <- svydesign(
-            ids = make.formula(paste(clusterID, siteID, sep=" + ")),
-            weights = ~wgt1 + wgt2,
-            fpc = make.formula(paste(Ncluster, stage1size, sep=" + ")),
-            data = dframe)
-        } else {
-          design <- svydesign(
-            ids = make.formula(paste(clusterID, siteID, sep=" + ")),
-            weights = ~wgt1 + wgt2,
-            data = dframe)
-        }
-      } else {
-        dframe$wgt1 <- dframe[, weight1]
-        dframe$wgt2 <- dframe[, weight]
-        if(popcorrect) {
-          design <- svydesign(
-            ids = make.formula(paste(clusterID, siteID, sep=" + ")),
-            weights = ~wgt1 + wgt2,
-            fpc = make.formula(paste(Ncluster, stage1size, sep=" + ")),
-            data = dframe)
-        } else {
-          design <- svydesign(
-            ids = make.formula(paste(clusterID, siteID, sep=" + ")),
-            weights = ~wgt1 + wgt2,
-            data = dframe)
-        }
-      }
-    } else {
-      if(sizeweight) {
-        dframe$wgt <- dframe[, weight] * dframe[, sweight]
-        if(popcorrect) {
-          design <- svydesign(
-            ids = make.formula(siteID),
-            weights = ~wgt,
-            fpc = make.formula(fpcsize),
-            data = dframe)
-        } else {
-          design <- svydesign(
-            ids = make.formula(siteID),
-            weights = ~wgt,
-            data = dframe)
-        }
-      } else {
-        dframe$wgt <- dframe[, weight]
-        if(popcorrect) {
-          design <- svydesign(
-            ids = make.formula(siteID),
-            weights = ~wgt,
-            fpc = make.formula(fpcsize),
-            data = dframe)
-        } else {
-          design <- svydesign(
-            ids = make.formula(siteID),
-            weights = ~wgt,
-            data = dframe)
-        }
-      }
-    }
-  }
+  design <- survey_design(dframe, siteID, weight, stratum.ind, stratumID,
+    cluster.ind, clusterID, weight1, sizeweight, sweight, sweight1, popcorrect,
+    fpcsize, Ncluster, stage1size, vartype, jointprob)
 
 # If popsize is not equal to NULL, then call either the postStratify or
 # calibrate function, as appropriate
