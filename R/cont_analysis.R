@@ -315,6 +315,19 @@ cont_analysis <- function(dframe, vars, vars_nondetect = NULL, subpops = NULL,
     msg <- paste0("The name provided for the weight argument, \"", weight, "\", does not occur among \nthe names for the dframe data frame.\n")
     error.vec <- c(error.vec, msg)
   }
+  
+# Setting a default finite population correction value for non-clustered designs
+  if (popcorrect && is.null(clusterID)) {
+    # if fpcsize is not provide it set it equal to the sum of the weights
+    if (is.null(fpcsize)) {
+      fpcsize <- sum(dframe[[weight]])
+      dframe$fpcsize <- fpcsize
+      fpcsize <- "fpcsize"
+    } else if (is.numeric(fpcsize)) { # if it is a numeric vector create the vector
+      dframe$fpcsize <- fpcsize
+      fpcsize <- "fpcsize"
+    }
+  }
 
 # Create a list containing names of survey design variables
 
