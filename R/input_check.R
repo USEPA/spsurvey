@@ -4,6 +4,8 @@
 # Date: October 9, 2020
 # Revised: November 5, 2020 to correct an error when checking size-weights for
 #          two-stage samples
+# Revised: December 17, 2020 to check input values for the Horvitz-Thompson and
+#          Yates-Grundy options for variance estimator
 #'
 #' Check Input Values for Analytical Functions
 #'
@@ -42,9 +44,16 @@
 #'
 #' @param popsize List providing known size of the resource.
 #'
-#' @param vartype  Character value identifying the choice for variance
-#'   estimator, where "Local" = local mean estimator and "SRS" = simple random
-#'   sampling estimator.
+#' @param vartype Character value providing choice of the variance estimator,
+#'   where "Local" = the local mean estimator, "SRS" = the simple random
+#'   sampling estimator, "HT" = the Horvitz-Thompson estimator, and "YG" = the
+#'   Yates-Grundy estimator.
+#'
+#' @param jointprob Character value providing choice of joint inclusion
+#'   probability approximation for use with Horvitz-Thompson and Yates-Grundy
+#'   variance estimators, where "overton" indicates the Overton approximation,
+#'   "hr" indicates the Hartley_Rao approximation, and "brewer" equals the
+#'   Brewer approximation.
 #'
 #' @param conf Numeric value providing the confidence level.
 #'
@@ -64,7 +73,7 @@
 #' @param error.vec Vector for storing error messages.
 #'
 #' @return A list consisting of dframe, vars_cat, vars_cont, vars_stressor,
-#'   subpops, popsize, vartype, error.ind, and error.vec.
+#'   subpops, popsize, vartype, jointprob, error.ind, and error.vec.
 #'
 #' @section Other Functions Required:
 #'   \describe{
@@ -79,8 +88,8 @@
 
 input_check <- function(dframe, design_names, vars_cat, vars_cont,
   vars_stressor, vars_nondetect, subpops, sizeweight, popcorrect, popsize,
-  vartype, conf, cdfval = NULL, pctval = NULL, sigma = NULL, var.sigma = NULL,
-  error.ind, error.vec) {
+  vartype, jointprob, conf, cdfval = NULL, pctval = NULL, sigma = NULL,
+  var.sigma = NULL, error.ind, error.vec) {
 
 # For variables that exist in the dframe data frame, assign survey design
 # variables and check those variables for missing values
@@ -677,9 +686,9 @@ input_check <- function(dframe, design_names, vars_cat, vars_cont,
 
 # Check the vartype argument
 
-  if(!(vartype %in% c("Local", "local", "SRS", "srs"))) {
+  if(!(vartype %in% c("Local", "local", "SRS", "srs", "HT", "ht", "YG", "yg"))) {
     error.ind <- TRUE
-    msg <- paste0("\nThe value provided for argument vartype must equal either \"Local\" or \"SRS\".  \nThe value provided was: \"", vartype, "\".")
+    msg <- paste0("\nThe value provided for argument vartype must equal either \"Local\",  \"SRS\", \"HT\", or \"YG\".  \nThe value provided was: \"", vartype, "\".")
     error.vec <- c(error.vec, msg)
   }
   if(vartype == "local") {
@@ -687,6 +696,38 @@ input_check <- function(dframe, design_names, vars_cat, vars_cont,
   }
   if(vartype == "srs") {
     vartype <- "SRS"
+  }
+  if(vartype == "ht") {
+    vartype <- "HT"
+  }
+  if(vartype == "yg") {
+    vartype <- "YG"
+  }
+  if(vartype %in% c("HT", "YG")) {
+    if(jointprob == "Overton") {
+      jointprob <- "overton"
+    }
+    if(jointprob == "HR") {
+      jointprob <- "hr"
+    }
+    if(jointprob == "Brewer") {
+      jointprob <- "brewer"
+    }
+    if(!(jointprob %in% c("overton", "hr", "brewer"))) {
+      error.ind <- TRUE
+      msg <- paste0("\nThe value provided for argument jointprob must equal either \"overton\",  \"hr\", or \"brewer\".  \nThe value provided was: \"", jointprob, "\".")
+      error.vec <- c(error.vec, msg)
+    }
+    if(jointprob %in% c("overton", "hr") && !is.null(clusterID)) {
+      error.ind <- TRUE
+      msg <- paste0("\nA two-stage survey design is not allowed when the jointprob argument equals \"", jointprob, "\".")
+      error.vec <- c(error.vec, msg)
+    }
+    if(jointprob == "brewer" && vartype != "HT") {
+      error.ind <- TRUE
+      msg <- paste("\nThe vartype argument must equal \"HT\" when the jointprob argument equals \"brewer\".")
+      error.vec <- c(error.vec, msg)
+    }
   }
 
 # For a two-stage sample, ensure that the Ncluster argument is provided when
@@ -785,5 +826,5 @@ input_check <- function(dframe, design_names, vars_cat, vars_cont,
 list(dframe = dframe, vars_cat = vars_cat, vars_cont = vars_cont,
   vars_stressor = vars_stressor, vars_nondetect = vars_nondetect,
   subpops = subpops, popsize = popsize, vartype = vartype,
-  error.ind = error.ind, error.vec = error.vec)
+  jointprob = jointprob, error.ind = error.ind, error.vec = error.vec)
 }
