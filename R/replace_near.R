@@ -32,16 +32,16 @@ replace_near <- function(over.near, sites, sframe) {
   # assign over sample sites
   for (i in 1:ns) {
     # find frame id for site in sites.
-    keep <- sframe$id == sites$id[i]
+    keep <- sframe$idpts == sites$idpts[i]
     tmp <- site_dist[keep,]
     tmp.id <- order(tmp)[2:(over.near + 1)]
-    sites.tmp <- sframe[sframe$id == sframe$id[tmp.id[1]],] #think you just need tmp.id[[1]] here
+    sites.tmp <- sframe[sframe$idpts == sframe$idpts[tmp.id[1]],] #think you just need tmp.id[[1]] here
     sites.tmp$siteuse <- "Near__1st"
-    sites.tmp$replsite <- sites$id[i]
+    sites.tmp$replsite <- sites$idpts[i]
     for( k in 2:over.near){
-      jnk <- sframe[sframe$id == sframe$id[tmp.id[k]],] #think you just need tmp.id[[1]] here
+      jnk <- sframe[sframe$idpts == sframe$idpts[tmp.id[k]],] #think you just need tmp.id[[1]] here
       jnk$siteuse <- names.siteuse[k]
-      jnk$replsite <- sites$id[i]
+      jnk$replsite <- sites$idpts[i]
       sites.tmp <- rbind(sites.tmp, jnk)
     }
     if(i == 1) {
