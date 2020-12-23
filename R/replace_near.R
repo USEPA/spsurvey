@@ -1,7 +1,7 @@
 ################################################################################
 # Function: replace_near.R
 # Programmer:  Tony Olsen
-# Date: September 21, 2020
+# Date: December 23, 2020
 #
 #' @param over.near number of nearby sites to be used as potential replacement(s) 
 #'    if a site cannot be sampled for any reason. Must be integer from 1 to 10.
@@ -35,11 +35,11 @@ replace_near <- function(over.near, sites, sframe) {
     keep <- sframe$idpts == sites$idpts[i]
     tmp <- site_dist[keep,]
     tmp.id <- order(tmp)[2:(over.near + 1)]
-    sites.tmp <- sframe[sframe$idpts == sframe$idpts[tmp.id[1]],] #think you just need tmp.id[[1]] here
+    sites.tmp <- sframe[sframe$idpts == sframe$idpts[tmp.id[1]],] 
     sites.tmp$siteuse <- "Near__1st"
     sites.tmp$replsite <- sites$idpts[i]
     for( k in 2:over.near){
-      jnk <- sframe[sframe$idpts == sframe$idpts[tmp.id[k]],] #think you just need tmp.id[[1]] here
+      jnk <- sframe[sframe$idpts == sframe$idpts[tmp.id[k]],] 
       jnk$siteuse <- names.siteuse[k]
       jnk$replsite <- sites$idpts[i]
       sites.tmp <- rbind(sites.tmp, jnk)
