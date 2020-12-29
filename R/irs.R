@@ -327,6 +327,9 @@ irs <- function(sframe, n.samp, stratum = NULL, seltype = "equal", pt_density = 
   if(!is.null(sites.over)) sites.over <- subset(sites.over, select = c(dsgn.names, sframe.names))
   if(!is.null(sites.near)) sites.near <- subset(sites.near, select = c(dsgn.names, sframe.names))
   
+  # add function call to dsgn list
+  dsgn <- c(list(Call = match.call()), dsgn)
+  
   # create output list
   sites <- list(sites.base = sites.base, sites.over = sites.over, sites.near = sites.near,
                 dsgn = dsgn)
