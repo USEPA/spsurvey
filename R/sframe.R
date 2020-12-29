@@ -7,6 +7,6 @@ sframe <- function(object) {
     sframe <- structure(sframe, class = c("sframe", class(sframe)))
     return(sframe)
   } else {
-    stop("Argument must be an sf object or an sp object")
+    stop("Input must be an sf object or an sp object")
   }
 }
