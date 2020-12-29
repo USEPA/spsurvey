@@ -1,27 +1,29 @@
-summary.spsurvey <- function(object, type = "counts", vars, ...) {
-  switch(type, 
-         "counts" = summary.spsurvey_counts(object, vars, ...),
-         "numsum" = summary.spsurvey_numsum(object, vars, ...),
-         stop(cat("type must equal \"counts\" or \"numsum\""))
-  )
-}
-
-summary.spsurvey_counts <- function(object, vars, maxsum = 1e10, ...) {
+summary.spsurvey <- function(object, type = "cat", vars, maxsum = 1e10, ...) {
   # keep the sites sf objects from class spsurvey
   sites <- object[names(object) %in% c("sites.base", "sites.over", "sites.near")]
-  # compute the counts for each sites set
-  counts <- lapply(sites, return_counts, vars, maxsum, ...)
-  # remove NULL counts
-  counts <- counts[!vapply(counts, is.null, logical(1))]
-}
-
-return_counts <- function(df, vars, maxsum, ...) {
   
+  if (type == "cat") {
+    # compute the counts for each sites set
+    output <- lapply(sites, return_counts, vars, maxsum, ...)
+  } else if (type == "cont") {
+    # compute the numsum for each sites set
+    output <- lapply(sites, return_numsum, vars, ...)
+  } else {
+    stop(cat("type must equal \"cat\" or \"cont\""))
+  }
+  
+  # remove NULL output
+  output <- output[!vapply(output, is.null, logical(1))]
+  return(output)
+}  
+  
+return_counts <- function(df, vars, maxsum, ...) {
   # convert a*b to a + b + a:b
   varterms <- terms(vars)
   varnames <- attr(varterms, "term.labels")
-  if (length(varnames) == 0) {
-    stop("right hand side of vars formula must contain at least one variable")
+  
+  if (attr(varterms, "response") == 1) {
+    stop("Left hand size of vars formula must be empty (e.g. ~ x)")
   }
   # split variables on : to subset 
   varnames_split <- strsplit(varnames, ":")
@@ -44,26 +46,21 @@ return_counts <- function(df, vars, maxsum, ...) {
     # giving columns appropriate names
     names(list_sites) <- varnames
     # coverting from list to data frame
-    df_sites <- as.data.frame(list_sites)
+    df_sites <- as.data.frame(list_sites, optional = TRUE) # without optional the : in name gets
+    # converted to synctactic name with .
     # returning the summary
     counts_sites <- summary.data.frame(df_sites, maxsum, ...)
     return(counts_sites)
   }
 }
 
-summary.spsurvey_numsum <- function(object, vars, ...) {
-  # keep the sites sf objects from class spsurvey
-  sites <- object[names(object) %in% c("sites.base", "sites.over", "sites.near")]
-  # compute the numsum for each sites set
-  numsum <- lapply(sites, return_numsum, vars, maxsum, ...)
-  # remove NULL numsum
-  numsum <- numsum[!vapply(numsum, is.null, logical(1))]
-}
-
 return_numsum <- function(df, vars, ...) {
   # convert a*b to a + b + a:b
   varterms <- terms(vars)
   varnames <- attr(varterms, "term.labels")
+  if (attr(varterms, "response") == 0) {
+    stop("Left hand size of vars formula must contain a response variable (e.g. y in y ~ x)")
+  }
   # get variable name of response
   response <- all.vars(varterms)[1]
   if (length(varnames) == 0 && attr(varterms, "intercept") == 0) {
