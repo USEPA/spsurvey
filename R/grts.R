@@ -366,6 +366,9 @@ grts <- function(sframe, n.samp, stratum = NULL, seltype = "equal", pt_density =
       cat(paste("During execution of the program,", nrow(warn.df), "warning messages were generated.  The warning \nmessages are stored in a data frame named 'warn.df'.  Enter the following \ncommand to view the warning messages: warndsgn() \nTo view a subset of the warning messages (say, messages number 1, 3, and 5), \nenter the following command: warnprnt(m=c(1,3,5))\n"))
     }
   }
+  
+  # constructor for spsurvey class
+  sites <- structure(sites, class = "spsurvey")
 
   # return the survey design sf object
   invisible(sites)
