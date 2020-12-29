@@ -15,6 +15,21 @@ summary.spsurvey <- function(object, type = "cat", vars, maxsum = 1e10, ...) {
   # remove NULL output
   output <- output[!vapply(output, is.null, logical(1))]
   return(output)
+}
+
+summary.sframe <- function(object, type = "cat", vars, maxsum = 1e10, ...) {
+
+  if (type == "cat") {
+    # compute the counts for each sites set
+    output <- return_counts(object, vars, maxsum, ...)
+    return(output)
+  } else if (type == "cont") {
+    # compute the numsum for each sites set
+    output <- return_numsum(object, vars, ...)
+    return(output)
+  } else {
+    stop(cat("type must equal \"cat\" or \"cont\""))
+  }
 }  
   
 return_counts <- function(df, vars, maxsum, ...) {
