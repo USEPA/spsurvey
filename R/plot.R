@@ -14,7 +14,10 @@ plot.sframe <- function(object, vars = ~ 1, varsub, fix_aspect = TRUE, ...) {
   } else if (is.null(varlist$response)) {
     # making variable df for plotting
     vardf <- make_vardf(object, varlist)
-    invisible(make_catplot(vardf, varlist, fix_aspect))
+    invisible(make_catplot(vardf, varlist, fix_aspect, ...))
+  } else {
+    vardf <- make_vardf(object, varlist)
+    invisible(make_contplot(vardf, varlist, fix_aspect, ...))
   }
 }
 
@@ -96,9 +99,8 @@ make_varlist <- function(vars, varsub) {
   # saving varsub if needed
   if (missing(varsub)) {
     varsub <- NULL
-  } else {
-    varsub <- varsub
   }
+  
   # storing the output list
   varlist <- list(
     varterms = varterms,
@@ -122,7 +124,7 @@ make_vardf <- function(object, varlist) {
       if (length(x) == 1 && is.numeric(object_df[[x]])) {
         return(object_df[, x, drop = FALSE]) # return numeric if provided
       } else {
-        return(interaction(object_df[, x, drop = FALSE])) # return factors
+        return(interaction(object_df[, x, drop = FALSE], sep = ":")) # return factors
       }
     }
   )
@@ -132,7 +134,10 @@ make_vardf <- function(object, varlist) {
 }
 
 make_catplot <- function(vardf, varlist, fix_aspect, ...) {
-  
+  oldpar <- par()
+  if (length(varlist$varnames) > 1) {
+    par(ask = TRUE)
+  }
   if (is.null(varlist$varsub)) {
     lapply(
       varlist$varnames,
@@ -161,6 +166,114 @@ make_catplot <- function(vardf, varlist, fix_aspect, ...) {
       plot(st_geometry(vardf_sub[varlist$varlabels]),
               main = paste(" ", expression("~"), " ", varlist$varlabels, " (", varlist$varsub, ")", sep = ""),
               ...
+      )
+    }
+  }
+  on.exit(par(ask = oldpar$ask))
+}
+
+make_contplot <- function(vardf, varlist, fix_aspect, ...) {
+  
+  oldpar <- par()
+  if ((length(varlist$varlabels) + 1 * varlist$intercept) > 1) {
+    par(ask = TRUE)
+  }
+  if (varlist$intercept) {
+    plot(vardf[varlist$response], main = varlist$response, ...)
+  }
+  
+  if (is.null(varlist$varsub)) {
+    vars_split <- lapply(varlist$varlabels, function(x) split(vardf[, c(varlist$response, x)], vardf[[x]]))
+    names(vars_split) <- varlist$varlabels
+    lapply(
+      varlist$varlabels,
+      function(x) {
+        if (fix_aspect) {
+          xlim <- st_bbox(vardf)[c(1, 3)]
+          ylim <- st_bbox(vardf)[c(2, 4)]
+          lapply(names(vars_split[[x]]),
+                 function(y) plot(vars_split[[x]][[y]][varlist$response],
+                                  main = paste(varlist$response, " ", expression("~"), " ", x, " (", y, ")", sep = ""),
+                                  xlim = xlim, ylim = ylim, ...))
+        } else {
+          lapply(names(vars_split[[x]]),
+                 function(y) plot(vars_split[[x]][[y]][varlist$response],
+                                  main = paste(varlist$response, " ", expression("~"), " ", x, " (", y, ")", sep = ""),
+                                  ...))
+        }
+      } 
+    )
+  } else { # stopped here on at 7:30 on 1/5 (works without specifying varsub)
+    vardf_sub <- vardf[vardf[[varlist$varlabels]] == varlist$varsub, ]
+    if (fix_aspect) {
+      xlim <- st_bbox(vardf)[c(1, 3)]
+      ylim <- st_bbox(vardf)[c(2, 4)]
+      plot(st_geometry(vardf_sub[varlist$varlabels]),
+           main = paste(" ", expression("~"), " ", varlist$varlabels, " (", varlist$varsub, ")", sep = ""),
+           xlim = xlim, 
+           ylim = ylim,
+           ...
+      )
+    } else {
+      plot(st_geometry(vardf_sub[varlist$varlabels]),
+           main = paste(" ", expression("~"), " ", varlist$varlabels, " (", varlist$varsub, ")", sep = ""),
+           ...
+      )
+    }
+  }
+  
+  on.exit(par(ask = oldpar$ask))
+}
+  if (attr(varterms, "intercept") == 1) {
+    vars_sf$intercept <- "intercept"
+    vars_sf <- vars_sf[c("intercept", setdiff(colnames(vars_sf), "intercept"))]
+  }
+  par(ask = TRUE)
+  vars_sf_names <- colnames(vars_sf)[!(colnames(vars_sf) %in% c(response, "geometry"))]
+  vars_split <- lapply(vars_sf_names, function(x) split(vars_sf[, c(response, x)], vars_sf[[x]]))
+  names(vars_split) <- vars_sf_names
+  if (attr(varterms, "intercept") == 1) {
+    vars_sf_names <- vars_sf_names[vars_sf_names != "intercept"]
+    invisible(plot(vars_split[["intercept"]][["intercept"]][response], ...))
+    invisible(lapply(vars_sf_names, function(x) lapply(names(vars_split[[x]]),
+                                                       function(y) plot(vars_split[[x]][[y]][response],
+                                                                        main = paste(response, " ", expression("~"), " ", x, " (", y, ")", sep = ""),
+                                                                        xlim = xlim, ylim = ylim, ...))))
+  } else {
+    invisible(lapply(vars_sf_names, function(x) lapply(names(vars_split[[x]]),
+                                                       function(y) plot(vars_split[[x]][[y]][response],
+                                                                        main = paste(response, " ", expression("~"), " ", x, " (", y, ")", sep = ""),
+                                                                        xlim = xlim, ylim = ylim, ...))))
+  }
+  
+  if (is.null(varlist$varsub)) {
+    lapply(
+      varlist$varnames,
+      function(x) {
+        if (fix_aspect) {
+          xlim <- st_bbox(vardf)[c(1, 3)]
+          ylim <- st_bbox(vardf)[c(2, 4)]
+          plot(vardf[x], main = paste(" ", expression("~"), " ", x, sep = ""), xlim = xlim, ylim = ylim, ...)
+        } else {
+          plot(vardf[x], main = paste(" ", expression("~"), " ", x, sep = ""), ...)
+        }
+      } 
+    )
+  } else {
+    vardf_sub <- vardf[vardf[[varlist$varlabels]] == varlist$varsub, ]
+    if (fix_aspect) {
+      xlim <- st_bbox(vardf)[c(1, 3)]
+      ylim <- st_bbox(vardf)[c(2, 4)]
+      plot(st_geometry(vardf_sub[varlist$varlabels]),
+           main = paste(" ", expression("~"), " ", varlist$varlabels, " (", varlist$varsub, ")", sep = ""),
+           xlim = xlim, 
+           ylim = ylim,
+           ...
+      )
+    } else {
+      plot(st_geometry(vardf_sub[varlist$varlabels]),
+           main = paste(" ", expression("~"), " ", varlist$varlabels, " (", varlist$varsub, ")", sep = ""),
+           ...
       )
     }
   }
