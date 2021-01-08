@@ -1,23 +1,55 @@
-plot.spsurvey <- function(object, sframe, args_sites.base, args_sites.over, args_sites.near, args_sites.sframe, ...) {
+plot.spsurvey <- function(object, sframe = NULL, sites = c("sframe", "sites.base"),
+                          vars = ~ sites, varsub = NULL, fix_aspect = TRUE, addargs, ...) {
+
+  site_names <- sites
+  sites <- sites[sites != "legacy"]
+  object <- c(list(sframe = sframe), object)
+  object <- object[sites]
+  # removing null objects
+  object <- object[!vapply(object, is.null, logical(1))]
+  object_names <- names(object)
+  site_names <- site_names[site_names %in% c(object_names, "legacy")]
+  # append sframe if provided
   
+  object <- lapply(object_names, function(x) merge(object[[x]], data.frame(sites = x)))
+  names(object) <- object_names
+  if ("sites.base" %in% object_names && any(!is.na(object$sites.base$legacy))) {
+    levels(object$sites.base$sites) <-  c("sites.base", "legacy")
+    object$sites.base$sites[!is.na(object$sites.base$legacy)] <- "legacy"
+  }
+  # make varlists
+  varlist <- make_varlist(vars, varsub)
+
+  # make sframe
+  varsfs <- lapply(object, function(x) make_varsf(x, varlist))
+  object <- do.call("rbind", varsfs)
+  
+  if (!missing(addargs)) {
+    argslist <- c(list(sites = site_names), addargs)
+    argsdf <- merge(argslist, object)[, names(addargs), drop = FALSE]
+    addargs <- as.list(argsdf)
+    plot.sframe(object, vars, varsub, fix_aspect, addargs = addargs, ...)
+  } else {
+    plot.sframe(object, vars, varsub, fix_aspect, ...)
+  }
 }
 
-plot.sframe <- function(object, vars = ~ 1, varsub, fix_aspect = TRUE, ...) {
+plot.sframe <- function(object, vars = ~ 1, varsub = NULL, fix_aspect = TRUE, ...) {
 
   # making variable list
   varlist <- make_varlist(vars, varsub)
 
-  
+
   # plot geometry for ~ 1
   if (length(varlist$varnames) == 0 && varlist$intercept) {
     invisible(plot(st_geometry(object), ...))
   } else if (is.null(varlist$response)) {
     # making variable df for plotting
-    vardf <- make_vardf(object, varlist)
-    invisible(make_catplot(vardf, varlist, fix_aspect, ...))
+    varsf <- make_varsf(object, varlist)
+    invisible(make_catplot(varsf, varlist, fix_aspect, ...))
   } else {
-    vardf <- make_vardf(object, varlist)
-    invisible(make_contplot(vardf, varlist, fix_aspect, ...))
+    varsf <- make_varsf(object, varlist)
+    invisible(make_contplot(varsf, varlist, fix_aspect, ...))
   }
 }
 
@@ -54,7 +86,6 @@ make_varlist <- function(vars, varsub) {
   # giving the list names
   names(varnames_split) <- varnames
   
-  # saving varsub if needed
   if (missing(varsub)) {
     varsub <- NULL
   }
@@ -72,7 +103,7 @@ make_varlist <- function(vars, varsub) {
   )
 }
 
-make_vardf <- function(object, varlist) {
+make_varsf <- function(object, varlist) {
   # can possibly deprecate this in the future by making use of
   # model.frame and extracting the main effects and using them to make the interactions
   # only real advantage will be creating variables for use mid formula with numeric variables
@@ -93,83 +124,105 @@ make_vardf <- function(object, varlist) {
   df_to_sf <- st_as_sf(df_varcols, geometry = object_geometry)
 }
 
-get_varlevels <- function(vardf) {
-  vardf_nogeom <- st_drop_geometry(vardf)
-  levels <- lapply(vardf_nogeom, function(x) {
-              if (is.numeric(x)) {
-                levels <- 0
-              } else {
-                levels <- length(na.omit(unique(x)))
-              }
-            })
-  levels <- sum(unlist(levels))
-}
 
-make_catplot <- function(vardf, varlist, fix_aspect, ...) {
+
+make_catplot <- function(varsf, varlist, fix_aspect, addargs, ...) {
   
   oldpar <- par()
-  dotlist <- list(...)
+  if (missing(addargs)){
+    dotlist <- list(...)
+  } else {
+    dotlist <- c(addargs, list(...))
+  }
+  
   if (length(varlist$varnames) > 1) {
     par(ask = TRUE)
   }
   
   if (is.null(varlist$varsub)) {
     if (fix_aspect) {
-      dotlist$xlim <- st_bbox(vardf)[c(1, 3)]
-      dotlist$ylim <- st_bbox(vardf)[c(2, 4)]
+      dotlist$xlim <- st_bbox(varsf)[c(1, 3)]
+      dotlist$ylim <- st_bbox(varsf)[c(2, 4)]
     }
     lapply(
       varlist$varnames,
       function(x) {
         dotlist$main <- paste(" ", expression("~"), " ", x, sep = "")
-        do.call("plot", c(list(vardf[x]), dotlist))
+        do.call("plot", c(list(varsf[x]), dotlist))
       }
     )
   } else {
-    vardf_sub <- vardf[vardf[[varlist$varlabels]] == varlist$varsub, ]
+    varsf_sub <- varsf[varsf[[varlist$varlabels]] == varlist$varsub, ]
     if (!("main" %in% names(dotlist))) {
       dotlist$main <- paste(" ", expression("~"), " ", varlist$varlabels, " (", varlist$varsub, ")", sep = "")
     }
-    do.call("plot", c(list(st_geometry(vardf_sub[varlist$varlabels])), dotlist))
+    do.call("plot", c(list(st_geometry(varsf_sub[varlist$varlabels])), dotlist))
   }
   on.exit(par(ask = oldpar$ask))
 }
 
-make_contplot <- function(vardf, varlist, fix_aspect, ...) {
+make_contplot <- function(varsf, varlist, fix_aspect, addargs, ...) {
   oldpar <- par()
-  dotlist <- list(...)
+  if (missing(addargs)){
+    dotlist <- list(...)
+  } else {
+    dotlist <- c(addargs, list(...))
+  }
   if (is.null(varlist$varsub)) {
-    if (get_varlevels(vardf) + 1 * varlist$intercept > 1) {
+    if (get_varlevels(varlist, varsf) + 1 * varlist$intercept > 1) {
       par(ask = TRUE)
     }
 
     if (fix_aspect) {
-      dotlist$xlim <- st_bbox(vardf)[c(1, 3)]
-      dotlist$ylim <- st_bbox(vardf)[c(2, 4)]
+      dotlist$xlim <- st_bbox(varsf)[c(1, 3)]
+      dotlist$ylim <- st_bbox(varsf)[c(2, 4)]
     }
         
     if (varlist$intercept) {
-      dotlist$main <- varlist$response
-      do.call("plot", c(list(vardf[varlist$response]), dotlist))
+      if (varlist$response %in% varlist$varlabels) {
+        varlisttemp <- varlist
+        varlisttemp$varnames <- unique(varlisttemp$varnames)
+        if (missing(addargs)) {
+          make_catplot(varsf, varlisttemp, fix_aspect, ...)
+        } else {
+          make_catplot(varsf, varlisttemp, fix_aspect, addargs, ...)
+        }
+      } else {
+        dotlist$main <- varlist$response
+        do.call("plot", c(list(varsf[varlist$response]), dotlist))
+      }
     }
-    vars_split <- lapply(varlist$varlabels, function(x) split(vardf[, c(varlist$response, x)], vardf[[x]]))
+    vars_split <- lapply(varlist$varlabels, function(x) split(varsf[, c(varlist$response, x)], varsf[[x]]))
     names(vars_split) <- varlist$varlabels
-    lapply(varlist$varlabels,
-           function(x) {
-             lapply(names(vars_split[[x]]),
-                    function(y) {
-                      dotlist$main <- paste(varlist$response, " ", expression("~"), " ", x, " (", y, ")", sep = "")
-                      do.call("plot", c(list(vars_split[[x]][[y]][varlist$response]), dotlist))
-                    }
-             )
-           }
-    )
+    if (varlist$response %in% varlist$varlabels) {
+      lapply(varlist$varlabels,
+             function(x) {
+               lapply(names(vars_split[[x]]),
+                      function(y) {
+                        dotlist$main <- paste("1", " ", expression("~"), " ", x, " (", y, ")", sep = "")
+                        do.call("plot", c(list(st_geometry(vars_split[[x]][[y]])), dotlist))
+                      }
+               )
+             }
+      )
+    } else {
+      lapply(varlist$varlabels,
+             function(x) {
+               lapply(names(vars_split[[x]]),
+                      function(y) {
+                        dotlist$main <- paste(varlist$response, " ", expression("~"), " ", x, " (", y, ")", sep = "")
+                        do.call("plot", c(list(vars_split[[x]][[y]][varlist$response]), dotlist))
+                      }
+               )
+             }
+      )
+    }
   } else {
-    vardf_sub <- vardf[vardf[[varlist$varlabels]] == varlist$varsub, ]
+    varsf_sub <- varsf[varsf[[varlist$varlabels]] == varlist$varsub, ]
     if (!("main" %in% names(dotlist))) {
       dotlist$main <- paste(varlist$response," ", expression("~"), " ", varlist$varlabels, " (", varlist$varsub, ")", sep = "")
     }
-    do.call("plot", c(list(vardf_sub[varlist$response]), dotlist))
+    do.call("plot", c(list(varsf_sub[varlist$response]), dotlist))
   }
   on.exit(par(ask = oldpar$ask))
 }
