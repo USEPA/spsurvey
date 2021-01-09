@@ -55,11 +55,15 @@ plot_rhf <- function(varsf, formlist, geom, showonly, fix_bbox, variableargs, le
     } else {
         varsf_sub <- varsf[varsf[[formlist$varlabels]] == formlist$showonly, ]
         if (!("main" %in% names(dot_list))) {
-          dot_list$main <- paste(" ", expression("~"), " ", formlist$varlabels, " (", formlist$showonly, ")", sep = "")
+          dot_list$main <- paste(" ", expression("~"), " ", formlist$varlabels, sep = "")
         }
-        do.call("plot", c(list(st_geometry(varsf_sub[formlist$varlabels])), dot_list))
+        do.call("plot", c(list(varsf_sub[formlist$varlabels]), dot_list))
+        # varsf_sub <- varsf[varsf[[formlist$varlabels]] == formlist$showonly, ]
+        # if (!("main" %in% names(dot_list))) {
+        #   dot_list$main <- paste(" ", expression("~"), " ", formlist$varlabels, " (", formlist$showonly, ")", sep = "")
+        # }
+        # do.call("plot", c(list(st_geometry(varsf_sub[formlist$varlabels])), dot_list))
     }
-
 }
     
 
