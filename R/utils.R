@@ -1,4 +1,4 @@
-make_varlist <- function(vars, varsub) {
+make_formlist <- function(vars, showonly) {
   # find all terms from the formula
   varterms <- terms(vars)
   # find all variable names
@@ -23,12 +23,12 @@ make_varlist <- function(vars, varsub) {
   varnames_split <- strsplit(varnames, ":")
   # giving the list names
   names(varnames_split) <- varnames
-  # this will be used if varsub is removed from summary
-  if (missing(varsub)) {
-    varsub <- NULL
+  # this will be used if showonly is removed from summary
+  if (missing(showonly)) {
+    showonly <- NULL
   }
   # storing the output list
-  varlist <- list(
+  formlist <- list(
     varterms = varterms,
     allvars = allvars,
     varlabels = varlabels,
@@ -36,11 +36,11 @@ make_varlist <- function(vars, varsub) {
     response = response,
     varnames = varnames,
     varnames_split = varnames_split,
-    varsub = varsub
+    showonly = showonly
   )
 }
 
-make_varsf <- function(object, varlist) {
+make_varsf <- function(object, formlist) {
   # can possibly deprecate this in the future by making use of
   # model.frame and extracting the main effects and using them to make the interactions
   # only real advantage will be creating variables for use mid formula with numeric variables
@@ -48,14 +48,14 @@ make_varsf <- function(object, varlist) {
   # store geometry 
   object_geometry <- st_geometry(object)
   
-  if (varlist$intercept && is.null(varlist$response) && length(varlist$varlabels) == 0) {
+  if (formlist$intercept && is.null(formlist$response) && length(formlist$varlabels) == 0) {
     return(object_geometry)
   } else {
     
     # remove geometry to make a regular data frame
     object_df <- st_drop_geometry(object)
-    varlist <- lapply(
-      varlist$varnames_split,
+    formlist <- lapply(
+      formlist$varnames_split,
       function(x) {
         if (length(x) == 1 && is.numeric(object_df[[x]])) {
           return(object_df[, x, drop = FALSE]) # return numeric if provided
@@ -64,22 +64,45 @@ make_varsf <- function(object, varlist) {
         }
       }
     )
-    varsf <- as.data.frame(varlist, optional = TRUE) # without optional the : in name gets
+    varsf <- as.data.frame(formlist, optional = TRUE) # without optional the : in name gets
     # converted to synctactic name with .
     varsf <- st_as_sf(varsf, geometry = object_geometry)
     return(varsf)
   }
 }
 
-get_varlevels <- function(varlist, varsf) {
+get_varlevels <- function(formlist, varsf) {
   varsf_nogeom <- st_drop_geometry(varsf)
-  levels <- lapply(varlist$varnames, function(x) {
-    if (is.numeric(varsf[[x]]) || (x == varlist$response & !(x %in% varlist$varlabels))) {
+  levels <- lapply(formlist$varnames, function(x) {
+    if (is.numeric(varsf[[x]]) || (x == formlist$response)) { # & !(x %in% formlist$varlabels))) {
       levels <- 0
     } else {
-      levels <- length(na.omit(unique(x)))
+      levels <- length(na.omit(unique(varsf[[x]])))
     }
   })
   levels <- sum(unlist(levels))
 }
 
+make_levelargs_list <- function(varsf, levelargs) {
+  levelargs_list <- lapply(names(levelargs), function(x) {
+    vardf <- st_drop_geometry(varsf[x])
+    vardf[[x]] <- as.character(vardf[[x]])
+    colnames(vardf) <- "levels"
+    vardf$index <- 1:nrow(vardf)
+    levelargs_df <- as.data.frame(levelargs[[x]], stringsAsFactors = FALSE)
+    levelargs_df <- merge(vardf, levelargs_df)
+    levelargs_df <- levelargs_df[order(levelargs_df$index), , drop = FALSE]
+    badcol <- which(colnames(levelargs_df) %in% c("levels", "index"))
+    levelargs_df <- levelargs_df[, -badcol, drop = FALSE]
+    levelargs_list <- as.list(levelargs_df)
+  })
+  names(levelargs_list) <- names(levelargs)
+  levelargs_list
+}
+
+check_rhs_cat <- function(varsf, formlist) {
+  any_numeric <- vapply(varsf[[formlist$varlabels]], is.numeric(), logical(1))
+  if (any_numeric) {
+    stop("Right hand side of formula must only contain categorical variables")
+  }
+}

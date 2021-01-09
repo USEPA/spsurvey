@@ -1,4 +1,4 @@
-summary.spsurvey <- function(object, vars, varsub = NULL, ...) {
+summary.spsurvey <- function(object, vars, showonly = NULL, ...) {
   
   # keep the sites sf objects from class spsurvey
   sites <- object[names(object) %in% c("sites.base", "sites.over", "sites.near")]
@@ -8,7 +8,7 @@ summary.spsurvey <- function(object, vars, varsub = NULL, ...) {
       if (is.null(x)) {
         x  
       } else {
-        summary.sframe(x, vars, varsub, ...)
+        summary.sframe(x, vars, showonly, ...)
       }
     }
   )
@@ -16,62 +16,62 @@ summary.spsurvey <- function(object, vars, varsub = NULL, ...) {
   output <- output[!vapply(output, is.null, logical(1))]
 }
 
-summary.sframe <- function(object, vars, varsub = NULL, ...) {
-  # making varlist (utils.R)
-  varlist <- make_varlist(vars, varsub)
+summary.sframe <- function(object, vars, showonly = NULL, ...) {
+  # making formlist (utils.R)
+  formlist <- make_formlist(vars, showonly)
   # making varsf (utils.R)
-  varsf <- make_varsf(object, varlist)
+  varsf <- make_varsf(object, formlist)
   # accomodating an intercept
-  if (varlist$intercept) {
+  if (formlist$intercept) {
     # adding "total" to varlabels
-    varlist$varlabels <- c("total", varlist$varlabels)
+    formlist$varlabels <- c("total", formlist$varlabels)
     # making a factor called "total"
     varsf$total <- as.factor("total")
     # adding the factor to varsf
-    varsf <- varsf[, c(varlist$response, varlist$varlabels), drop = FALSE]
+    varsf <- varsf[, c(formlist$response, formlist$varlabels), drop = FALSE]
   }
   # calling the appropriate summary based on formula (right hand side vs two sided)
-  if (is.null(varlist$response)) {
-    output <- cat_summary(varlist, varsf, ...)
+  if (is.null(formlist$response)) {
+    output <- cat_summary(formlist, varsf, ...)
   } else {
-    output <- cont_summary(varlist, varsf, ...)
+    output <- cont_summary(formlist, varsf, ...)
   }
 }
 
 
-cat_summary <- function(varlist, varsf, ...) {
+cat_summary <- function(formlist, varsf, ...) {
   dotlist <- list(...)
   if (!("maxsum" %in% names(dotlist))) {
     dotlist$maxsum <- 1e10
   }
   varsf_nogeom <- st_drop_geometry(varsf)
-  if (!is.null(varlist$varsub)) {
-    indexcol <- varlist$varlabels[length(varlist$varlabels)]
-    varsf_nogeom <- varsf_nogeom[varsf_nogeom[[indexcol]] == varlist$varsub, indexcol, drop = FALSE]
+  if (!is.null(formlist$showonly)) {
+    indexcol <- formlist$varlabels[length(formlist$varlabels)]
+    varsf_nogeom <- varsf_nogeom[varsf_nogeom[[indexcol]] == formlist$showonly, indexcol, drop = FALSE]
     varsf_nogeom <- na.omit(varsf_nogeom)
-    varsf_nogeom[[indexcol]] <- factor(varsf_nogeom[[indexcol]], levels = varlist$varsub)
+    varsf_nogeom[[indexcol]] <- factor(varsf_nogeom[[indexcol]], levels = formlist$showonly)
   }
   output <- do.call("summary.data.frame", c(list(varsf_nogeom), dotlist))
 }
 
-cont_summary <- function(varlist, varsf, ...) {
+cont_summary <- function(formlist, varsf, ...) {
   dotlist <- list(...)
   varsf_nogeom <- st_drop_geometry(varsf)
-  if (!is.null(varlist$varsub)) {
-    varlist$varlabels <- varlist$varlabels[length(varlist$varlabels)]
-    varsf_nogeom <- varsf_nogeom[varsf_nogeom[[varlist$varlabels]] == varlist$varsub, c(varlist$response, varlist$varlabels), drop = FALSE]
+  if (!is.null(formlist$showonly)) {
+    formlist$varlabels <- formlist$varlabels[length(formlist$varlabels)]
+    varsf_nogeom <- varsf_nogeom[varsf_nogeom[[formlist$varlabels]] == formlist$showonly, c(formlist$response, formlist$varlabels), drop = FALSE]
     varsf_nogeom <- na.omit(varsf_nogeom)
-    varsf_nogeom[[varlist$varlabels]] <- factor(varsf_nogeom[[varlist$varlabels]], levels = varlist$varsub)
+    varsf_nogeom[[formlist$varlabels]] <- factor(varsf_nogeom[[formlist$varlabels]], levels = formlist$showonly)
   }
-  output <- lapply(varlist$varlabels, function(x) {
+  output <- lapply(formlist$varlabels, function(x) {
     varlevels <- do.call("tapply",
-                         c(list(X = varsf_nogeom[[varlist$response]],
+                         c(list(X = varsf_nogeom[[formlist$response]],
                                 INDEX = varsf_nogeom[[x]],
                                 FUN = summary.default),
                            dotlist))
     do.call("rbind", varlevels)
   })
-  names(output) <- paste(varlist$response, "by", varlist$varlabels, sep = " ")
+  names(output) <- paste(formlist$response, "by", formlist$varlabels, sep = " ")
   output
 }
 

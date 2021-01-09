@@ -1,5 +1,5 @@
 plot.spsurvey <- function(object, sframe = NULL, sites = c("sframe", "sites.base"),
-                          vars = ~ sites, varsub = NULL, fix_aspect = TRUE, addargs, ...) {
+                          vars = ~ sites, showonly = NULL, fix_bbox = TRUE, addargs, ...) {
 
   site_names <- sites
   sites <- sites[sites != "legacy"]
@@ -17,185 +17,116 @@ plot.spsurvey <- function(object, sframe = NULL, sites = c("sframe", "sites.base
     levels(object$sites.base$sites) <-  c("sites.base", "legacy")
     object$sites.base$sites[!is.na(object$sites.base$legacy)] <- "legacy"
   }
-  # make varlists
-  varlist <- make_varlist(vars, varsub)
+  # make formlists
+  formlist <- make_formlist(vars, showonly)
 
   # make sframe
-  varsfs <- lapply(object, function(x) make_varsf(x, varlist))
+  varsfs <- lapply(object, function(x) make_varsf(x, formlist))
   object <- do.call("rbind", varsfs)
   
   if (!missing(addargs)) {
-    argslist <- c(list(sites = site_names), addargs)
+    argslist <- data.frame(c(list(sites = site_names), addargs), stringsAsFactors = FALSE)
     argsdf <- merge(argslist, object)[, names(addargs), drop = FALSE]
     addargs <- as.list(argsdf)
-    plot.sframe(object, vars, varsub, fix_aspect, addargs = addargs, ...)
+    plot.sframe(object, vars, showonly, fix_bbox, addargs = addargs, ...)
   } else {
-    plot.sframe(object, vars, varsub, fix_aspect, ...)
+    plot.sframe(object, vars, showonly, fix_bbox, ...)
   }
 }
 
-plot.sframe <- function(object, vars = ~ 1, varsub = NULL, fix_aspect = TRUE, ...) {
+plot.sframe <- function(object, vars = ~ 1, showonly = NULL, fix_bbox = TRUE, ...) {
 
   # making variable list
-  varlist <- make_varlist(vars, varsub)
+  formlist <- make_formlist(vars, showonly)
 
 
   # plot geometry for ~ 1
-  if (length(varlist$varnames) == 0 && varlist$intercept) {
+  if (length(formlist$varnames) == 0 && formlist$intercept) {
     invisible(plot(st_geometry(object), ...))
-  } else if (is.null(varlist$response)) {
+  } else if (is.null(formlist$response)) {
     # making variable df for plotting
-    varsf <- make_varsf(object, varlist)
-    invisible(make_catplot(varsf, varlist, fix_aspect, ...))
+    varsf <- make_varsf(object, formlist)
+    invisible(make_catplot(varsf, formlist, fix_bbox, ...))
   } else {
-    varsf <- make_varsf(object, varlist)
-    invisible(make_contplot(varsf, varlist, fix_aspect, ...))
+    varsf <- make_varsf(object, formlist)
+    invisible(make_contplot(varsf, formlist, fix_bbox, ...))
   }
 }
 
-make_varlist <- function(vars, varsub) {
-  # find all terms from the formula
-  varterms <- terms(vars)
-  
-  # find all variable names
-  allvars <- all.vars(varterms)
-  
-  # find all right hand side names
-  varlabels <- attr(varterms, "term.labels")
-  
-  # find if intercept exists in the formula
-  if (attr(varterms, "intercept") == 1) {
-    intercept <- TRUE
-  } else {
-    intercept <- FALSE
-  }
-  
-  # find if response exists in the formula
-  if (attr(varterms, "response") == 1) {
-    response <- allvars[1]
-  } else {
-    response <- NULL
-  }
-  
-  # make a vector of names
-  varnames <- c(response, varlabels)
-  
-  # make a list where names are split if they interact
-  varnames_split <- strsplit(varnames, ":")
-  
-  # giving the list names
-  names(varnames_split) <- varnames
-  
-  if (missing(varsub)) {
-    varsub <- NULL
-  }
-  
-  # storing the output list
-  varlist <- list(
-    varterms = varterms,
-    allvars = allvars,
-    varlabels = varlabels,
-    intercept = intercept,
-    response = response,
-    varnames = varnames,
-    varnames_split = varnames_split,
-    varsub = varsub
-  )
-}
-
-make_varsf <- function(object, varlist) {
-  # can possibly deprecate this in the future by making use of
-  # model.frame and extracting the main effects and using them to make the interactions
-  # only real advantage will be creating variables for use mid formula with numeric variables
-  object_df <- st_drop_geometry(object)
-  object_geometry <- st_geometry(object)
-  varcols <- lapply(
-    varlist$varnames_split,
-    function(x) {
-      if (length(x) == 1 && is.numeric(object_df[[x]])) {
-        return(object_df[, x, drop = FALSE]) # return numeric if provided
-      } else {
-        return(interaction(object_df[, x, drop = FALSE], sep = ":")) # return factors
-      }
-    }
-  )
-  df_varcols <- as.data.frame(varcols, optional = TRUE) # without optional the : in name gets
-  # converted to synctactic name with .
-  df_to_sf <- st_as_sf(df_varcols, geometry = object_geometry)
-}
-
-
-
-make_catplot <- function(varsf, varlist, fix_aspect, addargs, ...) {
+make_catplot <- function(varsf, formlist, fix_bbox, addargs, ...) {
   
   oldpar <- par()
   if (missing(addargs)){
     dotlist <- list(...)
   } else {
-    dotlist <- c(addargs, list(...))
+    dotlist <- addargs
+    dotlistadd <- c(addargs, list(...))
+    #dotlistadd <- addargs
   }
   
-  if (length(varlist$varnames) > 1) {
+  if (length(formlist$varnames) > 1) {
     par(ask = TRUE)
   }
   
-  if (is.null(varlist$varsub)) {
-    if (fix_aspect) {
+  if (is.null(formlist$showonly)) {
+    if (fix_bbox) {
       dotlist$xlim <- st_bbox(varsf)[c(1, 3)]
       dotlist$ylim <- st_bbox(varsf)[c(2, 4)]
     }
     lapply(
-      varlist$varnames,
+      formlist$varnames,
       function(x) {
         dotlist$main <- paste(" ", expression("~"), " ", x, sep = "")
         do.call("plot", c(list(varsf[x]), dotlist))
       }
     )
   } else {
-    varsf_sub <- varsf[varsf[[varlist$varlabels]] == varlist$varsub, ]
+    varsf_sub <- varsf[varsf[[formlist$varlabels]] == formlist$showonly, ]
     if (!("main" %in% names(dotlist))) {
-      dotlist$main <- paste(" ", expression("~"), " ", varlist$varlabels, " (", varlist$varsub, ")", sep = "")
+      dotlist$main <- paste(" ", expression("~"), " ", formlist$varlabels, " (", formlist$showonly, ")", sep = "")
     }
-    do.call("plot", c(list(st_geometry(varsf_sub[varlist$varlabels])), dotlist))
+    do.call("plot", c(list(st_geometry(varsf_sub[formlist$varlabels])), dotlist))
   }
   on.exit(par(ask = oldpar$ask))
 }
 
-make_contplot <- function(varsf, varlist, fix_aspect, addargs, ...) {
+make_contplot <- function(varsf, formlist, fix_bbox, addargs, ...) {
   oldpar <- par()
   if (missing(addargs)){
     dotlist <- list(...)
   } else {
-    dotlist <- c(addargs, list(...))
+    dotlist <- list(...)
+    dotlistadd <- addargs
+    dotlistadd2 <- c(addargs, dotlist)
   }
-  if (is.null(varlist$varsub)) {
-    if (get_varlevels(varlist, varsf) + 1 * varlist$intercept > 1) {
+  if (is.null(formlist$showonly)) {
+    if (get_varlevels(formlist, varsf) + 1 * formlist$intercept > 1) {
       par(ask = TRUE)
     }
 
-    if (fix_aspect) {
+    if (fix_bbox) {
       dotlist$xlim <- st_bbox(varsf)[c(1, 3)]
       dotlist$ylim <- st_bbox(varsf)[c(2, 4)]
     }
         
-    if (varlist$intercept) {
-      if (varlist$response %in% varlist$varlabels) {
-        varlisttemp <- varlist
-        varlisttemp$varnames <- unique(varlisttemp$varnames)
+    if (formlist$intercept) {
+      if (formlist$response %in% formlist$varlabels) {
+        formlisttemp <- formlist
+        formlisttemp$varnames <- unique(formlisttemp$varnames)
         if (missing(addargs)) {
-          make_catplot(varsf, varlisttemp, fix_aspect, ...)
+          do.call("make_catplot", c(list(varsf), list(formlisttemp), list(fix_bbox), dotlist))
         } else {
-          make_catplot(varsf, varlisttemp, fix_aspect, addargs, ...)
+          do.call("make_catplot", c(list(varsf), list(formlisttemp), list(fix_bbox), dotlistadd))
         }
       } else {
-        dotlist$main <- varlist$response
-        do.call("plot", c(list(varsf[varlist$response]), dotlist))
+        dotlist$main <- formlist$response
+        do.call("plot", c(list(varsf[formlist$response]), dotlist))
       }
     }
-    vars_split <- lapply(varlist$varlabels, function(x) split(varsf[, c(varlist$response, x)], varsf[[x]]))
-    names(vars_split) <- varlist$varlabels
-    if (varlist$response %in% varlist$varlabels) {
-      lapply(varlist$varlabels,
+    vars_split <- lapply(formlist$varlabels, function(x) split(varsf[, c(formlist$response, x)], varsf[[x]]))
+    names(vars_split) <- formlist$varlabels
+    if (formlist$response %in% formlist$varlabels) {
+      lapply(formlist$varlabels,
              function(x) {
                lapply(names(vars_split[[x]]),
                       function(y) {
@@ -206,23 +137,23 @@ make_contplot <- function(varsf, varlist, fix_aspect, addargs, ...) {
              }
       )
     } else {
-      lapply(varlist$varlabels,
+      lapply(formlist$varlabels,
              function(x) {
                lapply(names(vars_split[[x]]),
                       function(y) {
-                        dotlist$main <- paste(varlist$response, " ", expression("~"), " ", x, " (", y, ")", sep = "")
-                        do.call("plot", c(list(vars_split[[x]][[y]][varlist$response]), dotlist))
+                        dotlist$main <- paste(formlist$response, " ", expression("~"), " ", x, " (", y, ")", sep = "")
+                        do.call("plot", c(list(vars_split[[x]][[y]][formlist$response]), dotlist))
                       }
                )
              }
       )
     }
   } else {
-    varsf_sub <- varsf[varsf[[varlist$varlabels]] == varlist$varsub, ]
+    varsf_sub <- varsf[varsf[[formlist$varlabels]] == formlist$showonly, ]
     if (!("main" %in% names(dotlist))) {
-      dotlist$main <- paste(varlist$response," ", expression("~"), " ", varlist$varlabels, " (", varlist$varsub, ")", sep = "")
+      dotlist$main <- paste(formlist$response," ", expression("~"), " ", formlist$varlabels, " (", formlist$showonly, ")", sep = "")
     }
-    do.call("plot", c(list(varsf_sub[varlist$response]), dotlist))
+    do.call("plot", c(list(varsf_sub[formlist$response]), dotlist))
   }
   on.exit(par(ask = oldpar$ask))
 }
