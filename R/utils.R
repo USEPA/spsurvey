@@ -1,4 +1,4 @@
-make_formlist <- function(vars, showonly) {
+make_formlist <- function(vars, onlyshow) {
   # find all terms from the formula
   varterms <- terms(vars)
   # find all variable names
@@ -23,9 +23,9 @@ make_formlist <- function(vars, showonly) {
   varnames_split <- strsplit(varnames, ":")
   # giving the list names
   names(varnames_split) <- varnames
-  # this will be used if showonly is removed from summary
-  if (missing(showonly)) {
-    showonly <- NULL
+  # this will be used if onlyshow is removed from summary
+  if (missing(onlyshow)) {
+    onlyshow <- NULL
   }
   # storing the output list
   formlist <- list(
@@ -36,7 +36,7 @@ make_formlist <- function(vars, showonly) {
     response = response,
     varnames = varnames,
     varnames_split = varnames_split,
-    showonly = showonly
+    onlyshow = onlyshow
   )
 }
 
@@ -74,7 +74,7 @@ make_varsf <- function(object, formlist) {
 get_varlevels <- function(formlist, varsf) {
   varsf_nogeom <- st_drop_geometry(varsf)
   levels <- lapply(formlist$varnames, function(x) {
-    if (is.numeric(varsf[[x]]) || (x == formlist$response)) { # & !(x %in% formlist$varlabels))) {
+    if (is.numeric(varsf[[x]]) || (x %in% formlist$response)) { # & !(x %in% formlist$varlabels))) {
       levels <- 0
     } else {
       levels <- length(na.omit(unique(varsf[[x]])))
@@ -83,21 +83,21 @@ get_varlevels <- function(formlist, varsf) {
   levels <- sum(unlist(levels))
 }
 
-make_levelargs_list <- function(varsf, levelargs) {
-  levelargs_list <- lapply(names(levelargs), function(x) {
+make_level_args_list <- function(varsf, level_args) {
+  level_args_list <- lapply(names(level_args), function(x) {
     vardf <- st_drop_geometry(varsf[x])
     vardf[[x]] <- as.character(vardf[[x]])
     colnames(vardf) <- "levels"
     vardf$index <- 1:nrow(vardf)
-    levelargs_df <- as.data.frame(levelargs[[x]], stringsAsFactors = FALSE)
-    levelargs_df <- merge(vardf, levelargs_df)
-    levelargs_df <- levelargs_df[order(levelargs_df$index), , drop = FALSE]
-    badcol <- which(colnames(levelargs_df) %in% c("levels", "index"))
-    levelargs_df <- levelargs_df[, -badcol, drop = FALSE]
-    levelargs_list <- as.list(levelargs_df)
+    level_args_df <- as.data.frame(level_args[[x]], stringsAsFactors = FALSE)
+    level_args_df <- merge(vardf, level_args_df)
+    level_args_df <- level_args_df[order(level_args_df$index), , drop = FALSE]
+    badcol <- which(colnames(level_args_df) %in% c("levels", "index"))
+    level_args_df <- level_args_df[, -badcol, drop = FALSE]
+    level_args_list <- as.list(level_args_df)
   })
-  names(levelargs_list) <- names(levelargs)
-  levelargs_list
+  names(level_args_list) <- names(level_args)
+  level_args_list
 }
 
 check_rhs_cat <- function(varsf, formlist) {
