@@ -1,18 +1,3 @@
-plot.spsurvey <- function(object, sframe = NULL, sites = c("sframe", "sites.base"), formula = ~ sites, geom = FALSE, onlyshow = NULL,
-                          fix_bbox = TRUE, variable_args = NULL, level_args = NULL, ...) {
-  object <- c(list(sframe = sframe), object)
-  object <- object[sites]
-  object_names <- names(object)
-  object <- lapply(object_names, function(x) merge(object[[x]], data.frame(sites = x)))
-  names(object) <- object_names
-  # make formlists
-  formlist <- make_formlist(formula, onlyshow)
-  # make sframe
-  varsfs <- lapply(object, function(x) make_varsf(x, formlist))
-  object <- do.call("rbind", varsfs)
-  plot.sframe(object, formula, geom, onlyshow, fix_bbox, variable_args, level_args, ...)
-}
-
 plot.sframe <- function(object, formula = ~ 1, geom = FALSE, onlyshow = NULL,
                         fix_bbox = TRUE, variable_args = NULL, level_args = NULL, ...) {
   
@@ -30,13 +15,14 @@ plot.sframe <- function(object, formula = ~ 1, geom = FALSE, onlyshow = NULL,
   # making variable list
   formlist <- make_formlist(formula, onlyshow)
   varsf <- make_varsf(object, formlist)
+  varsf <- na.omit(varsf)
   
   # plot geometry or response for ~ 1
   if (length(formlist$varlabels) == 0 && formlist$intercept) {
     if (is.null(formlist$response)) {
-      if (!("main" %in% names(dot_list))) {
-        dot_list$main <- paste(expression("~"), " ", "1", sep = "")
-      }
+      # if (!("main" %in% names(dot_list))) {
+      #   dot_list$main <- paste(expression("~"), " ", "1", sep = "")
+      # }
       return(invisible(do.call("plot", c(list(st_geometry(object)), dot_list))))
     } else {
       if (!("main" %in% names(dot_list))) {
@@ -162,6 +148,21 @@ plot.sframe <- function(object, formula = ~ 1, geom = FALSE, onlyshow = NULL,
     }
   }
   on.exit(par(ask = oldpar$ask))
+}
+
+plot.spsurvey <- function(object, sframe = NULL, sites = c("sframe", "sites.base"), formula = ~ sites, geom = FALSE, onlyshow = NULL,
+                          fix_bbox = TRUE, variable_args = NULL, level_args = NULL, ...) {
+  object <- c(list(sframe = sframe), object)
+  object <- object[sites]
+  object_names <- names(object)
+  object <- lapply(object_names, function(x) merge(object[[x]], data.frame(sites = x)))
+  names(object) <- object_names
+  # make formlists
+  formlist <- make_formlist(formula, onlyshow)
+  # make sframe
+  varsfs <- lapply(object, function(x) make_varsf(x, formlist))
+  object <- do.call("rbind", varsfs)
+  plot.sframe(object, formula, geom, onlyshow, fix_bbox, variable_args, level_args, ...)
 }
 
 # plot.spsurvey <- function(object, sframe = NULL, sites = c("sframe", "sites.base"),
