@@ -14,6 +14,7 @@ summary.spsurvey <- function(object, vars, onlyshow = NULL, ...) {
   )
   # returning non-null outuput
   output <- output[!vapply(output, is.null, logical(1))]
+  output
 }
 
 summary.sframe <- function(object, vars, onlyshow = NULL, ...) {
@@ -33,8 +34,10 @@ summary.sframe <- function(object, vars, onlyshow = NULL, ...) {
   # calling the appropriate summary based on formula (right hand side vs two sided)
   if (is.null(formlist$response)) {
     output <- cat_summary(formlist, varsf, ...)
+    output
   } else {
     output <- cont_summary(formlist, varsf, ...)
+    output
   }
 }
 
