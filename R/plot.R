@@ -150,7 +150,7 @@ plot.sframe <- function(object, formula = ~ 1, geom = FALSE, onlyshow = NULL,
   on.exit(par(ask = oldpar$ask))
 }
 
-plot.spsurvey <- function(object, sframe = NULL, sites = c("sframe", "sites.base"), formula = ~ sites, geom = FALSE, onlyshow = NULL,
+plot.spsurvey <- function(object, sframe = NULL, formula = ~ sites, sites = c("sframe", "sites.base"), geom = FALSE, onlyshow = NULL,
                           fix_bbox = TRUE, variable_args = NULL, level_args = NULL, ...) {
   object <- c(list(sframe = sframe), object)
   object <- object[sites]
