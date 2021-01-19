@@ -127,3 +127,29 @@ check_rhs_cat <- function(varsf, formlist) {
     stop("Right hand side of formula must only contain categorical variables")
   }
 }
+
+match_sf_defaults <- function(varsf, list_args) {
+  if (all(st_geometry_type(varsf, by_geometry = FALSE) %in% c("POINT", "MULTIPOINT"))) {
+    sf_defaults <- list(pch = 1, cex = 1, col = 1, bg = 0, lwd = 1, lty = 1, type = "p")
+  }
+  
+  if (all(st_geometry_type(varsf, by_geometry = FALSE) %in% c("LINESTRING", "MULTILINESTRING"))) {
+    sf_defaults <- list(lty = 1, lwd = 1, col = 1, pch = 1, type = "l")
+  }
+
+  if (all(st_geometry_type(varsf, by_geometry = FALSE) %in% c("POLYGON", "MULTIPOLYGON"))) {
+    sf_defaults <- list(lty = 1, lwd = 1, col = NA, cex = 1, pch = NA, border = 1, rule = "evenodd")
+  }
+
+  names_list_args <- names(list_args)
+  list_args <- lapply(names_list_args, function(x) {
+      if (x %in% names(sf_defaults) && any(is.na(list_args[[x]]))) {
+        list_args[[x]][is.na(list_args[[x]])] <- sf_defaults[[x]]
+      } else {
+        list_args[[x]] <- list_args[[x]]
+      }
+    }
+  )
+  names(list_args) <- names_list_args
+  list_args
+}
