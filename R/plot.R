@@ -1,5 +1,5 @@
-plot.sframe <- function(object, formula = ~ 1, geom = FALSE, onlyshow = NULL,
-                        fix_bbox = TRUE, variable_args = NULL, level_args = NULL, ...) {
+plot.sframe <- function(object, formula = ~ 1, variable_args = NULL, level_args = NULL,
+                        geom = FALSE, onlyshow = NULL, fix_bbox = TRUE, ...) {
   
   # setting old graphical parameter value
   oldpar <- par()
@@ -53,6 +53,7 @@ plot.sframe <- function(object, formula = ~ 1, geom = FALSE, onlyshow = NULL,
           lapply(names_varsf_split, function(y) {
             list_args <- c(variable_args[[x]], level_args_split[[y]], dot_list)
             list_args$main <- paste(formlist$response, " ", expression("~"), " ", x, " (", y, ")", sep = "")
+            list_args <- match_sf_defaults(varsf_split[[y]], list_args)
             do.call("plot", c(list(st_geometry(varsf_split[[y]])), list_args))
           }
           )
@@ -68,6 +69,7 @@ plot.sframe <- function(object, formula = ~ 1, geom = FALSE, onlyshow = NULL,
             variable_args[[x]]$main <- paste(" ", expression("~"), " ", x, sep = "")
           }
           list_args <- c(variable_args[[x]], level_args_list[[x]], dot_list)
+          list_args <- match_sf_defaults(varsf[x], list_args)
           do.call("plot", c(list(varsf[x]), list_args))
         }
         )
@@ -105,6 +107,7 @@ plot.sframe <- function(object, formula = ~ 1, geom = FALSE, onlyshow = NULL,
           lapply(names_varsf_split, function(y) {
             list_args <- c(variable_args[[x]], level_args_split[[y]], dot_list)
             list_args$main <- paste(formlist$response, " ", expression("~"), " ", x, " (", y, ")", sep = "")
+            list_args <- match_sf_defaults(varsf_split[[y]], list_args)
             do.call("plot", c(list(varsf_split[[y]][formlist$response]), list_args))
           }
           )
@@ -124,6 +127,7 @@ plot.sframe <- function(object, formula = ~ 1, geom = FALSE, onlyshow = NULL,
           lapply(names_varsf_split, function(y) {
             list_args <- c(variable_args_split[[y]], level_args_split[[y]], dot_list)
             list_args$main <- paste(formlist$response, " ", expression("~"), " ", x, " (", y, ")", sep = "")
+            list_args <- match_sf_defaults(varsf_split[[y]], list_args)
             do.call("plot", c(list(varsf_split[[y]][formlist$response]), list_args))
           }
           )
@@ -150,13 +154,21 @@ plot.sframe <- function(object, formula = ~ 1, geom = FALSE, onlyshow = NULL,
   on.exit(par(ask = oldpar$ask))
 }
 
-plot.spsurvey <- function(object, sframe = NULL, formula = ~ sites, sites = c("sframe", "sites.base"), geom = FALSE, onlyshow = NULL,
-                          fix_bbox = TRUE, variable_args = NULL, level_args = NULL, ...) {
+# idea - set default sites equal to non null sites
+# change variable order for variable_args and level_args
+plot.spsurvey <- function(object, sframe = NULL, formula = ~ sites, sites = c("sframe", "sites.base"), 
+                          variable_args = NULL, level_args = NULL, geom = FALSE, onlyshow = NULL,
+                          fix_bbox = TRUE, showlegacy = FALSE, ...) {
+
   object <- c(list(sframe = sframe), object)
   object <- object[sites]
   object_names <- names(object)
   object <- lapply(object_names, function(x) merge(object[[x]], data.frame(sites = x)))
   names(object) <- object_names
+  if (showlegacy && "sites.base" %in% object_names) {
+    levels(object$sites.base$sites) <-  c("sites.base", "legacy")
+    object$sites.base$sites[!is.na(object$sites.base$legacy)] <- "legacy"
+  }
   # make formlists
   formlist <- make_formlist(formula, onlyshow)
   # make sframe
