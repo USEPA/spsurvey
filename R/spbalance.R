@@ -7,13 +7,13 @@
 #' Spatial Balance
 #'
 #' This function computes the spatial balance of a design with respect 
-#' to the population using Dirichlet Tesselations, measuring the
-#' extent to which a sample is a miniature of the population.
+#' to the sframe using Dirichlet Tesselations, measuring the
+#' extent to which a object is a miniature of the sframe.
 #' 
-#' @param sample 
-#' @param population 
-#' @param stratum_sample 
-#' @param stratum_population 
+#' @param object 
+#' @param sframe 
+#' @param stratum_object 
+#' @param stratum_sframe 
 #' @param metrics 
 #' @param return_extent 
 #'
@@ -21,17 +21,17 @@
 #' @export
 #'
 #' @examples
-spbalance <- function(sample, population, stratum_sample = "stratum", stratum_population, metrics = "pielou", return_extent = FALSE) {
+spbalance <- function(object, sframe, stratum_object = "stratum", stratum_sframe, metrics = "pielou", return_extent = FALSE) {
    
-   stratum <- sort(as.character(unique(sample[[stratum_sample]])))
+   stratum <- sort(as.character(unique(object[[stratum_object]])))
    
    if (any(stratum != "None")) {
-      if (!all.equal(stratum, sort(as.character(unique(population[[stratum_population]]))))) {
-         stop("stratums in sample and population must be equal")
+      if (!all.equal(stratum, sort(as.character(unique(sframe[[stratum_sframe]]))))) {
+         stop("stratums in object and sframe must be equal")
       }      
    }
 
-   output <- lapply(stratum, calculate_spbalance, sample, population, stratum_sample, stratum_population, metrics, return_extent)
+   output <- lapply(stratum, calculate_spbalance, object, sframe, stratum_object, stratum_sframe, metrics, return_extent)
    
    names(output) <- stratum
    
@@ -39,37 +39,37 @@ spbalance <- function(sample, population, stratum_sample = "stratum", stratum_po
 }
 
 
-calculate_spbalance <- function(stratum, sample, population, stratum_sample, stratum_population, metrics, return_extent) {
+calculate_spbalance <- function(stratum, object, sframe, stratum_object, stratum_sframe, metrics, return_extent) {
    
    if (any(stratum != "None")) {
-      sample <- sample[sample[[stratum_sample]] == stratum, ]
-      population <- population[population[[stratum_population]] == stratum, ]
+      object <- object[object[[stratum_object]] == stratum, ]
+      sframe <- sframe[sframe[[stratum_sframe]] == stratum, ]
    }
    
-   # finding the population bounding box, this needs to be reordered to 
+   # finding the sframe bounding box, this needs to be reordered to 
    # use in the Dirichlet Tesselation
-   pop_bbox <- st_bbox(population)[c("xmin", "xmax", "ymin", "ymax")]
+   pop_bbox <- st_bbox(sframe)[c("xmin", "xmax", "ymin", "ymax")]
    
-   # working with the sampled sites
+   # working with the objectd sites
    
-   ## take the sampled sites coordinates
-   samp_coords <- st_coordinates(sample)
+   ## take the objectd sites coordinates
+   samp_coords <- st_coordinates(object)
    ## name them X and Y
    colnames(samp_coords) <- c("X", "Y")
    ## isolate X
    samp_xcoord <- samp_coords[, "X"]
    ## isolate Y
    samp_ycoord <- samp_coords[, "Y"]
-   ## recover the sample size
-   n <- nrow(sample)
+   ## recover the object size
+   n <- nrow(object)
    
-   # and the population sites
+   # and the sframe sites
    
    
-   ## recover the population size
-   N <- nrow(population)
+   ## recover the sframe size
+   N <- nrow(sframe)
    
-   # spatial balance with respect to the population
+   # spatial balance with respect to the sframe
    
 
       
@@ -92,27 +92,27 @@ calculate_spbalance <- function(stratum, sample, population, stratum_sample, str
                 st_polygon(.))
    }) %>% 
       ## adding in the popoulation level crs
-      st_sfc(crs = st_crs(population)) %>%
+      st_sfc(crs = st_crs(sframe)) %>%
       ## adding in poly as a variable and storing as an sf object
       st_sf(poly = 1:n, geometry = .) %>%
-      ## joining the polygon bounds with the population data
-      st_join(population, .)
+      ## joining the polygon bounds with the sframe data
+      st_join(sframe, .)
    
    # calculate counts 
    
-   ## for points, population geometry must be point or multipoint
-   if(all(st_geometry_type(population) %in% c("POINT", "MULTIPOINT"))) {
+   ## for points, sframe geometry must be point or multipoint
+   if(all(st_geometry_type(sframe) %in% c("POINT", "MULTIPOINT"))) {
       ## storing a dummy variable to index counts by
       sftess$point_mdm <- 1
       ## summing over each polygon
       extent <- with(sftess, tapply(point_mdm, poly, sum))
       ## setting NA's equal to zero
       extent[is.na(extent)] <- 0
-   } else if(all(st_geometry_type(population) %in% c("LINESTRING", "MULTILINESTRING"))) {
+   } else if(all(st_geometry_type(sframe) %in% c("LINESTRING", "MULTILINESTRING"))) {
      sftess$length_mdm <- as.numeric(st_length(sftess))
      extent <- with(sftess, tapply(length_mdm, poly, sum))
      extent[is.na(extent)] <- 0
-   } else if(all(st_geometry_type(population) %in% c("POLYGON", "MULTIPOLYGON"))) {
+   } else if(all(st_geometry_type(sframe) %in% c("POLYGON", "MULTIPOLYGON"))) {
      sftess$area_mdm <- as.numeric(st_area(sftess))
      extent <- with(sftess, tapply(area_mdm, poly, sum))
      extent[is.na(extent)] <- 0
