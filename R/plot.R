@@ -156,11 +156,15 @@ plot.sframe <- function(object, formula = ~ 1, variable_args = NULL, level_args 
 
 # idea - set default sites equal to non null sites
 # change variable order for variable_args and level_args
-plot.spsurvey <- function(object, sframe = NULL, formula = ~ sites, sites = c("sframe", "sites.base"), 
+plot.spsurvey <- function(object, sframe = NULL, formula = ~ sites, sites = NULL, 
                           variable_args = NULL, level_args = NULL, geom = FALSE, onlyshow = NULL,
                           fix_bbox = TRUE, showlegacy = FALSE, ...) {
 
   object <- c(list(sframe = sframe), object)
+  if (is.null(sites)) {
+    sites <- names(object[!vapply(object, is.null, logical(1))])
+  }
+  sites <- sites[sites != "dsgn"] # remove dsgn if somehow provided
   object <- object[sites]
   object_names <- names(object)
   object <- lapply(object_names, function(x) merge(object[[x]], data.frame(sites = x)))
@@ -174,7 +178,7 @@ plot.spsurvey <- function(object, sframe = NULL, formula = ~ sites, sites = c("s
   # make sframe
   varsfs <- lapply(object, function(x) make_varsf(x, formlist))
   object <- do.call("rbind", varsfs)
-  plot.sframe(object, formula, geom, onlyshow, fix_bbox, variable_args, level_args, ...)
+  plot.sframe(object, formula, variable_args, level_args, geom, onlyshow, fix_bbox, ...)
 }
 
 # plot.spsurvey <- function(object, sframe = NULL, sites = c("sframe", "sites.base"),
