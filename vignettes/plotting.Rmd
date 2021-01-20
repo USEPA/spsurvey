@@ -22,6 +22,8 @@ knitr::opts_chunk$set(
 )
 library(devtools)
 load_all()
+
+# notes to myself -- need to incorporate onlyshow and pch = 19 on sites plots
 ```
 
 This vignette covers plotting in `spsurvey` using the `NE_lakes` data. Plotting in `spsurvey` largely builds on plotting functionality in `sf`. All of the plotting functions in `spsurvey` take `...` arguments to any of the plotting methods in `sf`. We recommend reading the `sf`'s [Plotting Simple Features](https://r-spatial.github.io/sf/articles/sf5.html) vignette and running `?plot.sf` for more background. 
@@ -100,6 +102,12 @@ plot(NE_lakes, ~ AREA_HA_CAT:ELEVATION_CAT, key.pos = 1)
 
 To plot the previous three plots using a single command, leverage `R`'s formula structure and the `*` operator. The code `plot(NE_lakes, AREA_HA_CAT * ELEVATION_CAT, key.pos = 1)` is equivalent to `plot(NE_lakes, ~ AREA_HA_CAT + ELEVATION_CAT + AREA_HA_CAT:ELEVATION_CAT, key.pos = 1)`.
 
+You can plot a single level of a single variable using the `onlyshow` argument. If an interaction is specified, the levels in `onlyshow` must correspond to the levels in the formula:
+```{r}
+plot(NE_lakes, ~ AREA_HA_CAT:ELEVATION_CAT, onlyshow = "small:high", key.pos = 1)
+```
+
+
 ## Plotting Geometries
 
 You will notice that previously, all observations are placed on the sample plot. Perhaps it is of interest to plot categorical variables **on separate plots.** -- and this is what we cover next. First, just plot the geometry of all sites in `NE_lakes`, run
@@ -109,7 +117,12 @@ plot(NE_lakes)
 
 To plot the geometry for each elevation category, run
 ```{r}
-plot(NE_lakes, ~ ELEVATION_CAT, geom = TRUE, key.pos = 1)
+plot(NE_lakes, ~ ELEVATION_CAT, geom = TRUE)
+```
+
+Or you can plot a single level:
+```{r}
+plot(NE_lakes, ~ ELEVATION_CAT, geom = TRUE, onlyshow = "high")
 ```
 
 The `geom = TRUE` argument tells `spsurvey` to plot the geometries; one plot for each level of `ELEVATION_CAT`. Certianly additional arguments like `variable_args` or `level_args` can be specified. Geometries can only be plotted when the left hand side of the formula is empty.
@@ -168,7 +181,7 @@ sample <- grts(NE_lakes, n.samp = 200)
 
 To visualize the sampled sites overalain on the sample frame, run
 ```{r}
-plot(sample, NE_lakes, key.pos = 1)
+plot(sample, NE_lakes, pch = 19, key.pos = 1)
 ```
 
 To plot just the geometries, simply use the `geom` argument:
@@ -192,7 +205,7 @@ Notice that if you do not want to plot the sample frame, it does not need to be 
 
 If you want to plot each level of the `sites` argument by a cateogrical variable, run
 ```{r}
-plot(sample, NE_lakes, sites ~ ELEVATION_CAT, key.pos = 1)
+plot(sample, NE_lakes, sites ~ ELEVATION_CAT, pch = 19, key.pos = 1)
 ```
 
 To plot closed circles for the base sites, run
@@ -214,7 +227,7 @@ sample2 <- grts(NE_lakes, n.samp = 200, n.over = 100)
 To visualize the sample frame (open circles), base sites (closed circles), and replacement sites(closed circles), run
 ```{r}
 level_args <- list(sites = list(levels = c("sframe", "sites.base", "sites.over"), pch = c(1, 19, 19)))
-plot(sample2, NE_lakes, sites = c("sframe", "sites.base", "sites.over"), level_args = level_args, key.pos = 1)
+plot(sample2, NE_lakes, level_args = level_args, key.pos = 1)
 ```
 
 
