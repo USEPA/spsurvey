@@ -26,7 +26,11 @@ replace_near <- function(over.near, sites, sframe) {
   names.siteuse <- c("Near__1st", "Near__2nd", "Near__3rd", "Near__4th", "Near__5th", 
                      "Near__6th", "Near__7th", "Near__8th", "Near__9th", "Near_10th")
   
+  
+  # split
   site_dist_list <- split(site_dist, 1:nrow(site_dist))
+  
+  # apply
   sites.near <- lapply(sites$idpts, function(x) {
       sites.tmp_ind <- site_dist_list[[x]]
       sites.tmp_ind <- sframe$idpts[order(sites.tmp_ind)][2:(over.near + 1)] # 0 always gets carried along
@@ -36,6 +40,8 @@ replace_near <- function(over.near, sites, sframe) {
       sites.tmp
     }
   )
+  
+  # combine
   sites.near <- do.call("rbind", sites.near)
 }
 
