@@ -1,6 +1,6 @@
 ################################################################################
 # Function: replace_near.R
-# Programmer:  Tony Olsen
+# Programmer:  Michael Dumelle and Tony Olsen
 # Date: December 23, 2020
 #
 #' @param over.near number of nearby sites to be used as potential replacement(s) 
