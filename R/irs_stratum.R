@@ -1,7 +1,7 @@
 ###################################################################################
 # Function: irs_stratum
 # Programmers: Tony Olsen
-# Date: October 2, 2020
+# Date: January 22, 2021
 #'
 #' For a single stratum, select an independent random sample. For a point sample frame, 
 #' the selection is a one-step
@@ -34,24 +34,22 @@
 #' @param maxtry Number of maximum attempts to ensure minimum distance between sites.
 #'   Default is 10.
 #'
-#' @param warn.ind  A logical value where TRUE indicates a warning message.
+#' @param warn_ind  A logical value where TRUE indicates a warning message.
 #'   Used for internal collection of messages only.
 #'
-#' @param warn.df A data frame containing messages warning of potential issues.
+#' @param warn_df A data frame containing messages warning of potential issues.
 #'   Used for internal collection of messages only.
 #'   
 #' @return rslts A list consisting of an sf object for base sites, an sf object of 
-#'   n.over sites (NULL if none) an sf object of n.near sites (NULL if none) where
+#'   n_over sites (NULL if none) an sf object of n_near sites (NULL if none) where
 #'   the sf objects containing the sites selected that meet the survey design requirements 
-#'   and warn.ind - logical value for warning indicator and warn.df - a data.frame
+#'   and warn_ind - logical value for warning indicator and warn_df - a data.frame
 #'   for warning messages.
 #'
 #' @section Other functions required:
 #'   \describe{
 #'     \item{\code{\link{grtspts_ip}}}{Calculates inclusion probabilities}
 #'     \item{\code{\link{grtspts_ipleg}}}{Calculates inclusion probabilities with legacy points}
-#'     \item{\code{\link{get.address}}}{Creates hierarchical order for points}
-#'     \item{\code{\link{UPpivotal}}}{Selects sample using pivotal method}
 #'     \item{\code{\link{grtspts_mindis}}}{selects a grts sample with minimum distance between
 #'       points}
 #'     }
@@ -70,7 +68,7 @@
 
 irs_stratum <- function(stratum, dsgn, sframe, sf_type, pt_density = NULL, 
                          legacy_option = NULL, legacy_sites = NULL, maxtry = 10,
-                         warn.ind = FALSE, warn.df = NULL) {
+                         warn_ind = FALSE, warn_df = NULL) {
   
   # subset sframe to s stratum
   sftmp <- sframe[sframe$stratum == stratum, ]
@@ -90,12 +88,12 @@ irs_stratum <- function(stratum, dsgn, sframe, sf_type, pt_density = NULL,
     # set default equal to 10 population sites per requested sample site
     if (is.null(pt_density)) {
       popmatch <- 10
-      n_base <- dsgn[["n.samp"]][[stratum]]
-      n_over <- dsgn[["n.over"]][[stratum]]
+      n_base <- dsgn[["n_samp"]][[stratum]]
+      n_over <- dsgn[["n_over"]][[stratum]]
       if (is.null(n_over)) {
         n_over <- 0
       }
-      n_near <- dsgn[["n.near"]][[stratum]]
+      n_near <- dsgn[["n_near"]][[stratum]]
       if (is.null(n_near)) {
         n_near <- 0
       }
@@ -124,12 +122,12 @@ irs_stratum <- function(stratum, dsgn, sframe, sf_type, pt_density = NULL,
     # set default equal to 10 population sites per requested sample site
     if (is.null(pt_density)) {
       popmatch <- 10
-      n_base <- dsgn[["n.samp"]][[stratum]]
-      n_over <- dsgn[["n.over"]][[stratum]]
+      n_base <- dsgn[["n_samp"]][[stratum]]
+      n_over <- dsgn[["n_over"]][[stratum]]
       if (is.null(n_over)) {
         n_over <- 0
       }
-      n_near <- dsgn[["n.near"]][[stratum]]
+      n_near <- dsgn[["n_near"]][[stratum]]
       if (is.null(n_near)) {
         n_near <- 0
       }
@@ -168,13 +166,13 @@ irs_stratum <- function(stratum, dsgn, sframe, sf_type, pt_density = NULL,
   
   # Step 2 site selection if linear or area; otherwise Step 1 for points.
   # detemine overall sample size required from dsgn for stratum
-  # account for n.over sample option if present
-  n.total <- dsgn[["n.samp"]][[stratum]] + sum(dsgn[["n.over"]][[stratum]], na.rm = TRUE)
+  # account for n_over sample option if present
+  n_total <- dsgn[["n_samp"]][[stratum]] + sum(dsgn[["n_over"]][[stratum]], na.rm = TRUE)
   if(dsgn[["seltype"]][[stratum]] == "equal" | dsgn[["seltype"]][[stratum]] == "proportional") {
-    n.caty <- n.total
+    n.caty <- n_total
   } else {
-    ifelse(is.null(dsgn[["n.over"]][[stratum]]), n.caty <- dsgn[["caty.n"]][[stratum]],
-           n.caty <- dsgn[["caty.n"]][[stratum]] + dsgn[["n.over"]][[stratum]])
+    ifelse(is.null(dsgn[["n_over"]][[stratum]]), n.caty <- dsgn[["caty_n"]][[stratum]],
+           n.caty <- dsgn[["caty_n"]][[stratum]] + dsgn[["n_over"]][[stratum]])
   }
   
   # If seltype is "equal" or "proportional", set caty to same as stratum
@@ -183,17 +181,17 @@ irs_stratum <- function(stratum, dsgn, sframe, sf_type, pt_density = NULL,
   }
   
   # compute inclusion probabilities
-  ip <- grtspts_ip(type = dsgn[["seltype"]][stratum], n.samp = n.caty,
+  ip <- grtspts_ip(type = dsgn[["seltype"]][stratum], n_samp = n.caty,
                    Nstratum = Nstratum, caty = sftmp$caty, aux = sftmp$aux,
-                   warn.ind = warn.ind,  warn.df = warn.df)
+                   warn_ind = warn_ind,  warn_df = warn_df)
   # save initial inclusion probabilities
   sftmp$ip_init <- ip$ip
   sftmp$ip <- ip$ip
   # accumulate warning messages if any
-  if(ip$warn.ind) {
-    warn.ind <- ip$warn.ind
-    warn.df <- ip$warn.df
-    warn.df$stratum <- ifelse(is.na(warn.df$stratum), stratum, warn.df$stratum)
+  if(ip$warn_ind) {
+    warn_ind <- ip$warn_ind
+    warn_df <- ip$warn_df
+    warn_df$stratum <- ifelse(is.na(warn_df$stratum), stratum, warn_df$stratum)
   }
   
   # If legacy sites, adjust inclusion probabilities to use 
@@ -201,84 +199,84 @@ irs_stratum <- function(stratum, dsgn, sframe, sf_type, pt_density = NULL,
   if(legacy_option == TRUE) {
     sftmp$ip <- grtspts_ipleg(sftmp$ip_init, !is.na(sftmp$legacy))
     # accumulate warning messages if any
-    if(ip$warn.ind) {
-      warn.ind <- ip$warn.ind
-      warn.df <- ip$warn.df
-      warn.df$stratum <- ifelse(is.na(warn.df$stratum), stratum, warn.df$stratum)
+    if(ip$warn_ind) {
+      warn_ind <- ip$warn_ind
+      warn_df <- ip$warn_df
+      warn_df$stratum <- ifelse(is.na(warn_df$stratum), stratum, warn_df$stratum)
       }
   }
   
   # select sites if no minimum distance between sites
   if(is.null(dsgn[["mindis"]])) {
-    if(nrow(sftmp) <= n.total) {
+    if(nrow(sftmp) <= n_total) {
       samp.id <- sftmp$idpts
     } else {
-      samp.id <- sample(sftmp$idpts, n.total, prob=sftmp$ip)
+      samp.id <- sample(sftmp$idpts, n_total, prob=sftmp$ip)
     }
     # extract sites from sample frame
     sites <- sftmp[sftmp$idpts %in% samp.id, ]
     sites$siteuse <- NA
     sites$replsite <- NA
-    sites <- list(sites.base = sites, warn.ind = warn.ind, warn.df = warn.df)
+    sites <- list(sites_base = sites, warn_ind = warn_ind, warn_df = warn_df)
 
   }
   # If minimum distance between sites, select sites
   if(!is.null(dsgn[["mindis"]])) {
-    sites <- grtspts_mindis(dsgn[["mindis"]], sftmp, samplesize = n.total, 
+    sites <- grtspts_mindis(dsgn[["mindis"]], sftmp, samplesize = n_total, 
                             stratum = stratum, maxtry = maxtry, legacy_option = legacy_option,
                             legacy_var = dsgn[["legacy_var"]],
-                            warn.ind = warn.ind, warn.df = warn.df)
+                            warn_ind = warn_ind, warn_df = warn_df)
   }
   # check for warning messages
-  warn.ind <- sites$warn.ind
-  warn.df <- sites$warn.df
-  if(warn.ind) {
-      warn.df$stratum <- ifelse(is.na(warn.df$stratum), stratum, warn.df$stratum)
+  warn_ind <- sites$warn_ind
+  warn_df <- sites$warn_df
+  if(warn_ind) {
+      warn_df$stratum <- ifelse(is.na(warn_df$stratum), stratum, warn_df$stratum)
   }
   
-  # Select replacement sites if n.near not NULL
-  if(!is.null(dsgn[["n.near"]])) {
-    sites.near <- replace_near(dsgn[["n.near"]], sites$sites.base, sframe = sftmp)
+  # Select replacement sites if n_near not NULL
+  if(!is.null(dsgn[["n_near"]])) {
+    sites_near <- replace_near(dsgn[["n_near"]], sites$sites_base, sframe = sftmp)
   }
   
   # adjust inclusion probabilities when over sample sites present
-  n.base <- dsgn[["n.samp"]][[stratum]]
-  sites[["sites.base"]]$ip <- sites[["sites.base"]]$ip * n.total / n.base
+  n.base <- dsgn[["n_samp"]][[stratum]]
+  sites[["sites_base"]]$ip <- sites[["sites_base"]]$ip * n_total / n.base
   # save base sites
-  sites.base <- sites$sites.base[1:n.base,]
-  # save n.over sample sites
-  sites.over <- NULL
-  if(!is.null(dsgn[["n.over"]][[stratum]])) {
-    sites.over <- sites$sites.base[(n.base + 1):n.total,]
-    sites.over$siteuse <- "Over"
+  sites_base <- sites$sites_base[1:n.base,]
+  # save n_over sample sites
+  sites_over <- NULL
+  if(!is.null(dsgn[["n_over"]][[stratum]])) {
+    sites_over <- sites$sites_base[(n.base + 1):n_total,]
+    sites_over$siteuse <- "Over"
   }
 
   # Assign original inclusion probabilites to sites, create weights and drop legacy ip variable
-  sites.base$ip <- sites.base$ip_init * ip_step1
-  sites.base$wgt <- 1/sites.base$ip
-  tmp <- names(sites.base)
-  sites.base <- subset(sites.base, select = tmp[!(tmp %in% c("ip_init", "geometry"))])
+  sites_base$ip <- sites_base$ip_init * ip_step1
+  sites_base$wgt <- 1/sites_base$ip
+  tmp <- names(sites_base)
+  sites_base <- subset(sites_base, select = tmp[!(tmp %in% c("ip_init", "geometry"))])
   
-  # Do same for sites.over if any
-  if(!is.null(dsgn[["n.over"]][[stratum]])) {
-    sites.over$ip <- sites.over$ip_init * ip_step1
-    sites.over$wgt <- 1/sites.over$ip
-    tmp <- names(sites.over)
-    sites.over <- subset(sites.over, select = tmp[!(tmp %in% c("ip_init", "geometry"))])
+  # Do same for sites_over if any
+  if(!is.null(dsgn[["n_over"]][[stratum]])) {
+    sites_over$ip <- sites_over$ip_init * ip_step1
+    sites_over$wgt <- 1/sites_over$ip
+    tmp <- names(sites_over)
+    sites_over <- subset(sites_over, select = tmp[!(tmp %in% c("ip_init", "geometry"))])
   }
   
-  # Do same for sites.near if any
-  if(is.null(dsgn[["n.near"]][[stratum]])) {sites.near <- NULL }
-  if(!is.null(dsgn[["n.near"]][[stratum]])) {
-    sites.near$ip <- sites.near$ip_init * ip_step1
-    sites.near$wgt <- 1/sites.near$ip
-    tmp <- names(sites.near)
-    sites.near <- subset(sites.near, select = tmp[!(tmp %in% c("ip_init", "geometry"))])
+  # Do same for sites_near if any
+  if(is.null(dsgn[["n_near"]][[stratum]])) {sites_near <- NULL }
+  if(!is.null(dsgn[["n_near"]][[stratum]])) {
+    sites_near$ip <- sites_near$ip_init * ip_step1
+    sites_near$wgt <- 1/sites_near$ip
+    tmp <- names(sites_near)
+    sites_near <- subset(sites_near, select = tmp[!(tmp %in% c("ip_init", "geometry"))])
   }
 
   # create list for output and return result
-  rslts <- list(sites.base = sites.base, sites.over = sites.over, sites.near = sites.near,
-                warn.ind = warn.ind, warn.df = warn.df)
+  rslts <- list(sites_base = sites_base, sites_over = sites_over, sites_near = sites_near,
+                warn_ind = warn_ind, warn_df = warn_df)
   
   invisible(rslts)
 }

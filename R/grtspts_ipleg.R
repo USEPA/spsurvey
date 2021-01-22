@@ -2,7 +2,7 @@
 ###################################################################################
 # Function: grtspts_ipleg
 # Programmers: Tony Olsen
-# Date: April 27, 2020
+# Date: January 22, 2021
 #'
 #' Adjust the initial inclusion probabities for point sample to ensure inclusion of
 #' legacy elements that must be in the sample.

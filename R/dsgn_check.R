@@ -1,7 +1,7 @@
 ###################################################################################
 # Function: dsgn_check
 # Programmer: Tony Olsen
-# Date: September 28, 2020
+# Date: January 22, 2021
 #'
 #' Check the input associated with the survey design list object and the sample frame
 #' 
@@ -21,35 +21,35 @@
 #'   
 #' @param seltype Single character value or character vector that identifies the type of 
 #'   random selection, which must be one of following: "equal" for equal probability selection, 
-#'   "unequal" for unequal probability selection by the categories specified in caty.n or 
+#'   "unequal" for unequal probability selection by the categories specified in caty_n or 
 #'   "proportional" for unequal probability selection proportional to the auxiliary variable
 #'   aux_var. If single character, then seltype applies to all strata. If vector, then each 
 #'   stratum may have different selection type. Default is single character value of "equal".
 #' 
-#' @param n.samp The sample size required. If single stratum, then single numeric value.
+#' @param n_samp The sample size required. If single stratum, then single numeric value.
 #'   If sample is stratified, then numeric vector with same length as "stratum" and sample sizes
 #'   required in same order as strata in "stratum". Must be specified.
 #' 
-#' @param caty.n If design is not stratified and seltype is "unequal", a named character vector
+#' @param caty_n If design is not stratified and seltype is "unequal", a named character vector
 #'   with the expected sample size for each category specified in variable caty_var. If design
 #'   is stratified, then either a named character vector with the expected sample size for each
 #'   category for all strata or if the expected sample size for each category may differ, then
 #'   a list of named character vectors with the expected sample size for each category in the
 #'   stratum. The list must be in same order as the "stratum" variable. For each stratum, 
-#'   the sum of caty.n values must equal n.samp for that stratum. Default is NULL.
+#'   the sum of caty_n values must equal n_samp for that stratum. Default is NULL.
 #'   
-#' @param n.over If seltype is "equal" and is not stratified, a numeric value specifying the 
+#' @param n_over If seltype is "equal" and is not stratified, a numeric value specifying the 
 #'   over sample size requested. If seltype is "equal" and is stratified either a numeric value
 #'   specifying the over sample size that will be applied to each stratum or a numeric vector
 #'   specifying the over sample size for each stratum listed in same order as "strata".  
 #'   If seltype is "unequal" and is not stratified, a named character vector with the over sample size 
-#'   for each category where names are the same as "caty.n". If seltype is "unequal" and is 
+#'   for each category where names are the same as "caty_n". If seltype is "unequal" and is 
 #'   stratified,  either a numeric vector specifying the over sample size for each category in
-#'   "caty.n" that will be applied to each stratum or a list of named numeric vectors with 
-#'   the over sample size for each "caty.n" category for each stratum. List must be in same order
+#'   "caty_n" that will be applied to each stratum or a list of named numeric vectors with 
+#'   the over sample size for each "caty_n" category for each stratum. List must be in same order
 #'   as the "stratum" variable order. Default is NULL.
 #'
-#' @param n.near Numeric value specifying the number of nearby points to select as
+#' @param n_near Numeric value specifying the number of nearby points to select as
 #'   possible replacement sites if a site cannot be sampled. Default is NULL. If specified,
 #'   must be integer from 1 to 10.
 #'  
@@ -92,51 +92,51 @@
 #' @export
 #################################################################################
 
-dsgn_check <- function(sframe, sf_type, legacy_sites, legacy_option, stratum, seltype, n.samp, caty.n,
-                       n.over, n.near, stratum_var,  caty_var, aux_var, legacy_var, mindis, 
+dsgn_check <- function(sframe, sf_type, legacy_sites, legacy_option, stratum, seltype, n_samp, caty_n,
+                       n_over, n_near, stratum_var,  caty_var, aux_var, legacy_var, mindis, 
                        DesignID, SiteBegin, maxtry) {
 
   # Create a data frame for stop messages
-  stop.ind <- FALSE
-  stop.df <- NULL
+  stop_ind <- FALSE
+  stop_df <- NULL
 
   # check that sframe has required variables for stratum, caty, aux and legacy
   # If stratum_var is provided, does the attribute exist in sframe
   if(!is.null(stratum_var)) {
     if(match(stratum_var, names(sframe), nomatch=0) == 0) {
-      stop.ind <- TRUE
-      stop.mess <- "The value provided for stratum variable does not exist as a variable in sframe."
-      stop.df <- rbind(stop.df, data.frame(func = I("stratum_var"), I(stop.mess)))
+      stop_ind <- TRUE
+      stop_mess <- "The value provided for stratum variable does not exist as a variable in sframe."
+      stop_df <- rbind(stop_df, data.frame(func = I("stratum_var"), I(stop_mess)))
     }
   }
 
   # If caty_var is provided, does the attribute exist in sframe
   if(!is.null(caty_var)) {
     if(match(caty_var, names(sframe), nomatch=0) == 0) {
-      stop.ind <- TRUE
-      stop.mess <- "The value provided for unequal probability category variable does not exist as a variable in sframe."
-      stop.df <- rbind(stop.df, data.frame(func = I("caty_var"), I(stop.mess)))
+      stop_ind <- TRUE
+      stop_mess <- "The value provided for unequal probability category variable does not exist as a variable in sframe."
+      stop_df <- rbind(stop_df, data.frame(func = I("caty_var"), I(stop_mess)))
     }
   }
 
   # If aux_var is provided, does the attribute exist in sframe
   if(!is.null(aux_var)) {
     if(match(aux_var, names(sframe), nomatch=0) == 0) {
-      stop.ind <- TRUE
-      stop.mess <- "The value provided for the auxillary variable for proportional sampling does not exist as a variable in sframe."
-      stop.df <- rbind(stop.df, data.frame(func = I("aux_var"), I(stop.mess)))
+      stop_ind <- TRUE
+      stop_mess <- "The value provided for the auxillary variable for proportional sampling does not exist as a variable in sframe."
+      stop_df <- rbind(stop_df, data.frame(func = I("aux_var"), I(stop_mess)))
     }
     # ensure class for aux variable is numeric
     if(!is.numeric (sframe[[aux_var]])) {
-      stop.ind <- TRUE
-      stop.mess <- "The auxillary variable in sample frame for proportional sampling must be numeric."
-      stop.df <- rbind(stop.df, data.frame(func = I("aux_var"), I(stop.mess)))
+      stop_ind <- TRUE
+      stop_mess <- "The auxillary variable in sample frame for proportional sampling must be numeric."
+      stop_df <- rbind(stop_df, data.frame(func = I("aux_var"), I(stop_mess)))
     } else {
       # check that values are > 0.
       if(any (sframe[[aux_var]] <= 0)) {
-        stop.ind <- TRUE
-        stop.mess <- "The auxillary variable for proportional sampling must have all values greater than zero"
-        stop.df <- rbind(stop.df, data.frame(func = I("aux_var"), I(stop.mess)))
+        stop_ind <- TRUE
+        stop_mess <- "The auxillary variable for proportional sampling must have all values greater than zero"
+        stop_df <- rbind(stop_df, data.frame(func = I("aux_var"), I(stop_mess)))
       }
     }
   }
@@ -144,9 +144,9 @@ dsgn_check <- function(sframe, sf_type, legacy_sites, legacy_option, stratum, se
   # If legacy_var is provided, does the attribute exist in sframe
   if(sf_type == "point" & !is.null(legacy_var)) {
     if(match(legacy_var, names(sframe), nomatch=0) == 0) {
-      stop.ind <- TRUE
-      stop.mess <- "The value provided for the variable identifying legacy sites does not exist as a variable in sframe."
-      stop.df <- rbind(stop.df, data.frame(func = I("legacy_var"), I(stop.mess)))
+      stop_ind <- TRUE
+      stop_mess <- "The value provided for the variable identifying legacy sites does not exist as a variable in sframe."
+      stop_df <- rbind(stop_df, data.frame(func = I("legacy_var"), I(stop_mess)))
     }
   }
   
@@ -156,33 +156,33 @@ dsgn_check <- function(sframe, sf_type, legacy_sites, legacy_option, stratum, se
     # If stratum_var is provided, does the attribute exist
     if(!is.null(stratum_var)) {
       if(match(stratum_var, names(legacy_sites), nomatch=0) == 0) {
-        stop.ind <- TRUE
-        stop.mess <- "The value provided for stratum variable does not exist as a variable in legacy_sites."
-        stop.df <- rbind(stop.df, data.frame(func = I("stratum_var"), I(stop.mess)))
+        stop_ind <- TRUE
+        stop_mess <- "The value provided for stratum variable does not exist as a variable in legacy_sites."
+        stop_df <- rbind(stop_df, data.frame(func = I("stratum_var"), I(stop_mess)))
       }
     }
     # If caty_var is provided, does the attribute exist
     if(!is.null(caty_var)) {
       if(match(caty_var, names(legacy_sites), nomatch=0) == 0) {
-        stop.ind <- TRUE
-        stop.mess <- "The value provided for caty variable does not exist as a variable in legacy_sites."
-        stop.df <- rbind(stop.df, data.frame(func = I("stratum_var"), I(stop.mess)))
+        stop_ind <- TRUE
+        stop_mess <- "The value provided for caty variable does not exist as a variable in legacy_sites."
+        stop_df <- rbind(stop_df, data.frame(func = I("stratum_var"), I(stop_mess)))
       }
     }
     # If aux_var is provided, does the attribute exist
     if(!is.null(aux_var)) {
       if(match(aux_var, names(legacy_sites), nomatch=0) == 0) {
-        stop.ind <- TRUE
-        stop.mess <- "The value provided for aux variable does not exist as a variable in legacy_sites."
-        stop.df <- rbind(stop.df, data.frame(func = I("stratum_var"), I(stop.mess)))
+        stop_ind <- TRUE
+        stop_mess <- "The value provided for aux variable does not exist as a variable in legacy_sites."
+        stop_df <- rbind(stop_df, data.frame(func = I("stratum_var"), I(stop_mess)))
       }
     }
     # If legacy_var is provided, does the attribute exist
     if(!is.null(legacy_var)) {
       if(match(legacy_var, names(legacy_sites), nomatch=0) == 0) {
-        stop.ind <- TRUE
-        stop.mess <- "The value provided for legacy variable does not exist as a variable in legacy_sites."
-        stop.df <- rbind(stop.df, data.frame(func = I("stratum_var"), I(stop.mess)))
+        stop_ind <- TRUE
+        stop_mess <- "The value provided for legacy variable does not exist as a variable in legacy_sites."
+        stop_df <- rbind(stop_df, data.frame(func = I("stratum_var"), I(stop_mess)))
       }
     }
   }
@@ -193,75 +193,75 @@ dsgn_check <- function(sframe, sf_type, legacy_sites, legacy_option, stratum, se
   # check if stratum is provided and values are in sframe
   if(!is.null(stratum)) {
     if(is.null(stratum_var)){
-      stop.ind <- TRUE
-      stop.mess <- "Design is stratified and no 'stratum_var' is provided."
-      stop.df <- rbind(stop.df, data.frame(func = I("stratum_var"), I(stop.mess)))
+      stop_ind <- TRUE
+      stop_mess <- "Design is stratified and no 'stratum_var' is provided."
+      stop_df <- rbind(stop_df, data.frame(func = I("stratum_var"), I(stop_mess)))
     } else {
       if(any(stratum %in% unique(sframe[[stratum_var]]) == FALSE)) {
-        stop.ind <-  TRUE
-        stop.mess <- paste0("Not all stratum values are in sample frame.")
-        stop.df <- rbind(stop.df, data.frame(func = I("stratum"), I(stop.mess)))
+        stop_ind <-  TRUE
+        stop_mess <- paste0("Not all stratum values are in sample frame.")
+        stop_df <- rbind(stop_df, data.frame(func = I("stratum"), I(stop_mess)))
       }
     }
   }
   
   # check seltype
   if(any(seltype %in% c("equal", "unequal", "proportional") == FALSE)) {
-    stop.ind <- TRUE
-    stop.mess <- paste0("seltype must be 'equal', 'unequal' or 'proportional'.")
-    stop.df <- rbind(stop.df, data.frame(func = I("seltype"), I(stop.mess)))
+    stop_ind <- TRUE
+    stop_mess <- paste0("seltype must be 'equal', 'unequal' or 'proportional'.")
+    stop_df <- rbind(stop_df, data.frame(func = I("seltype"), I(stop_mess)))
   }
   
-  # check n.samp
-  if(any(n.samp <= 0)) {
-    stop.ind <- TRUE
-    stop.mess <- paste0("Sample size must be integers greater than 0.")
-    stop.df <- rbind(stop.df, data.frame(func = I("n.samp"), I(stop.mess)))
+  # check n_samp
+  if(any(n_samp <= 0)) {
+    stop_ind <- TRUE
+    stop_mess <- paste0("Sample size must be integers greater than 0.")
+    stop_df <- rbind(stop_df, data.frame(func = I("n_samp"), I(stop_mess)))
   }
   
-  # check caty.n
-  if(!is.null(caty.n)) {
-    if(!is.list(caty.n)) {
-      if(any(names(caty.n) %in% unique(sframe[[caty_var]]) == FALSE)) {
-        stop.ind <-  TRUE
-        stop.mess <- paste0("Not all caty.n values are in sample frame.")
-        stop.df <- rbind(stop.df, data.frame(func = I("caty.n"), I(stop.mess)))
+  # check caty_n
+  if(!is.null(caty_n)) {
+    if(!is.list(caty_n)) {
+      if(any(names(caty_n) %in% unique(sframe[[caty_var]]) == FALSE)) {
+        stop_ind <-  TRUE
+        stop_mess <- paste0("Not all caty_n values are in sample frame.")
+        stop_df <- rbind(stop_df, data.frame(func = I("caty_n"), I(stop_mess)))
       }
-      tst <- function(x, caty.n){x != sum(caty.n)}
-      if(any(sapply(n.samp,tst, caty.n)) ) {
-        stop.ind <-  TRUE
-        stop.mess <- paste0("Sum of caty.n values do not equal n.samp.")
-        stop.df <- rbind(stop.df, data.frame(func = I("caty.n"), I(stop.mess)))
+      tst <- function(x, caty_n){x != sum(caty_n)}
+      if(any(sapply(n_samp,tst, caty_n)) ) {
+        stop_ind <-  TRUE
+        stop_mess <- paste0("Sum of caty_n values do not equal n_samp.")
+        stop_df <- rbind(stop_df, data.frame(func = I("caty_n"), I(stop_mess)))
       }
     }
-    if(is.list(caty.n)) {
-      if(any(names(caty.n) %in% stratum == FALSE)) {
-        stop.ind <-  TRUE
-        stop.mess <- paste0("Names for caty.n list are not values in 'stratum' variable.")
-        stop.df <- rbind(stop.df, data.frame(func = I("caty.n"), I(stop.mess)))
-        stop.mess <- paste0("For each stratum make sure caty.n values in 'caty_var' variable.")
-        stop.df <- rbind(stop.df, data.frame(func = I("caty.n"), I(stop.mess)))
+    if(is.list(caty_n)) {
+      if(any(names(caty_n) %in% stratum == FALSE)) {
+        stop_ind <-  TRUE
+        stop_mess <- paste0("Names for caty_n list are not values in 'stratum' variable.")
+        stop_df <- rbind(stop_df, data.frame(func = I("caty_n"), I(stop_mess)))
+        stop_mess <- paste0("For each stratum make sure caty_n values in 'caty_var' variable.")
+        stop_df <- rbind(stop_df, data.frame(func = I("caty_n"), I(stop_mess)))
       }
     }
   }
 
-  # check n.over
-  if(!is.null(n.over)){
+  # check n_over
+  if(!is.null(n_over)){
     if(is.null(stratum) | length(stratum) == 1) {
       if( any(seltype %in% c("equal", "proportional"))) {
-        if(n.over < 0){
-          stop.ind <-  TRUE
-          stop.mess <- paste0("n.over value must be zero or positive.")
-          stop.df <- rbind(stop.df, data.frame(func = I("n.over"), I(stop.mess)))
+        if(n_over < 0){
+          stop_ind <-  TRUE
+          stop_mess <- paste0("n_over value must be zero or positive.")
+          stop_df <- rbind(stop_df, data.frame(func = I("n_over"), I(stop_mess)))
         }
       }
       if(any(seltype == "unequal")){
-        if(!is.null(caty.n)) {
-          if(!is.list(n.over)) {
-            if(any(n.over < 0)) {
-              stop.ind <-  TRUE
-              stop.mess <- paste0("n.over values must be zero or positive.")
-              stop.df <- rbind(stop.df, data.frame(func = I("n.over"), I(stop.mess)))
+        if(!is.null(caty_n)) {
+          if(!is.list(n_over)) {
+            if(any(n_over < 0)) {
+              stop_ind <-  TRUE
+              stop_mess <- paste0("n_over values must be zero or positive.")
+              stop_df <- rbind(stop_df, data.frame(func = I("n_over"), I(stop_mess)))
             }
           }
         }
@@ -269,20 +269,20 @@ dsgn_check <- function(sframe, sf_type, legacy_sites, legacy_option, stratum, se
     }
     if(length(stratum) > 1) {
       if( any(seltype %in% c("equal", "proportional", "unequal"))) {
-        if(!is.list(n.over)) {
-          if(any(n.over < 0)) {
-            stop.ind <-  TRUE
-            stop.mess <- paste0("n.over values must be zero or positive.")
-            stop.df <- rbind(stop.df, data.frame(func = I("n.over"), I(stop.mess)))
+        if(!is.list(n_over)) {
+          if(any(n_over < 0)) {
+            stop_ind <-  TRUE
+            stop_mess <- paste0("n_over values must be zero or positive.")
+            stop_df <- rbind(stop_df, data.frame(func = I("n_over"), I(stop_mess)))
           }
         }
-        if(is.list(n.over)) {
-          if(any(names(n.over) %in% stratum == FALSE)) {
-            stop.ind <-  TRUE
-            stop.mess <- paste0("Names for n.over list are not values in 'stratum' variable.")
-            stop.df <- rbind(stop.df, data.frame(func = I("n.over"), I(stop.mess)))
-            stop.mess <- paste0("For each stratum make sure n.over values are non-negative.")
-            stop.df <- rbind(stop.df, data.frame(func = I("n.over"), I(stop.mess)))
+        if(is.list(n_over)) {
+          if(any(names(n_over) %in% stratum == FALSE)) {
+            stop_ind <-  TRUE
+            stop_mess <- paste0("Names for n_over list are not values in 'stratum' variable.")
+            stop_df <- rbind(stop_df, data.frame(func = I("n_over"), I(stop_mess)))
+            stop_mess <- paste0("For each stratum make sure n_over values are non-negative.")
+            stop_df <- rbind(stop_df, data.frame(func = I("n_over"), I(stop_mess)))
           }
         }
       }
@@ -290,20 +290,20 @@ dsgn_check <- function(sframe, sf_type, legacy_sites, legacy_option, stratum, se
   }
 
 
-  # check n.near
-  if(!is.null(n.near)) {
-    if(!(any(n.near %in% 1:10))) {
-      stop.ind <-  TRUE
-      stop.mess <- paste0("n.near must be from 1 to 10.\n")
-      stop.df <- rbind(stop.df, data.frame(func = I("n.near"), I(stop.mess)))
+  # check n_near
+  if(!is.null(n_near)) {
+    if(!(any(n_near %in% 1:10))) {
+      stop_ind <-  TRUE
+      stop_mess <- paste0("n_near must be from 1 to 10.\n")
+      stop_df <- rbind(stop_df, data.frame(func = I("n_near"), I(stop_mess)))
     }
   }
   
 
-  ### If any issues, write out stop.df and then stop
-  if(stop.ind) {
-    names(stop.df) <- c("Design Input", "Error Message")
-    stop.df <<- stop.df
+  ### If any issues, write out stop_df and then stop
+  if(stop_ind) {
+    names(stop_df) <- c("Design Input", "Error Message")
+    stop_df <<- stop_df
     cat("During the check of the input to grtspts, one or more errors were identified.\n")
     cat("Enter the following command to view all input error messages: stopprnt()\n")
     cat("To view a subset of the errors (e.g., errors 1 and 5) enter stopprnt(m=c(1,5))\n\n")

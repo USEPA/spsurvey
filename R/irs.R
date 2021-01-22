@@ -1,7 +1,7 @@
 ###################################################################################
 # Function: irs
 # Programmers: Tony Olsen, Tom Kincaid
-# Date: October 2, 2020
+# Date: January 22, 2022
 #'
 #' Select an independent random sample from a point, linear, or areal frame based on
 #' a survey design specification. The survey design may be stratified and within each stratum
@@ -18,7 +18,7 @@
 #'   are included in a finite sample frame, then a legacy variable must be provided to
 #'   identify elements that are legacy sites.
 #'    
-#' @param n.samp The sample size required. If single stratum, then single numeric value.
+#' @param n_samp The sample size required. If single stratum, then single numeric value.
 #'   If sample is stratified, then numeric vector with same length as "stratum" and sample sizes
 #'   required in same order as strata in "stratum". Must be specified.
 #'
@@ -28,7 +28,7 @@
 #'   
 #' @param seltype Single character value or character vector that identifies the type of 
 #'   random selection, which must be one of following: "equal" for equal probability selection, 
-#'   "unequal" for unequal probability selection by the categories specified in caty.n or 
+#'   "unequal" for unequal probability selection by the categories specified in caty_n or 
 #'   "proportional" for unequal probability selection proportional to the auxiliary variable
 #'   aux_var. If single character, then seltype applies to all strata. If vector, then each 
 #'   stratum may have different selection type. Default is single character value of "equal".
@@ -36,26 +36,26 @@
 #' @param pt_density For linear and area sample frame, the point density for the systematic
 #'   sample. Must be in units of the sframe sf.object. Default is NULL.
 #'
-#' @param caty.n If design is not stratified and seltype is "unequal", a named character vector
+#' @param caty_n If design is not stratified and seltype is "unequal", a named character vector
 #'   with the expected sample size for each category specified in variable caty_var. If design
 #'   is stratified, then either a named character vector with the expected sample size for each
 #'   category for all strata or if the expected sample size for each category may differ, then
 #'   a list of named character vectors with the expected sample size for each category in the
 #'   stratum. The list must be in same order as the "stratum" variable. For each stratum, 
-#'   the sum of caty.n values must equal n.samp for that stratum. Default is NULL.
+#'   the sum of caty_n values must equal n_samp for that stratum. Default is NULL.
 #'   
-#' @param n.over If seltype is "equal" and is not stratified, a numeric value specifying the 
+#' @param n_over If seltype is "equal" and is not stratified, a numeric value specifying the 
 #'   over sample size requested. If seltype is "equal" and is stratified either a numeric value
 #'   specifying the over sample size that will be applied to each stratum or a numeric vector
 #'   specifying the over sample size for each stratum listed in same order as "strata".  
 #'   If seltype is "unequal" and is not stratified, a named character vector with the over sample size 
-#'   for each category where names are the same as "caty.n". If seltype is "unequal" and is 
+#'   for each category where names are the same as "caty_n". If seltype is "unequal" and is 
 #'   stratified,  either a numeric vector specifying the over sample size for each category in
-#'   "caty.n" that will be applied to each stratum or a list of named numeric vectors with 
-#'   the over sample size for each "caty.n" category for each stratum. List must be in same order
+#'   "caty_n" that will be applied to each stratum or a list of named numeric vectors with 
+#'   the over sample size for each "caty_n" category for each stratum. List must be in same order
 #'   as the "stratum" variable order. Default is NULL.
 #'
-#' @param n.near Numeric value specifying the number of nearby points to select as
+#' @param n_near Numeric value specifying the number of nearby points to select as
 #'   possible replacement sites if a site cannot be sampled. Default is NULL. If specified,
 #'   must be integer from 1 to 10.
 #'  
@@ -102,8 +102,8 @@
 #'   Default is 10.
 #'
 #'
-#' @return sites A list of three sf objects containing the base sites (sites.base),
-#'   the n.over sites (sites.over) and the n.near sites (sites.near) selected 
+#' @return sites A list of three sf objects containing the base sites (sites_base),
+#'   the n_over sites (sites_over) and the n_near sites (sites_near) selected 
 #'   that meet the survey design requirementse plus a design list object that documents
 #'   the survey design used.
 #'
@@ -119,17 +119,17 @@
 #'
 #' @examples
 #' \dontrun{
-#'   test.sample <- grts(sframe = "test_sf", n.samp = 100)
+#'   test.sample <- grts(sframe = "test_sf", n_samp = 100)
 #' }
 #'
 #' @export
 #################################################################################
 
-irs <- function(sframe, n.samp, stratum = NULL, seltype = "equal", pt_density = NULL,
-                 caty.n = NULL, n.over = NULL, n.near = NULL, stratum_var = NULL, 
-                 caty_var = NULL, aux_var = NULL, legacy_option = FALSE,
-                 legacy_sites = NULL, legacy_var = NULL, mindis = NULL, 
-                 DesignID = "Site", SiteBegin = 1,  maxtry = 10) {
+irs <- function(sframe, n_samp, stratum = NULL, seltype = "equal", wgt_units = NULL,
+                pt_density = NULL, caty_n = NULL, n_over = NULL, n_near = NULL, 
+                stratum_var = NULL, caty_var = NULL, aux_var = NULL, legacy_option = FALSE,
+                legacy_sites = NULL, legacy_var = NULL, mindis = NULL, 
+                DesignID = "Site", SiteBegin = 1,  maxtry = 10) {
   
   # Ensure that the geometry types for sframe are consistent
   
@@ -147,17 +147,17 @@ irs <- function(sframe, n.samp, stratum = NULL, seltype = "equal", pt_density = 
   if(all(temp %in% c("POLYGON", "MULTIPOLYGON"))) sf_type <- "sf_area"
   
   # check input. If errors, dsgn_check will stop grtspts and report errors.
-  dsgn_check(sframe, sf_type, legacy_sites, legacy_option, stratum, seltype, n.samp, caty.n,
-             n.over, n.near, stratum_var,  caty_var, aux_var, legacy_var, mindis, 
+  dsgn_check(sframe, sf_type, legacy_sites, legacy_option, stratum, seltype, n_samp, caty_n,
+             n_over, n_near, stratum_var,  caty_var, aux_var, legacy_var, mindis, 
              DesignID, SiteBegin, maxtry)
 
   # Create warning indicator and data frame to collect all potential issues during
   # sample selection
-  warn.ind <- FALSE
-  warn.df <- data.frame(stratum = "Stratum", func = "Calling Function", warn = "Message")
+  warn_ind <- FALSE
+  warn_df <- data.frame(stratum = "Stratum", func = "Calling Function", warn = "Message")
   
   # preserve original sframe names
-  sframe.names <- names(sframe)
+  sframe_names <- names(sframe)
   
   ## Create variables in sample frame if needed.
   # Create unique sample frame ID values
@@ -190,8 +190,8 @@ irs <- function(sframe, n.samp, stratum = NULL, seltype = "equal", pt_density = 
   # variable assignments to dsgn list object
   dsgn <- list(stratum_var = stratum_var, caty_var = caty_var, aux_var = aux_var,
                legacy_option = legacy_option, legacy_var = legacy_var, stratum = stratum, 
-               seltype = NULL, n.samp = NULL, caty.n = NULL, n.over = NULL, 
-               n.near = NULL, mindis = mindis)
+               wgt_units = wgt_units, seltype = NULL, n_samp = NULL, caty_n = NULL, n_over = NULL, 
+               n_near = NULL, mindis = mindis)
   
   # seltype
   if(length(seltype) == length(stratum)) {
@@ -203,41 +203,41 @@ irs <- function(sframe, n.samp, stratum = NULL, seltype = "equal", pt_density = 
     dsgn$seltype <- tmp
   }
   
-  # n.samp
-  if(length(n.samp) == length(stratum)) {
-    dsgn$n.samp <- n.samp
-    names(dsgn$n.samp) <- stratum
+  # n_samp
+  if(length(n_samp) == length(stratum)) {
+    dsgn$n_samp <- n_samp
+    names(dsgn$n_samp) <- stratum
   } else {
-    tmp <- sapply(stratum, function(x, n.samp) { x = n.samp}, n.samp)
+    tmp <- sapply(stratum, function(x, n_samp) { x = n_samp}, n_samp)
     names(tmp) <- stratum
-    dsgn$n.samp <- tmp
+    dsgn$n_samp <- tmp
   }
   
-  # caty.n
-  if(is.list(caty.n)) {
-    dsgn$caty.n <- caty.n
+  # caty_n
+  if(is.list(caty_n)) {
+    dsgn$caty_n <- caty_n
   } else {
-    tmp <- lapply(stratum, function(x, caty.n) { x = caty.n}, caty.n)
+    tmp <- lapply(stratum, function(x, caty_n) { x = caty_n}, caty_n)
     names(tmp) <- stratum
-    dsgn$caty.n <- tmp
+    dsgn$caty_n <- tmp
   }
   
-  # n.over
-  if(!is.null(n.over)) {
-    if(is.list(n.over)) {
-      dsgn$n.over <- n.over
+  # n_over
+  if(!is.null(n_over)) {
+    if(is.list(n_over)) {
+      dsgn$n_over <- n_over
     } else {
-      tmp <- lapply(stratum, function(x, n.over) { x = n.over}, n.over)
+      tmp <- lapply(stratum, function(x, n_over) { x = n_over}, n_over)
       names(tmp) <- stratum
-      dsgn$n.over <- tmp
+      dsgn$n_over <- tmp
     }
   }
   
-  # n.near
-  if(!is.null(n.near)) {
-    tmp <- sapply(stratum, function(x, n.near) { x = n.near}, n.near)
+  # n_near
+  if(!is.null(n_near)) {
+    tmp <- sapply(stratum, function(x, n_near) { x = n_near}, n_near)
     names(tmp) <- stratum
-    dsgn$n.near <- tmp
+    dsgn$n_near <- tmp
   }
   
   # legacy_option
@@ -250,99 +250,113 @@ irs <- function(sframe, n.samp, stratum = NULL, seltype = "equal", pt_density = 
   ## select sites for each stratum
   rslts <- lapply(dsgn$stratum, irs_stratum, dsgn = dsgn, sframe = sframe, sf_type = sf_type, 
                   pt_density = pt_density, legacy_option = legacy_option,
-                  legacy_sites = legacy_sites, maxtry = maxtry, warn.ind, warn.df)
+                  legacy_sites = legacy_sites, maxtry = maxtry, warn_ind, warn_df)
   names(rslts) <- stratum
   
 
   # combine across strata
-  sites.base <- NULL
-  sites.over <- NULL
-  sites.near <- NULL
-  warn.ind <- FALSE
-  warn.df <- NULL
+  sites_base <- NULL
+  sites_over <- NULL
+  sites_near <- NULL
+  warn_ind <- FALSE
+  warn_df <- NULL
   for (i in 1:length(rslts)) {
-    sites.base <- rbind(sites.base, rslts[[i]]$sites.base)
-    sites.over <- rbind(sites.over, rslts[[i]]$sites.over)
-    sites.near <- rbind(sites.near, rslts[[i]]$sites.near)
-    if(rslts[[i]]$warn.ind) {
-      warn.ind <- TRUE
-      warn.df <- rbind(warn.df, rslts[[i]]$warn.df)
+    sites_base <- rbind(sites_base, rslts[[i]]$sites_base)
+    sites_over <- rbind(sites_over, rslts[[i]]$sites_over)
+    sites_near <- rbind(sites_near, rslts[[i]]$sites_near)
+    if(rslts[[i]]$warn_ind) {
+      warn_ind <- TRUE
+      warn_df <- rbind(warn_df, rslts[[i]]$warn_df)
     }
   }
  
   # Create siteID for base sites using DesignID and SiteBegin
-  sites.base$siteID <- gsub(" ","0", paste0(DesignID,"-",
-                                   format(SiteBegin - 1 + 1:nrow(sites.base), sep="")))
-  # create siteID for n.over sites if any
-  if(!is.null(n.over)) {
-    jnk <- max(nchar(sites.base$siteID))
-    nlast <- max(as.numeric(substr(sites.base$siteID, nchar(DesignID)+2, jnk)))
-    sites.over$siteID <- gsub(" ","0", 
-                              paste0(DesignID,"-", format(nlast + 1:nrow(sites.over), sep="")))
+  sites_base$siteID <- gsub(" ","0", paste0(DesignID,"-",
+                                   format(SiteBegin - 1 + 1:nrow(sites_base), sep="")))
+  # create siteID for n_over sites if any
+  if(!is.null(n_over)) {
+    jnk <- max(nchar(sites_base$siteID))
+    nlast <- max(as.numeric(substr(sites_base$siteID, nchar(DesignID)+2, jnk)))
+    sites_over$siteID <- gsub(" ","0", 
+                              paste0(DesignID,"-", format(nlast + 1:nrow(sites_over), sep="")))
   }
   
-  # if n.near sample sites, assign base ids to the replacement sites. then add siteIDs
-  if(!is.null(n.near)) {
-    tst <- match(sites.near$replsite, sites.base$id, nomatch = 0)
-    sites.near$replsite[tst > 0] <- sites.base$siteID[tst]
-    tst <- match(sites.near$replsite, sites.over$id, nomatch = 0)
-    sites.near$replsite[tst > 0] <- sites.over$siteID[tst]
+  # if n_near sample sites, assign base ids to the replacement sites. then add siteIDs
+  if(!is.null(n_near)) {
+    tst <- match(sites_near$replsite, sites_base$id, nomatch = 0)
+    sites_near$replsite[tst > 0] <- sites_base$siteID[tst]
+    tst <- match(sites_near$replsite, sites_over$id, nomatch = 0)
+    sites_near$replsite[tst > 0] <- sites_over$siteID[tst]
     
-    # sort by id so that sites.near in same order as sites in sites.base and sites.over
-    sites.near <- sites.near[order(sites.near$replsite, sites.near$siteuse),]
+    # sort by id so that sites_near in same order as sites in sites_base and sites_over
+    sites_near <- sites_near[order(sites_near$replsite, sites_near$siteuse),]
     # assign siteIDs
-    jnk <- max(nchar(sites.base$siteID), nchar(sites.over$siteID), na.rm = TRUE)
-    nlast <- max(as.numeric(substr(sites.base$siteID, nchar(DesignID)+2, jnk)),
-                 as.numeric(substr(sites.over$siteID, nchar(DesignID)+2, jnk)))
-    sites.near$siteID <- gsub(" ","0", 
-                              paste0(DesignID,"-", format(nlast + 1:nrow(sites.near), sep="")))
+    jnk <- max(nchar(sites_base$siteID), nchar(sites_over$siteID), na.rm = TRUE)
+    nlast <- max(as.numeric(substr(sites_base$siteID, nchar(DesignID)+2, jnk)),
+                 as.numeric(substr(sites_over$siteID, nchar(DesignID)+2, jnk)))
+    sites_near$siteID <- gsub(" ","0", 
+                              paste0(DesignID,"-", format(nlast + 1:nrow(sites_near), sep="")))
   }
   
   # reorder sf object variables by first specifying design names excluding unique 
   # feature ID id and idpts as they are internal
-  dsgn.names <- c("siteID", "replsite", "siteuse", "stratum", "wgt", "ip", "caty", "aux",
+  dsgn_names <- c("siteID", "replsite", "siteuse", "stratum", "wgt", "ip", "caty", "aux",
                   "legacy")
   # check what design variables are present in sf objects and add if missing
-  tmp.names <- names(sites.base)
-  add.names <- dsgn.names[!(dsgn.names %in% tmp.names)]
-  if( !is.null(add.names)) {
-    tmp <- matrix(NA, nrow = nrow(sites.base), ncol = length(add.names), 
-                  dimnames = list(NULL, add.names))
-    sites.base <- cbind(sites.base, tmp)
-    if(!is.null(sites.over)){
-      tmp <- matrix(NA, nrow = nrow(sites.over), ncol = length(add.names), 
-                  dimnames = list(NULL, add.names))
-      sites.over <- cbind(sites.over, tmp)
+  tmp_names <- names(sites_base)
+  add_names <- dsgn_names[!(dsgn_names %in% tmp_names)]
+  if( !is.null(add_names)) {
+    tmp <- matrix(NA, nrow = nrow(sites_base), ncol = length(add_names), 
+                  dimnames = list(NULL, add_names))
+    sites_base <- cbind(sites_base, tmp)
+    if(!is.null(sites_over)){
+      tmp <- matrix(NA, nrow = nrow(sites_over), ncol = length(add_names), 
+                  dimnames = list(NULL, add_names))
+      sites_over <- cbind(sites_over, tmp)
     }
-    if(!is.null(sites.near)){
-      tmp <- matrix(NA, nrow = nrow(sites.near), ncol = length(add.names), 
-                  dimnames = list(NULL, add.names))
-      sites.near <- cbind(sites.near, tmp)
+    if(!is.null(sites_near)){
+      tmp <- matrix(NA, nrow = nrow(sites_near), ncol = length(add_names), 
+                  dimnames = list(NULL, add_names))
+      sites_near <- cbind(sites_near, tmp)
     }
   }
-  # check if any dsgn.names occur in sframe names and drop in sframe names if duplicated
-  sframe.names <- sframe.names[!(sframe.names %in% dsgn.names)]
+  # check if any dsgn_names occur in sframe names and drop in sframe names if duplicated
+  sframe_names <- sframe_names[!(sframe_names %in% dsgn_names)]
   # use subset to reorder variables and drop internal variables and duplicated variables
-  sites.base <- subset(sites.base, select = c(dsgn.names, sframe.names))
-  if(!is.null(sites.over)) sites.over <- subset(sites.over, select = c(dsgn.names, sframe.names))
-  if(!is.null(sites.near)) sites.near <- subset(sites.near, select = c(dsgn.names, sframe.names))
+  sites_base <- subset(sites_base, select = c(dsgn_names, sframe_names))
+  if(!is.null(sites_over)) sites_over <- subset(sites_over, select = c(dsgn_names, sframe_names))
+  if(!is.null(sites_near)) sites_near <- subset(sites_near, select = c(dsgn_names, sframe_names))
+  
+  # Change weight units to user specified if not NULL
+  if(!is.null(wgt_units)){
+    # change sites_base weights
+    sites_base$wgt <- set_units(sites_base$wgt, wgt_units)
+    # change sites_over weights if sites_over present
+    if(!is.null(sites_over)) {
+      sites_over$wgt <- set_units(sites_over$wgt, wgt_units)
+    }
+    # change sites_near weights if sites_near present
+    if(!is.null(sites_near)) {
+      sites_near$wgt <- set_units(sites_near$wgt, wgt_units)
+    }
+  }
   
   # add function call to dsgn list
   dsgn <- c(list(Call = match.call()), dsgn)
   
   # create output list
-  sites <- list(sites.base = sites.base, sites.over = sites.over, sites.near = sites.near,
+  sites <- list(sites_base = sites_base, sites_over = sites_over, sites_near = sites_near,
                 dsgn = dsgn)
   
   # As necessary, output a message indicating that warning messages were generated
   # during execution of the program
 
-  if(warn.ind) {
-    warn.df <<- warn.df
-    if(nrow(warn.df) == 1){
-      cat("During execution of the program, a warning message was generated. The warning \nmessage is stored in a data frame named 'warn.df'.  Enter the following command \nto view the warning message: warndsgn()\n")
+  if(warn_ind) {
+    warn_df <<- warn_df
+    if(nrow(warn_df) == 1){
+      cat("During execution of the program, a warning message was generated. The warning \nmessage is stored in a data frame named 'warn_df'.  Enter the following command \nto view the warning message: warndsgn()\n")
     } else {
-      cat(paste("During execution of the program,", nrow(warn.df), "warning messages were generated.  The warning \nmessages are stored in a data frame named 'warn.df'.  Enter the following \ncommand to view the warning messages: warndsgn() \nTo view a subset of the warning messages (say, messages number 1, 3, and 5), \nenter the following command: warnprnt(m=c(1,3,5))\n"))
+      cat(paste("During execution of the program,", nrow(warn_df), "warning messages were generated.  The warning \nmessages are stored in a data frame named 'warn_df'.  Enter the following \ncommand to view the warning messages: warndsgn() \nTo view a subset of the warning messages (say, messages number 1, 3, and 5), \nenter the following command: warnprnt(m=c(1,3,5))\n"))
     }
   }
   
