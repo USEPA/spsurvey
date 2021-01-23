@@ -11,25 +11,25 @@
 #' model includes variance components for units, periods, the interaction of
 #' units and periods, and the residual (or index) variance.
 #'
-#' @param ind.names  Vector of indicator names
+#' @param ind_names  Vector of indicator names
 #'
-#' @param ind.values  Vector of indicator mean values
+#' @param ind_values  Vector of indicator mean values
 #'
-#' @param unit.var  Vector of variance component estimates for unit variability
+#' @param unit_var  Vector of variance component estimates for unit variability
 #'   for the indicators
 #'
-#' @param period.var  Vector of variance component estimates for period
+#' @param period_var  Vector of variance component estimates for period
 #'   variability for the indicators
 #'
-#' @param unitperiod.var  Vector of variance component estimates for unit by
+#' @param unitperiod_var  Vector of variance component estimates for unit by
 #'   period interaction variability for the indicators
 #'
-#' @param index.var  Vector of variance component estimates for index (residual)
+#' @param index_var  Vector of variance component estimates for index (residual)
 #'   error for the indicators
 #'
-#' @param unit.rho  Correlation across units. Default is 1
+#' @param unit_rho  Correlation across units. Default is 1
 #'
-#' @param period.rho  Correlation across periods. Default is 0
+#' @param period_rho  Correlation across periods. Default is 0
 #'
 #' @param paneldsgn  A list of panel designs each as a matrix.  Each element of
 #'   the list is a matrix with dimnames (dimensions: number of panels (rows) by
@@ -46,16 +46,16 @@
 #'   all panel designs. The default is NULL, a single visit. Names must match
 #'   list names in paneldsgn.
 #'
-#' @param trend.type  Trend type is either "mean" where trend is applied as
+#' @param trend_type  Trend type is either "mean" where trend is applied as
 #'   percent trend in the indicator mean or "percent" where the trend is applied
 #'   as percent trend in the proportion (percent) of the distribution that is
-#'   below or above a fixed value. Default is trend.type="mean"
+#'   below or above a fixed value. Default is trend_type="mean"
 #'
-#' @param ind.pct  When trend.type is equal to "percent", a vector of the
+#' @param ind_pct  When trend_type is equal to "percent", a vector of the
 #'   values of the indicator fixed value that defines the percent.  Default is
 #'   NULL
 #'
-#' @param ind.tail  When trend.type is equal to "percent", a character vector
+#' @param ind_tail  When trend_type is equal to "percent", a character vector
 #'   with values of either "lower" or "upper" for each indicator.  "lower"
 #'   states that the percent is associated with the lower tail of the
 #'   distribution and "upper" states that the percent is associated with the
@@ -91,11 +91,11 @@
 #'   A. B. Cooper, and D. S. Licht (eds.). Cambridge University Press, New York,
 #'   pp. 151-173.
 #
-#' @return A list with components trend.type, ind.pct, ind.tail, trend values
+#' @return A list with components trend_type, ind_pct, ind_tail, trend values
 #'   across periods, periods (all periods included in one or more panel
 #'   designs), significance levels, a five-dimensional array of power
-#'   calculations (dimensions: panel design names, periods, indicator names,
-#'   trend names, alpha.names), an array of indicator mean values for each trend
+#'   calculations (dimensions: panel, design names, periods, indicator names,
+#'   trend names, alpha_names), an array of indicator mean values for each trend
 #'   and the function call.
 #'
 #' @author Tony Olsen \email{Olsen.Tony@epa.gov}
@@ -109,7 +109,7 @@
 #'       assignment to panels and time periods}
 #'     \item{\code{\link{panel_summary}}}{summarize characteristics of a revisit
 #'       panel design}
-#'     \item{\code{\link{cov.panel.dsgn}}}{covariance matrix for a panel design}
+#'     \item{\code{\link{cov_panel_dsgn}}}{covariance matrix for a panel design}
 #'     \item{\code{\link{plot_powerpaneldesign}}}{plot power curves for panel
 #'       designs}
 #'   }
@@ -118,41 +118,41 @@
 #'
 #' @examples
 #' # Power for rotating panel with sample size 60
-#' power.dsgn("Variable_Name", ind.values = 43, unit.var = 280, period.var = 4,
-#'            unitperiod.var = 40, index.var = 90, unit.rho = 1, period.rho = 0,
+#' power.dsgn("Variable_Name", ind_values = 43, unit_var = 280, period_var = 4,
+#'            unitperiod_var = 40, index_var = 90, unit_rho = 1, period_rho = 0,
 #'            paneldsgn = list(NoR60=revisit_dsgn(20,
 #'                             panels=list(NoR60=list(n=60, pnl_dsgn = c(1, NA),
 #'                             pnl_n = NA, start_option = "None")), begin = 1)),
-#'             nrepeats = NULL, trend.type = "mean", trend= 1.0, alpha=0.05)
+#'             nrepeats = NULL, trend_type = "mean", trend= 1.0, alpha=0.05)
 #'
 #' @export
 ################################################################################
 
-power.dsgn <- function(ind.names, ind.values, unit.var, period.var,
-   unitperiod.var, index.var, unit.rho = 1, period.rho = 0, paneldsgn,
-   nrepeats = NULL, trend.type = "mean", ind.pct = NULL, ind.tail = NULL,
+power.dsgn <- function(ind_names, ind_values, unit_var, period_var,
+   unitperiod_var, index_var, unit_rho = 1, period_rho = 0, paneldsgn,
+   nrepeats = NULL, trend_type = "mean", ind_pct = NULL, ind_tail = NULL,
    trend = 2, alpha = 0.05) {
 
   # number of indicators for power comparison
-  n.ind <- length(ind.names)
+  n_ind <- length(ind_names)
 
   # number of trend change values for power comparison
-  n.trend <- length (trend)
-  trend.names <- paste ("Trend_", round (trend, 1), "%", sep="")
+  n_trend <- length (trend)
+  trend_names <- paste ("Trend_", round (trend, 1), "%", sep="")
 
-  # check that trend.type has correct possible values
-  if (!(trend.type %in% c("mean", "percent"))) stop ("\ntrend.type value not 'mean' or 'percent' ")
+  # check that trend_type has correct possible values
+  if (!(trend_type %in% c("mean", "percent"))) stop ("\ntrend_type value not 'mean' or 'percent' ")
 
   # number of significance levels for power comparison
-  n.alpha <- length (alpha)
-  alpha.names <- paste ("alpha_", alpha, sep="")
+  n_alpha <- length (alpha)
+  alpha_names <- paste ("alpha_", alpha, sep="")
 
   # number of designs for power comparison
-  n.dsgn <- length (paneldsgn)
+  n_dsgn <- length (paneldsgn)
 
   # Create nrepeats revisit design if necessary
   if(is.null(nrepeats)) {
-    nrepeats <- vector("list", n.dsgn)
+    nrepeats <- vector("list", n_dsgn)
     for (i in names (paneldsgn)) {
       nrepeats[[i]] <- paneldsgn[[i]]
       nrepeats[[i]][nrepeats[[i]] > 0] <- 1
@@ -161,61 +161,61 @@ power.dsgn <- function(ind.names, ind.values, unit.var, period.var,
 
   # number of periods for power comparison
   # First set up periods to calculate trend for each panel design based on periods when units are sampled
-  period.power <- vector("list", n.dsgn)
-  names (period.power) <- names (paneldsgn)
-  period.values <- numeric(length=0 )
+  period_power <- vector("list", n_dsgn)
+  names (period_power) <- names (paneldsgn)
+  period_values <- numeric(length=0 )
   for (i in names (paneldsgn)) {
-    period.power[[i]] <- ifelse ( apply (paneldsgn[[i]], 2, max) > 0, TRUE, FALSE)
-    period.power[[i]] <- as.numeric(dimnames(paneldsgn[[i]])[[2]][period.power[[i]]])
-    period.values <- c(period.values, period.power[[i]])
+    period_power[[i]] <- ifelse ( apply (paneldsgn[[i]], 2, max) > 0, TRUE, FALSE)
+    period_power[[i]] <- as.numeric(dimnames(paneldsgn[[i]])[[2]][period_power[[i]]])
+    period_values <- c(period_values, period_power[[i]])
   }
   # find minimum and maximum period from designs that are monitored
-  period.min <- min (period.values)
-  period.max <- max (period.values)
-  periods <- seq(period.min, by = 1, to=period.max)
-  n.periods <- length (periods)
+  period_min <- min (period_values)
+  period_max <- max (period_values)
+  periods <- seq(period_min, by = 1, to=period_max)
+  n_periods <- length (periods)
 
-  # When trend.type = "percent", check if for lower or upper tail
-  if (!is.null(ind.tail)) {
-    if (any( !(ind.tail %in% c("lower", "upper")) ) ) stop ("\nValues must be lower or upper")
-    lower.tail <- ind.tail == "lower"
+  # When trend_type = "percent", check if for lower or upper tail
+  if (!is.null(ind_tail)) {
+    if (any( !(ind_tail %in% c("lower", "upper")) ) ) stop ("\nValues must be lower or upper")
+    lower_tail <- ind_tail == "lower"
   }
 
   # set up output array for calculated power for each indicator, panel design, periods, trend, and alpha
-  pout <- array(NA, c(n.dsgn, n.periods, n.ind, n.trend, n.alpha))
-  dimnames (pout) <- list(names (paneldsgn), periods, ind.names, trend.names, alpha.names)
+  pout <- array(NA, c(n_dsgn, n_periods, n_ind, n_trend, n_alpha))
+  dimnames (pout) <- list(names (paneldsgn), periods, ind_names, trend_names, alpha_names)
 
   # set up change in mean for output and use in power calculations
-  trend.value <- array(NA, c(n.trend, n.periods, n.ind))
-  dimnames (trend.value) <- list(trend.names, as.character(periods), ind.names)
+  trend_value <- array(NA, c(n_trend, n_periods, n_ind))
+  dimnames (trend_value) <- list(trend_names, as.character(periods), ind_names)
 
   # set up trend for power calculation based on percent per period and indicator value so
   # that trend is in units indicator units of change per period.
 
-  for (ind in 1:length(ind.names)) {
+  for (ind in 1:length(ind_names)) {
 
-    for (k in 1:length(trend.names)) {
+    for (k in 1:length(trend_names)) {
       # calculate trend value
-      if (trend.type == "mean") {
-        trend.delta <- ind.values[ind] * trend[k] / 100
-        trend.value[k, ,ind] <- ind.values[ind] + trend.delta * seq(0, to=n.periods-1, by=1)
+      if (trend_type == "mean") {
+        trend_delta <- ind_values[ind] * trend[k] / 100
+        trend_value[k, ,ind] <- ind_values[ind] + trend_delta * seq(0, to=n_periods-1, by=1)
         }
-      if (trend.type == "percent") {
+      if (trend_type == "percent") {
         # find cut point value for "pct" which is assumed to have a normal distribution
-        ind.sd <- sqrt(unit.var[ind] + index.var[ind])
-        ind.cut <- qnorm(ind.pct[ind]/100, ind.values[ind], ind.sd, lower.tail = lower.tail)
+        ind_sd <- sqrt(unit_var[ind] + index_var[ind])
+        ind_cut <- qnorm(ind_pct[ind]/100, ind_values[ind], ind_sd, lower_tail = lower_tail)
         # function to search for shift in mean required to change the %Good by trend % change
-        mean.change <- function(x, ind.pct, ind.cut, ind.sd, lower.tail = lower.tail) {
-          abs (ind.pct/100 - pnorm(ind.cut, x, ind.sd, lower.tail = lower.tail) )
+        mean_change <- function(x, ind_pct, ind_cut, ind_sd, lower_tail = lower_tail) {
+          abs (ind_pct/100 - pnorm(ind_cut, x, ind_sd, lower_tail = lower_tail) )
         }
         # find change in mean required to achieve change in percent
-        for ( i in 1:n.periods) {
-          tmp <- optimize(mean.change, lower=ind.values[ind] - 3.1 * ind.sd,
-                          upper=ind.values[ind] + 3.1 * ind.sd,
-                          ind.pct = ind.pct[ind] + trend[k] * (i - 1),
-                          ind.cut = ind.cut, ind.sd= ind.sd,
-                          lower.tail = lower.tail)
-          trend.value[k, i, ind] <- tmp$minimum
+        for ( i in 1:n_periods) {
+          tmp <- optimize(mean_change, lower=ind_values[ind] - 3.1 * ind_sd,
+                          upper=ind_values[ind] + 3.1 * ind_sd,
+                          ind_pct = ind_pct[ind] + trend[k] * (i - 1),
+                          ind_cut = ind_cut, ind_sd= ind_sd,
+                          lower_tail = lower_tail)
+          trend_value[k, i, ind] <- tmp$minimum
         }
       }
 
@@ -227,47 +227,47 @@ power.dsgn <- function(ind.names, ind.values, unit.var, period.var,
 
 
           # Assume increasing number of periods monitored to compute power
-          for (i.period in 1:length(period.power[[j]]) ) {
-            if (i.period == 1) {
+          for (i_period in 1:length(period_power[[j]]) ) {
+            if (i_period == 1) {
               # set up initial period variables for x matrix
-              period.xmat <- rep(1, npanel)
-              if (trend.type == "percent") {
-                period.y <- rep (trend.value[k, 1, ind], npanel)
+              period_xmat <- rep(1, npanel)
+              if (trend_type == "percent") {
+                period_y <- rep (trend_value[k, 1, ind], npanel)
               }
             }
-            if (i.period != 1) {
+            if (i_period != 1) {
               # create the covariance matrix for jth design and ith end period
-              tmp <- matrix (paneldsgn[[j]][, c(as.character(period.power[[j]][1:i.period])) ] , nrow=npanel)
-              tmp2 <- matrix (nrepeats[[j]][,  c(as.character(period.power[[j]][1:i.period])) ], nrow=npanel)
-              panel.cov <- cov.panel.dsgn (tmp, tmp2,
-                                         unit.var = unit.var[ind], period.var = period.var[ind],
-                                         unitperiod.var = unitperiod.var[ind], index.var = index.var[ind],
-                                         unit.rho = unit.rho, period.rho = period.rho)
+              tmp <- matrix (paneldsgn[[j]][, c(as.character(period_power[[j]][1:i_period])) ] , nrow=npanel)
+              tmp2 <- matrix (nrepeats[[j]][,  c(as.character(period_power[[j]][1:i_period])) ], nrow=npanel)
+              panel_cov <- cov_panel_dsgn (tmp, tmp2,
+                                         unit_var = unit_var[ind], period_var = period_var[ind],
+                                         unitperiod_var = unitperiod_var[ind], index_var = index_var[ind],
+                                         unit_rho = unit_rho, period_rho = period_rho)
 
               # compute the power at ith monitoring time
               # define linear trend xmat for the panel
-              period.diff <- period.power[[j]][i.period] - period.power[[j]][1]
-              period.xmat <- c(period.xmat,  rep(period.diff + 1, npanel) )
-              if (trend.type == "percent") {
-                period.y <- c(period.y, rep (trend.value[k, i.period, ind], npanel) )
+              period_diff <- period_power[[j]][i_period] - period_power[[j]][1]
+              period_xmat <- c(period_xmat,  rep(period_diff + 1, npanel) )
+              if (trend_type == "percent") {
+                period_y <- c(period_y, rep (trend_value[k, i_period, ind], npanel) )
               }
-              xmat <- cbind(rep(1, npanel * i.period), period.xmat )
+              xmat <- cbind(rep(1, npanel * i_period), period_xmat )
 
               # remove time periods with no sample units
               indx <- as.vector(tmp) > 0
               xmat <- xmat[indx,]
-              if (trend.type == "percent" ) {y <- period.y[indx] }
+              if (trend_type == "percent" ) {y <- period_y[indx] }
 
               # calculate inverse of covariance matrix and calculate trend covariance matrix
-              phi.inv <- solve(panel.cov$cov[indx,indx])
-              bhat.cov <- solve(t(xmat) %*% phi.inv %*% xmat)
-              if (trend.type == "percent") {
-                bhat <- bhat.cov %*% t(xmat) %*% phi.inv %*% y
+              phi_inv <- solve(panel_cov$cov[indx,indx])
+              bhat_cov <- solve(t(xmat) %*% phi_inv %*% xmat)
+              if (trend_type == "percent") {
+                bhat <- bhat_cov %*% t(xmat) %*% phi_inv %*% y
               }
 
               # calculate trend slope standard error and power
-              indexse <- sqrt(bhat.cov[2,2])
-              ifelse(trend.type == "mean", bhat.std <- trend.delta/ indexse,
+              indexse <- sqrt(bhat_cov[2,2])
+              ifelse(trend_type == "mean", bhat.std <- trend_delta/ indexse,
                      bhat.std <- bhat[2] / indexse)
               }
             else {
@@ -275,9 +275,9 @@ power.dsgn <- function(ind.names, ind.values, unit.var, period.var,
             }
 
             # calculate power for all alpha
-            for (m in 1:length(alpha.names)) {
-             pout[j, as.character(period.power[[j]][i.period]), ind.names[ind],
-                  trend.names[k], alpha.names[m]]  <-
+            for (m in 1:length(alpha_names)) {
+             pout[j, as.character(period_power[[j]][i_period]), ind_names[ind],
+                  trend_names[k], alpha_names[m]]  <-
                 (pnorm (qnorm (alpha[m] / 2) - bhat.std )) +
                 (1 - pnorm ( qnorm(1-(alpha[m] / 2)) - bhat.std ) )
             }
@@ -288,18 +288,18 @@ power.dsgn <- function(ind.names, ind.values, unit.var, period.var,
 
   # Fill in NAs for time poriods when no sampling occurs by repeating power from
   # last time period sampled, that is, has power calculated
-  pwr.fill <- function (jnk) {
+  pwr_fill <- function (jnk) {
     keep <- jnk[1]
     for ( i in 2:length (jnk)) {
       ifelse ( is.na (jnk[i]), jnk[i] <- keep, keep <- jnk[i])
     }
     return (jnk)
   }
-  if(n.trend > 1) {
+  if(n_trend > 1) {
     for (i in names(paneldsgn)) {
-      for (j in 1:length(ind.names)) {
-        for (k in 1:length(alpha.names)) {
-          pout[i, , j, , k] <- apply (pout[i, , j, , k], 2,  pwr.fill)
+      for (j in 1:length(ind_names)) {
+        for (k in 1:length(alpha_names)) {
+          pout[i, , j, , k] <- apply (pout[i, , j, , k], 2,  pwr_fill)
         }
       }
     }
@@ -307,22 +307,22 @@ power.dsgn <- function(ind.names, ind.values, unit.var, period.var,
 
 
   # output list
-  dsgn.pwr <- vector("list", 11)
-  names(dsgn.pwr) <- c("design", "period", "indicator", "trend", "alpha",
-                       "trend.type", "ind.pct", "ind.tail", "trend.change", "dsgn.power", "call")
-  dsgn.pwr$design <- names (paneldsgn)
-  dsgn.pwr$period <- periods
-  dsgn.pwr$indicator <- ind.names
-  dsgn.pwr$trend <- trend
-  dsgn.pwr$alpha <- alpha
-  dsgn.pwr$trend.type <- trend.type
-  dsgn.pwr$ind.pct <- ind.pct
-  dsgn.pwr$ind.tail <- ind.tail
-  dsgn.pwr$trend.change <- trend.value
-  dsgn.pwr$dsgn.power <- pout
-  dsgn.pwr$call <- sys.call()
+  dsgn_pwr <- vector("list", 11)
+  names(dsgn_pwr) <- c("design", "period", "indicator", "trend", "alpha",
+                       "trend_type", "ind_pct", "ind_tail", "trend_change", "dsgn_power", "call")
+  dsgn_pwr$design <- names (paneldsgn)
+  dsgn_pwr$period <- periods
+  dsgn_pwr$indicator <- ind_names
+  dsgn_pwr$trend <- trend
+  dsgn_pwr$alpha <- alpha
+  dsgn_pwr$trend_type <- trend_type
+  dsgn_pwr$ind_pct <- ind_pct
+  dsgn_pwr$ind_tail <- ind_tail
+  dsgn_pwr$trend_change <- trend_value
+  dsgn_pwr$dsgn_power <- pout
+  dsgn_pwr$call <- sys.call()
 
-  class(dsgn.pwr) <- "powerpaneldesign"
+  class(dsgn_pwr) <- "powerpaneldesign"
 
-  return (dsgn.pwr)
+  return (dsgn_pwr)
 }

@@ -26,24 +26,24 @@
 #'   produced.
 #'
 #' @return List of six elements.
-#'   \itemize{ \item n.panel - number of panels in revisit design
+#'   \itemize{ \item n_panel - number of panels in revisit design
 #'
-#'   \item n.period - number of time periods in revisit design
+#'   \item n_period - number of time periods in revisit design
 #'
-#'   \item n.total - total number of sample events across all panels and all
+#'   \item n_total - total number of sample events across all panels and all
 #'   time periods, accounting for visitdsgn, that will be sampled in the revisit
 #'   design
 #'
-#'   \item n.periodunit - Vector of the number of time periods a unit will be
+#'   \item n_periodunit - Vector of the number of time periods a unit will be
 #'   sampled in each panel
 #'
-#'   \item n.unitpnl - Vector of the number of sample units, accounting for
+#'   \item n_unitpnl - Vector of the number of sample units, accounting for
 #'   visitdsgn, that will be sampled in each panel
 #'
-#'   \item n.unitperiod - Vector of the number of sample units, accounting for
+#'   \item n_unitperiod - Vector of the number of sample units, accounting for
 #'   visitdsgn, that will be sampled during each time period
 #'
-#'   \item ncum.unit - Vector of the cumulative number of unique units that will
+#'   \item ncum_unit - Vector of the cumulative number of unique units that will
 #'   be sampled in time periods up to and including the current time period.
 #'   }
 #'
@@ -56,9 +56,9 @@
 #'       panel revisit design}
 #'     \item{\code{\link{revisit_rand}}}{create a revisit design with random
 #'       assignment to panels and time periods}
-#'     \item{\code{\link{power.dsgn}}}{power calculation for multiple panel
+#'     \item{\code{\link{power_dsgn}}}{power calculation for multiple panel
 #'       designs}
-#'     \item{\code{\link{cov.panel.dsgn}}}{covariance matrix for a panel design}
+#'     \item{\code{\link{cov_panel_dsgn}}}{covariance matrix for a panel design}
 #'     \item{\code{\link{plot_powerpaneldesign}}}{plot power curves for panel
 #'       designs}
 #'   }
@@ -67,57 +67,57 @@
 #'
 #' @examples
 #' # Serially alternating panel revisit design summary
-#' sa.dsgn <- revisit_dsgn(20, panels=list(SA60N=list(n=60, pnl_dsgn = c(1, 4),
+#' sa_dsgn <- revisit_dsgn(20, panels=list(SA60N=list(n=60, pnl_dsgn = c(1, 4),
 #'                         pnl_n=NA, start_option="None")), begin=1 )
-#' panel_summary(sa.dsgn)
+#' panel_summary(sa_dsgn)
 #'
 #' # Add visit design where first panel is sampled twice at every time period
-#' sa.visit <- sa.dsgn
-#' sa.visit [sa.visit > 0] <- 1
-#' sa.visit [1, sa.visit[1,] > 0] <- 2
-#' panel_summary(sa.dsgn, sa.visit)
+#' sa_visit <- sa_dsgn
+#' sa_visit [sa_visit > 0] <- 1
+#' sa_visit [1, sa_visit[1,] > 0] <- 2
+#' panel_summary(sa_dsgn, sa_visit)
 #'
 #' @export
 ################################################################################
 
 panel_summary <- function (paneldsgn, visitdsgn = NULL) {
 
-  n.pan <- dim (paneldsgn)[1]
-  n.period <- dim (paneldsgn)[2]
+  n_pan <- dim (paneldsgn)[1]
+  n_period <- dim (paneldsgn)[2]
 
   # determine the cumulative number of unique sample units by sampling occasion
-  used <- rep(FALSE, n.pan)
-  tot <- vector("numeric", length=n.period)
-  for (i in 1:n.period) {
+  used <- rep(FALSE, n_pan)
+  tot <- vector("numeric", length=n_period)
+  for (i in 1:n_period) {
     units <- paneldsgn[,i] > 0
     new <- used + units
     tot[i] <- sum(paneldsgn[new == 1,i])
     used <- new
   }
-  n.unique_cum <- cumsum (tot)
-  names(n.unique_cum) <- dimnames(paneldsgn)[[2]]
+  n_unique_com <- cumsum (tot)
+  names(n_unique_com) <- dimnames(paneldsgn)[[2]]
 
   # summarize number of sample results by panel and by time period
   # incorporate multiple times unit is sampled if sample units for a time period are
   # sampled more than once.
   ifelse (!is.null (visitdsgn), vis <- visitdsgn * paneldsgn, vis <- paneldsgn)
-  n.unitpnl <- apply(vis, 1, sum)
-  n.unitperiod <- apply(vis, 2, sum)
-  n.total <- sum(n.unitperiod)
+  n_unitpnl <- apply(vis, 1, sum)
+  n_unitperiod <- apply(vis, 2, sum)
+  n_total <- sum(n_unitperiod)
   # number of times a sample unit is visited in each panel
-  tmp <- array(0, c(n.pan, n.period))
+  tmp <- array(0, c(n_pan, n_period))
   tmp[paneldsgn > 0] <- 1
   ifelse (!is.null (visitdsgn), vis <- visitdsgn * tmp, vis <- tmp)
-  n.periodunit <- apply(vis, 1, sum)
-  names (n.periodunit) <- dimnames(paneldsgn)[[1]]
+  n_periodunit <- apply(vis, 1, sum)
+  names (n_periodunit) <- dimnames(paneldsgn)[[1]]
 
   # create list of results
-  rslt <- list(n.panel = n.pan,
-               n.period = n.period,
-               n.total = n.total,
-               n.periodunit = n.periodunit,
-               n.unitpnl = n.unitpnl,
-               n.unitperiod = n.unitperiod,
-               ncum.unit = n.unique_cum)
+  rslt <- list(n_panel = n_pan,
+               n_period = n_period,
+               n_total = n_total,
+               n_periodunit = n_periodunit,
+               n_unitpnl = n_unitpnl,
+               n_unitperiod = n_unitperiod,
+               ncum_unit = n_unique_com)
   return (rslt)
 }
