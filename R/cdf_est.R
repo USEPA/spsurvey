@@ -66,17 +66,17 @@
 #' @param mult Numeric value that provides the Normal distribution confidence
 #'   bound multiplier.
 #'
-#' @param warn.ind Logical value that indicates whether warning messages were
+#' @param warn_ind Logical value that indicates whether warning messages were
 #'   generated.
 #'
-#' @param warn.df Data frame for storing warning messages.
+#' @param warn_df Data frame for storing warning messages.
 #'
 #' @return A list composed of the following objects:
 #'   \describe{
 #'     \item{\code{cdfsum}}{data frame containing the CDF estimate}
-#'     \item{\code{warn.ind}}{logical variable that indicates whether warning
+#'     \item{\code{warn_ind}}{logical variable that indicates whether warning
 #'       messages were generated}
-#'     \item{\code{warn.df}}{data frame for storing warning messages}
+#'     \item{\code{warn_df}}{data frame for storing warning messages}
 #'   }
 #'
 #' @section Other Functions Required:
@@ -118,8 +118,8 @@
 ################################################################################
 
 cdf_est <- function(cdfsum, dframe, itype, lev_itype, nlev_itype, ivar, design,
-  design_names, var_nondetect, popcorrect, vartype, conf, mult, warn.ind,
-  warn.df) {
+  design_names, var_nondetect, popcorrect, vartype, conf, mult, warn_ind,
+  warn_df) {
 
 # Assign a value to the function name variable
 
@@ -139,50 +139,50 @@ cdf_est <- function(cdfsum, dframe, itype, lev_itype, nlev_itype, ivar, design,
     cdfval <- sort(unique(dframe[!is.na(dframe[, ivar]), ivar]))
     ncdfval <- length(cdfval)
     if(nlev_itype == 1) {
-      rslt.svy <- lapply(cdfval, function(x)
+      rslt_svy <- lapply(cdfval, function(x)
         svymean(make.formula(paste0("I(", ivar, " <= ", x, ")")),
                 design = subset(design, tst), na.rm = TRUE))
-      cdfest.P <- sapply(rslt.svy, function(x) x[2])
-      cdfest.P <- as.data.frame(t(cdfest.P))
+      cdfest_P <- sapply(rslt_svy, function(x) x[2])
+      cdfest_P <- as.data.frame(t(cdfest_P))
       nresp <- list(cdf_nresp(dframe[, ivar], cdfval))
       if(vartype == "Local") {
         temp <- cdf_localmean_prop(itype, lev_itype, nlev_itype, ivar,
-          design, design_names, cdfval, ncdfval, cdfest.P, popcorrect, vartype,
-          mult, warn.ind, warn.df)
-        stderr.P <- temp$stderr.P
-        confval.P <- temp$confval.P
-        warn.ind <- temp$warn.ind
-        warn.df <- temp$warn.df
+          design, design_names, cdfval, ncdfval, cdfest_P, popcorrect, vartype,
+          mult, warn_ind, warn_df)
+        stderr_P <- temp$stderr_P
+        confval_P <- temp$confval_P
+        warn_ind <- temp$warn_ind
+        warn_df <- temp$warn_df
       } else {
-        stderr.P <- sapply(rslt.svy, function(x) SE(x)[2])
-        stderr.P <- as.data.frame(t(stderr.P))
-        temp <- sapply(rslt.svy, function(x) confint(x, level = conf/100))
-        confval.P <- t(temp[c(2, 4), ])
+        stderr_P <- sapply(rslt_svy, function(x) SE(x)[2])
+        stderr_P <- as.data.frame(t(stderr_P))
+        temp <- sapply(rslt_svy, function(x) confint(x, level = conf/100))
+        confval_P <- t(temp[c(2, 4), ])
       }
     } else {
-      rslt.svy <- lapply(cdfval, function(x)
+      rslt_svy <- lapply(cdfval, function(x)
         svyby(make.formula(paste0("I(", ivar, " <= ", x, ")")),
               make.formula(itype), design = subset(design, tst), svymean,
               na.rm = TRUE))
-      cdfest.P <- sapply(rslt.svy, function(x) x[, 3])
-      rownames(cdfest.P) <- lev_itype
+      cdfest_P <- sapply(rslt_svy, function(x) x[, 3])
+      rownames(cdfest_P) <- lev_itype
       nresp <- tapply(dframe[, ivar], dframe[, itype], cdf_nresp, cdfval)
       if(vartype == "Local") {
         temp <- cdf_localmean_prop(itype, lev_itype, nlev_itype, ivar,
-          design, design_names, cdfval, ncdfval, cdfest.P, popcorrect, vartype,
-          mult, warn.ind, warn.df)
-        stderr.P <- temp$stderr.P
-        confval.P <- temp$confval.P
-        warn.ind <- temp$warn.ind
-        warn.df <- temp$warn.df
+          design, design_names, cdfval, ncdfval, cdfest_P, popcorrect, vartype,
+          mult, warn_ind, warn_df)
+        stderr_P <- temp$stderr_P
+        confval_P <- temp$confval_P
+        warn_ind <- temp$warn_ind
+        warn_df <- temp$warn_df
       } else {
-        stderr.P <- sapply(rslt.svy, function(x) SE(x)[, 2])
-        rownames(stderr.P) <- lev_itype
-        temp <- lapply(rslt.svy, function(x) confint(x, level = conf/100)[
+        stderr_P <- sapply(rslt_svy, function(x) SE(x)[, 2])
+        rownames(stderr_P) <- lev_itype
+        temp <- lapply(rslt_svy, function(x) confint(x, level = conf/100)[
           (nlev_itype+1):(2*nlev_itype), ])
-        confval.P <- NULL
+        confval_P <- NULL
         for(i in 1:length(temp)) {
-          confval.P <- rbind(confval.P, temp[[i]])
+          confval_P <- rbind(confval_P, temp[[i]])
         }
       }
     }
@@ -192,48 +192,48 @@ cdf_est <- function(cdfsum, dframe, itype, lev_itype, nlev_itype, ivar, design,
 # response variable for the case where nondetects are not present
 
     if(nlev_itype == 1) {
-      rslt.svy <- lapply(cdfval, function(x)
+      rslt_svy <- lapply(cdfval, function(x)
         svytotal(make.formula(paste0("I(", ivar, " <= ", x, ")")),
                  design = subset(design, tst), na.rm = TRUE))
-      cdfest.U <- sapply(rslt.svy, function(x) x[2])
-      cdfest.U <- as.data.frame(t(cdfest.U))
+      confest_U <- sapply(rslt_svy, function(x) x[2])
+      confest_U <- as.data.frame(t(confest_U))
       if(vartype == "Local") {
         temp <- cdf_localmean_total(itype, lev_itype, nlev_itype, ivar,
-          design, design_names, cdfval, ncdfval, cdfest.U, popcorrect, vartype,
-          mult, warn.ind, warn.df)
-        stderr.U <- temp$stderr.U
-        confval.U <- temp$confval.U
-        warn.ind <- temp$warn.ind
-        warn.df <- temp$warn.df
+          design, design_names, cdfval, ncdfval, confest_U, popcorrect, vartype,
+          mult, warn_ind, warn_df)
+        stderr_U <- temp$stderr_U
+        confval_U <- temp$confval_U
+        warn_ind <- temp$warn_ind
+        warn_df <- temp$warn_df
       } else {
-        stderr.U <- sapply(rslt.svy, function(x) SE(x)[2])
-        stderr.U <- as.data.frame(t(stderr.U))
-        temp <- sapply(rslt.svy, function(x) confint(x, level = conf/100))
-        confval.U <- t(temp[c(2, 4), ])
+        stderr_U <- sapply(rslt_svy, function(x) SE(x)[2])
+        stderr_U <- as.data.frame(t(stderr_U))
+        temp <- sapply(rslt_svy, function(x) confint(x, level = conf/100))
+        confval_U <- t(temp[c(2, 4), ])
       }
     } else {
-      rslt.svy <- lapply(cdfval, function(x)
+      rslt_svy <- lapply(cdfval, function(x)
         svyby(make.formula(paste0("I(", ivar, " <= ", x, ")")),
               make.formula(itype), design = subset(design, tst), svytotal,
               na.rm = TRUE))
-      cdfest.U <- sapply(rslt.svy, function(x) x[, 3])
-      rownames(cdfest.U) <- lev_itype
+      confest_U <- sapply(rslt_svy, function(x) x[, 3])
+      rownames(confest_U) <- lev_itype
       if(vartype == "Local") {
         temp <- cdf_localmean_total(itype, lev_itype, nlev_itype, ivar,
-          design, design_names, cdfval, ncdfval, cdfest.U, popcorrect, vartype,
-          mult, warn.ind, warn.df)
-        stderr.U <- temp$stderr.U
-        confval.U <- temp$confval.U
-        warn.ind <- temp$warn.ind
-        warn.df <- temp$warn.df
+          design, design_names, cdfval, ncdfval, confest_U, popcorrect, vartype,
+          mult, warn_ind, warn_df)
+        stderr_U <- temp$stderr_U
+        confval_U <- temp$confval_U
+        warn_ind <- temp$warn_ind
+        warn_df <- temp$warn_df
       } else {
-        stderr.U <- sapply(rslt.svy, function(x) SE(x)[, 2])
-        rownames(stderr.U) <- lev_itype
-        temp <- lapply(rslt.svy, function(x) confint(x, level = conf/100)[
+        stderr_U <- sapply(rslt_svy, function(x) SE(x)[, 2])
+        rownames(stderr_U) <- lev_itype
+        temp <- lapply(rslt_svy, function(x) confint(x, level = conf/100)[
           (nlev_itype+1):(2*nlev_itype), ])
-        confval.U <- NULL
+        confval_U <- NULL
         for(i in 1:length(temp)) {
-          confval.U <- rbind(confval.U, temp[[i]])
+          confval_U <- rbind(confval_U, temp[[i]])
         }
       }
     }
@@ -248,7 +248,7 @@ cdf_est <- function(cdfsum, dframe, itype, lev_itype, nlev_itype, ivar, design,
     flip <- maxval - dframe[, ivar]
     event <- !dframe[, var_nondetect]
     if(nlev_itype == 1) {
-      rslt.svy <- svykm(Surv(flip, event)~1, design = subset(design, tst))
+      rslt_svy <- svykm(Surv(flip, event)~1, design = subset(design, tst))
     }
   }
 
@@ -263,16 +263,16 @@ cdf_est <- function(cdfsum, dframe, itype, lev_itype, nlev_itype, ivar, design,
         Indicator = ivar,
         Value = cdfval,
         nResp = nresp[[i]],
-        Estimate.P = 100 * unlist(cdfest.P[i, ]),
-        StdError.P = 100 * unlist(stderr.P[i, ]),
-        MarginofError.P = 100 * (mult * unlist(stderr.P[i, ])),
-        LCB.P = 100 * pmax(confval.P[indx, 1], 0),
-        UCB.P = 100 * pmin(confval.P[indx, 2], 1),
-        Estimate.U = unlist(cdfest.U[i, ]),
-        StdError.U = unlist(stderr.U[i, ]),
-        MarginofError.U = mult * unlist(stderr.U[i, ]),
-        LCB.U = pmax(confval.U[indx, 1], 0),
-        UCB.U = confval.U[indx, 2]))
+        Estimate.P = 100 * unlist(cdfest_P[i, ]),
+        StdError.P = 100 * unlist(stderr_P[i, ]),
+        MarginofError.P = 100 * (mult * unlist(stderr_P[i, ])),
+        LCB.P = 100 * pmax(confval_P[indx, 1], 0),
+        UCB.P = 100 * pmin(confval_P[indx, 2], 1),
+        Estimate.U = unlist(confest_U[i, ]),
+        StdError.U = unlist(stderr_U[i, ]),
+        MarginofError.U = mult * unlist(stderr_U[i, ]),
+        LCB.U = pmax(confval_U[indx, 1], 0),
+        UCB.U = confval_U[indx, 2]))
     }
 
   } else {
@@ -280,8 +280,8 @@ cdf_est <- function(cdfsum, dframe, itype, lev_itype, nlev_itype, ivar, design,
   }
 
 
-# Return the cdfsum data frame, the warn.ind logical value, and the warn.df
+# Return the cdfsum data frame, the warn_ind logical value, and the warn_df
 # data frame
 
-  list(cdfsum = cdfsum, warn.ind = warn.ind, warn.df = warn.df)
+  list(cdfsum = cdfsum, warn_ind = warn_ind, warn_df = warn_df)
 }

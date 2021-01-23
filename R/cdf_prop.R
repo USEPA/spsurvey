@@ -25,7 +25,7 @@
 #'
 #' @param val Vector of the set of values at which the CDF is estimated.
 #'
-#' @param cluster.ind Logical value that indicates whether the sample is a
+#' @param cluster_ind Logical value that indicates whether the sample is a
 #'   two-stage sample, where TRUE = a two-stage sample and FALSE = not a
 #'   two-stage sample.
 #'
@@ -44,29 +44,29 @@
 #' @export
 ################################################################################
 
-cdf_prop <- function(z, wgt, val, cluster.ind, cluster = NULL, wgt1 = NULL) {
+cdf_prop <- function(z, wgt, val, cluster_ind, cluster = NULL, wgt1 = NULL) {
 
 # Calculate additional required values
 
    m <- length(val)
-   if(cluster.ind) {
+   if(cluster_ind) {
       cluster <- factor(cluster)
       ncluster <- length(levels(cluster))
-      z.lst <- split(z, cluster)
-      wgt2.lst <- split(wgt, cluster)
-      wgt1.u <- as.vector(tapply(wgt1, cluster, unique))
+      z_1st <- split(z, cluster)
+      wgt2_1st <- split(wgt, cluster)
+      wgt1_u <- as.vector(tapply(wgt1, cluster, unique))
    }
 
 # Calculate the cdf estimate
 
    cdf <- numeric(m)
-   if(cluster.ind) {
+   if(cluster_ind) {
       for(i in 1:m) {
          temp <- numeric(ncluster)
          for(j in 1:ncluster) {
-            temp[j] <- sum(ifelse(z.lst[[j]] <= val[i], wgt2.lst[[j]], 0))
+            temp[j] <- sum(ifelse(z_1st[[j]] <= val[i], wgt2_1st[[j]], 0))
          }
-         cdf[i] <- sum(wgt1.u*temp)
+         cdf[i] <- sum(wgt1_u*temp)
       }
    } else {
       for(i in 1:m) {
@@ -74,7 +74,7 @@ cdf_prop <- function(z, wgt, val, cluster.ind, cluster = NULL, wgt1 = NULL) {
       }
    }
 
-   if(cluster.ind)
+   if(cluster_ind)
       cdf <- cdf/sum(wgt1*wgt)
    else
       cdf <- cdf/sum(wgt)

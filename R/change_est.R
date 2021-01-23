@@ -127,13 +127,13 @@
 #' @param mult Numeric value that provides the Normal distribution confidence
 #'   bound multiplier.
 #'
-#' @param warn.ind  Logical value that indicates whether warning messages were
+#' @param warn_ind  Logical value that indicates whether warning messages were
 #'  generated, where TRUE = warning messages were generated and FALSE = warning
 #'  messages were not generated.
 #'
-#' @param warn.df Data frame for storing warning messages.
+#' @param warn_df Data frame for storing warning messages.
 #'
-#' @param warn.vec Vector that contains names of the population type, the
+#' @param warn_vec Vector that contains names of the population type, the
 #'  subpopulation, and an indicator.
 #'
 #' @return A list composed of the following objects:
@@ -143,9 +143,9 @@
 #'       "cont", two data frames named contsum_mean and contsum_median
 #'       containing mean and median change estimates, respectively, as specified
 #'       by the argument named test.}
-#'     \item{\code{warn.ind}}{logical variable that indicates whether warning
+#'     \item{\code{warn_ind}}{logical variable that indicates whether warning
 #'       messages were generated}
-#'     \item{\code{warn.df}}{data frame for storing warning messages}
+#'     \item{\code{warn_df}}{data frame for storing warning messages}
 #'   }
 #'
 #'
@@ -187,7 +187,7 @@
 change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
   survey_2, itype, isubpop, ivar, lev_ivar, nlev_ivar, design_1, design_2,
   design_names, repeat_1, repeat_2, siteID, revisitwgt, test, var_nondetect,
-  popcorrect, vartype, conf, mult, warn.ind, warn.df, warn.vec) {
+  popcorrect, vartype, conf, mult, warn_ind, warn_df, warn_vec) {
 
 # Assign a value to the function name variable
 
@@ -225,21 +225,21 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
         dframe_1[repeat_1, siteID])
     if(sum(ind_1) > 0) {
       repeat_1[ind_1] <- FALSE
-      warn.ind <- TRUE
-      temp.str <- vecprint(dframe[repeat_1, siteID][ind_1])
-      warn <- paste("The following repeat visit site IDs for subpopulation ", isubpop, "\nof population type ", itype, " for indicator ", ivar, "\nin survey one did not have analogous site IDs present in survey two:\n", temp.str, sep="")
+      warn_ind <- TRUE
+      temp_str <- vecprint(dframe[repeat_1, siteID][ind_1])
+      warn <- paste("The following repeat visit site IDs for subpopulation ", isubpop, "\nof population type ", itype, " for indicator ", ivar, "\nin survey one did not have analogous site IDs present in survey two:\n", temp_str, sep="")
       act <- "The listed repeated visit sites were not used for covariance estimation.\n"
-      warn.df <- rbind(warn.df, data.frame(func=I(fname), subpoptype=I(itype),
+      warn_df <- rbind(warn_df, data.frame(func=I(fname), subpoptype=I(itype),
         subpop=I(isubpop), indicator=I(ivar),stratum=NA,  warning=I(warn),
         action=I(act)))
     }
     if(sum(ind_2) > 0) {
       repeat_2[ind_2] <- FALSE
-      warn.ind <- TRUE
-      temp.str <- vecprint(dframe[repeat_2, siteID][ind_2])
-      warn <- paste("The following repeated visit site IDs for subpopulation ", isubpop[isubpop], "\nof population type ", itype, " for indicator ", ivar, "\nin survey two did not have analogous site IDs present in survey one:\n", temp.str, sep="")
+      warn_ind <- TRUE
+      temp_str <- vecprint(dframe[repeat_2, siteID][ind_2])
+      warn <- paste("The following repeated visit site IDs for subpopulation ", isubpop[isubpop], "\nof population type ", itype, " for indicator ", ivar, "\nin survey two did not have analogous site IDs present in survey one:\n", temp_str, sep="")
       act <- "The listed repeated visit sites were not used for covariance estimation.\n"
-      warn.df <- rbind(warn.df, data.frame(func=I(fname), subpoptype=I(itype),
+      warn_df <- rbind(warn_df, data.frame(func=I(fname), subpoptype=I(itype),
         subpop=I(isubpop), indicator=I(ivar), stratum=NA,  warning=I(warn),
         action=I(act)))
     }
@@ -256,10 +256,10 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
     dframe_1[, itype] <- droplevels(dframe_1[, itype])
     temp <- category_est(NULL, dframe_1, itype, isubpop, 1, ivar, lev_ivar,
       nlev_ivar, design_1, design_names, popcorrect, vartype, conf, mult,
-      warn.ind, warn.df)
+      warn_ind, warn_df)
     temp_1 <- droplevels(subset(temp$catsum, Category != "Total"))
-    warn.ind <- temp$warn.ind
-    warn.df <- temp$warn.df
+    warn_ind <- temp$warn_ind
+    warn_df <- temp$warn_df
     tw_1 <- sum(weights(design_1))
 
 # Calculate estimates for all sites from survey two
@@ -267,10 +267,10 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
     dframe_2[, itype] <- droplevels(dframe_2[, itype])
     temp <- category_est(NULL, dframe_2, itype, isubpop, 1, ivar, lev_ivar,
       nlev_ivar, design_2, design_names, popcorrect, vartype, conf, mult,
-      warn.ind, warn.df)
+      warn_ind, warn_df)
     temp_2 <- droplevels(subset(temp$catsum, Category != "Total"))
-    warn.ind <- temp$warn.ind
-    warn.df <- temp$warn.df
+    warn_ind <- temp$warn_ind
+    warn_df <- temp$warn_df
     tw_2 <- sum(weights(design_2))
 
 # Merge results for the two surveys
@@ -359,19 +359,19 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
 
 # Assign a value to the indicator variable for a two-stage sample
 
-      cluster.ind <- !is.null(clusterID)
+      cluster_ind <- !is.null(clusterID)
 
 # Assign values to weight variables
 
       if(revisitwgt) {
-        if(cluster.ind) {
+        if(cluster_ind) {
           wgt1 <- tempdf$wgt1
           wgt2 <- tempdf$wgt2
         } else {
           wgt <- tempdf$wgt
         }
       } else {
-        if(cluster.ind) {
+        if(cluster_ind) {
           wgt1 <- rep(1, length(catvar_1))
           wgt2 <- rep(1, length(catvar_1))
         } else {
@@ -381,15 +381,15 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
 
 # Assign a logical value to the indicator variable for a stratified sample
 
-      stratum.ind <- !is.null(stratumID)
+      stratum_ind <- !is.null(stratumID)
 
 # If the sample is stratified, convert stratum to a factor, determine stratum
 # levels, and calculate number of strata
 
-      if(stratum.ind) {
+      if(stratum_ind) {
         stratum <- factor(stratumID)
-        stratum.levels <- levels(stratum)
-        nstrata <- length(stratum.levels)
+        stratum_levels <- levels(stratum)
+        nstrata <- length(stratum_levels)
       }
 
 # Remove missing values
@@ -398,8 +398,8 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
       indx[is.na(catvar_1) | is.na(catvar_2)] <- 0
       catvar_1 <- catvar_1[indx]
       catvar_2 <- catvar_2[indx]
-      if(stratum.ind) {
-        if(cluster.ind) {
+      if(stratum_ind) {
+        if(cluster_ind) {
           wgt2 <- wgt2[indx]
           xcoord <- xcoord[indx]
           ycoord <- ycoord[indx]
@@ -422,7 +422,7 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
           }
         }
       } else {
-        if(cluster.ind) {
+        if(cluster_ind) {
           wgt2 <- wgt2[indx]
           xcoord <- xcoord[indx]
           ycoord <- ycoord[indx]
@@ -446,15 +446,15 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
 
 # For a stratified sample, remove strata that contain a single site
 
-      if(stratum.ind) {
+      if(stratum_ind) {
         ind <- FALSE
         for(i in 1:nstrata) {
-          tst <- stratum == stratum.levels[i]
+          tst <- stratum == stratum_levels[i]
           if(sum(tst) == 1) {
-            warn.ind <- TRUE
-            warn <- paste0("The stratum named \"", stratum.levels[i], "\" contains a single value and was removed from the analysis.\n")
+            warn_ind <- TRUE
+            warn <- paste0("The stratum named \"", stratum_levels[i], "\" contains a single value and was removed from the analysis.\n")
             act <- "Stratum was not used for standard error estimation.\n"
-            warn.df <- rbind(warn.df, data.frame(func=I(fname), subpoptype=NA,
+            warn_df <- rbind(warn_df, data.frame(func=I(fname), subpoptype=NA,
               subpop=NA, indicator=NA, stratum=NA, warning=I(warn),
               action=I(act)))
             dframe <- dframe[!tst,]
@@ -466,7 +466,7 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
               ycoord <- ycoord[!tst]
             }
             stratum <- stratum[!tst]
-            if(cluster.ind) {
+            if(cluster_ind) {
               clusterID <- clusterID[!tst]
               wgt1 <- wgt1[!tst]
               wgt2 <- wgt2[!tst]
@@ -490,69 +490,69 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
         }
         if(ind) {
           stratum <- factor(stratum)
-          stratum.levels <- levels(stratum)
-          nstrata <- length(stratum.levels)
+          stratum_levels <- levels(stratum)
+          nstrata <- length(stratum_levels)
         }
       }
 
 # For a stratified sample, check whether the number of strata is one
 
-      if(stratum.ind) {
+      if(stratum_ind) {
         if(nstrata == 1) {
-          warn.ind <- TRUE
+          warn_ind <- TRUE
           warn <- "Only a single stratum was available for the analysis.\n"
           act <- "An unstratified data analysis was used.\n"
-          warn.df <- rbind(warn.df, data.frame(func=I(fname),
-            subpoptype=warn.vec[1], subpop=warn.vec[2], indicator=warn.vec[3],
+          warn_df <- rbind(warn_df, data.frame(func=I(fname),
+            subpoptype=warn_vec[1], subpop=warn_vec[2], indicator=warn_vec[3],
             stratum=NA, warning=I(warn), action=I(act)))
-          stratum.ind <- FALSE
+          stratum_ind <- FALSE
         }
       }
 
 # Assign levels of the categorical variable
 
-      catvar.levels <- levels(results$Category)
-      nlevels <- length(catvar.levels)
+      catvar_levels <- levels(results$Category)
+      nlevels <- length(catvar_levels)
 
 # Calculate population size values
 
-      if(stratum.ind) {
-        if(cluster.ind) {
-          popsize.hat <- tapply(wgt1 * wgt2, stratum, sum)
-          sum.popsize.hat <- sum(wgt1 * wgt2)
+      if(stratum_ind) {
+        if(cluster_ind) {
+          popsize_hat <- tapply(wgt1 * wgt2, stratum, sum)
+          sum_popsize_hat <- sum(wgt1 * wgt2)
         } else {
-          popsize.hat <- tapply(wgt, stratum, sum)
-          sum.popsize.hat <- sum(wgt)
+          popsize_hat <- tapply(wgt, stratum, sum)
+          sum_popsize_hat <- sum(wgt)
         }
       } else {
-        if(cluster.ind) {
-          popsize.hat <- sum(wgt1 * wgt2)
+        if(cluster_ind) {
+          popsize_hat <- sum(wgt1 * wgt2)
         } else {
-          popsize.hat <- sum(wgt)
+          popsize_hat <- sum(wgt)
         }
       }
 
 # Branch to handle stratified and unstratified data
 
-      if(stratum.ind) {
+      if(stratum_ind) {
 
 # Begin the section for stratified data
 
 # Create the vectors of covariance or correlation estimates for all strata
 # combined
 
-        rslt.P <- rep(NA, nlevels)
-        rslt.U <- rep(NA, nlevels)
+        rslt_P <- rep(NA, nlevels)
+        rslt_U <- rep(NA, nlevels)
 
 # Check whether the vectors of categorical variable values for revisit sites
 # are empty or contain a single value
 
         if(length(catvar_1) <= 1) {
-          warn.ind <- TRUE
+          warn_ind <- TRUE
           act <- "Covariance among the revisited sites was not included in calculation of \nthe standard error estimate.\n"
           warn <- paste("The number of nonmissing repeat visit sites was less than two in one of the \nsurveys.\n", sep="")
-          warn.df <- rbind(warn.df, data.frame(func=I(fname),
-            subpoptype=warn.vec[1], subpop=warn.vec[2], indicator=warn.vec[3],
+          warn_df <- rbind(warn_df, data.frame(func=I(fname),
+            subpoptype=warn_vec[1], subpop=warn_vec[2], indicator=warn_vec[3],
             stratum=NA, warning=I(warn), action=I(act)))
 
 # Begin section for nonempty vectors of categorical variable values for revisit
@@ -567,15 +567,15 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
 # Check whether the vectors of categorical variable values for revisit sites
 # are empty or contain a single value for a stratum
 
-            stratum.i <- stratum == stratum.levels[i]
-            if((sum(!is.na(catvar_1[stratum.i])) <= 1) |
-                (sum(!is.na(catvar_2[stratum.i])) <= 1)) {
-              warn.ind <- TRUE
+            stratum_i <- stratum == stratum_levels[i]
+            if((sum(!is.na(catvar_1[stratum_i])) <= 1) |
+                (sum(!is.na(catvar_2[stratum_i])) <= 1)) {
+              warn_ind <- TRUE
               act <- "Due to insufficient number of sites, the stratum was not included in \ncalculation of covariance among the revisited sites.\n"
-              warn <- paste("The number of nonmissing repeat visit sites  in one of the surveys was less \nthan two for stratum \"", stratum.levels[i], "\".\n", sep="")
-              warn.df <- rbind(warn.df, data.frame(func=I(fname),
-                subpoptype=warn.vec[1], subpop=warn.vec[2],
-                indicator=warn.vec[3], stratum=I(stratum.levels[i]),
+              warn <- paste("The number of nonmissing repeat visit sites  in one of the surveys was less \nthan two for stratum \"", stratum_levels[i], "\".\n", sep="")
+              warn_df <- rbind(warn_df, data.frame(func=I(fname),
+                subpoptype=warn_vec[1], subpop=warn_vec[2],
+                indicator=warn_vec[3], stratum=I(stratum_levels[i]),
                 warning=I(warn), action=I(act)))
 
 # Begin section for nonempty vectors of categorical variable values for revisit
@@ -585,69 +585,69 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
 
 # Calculate proportion estimates
 
-              z1 <- factor(catvar_1[stratum.i], levels=catvar.levels)
-              z2 <- factor(catvar_2[stratum.i], levels=catvar.levels)
-              m <- length(catvar.levels)
+              z1 <- factor(catvar_1[stratum_i], levels=catvar_levels)
+              z2 <- factor(catvar_2[stratum_i], levels=catvar_levels)
+              m <- length(catvar_levels)
               prop1 <- as.vector(svymean(make.formula(ivar),
-                design = subset(design_1, stratum.i), na.rm = TRUE))
+                design = subset(design_1, stratum_i), na.rm = TRUE))
               prop2 <- as.vector(svymean(make.formula(ivar),
-                design = subset(design_2, stratum.i), na.rm = TRUE))
+                design = subset(design_2, stratum_i), na.rm = TRUE))
 
 # Calculate covariance or correlation estimates
 
-              if(cluster.ind) {
-                temp <- changevar_prop(catvar.levels, z1, z2, wgt2[stratum.i],
-                  xcoord[stratum.i], ycoord[stratum.i], revisitwgt, prop1,
-                  prop2, stratum.ind, stratum.levels[i], cluster.ind,
-                  clusterID[stratum.i], wgt1[stratum.i], xcoord1[stratum.i],
-                  ycoord1[stratum.i], popcorrect, NULL, Ncluster[stratum.i],
-                  stage1size[stratum.i], vartype, warn.ind, warn.df, warn.vec)
+              if(cluster_ind) {
+                temp <- changevar_prop(catvar_levels, z1, z2, wgt2[stratum_i],
+                  xcoord[stratum_i], ycoord[stratum_i], revisitwgt, prop1,
+                  prop2, stratum_ind, stratum_levels[i], cluster_ind,
+                  clusterID[stratum_i], wgt1[stratum_i], xcoord1[stratum_i],
+                  ycoord1[stratum_i], popcorrect, NULL, Ncluster[stratum_i],
+                  stage1size[stratum_i], vartype, warn_ind, warn_df, warn_vec)
               } else {
-                temp <- changevar_prop(catvar.levels, z1, z2, wgt[stratum.i],
-                  xcoord[stratum.i], ycoord[stratum.i], revisitwgt, prop1,
-                  prop2, stratum.ind, stratum.levels[i], cluster.ind,
-                  pcfactor.ind = popcorrect, fpcsize = fpcsize[stratum.i],
-                  vartype = vartype, warn.ind = warn.ind, warn.df = warn.df,
-                  warn.vec = warn.vec)
+                temp <- changevar_prop(catvar_levels, z1, z2, wgt[stratum_i],
+                  xcoord[stratum_i], ycoord[stratum_i], revisitwgt, prop1,
+                  prop2, stratum_ind, stratum_levels[i], cluster_ind,
+                  pcfactor_ind = popcorrect, fpcsize = fpcsize[stratum_i],
+                  vartype = vartype, warn_ind = warn_ind, warn_df = warn_df,
+                  warn_vec = warn_vec)
               }
               correst <- temp$rslt
-              warn.ind <- temp$warn.ind
-              warn.df <- temp$warn.df
+              warn_ind <- temp$warn_ind
+              warn_df <- temp$warn_df
 
 # Add estimates to the vector for all strata combined
 
-              rslt.P[!is.na(correst)] <- rslt.P[!is.na(correst)] +
-                (popsize.hat[i]/sum.popsize.hat)*correst[!is.na(correst)]
+              rslt_P[!is.na(correst)] <- rslt_P[!is.na(correst)] +
+                (popsize_hat[i]/sum_popsize_hat)*correst[!is.na(correst)]
 
 # Estimate the size of each category
 
-              size1 <- popsize.hat[i] * prop1
-              size2 <- popsize.hat[i] * prop2
+              size1 <- popsize_hat[i] * prop1
+              size2 <- popsize_hat[i] * prop2
 
 # Calculate covariance or correlation estimates
 
-              if(cluster.ind) {
-                temp <- changevar_total(catvar.levels, z1, z2, wgt2[stratum.i],
-                  xcoord[stratum.i], ycoord[stratum.i], revisitwgt, size1,
-                  size2, stratum.ind, stratum.levels[i], cluster.ind,
-                  clusterID[stratum.i], wgt1[stratum.i], xcoord1[stratum.i],
-                  ycoord1[stratum.i], popcorrect, NULL, Ncluster[stratum.i],
-                  stage1size[stratum.i], vartype, warn.ind, warn.df, warn.vec)
+              if(cluster_ind) {
+                temp <- changevar_total(catvar_levels, z1, z2, wgt2[stratum_i],
+                  xcoord[stratum_i], ycoord[stratum_i], revisitwgt, size1,
+                  size2, stratum_ind, stratum_levels[i], cluster_ind,
+                  clusterID[stratum_i], wgt1[stratum_i], xcoord1[stratum_i],
+                  ycoord1[stratum_i], popcorrect, NULL, Ncluster[stratum_i],
+                  stage1size[stratum_i], vartype, warn_ind, warn_df, warn_vec)
               } else {
-                temp <- changevar_total(catvar.levels, z1, z2, wgt[stratum.i],
-                  xcoord[stratum.i], ycoord[stratum.i], revisitwgt, size1,
-                  size2, stratum.ind, stratum.levels[i], cluster.ind,
-                  pcfactor.ind = popcorrect, fpcsize = fpcsize[stratum.i],
-                  vartype = vartype, warn.ind = warn.ind, warn.df = warn.df,
-                  warn.vec = warn.vec)
+                temp <- changevar_total(catvar_levels, z1, z2, wgt[stratum_i],
+                  xcoord[stratum_i], ycoord[stratum_i], revisitwgt, size1,
+                  size2, stratum_ind, stratum_levels[i], cluster_ind,
+                  pcfactor_ind = popcorrect, fpcsize = fpcsize[stratum_i],
+                  vartype = vartype, warn_ind = warn_ind, warn_df = warn_df,
+                  warn_vec = warn_vec)
               }
               correst <- temp$rslt
-              warn.ind <- temp$warn.ind
-              warn.df <- temp$warn.df
+              warn_ind <- temp$warn_ind
+              warn_df <- temp$warn_df
 
 # Add estimates to the vector for all strata combined
 
-              rslt.U[!is.na(correst)] <- rslt.U[!is.na(correst)] +
+              rslt_U[!is.na(correst)] <- rslt_U[!is.na(correst)] +
                 correst[!is.na(correst)]
 
 # End the section for nonempty vectors of categorical variable values for
@@ -674,13 +674,13 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
 # are empty or contain a single value
 
         if(length(catvar_1) <= 1) {
-          rslt.P <- rep(NA, nlevels)
-          rslt.U <- rep(NA, nlevels)
-          warn.ind <- TRUE
+          rslt_P <- rep(NA, nlevels)
+          rslt_U <- rep(NA, nlevels)
+          warn_ind <- TRUE
           act <- "Covariance among the revisited sites was not included in calculation of \nthe standard error estimate.\n"
           warn <- paste("The number of nonmissing repeat visit sites was less than two in one of the \nsurveys.\n", sep="")
-          warn.df <- rbind(warn.df, data.frame(func=I(fname),
-            subpoptype=warn.vec[1], subpop=warn.vec[2], indicator=warn.vec[3],
+          warn_df <- rbind(warn_df, data.frame(func=I(fname),
+            subpoptype=warn_vec[1], subpop=warn_vec[2], indicator=warn_vec[3],
             stratum=NA, warning=I(warn), action=I(act)))
 
 # Begin section for nonempty vectors of categorical variable values for revisit
@@ -690,8 +690,8 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
 
 # Calculate proportion estimates
 
-          z1 <- factor(catvar_1, levels=catvar.levels)
-          z2 <- factor(catvar_2, levels=catvar.levels)
+          z1 <- factor(catvar_1, levels=catvar_levels)
+          z2 <- factor(catvar_2, levels=catvar_levels)
           prop1 <- as.vector(svymean(make.formula(ivar),
             design = design_1, na.rm = TRUE))
           prop2 <- as.vector(svymean(make.formula(ivar),
@@ -699,42 +699,42 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
 
 # Calculate covariance or correlation estimates
 
-          if(cluster.ind) {
-            temp <- changevar_prop(catvar.levels, z1, z2, wgt2, xcoord, ycoord,
-              revisitwgt, prop1, prop2, stratum.ind, NULL, cluster.ind,
+          if(cluster_ind) {
+            temp <- changevar_prop(catvar_levels, z1, z2, wgt2, xcoord, ycoord,
+              revisitwgt, prop1, prop2, stratum_ind, NULL, cluster_ind,
               clusterID, wgt1, xcoord1, ycoord1, popcorrect, NULL, Ncluster,
-              stage1size, vartype, warn.ind, warn.df, warn.vec)
+              stage1size, vartype, warn_ind, warn_df, warn_vec)
           } else {
-            temp <- changevar_prop(catvar.levels, z1, z2, wgt, xcoord, ycoord,
-              revisitwgt, prop1, prop2, stratum.ind, NULL, cluster.ind,
-              pcfactor.ind = popcorrect, fpcsize = fpcsize, vartype = vartype,
-              warn.ind = warn.ind, warn.df = warn.df, warn.vec = warn.vec)
+            temp <- changevar_prop(catvar_levels, z1, z2, wgt, xcoord, ycoord,
+              revisitwgt, prop1, prop2, stratum_ind, NULL, cluster_ind,
+              pcfactor_ind = popcorrect, fpcsize = fpcsize, vartype = vartype,
+              warn_ind = warn_ind, warn_df = warn_df, warn_vec = warn_vec)
           }
-          rslt.P <- temp$rslt
-          warn.ind <- temp$warn.ind
-          warn.df <- temp$warn.df
+          rslt_P <- temp$rslt
+          warn_ind <- temp$warn_ind
+          warn_df <- temp$warn_df
 
 # Estimate the size of each category
 #
-          size1 <- popsize.hat*prop1
-          size2 <- popsize.hat*prop2
+          size1 <- popsize_hat*prop1
+          size2 <- popsize_hat*prop2
 
 # Calculate covariance or correlation estimates
 
-          if(cluster.ind) {
-            temp <- changevar_total(catvar.levels, z1, z2, wgt2, xcoord, ycoord,
-              revisitwgt, size1, size2, stratum.ind, NULL, cluster.ind,
+          if(cluster_ind) {
+            temp <- changevar_total(catvar_levels, z1, z2, wgt2, xcoord, ycoord,
+              revisitwgt, size1, size2, stratum_ind, NULL, cluster_ind,
               clusterID, wgt1, xcoord1, ycoord1, popcorrect, NULL, Ncluster,
-              stage1size, vartype, warn.ind, warn.df, warn.vec)
+              stage1size, vartype, warn_ind, warn_df, warn_vec)
           } else {
-            temp <- changevar_total(catvar.levels, z1, z2, wgt, xcoord, ycoord,
-              revisitwgt, size1, size2, stratum.ind, NULL, cluster.ind,
-              pcfactor.ind = popcorrect, fpcsize = fpcsize,  vartype = vartype,
-              warn.ind = warn.ind, warn.df = warn.df, warn.vec = warn.vec)
+            temp <- changevar_total(catvar_levels, z1, z2, wgt, xcoord, ycoord,
+              revisitwgt, size1, size2, stratum_ind, NULL, cluster_ind,
+              pcfactor_ind = popcorrect, fpcsize = fpcsize,  vartype = vartype,
+              warn_ind = warn_ind, warn_df = warn_df, warn_vec = warn_vec)
           }
-          rslt.U <- temp$rslt
-          warn.ind <- temp$warn.ind
-          warn.df <- temp$warn.df
+          rslt_U <- temp$rslt
+          warn_ind <- temp$warn_ind
+          warn_df <- temp$warn_df
 
 # End the section for nonempty vectors of categorical variable values for
 # revisit sites
@@ -749,7 +749,7 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
 
       results$StdError.P <- rep(NA, nlevels)
       results$StdError.U <- rep(NA, nlevels)
-      ind <- is.na(rslt.P)
+      ind <- is.na(rslt_P)
       results$StdError.P[ind] <- sqrt(results$StdError.P_1[ind]^2 +
           results$StdError.P_2[ind]^2)
       results$StdError.U[ind] <- sqrt(results$StdError.U_1[ind]^2 +
@@ -759,51 +759,51 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
         tw_2r <- sum(weights(design_2))
         if(revisitwgt) {
           temp <- results$StdError.P_1^2 + results$StdError.P_2^2 -
-            ((2*tw_1r*tw_2r)/(tw_1*tw_2))*rslt.P
-          ind <- !is.na(rslt.P) & temp <= 0
+            ((2*tw_1r*tw_2r)/(tw_1*tw_2))*rslt_P
+          ind <- !is.na(rslt_P) & temp <= 0
           results$StdError.P[ind] <- sqrt(results$StdError.P_1[ind]^2 +
               results$StdError.P_2[ind]^2)
-          ind <- !is.na(rslt.P) & temp > 0
+          ind <- !is.na(rslt_P) & temp > 0
           results$StdError.P[ind] <- sqrt(temp[ind])
-          temp <- results$StdError.U_1^2 + results$StdError.U_2^2 - 2*rslt.U
-          ind <- !is.na(rslt.U) & temp <= 0
+          temp <- results$StdError.U_1^2 + results$StdError.U_2^2 - 2*rslt_U
+          ind <- !is.na(rslt_U) & temp <= 0
           results$StdError.U[ind] <- sqrt(results$StdError.U_1[ind]^2 +
               results$StdError.U_2[ind]^2)
-          ind <- !is.na(rslt.U) & temp > 0
+          ind <- !is.na(rslt_U) & temp > 0
           results$StdError.U[ind] <- sqrt(temp[ind])
         } else {
-          se_1.p <- rep(NA, nlevels)
-          se_1.u <- rep(NA, nlevels)
+          se_1_p <- rep(NA, nlevels)
+          se_1_u <- rep(NA, nlevels)
           temp <- category_est(NULL, dframe_1, itype, isubpop, 1, ivar,
             lev_ivar, nlev_ivar, design_1, design_names, popcorrect, vartype,
-            conf, mult, warn.ind, warn.df)
+            conf, mult, warn_ind, warn_df)
           temp$results <- droplevels(subset(temp$catsum, Category != "Total"))
-          ind <- match(temp$results$Category, catvar.levels, nomatch=0)
-          se_1.p[ind] <- temp$results$StdError.P / 100
-          se_1.u[ind] <- temp$results$StdError.U
-          se_2.p <- rep(NA, nlevels)
-          se_2.u <- rep(NA, nlevels)
+          ind <- match(temp$results$Category, catvar_levels, nomatch=0)
+          se_1_p[ind] <- temp$results$StdError.P / 100
+          se_1_u[ind] <- temp$results$StdError.U
+          se_2_p <- rep(NA, nlevels)
+          se_2_u <- rep(NA, nlevels)
           temp <- category_est(NULL, dframe_2, itype, isubpop, 1, ivar,
             lev_ivar, nlev_ivar, design_2, design_names, popcorrect, vartype,
-            conf, mult, warn.ind, warn.df)
+            conf, mult, warn_ind, warn_df)
           temp$results <- droplevels(subset(temp$catsum, Category != "Total"))
-          ind <- match(temp$results$Category, catvar.levels, nomatch=0)
-          se_2.p[ind] <- temp$results$StdError.P / 100
-          se_2.u[ind] <- temp$results$StdError.U
-          covest <- rslt.P * se_1.p * se_2.p
+          ind <- match(temp$results$Category, catvar_levels, nomatch=0)
+          se_2_p[ind] <- temp$results$StdError.P / 100
+          se_2_u[ind] <- temp$results$StdError.U
+          covest <- rslt_P * se_1_p * se_2_p
           temp <- results$StdError.P_1^2 + results$StdError.P_2^2 -
             ((2*tw_1r*tw_2r)/(tw_1*tw_2))*covest
-          ind <- !is.na(rslt.P) & temp <= 0
+          ind <- !is.na(rslt_P) & temp <= 0
           results$StdError.P[ind] <- sqrt(results$StdError.P_1[ind]^2 +
               results$StdError.P_2[ind]^2)
-          ind <- !is.na(rslt.P) & temp > 0
+          ind <- !is.na(rslt_P) & temp > 0
           results$StdError.P[ind] <- sqrt(temp[ind])
-          covest <- rslt.U * se_1.u * se_2.u
+          covest <- rslt_U * se_1_u * se_2_u
           temp <- results$StdError.U_1^2 + results$StdError.U_2^2 -2*covest
-          ind <- !is.na(rslt.U) & temp <= 0
+          ind <- !is.na(rslt_U) & temp <= 0
           results$StdError.U[ind] <- sqrt(results$StdError.U_1[ind]^2 +
               results$StdError.U_2[ind]^2)
-          ind <- !is.na(rslt.U) & temp > 0
+          ind <- !is.na(rslt_U) & temp > 0
           results$StdError.U[ind] <- sqrt(temp[ind])
         }
       }
@@ -860,13 +860,13 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
 
     pctest_1 <- percentile_est(NULL, dframe_1, itype, isubpop, 1, ivar,
       design_1, design_names, var_nondetect, popcorrect, vartype, conf, mult,
-      pctval = c(50), warn.ind, warn.df)
+      pctval = c(50), warn_ind, warn_df)
 
 # Calculate estimate for all sites from survey two
 
     pctest_2 <- percentile_est(NULL, dframe_2, itype, isubpop, 1, ivar,
       design_2, design_names, var_nondetect, popcorrect, vartype, conf, mult,
-      pctval = c(50), warn.ind, warn.df)
+      pctval = c(50), warn_ind, warn_df)
 
 #
 # Begin the section for a continuous variable using the mean
@@ -878,29 +878,29 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
 # frames and the design_1 and design_2 objects
 
       if("median" %in% test) {
-        dframe_1.org <- dframe_1
-        dframe_2.org <- dframe_2
-        design_1.org <- design_1
-        design_2.org <- design_2
+        dframe_1_org <- dframe_1
+        dframe_2_org <- dframe_2
+        design_1_org <- design_1
+        design_2_org <- design_2
       }
 
 # Using the pctest_1 data frame, extract the mean estimate for survey one
 
-      temp.cont_1 <- subset(pctest_1$pctsum, Statistic == "Mean")
-      warn.ind <- pctest_1$warn.ind
-      warn.df <- pctest_1$warn.df
+      temp_cont_1 <- subset(pctest_1$pctsum, Statistic == "Mean")
+      warn_ind <- pctest_1$warn_ind
+      warn_df <- pctest_1$warn_df
       tw_1 <- sum(weights(design_1))
 
 # Using the pctest_2 data frame, extract the mean estimate for survey two
 
-      temp.cont_2 <- subset(pctest_2$pctsum, Statistic == "Mean")
-      warn.ind <- pctest_2$warn.ind
-      warn.df <- pctest_2$warn.df
+      temp_cont_2 <- subset(pctest_2$pctsum, Statistic == "Mean")
+      warn_ind <- pctest_2$warn_ind
+      warn_df <- pctest_2$warn_df
       tw_2 <- sum(weights(design_2))
 
 # Merge results for the two surveys
 
-      results <- merge(temp.cont_1, temp.cont_2, by = "Statistic",
+      results <- merge(temp_cont_1, temp_cont_2, by = "Statistic",
         suffix=c("_1", "_2"))
 
 # Calculate the change estimate
@@ -956,19 +956,19 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
 
 # Assign a value to the indicator variable for a two-stage sample
 
-        cluster.ind <- !is.null(clusterID)
+        cluster_ind <- !is.null(clusterID)
 
 # Assign values to weight variables
 
         if(revisitwgt) {
-          if(cluster.ind) {
+          if(cluster_ind) {
             wgt1 <- tempdf$wgt1
             wgt2 <- tempdf$wgt2
           } else {
             wgt <- tempdf$wgt
           }
         } else {
-          if(cluster.ind) {
+          if(cluster_ind) {
             wgt1 <- rep(1, length(contvar_1))
             wgt2 <- rep(1, length(contvar_1))
           } else {
@@ -978,15 +978,15 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
 
 # Assign a logical value to the indicator variable for a stratified sample
 
-        stratum.ind <- !is.null(stratumID)
+        stratum_ind <- !is.null(stratumID)
 
 # If the sample is stratified, convert stratum to a factor, determine stratum
 # levels, and calculate number of strata
 
-        if(stratum.ind) {
+        if(stratum_ind) {
           stratum <- factor(stratumID)
-          stratum.levels <- levels(stratum)
-          nstrata <- length(stratum.levels)
+          stratum_levels <- levels(stratum)
+          nstrata <- length(stratum_levels)
         }
 
 # Remove missing values
@@ -995,8 +995,8 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
         indx[is.na(contvar_1) | is.na(contvar_2)] <- 0
         contvar_1 <- contvar_1[indx]
         contvar_2 <- contvar_2[indx]
-        if(stratum.ind) {
-          if(cluster.ind) {
+        if(stratum_ind) {
+          if(cluster_ind) {
             wgt2 <- wgt2[indx]
             xcoord <- xcoord[indx]
             ycoord <- ycoord[indx]
@@ -1019,7 +1019,7 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
             }
           }
         } else {
-          if(cluster.ind) {
+          if(cluster_ind) {
             wgt2 <- wgt2[indx]
             xcoord <- xcoord[indx]
             ycoord <- ycoord[indx]
@@ -1043,15 +1043,15 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
 
 # For a stratified sample, remove strata that contain a single site
 
-        if(stratum.ind) {
+        if(stratum_ind) {
           ind <- FALSE
           for(i in 1:nstrata) {
-            tst <- stratum == stratum.levels[i]
+            tst <- stratum == stratum_levels[i]
             if(sum(tst) == 1) {
-              warn.ind <- TRUE
-              warn <- paste0("The stratum named \"", stratum.levels[i], "\" contains a single value and was removed from the analysis.\n")
+              warn_ind <- TRUE
+              warn <- paste0("The stratum named \"", stratum_levels[i], "\" contains a single value and was removed from the analysis.\n")
               act <- "Stratum was not used for standard error estimation.\n"
-              warn.df <- rbind(warn.df, data.frame(func=I(fname), subpoptype=NA,
+              warn_df <- rbind(warn_df, data.frame(func=I(fname), subpoptype=NA,
                 subpop=NA, indicator=NA, stratum=NA, warning=I(warn),
                 action=I(act)))
               dframe <- dframe[!tst,]
@@ -1063,7 +1063,7 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
                 ycoord <- ycoord[!tst]
               }
               stratum <- stratum[!tst]
-              if(cluster.ind) {
+              if(cluster_ind) {
                 clusterID <- clusterID[!tst]
                 wgt1 <- wgt1[!tst]
                 wgt2 <- wgt2[!tst]
@@ -1087,46 +1087,46 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
           }
           if(ind) {
             stratum <- factor(stratum)
-            stratum.levels <- levels(stratum)
-            nstrata <- length(stratum.levels)
+            stratum_levels <- levels(stratum)
+            nstrata <- length(stratum_levels)
           }
         }
 
 # For a stratified sample, check whether the number of strata is one
 
-        if(stratum.ind) {
+        if(stratum_ind) {
           if(nstrata == 1) {
-            warn.ind <- TRUE
+            warn_ind <- TRUE
             warn <- "Only a single stratum was available for the analysis.\n"
             act <- "An unstratified data analysis was used.\n"
-            warn.df <- rbind(warn.df, data.frame(func=I(fname),
-              subpoptype=warn.vec[1], subpop=warn.vec[2], indicator=warn.vec[3],
+            warn_df <- rbind(warn_df, data.frame(func=I(fname),
+              subpoptype=warn_vec[1], subpop=warn_vec[2], indicator=warn_vec[3],
               stratum=NA, warning=I(warn), action=I(act)))
-            stratum.ind <- FALSE
+            stratum_ind <- FALSE
           }
         }
 
 # Calculate population size values
 
-        if(stratum.ind) {
-          if(cluster.ind) {
-            popsize.hat <- tapply(wgt1 * wgt2, stratum, sum)
-            sum.popsize.hat <- sum(wgt1 * wgt2)
+        if(stratum_ind) {
+          if(cluster_ind) {
+            popsize_hat <- tapply(wgt1 * wgt2, stratum, sum)
+            sum_popsize_hat <- sum(wgt1 * wgt2)
           } else {
-            popsize.hat <- tapply(wgt, stratum, sum)
-            sum.popsize.hat <- sum(wgt)
+            popsize_hat <- tapply(wgt, stratum, sum)
+            sum_popsize_hat <- sum(wgt)
           }
         } else {
-          if(cluster.ind) {
-            popsize.hat <- sum(wgt1 * wgt2)
+          if(cluster_ind) {
+            popsize_hat <- sum(wgt1 * wgt2)
           } else {
-            popsize.hat <- sum(wgt)
+            popsize_hat <- sum(wgt)
           }
         }
 
 # Branch to handle stratified and unstratified data
 
-        if(stratum.ind) {
+        if(stratum_ind) {
 
 # Begin the section for stratified data
 
@@ -1139,11 +1139,11 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
 # are empty or contain a single value
 
           if(length(contvar_1) <= 1) {
-            warn.ind <- TRUE
+            warn_ind <- TRUE
             act <- "Covariance among the revisited sites was not included in calculation of \nthe standard error estimate.\n"
             warn <- paste("The number of nonmissing repeat visit sites was less than two in one of the \nsurveys.\n", sep="")
-            warn.df <- rbind(warn.df, data.frame(func=I(fname),
-              subpoptype=warn.vec[1], subpop=warn.vec[2], indicator=warn.vec[3],
+            warn_df <- rbind(warn_df, data.frame(func=I(fname),
+              subpoptype=warn_vec[1], subpop=warn_vec[2], indicator=warn_vec[3],
               stratum=NA, warning=I(warn), action=I(act)))
 
 # Begin section for nonempty vectors of continuous variable values for revisit
@@ -1157,14 +1157,14 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
 # Check whether the vectors of continuous variable values for revisit sites
 # are empty or contain a single value for a stratum
 
-            stratum.i <- stratum == stratum.levels[i]
-            if(length(contvar_1[stratum.i]) <= 1) {
-              warn.ind <- TRUE
+            stratum_i <- stratum == stratum_levels[i]
+            if(length(contvar_1[stratum_i]) <= 1) {
+              warn_ind <- TRUE
               act <- "Due to insufficient number of sites, the stratum was not included in \ncalculation of covariance among the revisited sites.\n"
-              warn <- paste("The number of nonmissing repeat visit sites  in one of the surveys was less \nthan two for stratum \"", stratum.levels[i], "\".\n", sep="")
-              warn.df <- rbind(warn.df, data.frame(func=I(fname),
-                subpoptype=warn.vec[1], subpop=warn.vec[2],
-                indicator=warn.vec[3], stratum=I(stratum.levels[i]),
+              warn <- paste("The number of nonmissing repeat visit sites  in one of the surveys was less \nthan two for stratum \"", stratum_levels[i], "\".\n", sep="")
+              warn_df <- rbind(warn_df, data.frame(func=I(fname),
+                subpoptype=warn_vec[1], subpop=warn_vec[2],
+                indicator=warn_vec[3], stratum=I(stratum_levels[i]),
                 warning=I(warn), action=I(act)))
 
 # Begin section for nonempty vectors of continuous variables values for revisit
@@ -1174,37 +1174,37 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
 
 # Calculate mean estimates
 
-              stratum.i <- stratum == stratum.levels[i]
-              z1 <- contvar_1[stratum.i]
-              z2 <- contvar_2[stratum.i]
+              stratum_i <- stratum == stratum_levels[i]
+              z1 <- contvar_1[stratum_i]
+              z2 <- contvar_2[stratum_i]
               mean1 <- as.vector(svymean(make.formula(ivar),
-                design = subset(design_1, stratum.i), na.rm = TRUE))
+                design = subset(design_1, stratum_i), na.rm = TRUE))
               mean2 <- as.vector(svymean(make.formula(ivar),
-                design = subset(design_2, stratum.i), na.rm = TRUE))
+                design = subset(design_2, stratum_i), na.rm = TRUE))
 
 # Calculate covariance or correlation estimates
-              if(cluster.ind) {
-                temp <- changevar_mean(z1, z2, wgt2[stratum.i],
-                  xcoord[stratum.i], ycoord[stratum.i], revisitwgt, mean1,
-                  mean2, stratum.ind, stratum.levels[i], cluster.ind,
-                  clusterID[stratum.i], wgt1[stratum.i], xcoord1[stratum.i],
-                  ycoord1[stratum.i], popcorrect, NULL, Ncluster[stratum.i],
-                  stage1size[stratum.i], vartype, warn.ind, warn.df, warn.vec)
+              if(cluster_ind) {
+                temp <- changevar_mean(z1, z2, wgt2[stratum_i],
+                  xcoord[stratum_i], ycoord[stratum_i], revisitwgt, mean1,
+                  mean2, stratum_ind, stratum_levels[i], cluster_ind,
+                  clusterID[stratum_i], wgt1[stratum_i], xcoord1[stratum_i],
+                  ycoord1[stratum_i], popcorrect, NULL, Ncluster[stratum_i],
+                  stage1size[stratum_i], vartype, warn_ind, warn_df, warn_vec)
               } else {
-                temp <- changevar_mean(z1, z2, wgt[stratum.i],
-                  xcoord[stratum.i], ycoord[stratum.i], revisitwgt, mean1,
-                  mean2, stratum.ind, stratum.levels[i], cluster.ind,
-                  pcfactor.ind = popcorrect, fpcsize = fpcsize[stratum.i],
-                  vartype = vartype, warn.ind = warn.ind, warn.df = warn.df,
-                  warn.vec = warn.vec)
+                temp <- changevar_mean(z1, z2, wgt[stratum_i],
+                  xcoord[stratum_i], ycoord[stratum_i], revisitwgt, mean1,
+                  mean2, stratum_ind, stratum_levels[i], cluster_ind,
+                  pcfactor_ind = popcorrect, fpcsize = fpcsize[stratum_i],
+                  vartype = vartype, warn_ind = warn_ind, warn_df = warn_df,
+                  warn_vec = warn_vec)
               }
               correst <- temp$rslt
-              warn.ind <- temp$warn.ind
-              warn.df <- temp$warn.df
+              warn_ind <- temp$warn_ind
+              warn_df <- temp$warn_df
 
 # Add estimates to the object for all strata combined
               rslt[!is.na(correst)] <- rslt[!is.na(correst)] +
-                  (popsize.hat[i]/sum.popsize.hat)*correst[!is.na(correst)]
+                  (popsize_hat[i]/sum_popsize_hat)*correst[!is.na(correst)]
 
 # End the section for nonempty vectors of continuous variable values for
 # revisit sites for a stratum
@@ -1229,11 +1229,11 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
 
         if(length(contvar_1) <= 1) {
           rslt <- NA
-          warn.ind <- TRUE
+          warn_ind <- TRUE
           act <- "Covariance among the revisited sites was not included in calculation of \nthe standard error estimate.\n"
           warn <- paste("The number of nonmissing repeat visit sites was less than two in one of the \nsurveys.\n", sep="")
-          warn.df <- rbind(warn.df, data.frame(func=I(fname),
-            subpoptype=warn.vec[1], subpop=warn.vec[2], indicator=warn.vec[3],
+          warn_df <- rbind(warn_df, data.frame(func=I(fname),
+            subpoptype=warn_vec[1], subpop=warn_vec[2], indicator=warn_vec[3],
             stratum=NA, warning=I(warn), action=I(act)))
 
 # Begin section for nonempty vectors of continuous variable values for revisit
@@ -1251,20 +1251,20 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
             na.rm = TRUE))
 
 # Calculate covariance or correlation estimates
-          if(cluster.ind) {
+          if(cluster_ind) {
             temp <- changevar_mean(z1, z2, wgt2, xcoord, ycoord, revisitwgt,
-              mean1, mean2, stratum.ind, NULL, cluster.ind, clusterID, wgt1,
+              mean1, mean2, stratum_ind, NULL, cluster_ind, clusterID, wgt1,
               xcoord1, ycoord1, popcorrect, NULL, Ncluster, stage1size, vartype,
-              warn.ind, warn.df, warn.vec)
+              warn_ind, warn_df, warn_vec)
           } else {
             temp <- changevar_mean(z1, z2, wgt, xcoord, ycoord, revisitwgt,
-              mean1, mean2, stratum.ind, NULL, cluster.ind,
-              pcfactor.ind = popcorrect, fpcsize = fpcsize,  vartype = vartype,
-              warn.ind = warn.ind, warn.df = warn.df, warn.vec = warn.vec)
+              mean1, mean2, stratum_ind, NULL, cluster_ind,
+              pcfactor_ind = popcorrect, fpcsize = fpcsize,  vartype = vartype,
+              warn_ind = warn_ind, warn_df = warn_df, warn_vec = warn_vec)
           }
           rslt <- temp$rslt
-          warn.ind <- temp$warn.ind
-          warn.df <- temp$warn.df
+          warn_ind <- temp$warn_ind
+          warn_df <- temp$warn_df
 
 # End the section for nonempty vectors of continuous variable values for
 # revisit sites
@@ -1296,11 +1296,11 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
         } else {
           temp <- percentile_est(NULL, dframe_1, itype, isubpop, 1, ivar,
             design_1, design_names, var_nondetect, popcorrect, vartype, conf,
-            mult, pctval = c(50), warn.ind, warn.df)
+            mult, pctval = c(50), warn_ind, warn_df)
           se_1 <- subset(temp$pctsum, Statistic == "Mean")$StdError
           temp <- percentile_est(NULL, dframe_2, itype, isubpop, 1, ivar,
             design_2, design_names, var_nondetect, popcorrect, vartype, conf,
-            mult, pctval = c(50), warn.ind, warn.df)
+            mult, pctval = c(50), warn_ind, warn_df)
           se_2 <- subset(temp$pctsum, Statistic == "Mean")$StdError
           covest <- rslt * se_1 * se_2
           temp <- results$StdError_1^2 + results$StdError_2^2 -
@@ -1350,35 +1350,35 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
 # frames and the design_1 and design_2 objects
 
       if("mean" %in% test) {
-        dframe_1 <- dframe_1.org
-        dframe_2 <- dframe_2.org
-        design_1 <- design_1.org
-        design_2 <- design_2.org
+        dframe_1 <- dframe_1_org
+        dframe_2 <- dframe_2_org
+        design_1 <- design_1_org
+        design_2 <- design_2_org
       }
 
 # Using the pctest_1 data frame, extract the median estimate for survey one
 
-      temp.cont_1 <- pctest_1$pctsum[pctest_1$pctsum$Statistic == "50Pct",]
-      warn.ind <- pctest_1$warn.ind
-      warn.df <- pctest_1$warn.df
+      temp_cont_1 <- pctest_1$pctsum[pctest_1$pctsum$Statistic == "50Pct",]
+      warn_ind <- pctest_1$warn_ind
+      warn_df <- pctest_1$warn_df
 
 # Create the categorical response variables
 
-      p_1 <- factor(ifelse(dframe_1[, ivar] <= temp.cont_1$Estimate,
+      p_1 <- factor(ifelse(dframe_1[, ivar] <= temp_cont_1$Estimate,
         "Less_Than_Median", "Greater_Than_Median"))
       dframe_1$medcat <- p_1
       if("postStrata" %in% names(design_1)) {
-        temp <- factor(ifelse(design_1$variables[, ivar] <= temp.cont_1$Estimate,
+        temp <- factor(ifelse(design_1$variables[, ivar] <= temp_cont_1$Estimate,
           "Less_Than_Median", "Greater_Than_Median"))
         design_1 <- update(design_1, medcat = temp)
       } else {
         design_1 <- update(design_1, medcat = p_1)
       }
-      p_2 <- factor(ifelse(dframe_2[, ivar] <= temp.cont_1$Estimate,
+      p_2 <- factor(ifelse(dframe_2[, ivar] <= temp_cont_1$Estimate,
         "Less_Than_Median", "Greater_Than_Median"))
       dframe_2$medcat <- p_2
       if("postStrata" %in% names(design_1)) {
-        temp <- factor(ifelse(design_2$variables[, ivar] <= temp.cont_1$Estimate,
+        temp <- factor(ifelse(design_2$variables[, ivar] <= temp_cont_1$Estimate,
           "Less_Than_Median", "Greater_Than_Median"))
         design_2 <- update(design_2, medcat = temp)
       } else {
@@ -1393,10 +1393,10 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
       dframe_1[, itype] <- droplevels(dframe_1[, itype])
       temp <- category_est(NULL, dframe_1, itype, isubpop, 1, ivar, lev_ivar,
         nlev_ivar, design_1, design_names, popcorrect,  vartype, conf, mult,
-        warn.ind, warn.df)
+        warn_ind, warn_df)
       temp_1 <- droplevels(subset(temp$catsum, Category != "Total"))
-      warn.ind <- temp$warn.ind
-      warn.df <- temp$warn.df
+      warn_ind <- temp$warn_ind
+      warn_df <- temp$warn_df
       tw_1 <- sum(weights(design_1))
 
 # Calculate estimates for all sites from survey two
@@ -1404,10 +1404,10 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
       dframe_2[, itype] <- droplevels(dframe_2[, itype])
       temp <- category_est(NULL, dframe_2, itype, isubpop, 1, ivar, lev_ivar,
         nlev_ivar, design_2, design_names, popcorrect,  vartype, conf, mult,
-        warn.ind, warn.df)
+        warn_ind, warn_df)
       temp_2 <- droplevels(subset(temp$catsum, Category != "Total"))
-      warn.ind <- temp$warn.ind
-      warn.df <- temp$warn.df
+      warn_ind <- temp$warn_ind
+      warn_df <- temp$warn_df
       tw_2 <- sum(weights(design_2))
 
 # Merge results for the two surveys
@@ -1490,19 +1490,19 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
 
 # Assign a value to the indicator variable for a two-stage sample
 
-        cluster.ind <- !is.null(clusterID)
+        cluster_ind <- !is.null(clusterID)
 
 # Assign values to weight variables
 
         if(revisitwgt) {
-          if(cluster.ind) {
+          if(cluster_ind) {
             wgt1 <- tempdf$wgt1
             wgt2 <- tempdf$wgt2
           } else {
             wgt <- tempdf$wgt
           }
         } else {
-          if(cluster.ind) {
+          if(cluster_ind) {
             wgt1 <- rep(1, length(catvar_1))
             wgt2 <- rep(1, length(catvar_1))
           } else {
@@ -1512,15 +1512,15 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
 
 # Assign a logical value to the indicator variable for a stratified sample
 
-        stratum.ind <- !is.null(stratumID)
+        stratum_ind <- !is.null(stratumID)
 
 # If the sample is stratified, convert stratum to a factor, determine stratum
 # levels, and calculate number of strata
 
-        if(stratum.ind) {
+        if(stratum_ind) {
           stratum <- factor(stratumID)
-          stratum.levels <- levels(stratum)
-          nstrata <- length(stratum.levels)
+          stratum_levels <- levels(stratum)
+          nstrata <- length(stratum_levels)
         }
 
 # Remove missing values
@@ -1529,8 +1529,8 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
         indx[is.na(catvar_1) | is.na(catvar_2)] <- 0
         catvar_1 <- catvar_1[indx]
         catvar_2 <- catvar_2[indx]
-        if(stratum.ind) {
-          if(cluster.ind) {
+        if(stratum_ind) {
+          if(cluster_ind) {
             wgt2 <- wgt2[indx]
             xcoord <- xcoord[indx]
             ycoord <- ycoord[indx]
@@ -1553,7 +1553,7 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
             }
           }
         } else {
-          if(cluster.ind) {
+          if(cluster_ind) {
             wgt2 <- wgt2[indx]
             xcoord <- xcoord[indx]
             ycoord <- ycoord[indx]
@@ -1577,15 +1577,15 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
 
 # For a stratified sample, remove strata that contain a single site
 
-        if(stratum.ind) {
+        if(stratum_ind) {
           ind <- FALSE
           for(i in 1:nstrata) {
-            tst <- stratum == stratum.levels[i]
+            tst <- stratum == stratum_levels[i]
             if(sum(tst) == 1) {
-              warn.ind <- TRUE
-              warn <- paste0("The stratum named \"", stratum.levels[i], "\" contains a single value and was removed from the analysis.\n")
+              warn_ind <- TRUE
+              warn <- paste0("The stratum named \"", stratum_levels[i], "\" contains a single value and was removed from the analysis.\n")
               act <- "Stratum was not used for standard error estimation.\n"
-              warn.df <- rbind(warn.df, data.frame(func=I(fname), subpoptype=NA,
+              warn_df <- rbind(warn_df, data.frame(func=I(fname), subpoptype=NA,
                 subpop=NA, indicator=NA, stratum=NA, warning=I(warn),
                 action=I(act)))
               dframe <- dframe[!tst,]
@@ -1597,7 +1597,7 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
                 ycoord <- ycoord[!tst]
               }
               stratum <- stratum[!tst]
-              if(cluster.ind) {
+              if(cluster_ind) {
                 clusterID <- clusterID[!tst]
                 wgt1 <- wgt1[!tst]
                 wgt2 <- wgt2[!tst]
@@ -1621,69 +1621,69 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
           }
           if(ind) {
             stratum <- factor(stratum)
-            stratum.levels <- levels(stratum)
-            nstrata <- length(stratum.levels)
+            stratum_levels <- levels(stratum)
+            nstrata <- length(stratum_levels)
           }
         }
 
 # For a stratified sample, check whether the number of strata is one
 
-        if(stratum.ind) {
+        if(stratum_ind) {
           if(nstrata == 1) {
-            warn.ind <- TRUE
+            warn_ind <- TRUE
             warn <- "Only a single stratum was available for the analysis.\n"
             act <- "An unstratified data analysis was used.\n"
-            warn.df <- rbind(warn.df, data.frame(func=I(fname),
-              subpoptype=warn.vec[1], subpop=warn.vec[2], indicator=warn.vec[3],
+            warn_df <- rbind(warn_df, data.frame(func=I(fname),
+              subpoptype=warn_vec[1], subpop=warn_vec[2], indicator=warn_vec[3],
               stratum=NA, warning=I(warn), action=I(act)))
-            stratum.ind <- FALSE
+            stratum_ind <- FALSE
           }
         }
 
 # Assign levels of the categorical variables
 
-        catvar.levels <- results$Category
-        nlevels <- length(catvar.levels)
+        catvar_levels <- results$Category
+        nlevels <- length(catvar_levels)
 
 # Calculate population size values
 
-        if(stratum.ind) {
-          if(cluster.ind) {
-            popsize.hat <- tapply(wgt1 * wgt2, stratum, sum)
-            sum.popsize.hat <- sum(wgt1 * wgt2)
+        if(stratum_ind) {
+          if(cluster_ind) {
+            popsize_hat <- tapply(wgt1 * wgt2, stratum, sum)
+            sum_popsize_hat <- sum(wgt1 * wgt2)
           } else {
-            popsize.hat <- tapply(wgt, stratum, sum)
-            sum.popsize.hat <- sum(wgt)
+            popsize_hat <- tapply(wgt, stratum, sum)
+            sum_popsize_hat <- sum(wgt)
           }
         } else {
-          if(cluster.ind) {
-            popsize.hat <- sum(wgt1 * wgt2)
+          if(cluster_ind) {
+            popsize_hat <- sum(wgt1 * wgt2)
           } else {
-            popsize.hat <- sum(wgt)
+            popsize_hat <- sum(wgt)
           }
         }
 
 # Branch to handle stratified and unstratified data
 
-        if(stratum.ind) {
+        if(stratum_ind) {
 
 # Begin the section for stratified data
 
 # Create the vector of covariance or correlation estimates for all strata
 # combined
 
-          rslt.P <- rep(NA, nlevels)
-          rslt.U <- rep(NA, nlevels)
+          rslt_P <- rep(NA, nlevels)
+          rslt_U <- rep(NA, nlevels)
 
 # Check whether the vectors of categorical variable values for revisit sites
 # are empty or contain a single value
 
           if(length(catvar_1) <= 1) {
-            warn.ind <- TRUE
+            warn_ind <- TRUE
             act <- "Covariance among the revisited sites was not included in calculation of \nthe standard error estimate.\n"
             warn <- paste("The number of nonmissing repeat visit sites was less than two in one of the \nsurveys.\n", sep="")
-            warn.df <- rbind(warn.df, data.frame(func=I(fname),
-              subpoptype=warn.vec[1], subpop=warn.vec[2], indicator=warn.vec[3],
+            warn_df <- rbind(warn_df, data.frame(func=I(fname),
+              subpoptype=warn_vec[1], subpop=warn_vec[2], indicator=warn_vec[3],
               stratum=NA, warning=I(warn), action=I(act)))
 
 # Begin section for nonempty vectors of categorical variable values for revisit
@@ -1698,15 +1698,15 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
 # Check whether the vectors of categorical variable values for revisit sites
 # are empty or contain a single value for a stratum
 
-              stratum.i <- stratum == stratum.levels[i]
-              if((sum(!is.na(catvar_1[stratum.i])) <= 1) |
-                  (sum(!is.na(catvar_2[stratum.i])) <= 1)) {
-                warn.ind <- TRUE
+              stratum_i <- stratum == stratum_levels[i]
+              if((sum(!is.na(catvar_1[stratum_i])) <= 1) |
+                  (sum(!is.na(catvar_2[stratum_i])) <= 1)) {
+                warn_ind <- TRUE
                 act <- "Due to insufficient number of sites, the stratum was not included in \ncalculation of covariance among the revisited sites.\n"
-                warn <- paste("The number of nonmissing repeat visit sites  in one of the surveys was less \nthan two for stratum \"", stratum.levels[i], "\".\n", sep="")
-                warn.df <- rbind(warn.df, data.frame(func=I(fname),
-                  subpoptype=warn.vec[1], subpop=warn.vec[2],
-                  indicator=warn.vec[3], stratum=I(stratum.levels[i]),
+                warn <- paste("The number of nonmissing repeat visit sites  in one of the surveys was less \nthan two for stratum \"", stratum_levels[i], "\".\n", sep="")
+                warn_df <- rbind(warn_df, data.frame(func=I(fname),
+                  subpoptype=warn_vec[1], subpop=warn_vec[2],
+                  indicator=warn_vec[3], stratum=I(stratum_levels[i]),
                   warning=I(warn), action=I(act)))
 
 # Begin section for nonempty vectors of categorical variable values for revisit
@@ -1716,69 +1716,69 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
 
                 # Calculate proportion estimates
 
-                z1 <- factor(catvar_1[stratum.i], levels=catvar.levels)
-                z2 <- factor(catvar_2[stratum.i], levels=catvar.levels)
-                m <- length(catvar.levels)
+                z1 <- factor(catvar_1[stratum_i], levels=catvar_levels)
+                z2 <- factor(catvar_2[stratum_i], levels=catvar_levels)
+                m <- length(catvar_levels)
                 prop1 <- as.vector(svymean(make.formula(ivar),
-                  design = subset(design_1, stratum.i), na.rm = TRUE))
+                  design = subset(design_1, stratum_i), na.rm = TRUE))
                 prop2 <- as.vector(svymean(make.formula(ivar),
-                  design = subset(design_2, stratum.i), na.rm = TRUE))
+                  design = subset(design_2, stratum_i), na.rm = TRUE))
 
 # Calculate covariance or correlation estimates
 
-                if(cluster.ind) {
-                  temp <- changevar_prop(catvar.levels, z1, z2, wgt2[stratum.i],
-                    xcoord[stratum.i], ycoord[stratum.i], revisitwgt, prop1,
-                    prop2, stratum.ind, stratum.levels[i], cluster.ind,
-                    clusterID[stratum.i], wgt1[stratum.i], xcoord1[stratum.i],
-                    ycoord1[stratum.i], popcorrect, NULL, Ncluster[stratum.i],
-                    stage1size[stratum.i], vartype, warn.ind, warn.df, warn.vec)
+                if(cluster_ind) {
+                  temp <- changevar_prop(catvar_levels, z1, z2, wgt2[stratum_i],
+                    xcoord[stratum_i], ycoord[stratum_i], revisitwgt, prop1,
+                    prop2, stratum_ind, stratum_levels[i], cluster_ind,
+                    clusterID[stratum_i], wgt1[stratum_i], xcoord1[stratum_i],
+                    ycoord1[stratum_i], popcorrect, NULL, Ncluster[stratum_i],
+                    stage1size[stratum_i], vartype, warn_ind, warn_df, warn_vec)
                 } else {
-                  temp <- changevar_prop(catvar.levels, z1, z2, wgt[stratum.i],
-                    xcoord[stratum.i], ycoord[stratum.i], revisitwgt, prop1,
-                    prop2, stratum.ind, stratum.levels[i], cluster.ind,
-                    pcfactor.ind = popcorrect, fpcsize = fpcsize[stratum.i],
-                    vartype = vartype, warn.ind = warn.ind, warn.df = warn.df,
-                    warn.vec = warn.vec)
+                  temp <- changevar_prop(catvar_levels, z1, z2, wgt[stratum_i],
+                    xcoord[stratum_i], ycoord[stratum_i], revisitwgt, prop1,
+                    prop2, stratum_ind, stratum_levels[i], cluster_ind,
+                    pcfactor_ind = popcorrect, fpcsize = fpcsize[stratum_i],
+                    vartype = vartype, warn_ind = warn_ind, warn_df = warn_df,
+                    warn_vec = warn_vec)
                 }
                 correst <- temp$rslt
-                warn.ind <- temp$warn.ind
-                warn.df <- temp$warn.df
+                warn_ind <- temp$warn_ind
+                warn_df <- temp$warn_df
 
 # Add estimates to the vector for all strata combined
 
-                rslt.P[!is.na(correst)] <- rslt.P[!is.na(correst)] +
-                  (popsize.hat[i]/sum.popsize.hat)*correst[!is.na(correst)]
+                rslt_P[!is.na(correst)] <- rslt_P[!is.na(correst)] +
+                  (popsize_hat[i]/sum_popsize_hat)*correst[!is.na(correst)]
 
 # Estimate the size of each category
 
-                size1 <- popsize.hat[i] * prop1
-                size2 <- popsize.hat[i] * prop2
+                size1 <- popsize_hat[i] * prop1
+                size2 <- popsize_hat[i] * prop2
 
 # Calculate covariance or correlation estimates
 
-                if(cluster.ind) {
-                  temp <- changevar_total(catvar.levels, z1, z2, wgt2[stratum.i],
-                    xcoord[stratum.i], ycoord[stratum.i], revisitwgt, size1,
-                    size2, stratum.ind, stratum.levels[i], cluster.ind,
-                    clusterID[stratum.i], wgt1[stratum.i], xcoord1[stratum.i],
-                    ycoord1[stratum.i], popcorrect, NULL, Ncluster[stratum.i],
-                    stage1size[stratum.i], vartype, warn.ind, warn.df, warn.vec)
+                if(cluster_ind) {
+                  temp <- changevar_total(catvar_levels, z1, z2, wgt2[stratum_i],
+                    xcoord[stratum_i], ycoord[stratum_i], revisitwgt, size1,
+                    size2, stratum_ind, stratum_levels[i], cluster_ind,
+                    clusterID[stratum_i], wgt1[stratum_i], xcoord1[stratum_i],
+                    ycoord1[stratum_i], popcorrect, NULL, Ncluster[stratum_i],
+                    stage1size[stratum_i], vartype, warn_ind, warn_df, warn_vec)
                 } else {
-                  temp <- changevar_total(catvar.levels, z1, z2, wgt[stratum.i],
-                    xcoord[stratum.i], ycoord[stratum.i], revisitwgt, size1,
-                    size2, stratum.ind, stratum.levels[i], cluster.ind,
-                    pcfactor.ind = popcorrect, fpcsize = fpcsize[stratum.i],
-                    vartype = vartype, warn.ind = warn.ind, warn.df = warn.df,
-                    warn.vec = warn.vec)
+                  temp <- changevar_total(catvar_levels, z1, z2, wgt[stratum_i],
+                    xcoord[stratum_i], ycoord[stratum_i], revisitwgt, size1,
+                    size2, stratum_ind, stratum_levels[i], cluster_ind,
+                    pcfactor_ind = popcorrect, fpcsize = fpcsize[stratum_i],
+                    vartype = vartype, warn_ind = warn_ind, warn_df = warn_df,
+                    warn_vec = warn_vec)
                 }
                 correst <- temp$rslt
-                warn.ind <- temp$warn.ind
-                warn.df <- temp$warn.df
+                warn_ind <- temp$warn_ind
+                warn_df <- temp$warn_df
 
 # Add estimates to the vector for all strata combined
 
-                rslt.U[!is.na(correst)] <- rslt.U[!is.na(correst)] +
+                rslt_U[!is.na(correst)] <- rslt_U[!is.na(correst)] +
                   correst[!is.na(correst)]
 
 # End the section for nonempty vectors of categorical variable values for
@@ -1805,13 +1805,13 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
           # are empty or contain a single value
 
           if(length(catvar_1) <= 1) {
-            rslt.P <- rep(NA, nlevels)
-            rslt.U <- rep(NA, nlevels)
-            warn.ind <- TRUE
+            rslt_P <- rep(NA, nlevels)
+            rslt_U <- rep(NA, nlevels)
+            warn_ind <- TRUE
             act <- "Covariance among the revisited sites was not included in calculation of \nthe standard error estimate.\n"
             warn <- paste("The number of nonmissing repeat visit sites was less than two in one of the \nsurveys.\n", sep="")
-            warn.df <- rbind(warn.df, data.frame(func=I(fname),
-              subpoptype=warn.vec[1], subpop=warn.vec[2], indicator=warn.vec[3],
+            warn_df <- rbind(warn_df, data.frame(func=I(fname),
+              subpoptype=warn_vec[1], subpop=warn_vec[2], indicator=warn_vec[3],
               stratum=NA, warning=I(warn), action=I(act)))
 
 # Begin section for nonempty vectors of categorical variable values for revisit
@@ -1821,8 +1821,8 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
 
             # Calculate proportion estimates
 
-            z1 <- factor(catvar_1, levels=catvar.levels)
-            z2 <- factor(catvar_2, levels=catvar.levels)
+            z1 <- factor(catvar_1, levels=catvar_levels)
+            z2 <- factor(catvar_2, levels=catvar_levels)
             prop1 <- as.vector(svymean(make.formula(ivar),
               design = design_1, na.rm = TRUE))
             prop2 <- as.vector(svymean(make.formula(ivar),
@@ -1830,42 +1830,42 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
 
 # Calculate covariance or correlation estimates
 
-            if(cluster.ind) {
-              temp <- changevar_prop(catvar.levels, z1, z2, wgt2, xcoord, ycoord,
-                revisitwgt, prop1, prop2, stratum.ind, NULL, cluster.ind,
+            if(cluster_ind) {
+              temp <- changevar_prop(catvar_levels, z1, z2, wgt2, xcoord, ycoord,
+                revisitwgt, prop1, prop2, stratum_ind, NULL, cluster_ind,
                 clusterID, wgt1, xcoord1, ycoord1, popcorrect, NULL, Ncluster,
-                stage1size, vartype, warn.ind, warn.df, warn.vec)
+                stage1size, vartype, warn_ind, warn_df, warn_vec)
             } else {
-              temp <- changevar_prop(catvar.levels, z1, z2, wgt, xcoord, ycoord,
-                revisitwgt, prop1, prop2, stratum.ind, NULL, cluster.ind,
-                pcfactor.ind = popcorrect, fpcsize = fpcsize, vartype = vartype,
-                warn.ind = warn.ind, warn.df = warn.df, warn.vec = warn.vec)
+              temp <- changevar_prop(catvar_levels, z1, z2, wgt, xcoord, ycoord,
+                revisitwgt, prop1, prop2, stratum_ind, NULL, cluster_ind,
+                pcfactor_ind = popcorrect, fpcsize = fpcsize, vartype = vartype,
+                warn_ind = warn_ind, warn_df = warn_df, warn_vec = warn_vec)
             }
-            rslt.P <- temp$rslt
-            warn.ind <- temp$warn.ind
-            warn.df <- temp$warn.df
+            rslt_P <- temp$rslt
+            warn_ind <- temp$warn_ind
+            warn_df <- temp$warn_df
 
 # Estimate the size of each category
 
-            size1 <- popsize.hat*prop1
-            size2 <- popsize.hat*prop2
+            size1 <- popsize_hat*prop1
+            size2 <- popsize_hat*prop2
 
 # Calculate covariance or correlation estimates
 
-            if(cluster.ind) {
-              temp <- changevar_total(catvar.levels, z1, z2, wgt2, xcoord, ycoord,
-                revisitwgt, size1, size2, stratum.ind, NULL, cluster.ind,
+            if(cluster_ind) {
+              temp <- changevar_total(catvar_levels, z1, z2, wgt2, xcoord, ycoord,
+                revisitwgt, size1, size2, stratum_ind, NULL, cluster_ind,
                 clusterID, wgt1, xcoord1, ycoord1, popcorrect, NULL, Ncluster,
-                stage1size, vartype, warn.ind, warn.df, warn.vec)
+                stage1size, vartype, warn_ind, warn_df, warn_vec)
             } else {
-              temp <- changevar_total(catvar.levels, z1, z2, wgt, xcoord, ycoord,
-                revisitwgt, size1, size2, stratum.ind, NULL, cluster.ind,
-                pcfactor.ind = popcorrect, fpcsize = fpcsize,  vartype = vartype,
-                warn.ind = warn.ind, warn.df = warn.df, warn.vec = warn.vec)
+              temp <- changevar_total(catvar_levels, z1, z2, wgt, xcoord, ycoord,
+                revisitwgt, size1, size2, stratum_ind, NULL, cluster_ind,
+                pcfactor_ind = popcorrect, fpcsize = fpcsize,  vartype = vartype,
+                warn_ind = warn_ind, warn_df = warn_df, warn_vec = warn_vec)
             }
-            rslt.U <- temp$rslt
-            warn.ind <- temp$warn.ind
-            warn.df <- temp$warn.df
+            rslt_U <- temp$rslt
+            warn_ind <- temp$warn_ind
+            warn_df <- temp$warn_df
 
 # End the section for nonempty vectors of categorical variable values for
 # revisit sites
@@ -1880,7 +1880,7 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
 
         results$StdError.P <- rep(NA, nlevels)
         results$StdError.U <- rep(NA, nlevels)
-        ind <- is.na(rslt.P)
+        ind <- is.na(rslt_P)
         results$StdError.P[ind] <- sqrt(results$StdError.P_1[ind]^2 +
             results$StdError.P_2[ind]^2)
         results$StdError.U[ind] <- sqrt(results$StdError.U_1[ind]^2 +
@@ -1890,51 +1890,51 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
           tw_2r <- sum(weights(design_2))
           if(revisitwgt) {
             temp <- results$StdError.P_1^2 + results$StdError.P_2^2 -
-              ((2*tw_1r*tw_2r)/(tw_1*tw_2))*rslt.P
-            ind <- !is.na(rslt.P) & temp <= 0
+              ((2*tw_1r*tw_2r)/(tw_1*tw_2))*rslt_P
+            ind <- !is.na(rslt_P) & temp <= 0
             results$StdError.P[ind] <- sqrt(results$StdError.P_1[ind]^2 +
                 results$StdError.P_2[ind]^2)
-            ind <- !is.na(rslt.P) & temp > 0
+            ind <- !is.na(rslt_P) & temp > 0
             results$StdError.P[ind] <- sqrt(temp[ind])
-            temp <- results$StdError.U_1^2 + results$StdError.U_2^2 - 2*rslt.U
-            ind <- !is.na(rslt.U) & temp <= 0
+            temp <- results$StdError.U_1^2 + results$StdError.U_2^2 - 2*rslt_U
+            ind <- !is.na(rslt_U) & temp <= 0
             results$StdError.U[ind] <- sqrt(results$StdError.U_1[ind]^2 +
                 results$StdError.U_2[ind]^2)
-            ind <- !is.na(rslt.U) & temp > 0
+            ind <- !is.na(rslt_U) & temp > 0
             results$StdError.U[ind] <- sqrt(temp[ind])
           } else {
-            se_1.p <- rep(NA, nlevels)
-            se_1.u <- rep(NA, nlevels)
+            se_1_p <- rep(NA, nlevels)
+            se_1_u <- rep(NA, nlevels)
             temp <- category_est(NULL, dframe_1, itype, isubpop, 1, ivar,
               lev_ivar, nlev_ivar, design_1, design_names, popcorrect, vartype,
-              conf, mult, warn.ind, warn.df)
+              conf, mult, warn_ind, warn_df)
             temp$results <- droplevels(subset(temp$catsum, Category != "Total"))
-            ind <- match(temp$results$Category, catvar.levels, nomatch=0)
-            se_1.p[ind] <- temp$results$StdError.P / 100
-            se_1.u[ind] <- temp$results$StdError.U
-            se_2.p <- rep(NA, nlevels)
-            se_2.u <- rep(NA, nlevels)
+            ind <- match(temp$results$Category, catvar_levels, nomatch=0)
+            se_1_p[ind] <- temp$results$StdError.P / 100
+            se_1_u[ind] <- temp$results$StdError.U
+            se_2_p <- rep(NA, nlevels)
+            se_2_u <- rep(NA, nlevels)
             temp <- category_est(NULL, dframe_2, itype, isubpop, 1, ivar,
               lev_ivar, nlev_ivar, design_2, design_names, popcorrect, vartype,
-              conf, mult, warn.ind, warn.df)
+              conf, mult, warn_ind, warn_df)
             temp$results <- droplevels(subset(temp$catsum, Category != "Total"))
-            ind <- match(temp$results$Category, catvar.levels, nomatch=0)
-            se_2.p[ind] <- temp$results$StdError.P / 100
-            se_2.u[ind] <- temp$results$StdError.U
-            covest <- rslt.P * se_1.p * se_2.p
+            ind <- match(temp$results$Category, catvar_levels, nomatch=0)
+            se_2_p[ind] <- temp$results$StdError.P / 100
+            se_2_u[ind] <- temp$results$StdError.U
+            covest <- rslt_P * se_1_p * se_2_p
             temp <- results$StdError.P_1^2 + results$StdError.P_2^2 -
               ((2*tw_1r*tw_2r)/(tw_1*tw_2))*covest
-            ind <- !is.na(rslt.P) & temp <= 0
+            ind <- !is.na(rslt_P) & temp <= 0
             results$StdError.P[ind] <- sqrt(results$StdError.P_1[ind]^2 +
                 results$StdError.P_2[ind]^2)
-            ind <- !is.na(rslt.P) & temp > 0
+            ind <- !is.na(rslt_P) & temp > 0
             results$StdError.P[ind] <- sqrt(temp[ind])
-            covest <- rslt.U * se_1.u * se_2.u
+            covest <- rslt_U * se_1_u * se_2_u
             temp <- results$StdError.U_1^2 + results$StdError.U_2^2 -2*covest
-            ind <- !is.na(rslt.U) & temp <= 0
+            ind <- !is.na(rslt_U) & temp <= 0
             results$StdError.U[ind] <- sqrt(results$StdError.U_1[ind]^2 +
                 results$StdError.U_2[ind]^2)
-            ind <- !is.na(rslt.U) & temp > 0
+            ind <- !is.na(rslt_U) & temp > 0
             results$StdError.U[ind] <- sqrt(temp[ind])
           }
         }
@@ -1996,9 +1996,9 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
 
   }
 
-# Return the changesum object, the warn.ind logical value, and the warn.df
+# Return the changesum object, the warn_ind logical value, and the warn_df
 # data frame
 
-  list(changesum = changesum, warn.ind = warn.ind, warn.df = warn.df)
+  list(changesum = changesum, warn_ind = warn_ind, warn_df = warn_df)
 
 }

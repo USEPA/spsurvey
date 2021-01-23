@@ -11,7 +11,7 @@
 #' @param zmat Matrix of weighted response values or weighted residual values
 #'   for the sample points.
 #'
-#' @param weight.lst List from the local mean weight function containing two
+#' @param weight_1st List from the local mean weight function containing two
 #'   elements: a matrix named ij composed of the index values of neighboring
 #'   points and a vector named gwt composed of weights.
 #'
@@ -24,7 +24,7 @@
 #' @export
 ################################################################################
 
-localmean_cov <- function(zmat, weight.lst) {
+localmean_cov <- function(zmat, weight_1st) {
 
 # Calculate additional required values
 
@@ -46,12 +46,12 @@ localmean_cov <- function(zmat, weight.lst) {
 
 # Calculate local means
 
-         zb1 <- sapply(split(z1[weight.lst$ij[, 2]] * weight.lst$gwt, weight.lst$ij[, 1]), sum)
-         zb2 <- sapply(split(z2[weight.lst$ij[, 2]] * weight.lst$gwt, weight.lst$ij[, 1]), sum)
+         zb1 <- sapply(split(z1[weight_1st$ij[, 2]] * weight_1st$gwt, weight_1st$ij[, 1]), sum)
+         zb2 <- sapply(split(z2[weight_1st$ij[, 2]] * weight_1st$gwt, weight_1st$ij[, 1]), sum)
 
 # Calculate the variance or covariance estimate
 
-         lmvar[k, l] <- sum(weight.lst$gwt * (z1[weight.lst$ij[, 2]] - zb1[weight.lst$ij[, 1]]) * (z2[weight.lst$ij[, 2]] - zb2[weight.lst$ij[, 1]]))
+         lmvar[k, l] <- sum(weight_1st$gwt * (z1[weight_1st$ij[, 2]] - zb1[weight_1st$ij[, 1]]) * (z2[weight_1st$ij[, 2]] - zb2[weight_1st$ij[, 1]]))
 
       }
 

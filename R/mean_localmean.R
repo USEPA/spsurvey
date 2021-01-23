@@ -39,18 +39,18 @@
 #' @param mult Numeric value that provides the Normal distribution confidence
 #'   bound multiplier.
 #'
-#' @param warn.ind Logical value that indicates whether warning messages were
+#' @param warn_ind Logical value that indicates whether warning messages were
 #'   generated.
 #'
-#' @param warn.df Data frame for storing warning messages.
+#' @param warn_df Data frame for storing warning messages.
 #'
 #' @return A list containing the following objects:
 #'   \describe{
 #'     \item{\code{stderr}}{vector containing standard error estimates}
 #'     \item{\code{confval}}{data frame containing confidence bound estimates}
-#'     \item{\code{warn.ind}}{logical variable that indicates whether warning
+#'     \item{\code{warn_ind}}{logical variable that indicates whether warning
 #'       messages were generated}
-#'     \item{\code{warn.df}}{data frame for storing warning messages}
+#'     \item{\code{warn_df}}{data frame for storing warning messages}
 #'   }
 #'
 #' @section Other Functions Required:
@@ -73,7 +73,7 @@
 ################################################################################
 
 mean_localmean <- function(itype, lev_itype, nlev_itype, levs, ivar, design,
-  design_names, meanest, popcorrect, vartype, mult, warn.ind, warn.df) {
+  design_names, meanest, popcorrect, vartype, mult, warn_ind, warn_df) {
 
 # Assign a value to the function name variable
 
@@ -97,11 +97,11 @@ mean_localmean <- function(itype, lev_itype, nlev_itype, levs, ivar, design,
 
 # Assign a value to the indicator variable for a two-stage sample
 
-  cluster.ind <- !is.null(clusterID)
+  cluster_ind <- !is.null(clusterID)
 
 # Assign values to weight variables
 
-  if(cluster.ind) {
+  if(cluster_ind) {
     wgt1 <- dframe$wgt1
     wgt2 <- dframe$wgt2
   } else {
@@ -124,37 +124,37 @@ mean_localmean <- function(itype, lev_itype, nlev_itype, levs, ivar, design,
     tst <- !is.na(dframe[, ivar]) &
            (dframe[, itype] %in% lev_itype[isubpop])
 
-# Assign values to the warn.vec vector
+# Assign values to the warn_vec vector
 
-    warn.vec <- c(itype, lev_itype[isubpop], ivar)
+    warn_vec <- c(itype, lev_itype[isubpop], ivar)
 
 # Assign a value to the indicator variable for a stratified sample
 
-    stratum.ind <- !is.null(stratumID)
+    stratum_ind <- !is.null(stratumID)
 
 # For a stratified design, determine whether the subpopulation contains a single
 # stratum
 
-    if(stratum.ind) {
+    if(stratum_ind) {
       stratum <- factor(stratumID[tst])
-      stratum.levels <- levels(stratum)
-      nstrata <- length(stratum.levels)
+      stratum_levels <- levels(stratum)
+      nstrata <- length(stratum_levels)
       if(nstrata == 1)
-        stratum.ind <- FALSE
+        stratum_ind <- FALSE
     }
 
 # Branch for a stratified sample
 
-    if(stratum.ind) {
+    if(stratum_ind) {
 
 # Calculate values required for weighting strata
 
-      if(cluster.ind) {
-        popsize.hat <- tapply(wgt1[tst] * wgt2[tst], stratum, sum)
-        sum.popsize.hat <- sum(wgt1[tst] * wgt2[tst])
+      if(cluster_ind) {
+        popsize_hat <- tapply(wgt1[tst] * wgt2[tst], stratum, sum)
+        sum_popsize_hat <- sum(wgt1[tst] * wgt2[tst])
       } else {
-        popsize.hat <- tapply(wgt[tst], stratum, sum)
-        sum.popsize.hat <- sum(wgt[tst])
+        popsize_hat <- tapply(wgt[tst], stratum, sum)
+        sum_popsize_hat <- sum(wgt[tst])
       }
 
 # Begin the subsection for individual strata
@@ -163,40 +163,40 @@ mean_localmean <- function(itype, lev_itype, nlev_itype, levs, ivar, design,
 
 # Calculate mean estimates for the stratum
 
-        stratum.i <- tst & stratumID == stratum.levels[i]
+        stratum_i <- tst & stratumID == stratum_levels[i]
         meanest_st <- svymean(make.formula(ivar), design = subset(design,
-          stratum.i))
+          stratum_i))
 
 # Calculate variance estimates
 
-        if(cluster.ind) {
-          temp <- mean_var(contvar[stratum.i], wgt2[stratum.i],
-            xcoord[stratum.i], ycoord[stratum.i],  meanest_st[1], stratum.ind,
-            stratum.levels[i], cluster.ind, clusterID[stratum.i],
-            wgt1[stratum.i], xcoord1[stratum.i], ycoord1[stratum.i], popcorrect,
-            NULL, Ncluster[stratum.i], stage1size[stratum.i], vartype, warn.ind,
-            warn.df, warn.vec)
+        if(cluster_ind) {
+          temp <- mean_var(contvar[stratum_i], wgt2[stratum_i],
+            xcoord[stratum_i], ycoord[stratum_i],  meanest_st[1], stratum_ind,
+            stratum_levels[i], cluster_ind, clusterID[stratum_i],
+            wgt1[stratum_i], xcoord1[stratum_i], ycoord1[stratum_i], popcorrect,
+            NULL, Ncluster[stratum_i], stage1size[stratum_i], vartype, warn_ind,
+            warn_df, warn_vec)
         } else {
-          temp <- mean_var(contvar[stratum.i], wgt[stratum.i],
-            xcoord[stratum.i], ycoord[stratum.i], meanest_st[1], stratum.ind,
-            stratum.levels[i], cluster.ind, pcfactor.ind = popcorrect,
-            fpcsize=fpcsize[stratum.i], vartype = vartype, warn.ind = warn.ind,
-            warn.df = warn.df, warn.vec = warn.vec)
+          temp <- mean_var(contvar[stratum_i], wgt[stratum_i],
+            xcoord[stratum_i], ycoord[stratum_i], meanest_st[1], stratum_ind,
+            stratum_levels[i], cluster_ind, pcfactor_ind = popcorrect,
+            fpcsize=fpcsize[stratum_i], vartype = vartype, warn_ind = warn_ind,
+            warn_df = warn_df, warn_vec = warn_vec)
         }
         if(temp$vartype == "SRS") {
-          rslt.svy <- svymean(make.formula(ivar), design = subset(design, tst),
+          rslt_svy <- svymean(make.formula(ivar), design = subset(design, tst),
             na.rm = TRUE)
-          varest <- SE(rslt.svy)^2
+          varest <- SE(rslt_svy)^2
         } else {
           varest <- temp$varest
         }
-        warn.ind <- temp$warn.ind
-        warn.df <- temp$warn.df
+        warn_ind <- temp$warn_ind
+        warn_df <- temp$warn_df
 
 # Add estimate to the stderr vector
 
         stderr[isubpop] <- stderr[isubpop] +
-          ((popsize.hat[i]/sum.popsize.hat)^2)*varest
+          ((popsize_hat[i]/sum_popsize_hat)^2)*varest
 
 # End the subsection for individual strata
 
@@ -219,26 +219,26 @@ mean_localmean <- function(itype, lev_itype, nlev_itype, levs, ivar, design,
 
 # Calculate the standard error estimates
 
-      if(cluster.ind) {
+      if(cluster_ind) {
         temp <- mean_var(contvar[tst], wgt2[tst], xcoord[tst], ycoord[tst],
-          meanest[isubpop], stratum.ind, NULL, cluster.ind, clusterID[tst],
+          meanest[isubpop], stratum_ind, NULL, cluster_ind, clusterID[tst],
           wgt1[tst], xcoord1[tst], ycoord1[tst], popcorrect, NULL,
-          Ncluster[tst], stage1size[tst], vartype, warn.ind, warn.df, warn.vec)
+          Ncluster[tst], stage1size[tst], vartype, warn_ind, warn_df, warn_vec)
       } else {
         temp <- mean_var(contvar[tst], wgt[tst], xcoord[tst], ycoord[tst],
-          meanest[isubpop], stratum.ind, NULL, cluster.ind,
-          pcfactor.ind = popcorrect, fpcsize = fpcsize[tst], vartype = vartype,
-          warn.ind = warn.ind, warn.df = warn.df, warn.vec = warn.vec)
+          meanest[isubpop], stratum_ind, NULL, cluster_ind,
+          pcfactor_ind = popcorrect, fpcsize = fpcsize[tst], vartype = vartype,
+          warn_ind = warn_ind, warn_df = warn_df, warn_vec = warn_vec)
       }
       if(temp$vartype == "SRS") {
-        rslt.svy <- svymean(make.formula(ivar), design = subset(design, tst),
+        rslt_svy <- svymean(make.formula(ivar), design = subset(design, tst),
           na.rm = TRUE)
-        sdest <- SE(rslt.svy)
+        sdest <- SE(rslt_svy)
       } else {
         sdest <- sqrt(temp$varest)
       }
-      warn.ind <- temp$warn.ind
-      warn.df <- temp$warn.df
+      warn_ind <- temp$warn_ind
+      warn_df <- temp$warn_df
 
 # Calculate confidence bounds
 
@@ -258,6 +258,6 @@ mean_localmean <- function(itype, lev_itype, nlev_itype, levs, ivar, design,
 
   list(stderr = stderr,
        confval = confval,
-       warn.ind = warn.ind,
-       warn.df = warn.df)
+       warn_ind = warn_ind,
+       warn_df = warn_df)
 }

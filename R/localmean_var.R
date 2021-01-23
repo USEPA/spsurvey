@@ -2,7 +2,6 @@
 # Function: localmean_var
 # Programmers: Don Stevens and Tom Kincaid
 # Date: October 17, 2000
-# Last Revised: October 30, 2019
 #
 #' Internal Function: Local Mean Variance Estimator
 #'
@@ -11,7 +10,7 @@
 #' @param z Vector of weighted response values or weighted residual values for
 #'  the sample points.
 #'
-#' @param weight.lst List from the local mean weight function containing two
+#' @param weight_1st List from the local mean weight function containing two
 #'  elements: a matrix named ij composed of the index values of neighboring
 #'  points and a vector named gwt composed of weights.
 #'
@@ -24,15 +23,15 @@
 #'@export
 ################################################################################
 
-localmean_var <- function(z, weight.lst) {
+localmean_var <- function(z, weight_1st) {
 
 # Calculate local means
 
-   zb <- sapply(split(z[weight.lst$ij[, 2]] * weight.lst$gwt, weight.lst$ij[, 1]), sum)
+   zb <- sapply(split(z[weight_1st$ij[, 2]] * weight_1st$gwt, weight_1st$ij[, 1]), sum)
 
 # Calculate the variance estimate
 
-   lmvar <- sum(weight.lst$gwt * (z[weight.lst$ij[, 2]] - zb[weight.lst$ij[, 1]])^2)
+   lmvar <- sum(weight_1st$gwt * (z[weight_1st$ij[, 2]] - zb[weight_1st$ij[, 1]])^2)
 
 # Return the variance estimate
 

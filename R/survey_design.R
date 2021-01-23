@@ -20,14 +20,14 @@
 #'   variable in the dframe data frame.  For a two-stage sample, the weight
 #'   variable identifies stage two weights.
 #'
-#' @param stratum.ind Logical value that indicates whether the sample is
+#' @param stratum_ind Logical value that indicates whether the sample is
 #'   stratified, where TRUE = a stratified sample and FALSE = an unstratified
 #'   sample.
 #'
 #' @param stratumID Character value providing name of the stratum ID variable in
 #'   the dframe data frame.
 #'
-#' @param cluster.ind Logical value that indicates whether the sample contains
+#' @param cluster_ind Logical value that indicates whether the sample contains
 #'   two stages, where TRUE = a two-stage sample and FALSE = a single stage
 #'   sample.
 #'
@@ -98,13 +98,13 @@
 #' @export
 ################################################################################
 
-survey_design <- function(dframe, siteID, weight, stratum.ind, stratumID,
-  cluster.ind, clusterID, weight1, sizeweight, sweight, sweight1, popcorrect,
+survey_design <- function(dframe, siteID, weight, stratum_ind, stratumID,
+  cluster_ind, clusterID, weight1, sizeweight, sweight, sweight1, popcorrect,
   fpcsize, Ncluster, stage1size, vartype, jointprob) {
 
   if(vartype %in% c("Local", "SRS")) {
-    if(stratum.ind) {
-      if(cluster.ind) {
+    if(stratum_ind) {
+      if(cluster_ind) {
         if(sizeweight) {
           dframe$wgt1 <- dframe[, weight1] * dframe[, sweight1]
           dframe$wgt2 <- dframe[, weight] * dframe[, sweight]
@@ -180,7 +180,7 @@ survey_design <- function(dframe, siteID, weight, stratum.ind, stratumID,
         }
       }
     } else {
-      if(cluster.ind) {
+      if(cluster_ind) {
         if(sizeweight) {
           dframe$wgt1 <- dframe[, weight1] * dframe[, sweight1]
           dframe$wgt2 <- dframe[, weight] * dframe[, sweight]
@@ -246,8 +246,8 @@ survey_design <- function(dframe, siteID, weight, stratum.ind, stratumID,
     }
   } else {
     if(jointprob %in% c("overton", "hr")) {
-      if(stratum.ind) {
-        if(cluster.ind) {
+      if(stratum_ind) {
+        if(cluster_ind) {
           if(sizeweight) {
             dframe$prb1 <- 1 / (dframe[, weight1] * dframe[, sweight1])
             dframe$prb2 <- 1 / (dframe[, weight] * dframe[, sweight])
@@ -335,7 +335,7 @@ survey_design <- function(dframe, siteID, weight, stratum.ind, stratumID,
           }
         }
       } else {
-        if(cluster.ind) {
+        if(cluster_ind) {
           if(sizeweight) {
             dframe$prb1 <- 1 / (dframe[, weight1] * dframe[, sweight1])
             dframe$prb2 <- 1 / (dframe[, weight] * dframe[, sweight])
@@ -412,8 +412,8 @@ survey_design <- function(dframe, siteID, weight, stratum.ind, stratumID,
         }
       }
     } else {
-      if(stratum.ind) {
-        if(cluster.ind) {
+      if(stratum_ind) {
+        if(cluster_ind) {
           if(sizeweight) {
             dframe$prb1 <- 1 / (dframe[, weight1] * dframe[, sweight1])
             dframe$prb2 <- 1 / (dframe[, weight] * dframe[, sweight])
@@ -459,7 +459,7 @@ survey_design <- function(dframe, siteID, weight, stratum.ind, stratumID,
           }
         }
       } else {
-        if(cluster.ind) {
+        if(cluster_ind) {
           if(sizeweight) {
             dframe$prb1 <- 1 / (dframe[, weight1] * dframe[, sweight1])
             dframe$prb2 <- 1 / (dframe[, weight] * dframe[, sweight])

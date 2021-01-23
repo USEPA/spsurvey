@@ -1,9 +1,9 @@
 ################################################################################
-# Function: ash1.wgt.r
+# Function: ash1_wgt.R
 # Programmer: Tony Olsen
 #	Based on original script by Susan Hornsby
 # Date: February 1, 2005
-# Last Revised: January 27, 2012
+# Last Revised: January 22, 2021
 #
 #' Compute the Average Shifted Histogram (ASH) for Weighted Data
 #'
@@ -53,11 +53,11 @@
 #' @export
 ################################################################################
 
-ash1.wgt <- function(x, wgt = rep (1, length (x)), m = 5, nbin = 50, ab = NULL,
+ash1_wgt <- function(x, wgt = rep (1, length (x)), m = 5, nbin = 50, ab = NULL,
    support = "Continuous") {
 
 # Bin the possibly weighted data
-	v <- bin1.wgt(x, wgt, nbin, ab, support=support)
+	v <- bin1_wgt(x, wgt, nbin, ab, support=support)
 
 # Set delta based on range and number of bins
 	delta <- attr(v, "delta")
@@ -97,7 +97,7 @@ ash1.wgt <- function(x, wgt = rep (1, length (x)), m = 5, nbin = 50, ab = NULL,
 		mhi <- min(nbin,i+m-1)
 		for(k in mlow:mhi) {
 			if(tup[k] >= a & tlow[k] <= b )
-				f[i] <- f[i] + v[k]*wgt.lim(k-i,m, mlow=mlow-i, mhi=mhi-i)
+				f[i] <- f[i] + v[k]*wgt_lim(k-i,m, mlow=mlow-i, mhi=mhi-i)
 		}
 	}
 
@@ -120,7 +120,7 @@ ash1.wgt <- function(x, wgt = rep (1, length (x)), m = 5, nbin = 50, ab = NULL,
 # BIN algorithm for unequal-probability sample,
 #
 
-bin1.wgt <- function(x, wgt=rep(1,length(x)), nbin=50,
+bin1_wgt <- function(x, wgt=rep(1,length(x)), nbin=50,
                      ab=nicerange(x), support="Continuous") {
 
 # Arguments
@@ -191,7 +191,7 @@ bin1.wgt <- function(x, wgt=rep(1,length(x)), nbin=50,
 #
 # Define weight function
 #
-wgt.lim <- function(i, m, mlow=(1-m), mhi=(m-1)) {
+wgt_lim <- function(i, m, mlow=(1-m), mhi=(m-1)) {
 	K <- function(t) { (15/16)*(1-t^2)^2 }
 	I <- mlow:mhi
 	w <- m*K(i/m)/sum(K(I/m))

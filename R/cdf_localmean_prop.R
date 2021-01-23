@@ -31,7 +31,7 @@
 #' @param ncdfval Numeric value containing length of the set of values at which
 #'   the CDF is estimated.
 #'
-#' @param cdfest.P Object that provides CDF estimates on the proportion scale
+#' @param cdfest_P Object that provides CDF estimates on the proportion scale
 #'   for the continuous response variable.
 #'
 #' @param popcorrect Logical value that indicates whether the finite population
@@ -43,18 +43,18 @@
 #' @param mult Numeric value that provides the Normal distribution confidence
 #'   bound multiplier.
 #'
-#' @param warn.ind Logical value that indicates whether warning messages were
+#' @param warn_ind Logical value that indicates whether warning messages were
 #'   generated.
 #'
-#' @param warn.df Data frame for storing warning messages.
+#' @param warn_df Data frame for storing warning messages.
 #'
 #' @return A list containing the following objects:
 #'   \describe{
-#'     \item{\code{stderr.P}}{data frame containing standard error estimates}
-#'     \item{\code{confval.P}}{data frame containing confidence bound estimates}
-#'     \item{\code{warn.ind}}{logical variable that indicates whether warning
+#'     \item{\code{stderr_P}}{data frame containing standard error estimates}
+#'     \item{\code{confval_P}}{data frame containing confidence bound estimates}
+#'     \item{\code{warn_ind}}{logical variable that indicates whether warning
 #'       messages were generated}
-#'     \item{\code{warn.df}}{data frame for storing warning messages}
+#'     \item{\code{warn_df}}{data frame for storing warning messages}
 #'   }
 #'
 #' @section Other Functions Required:
@@ -77,8 +77,8 @@
 ################################################################################
 
 cdf_localmean_prop <- function(itype, lev_itype, nlev_itype, ivar, design,
-  design_names, cdfval, ncdfval, cdfest.P, popcorrect, vartype, mult, warn.ind,
-  warn.df) {
+  design_names, cdfval, ncdfval, cdfest_P, popcorrect, vartype, mult, warn_ind,
+  warn_df) {
 
 # Assign a value to the function name variable
 
@@ -102,11 +102,11 @@ cdf_localmean_prop <- function(itype, lev_itype, nlev_itype, ivar, design,
 
 # Assign a value to the indicator variable for a two-stage sample
 
-  cluster.ind <- !is.null(clusterID)
+  cluster_ind <- !is.null(clusterID)
 
 # Assign values to weight variables
 
-  if(cluster.ind) {
+  if(cluster_ind) {
     wgt1 <- dframe$wgt1
     wgt2 <- dframe$wgt2
   } else {
@@ -116,10 +116,10 @@ cdf_localmean_prop <- function(itype, lev_itype, nlev_itype, ivar, design,
 # Create the output data frames for standard error estimates and confidence
 # bound estimates
 
-  stderr.P <- data.frame(array(0, c(nlev_itype, ncdfval)))
-  rownames(stderr.P) <- lev_itype
-  confval.P <- data.frame(array(0, c(nlev_itype * ncdfval , 2)))
-  dimnames(confval.P) <- list(
+  stderr_P <- data.frame(array(0, c(nlev_itype, ncdfval)))
+  rownames(stderr_P) <- lev_itype
+  confval_P <- data.frame(array(0, c(nlev_itype * ncdfval , 2)))
+  dimnames(confval_P) <- list(
     paste(rep(lev_itype, ncdfval),
           rep(1:ncdfval, rep(nlev_itype, ncdfval)), sep=":"),
     c("LCB", "UCB"))
@@ -133,39 +133,39 @@ cdf_localmean_prop <- function(itype, lev_itype, nlev_itype, ivar, design,
 
 # Assign values to the vector of CDF estimates, prop
 
-    prop <- unlist(cdfest.P[isubpop, ])
+    prop <- unlist(cdfest_P[isubpop, ])
 
-# Assign values to the warn.vec vector
+# Assign values to the warn_vec vector
 
-    warn.vec <- c(itype, lev_itype[isubpop], ivar)
+    warn_vec <- c(itype, lev_itype[isubpop], ivar)
 
 # Assign a value to the indicator variable for a stratified sample
 
-    stratum.ind <- !is.null(stratumID)
+    stratum_ind <- !is.null(stratumID)
 
 # For a stratified design, determine whether the subpopulation contains a single
 # stratum
 
-    if(stratum.ind) {
+    if(stratum_ind) {
       stratum <- factor(stratumID[tst])
-      stratum.levels <- levels(stratum)
-      nstrata <- length(stratum.levels)
+      stratum_levels <- levels(stratum)
+      nstrata <- length(stratum_levels)
       if(nstrata == 1)
-        stratum.ind <- FALSE
+        stratum_ind <- FALSE
     }
 
 # Branch for a stratified sample
 
-    if(stratum.ind) {
+    if(stratum_ind) {
 
 # Calculate values required for weighting strata
 
-      if(cluster.ind) {
-        popsize.hat <- tapply(wgt1[tst] * wgt2[tst], stratum, sum)
-        sum.popsize.hat <- sum(wgt1[tst] * wgt2[tst])
+      if(cluster_ind) {
+        popsize_hat <- tapply(wgt1[tst] * wgt2[tst], stratum, sum)
+        sum_popsize_hat <- sum(wgt1[tst] * wgt2[tst])
       } else {
-        popsize.hat <- tapply(wgt[tst], stratum, sum)
-        sum.popsize.hat <- sum(wgt[tst])
+        popsize_hat <- tapply(wgt[tst], stratum, sum)
+        sum_popsize_hat <- sum(wgt[tst])
       }
 
 # Begin the subsection for individual strata
@@ -174,47 +174,47 @@ cdf_localmean_prop <- function(itype, lev_itype, nlev_itype, ivar, design,
 
 # Calculate CDF estimates for the stratum
 
-        stratum.i <- tst & stratumID == stratum.levels[i]
-        if(cluster.ind) {
-          cdfest_st <- cdf_prop(contvar[stratum.i], wgt2[stratum.i], cdfval,
-            cluster.ind, clusterID[stratum.i], wgt1[stratum.i])
+        stratum_i <- tst & stratumID == stratum_levels[i]
+        if(cluster_ind) {
+          cdfest_st <- cdf_prop(contvar[stratum_i], wgt2[stratum_i], cdfval,
+            cluster_ind, clusterID[stratum_i], wgt1[stratum_i])
         } else {
-          cdfest_st <- cdf_prop(contvar[stratum.i], wgt[stratum.i], cdfval,
-            cluster.ind)
+          cdfest_st <- cdf_prop(contvar[stratum_i], wgt[stratum_i], cdfval,
+            cluster_ind)
         }
 
 # Calculate variance estimates
 
-        if(cluster.ind) {
-          temp <- cdfvar_prop(contvar[stratum.i], wgt2[stratum.i],
-            xcoord[stratum.i], ycoord[stratum.i], cdfval, cdfest_st,
-            stratum.ind, stratum.levels[i], cluster.ind, clusterID[stratum.i],
-            wgt1[stratum.i], xcoord1[stratum.i], ycoord1[stratum.i], popcorrect,
-            NULL, Ncluster[stratum.i], stage1size[stratum.i], vartype, warn.ind,
-            warn.df, warn.vec)
+        if(cluster_ind) {
+          temp <- cdfvar_prop(contvar[stratum_i], wgt2[stratum_i],
+            xcoord[stratum_i], ycoord[stratum_i], cdfval, cdfest_st,
+            stratum_ind, stratum_levels[i], cluster_ind, clusterID[stratum_i],
+            wgt1[stratum_i], xcoord1[stratum_i], ycoord1[stratum_i], popcorrect,
+            NULL, Ncluster[stratum_i], stage1size[stratum_i], vartype, warn_ind,
+            warn_df, warn_vec)
         } else {
-          temp <- cdfvar_prop(contvar[stratum.i], wgt[stratum.i],
-            xcoord[stratum.i], ycoord[stratum.i], cdfval, cdfest_st,
-            stratum.ind, stratum.levels[i], cluster.ind,
-            pcfactor.ind = popcorrect, fpcsize=fpcsize[stratum.i],
-            vartype = vartype, warn.ind = warn.ind, warn.df = warn.df,
-            warn.vec = warn.vec)
+          temp <- cdfvar_prop(contvar[stratum_i], wgt[stratum_i],
+            xcoord[stratum_i], ycoord[stratum_i], cdfval, cdfest_st,
+            stratum_ind, stratum_levels[i], cluster_ind,
+            pcfactor_ind = popcorrect, fpcsize=fpcsize[stratum_i],
+            vartype = vartype, warn_ind = warn_ind, warn_df = warn_df,
+            warn_vec = warn_vec)
         }
         if(temp$vartype == "SRS") {
-          rslt.svy <- lapply(cdfval, function(x)
+          rslt_svy <- lapply(cdfval, function(x)
             svymean(make.formula(paste0("I(", ivar, " <= ", x, ")")),
               design = subset(design, tst), na.rm = TRUE))
-          varest <- sapply(rslt.svy, function(x) SE(x)[2])^2
+          varest <- sapply(rslt_svy, function(x) SE(x)[2])^2
         } else {
           varest <- temp$varest
         }
-        warn.ind <- temp$warn.ind
-        warn.df <- temp$warn.df
+        warn_ind <- temp$warn_ind
+        warn_df <- temp$warn_df
 
-# Add estimates to the stderr.P data frame
+# Add estimates to the stderr_P data frame
 
-        stderr.P[isubpop, ] <- stderr.P[isubpop, ] +
-          ((popsize.hat[i]/sum.popsize.hat)^2)*varest
+        stderr_P[isubpop, ] <- stderr_P[isubpop, ] +
+          ((popsize_hat[i]/sum_popsize_hat)^2)*varest
 
 # End the subsection for individual strata
 
@@ -224,12 +224,12 @@ cdf_localmean_prop <- function(itype, lev_itype, nlev_itype, ivar, design,
 
 # Add estimates to the data frames for results
 
-      stderr.P[isubpop, ] <- sqrt(stderr.P[isubpop, ])
-      lbound <- unlist(pmax(prop - mult * stderr.P[isubpop, ], 0))
-      ubound <- unlist(pmin(prop + mult * stderr.P[isubpop, ], 1))
+      stderr_P[isubpop, ] <- sqrt(stderr_P[isubpop, ])
+      lbound <- unlist(pmax(prop - mult * stderr_P[isubpop, ], 0))
+      ubound <- unlist(pmin(prop + mult * stderr_P[isubpop, ], 1))
       temp <- paste(lev_itype[isubpop], 1:ncdfval, sep=":")
-      ind <- rownames(confval.P) %in% temp
-      confval.P[ind, ] <- cbind(lbound, ubound)
+      ind <- rownames(confval_P) %in% temp
+      confval_P[ind, ] <- cbind(lbound, ubound)
 
 # End the subsection for all strata combined
 
@@ -239,27 +239,27 @@ cdf_localmean_prop <- function(itype, lev_itype, nlev_itype, ivar, design,
 
 # Calculate the standard error estimates
 
-      if(cluster.ind) {
+      if(cluster_ind) {
         temp <- cdfvar_prop(contvar[tst], wgt2[tst], xcoord[tst], ycoord[tst],
-          cdfval, prop, stratum.ind, NULL, cluster.ind, clusterID[tst],
+          cdfval, prop, stratum_ind, NULL, cluster_ind, clusterID[tst],
           wgt1[tst], xcoord1[tst], ycoord1[tst], popcorrect, NULL,
-          Ncluster[tst], stage1size[tst], vartype, warn.ind, warn.df, warn.vec)
+          Ncluster[tst], stage1size[tst], vartype, warn_ind, warn_df, warn_vec)
       } else {
         temp <- cdfvar_prop(contvar[tst], wgt[tst], xcoord[tst], ycoord[tst],
-          cdfval, prop, stratum.ind, NULL, cluster.ind,
-          pcfactor.ind = popcorrect, fpcsize = fpcsize[tst], vartype = vartype,
-          warn.ind = warn.ind, warn.df = warn.df, warn.vec = warn.vec)
+          cdfval, prop, stratum_ind, NULL, cluster_ind,
+          pcfactor_ind = popcorrect, fpcsize = fpcsize[tst], vartype = vartype,
+          warn_ind = warn_ind, warn_df = warn_df, warn_vec = warn_vec)
       }
       if(temp$vartype == "SRS") {
-        rslt.svy <- lapply(cdfval, function(x)
+        rslt_svy <- lapply(cdfval, function(x)
           svymean(make.formula(paste0("I(", ivar, " <= ", x, ")")),
             design = subset(design, tst), na.rm = TRUE))
-        sdest <- sapply(rslt.svy, function(x) SE(x)[2])
+        sdest <- sapply(rslt_svy, function(x) SE(x)[2])
       } else {
         sdest <- sqrt(temp$varest)
       }
-      warn.ind <- temp$warn.ind
-      warn.df <- temp$warn.df
+      warn_ind <- temp$warn_ind
+      warn_df <- temp$warn_df
 
 # Calculate confidence bounds
 
@@ -268,10 +268,10 @@ cdf_localmean_prop <- function(itype, lev_itype, nlev_itype, ivar, design,
 
 # Add estimates to the data frames for results
 
-      stderr.P[isubpop, ] <- sdest
+      stderr_P[isubpop, ] <- sdest
       temp <- paste(lev_itype[isubpop], 1:ncdfval, sep=":")
-      ind <- rownames(confval.P) %in% temp
-      confval.P[ind, ] <- cbind(lbound, ubound)
+      ind <- rownames(confval_P) %in% temp
+      confval_P[ind, ] <- cbind(lbound, ubound)
 
     }
 
@@ -279,8 +279,8 @@ cdf_localmean_prop <- function(itype, lev_itype, nlev_itype, ivar, design,
 
 # Return results
 
-  list(stderr.P = stderr.P,
-       confval.P = confval.P,
-       warn.ind = warn.ind,
-       warn.df = warn.df)
+  list(stderr_P = stderr_P,
+       confval_P = confval_P,
+       warn_ind = warn_ind,
+       warn_df = warn_df)
 }

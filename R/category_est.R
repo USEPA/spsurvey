@@ -63,17 +63,17 @@
 #' @param mult Numeric value that provides the Normal distribution confidence
 #'   bound multiplier.
 #'
-#' @param warn.ind Logical value that indicates whether warning messages were
+#' @param warn_ind Logical value that indicates whether warning messages were
 #'   generated.
 #'
-#' @param warn.df Data frame for storing warning messages.
+#' @param warn_df Data frame for storing warning messages.
 #'
 #' @return A list composed of the following objects:
 #'   \describe{
 #'     \item{\code{catsum}}{data frame containing the category estimates}
-#'     \item{\code{warn.ind}}{logical variable that indicates whether warning
+#'     \item{\code{warn_ind}}{logical variable that indicates whether warning
 #'       messages were generated}
-#'     \item{\code{warn.df}}{data frame for storing warning messages}
+#'     \item{\code{warn_df}}{data frame for storing warning messages}
 #'   }
 #'
 #' @section Other Functions Required:
@@ -114,7 +114,7 @@
 
 category_est <- function(catsum, dframe, itype, lev_itype, nlev_itype, ivar,
   lev_ivar, nlev_ivar, design, design_names, popcorrect, vartype, conf, mult,
-  warn.ind, warn.df) {
+  warn_ind, warn_df) {
 
 # Assign a value to the function name variable
 
@@ -128,73 +128,73 @@ category_est <- function(catsum, dframe, itype, lev_itype, nlev_itype, ivar,
   if(nlev_itype == 1) {
     if(nlev_ivar <= 1) {
       temp <- ifelse(all(is.na(dframe[, ivar])), 0.0, 1.0)
-      rslt.P <- data.frame(ivar = temp, Total = temp)
-      dimnames(rslt.P)[1] <- lev_itype
-      stderr.P <- data.frame(ivar = 0.0, Total = 0.0)
+      rslt_P <- data.frame(ivar = temp, Total = temp)
+      dimnames(rslt_P)[1] <- lev_itype
+      stderr_P <- data.frame(ivar = 0.0, Total = 0.0)
       temp <- data.frame(LCB = temp, UCB = temp)
-      confval.P <- rbind(ivar = temp, Total = temp)
+      stderr_P <- rbind(ivar = temp, Total = temp)
     } else {
-      rslt.svy <- svymean(make.formula(ivar), design = subset(design, tst),
+      rslt_svy <- svymean(make.formula(ivar), design = subset(design, tst),
         na.rm = TRUE)
-      rslt.P <- cbind(data.frame(t(as.data.frame(rslt.svy)[1])),
+      rslt_P <- cbind(data.frame(t(as.data.frame(rslt_svy)[1])),
         Total = 1.0)
-      dimnames(rslt.P)[1] <- lev_itype
+      dimnames(rslt_P)[1] <- lev_itype
       if(vartype == "Local") {
         temp <- cat_localmean_prop(itype, lev_itype, nlev_itype, ivar, lev_ivar,
-          nlev_ivar, design, design_names, rslt.P, popcorrect, vartype, mult,
-          warn.ind, warn.df)
-        stderr.P <- temp$stderr.P
-        confval.P <- temp$confval.P
-        warn.ind <- temp$warn.ind
-        warn.df <- temp$warn.df
+          nlev_ivar, design, design_names, rslt_P, popcorrect, vartype, mult,
+          warn_ind, warn_df)
+        stderr_P <- temp$stderr_P
+        stderr_P <- temp$stderr_P
+        warn_ind <- temp$warn_ind
+        warn_df <- temp$warn_df
       } else {
-        stderr.P <- cbind(t(data.frame(SE(rslt.svy))), Total = 0.0)
-        confval.P <- confint(rslt.svy, level = conf/100)
+        stderr_P <- cbind(t(data.frame(SE(rslt_svy))), Total = 0.0)
+        stderr_P <- confint(rslt_svy, level = conf/100)
         tempdf <- data.frame(LCB = 1.0, UCB = 1.0)
-        dimnames(tempdf) <- list("Total", colnames(confval.P))
-        confval.P <- rbind(confval.P, tempdf)
+        dimnames(tempdf) <- list("Total", colnames(stderr_P))
+        stderr_P <- rbind(stderr_P, tempdf)
       }
     }
   } else {
     if(nlev_ivar == 1) {
       ivar_splt <- split(dframe[, ivar], dframe[, itype])
       temp <- ifelse(sapply(ivar_splt, function(x) all(is.na(x))), 0.0, 1.0)
-      rslt.P <- data.frame(ivar = temp, Total = temp)
-      dimnames(rslt.P)[[1]] <- lev_itype
-      stderr.P <- data.frame(ivar = rep(0.0, nlev_itype), Total = rep(0.0,
+      rslt_P <- data.frame(ivar = temp, Total = temp)
+      dimnames(rslt_P)[[1]] <- lev_itype
+      stderr_P <- data.frame(ivar = rep(0.0, nlev_itype), Total = rep(0.0,
         nlev_itype))
-      confval.P <- NULL
+      stderr_P <- NULL
       for(i in 1:nlev_itype) {
         tempdf <- rbind(data.frame(temp[i], temp[i]), data.frame(temp[i],
           temp[i]))
         rownames(tempdf) <- c(paste(lev_itype[i], ivar, sep=":"),
           paste(lev_itype[i], "Total", sep=":"))
         colnames(tempdf) <- c("LCB", "UCB")
-        confval.P <- rbind(confval.P, tempdf)
+        stderr_P <- rbind(stderr_P, tempdf)
       }
     } else {
-      rslt.svy <- svyby(make.formula(ivar), make.formula(itype),
+      rslt_svy <- svyby(make.formula(ivar), make.formula(itype),
         design = subset(design, tst), svymean, na.rm = TRUE)
-      rslt.P <- rslt.svy[, 2:(nlev_ivar + 1)]
-      rslt.P <- cbind(rslt.P, Total = rep(1, nlev_itype))
+      rslt_P <- rslt_svy[, 2:(nlev_ivar + 1)]
+      rslt_P <- cbind(rslt_P, Total = rep(1, nlev_itype))
       if(vartype == "Local") {
         temp <- cat_localmean_prop(itype, lev_itype, nlev_itype, ivar, lev_ivar,
-          nlev_ivar, design, design_names, rslt.P, popcorrect, vartype, mult,
-          warn.ind, warn.df)
-        stderr.P <- temp$stderr.P
-        confval.P <- temp$confval.P
-        warn.ind <- temp$warn.ind
-        warn.df <- temp$warn.df
+          nlev_ivar, design, design_names, rslt_P, popcorrect, vartype, mult,
+          warn_ind, warn_df)
+        stderr_P <- temp$stderr_P
+        stderr_P <- temp$stderr_P
+        warn_ind <- temp$warn_ind
+        warn_df <- temp$warn_df
       } else {
-        stderr.P <- cbind(SE(rslt.svy), Total = rep(0, nlev_itype))
-        tempdf <- confint(rslt.svy, level = conf/100)
-        confval.P <- NULL
+        stderr_P <- cbind(SE(rslt_svy), Total = rep(0, nlev_itype))
+        tempdf <- confint(rslt_svy, level = conf/100)
+        stderr_P <- NULL
         for(i in 1:nlev_itype) {
-          confval.P <- rbind(confval.P, tempdf[seq(i, by=nlev_itype,
+          stderr_P <- rbind(stderr_P, tempdf[seq(i, by=nlev_itype,
             length=nlev_ivar), ])
           temp <- data.frame(1.0, 1.0)
           colnames(temp) <- colnames(tempdf)
-          confval.P <- rbind(confval.P, Total = temp)
+          stderr_P <- rbind(stderr_P, Total = temp)
         }
       }
     }
@@ -212,90 +212,90 @@ category_est <- function(catsum, dframe, itype, lev_itype, nlev_itype, ivar,
   design <- update(design, zzz = zzz)
   if(nlev_itype == 1) {
     if(nlev_ivar <= 1) {
-      rslt.svy <- svytotal(~zzz, design = subset(design, tst),  na.rm = TRUE)
-      rslt.U <- data.frame(ivar = rslt.svy[1], Total = rslt.svy[1])
-      dimnames(rslt.U)[1] <- lev_itype
+      rslt_svy <- svytotal(~zzz, design = subset(design, tst),  na.rm = TRUE)
+      rslt_U <- data.frame(ivar = rslt_svy[1], Total = rslt_svy[1])
+      dimnames(rslt_U)[1] <- lev_itype
       if(vartype == "Local") {
         temp <- cat_localmean_total(itype, lev_itype, nlev_itype, "zzz",
-          lev_ivar, nlev_ivar, design, design_names, rslt.U, popcorrect,
-          vartype, mult, warn.ind, warn.df)
-        stderr.U <- temp$stderr.U
-        confval.U <- temp$confval.U
-        warn.ind <- temp$warn.ind
-        warn.df <- temp$warn.df
+          lev_ivar, nlev_ivar, design, design_names, rslt_U, popcorrect,
+          vartype, mult, warn_ind, warn_df)
+        stderr_U <- temp$stderr_U
+        confval_U <- temp$confval_U
+        warn_ind <- temp$warn_ind
+        warn_df <- temp$warn_df
       } else {
-        temp <- SE(rslt.svy)
-        stderr.U <- data.frame(ivar = as.vector(temp), Total = as.vector(temp))
-        temp <- as.data.frame(confint(rslt.svy, level = conf/100))
-        confval.U <- rbind(ivar = temp, Total = temp)
+        temp <- SE(rslt_svy)
+        stderr_U <- data.frame(ivar = as.vector(temp), Total = as.vector(temp))
+        temp <- as.data.frame(confint(rslt_svy, level = conf/100))
+        confval_U <- rbind(ivar = temp, Total = temp)
       }
     } else {
-       rslt.svy <- svytotal(make.formula(ivar), design = subset(design, tst),
+       rslt_svy <- svytotal(make.formula(ivar), design = subset(design, tst),
         na.rm = TRUE)
-      rslt.T <- svytotal(~zzz, design = subset(design, tst), na.rm = TRUE)
-      rslt.U <- cbind(data.frame(t(as.data.frame(rslt.svy)[1])),
-        Total = rslt.T[1])
-      dimnames(rslt.U)[1] <- lev_itype
+      rslt_U <- svytotal(~zzz, design = subset(design, tst), na.rm = TRUE)
+      rslt_U <- cbind(data.frame(t(as.data.frame(rslt_svy)[1])),
+        Total = rslt_U[1])
+      dimnames(rslt_U)[1] <- lev_itype
       if(vartype == "Local") {
         temp <- cat_localmean_total(itype, lev_itype, nlev_itype, ivar,
-          lev_ivar, nlev_ivar, design, design_names, rslt.U, popcorrect,
-          vartype, mult, warn.ind, warn.df)
-        stderr.U <- temp$stderr.U
-        confval.U <- temp$confval.U
-        warn.ind <- temp$warn.ind
-        warn.df <- temp$warn.df
+          lev_ivar, nlev_ivar, design, design_names, rslt_U, popcorrect,
+          vartype, mult, warn_ind, warn_df)
+        stderr_U <- temp$stderr_U
+        confval_U <- temp$confval_U
+        warn_ind <- temp$warn_ind
+        warn_df <- temp$warn_df
       } else {
-        temp <- SE(rslt.T)
-        stderr.U <- cbind(t(data.frame(SE(rslt.svy))), Total = as.vector(temp))
-        temp <- as.data.frame(confint(rslt.T, level = conf/100))
-        confval.U <- rbind(confint(rslt.svy, level = conf/100), Total = temp)
+        temp <- SE(rslt_U)
+        stderr_U <- cbind(t(data.frame(SE(rslt_svy))), Total = as.vector(temp))
+        temp <- as.data.frame(confint(rslt_U, level = conf/100))
+        confval_U <- rbind(confint(rslt_svy, level = conf/100), Total = temp)
       }
     }
   } else {
     if(nlev_ivar == 1) {
-      rslt.svy <- svyby(~zzz, make.formula(itype), design = subset(design, tst),
+      rslt_svy <- svyby(~zzz, make.formula(itype), design = subset(design, tst),
         svytotal, na.rm = TRUE)
-      rslt.U <- data.frame(ivar = rslt.svy$zzz, Total = rslt.svy$zzz)
-      dimnames(rslt.U)[[1]] <- lev_itype
+      rslt_U <- data.frame(ivar = rslt_svy$zzz, Total = rslt_svy$zzz)
+      dimnames(rslt_U)[[1]] <- lev_itype
       if(vartype == "Local") {
         temp <- cat_localmean_total(itype, lev_itype, nlev_itype, "zzz",
-          lev_ivar,  nlev_ivar, design, design_names, rslt.U, popcorrect,
-          vartype, mult, warn.ind, warn.df)
-        stderr.U <- temp$stderr.U
-        confval.U <- temp$confval.U
-        warn.ind <- temp$warn.ind
-        warn.df <- temp$warn.df
+          lev_ivar,  nlev_ivar, design, design_names, rslt_U, popcorrect,
+          vartype, mult, warn_ind, warn_df)
+        stderr_U <- temp$stderr_U
+        confval_U <- temp$confval_U
+        warn_ind <- temp$warn_ind
+        warn_df <- temp$warn_df
       } else {
-        temp <- SE(rslt.svy)
-        stderr.U <- data.frame(ivar = temp, Total = temp)
-        temp <- as.data.frame(confint(rslt.svy, level = conf/100))
-        confval.U <- rbind(ivar = temp, Total = temp)
+        temp <- SE(rslt_svy)
+        stderr_U <- data.frame(ivar = temp, Total = temp)
+        temp <- as.data.frame(confint(rslt_svy, level = conf/100))
+        confval_U <- rbind(ivar = temp, Total = temp)
       }
     } else {
-      rslt.svy <- svyby(make.formula(ivar), make.formula(itype),
+      rslt_svy <- svyby(make.formula(ivar), make.formula(itype),
         design = subset(design, tst), svytotal, na.rm = TRUE)
-      rslt.T <- svyby(~zzz, make.formula(itype), design = subset(design, tst),
+      rslt_U <- svyby(~zzz, make.formula(itype), design = subset(design, tst),
         svytotal, na.rm = TRUE)
-      rslt.U <- rslt.svy[, 2:(nlev_ivar + 1)]
-      temp <- rslt.T[2]
+      rslt_U <- rslt_svy[, 2:(nlev_ivar + 1)]
+      temp <- rslt_U[2]
       names(temp) <- "Total"
-      rslt.U <- cbind(rslt.U, Total = temp)
+      rslt_U <- cbind(rslt_U, Total = temp)
       if(vartype == "Local") {
         temp <- cat_localmean_total(itype, lev_itype, nlev_itype, ivar,
-          lev_ivar,  nlev_ivar, design, design_names, rslt.U, popcorrect,
-          vartype, mult, warn.ind, warn.df)
-        stderr.U <- temp$stderr.U
-        confval.U <- temp$confval.U
-        warn.ind <- temp$warn.ind
-        warn.df <- temp$warn.df
+          lev_ivar,  nlev_ivar, design, design_names, rslt_U, popcorrect,
+          vartype, mult, warn_ind, warn_df)
+        stderr_U <- temp$stderr_U
+        confval_U <- temp$confval_U
+        warn_ind <- temp$warn_ind
+        warn_df <- temp$warn_df
       } else {
-        temp <- SE(rslt.T)
-        stderr.U <- cbind(SE(rslt.svy), Total = temp)
-        temp <- as.data.frame(confint(rslt.T, level = conf/100))
-        tempdf <- confint(rslt.svy, level = conf/100)
-        confval.U <- NULL
+        temp <- SE(rslt_U)
+        stderr_U <- cbind(SE(rslt_svy), Total = temp)
+        temp <- as.data.frame(confint(rslt_U, level = conf/100))
+        tempdf <- confint(rslt_svy, level = conf/100)
+        confval_U <- NULL
         for(i in 1:nlev_itype) {
-          confval.U <- rbind(confval.U, tempdf[seq(i, by=nlev_itype,
+          confval_U <- rbind(confval_U, tempdf[seq(i, by=nlev_itype,
             length=nlev_ivar), ], Total = temp[i, ])
         }
       }
@@ -304,7 +304,7 @@ category_est <- function(catsum, dframe, itype, lev_itype, nlev_itype, ivar,
 
 # Assign identifiers and estimates to the catsum data frame
 
-  snames <- dimnames(rslt.P)[[1]]
+  snames <- dimnames(rslt_P)[[1]]
   inames <- rep(ivar, nlev_ivar + 1)
   lev <- c(lev_ivar, "Total")
   cnames <- lev
@@ -322,7 +322,7 @@ category_est <- function(catsum, dframe, itype, lev_itype, nlev_itype, ivar,
     }
   }
   k <- 1
-  for(i in 1:nrow(rslt.P)) {
+  for(i in 1:nrow(rslt_P)) {
     inc <- (i - 1) * (nlev_ivar + 1)
     for(j in 1:length(inames)) {
       catsum <- rbind(catsum, data.frame(
@@ -331,22 +331,22 @@ category_est <- function(catsum, dframe, itype, lev_itype, nlev_itype, ivar,
         Indicator = inames[j],
         Category = cnames[j],
         nResp = nresp[k],
-        Estimate.P = 100 * rslt.P[i, j],
-        StdError.P = 100 * stderr.P[i, j],
-        MarginofError.P = 100 * (mult * stderr.P[i, j]),
-        LCB.P = 100 * max(confval.P[inc + j, 1], 0),
-        UCB.P = 100 * min(confval.P[inc + j, 2], 1),
-        Estimate.U = rslt.U[i, j],
-        StdError.U = stderr.U[i, j],
-        MarginofError.U = mult * stderr.U[i, j],
-        LCB.U = max(confval.U[inc + j, 1], 0),
-        UCB.U = confval.U[inc + j, 2]))
+        Estimate.P = 100 * rslt_P[i, j],
+        StdError.P = 100 * stderr_P[i, j],
+        MarginofError.P = 100 * (mult * stderr_P[i, j]),
+        LCB.P = 100 * max(stderr_P[inc + j, 1], 0),
+        UCB.P = 100 * min(stderr_P[inc + j, 2], 1),
+        Estimate.U = rslt_U[i, j],
+        StdError.U = stderr_U[i, j],
+        MarginofError.U = mult * stderr_U[i, j],
+        LCB.U = max(confval_U[inc + j, 1], 0),
+        UCB.U = confval_U[inc + j, 2]))
         k <- k + 1
     }
   }
 
-# Return the catsum data frame, the warn.ind logical value, and the warn.df
+# Return the catsum data frame, the warn_ind logical value, and the warn_df
 # data frame
 
-  list(catsum = catsum, warn.ind = warn.ind, warn.df = warn.df)
+  list(catsum = catsum, warn_ind = warn_ind, warn_df = warn_df)
 }

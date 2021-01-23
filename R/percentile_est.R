@@ -50,17 +50,17 @@
 #' @param pctval  Vector of the set of values at which percentiles are
 #'   estimated.
 #'
-#' @param warn.ind Logical value that indicates whether warning messages were
+#' @param warn_ind Logical value that indicates whether warning messages were
 #'   generated.
 #'
-#' @param warn.df Data frame for storing warning messages.
+#' @param warn_df Data frame for storing warning messages.
 #'
 #' @return A list composed of the following objects:
 #'   \describe{
 #'     \item{\code{pctsum}}{data frame containing the percentile estimates}
-#'     \item{\code{warn.ind}}{logical variable that indicates whether warning
+#'     \item{\code{warn_ind}}{logical variable that indicates whether warning
 #'       messages were generated}
-#'     \item{\code{warn.df}}{data frame for storing warning messages}
+#'     \item{\code{warn_df}}{data frame for storing warning messages}
 #'   }
 #'
 #' @section Other Functions Required:
@@ -99,7 +99,7 @@
 
 percentile_est <- function(pctsum, dframe, itype, lev_itype, nlev_itype, ivar,
   design, design_names, var_nondetect, popcorrect,  vartype, conf, mult, pctval,
-  warn.ind, warn.df) {
+  warn_ind, warn_df) {
 
 # Assign a value to the function name variable
 
@@ -123,10 +123,10 @@ percentile_est <- function(pctsum, dframe, itype, lev_itype, nlev_itype, ivar,
     if(nlev_itype == 1) {
       nresp <- sum(!is.na(dframe[tst, ivar]))
       if(nresp == 1) {
-        warn.ind <- TRUE
+        warn_ind <- TRUE
         act <- "Percentiles were not calculated.\n"
         warn <- paste0("Percentile estimates were not calculated for subpopulation type \"", itype, "\" \nsince the number of non-missing response values equals one.\n")
-        warn.df <- rbind(warn.df, data.frame(func=I(fname),
+        warn_df <- rbind(warn_df, data.frame(func=I(fname),
           subpoptype=itype, subpop=NA, indicator=ivar, stratum=NA,
           warning=I(warn), action=I(act)))
         pctest <- rep(NA, npctval)
@@ -142,14 +142,14 @@ percentile_est <- function(pctsum, dframe, itype, lev_itype, nlev_itype, ivar,
         ubound_mean <- temp
       } else {
         options(warn = -1)
-        rslt.svy <- svyquantile(make.formula(ivar),
+        rslt_svy <- svyquantile(make.formula(ivar),
           design = subset(design, tst), quantiles = pctval/100,
           alpha = (100 - conf)/100, ci = TRUE, na.rm = TRUE)
         options(warn = 0)
-        pctest <- rslt.svy$quantiles
+        pctest <- rslt_svy$quantiles
         nresp <- cdf_nresp(dframe[, ivar], as.vector(pctest))
-        stderr <- SE(rslt.svy)
-        temp <- confint(rslt.svy)
+        stderr <- SE(rslt_svy)
+        temp <- confint(rslt_svy)
         lbound <- temp[, 1]
         ubound <- temp[, 2]
         rslt <- svymean(make.formula(ivar), design = subset(design, tst),
@@ -159,12 +159,12 @@ percentile_est <- function(pctsum, dframe, itype, lev_itype, nlev_itype, ivar,
         if(vartype == "Local") {
           temp <- mean_localmean(itype, lev_itype, nlev_itype, c(1), ivar,
             design, design_names, meanest[1], popcorrect, vartype, mult,
-            warn.ind, warn.df)
+            warn_ind, warn_df)
           stderr_mean <- temp$stderr
           lbound_mean <- unlist(temp$confval[1])
           ubound_mean <- unlist(temp$confval[2])
-          warn.ind <- temp$warn.ind
-          warn.df <- temp$warn.df
+          warn_ind <- temp$warn_ind
+          warn_df <- temp$warn_df
         } else {
           stderr_mean <- SE(rslt)
           temp <- confint(rslt, level = conf/100)
@@ -187,11 +187,11 @@ percentile_est <- function(pctsum, dframe, itype, lev_itype, nlev_itype, ivar,
         sum(!is.na(x)))
       subpop_ind <- nval > 1
       if(any(!subpop_ind)) {
-        temp.str <- vecprint(lev_itype[!subpop_ind])
-        warn.ind <- TRUE
+        temp_str <- vecprint(lev_itype[!subpop_ind])
+        warn_ind <- TRUE
         act <- "Percentiles were not calculated.\n"
-        warn <- paste0("Percentile estimates were not calculated for the following subpopulations of \nsubpopulation type \"", itype, "\" since the number of non-missing response values \nequals one for each subpopulation:\n", temp.str)
-        warn.df <- rbind(warn.df, data.frame(func=I(fname),
+        warn <- paste0("Percentile estimates were not calculated for the following subpopulations of \nsubpopulation type \"", itype, "\" since the number of non-missing response values \nequals one for each subpopulation:\n", temp_str)
+        warn_df <- rbind(warn_df, data.frame(func=I(fname),
           subpoptype=itype, subpop=NA, indicator=ivar, stratum=NA,
           warning=I(warn), action=I(act)))
         levs <- (1:nlev_itype)[!subpop_ind]
@@ -209,13 +209,13 @@ percentile_est <- function(pctsum, dframe, itype, lev_itype, nlev_itype, ivar,
         tst <- tst & dframe[, itype] %in% lev_itype[subpop_ind]
         levs <- (1:nlev_itype)[subpop_ind]
         options(warn = -1)
-        rslt.svy <- svyby(make.formula(ivar), make.formula(itype),
+        rslt_svy <- svyby(make.formula(ivar), make.formula(itype),
           design = subset(design, tst), svyquantile, quantiles = pctval/100,
           alpha = (100 - conf)/100, ci = TRUE, na.rm = TRUE)
         options(warn = 0)
         j <- 1
         for(i in levs) {
-          pctest[i, ] <- unlist(rslt.svy[j, 2:(npctval+1)])
+          pctest[i, ] <- unlist(rslt_svy[j, 2:(npctval+1)])
           j <- j + 1
         }
         for(i in levs) {
@@ -223,13 +223,13 @@ percentile_est <- function(pctsum, dframe, itype, lev_itype, nlev_itype, ivar,
           nresp[i, ] <- cdf_nresp(dframe[ind, ivar], pctest[i, ])
         }
         rownames(nresp) <- lev_itype
-        temp <- SE(rslt.svy)
+        temp <- SE(rslt_svy)
         j <- 1
         for(i in levs) {
           stderr[i, ] <- unlist(temp[j, 1:npctval])
           j <- j + 1
         }
-        temp <- confint(rslt.svy)
+        temp <- confint(rslt_svy)
         j <- 1
         for(i in levs) {
           lbound[i, ] <- temp[seq(j, by = length(levs), length = npctval), 1]
@@ -247,12 +247,12 @@ percentile_est <- function(pctsum, dframe, itype, lev_itype, nlev_itype, ivar,
         if(vartype == "Local") {
           temp <- mean_localmean(itype, lev_itype, nlev_itype, levs, ivar,
             design, design_names, meanest, popcorrect, vartype, mult,
-            warn.ind, warn.df)
+            warn_ind, warn_df)
           stderr_mean[levs] <- temp$stderr[levs]
           lbound_mean[levs] <- unlist(temp$confval[levs, 1])
           ubound_mean[levs] <- unlist(temp$confval[levs, 2])
-          warn.ind <- temp$warn.ind
-          warn.df <- temp$warn.df
+          warn_ind <- temp$warn_ind
+          warn_df <- temp$warn_df
         } else {
           stderr_mean[levs] <- SE(rslt)
         temp <- confint(rslt, level = conf/100)
@@ -300,8 +300,8 @@ percentile_est <- function(pctsum, dframe, itype, lev_itype, nlev_itype, ivar,
 # To be implemented
   }
 
-# Return the pctsum data frame, the warn.ind logical value, and the warn.df
+# Return the pctsum data frame, the warn_ind logical value, and the warn_df
 # data frame
 
-  list(pctsum = pctsum, warn.ind = warn.ind, warn.df = warn.df)
+  list(pctsum = pctsum, warn_ind = warn_ind, warn_df = warn_df)
 }

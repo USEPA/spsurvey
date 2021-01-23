@@ -238,13 +238,13 @@ cont_analysis <- function(dframe, vars, vars_nondetect = NULL, subpops = NULL,
 
 # Create a vector for error messages
 
-  error.ind <- FALSE
-  error.vec <- NULL
+  error_ind <- FALSE
+  error_vec <- NULL
 
 # Create a data frame for warning messages
 
-  warn.ind <- FALSE
-  warn.df <- NULL
+  warn_ind <- FALSE
+  warn_df <- NULL
   fname <- "cont_analysis"
 
 # Ensure that the dframe argument was provided
@@ -283,9 +283,9 @@ cont_analysis <- function(dframe, vars, vars_nondetect = NULL, subpops = NULL,
     
     if(!(siteID %in% names(dframe))) {
       ind <- FALSE
-      error.ind <- TRUE
+      error_ind <- TRUE
       msg <- paste0("The name provided for the siteID argument, \"", siteID, "\", does not occur among \nthe names for the dframe data frame.\n")
-      error.vec <- c(error.vec, msg)
+      error_vec <- c(error_vec, msg)
     } else {
       ind <- TRUE
     }
@@ -298,11 +298,11 @@ cont_analysis <- function(dframe, vars, vars_nondetect = NULL, subpops = NULL,
     dframe$siteID <- dframe[, siteID]
     temp <- with(dframe, sapply(split(siteID, siteID), length))
     if(any(temp > 1)) {
-      warn.ind <- TRUE
-      temp.str <- vecprint(names(temp)[temp > 1])
-      warn <- paste("The following site ID values occur more than once among the values that were \ninput to the function:\n", temp.str)
+      warn_ind <- TRUE
+      temp_str <- vecprint(names(temp)[temp > 1])
+      warn <- paste("The following site ID values occur more than once among the values that were \ninput to the function:\n", temp_str)
       act <- "Unique site ID values were created.\n"
-      warn.df <- rbind(warn.df, data.frame(func=I(fname), subpoptype=NA,
+      warn_df <- rbind(warn_df, data.frame(func=I(fname), subpoptype=NA,
         subpop=NA, indicator=NA, stratum=NA, warning=I(warn), action=I(act)))
       dframe$siteID <- uniqueID(dframe$siteID)
     }
@@ -311,9 +311,9 @@ cont_analysis <- function(dframe, vars, vars_nondetect = NULL, subpops = NULL,
 # Ensure that the dframe data frame contains the survey weight variable
 
   if(!(weight %in% names(dframe))) {
-    error.ind <- TRUE
+    error_ind <- TRUE
     msg <- paste0("The name provided for the weight argument, \"", weight, "\", does not occur among \nthe names for the dframe data frame.\n")
-    error.vec <- c(error.vec, msg)
+    error_vec <- c(error_vec, msg)
   }
   
 # Setting a default finite population correction value for non-clustered designs
@@ -351,9 +351,9 @@ cont_analysis <- function(dframe, vars, vars_nondetect = NULL, subpops = NULL,
 # argument
 
   if(is.null(vars)) {
-    error.ind <- TRUE
+    error_ind <- TRUE
     msg <- "A value must be provided for the vars (response variable names) argument.\n"
-    error.vec <- c(error.vec, msg)
+    error_vec <- c(error_vec, msg)
   }
 
 # If a value was not provided for the subpops (subpopulation names) argument,
@@ -369,7 +369,7 @@ cont_analysis <- function(dframe, vars, vars_nondetect = NULL, subpops = NULL,
 # Check input arguments
   temp <- input_check(dframe, design_names, NULL, vars, NULL, vars_nondetect,
     subpops, sizeweight, popcorrect, popsize, vartype, jointprob, conf,
-    pctval = pctval, error.ind = error.ind, error.vec = error.vec)
+    pctval = pctval, error_ind = error_ind, error_vec = error_vec)
   dframe <- temp$dframe
   vars <- temp$vars_cont
   vars_nondetect <- temp$vars_nondetect
@@ -377,26 +377,26 @@ cont_analysis <- function(dframe, vars, vars_nondetect = NULL, subpops = NULL,
   popsize <- temp$popsize
   vartype <- temp$vartype
   jointprob <- temp$jointprob
-  error.ind <- temp$error.ind
-  error.vec <- temp$error.vec
+  error_ind <- temp$error_ind
+  error_vec <- temp$error_vec
 
 # As necessary, output a message indicating that error messages were generated
 # during execution of the program
 
-  if(error.ind) {
-    error.vec <<- error.vec
-    if(length(error.vec) == 1) {
-      cat("During execution of the program, an error message was generated.  The error \nmessage is stored in a vector named 'error.vec'.  Enter the following command \nto view the error message: errorprnt()\n")
+  if(error_ind) {
+    error_vec <<- error_vec
+    if(length(error_vec) == 1) {
+      cat("During execution of the program, an error message was generated.  The error \nmessage is stored in a vector named 'error_vec'.  Enter the following command \nto view the error message: errorprnt()\n")
     } else {
-      cat(paste("During execution of the program,", length(error.vec), "error messages were generated.  The error \nmessages are stored in a vector named 'error.vec'.  Enter the following \ncommand to view the error messages: errorprnt()\n"))
+      cat(paste("During execution of the program,", length(error_vec), "error messages were generated.  The error \nmessages are stored in a vector named 'error_vec'.  Enter the following \ncommand to view the error messages: errorprnt()\n"))
     }
 
-    if(warn.ind) {
-      warn.df <<- warn.df
-      if(nrow(warn.df) == 1) {
-        cat("During execution of the program, a warning message was generated.  The warning \nmessage is stored in a data frame named 'warn.df'.  Enter the following command \nto view the warning message: warnprnt()\n")
+    if(warn_ind) {
+      warn_df <<- warn_df
+      if(nrow(warn_df) == 1) {
+        cat("During execution of the program, a warning message was generated.  The warning \nmessage is stored in a data frame named 'warn_df'.  Enter the following command \nto view the warning message: warnprnt()\n")
       } else {
-        cat(paste("During execution of the program,", nrow(warn.df), "warning messages were generated.  The warning \nmessages are stored in a data frame named 'warn.df'.  Enter the following \ncommand to view the warning messages: warnprnt() \nTo view a subset of the warning messages (say, messages number 1, 3, and 5), \nenter the following command: warnprnt(m=c(1,3,5))\n"))
+        cat(paste("During execution of the program,", nrow(warn_df), "warning messages were generated.  The warning \nmessages are stored in a data frame named 'warn_df'.  Enter the following \ncommand to view the warning messages: warnprnt() \nTo view a subset of the warning messages (say, messages number 1, 3, and 5), \nenter the following command: warnprnt(m=c(1,3,5))\n"))
       }
     }
     stop("See the preceding message(s).")
@@ -404,22 +404,22 @@ cont_analysis <- function(dframe, vars, vars_nondetect = NULL, subpops = NULL,
 
 # Assign a logical value to the indicator variable for a stratified sample
 
-  stratum.ind <- !is.null(stratumID)
+  stratum_ind <- !is.null(stratumID)
 
 # For a stratified sample, remove strata that contain a single site
 
-  if(stratum.ind) {
+  if(stratum_ind) {
     dframe[, stratumID] <- factor(dframe[, stratumID])
-    stratum.levels <- levels(dframe[, stratumID])
-    nstrata <- length(stratum.levels)
+    stratum_levels <- levels(dframe[, stratumID])
+    nstrata <- length(stratum_levels)
     ind <- FALSE
     for(i in 1:nstrata) {
-      tst <- dframe[, stratumID] == stratum.levels[i]
+      tst <- dframe[, stratumID] == stratum_levels[i]
       if(sum(tst) == 1) {
-        warn.ind <- TRUE
-        warn <- paste0("The stratum named \"", stratum.levels[i], "\" contains a single value and was removed from the analysis.\n")
+        warn_ind <- TRUE
+        warn <- paste0("The stratum named \"", stratum_levels[i], "\" contains a single value and was removed from the analysis.\n")
         act <- "Stratum was removed from the analysis.\n"
-        warn.df <- rbind(warn.df, data.frame(func=I(fname), subpoptype=NA,
+        warn_df <- rbind(warn_df, data.frame(func=I(fname), subpoptype=NA,
           subpop=NA, indicator=NA, stratum=NA, warning=I(warn), action=I(act)))
         dframe <- dframe[!tst,]
         ind <- TRUE
@@ -427,20 +427,20 @@ cont_analysis <- function(dframe, vars, vars_nondetect = NULL, subpops = NULL,
     }
     if(ind) {
       dframe[, stratumID] <- factor(dframe[, stratumID])
-      stratum.levels <- levels(dframe[, stratumID])
-      nstrata <- length(stratum.levels)
+      stratum_levels <- levels(dframe[, stratumID])
+      nstrata <- length(stratum_levels)
       dframe <- droplevels(dframe)
     }
   }
 
 # Assign a logical value to the indicator variable for a two-stage sample
 
-  cluster.ind <- !is.null(clusterID)
+  cluster_ind <- !is.null(clusterID)
 
 # Create the survey design object
 
-  design <- survey_design(dframe, siteID, weight, stratum.ind, stratumID,
-    cluster.ind, clusterID, weight1, sizeweight, sweight, sweight1, popcorrect,
+  design <- survey_design(dframe, siteID, weight, stratum_ind, stratumID,
+    cluster_ind, clusterID, weight1, sizeweight, sweight, sweight1, popcorrect,
     fpcsize, Ncluster, stage1size, vartype, jointprob)
 
 # If popsize is not equal to NULL, then call either the postStratify or
@@ -456,18 +456,18 @@ cont_analysis <- function(dframe, vars, vars_nondetect = NULL, subpops = NULL,
       design <- postStratify(design, make.formula(pnames), popsize)
     } else {
       cnames <- cal_names(make.formula(names(popsize)), design)
-      pop.totals <- numeric(length(cnames))
-      names(pop.totals) <- cnames
-      pop.totals[1] <-sum(popsize[[1]])
+      pop_totals <- numeric(length(cnames))
+      names(pop_totals) <- cnames
+      pop_totals[1] <-sum(popsize[[1]])
       k <- 2
       for(i in names(popsize)) {
         temp <- popsize[[i]]
         for(j in 2:length(temp)) {
-          pop.totals[k] <-temp[j]
+          pop_totals[k] <-temp[j]
           k <- k+1
         }
       }
-      design <- calibrate(design, make.formula(cnames), pop.totals)
+      design <- calibrate(design, make.formula(cnames), pop_totals)
     }
   }
 
@@ -476,7 +476,7 @@ cont_analysis <- function(dframe, vars, vars_nondetect = NULL, subpops = NULL,
 # data frame
 
   if(!is.null(popsize) && vartype == "Local") {
-    if(cluster.ind) {
+    if(cluster_ind) {
       ncluster <- length(unique(design$variables[, clusterID]))
       design$variables$wgt1 <- unique(design$variables[, Ncluster]) / ncluster
       design$variables$wgt2 <- weights(design)/design$variables$wgt1
@@ -511,19 +511,19 @@ cont_analysis <- function(dframe, vars, vars_nondetect = NULL, subpops = NULL,
       indx <- match(ivar, vars)
       temp <- cdf_est(contsum$CDF, dframe, itype, lev_itype, nlev_itype, ivar,
         design, design_names, vars_nondetect[indx], popcorrect, vartype, conf,
-        mult, warn.ind, warn.df)
+        mult, warn_ind, warn_df)
       contsum$CDF <- temp$cdfsum
-      warn.ind <- temp$warn.ind
-      warn.df <- temp$warn.df
+      warn_ind <- temp$warn_ind
+      warn_df <- temp$warn_df
 
 # Calculate percentile estimates
 
       temp <- percentile_est(contsum$Pct, dframe, itype, lev_itype, nlev_itype,
         ivar, design, design_names, vars_nondetect[indx], popcorrect, vartype,
-        conf, mult, pctval, warn.ind, warn.df)
+        conf, mult, pctval, warn_ind, warn_df)
       contsum$Pct <- temp$pctsum
-      warn.ind <- temp$warn.ind
-      warn.df <- temp$warn.df
+      warn_ind <- temp$warn_ind
+      warn_df <- temp$warn_df
 
       # End of the loop for response variables
 
@@ -536,12 +536,12 @@ cont_analysis <- function(dframe, vars, vars_nondetect = NULL, subpops = NULL,
 # As necessary, output a message indicating that warning messages were generated
 # during execution of the program
 
-  if(warn.ind) {
-    warn.df <<- warn.df
-    if(nrow(warn.df) == 1) {
-      cat("During execution of the program, a warning message was generated.  The warning \nmessage is stored in a data frame named 'warn.df'.  Enter the following command \nto view the warning message: warnprnt()\n")
+  if(warn_ind) {
+    warn_df <<- warn_df
+    if(nrow(warn_df) == 1) {
+      cat("During execution of the program, a warning message was generated.  The warning \nmessage is stored in a data frame named 'warn_df'.  Enter the following command \nto view the warning message: warnprnt()\n")
     } else {
-      cat(paste("During execution of the program,", nrow(warn.df), "warning messages were generated.  The warning \nmessages are stored in a data frame named 'warn.df'.  Enter the following \ncommand to view the warning messages: warnprnt() \nTo view a subset of the warning messages (say, messages number 1, 3, and 5), \nenter the following command: warnprnt(m=c(1,3,5))\n"))
+      cat(paste("During execution of the program,", nrow(warn_df), "warning messages were generated.  The warning \nmessages are stored in a data frame named 'warn_df'.  Enter the following \ncommand to view the warning messages: warnprnt() \nTo view a subset of the warning messages (say, messages number 1, 3, and 5), \nenter the following command: warnprnt(m=c(1,3,5))\n"))
     }
   }
 

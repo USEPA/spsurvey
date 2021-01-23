@@ -248,13 +248,13 @@ cont_cdftest <- function(dframe, vars, subpops = NULL, surveyID = NULL,
 
 # Create a vector for error messages
 
-  error.ind <- FALSE
-  error.vec <- NULL
+  error_ind <- FALSE
+  error_vec <- NULL
 
 # Create a data frame for warning messages
 
-  warn.ind <- FALSE
-  warn.df <- NULL
+  warn_ind <- FALSE
+  warn_df <- NULL
   fname <- "cont_cdftest"
 
 # Check for a valid test statistic name
@@ -262,9 +262,9 @@ cont_cdftest <- function(dframe, vars, subpops = NULL, surveyID = NULL,
   temp <- match(testname, c("Wald", "adjWald", "RaoScott_First",
     "RaoScott_Second"), nomatch=0)
   if(temp == 0) {
-    error.ind <- TRUE
+    error_ind <- TRUE
     msg <- paste0("\nThe value provided for argument testname, \"", testname, "\", is not a valid test statistic name.\n")
-    error.vec <- c(error.vec, msg)
+    error_vec <- c(error_vec, msg)
   }
 
 # As necessary, reassign the test statistic name to match the values required
@@ -280,15 +280,15 @@ cont_cdftest <- function(dframe, vars, subpops = NULL, surveyID = NULL,
 
   if(testname %in% c("Wald", "adjWald")) {
     if(nclass < 2) {
-      error.ind <- TRUE
+      error_ind <- TRUE
       msg <- paste("\nThe number of classes into which the CDFs will be divided (binned) must equal \nat least two.")
-      error.vec <- c(error.vec, msg)
+      error_vec <- c(error_vec, msg)
     }
   } else {
     if(nclass < 3) {
-      error.ind <- TRUE
+      error_ind <- TRUE
       msg <- paste("\nThe number of classes into which the CDFs will be divided (binned) must equal \nat least three")
-      error.vec <- c(error.vec, msg)
+      error_vec <- c(error_vec, msg)
     }
   }
 
@@ -322,9 +322,9 @@ cont_cdftest <- function(dframe, vars, subpops = NULL, surveyID = NULL,
   if(!is.null(surveyID)) {
     if(!(surveyID %in% names(dframe))) {
       ind1 <- FALSE
-      error.ind <- TRUE
+      error_ind <- TRUE
       msg <- paste0("The name provided for the surveyID argument, \"", surveyID, "\", does not occur among \nthe names for the dframe data frame.\n")
-      error.vec <- c(error.vec, msg)
+      error_vec <- c(error_vec, msg)
     } else {
       survey_names <- as.vector(unique(dframe[, surveyID]))
       ind1 <- TRUE
@@ -335,9 +335,9 @@ cont_cdftest <- function(dframe, vars, subpops = NULL, surveyID = NULL,
 
   if(!(siteID %in% names(dframe))) {
     ind2 <- FALSE
-    error.ind <- TRUE
+    error_ind <- TRUE
     msg <- paste0("The name provided for the siteID argument, \"", siteID, "\", does not occur among \nthe names for the dframe data frame.\n")
-    error.vec <- c(error.vec, msg)
+    error_vec <- c(error_vec, msg)
   } else {
     ind2 <- TRUE
   }
@@ -350,11 +350,11 @@ cont_cdftest <- function(dframe, vars, subpops = NULL, surveyID = NULL,
       dframe$siteID <- dframe[, siteID]
       temp <- with(dframe, sapply(split(siteID, siteID), length))
       if(any(temp > 1)) {
-        warn.ind <- TRUE
+        warn_ind <- TRUE
         temp.str <- vecprint(names(temp)[temp > 1])
         warn <- paste("The following site ID values occur more than once among the values that were \ninput to the function:\n", temp.str)
         act <- "Unique site ID values were created.\n"
-        warn.df <- rbind(warn.df, data.frame(func=I(fname), subpoptype=NA,
+        warn_df <- rbind(warn_df, data.frame(func=I(fname), subpoptype=NA,
           subpop=NA, indicator=NA, stratum=NA, warning=I(warn), action=I(act)))
         dframe$siteID <- uniqueID(dframe$siteID)
       }
@@ -367,11 +367,11 @@ cont_cdftest <- function(dframe, vars, subpops = NULL, surveyID = NULL,
         eval(parse(text=paste0("tst <- dframe$surveyID == \"", i, "\"")))
         temp <- with(subset(dframe, tst), sapply(split(siteID, siteID), length))
         if(any(temp > 1)) {
-          warn.ind <- TRUE
+          warn_ind <- TRUE
           temp.str <- vecprint(names(temp)[temp > 1])
           warn <- paste("The following site ID values occur more than once among survey", i, "values \nthat were input to the function:\n", temp.str)
           act <- "Unique site ID values were created.\n"
-          warn.df <- rbind(warn.df, data.frame(func=I(fname), subpoptype=NA,
+          warn_df <- rbind(warn_df, data.frame(func=I(fname), subpoptype=NA,
             subpop=NA, indicator=NA, stratum=NA, warning=I(warn), action=I(act)))
           dframe$siteID[tst] <- uniqueID(dframe$siteID[tst])
         }
@@ -382,9 +382,9 @@ cont_cdftest <- function(dframe, vars, subpops = NULL, surveyID = NULL,
 # Ensure that the dframe data frame contains the survey weight variable
 
   if(!(weight %in% names(dframe))) {
-    error.ind <- TRUE
+    error_ind <- TRUE
     msg <- paste0("The name provided for the weight argument, \"", weight, "\", does not occur among \nthe names for the dframe data frame.\n")
-    error.vec <- c(error.vec, msg)
+    error_vec <- c(error_vec, msg)
   }
 
 # As necessary, create a stratum variable that incorporates survey ID values
@@ -421,9 +421,9 @@ cont_cdftest <- function(dframe, vars, subpops = NULL, surveyID = NULL,
 # argument
 
   if(is.null(vars)) {
-    error.ind <- TRUE
+    error_ind <- TRUE
     msg <- "A value must be provided for the vars (response variable names) argument.\n"
-    error.vec <- c(error.vec, msg)
+    error_vec <- c(error_vec, msg)
   }
 
 # If a value was not provided for the subpops (subpopulation names) argument,
@@ -439,7 +439,7 @@ cont_cdftest <- function(dframe, vars, subpops = NULL, surveyID = NULL,
 # Check input arguments
   temp <- input_check(dframe, design_names, NULL, vars, NULL, NULL, subpops,
     sizeweight, popcorrect, popsize, vartype, jointprob, conf = 95,
-    error.ind = error.ind, error.vec = error.vec)
+    error_ind = error_ind, error_vec = error_vec)
   dframe <- temp$dframe
   vars <- temp$vars_cont
   vars_nondetect <- temp$vars_nondetect
@@ -447,26 +447,26 @@ cont_cdftest <- function(dframe, vars, subpops = NULL, surveyID = NULL,
   popsize <- temp$popsize
   vartype <- temp$vartype
   jointprob <- temp$jointprob
-  error.ind <- temp$error.ind
-  error.vec <- temp$error.vec
+  error_ind <- temp$error_ind
+  error_vec <- temp$error_vec
 
 # As necessary, output a message indicating that error messages were generated
 # during execution of the program
 
-  if(error.ind) {
-    error.vec <<- error.vec
-    if(length(error.vec) == 1) {
-      cat("During execution of the program, an error message was generated.  The error \nmessage is stored in a vector named 'error.vec'.  Enter the following command \nto view the error message: errorprnt()\n")
+  if(error_ind) {
+    error_vec <<- error_vec
+    if(length(error_vec) == 1) {
+      cat("During execution of the program, an error message was generated.  The error \nmessage is stored in a vector named 'error_vec'.  Enter the following command \nto view the error message: errorprnt()\n")
     } else {
-      cat(paste("During execution of the program,", length(error.vec), "error messages were generated.  The error \nmessages are stored in a vector named 'error.vec'.  Enter the following \ncommand to view the error messages: errorprnt()\n"))
+      cat(paste("During execution of the program,", length(error_vec), "error messages were generated.  The error \nmessages are stored in a vector named 'error_vec'.  Enter the following \ncommand to view the error messages: errorprnt()\n"))
     }
 
-    if(warn.ind) {
-      warn.df <<- warn.df
-      if(nrow(warn.df) == 1) {
-        cat("During execution of the program, a warning message was generated.  The warning \nmessage is stored in a data frame named 'warn.df'.  Enter the following command \nto view the warning message: warnprnt()\n")
+    if(warn_ind) {
+      warn_df <<- warn_df
+      if(nrow(warn_df) == 1) {
+        cat("During execution of the program, a warning message was generated.  The warning \nmessage is stored in a data frame named 'warn_df'.  Enter the following command \nto view the warning message: warnprnt()\n")
       } else {
-        cat(paste("During execution of the program,", nrow(warn.df), "warning messages were generated.  The warning \nmessages are stored in a data frame named 'warn.df'.  Enter the following \ncommand to view the warning messages: warnprnt() \nTo view a subset of the warning messages (say, messages number 1, 3, and 5), \nenter the following command: warnprnt(m=c(1,3,5))\n"))
+        cat(paste("During execution of the program,", nrow(warn_df), "warning messages were generated.  The warning \nmessages are stored in a data frame named 'warn_df'.  Enter the following \ncommand to view the warning messages: warnprnt() \nTo view a subset of the warning messages (say, messages number 1, 3, and 5), \nenter the following command: warnprnt(m=c(1,3,5))\n"))
       }
     }
     stop("See the preceding message(s).")
@@ -474,22 +474,22 @@ cont_cdftest <- function(dframe, vars, subpops = NULL, surveyID = NULL,
 
 # Assign a logical value to the indicator variable for a stratified sample
 
-  stratum.ind <- !is.null(stratumID)
+  stratum_ind <- !is.null(stratumID)
 
 # For a stratified sample, remove strata that contain a single site
 
-  if(stratum.ind) {
+  if(stratum_ind) {
     dframe[, stratumID] <- factor(dframe[, stratumID])
-    stratum.levels <- levels(dframe[, stratumID])
-    nstrata <- length(stratum.levels)
+    stratum_levels <- levels(dframe[, stratumID])
+    nstrata <- length(stratum_levels)
     ind <- FALSE
     for(i in 1:nstrata) {
-      tst <- dframe[, stratumID] == stratum.levels[i]
+      tst <- dframe[, stratumID] == stratum_levels[i]
       if(sum(tst) == 1) {
-        warn.ind <- TRUE
-        warn <- paste0("The stratum named \"", stratum.levels[i], "\" contains a single value and was removed from the analysis.\n")
+        warn_ind <- TRUE
+        warn <- paste0("The stratum named \"", stratum_levels[i], "\" contains a single value and was removed from the analysis.\n")
         act <- "Stratum was removed from the analysis.\n"
-        warn.df <- rbind(warn.df, data.frame(func=I(fname), subpoptype=NA,
+        warn_df <- rbind(warn_df, data.frame(func=I(fname), subpoptype=NA,
           subpop=NA, indicator=NA, stratum=NA, warning=I(warn), action=I(act)))
         dframe <- dframe[!tst,]
         ind <- TRUE
@@ -497,20 +497,20 @@ cont_cdftest <- function(dframe, vars, subpops = NULL, surveyID = NULL,
     }
     if(ind) {
       dframe[, stratumID] <- factor(dframe[, stratumID])
-      stratum.levels <- levels(dframe[, stratumID])
-      nstrata <- length(stratum.levels)
+      stratum_levels <- levels(dframe[, stratumID])
+      nstrata <- length(stratum_levels)
       dframe <- droplevels(dframe)
     }
   }
 
 # Assign a logical value to the indicator variable for a two-stage sample
 
-  cluster.ind <- !is.null(clusterID)
+  cluster_ind <- !is.null(clusterID)
 
 # Create the survey design object
 
-  design <- survey_design(dframe, siteID, weight, stratum.ind, stratumID,
-    cluster.ind, clusterID, weight1, sizeweight, sweight, sweight1, popcorrect,
+  design <- survey_design(dframe, siteID, weight, stratum_ind, stratumID,
+    cluster_ind, clusterID, weight1, sizeweight, sweight, sweight1, popcorrect,
     fpcsize, Ncluster, stage1size, vartype, jointprob)
 
 # If popsize is not equal to NULL, then call either the postStratify or
@@ -526,18 +526,18 @@ cont_cdftest <- function(dframe, vars, subpops = NULL, surveyID = NULL,
       design <- postStratify(design, make.formula(pnames), popsize)
     } else {
       cnames <- cal_names(make.formula(names(popsize)), design)
-      pop.totals <- numeric(length(cnames))
-      names(pop.totals) <- cnames
-      pop.totals[1] <-sum(popsize[[1]])
+      pop_totals <- numeric(length(cnames))
+      names(pop_totals) <- cnames
+      pop_totals[1] <-sum(popsize[[1]])
       k <- 2
       for(i in names(popsize)) {
         temp <- popsize[[i]]
         for(j in 2:length(temp)) {
-          pop.totals[k] <-temp[j]
+          pop_totals[k] <-temp[j]
           k <- k+1
         }
       }
-      design <- calibrate(design, make.formula(cnames), pop.totals)
+      design <- calibrate(design, make.formula(cnames), pop_totals)
     }
   }
 
@@ -546,7 +546,7 @@ cont_cdftest <- function(dframe, vars, subpops = NULL, surveyID = NULL,
 # data frame
 
   if(!is.null(popsize) && vartype == "Local") {
-    if(cluster.ind) {
+    if(cluster_ind) {
       ncluster <- length(unique(design$variables[, clusterID]))
       design$variables$wgt1 <- unique(design$variables[, Ncluster]) / ncluster
       design$variables$wgt2 <- weights(design)/design$variables$wgt1
@@ -571,10 +571,10 @@ cont_cdftest <- function(dframe, vars, subpops = NULL, surveyID = NULL,
 # Check whether the number of levels of the subpopulation is greater than one
 
     if(nlev_itype == 1) {
-      warn.ind <- TRUE
+      warn_ind <- TRUE
       warn <- paste("Population type", itype, "contains a single subpopulation. \nNo CDF tests could be performed\n")
       act <- "None.\n"
-      warn.df <- rbind(warn.df, data.frame(func=I(fname),
+      warn_df <- rbind(warn_df, data.frame(func=I(fname),
         subpoptype=I(itype), subpop=NA,
         indicator=I(varnames[ivar]), stratum=NA, warning=I(warn),
         action=I(act)))
@@ -600,15 +600,15 @@ cont_cdftest <- function(dframe, vars, subpops = NULL, surveyID = NULL,
 
 # Select sites in the first level
 
-        subpop1.ind <- dframe[, itype] == lev_itype[isubpop1]
+        subpop1_ind <- dframe[, itype] == lev_itype[isubpop1]
 
 # Determine whether the level is empty
 
-        if(all(is.na(dframe[subpop1.ind, ivar]))) {
-          warn.ind <- TRUE
+        if(all(is.na(dframe[subpop1_ind, ivar]))) {
+          warn_ind <- TRUE
           warn <- paste("Subpopulation", lev_itype[isubpop1], "of population type", itype, "for indicator", varnames[ivar], "\ncontains no data.\n")
           act <- "None.\n"
-          warn.df <- rbind(warn.df, data.frame(func=I(fname),
+          warn_df <- rbind(warn_df, data.frame(func=I(fname),
             subpoptype=I(itype),
             subpop=I(lev_itype[isubpop1]), indicator=I(varnames[ivar]),
             stratum=NA,  warning=I(warn), action=I(act)))
@@ -617,11 +617,11 @@ cont_cdftest <- function(dframe, vars, subpops = NULL, surveyID = NULL,
 
 # Determine whether the level contains a single value
 
-        if(sum(!is.na(dframe[subpop1.ind, ivar])) == 1) {
-          warn.ind <- TRUE
+        if(sum(!is.na(dframe[subpop1_ind, ivar])) == 1) {
+          warn_ind <- TRUE
           warn <- paste("Subpopulation", lev_itype[isubpop1], "of population type", itype, "for indicator", varnames[ivar], "\ncontains a single value.  No analysis was performed.\n")
           act <- "None.\n"
-          warn.df <- rbind(warn.df, data.frame(func=I(fname),
+          warn_df <- rbind(warn_df, data.frame(func=I(fname),
             subpoptype=I(itype),
             subpop=I(lev_itype[isubpop1]), indicator=I(varnames[ivar]),
             stratum=NA,  warning=I(warn), action=I(act)))
@@ -634,15 +634,15 @@ cont_cdftest <- function(dframe, vars, subpops = NULL, surveyID = NULL,
 
 # Select sites in the second level
 
-          subpop2.ind <- dframe[, itype] == lev_itype[isubpop2]
+          subpop2_ind <- dframe[, itype] == lev_itype[isubpop2]
 
 # Determine whether level is empty
 
-          if(all(is.na(dframe[subpop2.ind, ivar]))) {
-            warn.ind <- TRUE
+          if(all(is.na(dframe[subpop2_ind, ivar]))) {
+            warn_ind <- TRUE
             warn <- paste("Subpopulation", lev_itype[isubpop2], "of population type", itype, "for indicator", varnames[ivar], "\ncontains no data.\n")
             act <- "None.\n"
-            warn.df <- rbind(warn.df, data.frame(func=I(fname),
+            warn_df <- rbind(warn_df, data.frame(func=I(fname),
               subpoptype=I(itype),
               subpop=I(lev_itype[isubpop2]),
               indicator=I(varnames[ivar]), stratum=NA,  warning=I(warn),
@@ -652,11 +652,11 @@ cont_cdftest <- function(dframe, vars, subpops = NULL, surveyID = NULL,
 
 # Determine whether the level contains a single value
 
-          if(sum(!is.na(dframe[subpop2.ind, ivar])) == 1) {
-            warn.ind <- TRUE
+          if(sum(!is.na(dframe[subpop2_ind, ivar])) == 1) {
+            warn_ind <- TRUE
             warn <- paste("Subpopulation", lev_itype[isubpop2], "of population type", itype, "for indicator", varnames[ivar], "\ncontains a single value.  No analysis was performed.\n")
             act <- "None.\n"
-            warn.df <- rbind(warn.df, data.frame(func=I(fname),
+            warn_df <- rbind(warn_df, data.frame(func=I(fname),
               subpoptype=I(itype),
               subpop=I(lev_itype[isubpop2]),
               indicator=I(varnames[ivar]), stratum=NA,  warning=I(warn),
@@ -667,8 +667,8 @@ cont_cdftest <- function(dframe, vars, subpops = NULL, surveyID = NULL,
 # Perform the CDF test for the response variable
 
           rowvar <- rep(NA, nrow(dframe))
-          rowvar[subpop1.ind] <- "Subpopulation 1"
-          rowvar[subpop2.ind] <- "Subpopulation 2"
+          rowvar[subpop1_ind] <- "Subpopulation 1"
+          rowvar[subpop2_ind] <- "Subpopulation 2"
           design$variables$rowvar <- factor(rowvar,
             levels = c("Subpopulation 1", "Subpopulation 2"))
 
@@ -676,18 +676,18 @@ cont_cdftest <- function(dframe, vars, subpops = NULL, surveyID = NULL,
             warn.vec <- c(itype, lev_itype[isubpop1], lev_itype[isubpop2], ivar)
             if(testname %in% c("Wald", "adjWald")) {
               temp <- cdftest_localmean_total(design, design_names, popcorrect,
-                vartype, warn.ind, warn.df, warn.vec)
+                vartype, warn_ind, warn_df, warn.vec)
               var_totals <- temp$varest
               vartype <- temp$vartype
-              warn.ind <- temp$warn.ind
-              warn.df <- temp$warn.df
+              warn_ind <- temp$warn_ind
+              warn_df <- temp$warn_df
             } else {
               temp <- cdftest_localmean_prop(design, design_names,  popcorrect,
-                vartype,  warn.ind, warn.df, warn.vec)
+                vartype,  warn_ind, warn_df, warn.vec)
               var_means <- temp$varest
               vartype <- temp$vartype
-              warn.ind <- temp$warn.ind
-              warn.df <- temp$warn.df
+              warn_ind <- temp$warn_ind
+              warn_df <- temp$warn_df
             }
           } else {
             var_totals <- NULL
@@ -748,12 +748,12 @@ cont_cdftest <- function(dframe, vars, subpops = NULL, surveyID = NULL,
 # As necessary, output a message indicating that warning messages were generated
 # during execution of the program
 
-  if(warn.ind) {
-    warn.df <<- warn.df
-    if(nrow(warn.df) == 1)
-      cat("During execution of the program, a warning message was generated.  The warning \nmessage is stored in a data frame named 'warn.df'.  Enter the following command \nto view the warning message: warnprnt()\n")
+  if(warn_ind) {
+    warn_df <<- warn_df
+    if(nrow(warn_df) == 1)
+      cat("During execution of the program, a warning message was generated.  The warning \nmessage is stored in a data frame named 'warn_df'.  Enter the following command \nto view the warning message: warnprnt()\n")
     else
-      cat(paste("During execution of the program,", nrow(warn.df), "warning messages were generated.  The warning \nmessages are stored in a data frame named 'warn.df'.  Enter the following \ncommand to view the warning messages: warnprnt() \nTo view a subset of the warning messages (say, messages number 1, 3, and 5), \nenter the following command: warnprnt(m=c(1,3,5))\n"))
+      cat(paste("During execution of the program,", nrow(warn_df), "warning messages were generated.  The warning \nmessages are stored in a data frame named 'warn_df'.  Enter the following \ncommand to view the warning messages: warnprnt() \nTo view a subset of the warning messages (say, messages number 1, 3, and 5), \nenter the following command: warnprnt(m=c(1,3,5))\n"))
   }
 
 # Return the data frame

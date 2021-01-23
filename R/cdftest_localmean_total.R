@@ -22,12 +22,12 @@
 #' @param vartype The choice of variance estimator, where "Local" = local mean
 #'   estimator and "SRS" = SRS estimator.
 #'
-#' @param warn.ind Logical value that indicates whether warning messages were
+#' @param warn_ind Logical value that indicates whether warning messages were
 #'   generated.
 #'
-#' @param warn.df Data frame for storing warning messages.
+#' @param warn_df Data frame for storing warning messages.
 #'
-#' @param warn.vec Character vector that contains a subpopulation name, the
+#' @param warn_vec Character vector that contains a subpopulation name, the
 #'   first subpopulation level, the second subpopulation level, and an
 #'   indicator name.
 #'
@@ -52,7 +52,7 @@
 ################################################################################
 
 cdftest_localmean_total <- function(design, design_names,  popcorrect, vartype,
-  warn.ind, warn.df, warn.vec) {
+  warn_ind, warn_df, warn_vec) {
 
 # Assign a value to the function name variable
 
@@ -72,11 +72,11 @@ cdftest_localmean_total <- function(design, design_names,  popcorrect, vartype,
 
 # Assign a value to the indicator variable for a two-stage sample
 
-  cluster.ind <- !is.null(clusterID)
+  cluster_ind <- !is.null(clusterID)
 
 # Assign values to weight variables
 
-  if(cluster.ind) {
+  if(cluster_ind) {
     wgt1 <- dframe$wgt1
     wgt2 <- dframe$wgt2
   } else {
@@ -85,31 +85,31 @@ cdftest_localmean_total <- function(design, design_names,  popcorrect, vartype,
 
 # Assign a value to the indicator variable for a stratified sample
 
-  stratum.ind <- !is.null(stratumID)
+  stratum_ind <- !is.null(stratumID)
 
 # For a stratified design, determine whether the subpopulation contains a single
 # stratum
 
-    if(stratum.ind) {
+    if(stratum_ind) {
       stratum <- factor(stratumID)
-      stratum.levels <- levels(stratum)
-      nstrata <- length(stratum.levels)
+      stratum_levels <- levels(stratum)
+      nstrata <- length(stratum_levels)
       if(nstrata == 1)
-        stratum.ind <- FALSE
+        stratum_ind <- FALSE
     }
 
 # Branch for a stratified sample
 
-    if(stratum.ind) {
+    if(stratum_ind) {
 
 # Calculate values required for weighting strata
 
-      if(cluster.ind) {
-        popsize.hat <- tapply(wgt1 * wgt2, stratum, sum)
-        sum.popsize.hat <- sum(wgt1 * wgt2)
+      if(cluster_ind) {
+        popsize_hat <- tapply(wgt1 * wgt2, stratum, sum)
+        sum_popsize_hat <- sum(wgt1 * wgt2)
       } else {
-        popsize.hat <- tapply(wgt, stratum, sum)
-        sum.popsize.hat <- sum(wgt)
+        popsize_hat <- tapply(wgt, stratum, sum)
+        sum_popsize_hat <- sum(wgt)
       }
 
 # Create the varest matrix
@@ -133,33 +133,33 @@ cdftest_localmean_total <- function(design, design_names,  popcorrect, vartype,
 
       for(i in 1:nstrata) {
         temp <- design_names$stratumID
-        tst <- design$variables[, temp] != stratum.levels[i]
-        design.temp <- design
-        design.temp$variables$rowvar[tst] <- NA
-        stratum.i <- stratumID == stratum.levels[i]
-        if(cluster.ind) {
-          temp <- cdftestvar_total(design.temp, wgt2[stratum.i],
-            xcoord[stratum.i], ycoord[stratum.i], stratum.ind,
-            stratum.levels[i], cluster.ind, clusterID[stratum.i],
-            wgt1[stratum.i], xcoord1[stratum.i], ycoord1[stratum.i], popcorrect,
-            NULL, Ncluster[stratum.i], stage1size[stratum.i], vartype, warn.ind,
-            warn.df, warn.vec)
+        tst <- design$variables[, temp] != stratum_levels[i]
+        design_temp <- design
+        design_temp$variables$rowvar[tst] <- NA
+        stratum_i <- stratumID == stratum_levels[i]
+        if(cluster_ind) {
+          temp <- cdftestvar_total(design_temp, wgt2[stratum_i],
+            xcoord[stratum_i], ycoord[stratum_i], stratum_ind,
+            stratum_levels[i], cluster_ind, clusterID[stratum_i],
+            wgt1[stratum_i], xcoord1[stratum_i], ycoord1[stratum_i], popcorrect,
+            NULL, Ncluster[stratum_i], stage1size[stratum_i], vartype, warn_ind,
+            warn_df, warn_vec)
         } else {
-          temp <- cdftestvar_total(design.temp, wgt[stratum.i],
-            xcoord[stratum.i], ycoord[stratum.i], stratum.ind,
-            stratum.levels[i], cluster.ind, pcfactor.ind = popcorrect,
-            fpcsize = fpcsize[stratum.i], vartype = vartype,
-            warn.ind = warn.ind, warn.df = warn.df, warn.vec = warn.vec)
+          temp <- cdftestvar_total(design_temp, wgt[stratum_i],
+            xcoord[stratum_i], ycoord[stratum_i], stratum_ind,
+            stratum_levels[i], cluster_ind, pcfactor_ind = popcorrect,
+            fpcsize = fpcsize[stratum_i], vartype = vartype,
+            warn_ind = warn_ind, warn_df = warn_df, warn_vec = warn_vec)
         }
         varest_st <- temp$varest
-        warn.ind <- temp$warn.ind
-        warn.df <- temp$warn.df
+        warn_ind <- temp$warn_ind
+        warn_df <- temp$warn_df
 
 # Add estimates to the varest matrix
 
         tst <- colnames_varest %in% colnames(varest_st)
         varest[tst, tst] <- varest[tst, tst] +
-          ((popsize.hat[i]/sum.popsize.hat)^2)*varest_st
+          ((popsize_hat[i]/sum_popsize_hat)^2)*varest_st
         colnames(varest) <- colnames_varest
 
 # End the loop for strata
@@ -168,8 +168,8 @@ cdftest_localmean_total <- function(design, design_names,  popcorrect, vartype,
 
 # Create the results list
 
-      results <- list(varest=varest, vartype=vartype, warn.ind=warn.ind,
-        warn.df=warn.df)
+      results <- list(varest=varest, vartype=vartype, warn_ind=warn_ind,
+        warn_df=warn_df)
 
 # Branch for an unstratified sample
 
@@ -177,15 +177,15 @@ cdftest_localmean_total <- function(design, design_names,  popcorrect, vartype,
 
 # Calculate the variance/covariance estimates
 
-      if(cluster.ind) {
-        results <- cdftestvar_total(design, wgt2, xcoord, ycoord, stratum.ind,
-          NULL, cluster.ind, clusterID, wgt1, xcoord1,ycoord1, popcorrect, NULL,
-          Ncluster, stage1size, vartype, warn.ind, warn.df, warn.vec)
+      if(cluster_ind) {
+        results <- cdftestvar_total(design, wgt2, xcoord, ycoord, stratum_ind,
+          NULL, cluster_ind, clusterID, wgt1, xcoord1,ycoord1, popcorrect, NULL,
+          Ncluster, stage1size, vartype, warn_ind, warn_df, warn_vec)
       } else {
-        results <- cdftestvar_total(design, wgt, xcoord, ycoord, stratum.ind,
-          NULL, cluster.ind, pcfactor.ind = popcorrect, fpcsize = fpcsize,
-          vartype = vartype, warn.ind = warn.ind, warn.df = warn.df,
-          warn.vec = warn.vec)
+        results <- cdftestvar_total(design, wgt, xcoord, ycoord, stratum_ind,
+          NULL, cluster_ind, pcfactor_ind = popcorrect, fpcsize = fpcsize,
+          vartype = vartype, warn_ind = warn_ind, warn_df = warn_df,
+          warn_vec = warn_vec)
       }
 
     }
