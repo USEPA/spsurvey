@@ -10,7 +10,7 @@
 #' structures may be created: always revisit panel, serially alternating panels,
 #' or rotating panels.
 #'
-#' @param n.period  Number of time periods for the panel design. For example,
+#' @param n_period  Number of time periods for the panel design. For example,
 #'   number of periods if sampling occurs once per period or number of months if
 #'   sampling occurs once per month.
 #'
@@ -70,14 +70,14 @@
 #'   The number of panels in a single panel design is specified by pnl_n.  For
 #'   an always revisit panel structure, a single panel is created and pnl_n is
 #'   ignored. For a rotating panel structure, when pnl_n = NA, the number of
-#'   panels is equal to n.period. Note that this should only be used when the
+#'   panels is equal to n_period. Note that this should only be used when the
 #'   rotating panel structure is the only panel design, i.e., no split panel
 #'   design (see below for split panel details). If pnl_n = m is specified for a
 #'   rotating panel design, then then number of panels will be m.  For example,
 #'   pnl_dsgn = c( 1, 4, 1, NA) and and pnl_n = 5 means that only 5 panels will
 #'   be constructed and the last time period to be sampled will be time period
 #'   10. In McDonald's notation the panel design structure is [(1-4-1-n)^5].  If
-#'   the number of time periods, n.period, is 20 and no other panel design
+#'   the number of time periods, n_period, is 20 and no other panel design
 #'   structure is specified, then the last 10 time periods will not be sampled.
 #'   For serially alternating panels, when pnl_n = NA, the number of panels will
 #'   be the sum of the elements in pan_dsgn (ignoring NA). If pnl_n is specified
@@ -127,9 +127,9 @@
 #'       assignment to panels and time periods}
 #'     \item{\code{\link{panel_summary}}}{summarize characteristics of a revisit
 #'       panel design}
-#'     \item{\code{\link{power.dsgn}}}{power calculation for multiple panel
+#'     \item{\code{\link{power_dsgn}}}{power calculation for multiple panel
 #'       designs}
-#'     \item{\code{\link{cov.panel.dsgn}}}{covariance matrix for a panel design}
+#'     \item{\code{\link{cov_panel_dsgn}}}{covariance matrix for a panel design}
 #'     \item{\code{\link{plot_powerpaneldesign}}}{plot power curves for panel
 #'       designs}
 #'   }
@@ -143,7 +143,7 @@
 #'               start_option = "None")), begin=1)
 #'
 #' # Rotating panels of 60 units sampled once and never again: [1-n].  Number
-#' # of panels equal n.period.
+#' # of panels equal n_period.
 #' revisit_dsgn(20, panels=list(
 #'   R60N=list(n=60, pnl_dsgn = c(1, NA), pnl_n=NA, start_option="None")),
 #'             begin=1 )
@@ -155,7 +155,7 @@
 #'              start_option="Partial_End")), begin=1 )
 #'
 #' # Split panel of sample units combining above two panel designs: [1-0, 1-n]
-#' revisit_dsgn(n.period=20, begin=2017,  panels = list(
+#' revisit_dsgn(n_period=20, begin=2017,  panels = list(
 #'   Annual=list(n = 60, pnl_dsgn = c(1, 0), pnl.n = NA,
 #'               start_option = "None"),
 #'   R60N=list(n=60, pnl_dsgn = c(1, NA), pnl_n=NA, start_option="None") ))
@@ -163,202 +163,202 @@
 #' @export
 ################################################################################
 
-revisit_dsgn <- function(n.period, panels, begin = 1, skip = 1 )  {
+revisit_dsgn <- function(n_period, panels, begin = 1, skip = 1 )  {
 
   if (!is.list(panels)) {
     stop ('\npanels must be a list of lists')
   }
 
   # initialize final panel design array
-  panels.dsgn <- NULL
+  panels_dsgn <- NULL
 
   ## cycle through the number of panel structures
   for (nsplit in 1:length(names(panels)) ) {
-    tmp.n <- panels[[nsplit]]$n
-    tmp.dsgn <- panels[[nsplit]]$pnl_dsgn
-    tmp.pnl_n <- panels[[nsplit]]$pnl_n
-    tmp.start_option <- panels[[nsplit]]$start_option
-    # determine if start up option required. If num.vis > 1 start up options okay
-    num.vis <- sum ( tmp.dsgn[seq (1, by = 2, length.out = length(tmp.dsgn) / 2)])
+    tmp_n <- panels[[nsplit]]$n
+    tmp_dsgn <- panels[[nsplit]]$pnl_dsgn
+    tmp_pnl_n <- panels[[nsplit]]$pnl_n
+    tmp_start_option <- panels[[nsplit]]$start_option
+    # determine if start up option required. If num_vis > 1 start up options okay
+    num_vis <- sum ( tmp_dsgn[seq (1, by = 2, length.out = length(tmp_dsgn) / 2)])
 
     # check that pnl_dsgn has even number of elements as required
-    if (length(tmp.dsgn) %% 2 == 1) {
+    if (length(tmp_dsgn) %% 2 == 1) {
       stop ('\nVector specifying pnl_dsgn must have even number of elements')
     }
 
     # check start options
-    if (!(tmp.start_option %in% c("None", "Partial_Begin", "Partial_End"))) {
+    if (!(tmp_start_option %in% c("None", "Partial_Begin", "Partial_End"))) {
       stop ('\nStart option for a panel design is not one of None, Partial_Begin, Partial_End')
     }
 
     # check that pnl_dsgn ends in NA, 0 or > 0 as required
-    pnl.type <- tmp.dsgn[length(tmp.dsgn)]
-    if ( !( pnl.type == 0 | is.na(pnl.type) | pnl.type > 0 )) {
+    pnl_type <- tmp_dsgn[length(tmp_dsgn)]
+    if ( !( pnl_type == 0 | is.na(pnl_type) | pnl_type > 0 )) {
       stop ('\nVector specifying pnl_dsgn must end in NA, 0, or > 0')
     }
 
     # set up panel core visit, skip schedule that may or may not be repeated
-    # v.len is number of occasions in a panel cycle
-    v.len <- sum(tmp.dsgn, na.rm = TRUE)
-    visit <- rep(tmp.n, tmp.dsgn[1])
-    if(length(tmp.dsgn) > 1) {
-      for (j in 2:length(tmp.dsgn)) {
-        if(j %% 2 == 1) visit <- c(visit, rep(tmp.n, tmp.dsgn[j]))
-        if(j %% 2 == 0 & !is.na(tmp.dsgn[j]) ) visit <- c(visit, rep(0, tmp.dsgn[j]))
+    # v_len is number of occasions in a panel cycle
+    v_len <- sum(tmp_dsgn, na.rm = TRUE)
+    visit <- rep(tmp_n, tmp_dsgn[1])
+    if(length(tmp_dsgn) > 1) {
+      for (j in 2:length(tmp_dsgn)) {
+        if(j %% 2 == 1) visit <- c(visit, rep(tmp_n, tmp_dsgn[j]))
+        if(j %% 2 == 0 & !is.na(tmp_dsgn[j]) ) visit <- c(visit, rep(0, tmp_dsgn[j]))
       }
     }
 
     ####  Always revisit panels
-    if (!is.na (pnl.type) &  pnl.type == 0) {
-      pan.dsgn <- array (c(visit, rep (tmp.n, n.period - length (visit))), c(1,n.period))
+    if (!is.na (pnl_type) &  pnl_type == 0) {
+      pan_dsgn <- array (c(visit, rep (tmp_n, n_period - length (visit))), c(1,n_period))
       # assign dimnames
-      dimnames (pan.dsgn) <- list(names(panels)[nsplit], seq(begin, by = skip, length.out=n.period) )
+      dimnames (pan_dsgn) <- list(names(panels)[nsplit], seq(begin, by = skip, length.out=n_period) )
       # combine with other panels if any
-      panels.dsgn <- rbind(panels.dsgn, pan.dsgn)
+      panels_dsgn <- rbind(panels_dsgn, pan_dsgn)
     }
 
     #### serially alternating panel type designS
-    if (!is.na (pnl.type) & pnl.type > 0) {
+    if (!is.na (pnl_type) & pnl_type > 0) {
 
       # determine number of panels
-      n.panels <- sum(tmp.dsgn)
-      n.cycle <- sum(tmp.dsgn)
+      n_panels <- sum(tmp_dsgn)
+      n_cycle <- sum(tmp_dsgn)
 
-      pan.dsgn <- rep(visit, ceiling (1 + n.period / v.len))
-      for (i in 2:n.panels){
-        tmp <-  c(rep(0, i-1), rep(visit, ceiling (1 + n.period / v.len)))
-        pan.dsgn <- rbind(pan.dsgn, tmp[1:(length(tmp) - i + 1)])
+      pan_dsgn <- rep(visit, ceiling (1 + n_period / v_len))
+      for (i in 2:n_panels){
+        tmp <-  c(rep(0, i-1), rep(visit, ceiling (1 + n_period / v_len)))
+        pan_dsgn <- rbind(pan_dsgn, tmp[1:(length(tmp) - i + 1)])
       }
 
       ## set up start options: None, Partial_Begin, Partial_End
 
       # start.option = None
-      if (tmp.start_option == "None") {
-        pan.dsgn <- pan.dsgn[, 1:n.period]
+      if (tmp_start_option == "None") {
+        pan_dsgn <- pan_dsgn[, 1:n_period]
       }
 
       # set up start.option = Partial_Begin
-      if (tmp.start_option == "Partial_Begin") {
-        if (num.vis == 1) {
-          pan.dsgn <- pan.dsgn[ , 1:n.period]
+      if (tmp_start_option == "Partial_Begin") {
+        if (num_vis == 1) {
+          pan_dsgn <- pan_dsgn[ , 1:n_period]
         }
-        if (num.vis > 1) {
-          itmp <- sum ( tmp.dsgn[1:(length(tmp.dsgn) - 1)] )
-          pan.dsgn <- pan.dsgn[ , itmp:ncol(pan.dsgn)]
-          pan.dsgn <- pan.dsgn[ , 1:n.period]
+        if (num_vis > 1) {
+          itmp <- sum ( tmp_dsgn[1:(length(tmp_dsgn) - 1)] )
+          pan_dsgn <- pan_dsgn[ , itmp:ncol(pan_dsgn)]
+          pan_dsgn <- pan_dsgn[ , 1:n_period]
         }
       }
 
       # set up start.option = Partial_End
-      if (tmp.start_option == "Partial_End") {
-        if (num.vis == 1) {
-          pan.dsgn <- pan.dsgn[ , 1:n.period]
+      if (tmp_start_option == "Partial_End") {
+        if (num_vis == 1) {
+          pan_dsgn <- pan_dsgn[ , 1:n_period]
         }
-        if (num.vis > 1) {
-          itmp <- n.cycle + 1
-          pan.dsgn <- pan.dsgn[ , itmp:ncol(pan.dsgn)]
-          pan.dsgn <- pan.dsgn[ , 1:n.period]
+        if (num_vis > 1) {
+          itmp <- n_cycle + 1
+          pan_dsgn <- pan_dsgn[ , itmp:ncol(pan_dsgn)]
+          pan_dsgn <- pan_dsgn[ , 1:n_period]
         }
       }
 
       # check to see if want to use all panels
-      if (!is.na (tmp.pnl_n) ) {
-        pan.dsgn <- pan.dsgn[1:tmp.pnl_n, ]
+      if (!is.na (tmp_pnl_n) ) {
+        pan_dsgn <- pan_dsgn[1:tmp_pnl_n, ]
       }
 
       # assign dimnames
-      if (nrow(pan.dsgn) < 10) {
-        dimnames (pan.dsgn) <- list(c(paste(names(panels)[nsplit], 1:nrow(pan.dsgn), sep="_") ),
-                                    seq(begin, by = skip, length.out=ncol(pan.dsgn)) )
+      if (nrow(pan_dsgn) < 10) {
+        dimnames (pan_dsgn) <- list(c(paste(names(panels)[nsplit], 1:nrow(pan_dsgn), sep="_") ),
+                                    seq(begin, by = skip, length.out=ncol(pan_dsgn)) )
       }
       else {
-        dimnames (pan.dsgn) <- list(c(paste(names(panels)[nsplit], 1:9, sep="_0"),
-                                      paste(names(panels)[nsplit], 10:nrow(pan.dsgn), sep="_") ),
-                                    seq(begin, by = skip, length.out=ncol(pan.dsgn)) )
+        dimnames (pan_dsgn) <- list(c(paste(names(panels)[nsplit], 1:9, sep="_0"),
+                                      paste(names(panels)[nsplit], 10:nrow(pan_dsgn), sep="_") ),
+                                    seq(begin, by = skip, length.out=ncol(pan_dsgn)) )
       }
       # combine with other panels if any
-      panels.dsgn <- rbind(panels.dsgn, pan.dsgn)
+      panels_dsgn <- rbind(panels_dsgn, pan_dsgn)
     }
 
     #### rotating panel type designs
-    if (is.na (pnl.type)) {
+    if (is.na (pnl_type)) {
 
       # determine cycle length based on number of sampling occasions
       # from first through last sample visit
-      n.cycle <- sum (tmp.dsgn, na.rm = TRUE)
-      n.panels <- n.period
+      n_cycle <- sum (tmp_dsgn, na.rm = TRUE)
+      n_panels <- n_period
 
-      for (i in 1:(n.panels + n.cycle)) {
+      for (i in 1:(n_panels + n_cycle)) {
         if ( i == 1) {
-          pan.dsgn <- c(visit, rep(0, n.period + n.cycle))
+          pan_dsgn <- c(visit, rep(0, n_period + n_cycle))
         }
         else {
-          pan.dsgn <- rbind(pan.dsgn, c(rep(0, i-1), visit, rep(0, n.period + n.cycle - (i - 1))) )
+          pan_dsgn <- rbind(pan_dsgn, c(rep(0, i-1), visit, rep(0, n_period + n_cycle - (i - 1))) )
         }
       }
 
       ## set up start options: None, Partial_Begin, Partial_End
 
-      # if num.vis equal to 1 then no start option required
-      if ( num.vis == 1) {
-        # shorten columns to n.period and keep only panels with at least one sample occasion
-        pan.dsgn <- pan.dsgn[, 1:n.period]
-        keep <- ifelse (apply (pan.dsgn, 1, sum) > 0, TRUE, FALSE)
-        pan.dsgn <- pan.dsgn[keep, ]
+      # if num_vis equal to 1 then no start option required
+      if ( num_vis == 1) {
+        # shorten columns to n_period and keep only panels with at least one sample occasion
+        pan_dsgn <- pan_dsgn[, 1:n_period]
+        keep <- ifelse (apply (pan_dsgn, 1, sum) > 0, TRUE, FALSE)
+        pan_dsgn <- pan_dsgn[keep, ]
       }
 
       # start.option = None
-      if (tmp.start_option == "None") {
-        # shorten columns to n.period and keep only panels with at least one sample occasion
-        pan.dsgn <- pan.dsgn[, 1:n.period]
-        keep <- ifelse (apply (pan.dsgn, 1, sum) > 0, TRUE, FALSE)
-        pan.dsgn <- pan.dsgn[keep, ]
+      if (tmp_start_option == "None") {
+        # shorten columns to n_period and keep only panels with at least one sample occasion
+        pan_dsgn <- pan_dsgn[, 1:n_period]
+        keep <- ifelse (apply (pan_dsgn, 1, sum) > 0, TRUE, FALSE)
+        pan_dsgn <- pan_dsgn[keep, ]
       }
       # set up start.option = Partial_Begin
-      if (tmp.start_option == "Partial_Begin" & num.vis > 1) {
-        itmp <- sum ( tmp.dsgn[1:(length(tmp.dsgn) - 1)] )
-        pan.dsgn <- pan.dsgn[ , itmp:ncol(pan.dsgn)]
+      if (tmp_start_option == "Partial_Begin" & num_vis > 1) {
+        itmp <- sum ( tmp_dsgn[1:(length(tmp_dsgn) - 1)] )
+        pan_dsgn <- pan_dsgn[ , itmp:ncol(pan_dsgn)]
 
-        # shorten columns to n.period and keep only panels with at least one sample occasion
-        pan.dsgn <- pan.dsgn[, 1:n.period]
-        keep <- ifelse (apply (pan.dsgn, 1, sum) > 0, TRUE, FALSE)
-        pan.dsgn <- pan.dsgn[keep, ]
+        # shorten columns to n_period and keep only panels with at least one sample occasion
+        pan_dsgn <- pan_dsgn[, 1:n_period]
+        keep <- ifelse (apply (pan_dsgn, 1, sum) > 0, TRUE, FALSE)
+        pan_dsgn <- pan_dsgn[keep, ]
       }
       # set up start.option = Partial_End:
-      if (tmp.start_option == "Partial_End" & num.vis > 1) {
-       if(v.len > 1) {
-          for (i in 1:(v.len - 1) ) {
-            pan.dsgn[n.panels - v.len + 1 + i, 1:i] <- visit[(v.len + 1 - i):v.len]
+      if (tmp_start_option == "Partial_End" & num_vis > 1) {
+       if(v_len > 1) {
+          for (i in 1:(v_len - 1) ) {
+            pan_dsgn[n_panels - v_len + 1 + i, 1:i] <- visit[(v_len + 1 - i):v_len]
           }
         }
-        # shorten columns to n.period and keep only panels with at least one sample occasion
-        pan.dsgn <- pan.dsgn[, 1:n.period]
-        keep <- ifelse (apply (pan.dsgn, 1, sum) > 0, TRUE, FALSE)
-        pan.dsgn <- pan.dsgn[keep, ]
+        # shorten columns to n_period and keep only panels with at least one sample occasion
+        pan_dsgn <- pan_dsgn[, 1:n_period]
+        keep <- ifelse (apply (pan_dsgn, 1, sum) > 0, TRUE, FALSE)
+        pan_dsgn <- pan_dsgn[keep, ]
       }
 
       # check to see if want to use all panels
-      if (!is.na (tmp.pnl_n) ) {
-        pan.dsgn <- pan.dsgn[1:tmp.pnl_n, ]
+      if (!is.na (tmp_pnl_n) ) {
+        pan_dsgn <- pan_dsgn[1:tmp_pnl_n, ]
       }
 
       # assign dimnames
-      if (nrow(pan.dsgn) < 10) {
-        dimnames (pan.dsgn) <- list(c(paste(names(panels)[nsplit], 1:nrow(pan.dsgn), sep="_") ),
-                                    seq(begin, by = skip, length.out=ncol(pan.dsgn)) )
+      if (nrow(pan_dsgn) < 10) {
+        dimnames (pan_dsgn) <- list(c(paste(names(panels)[nsplit], 1:nrow(pan_dsgn), sep="_") ),
+                                    seq(begin, by = skip, length.out=ncol(pan_dsgn)) )
       }
       else {
-        dimnames (pan.dsgn) <- list(c(paste(names(panels)[nsplit], 1:9, sep="_0"),
-                                      paste(names(panels)[nsplit], 10:nrow(pan.dsgn), sep="_") ),
-                                    seq(begin, by = skip, length.out=ncol(pan.dsgn)) )
+        dimnames (pan_dsgn) <- list(c(paste(names(panels)[nsplit], 1:9, sep="_0"),
+                                      paste(names(panels)[nsplit], 10:nrow(pan_dsgn), sep="_") ),
+                                    seq(begin, by = skip, length.out=ncol(pan_dsgn)) )
       }
       # combine with All Revisit and Serially Alternating panel designs if any
-      panels.dsgn <- rbind (panels.dsgn, pan.dsgn)
+      panels_dsgn <- rbind (panels_dsgn, pan_dsgn)
     }
     # end of rotating panel structure
   }
 
   # return final revisit panel design structure
-  class (pan.dsgn) <- "paneldesign"
-  return (panels.dsgn)
+  class (pan_dsgn) <- "paneldesign"
+  return (panels_dsgn)
 }

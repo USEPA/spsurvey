@@ -12,14 +12,14 @@
 #' design.  Based on algorithmic idea by Cook and Nachtsheim (1989) and
 #' implemented by Robert Wheeler.
 #'
-#' @param n.period  Number of time periods for the survey design. Typically,
+#' @param n_period  Number of time periods for the survey design. Typically,
 #'   number of periods if sampling occurs once per period or number of months if
 #'   sampling occurs once per month. (v, number of varieties/treatments in BIBD
 #'   terms)
 #'
-#' @param n.pnl Number of panels (b, number of blocks in BIBD terms)
+#' @param n_pnl Number of panels (b, number of blocks in BIBD terms)
 #'
-#' @param n.visit  Number of time periods to be visited in a panel (k, block
+#' @param n_visit  Number of time periods to be visited in a panel (k, block
 #'   size in BIBD terms)
 #'
 #' @param nsamp Number of samples in each panel.
@@ -55,9 +55,9 @@
 #'       assignment to panels and time periods}
 #'     \item{\code{\link{panel_summary}}}{summarize characteristics of a revisit
 #'       panel design}
-#'     \item{\code{\link{power.dsgn}}}{power calculation for multiple panel
+#'     \item{\code{\link{power_dsgn}}}{power calculation for multiple panel
 #'       designs}
-#'     \item{\code{\link{cov.panel.dsgn}}}{covariance matrix for a panel design}
+#'     \item{\code{\link{cov_panel_dsgn}}}{covariance matrix for a panel design}
 #'     \item{\code{\link{plot_powerpaneldesign}}}{plot power curves for panel
 #'       designs}
 #'   }
@@ -67,34 +67,34 @@
 #' @examples
 #' # Balanced incomplete block design with 20 sample occasions, 20 panels,
 #' # 3 visits to each unit, and 20 units in each panel.
-#' revisit_bibd(n.period = 20, n.pnl = 20, n.visit = 3, nsamp = 20)
+#' revisit_bibd(n_period = 20, n_pnl = 20, n_visit = 3, nsamp = 20)
 #'
 #' @export
 ################################################################################
 
-revisit_bibd <- function (n.period, n.pnl, n.visit, nsamp, panel_name = "BIB",
+revisit_bibd <- function (n_period, n_pnl, n_visit, nsamp, panel_name = "BIB",
    begin = 1, skip = 1, iter = 30 ) {
 
   # check input parameters for meeting requirements
-  if ( !(n.period > n.visit & n.pnl >= n.period & n.visit > 1)) {
+  if ( !(n_period > n_visit & n_pnl >= n_period & n_visit > 1)) {
     stop ("\nInput parameters do not satisfy minimal conditions")
   }
 
   # use crossdes package functions to generate BIB design
-  bib <- find.BIB(n.period, n.pnl, n.visit, iter = iter)
-  pan.dsgn <- table (c(rep(1:n.pnl, rep(n.visit, n.pnl))), as.vector(t(bib)) )
-  pan.dsgn[pan.dsgn ==1] <- nsamp
+  bib <- find.BIB(n_period, n_pnl, n_visit, iter = iter)
+  pan_dsgn <- table (c(rep(1:n_pnl, rep(n_visit, n_pnl))), as.vector(t(bib)) )
+  pan_dsgn[pan_dsgn ==1] <- nsamp
 
   # assign dimnames
-  if (nrow(pan.dsgn) < 10) {
-    dimnames (pan.dsgn) <- list(c(paste(panel_name, 1:nrow(pan.dsgn), sep="_") ),
-                                seq(begin, by = skip, length.out=ncol(pan.dsgn)) )
+  if (nrow(pan_dsgn) < 10) {
+    dimnames (pan_dsgn) <- list(c(paste(panel_name, 1:nrow(pan_dsgn), sep="_") ),
+                                seq(begin, by = skip, length.out=ncol(pan_dsgn)) )
   }
   else {
-    dimnames (pan.dsgn) <- list(c(paste(panel_name, 1:9, sep="_0"),
-                                  paste(panel_name, 10:nrow(pan.dsgn), sep="_") ),
-                                seq(begin, by = skip, length.out=ncol(pan.dsgn)) )
+    dimnames (pan_dsgn) <- list(c(paste(panel_name, 1:9, sep="_0"),
+                                  paste(panel_name, 10:nrow(pan_dsgn), sep="_") ),
+                                seq(begin, by = skip, length.out=ncol(pan_dsgn)) )
   }
-  class (pan.dsgn) <- "paneldesign"
-  return (pan.dsgn)
+  class (pan_dsgn) <- "paneldesign"
+  return (pan_dsgn)
 }

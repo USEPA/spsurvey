@@ -47,7 +47,7 @@
 #' @examples
 #' x <- rnorm(100, 10, sqrt(10))
 #' wgt <- runif(100, 10, 100)
-#' rslt <- ash1.wgt(x, wgt)
+#' rslt <- ash1_wgt(x, wgt)
 #' plot(rslt)
 #'
 #' @export
