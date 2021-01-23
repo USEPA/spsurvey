@@ -26,7 +26,7 @@
 #'   aux_var. If single character, then seltype applies to all strata. If vector, then each 
 #'   stratum may have different selection type. Default is single character value of "equal".
 #' 
-#' @param n_samp The sample size required. If single stratum, then single numeric value.
+#' @param n_base The sample size required. If single stratum, then single numeric value.
 #'   If sample is stratified, then numeric vector with same length as "stratum" and sample sizes
 #'   required in same order as strata in "stratum". Must be specified.
 #' 
@@ -36,7 +36,7 @@
 #'   category for all strata or if the expected sample size for each category may differ, then
 #'   a list of named character vectors with the expected sample size for each category in the
 #'   stratum. The list must be in same order as the "stratum" variable. For each stratum, 
-#'   the sum of caty_n values must equal n_samp for that stratum. Default is NULL.
+#'   the sum of caty_n values must equal n_base for that stratum. Default is NULL.
 #'   
 #' @param n_over If seltype is "equal" and is not stratified, a numeric value specifying the 
 #'   over sample size requested. If seltype is "equal" and is stratified either a numeric value
@@ -92,7 +92,7 @@
 #' @export
 #################################################################################
 
-dsgn_check <- function(sframe, sf_type, legacy_sites, legacy_option, stratum, seltype, n_samp, caty_n,
+dsgn_check <- function(sframe, sf_type, legacy_sites, legacy_option, stratum, seltype, n_base, caty_n,
                        n_over, n_near, stratum_var,  caty_var, aux_var, legacy_var, mindis, 
                        DesignID, SiteBegin, maxtry) {
 
@@ -212,11 +212,11 @@ dsgn_check <- function(sframe, sf_type, legacy_sites, legacy_option, stratum, se
     stop_df <- rbind(stop_df, data.frame(func = I("seltype"), I(stop_mess)))
   }
   
-  # check n_samp
-  if(any(n_samp <= 0)) {
+  # check n_base
+  if(any(n_base <= 0)) {
     stop_ind <- TRUE
     stop_mess <- paste0("Sample size must be integers greater than 0.")
-    stop_df <- rbind(stop_df, data.frame(func = I("n_samp"), I(stop_mess)))
+    stop_df <- rbind(stop_df, data.frame(func = I("n_base"), I(stop_mess)))
   }
   
   # check caty_n
@@ -228,9 +228,9 @@ dsgn_check <- function(sframe, sf_type, legacy_sites, legacy_option, stratum, se
         stop_df <- rbind(stop_df, data.frame(func = I("caty_n"), I(stop_mess)))
       }
       tst <- function(x, caty_n){x != sum(caty_n)}
-      if(any(sapply(n_samp,tst, caty_n)) ) {
+      if(any(sapply(n_base,tst, caty_n)) ) {
         stop_ind <-  TRUE
-        stop_mess <- paste0("Sum of caty_n values do not equal n_samp.")
+        stop_mess <- paste0("Sum of caty_n values do not equal n_base.")
         stop_df <- rbind(stop_df, data.frame(func = I("caty_n"), I(stop_mess)))
       }
     }

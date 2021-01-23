@@ -91,7 +91,7 @@ grts_stratum <- function(stratum, dsgn, sframe, sf_type, pt_density = NULL,
     # set default equal to 10 population sites per requested sample site
     if (is.null(pt_density)) {
       popmatch <- 10
-      n_base <- dsgn[["n_samp"]][[stratum]]
+      n_base <- dsgn[["n_base"]][[stratum]]
       n_over <- dsgn[["n_over"]][[stratum]]
       if (is.null(n_over)) {
         n_over <- 0
@@ -126,7 +126,7 @@ grts_stratum <- function(stratum, dsgn, sframe, sf_type, pt_density = NULL,
     # set default equal to 10 population sites per requested sample site
     if (is.null(pt_density)) {
       popmatch <- 10
-      n_base <- dsgn[["n_samp"]][[stratum]]
+      n_base <- dsgn[["n_base"]][[stratum]]
       n_over <- dsgn[["n_over"]][[stratum]]
       if (is.null(n_over)) {
         n_over <- 0
@@ -171,7 +171,7 @@ grts_stratum <- function(stratum, dsgn, sframe, sf_type, pt_density = NULL,
   # Step 2 site selection if linear or area; otherwise Step 1 for points.
   # detemine overall sample size required from dsgn for stratum
   # account for n_over sample option if present
-  n_total <- dsgn[["n_samp"]][[stratum]] + sum(dsgn[["n_over"]][[stratum]], na.rm = TRUE)
+  n_total <- dsgn[["n_base"]][[stratum]] + sum(dsgn[["n_over"]][[stratum]], na.rm = TRUE)
   if(dsgn[["seltype"]][[stratum]] == "equal" | dsgn[["seltype"]][[stratum]] == "proportional") {
     n.caty <- n_total
   } else {
@@ -185,7 +185,7 @@ grts_stratum <- function(stratum, dsgn, sframe, sf_type, pt_density = NULL,
   }
   
   # compute inclusion probabilities
-  ip <- grtspts_ip(type = dsgn[["seltype"]][stratum], n_samp = n.caty,
+  ip <- grtspts_ip(type = dsgn[["seltype"]][stratum], n_base = n.caty,
                    Nstratum = Nstratum, caty = sftmp$caty, aux = sftmp$aux,
                    warn_ind = warn_ind,  warn_df = warn_df)
   # save initial inclusion probabilities
@@ -241,7 +241,7 @@ grts_stratum <- function(stratum, dsgn, sframe, sf_type, pt_density = NULL,
   }
   
   # adjust inclusion probabilities when over sample sites present
-  n.base <- dsgn[["n_samp"]][[stratum]]
+  n.base <- dsgn[["n_base"]][[stratum]]
   sites[["sites_base"]]$ip <- sites[["sites_base"]]$ip * n_total / n.base
   # save base sites
   sites_base <- sites$sites_base[1:n.base,]

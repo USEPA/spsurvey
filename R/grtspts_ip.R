@@ -10,10 +10,10 @@
 #' @param type Character string with values of equal, unequal or proportional. Default
 #'   is equal.
 #'
-#' @param n_samp Sample size for the stratum. If type is equal or proportional, then n_samp
+#' @param n_base Sample size for the stratum. If type is equal or proportional, then n_base
 #'   is numeric value for the total sample size for the stratum. If type is unequal,
-#'   then n_samp is a named vector where names are the unequal probability categories with the
-#'   expected sample size for each category. Names in n_samp must be a subset of the values in caty.
+#'   then n_base is a named vector where names are the unequal probability categories with the
+#'   expected sample size for each category. Names in n_base must be a subset of the values in caty.
 #'   The sum of the category sample sizes is the total sample size for the stratum.
 #'
 #' @param Nstratum Number of elements in the stratum. Each element will be assigned an
@@ -21,7 +21,7 @@
 #'
 #' @param caty If type is unequal, a character variable that identifies the category
 #'   for each element of the sample frame that may be used for an unequal probability
-#'   design. All categories in n_samp must be present in pt_caty but additional categories
+#'   design. All categories in n_base must be present in pt_caty but additional categories
 #'   are allowed but will not be included in the survey design for the statum. Default is NULL.
 #'
 #' @param aux If type is proportional, a numeric vector that will be used to select
@@ -42,32 +42,32 @@
 #' @keywords survey, inclusion probability
 #'
 #' @example
-#' tmp <- grtspts_ip(type = "equal", n_samp = 10, Nstratum = 25)
+#' tmp <- grtspts_ip(type = "equal", n_base = 10, Nstratum = 25)
 #' tmp
-#' tmp <- grtspts_ip(type = "unequal", n_samp = c(small = 5, large = 5),
+#' tmp <- grtspts_ip(type = "unequal", n_base = c(small = 5, large = 5),
 #'           caty = c(rep("small", 15), rep("large", 10)))
 #' tmp
-#' tmp <- grtspts_ip(type = "proportional", n_samp = 10,
+#' tmp <- grtspts_ip(type = "proportional", n_base = 10,
 #'                   aux = c(rnorm(20, 3), -2, 30, 40, 0, 0))
 #' tmp
 #'
 #' @export
 #################################################################################
 
-grtspts_ip <- function(type = "equal", n_samp, Nstratum = NULL, caty = NULL,
+grtspts_ip <- function(type = "equal", n_base, Nstratum = NULL, caty = NULL,
                        aux = NULL, warn_ind = NULL, warn_df = NULL) {
 
   # equal inclusion probabilities
   if(type == "equal") {
-    ip <- rep(sum(n_samp, na.rm = TRUE)/Nstratum, Nstratum)
+    ip <- rep(sum(n_base, na.rm = TRUE)/Nstratum, Nstratum)
   }
   # unequal inclusion probabilities
   if(type == "unequal") {
     gsum <- table(caty)
-    catmatch <- match(names(n_samp),names(gsum),nomatch=0)
-    piden <- n_samp/gsum[catmatch]
+    catmatch <- match(names(n_base),names(gsum),nomatch=0)
+    piden <- n_base/gsum[catmatch]
     ip <- rep(NA,length(caty))
-    for(i in names(n_samp))
+    for(i in names(n_base))
       ip[caty == i] <- piden[i]
   }
   # proportional inclusion probabilities
@@ -100,7 +100,7 @@ grtspts_ip <- function(type = "equal", n_samp, Nstratum = NULL, caty = NULL,
       }
     }
     # initialize inclusion probabilities
-    ip <- n_samp * ip / sum(ip)
+    ip <- n_base * ip / sum(ip)
 
     # identify and subset elements that have ip > 0
     element_gt0 <- ip > 0
@@ -115,7 +115,7 @@ grtspts_ip <- function(type = "equal", n_samp, Nstratum = NULL, caty = NULL,
       tst <- 0
       while(ngt1 != tst) {
         tmp <- ip_gt0[!element_gt1]
-        ip_gt0[!element_gt1] <- (n_samp - ngt1) * tmp/sum(tmp)
+        ip_gt0[!element_gt1] <- (n_base - ngt1) * tmp/sum(tmp)
         ip_gt0[element_gt1] <- 1
         tst <- ngt1
         element_gt1 <- ip_gt0 >= 1

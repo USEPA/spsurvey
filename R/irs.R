@@ -18,7 +18,7 @@
 #'   are included in a finite sample frame, then a legacy variable must be provided to
 #'   identify elements that are legacy sites.
 #'    
-#' @param n_samp The sample size required. If single stratum, then single numeric value.
+#' @param n_base The sample size required. If single stratum, then single numeric value.
 #'   If sample is stratified, then numeric vector with same length as "stratum" and sample sizes
 #'   required in same order as strata in "stratum". Must be specified.
 #'
@@ -42,7 +42,7 @@
 #'   category for all strata or if the expected sample size for each category may differ, then
 #'   a list of named character vectors with the expected sample size for each category in the
 #'   stratum. The list must be in same order as the "stratum" variable. For each stratum, 
-#'   the sum of caty_n values must equal n_samp for that stratum. Default is NULL.
+#'   the sum of caty_n values must equal n_base for that stratum. Default is NULL.
 #'   
 #' @param n_over If seltype is "equal" and is not stratified, a numeric value specifying the 
 #'   over sample size requested. If seltype is "equal" and is stratified either a numeric value
@@ -119,13 +119,13 @@
 #'
 #' @examples
 #' \dontrun{
-#'   test.sample <- grts(sframe = "test_sf", n_samp = 100)
+#'   test.sample <- grts(sframe = "test_sf", n_base = 100)
 #' }
 #'
 #' @export
 #################################################################################
 
-irs <- function(sframe, n_samp, stratum = NULL, seltype = "equal", wgt_units = NULL,
+irs <- function(sframe, n_base, stratum = NULL, seltype = "equal", wgt_units = NULL,
                 pt_density = NULL, caty_n = NULL, n_over = NULL, n_near = NULL, 
                 stratum_var = NULL, caty_var = NULL, aux_var = NULL, legacy_option = FALSE,
                 legacy_sites = NULL, legacy_var = NULL, mindis = NULL, 
@@ -147,7 +147,7 @@ irs <- function(sframe, n_samp, stratum = NULL, seltype = "equal", wgt_units = N
   if(all(temp %in% c("POLYGON", "MULTIPOLYGON"))) sf_type <- "sf_area"
   
   # check input. If errors, dsgn_check will stop grtspts and report errors.
-  dsgn_check(sframe, sf_type, legacy_sites, legacy_option, stratum, seltype, n_samp, caty_n,
+  dsgn_check(sframe, sf_type, legacy_sites, legacy_option, stratum, seltype, n_base, caty_n,
              n_over, n_near, stratum_var,  caty_var, aux_var, legacy_var, mindis, 
              DesignID, SiteBegin, maxtry)
 
@@ -190,7 +190,7 @@ irs <- function(sframe, n_samp, stratum = NULL, seltype = "equal", wgt_units = N
   # variable assignments to dsgn list object
   dsgn <- list(stratum_var = stratum_var, caty_var = caty_var, aux_var = aux_var,
                legacy_option = legacy_option, legacy_var = legacy_var, stratum = stratum, 
-               wgt_units = wgt_units, seltype = NULL, n_samp = NULL, caty_n = NULL, n_over = NULL, 
+               wgt_units = wgt_units, seltype = NULL, n_base = NULL, caty_n = NULL, n_over = NULL, 
                n_near = NULL, mindis = mindis)
   
   # seltype
@@ -203,14 +203,14 @@ irs <- function(sframe, n_samp, stratum = NULL, seltype = "equal", wgt_units = N
     dsgn$seltype <- tmp
   }
   
-  # n_samp
-  if(length(n_samp) == length(stratum)) {
-    dsgn$n_samp <- n_samp
-    names(dsgn$n_samp) <- stratum
+  # n_base
+  if(length(n_base) == length(stratum)) {
+    dsgn$n_base <- n_base
+    names(dsgn$n_base) <- stratum
   } else {
-    tmp <- sapply(stratum, function(x, n_samp) { x = n_samp}, n_samp)
+    tmp <- sapply(stratum, function(x, n_base) { x = n_base}, n_base)
     names(tmp) <- stratum
-    dsgn$n_samp <- tmp
+    dsgn$n_base <- tmp
   }
   
   # caty_n
