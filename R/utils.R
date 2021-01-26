@@ -129,17 +129,24 @@ check_rhs_cat <- function(varsf, formlist) {
 }
 
 match_sf_defaults <- function(varsf, list_args) {
-  if (all(st_geometry_type(varsf, by_geometry = FALSE) %in% c("POINT", "MULTIPOINT"))) {
-    sf_defaults <- list(pch = 1, cex = 1, col = 1, bg = 0, lwd = 1, lty = 1, type = "p")
-  }
-  
-  if (all(st_geometry_type(varsf, by_geometry = FALSE) %in% c("LINESTRING", "MULTILINESTRING"))) {
-    sf_defaults <- list(lty = 1, lwd = 1, col = 1, pch = 1, type = "l")
-  }
 
-  if (all(st_geometry_type(varsf, by_geometry = FALSE) %in% c("POLYGON", "MULTIPOLYGON"))) {
-    sf_defaults <- list(lty = 1, lwd = 1, col = NA, cex = 1, pch = NA, border = 1, rule = "evenodd")
-  }
+  sf_default_df <- data.frame(
+    geometry = c("POINT", "MULTIPOINT", "LINESTRING", "MULTILINESTRING", "POLYGON", "MULTIPOLYGON"),
+    pch = c(1, 1, 1, 1, NA, NA),
+    cex = c(1, 1, NA, NA, 1, 1),
+    col = c(1, 1, 1, 1, NA, NA),
+    bg = c(0, 0, NA, NA, NA, NA),
+    lwd = c(1, 1, 1, 1, 1, 1),
+    lty = c(1, 1, 1, 1, 1, 1),
+    type = c("p", "p", "l", "l", NA, NA),
+    border = c(NA, NA, NA, NA, 1, 1),
+    rule = c(NA, NA, NA, NA, "evenodd", "evenodd"),
+    stringsAsFactors = FALSE
+  )
+  sf_defaults <- merge(as.character(st_geometry_type(varsf)), sf_default_df, sort = FALSE)
+  # sf_defaults <- lapply(st_geometry_type(varsf), get_sf_defaults)
+  # sf_defaults <- do.call("rbind", sf_defaults)
+
 
   names_list_args <- names(list_args)
   list_args <- lapply(names_list_args, function(x) {
@@ -153,3 +160,16 @@ match_sf_defaults <- function(varsf, list_args) {
   names(list_args) <- names_list_args
   list_args
 }
+
+# get_sf_defaults <-   function(geometry) {
+#   if (geometry %in% c("POINT", "MULTIPOINT")) {
+#     sf_defaults <- data.frame(pch = 1, cex = 1, col = 1, bg = 0, lwd = 1, lty = 1, type = "p", border = NA, rule = NA, stringsAsFactors = FALSE)
+#   } else if (geometry %in% c("LINESTRING", "MULTILINESTRING")){
+#     sf_defaults <- data.frame(pch = 1, cex = NA, col = 1, bg = 0, lwd = 1, lty = 1, type = "l", border = NA, rule = NA, stringsAsFactors = FALSE)
+#   } else if (geometry %in% c("POLYGON", "MULTIPOLYGON")){
+#     sf_defaults <- data.frame(pch = NA, cex = 1, col = NA, bg = NA, lwd = 1, lty = 1, type = NA, border = 1, rule = "evenodd", stringsAsFactors = FALSE)
+#   } else {
+#     stop("All object geometries must be POINT, MULTIPOINT, LINESTRING, MULTILINESTRING, POLYGON, or MULTIPOLYGON")
+#   }
+#   sf_defaults
+# }

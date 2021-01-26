@@ -138,7 +138,7 @@ To overlay the spatially balanced sample on the original population, run
 ```{r, fig.align = "center", fig.cap = "Population (sframe) and sampled sites (sites_base) from an equal probability GRTS design."}
 plot(eqprob, NE_lakes, pch = 19, key.pos = 1)
 ```
-The `pch = 19` argument tells `spsurvey` to plot closed circles instead of open circles (the default).
+The `pch = 19` argument tells `spsurvey` to plot closed circles instead of open circles (the default), and the `key.pos = 1` argument tells `spsurvey` to put the legend at the bottom of the plot.
 
 `grts` returns several design elements used by the function as a tool to both keep track of and to verify the specifications of your design. You can access this information by running `eqprob$dsgn`. A list is printed containing several pieces of information -- several of which may be `NULL`. These `NULL` values are expected and change based on the specifications of your design, similar to how the columns having only `NA` in `eqprob$sites_base` will eventually change; this will be made more clear later on. For now, you will focus on the relevant non-`NULL` information:
 ```{r, echo = FALSE}
