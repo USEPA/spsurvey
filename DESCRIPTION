@@ -48,7 +48,6 @@ License: GPL (>= 3)
 Imports:
     crossdes,
     deldir,
-    foreign,
     graphics,
     grDevices,
     Hmisc,

@@ -32,7 +32,6 @@
 #' @import survey
 #' @importFrom crossdes find.BIB
 #' @importFrom deldir deldir tile.list
-#' @importFrom foreign read.ssd read.xport
 #' @importFrom graphics axis box legend lines mtext par plot points text title
 #' @importFrom grDevices graphics.off pdf rainbow
 #' @importFrom Hmisc describe
