@@ -144,7 +144,7 @@ match_sf_defaults <- function(varsf, list_args) {
   names_list_args <- names(list_args)
   list_args <- lapply(names_list_args, function(x) {
       if (x %in% names(sf_defaults) && any(is.na(list_args[[x]]))) {
-        list_args[[x]][is.na(list_args[[x]])] <- sf_defaults[[x]]
+        list_args[[x]] <- ifelse(is.na(list_args[[x]]), sf_defaults[[x]], list_args[[x]])
       } else {
         list_args[[x]] <- list_args[[x]]
       }
