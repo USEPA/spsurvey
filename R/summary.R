@@ -1,25 +1,50 @@
-summary.spsurvey <- function(object, vars, onlyshow = NULL, ...) {
-  
-  # keep the sites sf objects from class spsurvey
-  sites <- object[names(object) %in% c("sites.base", "sites.over", "sites.near")]
-  
-  # storing output if non-null
-  output <- lapply(sites, function(x) {
-      if (is.null(x)) {
-        x  
-      } else {
-        summary.sframe(x, vars, onlyshow, ...)
-      }
-    }
-  )
-  # returning non-null outuput
-  output <- output[!vapply(output, is.null, logical(1))]
-  output
-}
-
-summary.sframe <- function(object, vars, onlyshow = NULL, ...) {
+###################################################################################
+# Function: summary.sframe and summary.spsurvey
+# Programmers: Michael Dumelle
+# Date: January 22, 2021
+#' Calculate summaries of design objects
+#' 
+#' @description 
+#' `summary` summarizes sample frames or design objects, depending on 
+#' which is provided. For design objects,sites in the base sample and
+#' replacement sites (if they exist) are summarized. The right hand of the formula specifies
+#' the categorical variables (or factors) you want to summarize by. If
+#' the left hand side of the formula is empty, the summary will be of the
+#' count distribution of the right hand side variables. If the left hand side
+#' contains a variable, the summary will be of the left hand size variable
+#' grouped by each of the right hand variables.
+#'
+#' @param object A design object output from `grts()` or `irs()` having class
+#' "spsurvey".
+#' @param formula A formula. Left hand side variables can be numeric or
+#' categorical (or factor) and right hand side variables can be categorical
+#' (or factor). Right hand side variables that are numeric will be coerced
+#' to a categorical (or factor) variable. If an intercept is included in the
+#' right hand side formula, the total will also be summarized.
+#' @param onlyshow A string indicating the level of the single right hand side
+#' variable for which a summary is requested.
+#' @param ... Additional arguments to pass to `summary()`. If the left hand
+#' side of the formula is empty, the appropriate generic arguments are passed
+#' to summary.data.frame. If the left hand side of the formula is provided, 
+#' the appropriate generic arguments are passed to summary.default
+#'
+#' @return If the left hand side of the formula is empty, a named list 
+#' containing summaries of the count distribution for each right hand side
+#' varaiable is returned. If the left hand side of the formula contains a
+#' variable, a named list contianing five number
+#' summaries (numeric left hand side) or tables (categorical or factor left
+#' hand side) is returned for each right hand side variable.
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#'    summary(NE_lakes, ELEVATION ~ 1)
+#'    sample <- grts(NE_lakes, 100)
+#'    summary(sample, ELEVATION ~ 1)
+#' }
+summary.sframe <- function(object, formula, onlyshow = NULL, ...) {
   # making formlist (utils.R)
-  formlist <- make_formlist(vars, onlyshow)
+  formlist <- make_formlist(formula, onlyshow)
   # making varsf (utils.R)
   varsf <- make_varsf(object, formlist)
   # accomodating an intercept
@@ -41,6 +66,27 @@ summary.sframe <- function(object, vars, onlyshow = NULL, ...) {
   }
 }
 
+#' @describeIn summary.sframe
+summary.spsurvey <- function(object, formula, onlyshow = NULL, ...) {
+  
+  # keep the sites sf objects from class spsurvey
+  sites <- object[names(object) %in% c("sites_base", "sites_over", "sites_near")]
+  
+  # storing output if non-null
+  output <- lapply(sites, function(x) {
+      if (is.null(x)) {
+        x  
+      } else {
+        summary.sframe(x, formula, onlyshow, ...)
+      }
+    }
+  )
+  # returning non-null outuput
+  output <- output[!vapply(output, is.null, logical(1))]
+  output
+}
+
+# Helpers -----------------------------------------------------------------
 
 cat_summary <- function(formlist, varsf, ...) {
   dotlist <- list(...)

@@ -113,8 +113,8 @@
 #'
 #' @section Other functions required:
 #'   \describe{
-#'     \item{\code{{\link{dsgn_check}}}{Checks input}
-#'     \item{\code{{\link{grts_stratum}}}{Selects sample for a stratum}
+#'     \item{\code{\link{dsgn_check}}}{Checks input}
+#'     \item{\code{\link{grts_stratum}}}{Selects sample for a stratum}
 #'     }
 #'
 #' @author Tony Olsen email{olsen.tony@epa.gov}

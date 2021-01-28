@@ -41,7 +41,7 @@
 #'
 #' @keywords survey, inclusion probability
 #'
-#' @example
+#' @examples
 #' tmp <- grtspts_ip(type = "equal", n_base = 10, Nstratum = 25)
 #' tmp
 #' tmp <- grtspts_ip(type = "unequal", n_base = c(small = 5, large = 5),
