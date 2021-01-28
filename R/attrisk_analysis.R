@@ -7,6 +7,7 @@
 # Revised: December 16, 2020 to allow use of the Horvitz-Thompson and
 #          Yates-Grundy variance estimators and to use a new function named
 #          survey_design to create the survey design object
+# Revised: January 28, 2021 to replace "pcfactor.ind" with "pcfactor_ind"
 #'
 #' Attributable Risk Analysis for Probability Survey Data
 #'
@@ -706,7 +707,7 @@ attrisk_analysis <- function(dframe, vars_response, vars_stressor,
                   response_levels[[ivar_r]], stressor_levels[[ivar_s]],
                   wgt[stratum_i], xcoord[stratum_i], ycoord[stratum_i],
                   stratum_ind, stratum_levels[i], cluster_ind,
-                  pcfactor.ind = popcorrect, fpcsize = fpcsize[stratum_i],
+                  pcfactor_ind = popcorrect, fpcsize = fpcsize[stratum_i],
                   vartype = vartype, warn_ind = warn_ind, warn_df = warn_df,
                   warn_vec = warn_vec)
               }
@@ -885,7 +886,7 @@ attrisk_analysis <- function(dframe, vars_response, vars_stressor,
                 temp <- attrisk_var(response[tst], stressor[tst],
                   response_levels[[ivar_r]], stressor_levels[[ivar_s]],
                   wgt[tst], xcoord[tst], ycoord[tst], stratum_ind, NULL,
-                  cluster_ind, pcfactor.ind = popcorrect,
+                  cluster_ind, pcfactor_ind = popcorrect,
                   fpcsize = fpcsize[tst], vartype = vartype,
                   warn_ind = warn_ind, warn_df = warn_df,
                   warn_vec = warn_vec)
