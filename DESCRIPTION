@@ -48,7 +48,6 @@ License: GPL (>= 3)
 Imports:
     crossdes,
     deldir,
-    foreign,
     graphics,
     grDevices,
     Hmisc,
@@ -59,5 +58,5 @@ Imports:
 VignetteBuilder: knitr
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 6.1.1
+RoxygenNote: 7.1.0
 NeedsCompilation: no

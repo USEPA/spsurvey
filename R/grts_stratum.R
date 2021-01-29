@@ -74,7 +74,7 @@ grts_stratum <- function(stratum, dsgn, sframe, sf_type, pt_density = NULL,
                          warn_ind = FALSE, warn_df = NULL) {
   
   # subset sframe to s stratum
-  sftmp <- sframe[sframe$stratum == stratum, ]
+  sftmp <- sframe[sframe$stratum == stratum, , drop = FALSE]
   
   # sf_type equals point
   if(sf_type == "sf_point") {
@@ -163,7 +163,7 @@ grts_stratum <- function(stratum, dsgn, sframe, sf_type, pt_density = NULL,
     sftmp[, addtmp] <- NA
     tmp[, addleg] <- NA
     sftmp <- rbind(tmp, sftmp)
-    sftmp <- sftmp[sftmp$stratum == stratum, ]
+    sftmp <- sftmp[sftmp$stratum == stratum, , drop = FALSE]
     # Determine number of elements in stratum
     Nstratum <- nrow(sftmp)
   }

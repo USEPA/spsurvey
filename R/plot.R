@@ -53,7 +53,9 @@ plot.sframe <- function(object, formula = ~ 1, variable_args = NULL, level_args 
           lapply(names_varsf_split, function(y) {
             list_args <- c(variable_args[[x]], level_args_split[[y]], dot_list)
             list_args$main <- paste(formlist$response, " ", expression("~"), " ", x, " (", y, ")", sep = "")
-            list_args <- match_sf_defaults(varsf_split[[y]], list_args)
+            if (any(is.na(unlist(list_args)))) {
+              list_args <- match_sf_defaults(varsf_split[[y]], list_args)
+            }
             do.call("plot", c(list(st_geometry(varsf_split[[y]])), list_args))
           }
           )
@@ -69,7 +71,9 @@ plot.sframe <- function(object, formula = ~ 1, variable_args = NULL, level_args 
             variable_args[[x]]$main <- paste(" ", expression("~"), " ", x, sep = "")
           }
           list_args <- c(variable_args[[x]], level_args_list[[x]], dot_list)
-          list_args <- match_sf_defaults(varsf[x], list_args)
+          if (any(is.na(unlist(list_args)))) {
+            list_args <- match_sf_defaults(varsf[x], list_args)
+          }
           do.call("plot", c(list(varsf[x]), list_args))
         }
         )
@@ -107,7 +111,9 @@ plot.sframe <- function(object, formula = ~ 1, variable_args = NULL, level_args 
           lapply(names_varsf_split, function(y) {
             list_args <- c(variable_args[[x]], level_args_split[[y]], dot_list)
             list_args$main <- paste(formlist$response, " ", expression("~"), " ", x, " (", y, ")", sep = "")
-            list_args <- match_sf_defaults(varsf_split[[y]], list_args)
+            if (any(is.na(unlist(list_args)))) {
+              list_args <- match_sf_defaults(varsf_split[[y]], list_args)
+            }
             do.call("plot", c(list(varsf_split[[y]][formlist$response]), list_args))
           }
           )
@@ -127,7 +133,9 @@ plot.sframe <- function(object, formula = ~ 1, variable_args = NULL, level_args 
           lapply(names_varsf_split, function(y) {
             list_args <- c(variable_args_split[[y]], level_args_split[[y]], dot_list)
             list_args$main <- paste(formlist$response, " ", expression("~"), " ", x, " (", y, ")", sep = "")
-            list_args <- match_sf_defaults(varsf_split[[y]], list_args)
+            if (any(is.na(unlist(list_args)))) {
+              list_args <- match_sf_defaults(varsf_split[[y]], list_args)
+            }
             do.call("plot", c(list(varsf_split[[y]][formlist$response]), list_args))
           }
           )

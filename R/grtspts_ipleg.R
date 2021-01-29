@@ -22,7 +22,7 @@
 #'
 #' @keywords survey, inclusion probability
 #'
-#' @example
+#' @examples
 #' a <- runif(30)
 #' tmp <- grtspts_ipleg(ip = 10 * a/sum(a), legacy = c(TRUE, rep(FALSE, 5), TRUE, TRUE,
 #'                  rep(FALSE, 22)) )

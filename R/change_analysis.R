@@ -7,6 +7,7 @@
 # Revised: December 15, 2020 to allow use of the Horvitz-Thompson and
 #          Yates-Grundy variance estimators and to use a new function named
 #          survey_design to create the survey design object
+# Revised: January 28, 2021 to replace "warn.vec" with "warn_vec"
 #
 #' Estimation of Change between Two Probability Surveys
 #'
@@ -620,7 +621,7 @@ change_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL,
             nlev_ivar, design_1, design_2, design_names, repeat_1[survey_1],
             repeat_2[survey_2], siteID, revisitwgt, NULL,  NULL, popcorrect,
             vartype, conf, mult, warn_ind, warn_df,
-            warn.vec=c(itype, isubpop, ivar))
+            warn_vec=c(itype, isubpop, ivar))
           changesum <- temp$changesum
           warn_ind <- temp$warn_ind
           warn_df <- temp$warn_df
@@ -671,7 +672,7 @@ change_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL,
             design_1, design_2, design_names, repeat_1[survey_1],
             repeat_2[survey_2], siteID, revisitwgt, test, vars_nondetect[indx],
             popcorrect, vartype, conf, mult, warn_ind, warn_df,
-            warn.vec=c(itype, isubpop, ivar))
+            warn_vec=c(itype, isubpop, ivar))
           changesum <- temp$changesum
           warn_ind <- temp$warn_ind
           warn_df <- temp$warn_df

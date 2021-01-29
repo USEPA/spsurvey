@@ -4,6 +4,7 @@
 # Date: July 23, 2020
 # Revised: October 23, 2020 to correct a coding error when calculating
 #          proportion estimates for a stratum
+# Revised: January 28, 2021 to replace "pcfactor.ind" with "pcfactor_ind"
 #'
 #' Local Mean Variance Estimates of Estimated Proportions for Categorical Data
 #'
@@ -197,7 +198,7 @@ cat_localmean_prop <- function(itype, lev_itype, nlev_itype, ivar, lev_ivar,
           temp <- catvar_prop(factor(catvar[stratum_i]), wgt[stratum_i],
             xcoord[stratum_i], ycoord[stratum_i], prop_st, prop_names,
             stratum_ind, stratum_levels[i], cluster_ind,
-            pcfactor.ind = popcorrect, fpcsize=fpcsize[stratum_i],
+            pcfactor_ind = popcorrect, fpcsize=fpcsize[stratum_i],
             vartype = vartype, warn_ind = warn_ind, warn_df = warn_df,
             warn_vec = warn_vec)
         }
@@ -255,7 +256,7 @@ cat_localmean_prop <- function(itype, lev_itype, nlev_itype, ivar, lev_ivar,
       } else {
         temp <- catvar_prop(factor(catvar[tst]), wgt[tst], xcoord[tst],
           ycoord[tst], prop, prop_names, stratum_ind, NULL, cluster_ind,
-          pcfactor.ind = popcorrect, fpcsize = fpcsize[tst], vartype = vartype,
+          pcfactor_ind = popcorrect, fpcsize = fpcsize[tst], vartype = vartype,
           warn_ind = warn_ind, warn_df = warn_df, warn_vec = warn_vec)
       }
 
