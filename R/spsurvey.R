@@ -36,8 +36,6 @@
 #' @importFrom grDevices graphics.off pdf rainbow
 #' @importFrom Hmisc describe
 #' @importFrom MASS ginv
-#' @importFrom parallel clusterEvalQ clusterExport detectCores getDefaultCluster
-#'   makeCluster parLapply setDefaultCluster stopCluster
 #' @importFrom rgeos gIntersection
 #' @importFrom sp SpatialPoints SpatialPointsDataFrame
 #' @importFrom stats addmargins chisq.test confint dist dnorm ftable model.frame
