@@ -14,20 +14,38 @@ output:
 ---
 
 ```{r, include = FALSE}
-# use nla_2007 for analysis, NE_lakes for design
-# use 
-
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>", 
   warning = FALSE, 
   message = FALSE
 )
-library(tidyverse)
 library(devtools)
 load_all()
-load("C:/Users/mdumelle/Documents/software/spsurvey/spsurvey/data/NLA_2007.rda")
-NLA_2007 <- NLA_2007 %>% select(siteID:ycoord, Lake_Origin, Chla, Chla_cond, NTL)
+data("NLA_West")
+```
+
+
+# Introduction
+
+In this vignette, you will use `spsurvey` to analyze probability samples of a finite resource. You will explore:
+
+* [The `NLA_West` Data]
+* [Categorical Variable Analysis]
+* [Continuous Variable Analysis]
+
+If you have not yet done so, please read the "Start Here" vignette, accessed [here](dummy link for now) or by running `vignette("start_here", package = "spsurvey")`. In this vignette, you will review Coordinate Reference Systems (CRS), `sf` objects, installing and loading the `spsurvey` package, setting a reproducible seed, and using the "pipe" operator (`%>%`).
+
+# The `NLA_West` Data
+
+Before anything else, you must load `spsurvey` by running
+```{r setup, eval = FALSE}
+library(spsurvey)
+```
+
+Then, you can load the `NLA_West` data by running 
+```{r}
+data("NLA_West")
 ```
 
 
@@ -109,9 +127,14 @@ strat_eqprob_chlacond
 ## `cont_analysis()`
 
 ```{r}
-eqprob_chla <- cont_analysis(dframe = eqprob_base,  vars = "Chla", siteID = "siteID",
-                                weight = "wgt", xcoord = "X", 
-                                ycoord = "Y")
+eqprob_chla <- cont_analysis(dframe = NLA_West, vars = "BENTHIC_MMI",
+                                weight = "WGT_TP_EXTENT", xcoord = "XCOORD", siteID = "SITE_ID",
+                                ycoord = "YCOORD")
+
+
+eqprob_chla <- cat_analysis(dframe = NLA_West, vars = "BENTHIC_MMI_COND",
+                                weight = "WGT_TP_EXTENT", xcoord = "XCOORD", siteID = "SITE_ID",
+                                ycoord = "YCOORD")
 ```
 
 ```{r}

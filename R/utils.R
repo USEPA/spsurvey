@@ -1,3 +1,5 @@
+# Helpers -----------------------------------------------------------------
+
 make_formlist <- function(vars, onlyshow) {
   # find all terms from the formula
   varterms <- terms(vars)
@@ -40,33 +42,33 @@ make_formlist <- function(vars, onlyshow) {
   )
 }
 
-make_varsf <- function(object, formlist) {
+make_varsf <- function(x, formlist) {
   # can possibly deprecate this in the future by making use of
   # model.frame and extracting the main effects and using them to make the interactions
   # only real advantage will be creating variables for use mid formula with numeric variables
   
   # store geometry 
-  object_geometry <- st_geometry(object)
+  x_geometry <- st_geometry(x)
   
   if (formlist$intercept && is.null(formlist$response) && length(formlist$varlabels) == 0) {
-    return(object_geometry)
+    return(x_geometry)
   } else {
     
     # remove geometry to make a regular data frame
-    object_df <- st_drop_geometry(object)
+    x_df <- st_drop_geometry(x)
     formlist <- lapply(
       formlist$varnames_split,
       function(x) {
-        if (length(x) == 1 && is.numeric(object_df[[x]])) {
-          return(object_df[, x, drop = FALSE]) # return numeric if provided
+        if (length(x) == 1 && is.numeric(x_df[[x]])) {
+          return(x_df[, x, drop = FALSE]) # return numeric if provided
         } else {
-          return(interaction(object_df[, x, drop = FALSE], sep = ":")) # return factors
+          return(interaction(x_df[, x, drop = FALSE], sep = ":")) # return factors
         }
       }
     )
     varsf <- as.data.frame(formlist, optional = TRUE) # without optional the : in name gets
     # converted to synctactic name with .
-    varsf <- st_as_sf(varsf, geometry = object_geometry)
+    varsf <- st_as_sf(varsf, geometry = x_geometry)
     return(varsf)
   }
 }
@@ -169,7 +171,7 @@ match_sf_defaults <- function(varsf, list_args) {
 #   } else if (geometry %in% c("POLYGON", "MULTIPOLYGON")){
 #     sf_defaults <- data.frame(pch = NA, cex = 1, col = NA, bg = NA, lwd = 1, lty = 1, type = NA, border = 1, rule = "evenodd", stringsAsFactors = FALSE)
 #   } else {
-#     stop("All object geometries must be POINT, MULTIPOINT, LINESTRING, MULTILINESTRING, POLYGON, or MULTIPOLYGON")
+#     stop("All x geometries must be POINT, MULTIPOINT, LINESTRING, MULTILINESTRING, POLYGON, or MULTIPOLYGON")
 #   }
 #   sf_defaults
 # }

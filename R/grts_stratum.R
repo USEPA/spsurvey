@@ -72,7 +72,7 @@
 grts_stratum <- function(stratum, dsgn, sframe, sf_type, pt_density = NULL, 
                          legacy_option = NULL, legacy_sites = NULL, maxtry = 10,
                          warn_ind = FALSE, warn_df = NULL) {
-  
+
   # subset sframe to s stratum
   sftmp <- sframe[sframe$stratum == stratum, , drop = FALSE]
   
@@ -145,7 +145,6 @@ grts_stratum <- function(stratum, dsgn, sframe, sf_type, pt_density = NULL,
     # drop features with no points
     sfpts <- sfpts[!st_is_empty(sfpts),]
     sftmp <- st_join(sfpts, sftmp)
-    names(sftmp)[names(sftmp) == "sfpts"] <- "geometry"
     sftmp$xcoord <- st_coordinates(sftmp)[,"X"]
     sftmp$ycoord <- st_coordinates(sftmp)[,"Y"]
     sftmp$idpts <- 1:nrow(sftmp)

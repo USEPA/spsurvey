@@ -1,5 +1,5 @@
 ###################################################################################
-# Function: summary.sframe and summary.spsurvey
+# Function: summary.sframe and summary.design
 # Programmers: Michael Dumelle
 # Date: January 22, 2021
 #' Calculate summaries of design objects
@@ -7,15 +7,16 @@
 #' @description 
 #' `summary` summarizes sample frames or design objects, depending on 
 #' which is provided. For design objects,sites in the base sample and
-#' replacement sites (if they exist) are summarized. The right hand of the formula specifies
-#' the categorical variables (or factors) you want to summarize by. If
-#' the left hand side of the formula is empty, the summary will be of the
+#' replacement sites (if they exist) are summarized. The right hand of the 
+#' formula specifies the categorical variables (or factors) you want to
+#' summarize by. If the left hand side of the formula is empty, the
+#' summary will be of the
 #' count distribution of the right hand side variables. If the left hand side
 #' contains a variable, the summary will be of the left hand size variable
 #' grouped by each of the right hand variables.
 #'
-#' @param object A design object output from `grts()` or `irs()` having class
-#' "spsurvey".
+#' @param object A sample frame object having class `sframe` or a design object
+#'  output from `grts()` or `irs()` having class "design".
 #' @param formula A formula. Left hand side variables can be numeric or
 #' categorical (or factor) and right hand side variables can be categorical
 #' (or factor). Right hand side variables that are numeric will be coerced
@@ -34,13 +35,19 @@
 #' variable, a named list contianing five number
 #' summaries (numeric left hand side) or tables (categorical or factor left
 #' hand side) is returned for each right hand side variable.
+#' 
+#' @name summary
+#' @method summary sframe
 #' @export
 #'
 #' @examples
 #' \dontrun{
+#'    NE_lakes <- sframe(NE_lakes)
 #'    summary(NE_lakes, ELEVATION ~ 1)
+#'    summary(NE_lakes, ~ ELEVATION_CAT * AREA_HA_CAT)
 #'    sample <- grts(NE_lakes, 100)
 #'    summary(sample, ELEVATION ~ 1)
+#'    summary(sample, ~ ELEVATION_CAT * AREA_HA_CAT)
 #' }
 summary.sframe <- function(object, formula, onlyshow = NULL, ...) {
   # making formlist (utils.R)
@@ -66,10 +73,12 @@ summary.sframe <- function(object, formula, onlyshow = NULL, ...) {
   }
 }
 
-#' @describeIn summary.sframe
-summary.spsurvey <- function(object, formula, onlyshow = NULL, ...) {
+#' @name summary
+#' @method summary design
+#' @export
+summary.design <- function(object, formula, onlyshow = NULL, ...) {
   
-  # keep the sites sf objects from class spsurvey
+  # keep the sites sf objects from class design
   sites <- object[names(object) %in% c("sites_base", "sites_over", "sites_near")]
   
   # storing output if non-null

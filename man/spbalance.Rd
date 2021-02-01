@@ -2,35 +2,40 @@
 % Please edit documentation in R/spbalance.R
 \name{spbalance}
 \alias{spbalance}
-\title{Spatial Balance}
+\title{Calculate spatial balance metrics}
 \usage{
 spbalance(
   object,
   sframe,
-  stratum_object = "stratum",
-  stratum_sframe,
+  sites = "sites_base",
   metrics = "pielou",
-  return_extent = FALSE
+  extents = FALSE
 )
 }
 \arguments{
-\item{object}{}
+\item{object}{A design object output from `grts()` or `irs()`
+having class "spsurvey"}
 
-\item{sframe}{}
+\item{sframe}{An `sframe or `sf` object}
 
-\item{stratum_object}{}
+\item{sites}{The sites in object for which spatial balance metrics
+are desired. This argument must be "sites_base", "sites_over", or 
+"sites_near". Defaults to "sites_base"}
 
-\item{stratum_sframe}{}
+\item{metrics}{A character vector of spatial balance metrics 
+(pielou, simpsons, chisquare, absolute error). Defaults to 
+"pielou".}
 
-\item{metrics}{}
-
-\item{return_extent}{}
+\item{extents}{Should the total extent within each dirichlet
+tesselation be returned? Defaults to FALSE.}
 }
 \value{
-
+A list having names equal to each strata
 }
 \description{
 This function computes the spatial balance of a design with respect 
-to the sframe using Dirichlet Tesselations, measuring the
-extent to which a object is a miniature of the sframe.
+to the sample frame (sframe) using Dirichlet Tesselations, measuring the
+extent to which a object is a miniature of sframe. This function is
+applicable for unstratified or stratified designs with equal selection
+probabilities.
 }

@@ -85,13 +85,13 @@ The `ELEVATION` column has continuous elevation measurements, but next make a ca
 
 To convert `ELEVATION` into this categorical variable, run
 ```{r elev cat}
-max_elevation <- max(NE_lakes$ELEVATION) # store the max elevation 
-NE_lakes$ELEVATION_CAT <- cut(
-  NE_lakes$ELEVATION,
-  breaks = c(0, 100, max_elevation),
-  labels = c("low", "high"),
-  include.lowest = TRUE # includes zero as a possible elevation
-  )
+# max_elevation <- max(NE_lakes$ELEVATION) # store the max elevation 
+# NE_lakes$ELEVATION_CAT <- cut(
+#   NE_lakes$ELEVATION,
+#   breaks = c(0, 100, max_elevation),
+#   labels = c("low", "high"),
+#   include.lowest = TRUE # includes zero as a possible elevation
+#   )
 ```
 
 Later you will sumamrize and visualize the `NE_lakes` data. Before doing so, you must store the data as an `sframe` object:
@@ -460,10 +460,10 @@ To measure the spatial balance of a design, Stevens and Olsen (2004) proposed us
 Let $p_i$ be the proportion of population sites in Voroni polygon $i$. The Pielou's evenness index is often used as a measure of spatial balance and can be defined as $1 + \frac{1}{n}\sum_{i = 1}^n p_i log(p_i)$. One attractive feature of Pielou's evenness index is that it is unitless; a value of 0 indicates perfect spatial balance, and a value of 1 indicates no spatial balance. To compute the Pielou's evenness index of the equal probabily GRTS and IRS designs, run
 ```{r}
 # compute for grts
-pielou_grts <- spbalance(eqprob$sites_base, NE_lakes)
+pielou_grts <- spbalance(eqprob, NE_lakes)
 pielou_grts
 # compute for irs
-pielou_irs <- spbalance(eqprob_irs$sites_base, NE_lakes)
+pielou_irs <- spbalance(eqprob_irs, NE_lakes)
 pielou_irs
 ```
 Unsurprisingly, the GRTS design has better spatial balance than the IRS design. By default, `spbalance()` computes only the Pielou's evenness index, but several other spatial balance metrics are available -- run `?spbalance` for more information.
