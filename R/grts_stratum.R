@@ -111,6 +111,7 @@ grts_stratum <- function(stratum, dsgn, sframe, sf_type, pt_density = NULL,
     # join sites with linear features
     sfpts <- st_cast(sfpts, to = "POINT")
     sftmp <- st_join(sfpts, sftmp, join = st_nearest_feature)
+    names(sftmp)[names(sftmp) == "sfpts"] <- "geometry"
     sftmp$xcoord <- st_coordinates(sftmp)[,"X"]
     sftmp$ycoord <- st_coordinates(sftmp)[,"Y"]
     sftmp$idpts <- 1:nrow(sftmp)
