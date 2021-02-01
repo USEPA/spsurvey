@@ -2,100 +2,35 @@
 % Please edit documentation in R/spbalance.R
 \name{spbalance}
 \alias{spbalance}
-\title{Calculate Spatial Balance Metrics for a Survey Design}
+\title{Spatial Balance}
 \usage{
-spbalance(spsample, sfframe, tess_ind = TRUE, sbc_ind = FALSE,
-  nrows = 5, dxdy = TRUE)
+spbalance(
+  object,
+  sframe,
+  stratum_object = "stratum",
+  stratum_sframe,
+  metrics = "pielou",
+  return_extent = FALSE
+)
 }
 \arguments{
-\item{spsample}{Object of class SpatialDesign produced by either the grts or
-irs functions that contains survey design information and additional
-attribute (auxiliary) variables.}
+\item{object}{}
 
-\item{sfframe}{An object of class sf that contains the survey frame.}
+\item{sframe}{}
 
-\item{tess_ind}{Logical variable indicating whether spatial balance metrics
-are calculated using proportions obtained from the intersection of
-Dirichlet tesselation polygons for the sample points with the frame object.
-TRUE means calculate the metrics.  FALSE means do not calculate the
-metrics. The default is TRUE.}
+\item{stratum_object}{}
 
-\item{sbc_ind}{Logical variable indicating whether spatial balance metrics
-are calculated using proportions obtained from a rectangular grid
-superimposed on the sample points and the frame.  TRUE means calculate the
-metrics.  FALSE means do not calculate the metrics.  The default is FALSE.}
+\item{stratum_sframe}{}
 
-\item{nrows}{Number of rows (and columns) for the grid of cells. The
-default is 5.}
+\item{metrics}{}
 
-\item{dxdy}{Indicator for equal x-coordinate and y-coordinate grid cell
-increments, where TRUE means the increments are equal and FALSE means the
-increments are not equal.  The default is TRUE.}
+\item{return_extent}{}
 }
 \value{
-List containing the following components:
-  \describe{
-    \item{\code{tess}}{results for spatial balance metrics using
-      tesselation polygons}
-    \item{\code{sbc}}{results for spatial balance metrics using a
-      rectangular grid}
-  }
-  If either the tess_ind or sbc_ind arguments are set to FALSE, the
-  corresponding component in the list is set to NULL.  Otherwise, each
-  components of the list is a lists that contains the following components:
-  \describe{
-    \item{\code{J_subp}}{Pielou evenness measure}
-    \item{\code{chi_sq}}{Chi-square statistic}
-    \item{\code{extent}}{frame extent for each  Dirichlet tesselation
-      polygon or rectangular grid cell}
-    \item{\code{prop}}{frame proportion for each Dirichlet tesselation
-      polygon or rectangular grid cell}
-  }
+
 }
 \description{
-This function calculates spatial balance metrics for a survey design.    Two
-options for calculation of spatial balance metrics are available: (1) use
-proportions obtained from the intersection of Dirichlet tesselation polygons
-for the sample points with the frame object and (2) use proportions obtained
-from a rectangular grid superimposed on the sample points and the frame
-object.  In both cases the proportions are used to calculate the spatial
-balance metrics.  Two metrics are calculated: (1) the Pielou evenness measure
-and (2) the chi-square statistic.
+This function computes the spatial balance of a design with respect 
+to the sframe using Dirichlet Tesselations, measuring the
+extent to which a object is a miniature of the sframe.
 }
-\section{Other Functions Required}{
-
-  \describe{
-    \item{\code{\link{deldir}}}{deldir package function that computes the
-      Delaunay triangulation and Dirichlet tesselation of a set of points}
-    \item{\code{\link{tile.list}}}{deldir package function that extracts
-      coordinates of the Dirichlet tesselation polygons from the object
-      produced by the deldir function}
-    \item{\code{\link{gIntersection}}}{rgeos package function that determines
-      the intersection between two sp package objects}
-    \item{\code{\link{LinesLength}}}{sp package function that determines
-      length of the line segemnts in a class Lines object}
-    \item{\code{\link{sbcframe}}}{function to calculate spatial balance grid
-      cell extent and  proportions for a sample frame}
-    \item{\code{\link{sbcsamp}}}{function to calculate spatial balance grid
-      cell extent and proportions for a survey design}
-  }
-}
-
-\examples{
-\dontrun{
-design <- list(
-  Stratum1=list(panel=c(PanelOne=50), seltype="Equal", over=10),
-  Stratum2=list(panel=c(PanelOne=50, PanelTwo=50), seltype="Unequal",
-    caty.n=c(CatyOne=25, CatyTwo=25, CatyThree=25, CatyFour=25), over=75))
-samp <- grts(design=design, DesignID="Test.Site", type.frame="area",
-  src.frame="shapefile", in.shape="shapefile.shp", stratum="stratum",
-  mdcaty="mdcaty", shapefile=TRUE, out.shape="sample.shp")
-sframe <- read.shp("shapefile.shp")
-spbalance(samp, sframe, sbc_ind = TRUE)
-}
-
-}
-\author{
-Tom Kincaid \email{Kincaid.Tom@epa.gov}
-}
-\keyword{survey}

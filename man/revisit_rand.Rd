@@ -4,23 +4,31 @@
 \alias{revisit_rand}
 \title{Create a Revisit Design with Random Assignment to Panels and Time Periods}
 \usage{
-revisit_rand(n.period, n.pnl, rand.control = "period", n.visit, nsamp,
-  panel_name = "Random", begin = 1, skip = 1)
+revisit_rand(
+  n_period,
+  n_pnl,
+  rand_control = "period",
+  n_visit,
+  nsamp,
+  panel_name = "Random",
+  begin = 1,
+  skip = 1
+)
 }
 \arguments{
-\item{n.period}{Number of time periods for the survey design. Typically,
+\item{n_period}{Number of time periods for the survey design. Typically,
 number of periods if sampling occurs once per period or number of months if
 sampling occurs once per month. (v, number of varieties (or treatments) in
 BIBD terms)}
 
-\item{n.pnl}{Number of panels}
+\item{n_pnl}{Number of panels}
 
-\item{rand.control}{Character value must be "none", "panel", or "period".
+\item{rand_control}{Character value must be "none", "panel", or "period".
 Specifies whether the number of sample events will be fixed for each panel
 ("panel"), for each sample occasion ("occasion"), or for total panel-period
 combinations ("none").  Default is "panel".}
 
-\item{n.visit}{If rand_control is "panel", this is the number of panels that
+\item{n_visit}{If rand_control is "panel", this is the number of panels that
 will be sampled in each time period. If rand_control is "period", this is
 the number of time periods to be sampled in each panel. If rand_control is
 "none", this is the total number of panel-period combinations that will
@@ -53,12 +61,12 @@ The revisit design for a survey is created by random selection of
   occasions that will be visited by a panel is random.
 }
 \examples{
-revisit_rand(n.period = 20, n.pnl = 10, rand.control = "none", n.visit = 50,
+revisit_rand(n_period = 20, n_pnl = 10, rand_control = "none", n_visit = 50,
              nsamp = 20)
-revisit_rand(n.period = 20, n.pnl = 10, rand.control = "panel", n.visit = 5,
+revisit_rand(n_period = 20, n_pnl = 10, rand_control = "panel", n_visit = 5,
              nsamp = 10)
-revisit_rand(n.period = 20, n.pnl = 10, rand.control = "period",
-              n.visit = 5, nsamp = 10)
+revisit_rand(n_period = 20, n_pnl = 10, rand_control = "period",
+              n_visit = 5, nsamp = 10)
 
 }
 \seealso{
@@ -68,9 +76,9 @@ revisit_rand(n.period = 20, n.pnl = 10, rand.control = "period",
       panel revisit design}
     \item{\code{\link{panel_summary}}}{summarize characteristics of a revisit
       panel design}
-    \item{\code{\link{power.dsgn}}}{power calculation for multiple panel
+    \item{\code{\link{power_dsgn}}}{power calculation for multiple panel
       designs}
-    \item{\code{\link{cov.panel.dsgn}}}{covariance matrix for a panel design}
+    \item{\code{\link{cov_panel_dsgn}}}{covariance matrix for a panel design}
     \item{\code{\link{plot_powerpaneldesign}}}{plot power curves for panel
       designs}
   }

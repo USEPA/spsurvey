@@ -4,18 +4,26 @@
 \alias{revisit_bibd}
 \title{Create a Balanced Incomplete Block Panel Revisit Design}
 \usage{
-revisit_bibd(n.period, n.pnl, n.visit, nsamp, panel_name = "BIB",
-  begin = 1, skip = 1, iter = 30)
+revisit_bibd(
+  n_period,
+  n_pnl,
+  n_visit,
+  nsamp,
+  panel_name = "BIB",
+  begin = 1,
+  skip = 1,
+  iter = 30
+)
 }
 \arguments{
-\item{n.period}{Number of time periods for the survey design. Typically,
+\item{n_period}{Number of time periods for the survey design. Typically,
 number of periods if sampling occurs once per period or number of months if
 sampling occurs once per month. (v, number of varieties/treatments in BIBD
 terms)}
 
-\item{n.pnl}{Number of panels (b, number of blocks in BIBD terms)}
+\item{n_pnl}{Number of panels (b, number of blocks in BIBD terms)}
 
-\item{n.visit}{Number of time periods to be visited in a panel (k, block
+\item{n_visit}{Number of time periods to be visited in a panel (k, block
 size in BIBD terms)}
 
 \item{nsamp}{Number of samples in each panel.}
@@ -51,7 +59,7 @@ to search balanced incomplete block designs.
 \examples{
 # Balanced incomplete block design with 20 sample occasions, 20 panels,
 # 3 visits to each unit, and 20 units in each panel.
-revisit_bibd(n.period = 20, n.pnl = 20, n.visit = 3, nsamp = 20)
+revisit_bibd(n_period = 20, n_pnl = 20, n_visit = 3, nsamp = 20)
 
 }
 \references{
@@ -65,9 +73,9 @@ Cook R. D.  and C. Nachtsheim. (1989). Computer-aided blocking of factorial
       assignment to panels and time periods}
     \item{\code{\link{panel_summary}}}{summarize characteristics of a revisit
       panel design}
-    \item{\code{\link{power.dsgn}}}{power calculation for multiple panel
+    \item{\code{\link{power_dsgn}}}{power calculation for multiple panel
       designs}
-    \item{\code{\link{cov.panel.dsgn}}}{covariance matrix for a panel design}
+    \item{\code{\link{cov_panel_dsgn}}}{covariance matrix for a panel design}
     \item{\code{\link{plot_powerpaneldesign}}}{plot power curves for panel
       designs}
   }

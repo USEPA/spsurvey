@@ -4,7 +4,8 @@
 \name{NLA_2007}
 \alias{NLA_2007}
 \title{Western Mountains Ecoregion Lakes}
-\format{A data frame with 236 rows and 15 attributes:
+\format{
+A data frame with 236 rows and 15 attributes:
 \describe{
   \item{siteID}{site ID value.}
   \item{xcoord}{Albers projection x-coordinate.}
@@ -23,7 +24,8 @@
   \item{PTL_cond}{condition class category of the total phosphorus value.}
   \item{NTL_cond}{condition class category of the total nitrogen value.}
   \item{Turbidity_cond}{condition class category of the turbidity value.}
-}}
+}
+}
 \usage{
 NLA_2007
 }

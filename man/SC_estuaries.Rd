@@ -4,7 +4,8 @@
 \name{SC_estuaries}
 \alias{SC_estuaries}
 \title{Estuaries in South Carolina}
-\format{A data frame with 135 rows and 10 attributes:
+\format{
+A data frame with 135 rows and 10 attributes:
 \describe{
   \item{siteID}{site ID value.}
   \item{xcoord}{Albers projection x-coordinate.}
@@ -16,7 +17,8 @@
   \item{IBI_status}{status category of the IBI score.}
   \item{WQ_score}{WQ (water quality) score.}
   \item{WQ_status}{status category of the WQ score.}
-}}
+}
+}
 \usage{
 SC_estuaries
 }

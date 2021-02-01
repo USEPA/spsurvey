@@ -2,150 +2,156 @@
 % Please edit documentation in R/irs.R
 \name{irs}
 \alias{irs}
-\title{Select an Independent Random Sample (IRS)}
+\title{Select an independent random sample from a point, linear, or areal frame based on
+a survey design specification. The survey design may be stratified and within each stratum
+may be equal probability, unequal probability by categories or unequal probabilty
+proportional to an auxillary variable. Additional options include selecting additional 
+sites as an "over" sample, selecting nearby replacement sites, including legacy sites, 
+and requiring minimum distance between sites.}
 \usage{
-irs(design, DesignID = "Site", SiteBegin = 1, type.frame = "finite",
-  src.frame = "shapefile", in.shape = NULL, sf.object = NULL,
-  sp.object = NULL, att.frame = NULL, id = NULL, xcoord = NULL,
-  ycoord = NULL, stratum = NULL, mdcaty = NULL, maxtry = NULL,
-  shapefile = TRUE, prjfilename = NULL, out.shape = "sample.shp")
+irs(
+  sframe,
+  n_base,
+  stratum = NULL,
+  seltype = "equal",
+  wgt_units = NULL,
+  pt_density = NULL,
+  caty_n = NULL,
+  n_over = NULL,
+  n_near = NULL,
+  stratum_var = NULL,
+  caty_var = NULL,
+  aux_var = NULL,
+  legacy_option = FALSE,
+  legacy_sites = NULL,
+  legacy_var = NULL,
+  mindis = NULL,
+  DesignID = "Site",
+  SiteBegin = 1,
+  maxtry = 10
+)
 }
 \arguments{
-\item{design}{Named list of stratum design specifications which are also
-lists.  Stratum names must be subset of values in stratum argument.  Each
-stratum list has four components:
-\describe{
-  \item{panel}{named vector of sample sizes for each panel in stratum}
-  \item{seltype}{the type of random selection, which must be one of
-    following: "Equal" - equal probability selection, "Unequal" - unequal
-    probability selection by the categories specified in caty.n and mdcaty,
-    or "Continuous" - unequal probability selection proportional to
-    auxiliary variable mdcaty}
-  \item{caty.n}{if seltype equals "Unequal", a named vector of sample sizes
-    for each category specified by mdcaty, where sum of the sample sizes
-    must equal sum of the panel sample sizes, and names must be a subset of
-    values in mdcaty}
-  \item{over}{number of replacement sites ("oversample" sites) for the
-    entire design, which is set equal to 0 if none are required)}
-}
-Example design for a stratified sample:\cr
-  design=list(
-    Stratum1=list(panel=c(PanelOne=50), seltype="Equal", over=10),
-    Stratum2=list(panel=c(PanelOne=50, PanelTwo=50), seltype="Unequal",
-      caty.n=c(CatyOne=25, CatyTwo=25, CatyThree=25, CatyFour=25),
-      over=75))
-Example design for an unstratified sample:\cr
-  design <- list(
-    None=list(panel=c(Panel1=50, Panel2=100, Panel3=50), seltype="Unequal",
-      caty.n=c("Caty 1"=50, "Caty 2"=25, "Caty 3"=25, "Caty 4"=25,
-      "Caty 5"=75), over=100))}
+\item{sframe}{Sample frame as an sf object. If the design is stratified, unequal probability 
+or proportional probability, then sample frame must include variables that identify the 
+stratum; and the category or auxillary variables for unequal selection. The coordinate 
+system for sframe must be one where distance for coordinates is meaningful. If legacy sites
+are included in a finite sample frame, then a legacy variable must be provided to
+identify elements that are legacy sites.}
+
+\item{n_base}{The sample size required. If single stratum, then single numeric value.
+If sample is stratified, then numeric vector with same length as "stratum" and sample sizes
+required in same order as strata in "stratum". Must be specified.}
+
+\item{stratum}{Single character value or character vector that identifies the strata for
+the design.  Default is NULL which means no stratification and all elements in the sample
+frame are assumed to be included.}
+
+\item{seltype}{Single character value or character vector that identifies the type of 
+random selection, which must be one of following: "equal" for equal probability selection, 
+"unequal" for unequal probability selection by the categories specified in caty_n or 
+"proportional" for unequal probability selection proportional to the auxiliary variable
+aux_var. If single character, then seltype applies to all strata. If vector, then each 
+stratum may have different selection type. Default is single character value of "equal".}
+
+\item{pt_density}{For linear and area sample frame, the point density for the systematic
+sample. Must be in units of the sframe sf.object. Default is NULL.}
+
+\item{caty_n}{If design is not stratified and seltype is "unequal", a named character vector
+with the expected sample size for each category specified in variable caty_var. If design
+is stratified, then either a named character vector with the expected sample size for each
+category for all strata or if the expected sample size for each category may differ, then
+a list of named character vectors with the expected sample size for each category in the
+stratum. The list must be in same order as the "stratum" variable. For each stratum, 
+the sum of caty_n values must equal n_base for that stratum. Default is NULL.}
+
+\item{n_over}{If seltype is "equal" and is not stratified, a numeric value specifying the 
+over sample size requested. If seltype is "equal" and is stratified either a numeric value
+specifying the over sample size that will be applied to each stratum or a numeric vector
+specifying the over sample size for each stratum listed in same order as "strata".  
+If seltype is "unequal" and is not stratified, a named character vector with the over sample size 
+for each category where names are the same as "caty_n". If seltype is "unequal" and is 
+stratified,  either a numeric vector specifying the over sample size for each category in
+"caty_n" that will be applied to each stratum or a list of named numeric vectors with 
+the over sample size for each "caty_n" category for each stratum. List must be in same order
+as the "stratum" variable order. Default is NULL.}
+
+\item{n_near}{Numeric value specifying the number of nearby points to select as
+possible replacement sites if a site cannot be sampled. Default is NULL. If specified,
+must be integer from 1 to 10.}
+
+\item{stratum_var}{Character string containing the name of the column from
+sframe that identifies stratum membership for each element in the frame.
+If stratum equals NULL, the design is unstratified and all elements in sample frame
+are eligible to be selected in the sample. The default is NULL.}
+
+\item{caty_var}{Character string containing the name of the column from
+sframe that identifies the unequal probability category for each element
+in the frame.  Default is NULL.}
+
+\item{aux_var}{Character string that is the name of the column from sframe that
+identifies the auxiliary variable value for each element in the sample frame
+that will be used to calculate inclusion probabilities when the survey design
+specifies that the selection type (seltype) is "proportional". Default is NULL.}
+
+\item{legacy_option}{Logical variable that when TRUE legacy sites are to be included 
+in the survey design. Default is FALSE}
+
+\item{legacy_sites}{sf object of legacy sites to be included in the survey design when 
+sample frame is linear or area. Note legacy_option must be equal to TRUE. The sf object 
+must include the variables stratum_var, caty_variable and aux_variable if required by 
+the survey design.  The legacy_var is required and the contents of the variable must 
+either be a legacy siteID if the sample frame element is a legacy site or must 
+be equal to NA otherwise.}
+
+\item{legacy_var}{For finite sample frames when legacy sites are to be included in the 
+survey design, a character string that is the name of the character variable in sframe that
+identifies which elements in the sample frame are legacy sites. The contents of the
+variable must either be a legacy siteID if the sample frame element is a legacy site or must 
+be equal to NA otherwise. Default is NULL.}
+
+\item{mindis}{Numeric value for the minimum distance required between elements
+in the sample. If design is stratified, then mindis applies only within each stratum.
+Units must be the same units as in sf geometry. Default is NULL.}
 
 \item{DesignID}{Name for the design, which is used to create a site ID for
-each site.  The default is "Site".}
+each site.  Default is "Site".}
 
-\item{SiteBegin}{Number to use for first site in the design.  The default
-is 1.}
+\item{SiteBegin}{Number to use for first site in the design.  Default is 1.}
 
-\item{type.frame}{The type of frame, which must be one of following:
-"finite", "linear", or "area".  The default is "finite".}
-
-\item{src.frame}{Source of the frame, which equals "sf.object" if the frame
-is contained in an sf package object, "shapefile" if the frame is to be
-read from a shapefile, "sp.object" if the frame is obtained from an sp
-package object, or "att.frame" if type.frame equals "finite" and the
-frame is included in att.frame.  The default is "shapefile".}
-
-\item{in.shape}{Name of a shapefile containing the frame, which is required
-when src.frame equals "shapefile".  The shapefile name should include the
-".shp" extension.  If the name does not include that extension, it will be
-added.  The default is NULL.}
-
-\item{sf.object}{An sf package object containing the frame, which is required
-when src.frame equals "sf.object".  The default is NULL.}
-
-\item{sp.object}{An sp package object containing the frame, which is required
-when src.frame equals "sp.object".  The default is NULL.}
-
-\item{att.frame}{Data frame composed of attributes associated with elements
-in the frame.  If src.frame equals "att.frame", then att.frame must include
-columns that contain x-coordinates and y-coordinates for each element in
-the frame.  If src.frame does not equal "att.frame" and att.frame is not
-equal to NULL, then an sf object is created from att.frame and the geometry
-column from the object named "sf.object" that is created by the function.
-The default is NULL.}
-
-\item{id}{This argument is depricated.}
-
-\item{xcoord}{Character string containing the name of the column from
-att.frame that identifies x-coordinates, which is required when src.frame
-equals "att.frame".  The default is NULL.}
-
-\item{ycoord}{Character string containing the name of the column from
-att.frame that identifies y-coordinates, which is required when src.frame
-equals "att.frame".  The default is NULL.}
-
-\item{stratum}{Character string containing the name of the attribute in
-sf.object that identifies stratum membership for each feature. If stratum
-equals NULL, the design is unstratified, and an attribute named "stratum"
-(with all of its elements equal to the stratum name specified in design) is
-added to sf.object.  The default is NULL.}
-
-\item{mdcaty}{Character string containing the name of the attribute in
-sf.object that identifies the unequal probability category for each
-feature.  The default is NULL.}
-
-\item{maxtry}{This argument is depricated.}
-
-\item{shapefile}{Option to create a shapefile containing the survey design
-information,  where TRUE equals create a shapefile and FALSE equals do not
-create a shapefile.  The default is TRUE.}
-
-\item{prjfilename}{This argument is depricated.}
-
-\item{out.shape}{Name of the output shapefile.  The default is "sample.shp".}
+\item{maxtry}{Number of maximum attempts to ensure minimum distance (mindis) between sites.
+Default is 10.}
 }
 \value{
-An object of class SpatialDesign containing the survey design
-  information and any additional attribute variables that were provided.
-  Optionally, a shapefile can be created that contains the survey design
-  information.
+sites A list of three sf objects containing the base sites (sites_base),
+  the n_over sites (sites_over) and the n_near sites (sites_near) selected 
+  that meet the survey design requirementse plus a design list object that documents
+  the survey design used.
 }
 \description{
-Select an independent random sample from a point, linear, or areal frame.
-Frame features must be located in a 1-dimensional or 2-dimensional
-coordinate system.  Sample may be equal probability or unequal probability
-(either categorical or proportional to an auxiliary variable).  May designate
-panels of sites for surveys over time.
+Select an independent random sample from a point, linear, or areal frame based on
+a survey design specification. The survey design may be stratified and within each stratum
+may be equal probability, unequal probability by categories or unequal probabilty
+proportional to an auxillary variable. Additional options include selecting additional 
+sites as an "over" sample, selecting nearby replacement sites, including legacy sites, 
+and requiring minimum distance between sites.
 }
-\section{Other Functions Required}{
+\section{Other functions required}{
 
   \describe{
-    \item{\code{\link{irsarea}}}{select an IRS sample of an area resource}
-    \item{\code{\link{irslin}}}{select an IRS sample of a linear resource}
-    \item{\code{\link{irspts}}}{select an IRS sample of a finite resource}
-    \item{\code{\link{mdmarea}}}{calculate multidensity-density multipliers
-      for an area resource}
-    \item{\code{\link{mdmlin}}}{calculate multidensity-density multipliers
-      for a linear resource}
-    \item{\code{\link{mdmpts}}}{calculate multidensity-density multipliers
-      for a finite resource}
-  }
+    \item{\code{\link{grts_stratum}}}{Selects sample for a stratum}
+    \item{\code{\link{dsgn_check}}}{Checks input}
+    }
 }
 
 \examples{
 \dontrun{
-  test_design <- list(
-    Stratum1=list(panel=c(PanelOne=50), seltype="Equal", over=10),
-    Stratum2=list(panel=c(PanelOne=50, PanelTwo=50), seltype="Unequal",
-      caty.n=c(CatyOne=25, CatyTwo=25, CatyThree=25, CatyFour=25), over=75))
-  test_sfobject <- st_read("test_shapefile.shp")
-  test_sample <- irs(design=test_design, DesignID="TestSite",
-    type.frame="area", src.frame = "sf.object", sf.object=test_sfobject,
-    stratum="test_stratum", mdcaty="test_mdcaty")
+  test.sample <- grts(sframe = "test_sf", n_base = 100)
 }
 
 }
 \author{
-Tom Kincaid \email{Kincaid.Tom@epa.gov}
+Tony Olsen email{olsen.tony@epa.gov}
 }
+\keyword{design}
 \keyword{survey}

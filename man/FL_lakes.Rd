@@ -4,7 +4,8 @@
 \name{FL_lakes}
 \alias{FL_lakes}
 \title{Small Lakes in Florida}
-\format{A data frame with 930 rows and 11 attributes:
+\format{
+A data frame with 930 rows and 11 attributes:
 \describe{
   \item{siteID}{site ID value.}
   \item{xcoord}{Albers projection x-coordinate.}
@@ -17,7 +18,8 @@
   \item{Coliform_Cat}{fecal coliform count category.}
   \item{Oxygen}{dissolved oxygen value.}
   \item{Turbidity}{turbidity value.}
-}}
+}
+}
 \usage{
 FL_lakes
 }

@@ -4,14 +4,26 @@
 \name{NE_lakes}
 \alias{NE_lakes}
 \title{Lakes in the Southern New England Region of the U.S.}
-\format{An object of class sf (simple features) containing 6,121 features
+\format{
+An object of class sf (simple features) containing 6,121 features
   and 4 attributes:
 \describe{
   \item{xcoord}{Albers projection x-coordinate of the lake centroid.}
   \item{ycoord}{Albers projection y-coordinate of the lake centroid.}
   \item{State}{state code for the lake.}
   \item{Area_Cat}{lake surface area category in hectares.}
-}}
+}
+
+A data frame with 6121 rows and 5 variables:
+\describe{
+  \item{xcoord}{x coordinate in meters in Albers (1832073 - 2136098)}
+  \item{ycoord}{y coordinate in meters in Albers (2218907 - 2474343)}
+  \item{State}{state lake point is in (CT, MA, RI)}
+  \item{Area_Cat}{lake surface area category in hectares ((0,1],(1,5],
+  (10,50],(5,10],(50,500], (500,1e+04])}
+  \item{geometry}{simple features geometry list-column}
+}
+}
 \usage{
 NE_lakes
 

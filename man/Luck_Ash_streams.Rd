@@ -4,13 +4,15 @@
 \name{Luck_Ash_streams}
 \alias{Luck_Ash_streams}
 \title{Streams in the Luckiamute Watershed in Oregon}
-\format{An object of class sf (simple features) containing 429 features and
+\format{
+An object of class sf (simple features) containing 429 features and
   3 attributes:
 \describe{
   \item{Per_Int}{stream type for the line segment.}
   \item{Level3_Nam}{Strahler order category for the line segment.}
   \item{Length_km}{length of the line segment in kilometers.}
-}}
+}
+}
 \usage{
 Luck_Ash_streams
 }
