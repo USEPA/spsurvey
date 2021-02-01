@@ -1,5 +1,5 @@
 ################################################################################
-# Function: cov.panel.dsgn
+# Function: cov_panel_dsgn
 # Programmers: Tom Kincaid
 #              Tony Olsen
 # Date: March 14, 2019
@@ -25,21 +25,21 @@
 #'   all panel designs. The default is NULL, a single visit. Names must match
 #'   list names in paneldsgn.
 #'
-#' @param unit.var   The variance component estimate for unit (the default is
+#' @param unit_var   The variance component estimate for unit (the default is
 #'   Null)
 #'
-#' @param period.var   The variance component estimate for period (the default
+#' @param period_var   The variance component estimate for period (the default
 #'   is Null)
 #'
-#' @param unitperiod.var The variance component estimate for unit by period
+#' @param unitperiod_var The variance component estimate for unit by period
 #'   interaction (the default is Null)
 #'
-#' @param index.var  The variance component estimate for index error (the
+#' @param index_var  The variance component estimate for index error (the
 #'   def0ult is Null)
 #'
-#' @param unit.rho   unit correlation across periods (the default is 1)
+#' @param unit_rho   unit correlation across periods (the default is 1)
 #'
-#' @param period.rho   period autocorrelation (the default is 0)
+#' @param period_rho   period autocorrelation (the default is 0)
 #'
 #' @details Covariance structure accounts for the panel design and the four
 #'   variance components: unit variation, period variation, unit by period
@@ -85,7 +85,7 @@
 #'       assignment to panels and time periods}
 #'     \item{\code{\link{panel_summary}}}{summarize characteristics of a revisit
 #'       panel design}
-#'     \item{\code{\link{power.dsgn}}}{power calculation for multiple panel
+#'     \item{\code{\link{power_dsgn}}}{power calculation for multiple panel
 #'       designs}
 #'     \item{\code{\link{plot_powerpaneldesign}}}{plot power curves for panel
 #'       designs}
@@ -96,16 +96,16 @@
 #' @export
 ################################################################################
 
-cov.panel.dsgn <- function(paneldsgn = matrix(50,1,10), nrepeats = 1,
-   unit.var = NULL, period.var = NULL, unitperiod.var = NULL, index.var = NULL,
-   unit.rho = 1, period.rho = 0) {
+cov_panel_dsgn <- function(paneldsgn = matrix(50,1,10), nrepeats = 1,
+   unit_var = NULL, period_var = NULL, unitperiod_var = NULL, index_var = NULL,
+   unit_rho = 1, period_rho = 0) {
 
   paneldsgn <- as.matrix (paneldsgn)
   nperiod <- ncol (paneldsgn)
   npanel <- nrow (paneldsgn)
 
-  if (any(is.null(unit.var), is.null(period.var), is.null(unitperiod.var), is.null(index.var)) ) {
-    stop("Must provide four variance components. index.var may be zero if nrepeats=1")
+  if (any(is.null(unit_var), is.null(period_var), is.null(unitperiod_var), is.null(index_var)) ) {
+    stop("Must provide four variance components. index_var may be zero if nrepeats=1")
   }
 
   # Create covariance matrix for period correlation
@@ -117,24 +117,24 @@ cov.panel.dsgn <- function(paneldsgn = matrix(50,1,10), nrepeats = 1,
     }
   }
 
-  period.cov <- period.var * (period.rho ^ rhomat)
+  period_cov <- period_var * (period_rho ^ rhomat)
 
   # Create covariance matrix for unit correlation
-  unit.cov <- unit.var * (unit.rho ^ rhomat)
+  unit_cov <- unit_var * (unit_rho ^ rhomat)
 
   # Construct panel covariance term
   # nunits is number of units in a panel
   nunits <- apply (paneldsgn, 1, max)
-  if(npanel > 1) pan.cov <- kronecker (unit.cov, diag (ifelse (nunits >0, 1 / nunits, 0)))
-  else pan.cov <- unit.cov / nunits
+  if(npanel > 1) pan_cov <- kronecker (unit_cov, diag (ifelse (nunits >0, 1 / nunits, 0)))
+  else pan_cov <- unit_cov / nunits
 
   # construct period covariance term
-  yr.cov <- kronecker(period.cov, matrix (1, nrow = npanel, ncol = npanel))
+  yr_cov <- kronecker(period_cov, matrix (1, nrow = npanel, ncol = npanel))
 
   # Construct unit by period covariance term
   if (length (nunits) > 1)
-    sy.cov <- unitperiod.var * kronecker (diag(nperiod), diag(ifelse(nunits > 0, 1/nunits, 0)))
-  else sy.cov <- unitperiod.var * diag(nperiod) / nunits
+    sy_cov <- unitperiod_var * kronecker (diag(nperiod), diag(ifelse(nunits > 0, 1/nunits, 0)))
+  else sy_cov <- unitperiod_var * diag(nperiod) / nunits
 
   # Construct index covariance term
   # Create nrepeats revisit design if necessary
@@ -146,14 +146,14 @@ cov.panel.dsgn <- function(paneldsgn = matrix(50,1,10), nrepeats = 1,
     }
   }
   if(npanel > 1) {
-    index.cov <- index.var * kronecker(diag (nperiod),
+    index_cov <- index_var * kronecker(diag (nperiod),
                                        diag (ifelse(nunits > 0, 1/(nunits * apply (nrepeats, 1, max)), 0)) )
   }
-  else index.cov <- index.var * diag (nperiod) / nunits
+  else index_cov <- index_var * diag (nperiod) / nunits
 
   # overall covariance matrix
-  phi <- pan.cov + yr.cov + sy.cov + index.cov
+  phi <- pan_cov + yr_cov + sy_cov + index_cov
 
-  cov <- list(cov = phi, paneldsgn = paneldsgn, nrepeat.dsgn = nrepeats, call = sys.call() )
+  cov <- list(cov = phi, paneldsgn = paneldsgn, nrepeat_dsgn = nrepeats, call = sys.call() )
   return(cov)
 }

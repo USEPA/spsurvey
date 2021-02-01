@@ -52,7 +52,6 @@ Imports:
     grDevices,
     Hmisc,
     MASS,
-    parallel,
     rgeos,
     stats
 VignetteBuilder: knitr

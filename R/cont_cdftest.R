@@ -5,6 +5,7 @@
 # Revised: December 15, 2020 to allow use of the Horvitz-Thompson and
 #          Yates-Grundy variance estimators and to use a new function named
 #          survey_design to create the survey design object
+# Revised: January 28, 2021 to replace "warn.vec" with "warn_vec"
 #'
 #' Cumulative Distribution Function Inference for a Probability Survey
 #'
@@ -673,17 +674,17 @@ cont_cdftest <- function(dframe, vars, subpops = NULL, surveyID = NULL,
             levels = c("Subpopulation 1", "Subpopulation 2"))
 
           if(vartype == "Local") {
-            warn.vec <- c(itype, lev_itype[isubpop1], lev_itype[isubpop2], ivar)
+            warn_vec <- c(itype, lev_itype[isubpop1], lev_itype[isubpop2], ivar)
             if(testname %in% c("Wald", "adjWald")) {
               temp <- cdftest_localmean_total(design, design_names, popcorrect,
-                vartype, warn_ind, warn_df, warn.vec)
+                vartype, warn_ind, warn_df, warn_vec)
               var_totals <- temp$varest
               vartype <- temp$vartype
               warn_ind <- temp$warn_ind
               warn_df <- temp$warn_df
             } else {
               temp <- cdftest_localmean_prop(design, design_names,  popcorrect,
-                vartype,  warn_ind, warn_df, warn.vec)
+                vartype,  warn_ind, warn_df, warn_vec)
               var_means <- temp$varest
               vartype <- temp$vartype
               warn_ind <- temp$warn_ind

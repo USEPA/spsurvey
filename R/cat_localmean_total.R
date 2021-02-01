@@ -2,6 +2,7 @@
 # Function: cat_localmean_total
 # Programmer: Tom Kincaid
 # Date: July 23, 2020
+# Revised: January 28, 2021 to replace "pcfactor.ind" with "pcfactor_ind"
 #'
 #' Local Mean Variance Estimates of Estimated Totals for Categorical Data
 #'
@@ -185,7 +186,7 @@ cat_localmean_total <- function(itype, lev_itype, nlev_itype, ivar, lev_ivar,
         } else {
           temp <- catvar_total(factor(catvar[stratum_i]), wgt[stratum_i],
             xcoord[stratum_i], ycoord[stratum_i], size_names, stratum_ind,
-            stratum_levels[i], cluster_ind, pcfactor.ind = popcorrect,
+            stratum_levels[i], cluster_ind, pcfactor_ind = popcorrect,
             fpcsize=fpcsize[stratum_i], vartype = vartype, warn_ind = warn_ind,
             warn_df = warn_df, warn_vec = warn_vec)
         }
@@ -260,7 +261,7 @@ cat_localmean_total <- function(itype, lev_itype, nlev_itype, ivar, lev_ivar,
       } else {
         temp <- catvar_total(factor(catvar[tst]), wgt[tst], xcoord[tst],
           ycoord[tst], size_names, stratum_ind, NULL, cluster_ind,
-          pcfactor.ind = popcorrect, fpcsize=fpcsize[tst], vartype = vartype,
+          pcfactor_ind = popcorrect, fpcsize=fpcsize[tst], vartype = vartype,
           warn_ind = warn_ind, warn_df = warn_df, warn_vec = warn_vec)
       }
       if(temp$vartype == "SRS") {

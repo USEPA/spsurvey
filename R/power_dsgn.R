@@ -178,7 +178,7 @@ power.dsgn <- function(ind_names, ind_values, unit_var, period_var,
   # When trend_type = "percent", check if for lower or upper tail
   if (!is.null(ind_tail)) {
     if (any( !(ind_tail %in% c("lower", "upper")) ) ) stop ("\nValues must be lower or upper")
-    lower_tail <- ind_tail == "lower"
+    lower.tail <- ind_tail == "lower"
   }
 
   # set up output array for calculated power for each indicator, panel design, periods, trend, and alpha
@@ -203,10 +203,10 @@ power.dsgn <- function(ind_names, ind_values, unit_var, period_var,
       if (trend_type == "percent") {
         # find cut point value for "pct" which is assumed to have a normal distribution
         ind_sd <- sqrt(unit_var[ind] + index_var[ind])
-        ind_cut <- qnorm(ind_pct[ind]/100, ind_values[ind], ind_sd, lower_tail = lower_tail)
+        ind_cut <- qnorm(ind_pct[ind]/100, ind_values[ind], ind_sd, lower.tail = lower.tail)
         # function to search for shift in mean required to change the %Good by trend % change
-        mean_change <- function(x, ind_pct, ind_cut, ind_sd, lower_tail = lower_tail) {
-          abs (ind_pct/100 - pnorm(ind_cut, x, ind_sd, lower_tail = lower_tail) )
+        mean_change <- function(x, ind_pct, ind_cut, ind_sd, lower.tail = lower.tail) {
+          abs (ind_pct/100 - pnorm(ind_cut, x, ind_sd, lower.tail = lower.tail) )
         }
         # find change in mean required to achieve change in percent
         for ( i in 1:n_periods) {
@@ -214,7 +214,7 @@ power.dsgn <- function(ind_names, ind_values, unit_var, period_var,
                           upper=ind_values[ind] + 3.1 * ind_sd,
                           ind_pct = ind_pct[ind] + trend[k] * (i - 1),
                           ind_cut = ind_cut, ind_sd= ind_sd,
-                          lower_tail = lower_tail)
+                          lower.tail = lower.tail)
           trend_value[k, i, ind] <- tmp$minimum
         }
       }
