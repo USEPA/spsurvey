@@ -4,12 +4,12 @@
 \alias{vecprint}
 \title{Internal Function: Create Vector to Print}
 \usage{
-vecprint(x, n.char = 78)
+vecprint(x, n_char = 78)
 }
 \arguments{
 \item{x}{Character vector.}
 
-\item{n.char}{The maximum number of characters per line.  The default is 78.}
+\item{n_char}{The maximum number of characters per line.  The default is 78.}
 }
 \value{
 Character string that is suitable for printing by the functions:
@@ -18,20 +18,20 @@ Character string that is suitable for printing by the functions:
 \description{
 This function takes an input vector and outputs a character string with line
 breaks inserted so that, whenever possible, no line in the string exceeds the
-input value n.char, which is set to 78 characters by default.  The input
+input value n_char, which is set to 78 characters by default.  The input
 vector is coereced to mode character.  When an element of the input vector is
-greater than n.char characters in length, then that element is inserted in
+greater than n_char characters in length, then that element is inserted in
 the output character string as an individual line.
 }
 \examples{
 sites <- paste("Site Number", 1:50)
-sites.str <- vecprint(sites)
-cat(sites.str)
+sites_str <- vecprint(sites)
+cat(sites_str)
 
 temp <- c(1, 5, 21:25, 33:37)
-sites.str <- vecprint(sites[temp])
-warning(paste("\\nThe following site ID values were removed from the
-  analysis:\\n", sites.str, sep=""))
+sites_str <- vecprint(sites[temp])
+warning(paste("\nThe following site ID values were removed from the
+  analysis:\n", sites_str, sep=""))
 
 }
 \author{

@@ -4,10 +4,10 @@
 \alias{revisit_dsgn}
 \title{Create a Panel Revisit Design}
 \usage{
-revisit_dsgn(n.period, panels, begin = 1, skip = 1)
+revisit_dsgn(n_period, panels, begin = 1, skip = 1)
 }
 \arguments{
-\item{n.period}{Number of time periods for the panel design. For example,
+\item{n_period}{Number of time periods for the panel design. For example,
 number of periods if sampling occurs once per period or number of months if
 sampling occurs once per month.}
 
@@ -78,14 +78,14 @@ The function creates revisit designs using the concepts in McDonald
   The number of panels in a single panel design is specified by pnl_n.  For
   an always revisit panel structure, a single panel is created and pnl_n is
   ignored. For a rotating panel structure, when pnl_n = NA, the number of
-  panels is equal to n.period. Note that this should only be used when the
+  panels is equal to n_period. Note that this should only be used when the
   rotating panel structure is the only panel design, i.e., no split panel
   design (see below for split panel details). If pnl_n = m is specified for a
   rotating panel design, then then number of panels will be m.  For example,
   pnl_dsgn = c( 1, 4, 1, NA) and and pnl_n = 5 means that only 5 panels will
   be constructed and the last time period to be sampled will be time period
   10. In McDonald's notation the panel design structure is [(1-4-1-n)^5].  If
-  the number of time periods, n.period, is 20 and no other panel design
+  the number of time periods, n_period, is 20 and no other panel design
   structure is specified, then the last 10 time periods will not be sampled.
   For serially alternating panels, when pnl_n = NA, the number of panels will
   be the sum of the elements in pan_dsgn (ignoring NA). If pnl_n is specified
@@ -124,7 +124,7 @@ revisit_dsgn(20, panels = list(
               start_option = "None")), begin=1)
 
 # Rotating panels of 60 units sampled once and never again: [1-n].  Number
-# of panels equal n.period.
+# of panels equal n_period.
 revisit_dsgn(20, panels=list(
   R60N=list(n=60, pnl_dsgn = c(1, NA), pnl_n=NA, start_option="None")),
             begin=1 )
@@ -136,7 +136,7 @@ revisit_dsgn(20, panels=list(
              start_option="Partial_End")), begin=1 )
 
 # Split panel of sample units combining above two panel designs: [1-0, 1-n]
-revisit_dsgn(n.period=20, begin=2017,  panels = list(
+revisit_dsgn(n_period=20, begin=2017,  panels = list(
   Annual=list(n = 60, pnl_dsgn = c(1, 0), pnl.n = NA,
               start_option = "None"),
   R60N=list(n=60, pnl_dsgn = c(1, NA), pnl_n=NA, start_option="None") ))
@@ -155,9 +155,9 @@ McDonald, T. (2003). Review of environmental monitoring methods: survey
       assignment to panels and time periods}
     \item{\code{\link{panel_summary}}}{summarize characteristics of a revisit
       panel design}
-    \item{\code{\link{power.dsgn}}}{power calculation for multiple panel
+    \item{\code{\link{power_dsgn}}}{power calculation for multiple panel
       designs}
-    \item{\code{\link{cov.panel.dsgn}}}{covariance matrix for a panel design}
+    \item{\code{\link{cov_panel_dsgn}}}{covariance matrix for a panel design}
     \item{\code{\link{plot_powerpaneldesign}}}{plot power curves for panel
       designs}
   }

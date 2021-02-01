@@ -18,24 +18,24 @@ will be sampled only once at each time period.}
 }
 \value{
 List of six elements.
-  \itemize{ \item n.panel - number of panels in revisit design
+  \itemize{ \item n_panel - number of panels in revisit design
 
-  \item n.period - number of time periods in revisit design
+  \item n_period - number of time periods in revisit design
 
-  \item n.total - total number of sample events across all panels and all
+  \item n_total - total number of sample events across all panels and all
   time periods, accounting for visitdsgn, that will be sampled in the revisit
   design
 
-  \item n.periodunit - Vector of the number of time periods a unit will be
+  \item n_periodunit - Vector of the number of time periods a unit will be
   sampled in each panel
 
-  \item n.unitpnl - Vector of the number of sample units, accounting for
+  \item n_unitpnl - Vector of the number of sample units, accounting for
   visitdsgn, that will be sampled in each panel
 
-  \item n.unitperiod - Vector of the number of sample units, accounting for
+  \item n_unitperiod - Vector of the number of sample units, accounting for
   visitdsgn, that will be sampled during each time period
 
-  \item ncum.unit - Vector of the cumulative number of unique units that will
+  \item ncum_unit - Vector of the cumulative number of unique units that will
   be sampled in time periods up to and including the current time period.
   }
 }
@@ -54,15 +54,15 @@ The revisit panel design and the visit design (if present) are
 }
 \examples{
 # Serially alternating panel revisit design summary
-sa.dsgn <- revisit_dsgn(20, panels=list(SA60N=list(n=60, pnl_dsgn = c(1, 4),
+sa_dsgn <- revisit_dsgn(20, panels=list(SA60N=list(n=60, pnl_dsgn = c(1, 4),
                         pnl_n=NA, start_option="None")), begin=1 )
-panel_summary(sa.dsgn)
+panel_summary(sa_dsgn)
 
 # Add visit design where first panel is sampled twice at every time period
-sa.visit <- sa.dsgn
-sa.visit [sa.visit > 0] <- 1
-sa.visit [1, sa.visit[1,] > 0] <- 2
-panel_summary(sa.dsgn, sa.visit)
+sa_visit <- sa_dsgn
+sa_visit [sa_visit > 0] <- 1
+sa_visit [1, sa_visit[1,] > 0] <- 2
+panel_summary(sa_dsgn, sa_visit)
 
 }
 \seealso{
@@ -72,9 +72,9 @@ panel_summary(sa.dsgn, sa.visit)
       panel revisit design}
     \item{\code{\link{revisit_rand}}}{create a revisit design with random
       assignment to panels and time periods}
-    \item{\code{\link{power.dsgn}}}{power calculation for multiple panel
+    \item{\code{\link{power_dsgn}}}{power calculation for multiple panel
       designs}
-    \item{\code{\link{cov.panel.dsgn}}}{covariance matrix for a panel design}
+    \item{\code{\link{cov_panel_dsgn}}}{covariance matrix for a panel design}
     \item{\code{\link{plot_powerpaneldesign}}}{plot power curves for panel
       designs}
   }

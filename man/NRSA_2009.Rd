@@ -4,7 +4,8 @@
 \name{NRSA_2009}
 \alias{NRSA_2009}
 \title{Western Mountains Ecoregion Rivers and Streams}
-\format{A data frame with 668 rows and 13 attributes:
+\format{
+A data frame with 668 rows and 13 attributes:
 \describe{
   \item{siteID}{site ID value.}
   \item{xcoord}{Albers projection x-coordinate.}
@@ -21,7 +22,8 @@
   \item{NTL_Cond}{condition class category of the total nitrogen value.}
   \item{PTL_Cond}{condition class category of the total phosphorus value.}
   \item{Benthic_MMI_Cond}{condition class category of the benthic MMI value.}
-}}
+}
+}
 \usage{
 NRSA_2009
 }

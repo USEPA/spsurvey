@@ -4,7 +4,8 @@
 \name{IN_streams}
 \alias{IN_streams}
 \title{Streams in the Upper Wabash Basin in Indiana}
-\format{A data frame with 100 rows and 11 attributes:
+\format{
+A data frame with 100 rows and 11 attributes:
 \describe{
   \item{siteID}{site ID value.}
   \item{xcoord}{Albers projection x-coordinate.}
@@ -18,7 +19,8 @@
   \item{IBI_Status}{status category of the IBI score.}
   \item{QHEI_Score}{QHEI ((qualitative habitat evaluation index) score.}
   \item{QHEI_Status}{status category of the QHEI score.}
-}}
+}
+}
 \usage{
 IN_streams
 }

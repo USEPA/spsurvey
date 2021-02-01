@@ -3,11 +3,13 @@ Title: Spatial Survey Design and Analysis
 Version: 4.1.2
 Date: 2020-3-31
 Authors@R: c(
+    person("Michael", "Dumelle", role=c("aut","cre"),
+           email = "Dumelle.Michael@epa.gov"),
     person("Tom", "Kincaid", role="aut",
            email = "Kincaid.Tom@epa.gov"),
     person("Tony", "Olsen",  role="aut",
            email = "Olsen.Tony@epa.gov"),
-    person("Marc", "Weber",  role=c("aut","cre"),
+    person("Marc", "Weber",  role="aut",,
            email = "Weber.Marc@epa.gov"),
     person("Don", "Stevens",  role="ctb"),
     person("Christian", "Platt",  role="ctb"),
@@ -52,11 +54,10 @@ Imports:
     grDevices,
     Hmisc,
     MASS,
-    parallel,
     rgeos,
     stats
 VignetteBuilder: knitr
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.1
 NeedsCompilation: no

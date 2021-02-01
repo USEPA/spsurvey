@@ -4,13 +4,15 @@
 \name{UT_ecoregions}
 \alias{UT_ecoregions}
 \title{Ecoregions in Utah}
-\format{An object of class sf (simple features) containing 10 features and
+\format{
+An object of class sf (simple features) containing 10 features and
   3 attributes:
 \describe{
   \item{Level3}{Level 3 ecoregion code for the polygon.}
   \item{Level3_Nam}{Level 3 ecoregion name for the polygon.}
   \item{Area_ha}{area of the polygon in hectares.}
-}}
+}
+}
 \usage{
 UT_ecoregions
 }

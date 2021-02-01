@@ -4,7 +4,8 @@
 \name{decon_data}
 \alias{decon_data}
 \title{Small Lakes in Florida for Examining CDF Deconvolution}
-\format{A data frame with 930 rows and 6 attributes:
+\format{
+A data frame with 930 rows and 6 attributes:
 \describe{
   \item{xcoord}{simulated x-coordinate value.}
   \item{ycoord}{simulated y-coordinate value.}
@@ -15,7 +16,8 @@
     variance.}
   \item{Richness_100}{species richness value plus 100\% measurement error
     variance.}
-}}
+}
+}
 \usage{
 decon_data
 }
