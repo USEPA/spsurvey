@@ -47,13 +47,13 @@ make_varsf <- function(x, formlist) {
   # model.frame and extracting the main effects and using them to make the interactions
   # only real advantage will be creating variables for use mid formula with numeric variables
   
-  # store geometry 
-  x_geometry <- st_geometry(x)
+
   
   if (formlist$intercept && is.null(formlist$response) && length(formlist$varlabels) == 0) {
-    return(x_geometry)
+    return(x)
   } else {
-    
+    # store geometry 
+    x_geometry <- st_geometry(x)
     # remove geometry to make a regular data frame
     x_df <- st_drop_geometry(x)
     formlist <- lapply(

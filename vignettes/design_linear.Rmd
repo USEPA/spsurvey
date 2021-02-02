@@ -15,6 +15,7 @@ output:
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
+  echo = TRUE,
   collapse = TRUE,
   comment = "#>", 
   warning = FALSE, 
@@ -270,7 +271,7 @@ eqprob_legacy$dsgn
 ```
 
 To plot the population sites next to the legacy and sampled sites, run
-```{r, fig.show = "hold", fig.align = "center", fig.cap = "Sampled non-legacy sites (aquamarine) and sampled legacy sites (orange) obtained for an equal probability GRTS design."}
+```{r, fig.show = "hold", fig.align = "center", fig.cap = "Sampled sites (sites_base) and legacy sites (legacy) obtained for an equal probability GRTS design."}
 plot(eqprob_legacy, Illinois_River, showlegacy = TRUE, pch = 19, key.pos = 1)
 ```
 
