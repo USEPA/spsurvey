@@ -56,7 +56,7 @@ plot.sframe <- function(x, y, formula = ~ 1, variable_args = NULL, level_args = 
   
   
   # making variable list
-  formlist <- make_formlist(formula, onlyshow)
+  formlist <- make_formlist(formula, onlyshow, x)
   varsf <- make_varsf(x, formlist)
   varsf <- na.omit(varsf)
   

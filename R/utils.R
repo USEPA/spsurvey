@@ -1,12 +1,14 @@
 # Helpers -----------------------------------------------------------------
 
-make_formlist <- function(vars, onlyshow) {
+make_formlist <- function(formula, onlyshow, object) {
   # find all terms from the formula
-  varterms <- terms(vars)
+  varterms <- terms(formula, data = object)
   # find all variable names
   allvars <- all.vars(varterms)
   # find all right hand side names
   varlabels <- attr(varterms, "term.labels")
+  # remove geometry if present
+  varlabels <- varlabels[varlabels != "geometry"]
   # find if intercept exists in the formula
   if (attr(varterms, "intercept") == 1) {
     intercept <- TRUE
@@ -42,37 +44,37 @@ make_formlist <- function(vars, onlyshow) {
   )
 }
 
-make_varsf <- function(x, formlist) {
+make_varsf <- function(object, formlist) {
   # can possibly deprecate this in the future by making use of
   # model.frame and extracting the main effects and using them to make the interactions
   # only real advantage will be creating variables for use mid formula with numeric variables
   
 
-  
+
   if (formlist$intercept && is.null(formlist$response) && length(formlist$varlabels) == 0) {
-    return(x)
+    return(object)
   } else {
     # store geometry 
-    if ("sf" %in% class(x)) {
-      x_geometry <- st_geometry(x)
-      x_df <- st_drop_geometry(x)
+    if ("sf" %in% class(object)) {
+      object_geometry <- st_geometry(object)
+      object_df <- st_drop_geometry(object)
     } else {
-      x_df <- x
+      object_df <- object
     }
     formlist <- lapply(
       formlist$varnames_split,
       function(x) {
-        if (length(x) == 1 && is.numeric(x_df[[x]])) {
-          return(x_df[, x, drop = FALSE]) # return numeric if provided
+        if (length(x) == 1 && is.numeric(object_df[[x]])) {
+          return(object_df[, x, drop = FALSE]) # return numeric if provided
         } else {
-          return(interaction(x_df[, x, drop = FALSE], sep = ":")) # return factors
+          return(interaction(object_df[, x, drop = FALSE], sep = ":")) # return factors
         }
       }
     )
     varsf <- as.data.frame(formlist, optional = TRUE) # without optional the : in name gets
     # converted to synctactic name with .
-    if ("sf" %in% class(x)) {
-      varsf <- st_as_sf(varsf, geometry = x_geometry)
+    if ("sf" %in% class(object)) {
+      varsf <- st_as_sf(varsf, geometry = object_geometry)
     } 
     return(varsf)
   }

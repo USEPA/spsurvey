@@ -51,7 +51,7 @@
 #' }
 summary.sframe <- function(object, formula, onlyshow = NULL, ...) {
   # making formlist (utils.R)
-  formlist <- make_formlist(formula, onlyshow)
+  formlist <- make_formlist(formula, onlyshow, object)
   # making varsf (utils.R)
   varsf <- make_varsf(object, formlist)
   # accomodating an intercept
