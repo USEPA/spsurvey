@@ -53,9 +53,12 @@ make_varsf <- function(x, formlist) {
     return(x)
   } else {
     # store geometry 
-    x_geometry <- st_geometry(x)
-    # remove geometry to make a regular data frame
-    x_df <- st_drop_geometry(x)
+    if ("sf" %in% class(x)) {
+      x_geometry <- st_geometry(x)
+      x_df <- st_drop_geometry(x)
+    } else {
+      x_df <- x
+    }
     formlist <- lapply(
       formlist$varnames_split,
       function(x) {
@@ -68,7 +71,9 @@ make_varsf <- function(x, formlist) {
     )
     varsf <- as.data.frame(formlist, optional = TRUE) # without optional the : in name gets
     # converted to synctactic name with .
-    varsf <- st_as_sf(varsf, geometry = x_geometry)
+    if ("sf" %in% class(x)) {
+      varsf <- st_as_sf(varsf, geometry = x_geometry)
+    } 
     return(varsf)
   }
 }

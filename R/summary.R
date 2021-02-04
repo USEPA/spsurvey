@@ -102,7 +102,12 @@ cat_summary <- function(formlist, varsf, ...) {
   if (!("maxsum" %in% names(dotlist))) {
     dotlist$maxsum <- 1e10
   }
-  varsf_nogeom <- st_drop_geometry(varsf)
+  if ("sf" %in% class(varsf)) {
+    varsf_nogeom <- st_drop_geometry(varsf)
+  } else {
+    varsf_nogeom <- varsf
+  }
+ 
   if (!is.null(formlist$onlyshow)) {
     indexcol <- formlist$varlabels[length(formlist$varlabels)]
     varsf_nogeom <- varsf_nogeom[varsf_nogeom[[indexcol]] == formlist$onlyshow, indexcol, drop = FALSE]
@@ -114,7 +119,11 @@ cat_summary <- function(formlist, varsf, ...) {
 
 cont_summary <- function(formlist, varsf, ...) {
   dotlist <- list(...)
-  varsf_nogeom <- st_drop_geometry(varsf)
+  if ("sf" %in% class(varsf)) {
+    varsf_nogeom <- st_drop_geometry(varsf)
+  } else {
+    varsf_nogeom <- varsf
+  }
   if (!is.null(formlist$onlyshow)) {
     formlist$varlabels <- formlist$varlabels[length(formlist$varlabels)]
     varsf_nogeom <- varsf_nogeom[varsf_nogeom[[formlist$varlabels]] == formlist$onlyshow, c(formlist$response, formlist$varlabels), drop = FALSE]
