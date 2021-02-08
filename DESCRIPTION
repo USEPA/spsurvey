@@ -20,7 +20,6 @@ Maintainer: Marc Weber <Weber.Marc@epa.gov>
 Depends:
     R (>= 3.3.0),
     sf,
-    sp,
     survey
 Suggests: 
     knitr,
@@ -55,6 +54,7 @@ Imports:
     Hmisc,
     MASS,
     rgeos,
+    sp,
     stats
 VignetteBuilder: knitr
 Encoding: UTF-8

@@ -4,56 +4,73 @@
 # Date: December 03, 2020
 # Last Revised: December 03, 2020
 # 
-#' Spatial Balance
+#' Calculate spatial balance metrics
 #'
 #' This function computes the spatial balance of a design with respect 
-#' to the sframe using Dirichlet Tesselations, measuring the
-#' extent to which a object is a miniature of the sframe.
+#' to the sample frame (sframe) using Dirichlet Tesselations, measuring the
+#' extent to which a object is a miniature of sframe. This function is
+#' applicable for unstratified or stratified designs with equal selection
+#' probabilities.
 #' 
-#' @param object 
-#' @param sframe 
-#' @param stratum_object 
-#' @param stratum_sframe 
-#' @param metrics 
-#' @param return_extent 
+#' @param object A design object output from `grts()` or `irs()`
+#' having class "spsurvey"
+#' @param sframe An `sframe or `sf` object
+#' @param sites The sites in object for which spatial balance metrics
+#' are desired. This argument must be "sites_base", "sites_over", or 
+#' "sites_near". Defaults to "sites_base" 
+#' @param metrics A character vector of spatial balance metrics 
+#' (pielou, simpsons, chisquare, absolute error). Defaults to 
+#' "pielou".
+#' @param extents Should the total extent within each dirichlet
+#' tesselation be returned? Defaults to FALSE.
 #'
-#' @return
+#' @return A list having names equal to each strata
 #' @export
 #'
 #' @examples
-spbalance <- function(object, sframe, stratum_object = "stratum", stratum_sframe, metrics = "pielou", return_extent = FALSE) {
+spbalance <- function(object, sframe, sites = "sites_base", metrics = "pielou", extents = FALSE) {
    
-   stratum <- sort(as.character(unique(object[[stratum_object]])))
-   
-   if (any(stratum != "None")) {
-      if (!all.equal(stratum, sort(as.character(unique(sframe[[stratum_sframe]]))))) {
-         stop("stratums in object and sframe must be equal")
-      }      
+   object_split <- split(object[[sites]], object[[sites]][["stratum"]])
+   if (is.null(object$dsgn$Call$stratum_var)) {
+      output <- lapply("None", function(x) {
+         calculate_spbalance(object_split[[x]], sframe, sites, metrics, extents)
+      })
+      names(output) <- "None"
+   } else {
+      sframe_split <- split(sframe, sframe[[object$dsgn$stratum_var]])
+      output <- lapply(object$dsgn$stratum, function(x) {
+         calculate_spbalance(object_split[[x]], sframe_split[[x]], sites, metrics, extents)
+      })
+      names(output) <- object$dsgn$stratum
    }
-
-   output <- lapply(stratum, calculate_spbalance, object, sframe, stratum_object, stratum_sframe, metrics, return_extent)
-   
-   names(output) <- stratum
-   
-   return(output)
+   metrics_dfs <- lapply(names(output), function(x) cbind(stratum = x, data.frame(metric = metrics, value = output[[x]]$values)))
+   metrics <- do.call("rbind", metrics_dfs)
+   metrics <- metrics[order(metrics$metric), , drop = FALSE]
+   row.names(metrics) <- NULL
+   if (extents) {
+      extent_sf_split <- lapply(names(output), function(x) {
+         object_split[[x]]$extent <- output[[x]]$extent
+         object_split[[x]][c("stratum", "extent")]
+      })
+      extents <- do.call("rbind", extent_sf_split)
+      return(list(metrics = metrics, extents = extents))
+   } else {
+      return(metrics)
+   }
+   output
 }
 
 
-calculate_spbalance <- function(stratum, object, sframe, stratum_object, stratum_sframe, metrics, return_extent) {
-   
-   if (any(stratum != "None")) {
-      object <- object[object[[stratum_object]] == stratum, ]
-      sframe <- sframe[sframe[[stratum_sframe]] == stratum, ]
-   }
+calculate_spbalance <- function(object_split, sframe_split, sites, metrics, extents) {
    
    # finding the sframe bounding box, this needs to be reordered to 
    # use in the Dirichlet Tesselation
-   pop_bbox <- st_bbox(sframe)[c("xmin", "xmax", "ymin", "ymax")]
+   pop_bbox <- st_bbox(sframe_split)[c("xmin", "xmax", "ymin", "ymax")]
    
    # working with the objectd sites
    
    ## take the objectd sites coordinates
-   samp_coords <- st_coordinates(object)
+   samp_coords <- st_coordinates(object_split)
    ## name them X and Y
    colnames(samp_coords) <- c("X", "Y")
    ## isolate X
@@ -61,63 +78,44 @@ calculate_spbalance <- function(stratum, object, sframe, stratum_object, stratum
    ## isolate Y
    samp_ycoord <- samp_coords[, "Y"]
    ## recover the object size
-   n <- nrow(object)
+   n <- nrow(object_split)
    
    # and the sframe sites
    
    
    ## recover the sframe size
-   N <- nrow(sframe)
+   N <- nrow(sframe_split)
    
    # spatial balance with respect to the sframe
    
-
-      
-   ## making the dirichlet polygon
-   tiles <- deldir(x = samp_xcoord, 
-                   y = samp_ycoord, 
-                   rw = pop_bbox) %>% 
-      ## storing it as a tile.list()
-      tile.list(.)
+   tiles <- tile.list(deldir(x = samp_xcoord, y = samp_ycoord, rw = pop_bbox))
+   
    ## using lapply instead of a loop
-   sftess <- lapply(tiles, function(t) {
-      ## finding the number of points in the bounding polygon
-      npol <- length(t$x)
-      ## binding the coordinates
-      return(cbind(c(t$x[1], t$x[npol:1]), 
-                   c(t$y[1], t$y[npol:1])) %>% 
-                ## storing as a list
-                list(.) %>%
-                ## storing as a st polygon
-                st_polygon(.))
-   }) %>% 
-      ## adding in the popoulation level crs
-      st_sfc(crs = st_crs(sframe)) %>%
-      ## adding in poly as a variable and storing as an sf object
-      st_sf(poly = 1:n, geometry = .) %>%
-      ## joining the polygon bounds with the sframe data
-      st_join(sframe, .)
+   sftess <- lapply(tiles, get_sftess) 
+   sftess <- st_sfc(sftess, crs = st_crs(sframe_split))
+   sftess <- st_sf(poly = 1:n, geometry = sftess)
+   sftess <- st_join(sframe_split, sftess)
    
    # calculate counts 
    
    ## for points, sframe geometry must be point or multipoint
-   if(all(st_geometry_type(sframe) %in% c("POINT", "MULTIPOINT"))) {
+   if(all(st_geometry_type(sframe_split) %in% c("POINT", "MULTIPOINT"))) {
       ## storing a dummy variable to index counts by
       sftess$point_mdm <- 1
       ## summing over each polygon
       extent <- with(sftess, tapply(point_mdm, poly, sum))
       ## setting NA's equal to zero
       extent[is.na(extent)] <- 0
-   } else if(all(st_geometry_type(sframe) %in% c("LINESTRING", "MULTILINESTRING"))) {
-     sftess$length_mdm <- as.numeric(st_length(sftess))
-     extent <- with(sftess, tapply(length_mdm, poly, sum))
-     extent[is.na(extent)] <- 0
-   } else if(all(st_geometry_type(sframe) %in% c("POLYGON", "MULTIPOLYGON"))) {
-     sftess$area_mdm <- as.numeric(st_area(sftess))
-     extent <- with(sftess, tapply(area_mdm, poly, sum))
-     extent[is.na(extent)] <- 0
+   } else if(all(st_geometry_type(sframe_split) %in% c("LINESTRING", "MULTILINESTRING"))) {
+      sftess$length_mdm <- as.numeric(st_length(sftess))
+      extent <- with(sftess, tapply(length_mdm, poly, sum))
+      extent[is.na(extent)] <- 0
+   } else if(all(st_geometry_type(sframe_split) %in% c("POLYGON", "MULTIPOLYGON"))) {
+      sftess$area_mdm <- as.numeric(st_area(sftess))
+      extent <- with(sftess, tapply(area_mdm, poly, sum))
+      extent[is.na(extent)] <- 0
    }
-
+   
    # making proportions and expected quantities
    proportions <- extent / sum(extent)
    expected_proportions <- 1 / n
@@ -126,13 +124,21 @@ calculate_spbalance <- function(stratum, object, sframe, stratum_object, stratum
    # metrics
    values <- vapply(metrics, calculate_metric, double(1), proportions, expected_proportions)
    
-    # returning the results when stored by the user
+   # returning the results when stored by the user
    output <- list(values = values)
-   if (return_extent) {
+   if (extents) {
       output$extent <- extent
    }
+   output
+}
+
+get_sftess <- function(tile) {
+   ## finding the number of points in the bounding polygon
+   npol <- length(tile$x)
    
-   return(output)
+   ## creating and returning the appropriate polygon after binding coords
+   st_polygon(list(cbind(c(tile$x[1], tile$x[npol:1]), 
+                         c(tile$y[1], tile$y[npol:1]))))
 }
 
 
@@ -143,7 +149,7 @@ calculate_metric <- function(metric, proportions, expected_proportions) {
           abserr = calculate_abserr(proportions, expected_proportions),
           simpsons = calculate_simpsons(proportions, expected_proportions),
           stop("an invalid metric was provided")
-          )
+   )
 }
 
 calculate_pielou <- function(proportions, expected_proportions) {

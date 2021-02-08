@@ -1,10 +1,14 @@
-make_formlist <- function(vars, onlyshow) {
+# Helpers -----------------------------------------------------------------
+
+make_formlist <- function(formula, onlyshow, object) {
   # find all terms from the formula
-  varterms <- terms(vars)
+  varterms <- terms(formula, data = object)
   # find all variable names
   allvars <- all.vars(varterms)
   # find all right hand side names
   varlabels <- attr(varterms, "term.labels")
+  # remove geometry if present
+  varlabels <- varlabels[varlabels != "geometry"]
   # find if intercept exists in the formula
   if (attr(varterms, "intercept") == 1) {
     intercept <- TRUE
@@ -45,15 +49,18 @@ make_varsf <- function(object, formlist) {
   # model.frame and extracting the main effects and using them to make the interactions
   # only real advantage will be creating variables for use mid formula with numeric variables
   
-  # store geometry 
-  object_geometry <- st_geometry(object)
-  
+
+
   if (formlist$intercept && is.null(formlist$response) && length(formlist$varlabels) == 0) {
-    return(object_geometry)
+    return(object)
   } else {
-    
-    # remove geometry to make a regular data frame
-    object_df <- st_drop_geometry(object)
+    # store geometry 
+    if ("sf" %in% class(object)) {
+      object_geometry <- st_geometry(object)
+      object_df <- st_drop_geometry(object)
+    } else {
+      object_df <- object
+    }
     formlist <- lapply(
       formlist$varnames_split,
       function(x) {
@@ -66,7 +73,9 @@ make_varsf <- function(object, formlist) {
     )
     varsf <- as.data.frame(formlist, optional = TRUE) # without optional the : in name gets
     # converted to synctactic name with .
-    varsf <- st_as_sf(varsf, geometry = object_geometry)
+    if ("sf" %in% class(object)) {
+      varsf <- st_as_sf(varsf, geometry = object_geometry)
+    } 
     return(varsf)
   }
 }
@@ -169,7 +178,7 @@ match_sf_defaults <- function(varsf, list_args) {
 #   } else if (geometry %in% c("POLYGON", "MULTIPOLYGON")){
 #     sf_defaults <- data.frame(pch = NA, cex = 1, col = NA, bg = NA, lwd = 1, lty = 1, type = NA, border = 1, rule = "evenodd", stringsAsFactors = FALSE)
 #   } else {
-#     stop("All object geometries must be POINT, MULTIPOINT, LINESTRING, MULTILINESTRING, POLYGON, or MULTIPOLYGON")
+#     stop("All x geometries must be POINT, MULTIPOINT, LINESTRING, MULTILINESTRING, POLYGON, or MULTIPOLYGON")
 #   }
 #   sf_defaults
 # }

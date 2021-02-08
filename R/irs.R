@@ -360,8 +360,8 @@ irs <- function(sframe, n_base, stratum = NULL, seltype = "equal", wgt_units = N
     }
   }
   
-  # constructor for spsurvey class
-  sites <- structure(sites, class = "spsurvey")
+  # constructor for design class
+  sites <- structure(sites, class = "design")
 
   # return the survey design sf object
   invisible(sites)
