@@ -92,7 +92,7 @@ plot(NE_Lakes)
 ```
 Notice that lakes have the highest density in the northeastern locations and the sparsest density in the northwestern locations. A spatially balanced sample with respect to the population mirrors the density in the population, sampling more in the northeast and less in the northwest, while a spatially balanced sample with respect to geography omits this density information but takes into account the absolute distances among neighboring sites. These two types of spatial balance are useful in different contexts, and no type is superior over the other. But it is important to be aware of this distinction and its implications. Henceforth, when we refer to "spatial balance," we mean spatial balance with respect to the population.
 
-Spatially balanced samples are so important because they generally yield estimators of means and totals *having narrower confidence intervals* than samples lacking spatial balance. This means our estimators are more *precise*, which can lead to reduced resource costs and a *more accurate representation* of the true, uknonwn values of the quantities we are studying.
+Spatially balanced samples are important because they generally yield estimators of means and totals *having narrower confidence intervals* than samples lacking spatial balance. This means our estimators are more *precise*, which can lead to reduced resource costs and a *more accurate representation* of the true, unknown values of the quantities we are studying.
 
 ## An Unstratified, Equal Probability GRTS Design
 
@@ -123,6 +123,7 @@ To overlay the spatially balanced sample on the original population, run
 ```{r, fig.align = "center", fig.cap = "Population (sframe) and sampled sites (sites_base) from an equal probability GRTS design."}
 plot(eqprob, NE_Lakes, pch = 19, key.pos = 1)
 ```
+
 The `pch = 19` argument tells `spsurvey` to plot closed circles instead of open circles (the default), and the `key.pos = 1` argument tells `spsurvey` to put the legend at the bottom of the plot.
 
 `grts` returns several design elements used by the function as a tool to both keep track of and to verify the specifications of your design. You can access this information by running `eqprob$dsgn`. A list is printed containing several pieces of information -- several of which may be `NULL`. These `NULL` values are expected and change based on the specifications of your design, similar to how the columns having only `NA` in `eqprob$sites_base` will eventually change; this will be made more clear later on. For now, you will focus on the relevant non-`NULL` information:

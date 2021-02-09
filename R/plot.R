@@ -227,7 +227,7 @@ plot.design <- function(x, y = NULL, formula = ~ sites, sites = NULL,
     x$sites_base$sites[!is.na(x$sites_base$legacy)] <- "legacy"
   }
   # make formlists
-  formlist <- make_formlist(formula, onlyshow)
+  formlist <- make_formlist(formula, onlyshow, x$sframe)
   # make sframe
   varsfs <- lapply(x, function(a) make_varsf(a, formlist))
   x <- do.call("rbind", varsfs)
