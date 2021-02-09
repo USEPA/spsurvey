@@ -250,11 +250,11 @@ grts_stratum <- function(stratum, dsgn, sframe, sf_type, pt_density = NULL,
   # Select replacement sites if n_near not NULL
   if(!is.null(dsgn[["n_near"]])) {
     sites_near <- replace_near(dsgn[["n_near"]], sites$sites_base, sframe = sftmp)
-  }
-  
-  # Adjust inclusion probabilities for replacement sites if over sample sites present
-  if(!is.null(dsgn[["n_over"]][[stratum]])) {
-    sites_near$ip_init <- sites_near$ip_init* n.base / n_total
+    
+    # Adjust inclusion probabilities for replacement sites if over sample sites present
+    if(!is.null(dsgn[["n_over"]][[stratum]])) {
+    sites_near$ip_init <- sites_near$ip_init * n.base / n_total
+    }
   }
 
   # Assign original inclusion probabilites to sites, create weights and drop legacy ip variable
