@@ -74,6 +74,13 @@ summary.sframe <- function(object, formula, onlyshow = NULL, ...) {
 }
 
 #' @name summary
+#' @method summary dframe
+#' @export
+summary.dframe <- function(object, formula, onlyshow = NULL, ...) {
+  summary.sframe(object, formula, onlyshow, ...)
+}
+
+#' @name summary
 #' @method summary design
 #' @export
 summary.design <- function(object, formula, onlyshow = NULL, ...) {

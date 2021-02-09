@@ -29,9 +29,6 @@ sframe <- function(object) {
     sframe <- as(object, "sf")
     sframe <- structure(sframe, class = c("sframe", class(sframe)))
     return(sframe)
-  } else if ("data.frame" %in% class(object)) {
-    sframe <- structure(object, class = c("sframe", class(object)))
-    return(sframe)
   } else {
     stop("Input must be an sf object or an sp object")
   }
