@@ -242,7 +242,7 @@ grts_stratum <- function(stratum, dsgn, sframe, sf_type, pt_density = NULL,
   
   # adjust inclusion probabilities when over sample sites present
   n.base <- dsgn[["n_base"]][[stratum]]
-  sites[["sites_base"]]$ip <- sites[["sites_base"]]$ip * n_total / n.base
+  sites[["sites_base"]]$ip_init <- sites[["sites_base"]]$ip_init * n_total / n.base
   # save base sites
   sites_base <- sites$sites_base[1:n.base,]
   # save n_over sample sites
