@@ -47,7 +47,7 @@ plot.sframe <- function(x, y, formula = ~ 1, variable_args = NULL, level_args = 
   # setting old graphical parameter value
   oldpar <- par()
   # setting exit handler
-  on.exit(par(ask = oldpar$ask))
+  on.exit(par(ask = oldpar$ask), add = TRUE)
   
   # storing dotlist
   dot_list <- list(...)
