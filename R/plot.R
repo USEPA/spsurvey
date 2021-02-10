@@ -46,6 +46,8 @@ plot.sframe <- function(x, y, formula = ~ 1, variable_args = NULL, level_args = 
   
   # setting old graphical parameter value
   oldpar <- par()
+  # setting exit handler
+  on.exit(par(ask = oldpar$ask))
   
   # storing dotlist
   dot_list <- list(...)
@@ -202,7 +204,6 @@ plot.sframe <- function(x, y, formula = ~ 1, variable_args = NULL, level_args = 
       do.call("plot", c(list(varsf_sub[formlist$response]), variable_args_split, dot_list))
     }
   }
-  on.exit(par(ask = oldpar$ask))
 }
 
 #' @name plot
