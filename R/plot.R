@@ -46,9 +46,7 @@ plot.sframe <- function(x, y, formula = ~ 1, variable_args = NULL, level_args = 
   
   # setting old graphical parameter value
   oldpar <- par()
-  # setting exit handler
-  on.exit(par(ask = oldpar$ask))
-  
+
   # storing dotlist
   dot_list <- list(...)
   if (fix_bbox) {
@@ -101,7 +99,7 @@ plot.sframe <- function(x, y, formula = ~ 1, variable_args = NULL, level_args = 
             if (any(is.na(unlist(list_args)))) {
               list_args <- match_sf_defaults(varsf_split[[b]], list_args)
             }
-            do.call("plot", c(list(st_geometry(varsf_split[[b]])), list_args))
+            return(invisible(do.call("plot", c(list(st_geometry(varsf_split[[b]])), list_args))))
           }
           )
         }
@@ -119,7 +117,7 @@ plot.sframe <- function(x, y, formula = ~ 1, variable_args = NULL, level_args = 
           if (any(is.na(unlist(list_args)))) {
             list_args <- match_sf_defaults(varsf[a], list_args)
           }
-          do.call("plot", c(list(varsf[a]), list_args))
+          return(invisible(do.call("plot", c(list(varsf[a]), list_args))))
         }
         )
       }
@@ -132,7 +130,7 @@ plot.sframe <- function(x, y, formula = ~ 1, variable_args = NULL, level_args = 
         if (!("main" %in% names(dot_list))) {
           dot_list$main <- paste(" ", expression("~"), " ", formlist$varlabels, sep = "")
         }
-        do.call("plot", c(list(varsf_sub[formlist$varlabels]), dot_list))
+        return(invisible(do.call("plot", c(list(varsf_sub[formlist$varlabels]), dot_list))))
       }
     }
   } else {
@@ -159,7 +157,7 @@ plot.sframe <- function(x, y, formula = ~ 1, variable_args = NULL, level_args = 
             if (any(is.na(unlist(list_args)))) {
               list_args <- match_sf_defaults(varsf_split[[b]], list_args)
             }
-            do.call("plot", c(list(varsf_split[[b]][formlist$response]), list_args))
+            return(invisible(do.call("plot", c(list(varsf_split[[b]][formlist$response]), list_args))))
           }
           )
         }
@@ -181,7 +179,7 @@ plot.sframe <- function(x, y, formula = ~ 1, variable_args = NULL, level_args = 
             if (any(is.na(unlist(list_args)))) {
               list_args <- match_sf_defaults(varsf_split[[b]], list_args)
             }
-            do.call("plot", c(list(varsf_split[[b]][formlist$response]), list_args))
+            return(invisible(do.call("plot", c(list(varsf_split[[b]][formlist$response]), list_args))))
           }
           )
         }
@@ -201,9 +199,11 @@ plot.sframe <- function(x, y, formula = ~ 1, variable_args = NULL, level_args = 
       if (!("main" %in% names(dot_list))) {
         dot_list$main <- paste(formlist$response, " ", expression("~"), " ", formlist$varlabels, " (", formlist$onlyshow, ")", sep = "")
       }
-      do.call("plot", c(list(varsf_sub[formlist$response]), variable_args_split, dot_list))
+      return(invisible(do.call("plot", c(list(varsf_sub[formlist$response]), variable_args_split, dot_list))))
     }
   }
+  # setting exit handler
+  on.exit(par(ask = oldpar$ask))
 }
 
 #' @name plot
