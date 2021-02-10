@@ -46,7 +46,9 @@ plot.sframe <- function(x, y, formula = ~ 1, variable_args = NULL, level_args = 
   
   # setting old graphical parameter value
   oldpar <- par()
-
+  # setting exit handler
+  on.exit(par(ask = oldpar$ask))
+  
   # storing dotlist
   dot_list <- list(...)
   if (fix_bbox) {
@@ -66,144 +68,154 @@ plot.sframe <- function(x, y, formula = ~ 1, variable_args = NULL, level_args = 
       # if (!("main" %in% names(dot_list))) {
       #   dot_list$main <- paste(expression("~"), " ", "1", sep = "")
       # }
-      return(invisible(do.call("plot", c(list(st_geometry(x)), dot_list))))
+      sfplot <- do.call("plot", c(list(st_geometry(x)), dot_list))
     } else {
       if (!("main" %in% names(dot_list))) {
         dot_list$main <- paste(formlist$response, " ", expression("~"), " ", "1", sep = "")
       }
-      return(invisible(do.call("plot", c(list(varsf[formlist$response]), dot_list))))
+      sfplot <- do.call("plot", c(list(varsf[formlist$response]), dot_list))
     }
-  }
+  } else {
   
-  if (is.null(formlist$response)) {
-    # get level_args list
-    if (!is.null(level_args)) {
-      level_args_list <- make_level_args_list(varsf, level_args)
+    if (is.null(formlist$response)) {
+      # get level_args list
+      if (!is.null(level_args)) {
+        level_args_list <- make_level_args_list(varsf, level_args)
+      } else {
+        level_args_list <- level_args
+      }
+      
+      if (is.null(onlyshow)) {
+        if (geom) {
+          # turning on ask if necessary
+          if (get_varlevels(formlist, varsf) > 1) {
+            par(ask = TRUE)
+          }
+          sfplot <- lapply(formlist$varlabels, function(a) {
+            varsf_split <- split(varsf[a], varsf[[a]])
+            names_varsf_split <- names(varsf_split)
+            level_args_split <- split(as.data.frame(level_args_list[[a]], stringsAsFactors = FALSE), varsf[[a]])
+            lapply(names_varsf_split, function(b) {
+              list_args <- c(variable_args[[a]], level_args_split[[b]], dot_list)
+              list_args$main <- paste(formlist$response, " ", expression("~"), " ", a, " (", b, ")", sep = "")
+              if (any(is.na(unlist(list_args)))) {
+                list_args <- match_sf_defaults(varsf_split[[b]], list_args)
+              }
+              do.call("plot", c(list(st_geometry(varsf_split[[b]])), list_args))
+            }
+            )
+          }
+          )
+          names(sfplot) <- formlist$varlabels
+        } else {
+          # turning on ask if necessary
+          if (length(formlist$varlabels) > 1) {
+            par(ask = TRUE)
+          }
+          sfplot <- lapply(formlist$varlabels, function(a) {
+            if (!("main" %in% names(variable_args[[a]]))) {
+              variable_args[[a]]$main <- paste(" ", expression("~"), " ", a, sep = "")
+            }
+            list_args <- c(variable_args[[a]], level_args_list[[a]], dot_list)
+            if (any(is.na(unlist(list_args)))) {
+              list_args <- match_sf_defaults(varsf[a], list_args)
+            }
+            do.call("plot", c(list(varsf[a]), list_args))
+          }
+          )
+          names(sfplot) <- formlist$varlabels
+        }
+      } else {
+        varsf_sub <- varsf[varsf[[formlist$varlabels]] == formlist$onlyshow, ]
+        if (geom) {
+          dot_list$main <- paste(" ", expression("~"), " ", formlist$varlabels, " (", formlist$onlyshow, ")", sep = "")
+          sfplot <- do.call("plot", c(list(st_geometry(varsf_sub[formlist$varlabels])), dot_list))
+        } else {
+          if (!("main" %in% names(dot_list))) {
+            dot_list$main <- paste(" ", expression("~"), " ", formlist$varlabels, sep = "")
+          }
+          sfplot <- do.call("plot", c(list(varsf_sub[formlist$varlabels]), dot_list))
+        }
+      }
     } else {
-      level_args_list <- level_args
-    }
-    
-    if (is.null(onlyshow)) {
-      if (geom) {
-        # turning on ask if necessary
+      # get level_args list
+      if (!is.null(level_args)) {
+        level_args_list <- make_level_args_list(varsf, level_args)
+      } else {
+        level_args_list <- level_args
+      }
+      
+      if (is.null(onlyshow)) {
         if (get_varlevels(formlist, varsf) > 1) {
           par(ask = TRUE)
         }
-        lapply(formlist$varlabels, function(a) {
-          varsf_split <- split(varsf[a], varsf[[a]])
-          names_varsf_split <- names(varsf_split)
-          level_args_split <- split(as.data.frame(level_args_list[[a]], stringsAsFactors = FALSE), varsf[[a]])
-          lapply(names_varsf_split, function(b) {
-            list_args <- c(variable_args[[a]], level_args_split[[b]], dot_list)
-            list_args$main <- paste(formlist$response, " ", expression("~"), " ", a, " (", b, ")", sep = "")
-            if (any(is.na(unlist(list_args)))) {
-              list_args <- match_sf_defaults(varsf_split[[b]], list_args)
+        
+        if (is.numeric(varsf[[formlist$response]])) {
+          sfplot <- lapply(formlist$varlabels, function(a) {
+            varsf_split <- split(varsf[, c(formlist$response, a)], varsf[[a]])
+            names_varsf_split <- names(varsf_split)
+            level_args_split <- split(as.data.frame(level_args_list[[a]], stringsAsFactors = FALSE), varsf[[a]])
+            lapply(names_varsf_split, function(b) {
+              list_args <- c(variable_args[[a]], level_args_split[[b]], dot_list)
+              list_args$main <- paste(formlist$response, " ", expression("~"), " ", a, " (", b, ")", sep = "")
+              if (any(is.na(unlist(list_args)))) {
+                list_args <- match_sf_defaults(varsf_split[[b]], list_args)
+              }
+              sfplot <- do.call("plot", c(list(varsf_split[[b]][formlist$response]), list_args))
+              sfplot <- list(sfplot)
+              names(sfplot) <- b
+              sfplot
             }
-            return(invisible(do.call("plot", c(list(st_geometry(varsf_split[[b]])), list_args))))
+            )
           }
           )
-        }
-        )
-      } else {
-        # turning on ask if necessary
-        if (length(formlist$varlabels) > 1) {
-          par(ask = TRUE)
-        }
-        lapply(formlist$varlabels, function(a) {
-          if (!("main" %in% names(variable_args[[a]]))) {
-            variable_args[[a]]$main <- paste(" ", expression("~"), " ", a, sep = "")
+          names(sfplot) <- formlist$varlabels
+        } else {
+          if (!is.null(variable_args)) {
+            variable_args_list <- make_variable_args_list(varsf, variable_args)
+          } else {
+            variable_args_list <- NULL
           }
-          list_args <- c(variable_args[[a]], level_args_list[[a]], dot_list)
-          if (any(is.na(unlist(list_args)))) {
-            list_args <- match_sf_defaults(varsf[a], list_args)
-          }
-          return(invisible(do.call("plot", c(list(varsf[a]), list_args))))
-        }
-        )
-      }
-    } else {
-      varsf_sub <- varsf[varsf[[formlist$varlabels]] == formlist$onlyshow, ]
-      if (geom) {
-        dot_list$main <- paste(" ", expression("~"), " ", formlist$varlabels, " (", formlist$onlyshow, ")", sep = "")
-        do.call("plot", c(list(st_geometry(varsf_sub[formlist$varlabels])), dot_list))
-      } else {
-        if (!("main" %in% names(dot_list))) {
-          dot_list$main <- paste(" ", expression("~"), " ", formlist$varlabels, sep = "")
-        }
-        return(invisible(do.call("plot", c(list(varsf_sub[formlist$varlabels]), dot_list))))
-      }
-    }
-  } else {
-    # get level_args list
-    if (!is.null(level_args)) {
-      level_args_list <- make_level_args_list(varsf, level_args)
-    } else {
-      level_args_list <- level_args
-    }
-    
-    if (is.null(onlyshow)) {
-      if (get_varlevels(formlist, varsf) > 1) {
-        par(ask = TRUE)
-      }
-      
-      if (is.numeric(varsf[[formlist$response]])) {
-        lapply(formlist$varlabels, function(a) {
-          varsf_split <- split(varsf[, c(formlist$response, a)], varsf[[a]])
-          names_varsf_split <- names(varsf_split)
-          level_args_split <- split(as.data.frame(level_args_list[[a]], stringsAsFactors = FALSE), varsf[[a]])
-          lapply(names_varsf_split, function(b) {
-            list_args <- c(variable_args[[a]], level_args_split[[b]], dot_list)
-            list_args$main <- paste(formlist$response, " ", expression("~"), " ", a, " (", b, ")", sep = "")
-            if (any(is.na(unlist(list_args)))) {
-              list_args <- match_sf_defaults(varsf_split[[b]], list_args)
+          sfplot <- lapply(formlist$varlabels, function(a) {
+            varsf_split <- split(varsf[, c(formlist$response, a)], varsf[[a]])
+            names_varsf_split <- names(varsf_split)
+            level_args_split <- split(as.data.frame(level_args_list[[a]], stringsAsFactors = FALSE), varsf[[a]])
+            variable_args_split <- split(as.data.frame(variable_args_list[[a]][[formlist$response]], stringsAsFactors = FALSE), varsf[[a]])
+            lapply(names_varsf_split, function(b) {
+              list_args <- c(variable_args_split[[b]], level_args_split[[b]], dot_list)
+              list_args$main <- paste(formlist$response, " ", expression("~"), " ", a, " (", b, ")", sep = "")
+              if (any(is.na(unlist(list_args)))) {
+                list_args <- match_sf_defaults(varsf_split[[b]], list_args)
+              }
+              sfplot <- do.call("plot", c(list(varsf_split[[b]][formlist$response]), list_args))
+              sfplot <- list(sfplot)
+              names(sfplot) <- b
+              sfplot
             }
-            return(invisible(do.call("plot", c(list(varsf_split[[b]][formlist$response]), list_args))))
+            )
           }
           )
+          names(sfplot) <- formlist$varlabels
         }
-        )
       } else {
+        varsf_sub <- varsf[varsf[[formlist$varlabels]] == formlist$onlyshow, ]
         if (!is.null(variable_args)) {
           variable_args_list <- make_variable_args_list(varsf, variable_args)
+          variable_args_split <- split(as.data.frame(variable_args_list[[formlist$varlabels]][[formlist$response]],
+                                                     stringsAsFactors = FALSE), varsf[[formlist$varlabels]])
+          variable_args_split <- variable_args_split[[formlist$onlyshow]]
         } else {
           variable_args_list <- NULL
+          variable_args_split <- NULL
         }
-        lapply(formlist$varlabels, function(a) {
-          varsf_split <- split(varsf[, c(formlist$response, a)], varsf[[a]])
-          names_varsf_split <- names(varsf_split)
-          level_args_split <- split(as.data.frame(level_args_list[[a]], stringsAsFactors = FALSE), varsf[[a]])
-          variable_args_split <- split(as.data.frame(variable_args_list[[a]][[formlist$response]], stringsAsFactors = FALSE), varsf[[a]])
-          lapply(names_varsf_split, function(b) {
-            list_args <- c(variable_args_split[[b]], level_args_split[[b]], dot_list)
-            list_args$main <- paste(formlist$response, " ", expression("~"), " ", a, " (", b, ")", sep = "")
-            if (any(is.na(unlist(list_args)))) {
-              list_args <- match_sf_defaults(varsf_split[[b]], list_args)
-            }
-            return(invisible(do.call("plot", c(list(varsf_split[[b]][formlist$response]), list_args))))
-          }
-          )
+        if (!("main" %in% names(dot_list))) {
+          dot_list$main <- paste(formlist$response, " ", expression("~"), " ", formlist$varlabels, " (", formlist$onlyshow, ")", sep = "")
         }
-        )
+        sfplot <- do.call("plot", c(list(varsf_sub[formlist$response]), variable_args_split, dot_list))
       }
-    } else {
-      varsf_sub <- varsf[varsf[[formlist$varlabels]] == formlist$onlyshow, ]
-      if (!is.null(variable_args)) {
-        variable_args_list <- make_variable_args_list(varsf, variable_args)
-        variable_args_split <- split(as.data.frame(variable_args_list[[formlist$varlabels]][[formlist$response]],
-                                                   stringsAsFactors = FALSE), varsf[[formlist$varlabels]])
-        variable_args_split <- variable_args_split[[formlist$onlyshow]]
-      } else {
-        variable_args_list <- NULL
-        variable_args_split <- NULL
-      }
-      if (!("main" %in% names(dot_list))) {
-        dot_list$main <- paste(formlist$response, " ", expression("~"), " ", formlist$varlabels, " (", formlist$onlyshow, ")", sep = "")
-      }
-      return(invisible(do.call("plot", c(list(varsf_sub[formlist$response]), variable_args_split, dot_list))))
     }
   }
-  # setting exit handler
-  on.exit(par(ask = oldpar$ask))
+  invisible(sfplot)
 }
 
 #' @name plot
