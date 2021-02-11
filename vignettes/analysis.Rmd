@@ -1,5 +1,5 @@
 ---
-title: "Analyzing Probability Samples Using spsurvey"
+title: "Analyzing Probability Samples Using spsurvey (this needs a bit of work still timestamped 2/10 at 17:00"
 author: "Michael Dumelle, Tony Olsen, Tom Kincaid, and Marc Weber"
 output: 
   html_document:
@@ -182,4 +182,179 @@ head(bmmi2$Pct)
 
 # The `NRSA_EPA7` Data (linear resources)
 
+You can load the `NRSA_EPA7` data by running 
+```{r}
+data("NRSA_EPA7")
+```
+
+There are a few missing values in this data, so you can remove them before proceeding
+```{r}
+NRSA_EPA7 <- na.omit(NRSA_EPA7)
+```
+
+There are a few missing values in this data, so you can remove them before proceeding
+```{r}
+NRSA_EPA7 <- na.omit(NRSA_EPA7)
+```
+
+First you will estimate the extent (total sreatm length) that are in the target population.
+```{r}
+tnt_extent <- cat_analysis(
+  dframe = NRSA_EPA7,
+  vars = "TNT_CAT",
+  weight = "WGT_TP_EXTENT",
+  xcoord = "XCOORD",
+  ycoord = "YCOORD",
+  popcorrect = TRUE
+)
+print(tnt_extent)
+```
+
+The `popcorrect` argument indicates that a finite population adjustment to the variance estimate should be calculated.
+
+Next, you will subset the data to only include lakes in the target population:
+```{r}
+NRSA_EPA7_Target <- subset(NRSA_EPA7, TNT_CAT == "Target")
+```
+
+Then you can analyze the phosphorus condition class (`PHOSPHORUS_COND`) by running
+```{r}
+phos_cond <- cat_analysis(
+  dframe = NRSA_EPA7_Target,
+  vars = "PHOSPHORUS_COND",
+  weight = "WGT_TP_CORE",
+  xcoord = "XCOORD",
+  ycoord = "YCOORD",
+  popcorrect = TRUE,
+)
+print(phos_cond)
+```
+
+## `cont_analysis()`
+
+To analyze Benthic MMI (`BENTHIC_MMI`), run
+```{r}
+bmmi <- cont_analysis(
+  dframe = NRSA_EPA7_Target,
+  vars = "BENTHIC_MMI",
+  weight = "WGT_TP_CORE",
+  xcoord = "XCOORD",
+  ycoord = "YCOORD",
+  popcorrect = TRUE
+)
+```
+
+To view the first few rows of each type of output, run
+```{r}
+head(bmmi$CDF)
+head(bmmi$Pct)
+```
+
+To analyze Benthic MMI (`BENTHIC_MMI`) for the urban vs non-urban subpopulation (`URBN_NLA17`), run
+
+```{r}
+bmmi2 <- cont_analysis(
+  dframe = NRSA_EPA7_Target,
+  vars = "BENTHIC_MMI",
+  weight = "WGT_TP_CORE",
+  xcoord = "XCOORD",
+  ycoord = "YCOORD",
+  popcorrect = TRUE
+)
+```
+
+To view the first few rows of each type of output, run
+```{r}
+head(bmmi2$CDF)
+head(bmmi2$Pct)
+```
+
 # The `NCCA_Gulf` Data (areal resources)
+
+You can load the `NCCA_Gulf` data by running 
+```{r}
+data("NCCA_Gulf")
+```
+
+There are a few missing values in this data, so you can remove them before proceeding
+```{r}
+NCCA_Gulf <- na.omit(NCCA_Gulf)
+```
+
+There are a few missing values in this data, so you can remove them before proceeding
+```{r}
+NCCA_Gulf <- na.omit(NCCA_Gulf)
+```
+
+First you will estimate the extent (total sreatm length) that are in the target population.
+```{r}
+tnt_extent <- cat_analysis(
+  dframe = NCCA_Gulf,
+  vars = "TNT_CAT",
+  weight = "WGT_TP_EXTENT",
+  xcoord = "XCOORD",
+  ycoord = "YCOORD",
+  popcorrect = TRUE
+)
+print(tnt_extent)
+```
+
+The `popcorrect` argument indicates that a finite population adjustment to the variance estimate should be calculated.
+
+Next, you will subset the data to only include lakes in the target population:
+```{r}
+NCCA_Gulf_Target <- subset(NCCA_Gulf, TNT_CAT == "Target")
+```
+
+Then you can analyze the phosphorus condition class (`PHOSPHORUS_COND`) by running
+```{r}
+phos_cond <- cat_analysis(
+  dframe = NCCA_Gulf_Target,
+  vars = "PHOSPHORUS_COND",
+  weight = "WGT_TP_CORE",
+  xcoord = "XCOORD",
+  ycoord = "YCOORD",
+  popcorrect = TRUE,
+)
+print(phos_cond)
+```
+
+
+## `cont_analysis()`
+
+To analyze Benthic MMI (`BENTHIC_MMI`), run
+```{r}
+bmmi <- cont_analysis(
+  dframe = NCCA_Gulf_Target,
+  vars = "BENTHIC_MMI",
+  weight = "WGT_TP_CORE",
+  xcoord = "XCOORD",
+  ycoord = "YCOORD",
+  popcorrect = TRUE
+)
+```
+
+To view the first few rows of each type of output, run
+```{r}
+head(bmmi$CDF)
+head(bmmi$Pct)
+```
+
+To analyze Benthic MMI (`BENTHIC_MMI`) for the urban vs non-urban subpopulation (`URBN_NLA17`), run
+
+```{r}
+bmmi2 <- cont_analysis(
+  dframe = NCCA_Gulf_Target,
+  vars = "BENTHIC_MMI",
+  weight = "WGT_TP_CORE",
+  xcoord = "XCOORD",
+  ycoord = "YCOORD",
+  popcorrect = TRUE
+)
+```
+
+To view the first few rows of each type of output, run
+```{r}
+head(bmmi2$CDF)
+head(bmmi2$Pct)
+```
