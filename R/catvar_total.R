@@ -2,6 +2,9 @@
 # Function: catvar_total
 # Programmer: Tom Kincaid
 # Date: April 21, 2020
+# Revised: February 10, 2021 to properly handle the case where categories
+#          contained in the size_names vector are not present among levels of
+#          the response varible.
 #
 #' Variance Estimates of the Estimated Size for Categorical Data
 #'
@@ -117,6 +120,7 @@ catvar_total <- function(z, wgt, x, y, size_names, stratum_ind, stratum_level,
 
 # Calculate additional required values
 
+    size_names <- size_names[size_names %in% c(levels(z), "Total")]
     m <- length(size_names)
     cluster <- factor(clusterID)
     cluster_levels <- levels(cluster)
@@ -237,6 +241,7 @@ catvar_total <- function(z, wgt, x, y, size_names, stratum_ind, stratum_level,
 # Calculate additional required values
 
     n <- length(z)
+    size_names <- size_names[size_names %in% c(levels(z), "Total")]
     m <- length(size_names)
     if(pcfactor_ind) {
       fpcsize_u <- unique(fpcsize)
