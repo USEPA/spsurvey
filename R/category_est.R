@@ -2,6 +2,8 @@
 # Function: category_est
 # Programmer: Tom Kincaid
 # Date: July 23, 2020
+# Revised: February 9, 2021 to fix incorrect coding of "confval_P" as
+#          "stderr_P".
 #
 #' Category Proportion and Total Estimates for Probability Survey Data
 #'
@@ -132,7 +134,7 @@ category_est <- function(catsum, dframe, itype, lev_itype, nlev_itype, ivar,
       dimnames(rslt_P)[1] <- lev_itype
       stderr_P <- data.frame(ivar = 0.0, Total = 0.0)
       temp <- data.frame(LCB = temp, UCB = temp)
-      stderr_P <- rbind(ivar = temp, Total = temp)
+      confval_P <- rbind(ivar = temp, Total = temp)
     } else {
       rslt_svy <- svymean(make.formula(ivar), design = subset(design, tst),
         na.rm = TRUE)
@@ -144,15 +146,15 @@ category_est <- function(catsum, dframe, itype, lev_itype, nlev_itype, ivar,
           nlev_ivar, design, design_names, rslt_P, popcorrect, vartype, mult,
           warn_ind, warn_df)
         stderr_P <- temp$stderr_P
-        stderr_P <- temp$stderr_P
+        confval_P <- temp$confval_P
         warn_ind <- temp$warn_ind
         warn_df <- temp$warn_df
       } else {
         stderr_P <- cbind(t(data.frame(SE(rslt_svy))), Total = 0.0)
-        stderr_P <- confint(rslt_svy, level = conf/100)
+        confval_P <- confint(rslt_svy, level = conf/100)
         tempdf <- data.frame(LCB = 1.0, UCB = 1.0)
-        dimnames(tempdf) <- list("Total", colnames(stderr_P))
-        stderr_P <- rbind(stderr_P, tempdf)
+        dimnames(tempdf) <- list("Total", colnames(confval_P))
+        confval_P <- rbind(confval_P, tempdf)
       }
     }
   } else {
@@ -163,14 +165,14 @@ category_est <- function(catsum, dframe, itype, lev_itype, nlev_itype, ivar,
       dimnames(rslt_P)[[1]] <- lev_itype
       stderr_P <- data.frame(ivar = rep(0.0, nlev_itype), Total = rep(0.0,
         nlev_itype))
-      stderr_P <- NULL
+      confval_P <- NULL
       for(i in 1:nlev_itype) {
         tempdf <- rbind(data.frame(temp[i], temp[i]), data.frame(temp[i],
           temp[i]))
         rownames(tempdf) <- c(paste(lev_itype[i], ivar, sep=":"),
           paste(lev_itype[i], "Total", sep=":"))
         colnames(tempdf) <- c("LCB", "UCB")
-        stderr_P <- rbind(stderr_P, tempdf)
+        confval_P <- rbind(confval_P, tempdf)
       }
     } else {
       rslt_svy <- svyby(make.formula(ivar), make.formula(itype),
@@ -182,19 +184,19 @@ category_est <- function(catsum, dframe, itype, lev_itype, nlev_itype, ivar,
           nlev_ivar, design, design_names, rslt_P, popcorrect, vartype, mult,
           warn_ind, warn_df)
         stderr_P <- temp$stderr_P
-        stderr_P <- temp$stderr_P
+        confval_P <- temp$confval_P
         warn_ind <- temp$warn_ind
         warn_df <- temp$warn_df
       } else {
         stderr_P <- cbind(SE(rslt_svy), Total = rep(0, nlev_itype))
         tempdf <- confint(rslt_svy, level = conf/100)
-        stderr_P <- NULL
+        confval_P <- NULL
         for(i in 1:nlev_itype) {
-          stderr_P <- rbind(stderr_P, tempdf[seq(i, by=nlev_itype,
+          confval_P <- rbind(confval_P, tempdf[seq(i, by=nlev_itype,
             length=nlev_ivar), ])
           temp <- data.frame(1.0, 1.0)
           colnames(temp) <- colnames(tempdf)
-          stderr_P <- rbind(stderr_P, Total = temp)
+          confval_P <- rbind(confval_P, Total = temp)
         }
       }
     }
@@ -334,8 +336,8 @@ category_est <- function(catsum, dframe, itype, lev_itype, nlev_itype, ivar,
         Estimate.P = 100 * rslt_P[i, j],
         StdError.P = 100 * stderr_P[i, j],
         MarginofError.P = 100 * (mult * stderr_P[i, j]),
-        LCB.P = 100 * max(stderr_P[inc + j, 1], 0),
-        UCB.P = 100 * min(stderr_P[inc + j, 2], 1),
+        LCB.P = 100 * max(confval_P[inc + j, 1], 0),
+        UCB.P = 100 * min(confval_P[inc + j, 2], 1),
         Estimate.U = rslt_U[i, j],
         StdError.U = stderr_U[i, j],
         MarginofError.U = mult * stderr_U[i, j],
