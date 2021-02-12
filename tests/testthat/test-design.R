@@ -31,7 +31,6 @@ test_that("test unequal random selection",{
 
 # Finite: NHDPoint PointZ shapefile:
 load(system.file("extdata", "NHDPoint.rda", package="spsurvey"))
-NHDPoint <- st_zm(NHDPoint, drop=TRUE)
 
 testsample <- grts(sframe=NHDPoint,n_base=10, 
                    n_over=0,seltype="equal")
@@ -45,7 +44,7 @@ test_that("test equal random selection using NHDPoint",{
 # Linear: Butte Creek linear sample frame:
 load(system.file("extdata", "ButteCreek.rda", package="spsurvey"))
 
-testsample <- grts(sframe=ButteCreek,n_base=10, 
+testsample <- grts(sframe=nhd,n_base=10, 
                    n_over=0,seltype="equal")
 
 test_that("test equal random selection using linear sample frame",{

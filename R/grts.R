@@ -124,6 +124,10 @@
 #' @examples
 #' \dontrun{
 #'   test_sample <- grts(sframe = "test_sf", n_base = 100)
+#'   caty_n <- c("var1"=15, "var2"=5)
+#'   test_sample <- grts(sframe=test_sf,n_base=20, 
+#'                   n_over=0,seltype = "unequal",
+#'                   caty_var = "Var_Name", caty_n = caty_n)
 #' }
 #'
 #' @export
@@ -144,7 +148,13 @@ grts <- function(sframe, n_base, stratum = NULL, seltype = "equal", wgt_units = 
   if(!tst) {
     stop(paste("\nThe geometry types for the survey frame object passed to function grts: \n\"", unique(st_geometry_type(sf.object)), "\" are not consistent.", sep=""))
   }
-
+  
+  # Drop m and z values to ensure no issues with grts functionality with sf object
+  if(!is.null(st_m_range(sframe)) & !is.null(st_z_range(sframe))) {
+     "\nThe survey frame object passed to function grts contains m or z values - they are being dropped to ensure functionality in grts."
+     sframe <- st_zm(sframe)
+  }
+  
   # Determine type of sample frame: point, line, polygon
   if(all(temp %in% c("POINT", "MULTIPOINT"))) sf_type <- "sf_point"
   if(all(temp %in% c("LINESTRING", "MULTILINESTRING"))) sf_type <- "sf_linear"
