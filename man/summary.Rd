@@ -3,10 +3,13 @@
 \name{summary}
 \alias{summary}
 \alias{summary.sframe}
+\alias{summary.dframe}
 \alias{summary.design}
 \title{Calculate summaries of design objects}
 \usage{
 \method{summary}{sframe}(object, formula, onlyshow = NULL, ...)
+
+\method{summary}{dframe}(object, formula, onlyshow = NULL, ...)
 
 \method{summary}{design}(object, formula, onlyshow = NULL, ...)
 }
