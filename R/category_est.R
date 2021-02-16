@@ -4,6 +4,8 @@
 # Date: July 23, 2020
 # Revised: February 9, 2021 to fix incorrect coding of "confval_P" as
 #          "stderr_P".
+# Revised: February 16, 2021 to correctly handle the case where the response
+#          variable contains a single category. 
 #
 #' Category Proportion and Total Estimates for Probability Survey Data
 #'
@@ -218,7 +220,7 @@ category_est <- function(catsum, dframe, itype, lev_itype, nlev_itype, ivar,
       rslt_U <- data.frame(ivar = rslt_svy[1], Total = rslt_svy[1])
       dimnames(rslt_U)[1] <- lev_itype
       if(vartype == "Local") {
-        temp <- cat_localmean_total(itype, lev_itype, nlev_itype, "zzz",
+        temp <- cat_localmean_total(itype, lev_itype, nlev_itype, ivar,
           lev_ivar, nlev_ivar, design, design_names, rslt_U, popcorrect,
           vartype, mult, warn_ind, warn_df)
         stderr_U <- temp$stderr_U
@@ -260,7 +262,7 @@ category_est <- function(catsum, dframe, itype, lev_itype, nlev_itype, ivar,
       rslt_U <- data.frame(ivar = rslt_svy$zzz, Total = rslt_svy$zzz)
       dimnames(rslt_U)[[1]] <- lev_itype
       if(vartype == "Local") {
-        temp <- cat_localmean_total(itype, lev_itype, nlev_itype, "zzz",
+        temp <- cat_localmean_total(itype, lev_itype, nlev_itype, ivar,
           lev_ivar,  nlev_ivar, design, design_names, rslt_U, popcorrect,
           vartype, mult, warn_ind, warn_df)
         stderr_U <- temp$stderr_U
