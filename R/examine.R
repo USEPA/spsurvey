@@ -1,5 +1,5 @@
-################################################################################
-# Function: examine
+###############################################################################
+# Function: examine (exported)
 # Programmer: Tom Kincaid
 # Date: May 18, 2016
 #'
@@ -10,23 +10,23 @@
 #'
 #' @param dframe Data frame.
 #'
-#' @param subpop Character string identifying a variable in dframe that is
+#' @param subpop Character string identifying a variable in \code{dframe} that is
 #'   used to group output.  A separate table or call to the describe function is
-#'   printed for each unique value in the variable.  The default value is NULL.
+#'   printed for each unique value in the variable.  The default value is \code{NULL}.
 #'
 #' @param ord Logical value that controls the order in which the variables in
-#'   dframe are processed.  TRUE mean that variables are processed in sorted
-#'   order.  FALSE means that variables are processed in the order in which they
-#'   occur in dframe.  The default value is TRUE.
+#'   \code{dframe} are processed.  \code{TRUE} means that variables are processed in sorted
+#'   order.  \code{FALSE} means that variables are processed in the order in which they
+#'   occur in \code{dframe}.  The default value is \code{TRUE}.
 #'
 #' @param cmax Numeric value that controls whether a call to table or a call
-#'   to describe is used to process variables in dframe.  If the number of
-#'   unique values in a variable is less than or equal to cmax, then table is
-#'   called. If the number of unique values in a variable is greater than cmax,
-#'   then describe is called.  The default value is 50.
+#'   to describe is used to process variables in \code{dframe}.  If the number of
+#'   unique values in a variable is less than or equal to \code{cmax}, then table is
+#'   called. If the number of unique values in a variable is greater than \code{cmax},
+#'   then \code{describe} is called.  The default value is \code{50}.
 #'
 #' @return Tables and/or the output from calls to describe are printed.  The
-#'   function returns NULL invisibly.
+#'   function returns \code{NULL} invisibly.
 #'
 #' @author Tom Kincaid \email{Kincaid.Tom@epa.gov}
 #'
@@ -42,7 +42,7 @@
 #' examine(df, "Gender", FALSE)
 #'
 #' @export
-################################################################################
+###############################################################################
 
 examine <- function(dframe, subpop = NULL, ord = TRUE, cmax = 50) {
 

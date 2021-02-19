@@ -7,15 +7,15 @@
 sframe(object)
 }
 \arguments{
-\item{object}{An `sp` or `sf` object}
+\item{object}{An \code{sp} or \code{sf} object}
 }
 \value{
-An `sframe` object
+An \code{sframe} object
 }
 \description{
-sframe gives `sp` and `sf` objects class `"sframe"` to be used
-in `summary()` and `plot()` generics. `sp` objects are coerced to `sf`
-objects prior to giving class `sframe`.
+sframe gives \code{sp} and \code{sf} objects class \code{"sframe"} to be used
+in \code{summary()} and \code{plot()} generics. \code{sp} objects are coerced to \code{sf}
+objects prior to giving class \code{sframe}.
 }
 \examples{
 \dontrun{

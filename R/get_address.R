@@ -1,17 +1,17 @@
-################################################################################
-# Function: get.address
+###############################################################################
+# Function: get.address (exported)
 # Programmer: Guillaume Chauvet
 # Adapted by: Marc Weber
 # Date: September 2, 2020
 #
-#' This function was used directly from Guillaume Chauvet and Ronan Le Gleut 
-#' as they describe in their paper Inference under pivotal sampling: Properties, 
-#' variance estimation, and application to tesselation for spatial sampling,
-#' Scand J Statist. 2020;1–24. 
+#' Get Heirarchical Address
 #'
 #' This function creates a tessellation of the two dimensional space, attributes
 #' an address to each unit in the population and sorts the sampling frame in the 
-#' order given by the addresses.
+#' order given by the addresses. This function was used directly from Guillaume Chauvet and Ronan Le Gleut 
+#' as they describe in their paper Inference under pivotal sampling: Properties, 
+#' variance estimation, and application to tesselation for spatial sampling,
+#' Scand J Statist. 2020;1–24. 
 #' 
 #' GET ADDRESS: function to attriubute an address to each unit and to sort the 
 #' sampling frame. The parameter rand allows a randomization of the tessellation. 
@@ -23,7 +23,7 @@
 #'
 #' @param y The y-coordinate value in the sample frame of points.
 #'
-#' @param rand Whether or not to randomize the addressing.  Default is TRUE
+#' @param rand Whether or not to randomize the addressing.  Default is \code{TRUE}
 #'
 #' @return A sorted sample frame.
 #'
@@ -32,7 +32,7 @@
 #' @keywords survey
 #'
 #' @export
-################################################################################
+###############################################################################
 
 
 get_address <- function(x, y, rand = TRUE){

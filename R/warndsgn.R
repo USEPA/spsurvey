@@ -1,5 +1,5 @@
-################################################################################
-# Function: warndsgn
+###############################################################################
+# Function: warndsgn (exported)
 # Programmer: Tony Olsen
 # Date: January 22, 2021
 #
@@ -8,19 +8,19 @@
 #' This function prints the warnings data frame.
 #'
 #' @param warn_df Data frame that contains warning messages.  The default is
-#'   "warn_df", which is the name given to the warnings data frame created by
+#'   \code{"warn_df"}, which is the name given to the warnings data frame created by
 #'   functions in the spsurvey package.
 #'
 #' @param m Vector of indices for warning messages that are to be printed. The
 #'   default is a vector containing the integers from 1 through the number of
-#'   rows in warn_df, which will print all warning messages in the data frame.
+#'   rows in \code{warn_df}, which will print all warning messages in the data frame.
 #'
 #' @return Invisible return.  Prints warnings.
 #'
-#' @author Tony Olsen \email{Olsen.Tony@epa.gov}
+#' @author Tony Olsen \email{Olsen.Tony@@epa.gov}
 #'
 #' @export
-################################################################################
+###############################################################################
 
 warndsgn <- function(warn_df=get("warn_df", envir = .GlobalEnv),
                      m = 1:nrow(warn_df)) {

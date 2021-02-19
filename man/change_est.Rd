@@ -36,24 +36,24 @@ change_est(
 }
 \arguments{
 \item{resp_ind}{A character value that indicates the type of response
-variable, where "cat" indicates a categorical variable and "cont" indicates
+variable, where \code{"cat"} indicates a categorical variable and \code{"cont"} indicates
 a continuous variable.}
 
 \item{survey_names}{Character vector of length two that provides the survey
-names contained in the survey ID variable in the dframe data frame.  The
+names contained in the survey ID variable in the \code{dframe} data frame.  The
 two values in the vector identify the first survey and second survey,
 respectively.}
 
 \item{changesum}{List containing estimates, which is composed of three data
-frames: catsum, contsum_mean, and contsum_median.}
+frames: \code{catsum}, \code{contsum_mean}, and \code{contsum_median}.}
 
 \item{dframe}{Data frame containing survey design variables, response
 variables, and subpopulation (domain) variables for both surveys.}
 
-\item{survey_1}{Logical vector that identifies survey one sites in the dframe
+\item{survey_1}{Logical vector that identifies survey one sites in the \code{dframe}
 data frame.}
 
-\item{survey_2}{Logical vector that identifies survey two sites in the dframe
+\item{survey_2}{Logical vector that identifies survey two sites in the \code{dframe}
 data frame.}
 
 \item{itype}{Character value that identifies the factor variable containing
@@ -70,14 +70,14 @@ response variable.}
 \item{nlev_ivar}{Numeric value that provides the number of levels of a
 categorical response variable.}
 
-\item{design_1}{Object of class survey.design that specifies the complex
+\item{design_1}{Object of class \code{survey.design} that specifies the complex
 survey design for survey one.}
 
-\item{design_2}{Object of class survey.design that specifies the complex
+\item{design_2}{Object of class \code{survey.design} that specifies the complex
 survey design for survey two}
 
 \item{design_names}{Character vector that provides names of survey design
-variables in the design argument.}
+variables in the \code{design} argument.}
 
 \item{repeat_1}{Logical vector that identifies repeat visit sites for
 survey one.}
@@ -86,29 +86,29 @@ survey one.}
 survey two.}
 
 \item{siteID}{Character value providing name of the site ID variable in
-the dframe data frame.}
+the \code{dframe} data frame.}
 
 \item{revisitwgt}{Logical value that indicates whether each repeat visit
-site has the same survey design weight in the two surveys, where TRUE = the
-weight for each repeat visit site is the same and FALSE = the weight for
-each repeat visit site is not the same.  When this argument is FALSE, all
+site has the same survey design weight in the two surveys, where \code{TRUE} = the
+weight for each repeat visit site is the same and \code{FALSE} = the weight for
+each repeat visit site is not the same.  When this argument is \code{FALSE}, all
 of the repeat visit sites are assigned equal weights when calculating the
 covariance component of the change estimate standard error.  The default is
-FALSE.}
+\code{FALSE}.}
 
 \item{test}{Character string or character vector providing the location
 measure(s) to use for change estimation for continuous variables.  The
-choices are "mean", "median", or c("mean", "median").}
+choices are \code{"mean"}, \code{"median"}, or \code{c("mean", "median")}.}
 
 \item{var_nondetect}{Character value that identifies the name of a logical
-variable in the dframe data frame specifying the presence of not detected
+variable in the \code{dframe} data frame specifying the presence of not detected
 (nondetect) values for a continuous response variable.}
 
 \item{popcorrect}{Logical value that indicates whether the finite population
 correction factor is used during variance estimation.}
 
-\item{vartype}{The choice of variance estimator, where "Local" = local mean
-estimator and "SRS" = SRS estimator.}
+\item{vartype}{The choice of variance estimator, where \code{"Local"} = local mean
+estimator and \code{"SRS"} = SRS estimator.}
 
 \item{conf}{Numeric value for the confidence level.}
 
@@ -116,7 +116,7 @@ estimator and "SRS" = SRS estimator.}
 bound multiplier.}
 
 \item{warn_ind}{Logical value that indicates whether warning messages were
-generated, where TRUE = warning messages were generated and FALSE = warning
+generated, where \code{TRUE} = warning messages were generated and \code{FALSE} = warning
 messages were not generated.}
 
 \item{warn_df}{Data frame for storing warning messages.}
@@ -127,9 +127,9 @@ subpopulation, and an indicator.}
 \value{
 A list composed of the following objects:
   \describe{
-    \item{\code{results}}{if resp_ind equals "cat", a data frame named
-      catsum containing change estimates for categories; if resp_ind equals
-      "cont", two data frames named contsum_mean and contsum_median
+    \item{\code{results}}{if resp_ind equals \code{"cat"}, a data frame named
+      catsum containing change estimates for categories; if \code{resp_ind} equals
+      \code{"cont"}, two data frames named contsum_mean and contsum_median
       containing mean and median change estimates, respectively, as specified
       by the argument named test.}
     \item{\code{warn_ind}}{logical variable that indicates whether warning

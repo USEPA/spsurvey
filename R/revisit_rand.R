@@ -1,5 +1,5 @@
-################################################################################
-# Function: revisit_rand
+###############################################################################
+# Function: revisit_rand (exported)
 # Programmer: Tony Olsen
 # Date: March 15, 2019
 #'
@@ -7,9 +7,9 @@
 #'
 #' Create a revisit design for a survey that specifies the panels and time
 #' periods that will be sampled by random selection of panels and time periods.
-#' Three options for random assignments are "period" where the number of time
-#' periods to be sampled in a panel is fixed, "panel" where the number panels to
-#' be sampled in a time period is fixed, and "none" where the number of
+#' Three options for random assignments are \code{"period"} where the number of time
+#' periods to be sampled in a panel is fixed, \code{"panel"} where the number panels to
+#' be sampled in a time period is fixed, and \code{"none"} where the number of
 #' panel-period combinations is fixed.
 #'
 #' @param n_period  Number of time periods for the survey design. Typically,
@@ -19,15 +19,15 @@
 #'
 #' @param n_pnl Number of panels
 #'
-#' @param rand_control  Character value must be "none", "panel", or "period".
+#' @param rand_control  Character value must be \code{"none"}, \code{"panel"}, or \code{"period"}.
 #'   Specifies whether the number of sample events will be fixed for each panel
-#'   ("panel"), for each sample occasion ("occasion"), or for total panel-period
-#'   combinations ("none").  Default is "panel".
+#'   (\code{"panel"}), for each sample occasion (\code{"occasion"}), or for total panel-period
+#'   combinations (\code{"none"}).  Default is \code{"panel"}.
 #'
-#' @param n_visit If rand_control is "panel", this is the number of panels that
-#'   will be sampled in each time period. If rand_control is "period", this is
-#'   the number of time periods to be sampled in each panel. If rand_control is
-#'   "none", this is the total number of panel-period combinations that will
+#' @param n_visit If \code{rand_control} is \code{"panel"}, this is the number of panels that
+#'   will be sampled in each time period. If rand_control is \code{"period"}, this is
+#'   the number of time periods to be sampled in each panel. If \code{rand_control} is
+#'   \code{"none"}, this is the total number of panel-period combinations that will
 #'   have units sampled in the revisit design.
 #'
 #' @param nsamp Number of samples in each panel.
@@ -37,7 +37,7 @@
 #' @param begin  Numeric name of first sampling occasion, e.g. a specific period.
 #'
 #' @param skip  Number of sampling occasions to skip between planned sampling
-#'   periods, e.g., sampling will occur only every 5 periods if skip = 5.
+#'   periods, e.g., sampling will occur only every 5 periods if \code{skip = 5}.
 #'
 #' @details  The revisit design for a survey is created by random selection of
 #'   panels and time periods that will have sample events.  The number of sample
@@ -73,7 +73,7 @@
 #'               n_visit = 5, nsamp = 10)
 #'
 #' @export
-################################################################################
+###############################################################################
 
 revisit_rand <- function (n_period, n_pnl, rand_control = "period",  n_visit,
    nsamp, panel_name = "Random", begin = 1, skip = 1) {

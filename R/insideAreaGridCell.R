@@ -1,5 +1,5 @@
-################################################################################
-# Function: insideAreaGridCell
+###############################################################################
+# Function: insideAreaGridCell (exported)
 # Programmer: Tom Kincaid
 # Date: July 8, 2019
 #
@@ -8,7 +8,7 @@
 #' For each grid cell, this function calculates the clipped area of each polygon
 #' feature contained in the cell.
 #'
-#' @param sfobject The sf polygon object.
+#' @param sfobject The \code{sf} polygon object.
 #'
 #' @param rdx.u Vector of cell IDs.
 #'
@@ -20,15 +20,15 @@
 #'
 #' @param dy The y-axis grid cell dimension.
 #'
-#' @return Data frame containing the following variables: cellID, featureArea,
-#'   and featureID.
+#' @return Data frame containing the following variables: \code{cellID}, \code{featureArea},
+#'   and \code{featureID}.
 #'
 #' @author Tom Kincaid \email{Kincaid.Tom@epa.gov}
 #'
 #' @keywords survey
 #'
 #' @export
-################################################################################
+###############################################################################
 
 insideAreaGridCell <- function(sfobject, rdx.u, xc, yc, dx, dy) {
 

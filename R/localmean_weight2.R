@@ -1,5 +1,5 @@
-################################################################################
-# Function: localmean_weight2
+###############################################################################
+# Function: localmean_weight2 (exported)
 # Programmers: Don Stevens and Tom Kincaid
 # Date: October 30, 2019
 #'
@@ -7,8 +7,8 @@
 #'
 #' This function calculates the initial section of the localmean_weight function
 #' and serves to allow recovery from an error in the singular value
-#' decomposition function (La.svd) that is called by the generalized inverse
-#' function (ginv) in the MASS package.
+#' decomposition function \code{(La.svd)} that is called by the generalized inverse
+#' function \code{(ginv)} in the MASS package.
 #'
 #' @param  x  Vector of x-coordinates for location of the sample points.
 #'
@@ -18,14 +18,14 @@
 #'
 #' @param  nbh  Number of neighboring points to use in the calculations.
 #'
-#' @return Either an object of class "try-error" when the ginv function
-#'   terminates with an error or a generalized inverse matrix when the ginv
+#' @return Either an object of class \code{"try-error"} when the \code{ginv} function
+#'   terminates with an error or a generalized inverse matrix when the \code{ginv}
 #'   function terminates normally.
 #'
 #' @author Don Stevens  Tom Kincaid \email{Kincaid.Tom@epa.gov}
 #'
 #' @export
-################################################################################
+###############################################################################
 
 localmean_weight2 <- function(x, y, prb, nbh) {
 

@@ -1,5 +1,5 @@
-################################################################################
-# Function: mean_localmean
+###############################################################################
+# Function: mean_localmean (exported)
 # Programmer: Tom Kincaid
 # Date: July 9, 2020
 #'
@@ -22,19 +22,19 @@
 #' @param ivar Character value that identifies a factor variable in the design
 #'   argument containing categorical response values.
 #'
-#' @param design Object of class survey.design that specifies a complex survey
+#' @param design Object of class \code{survey.design} that specifies a complex survey
 #'   design.
 #'
 #' @param design_names Character vector that provides names of survey design
-#'   variables in the design argument.
+#'   variables in the \code{design} argument.
 #'
 #' @param meanest Vector that provides estimates of the mean.
 #'
 #' @param popcorrect Logical value that indicates whether the finite population
 #'   correction factor should be employed during variance estimation.
 #'
-#' @param vartype The choice of variance estimator, where "Local" = local mean
-#'   estimator and "SRS" = SRS estimator.
+#' @param vartype The choice of variance estimator, where \code{"Local"} = local mean
+#'   estimator and \code{"SRS"} = SRS estimator.
 #'
 #' @param mult Numeric value that provides the Normal distribution confidence
 #'   bound multiplier.
@@ -70,7 +70,7 @@
 #' @keywords survey
 #'
 #' @export
-################################################################################
+###############################################################################
 
 mean_localmean <- function(itype, lev_itype, nlev_itype, levs, ivar, design,
   design_names, meanest, popcorrect, vartype, mult, warn_ind, warn_df) {

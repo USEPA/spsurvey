@@ -14,30 +14,30 @@ ash1_wgt(
 )
 }
 \arguments{
-\item{x}{Vector of data used to estimate the density. NAs are allowed}
+\item{x}{Vector used to estimate the density. \code{NA} values are allowed.}
 
-\item{wgt}{Vector of Weights for each observation from a probability sample.
-The default is equal weights (equal probability).}
+\item{wgt}{Vector of weights for each observation from a
+probability sample. The default assigns equal weights (equal probability).}
 
-\item{m}{The number of empty bins to add to the ends when the range is not
-completely specified.  The default is 5.}
+\item{m}{Number of empty bins to add to the ends when the range is not
+completely specified.  The default is \code{5}.}
 
-\item{nbin}{The number of bins for density estimation.  The default is 50.}
+\item{nbin}{Number of bins for density estimation.  The default is \code{50}.}
 
 \item{ab}{Optional range for support associated with the density. Both
-values may be equal to NA.  If equal to NA, then corresponding limit will
-be based on nicerange(). The default is NULL.}
+values may be equal to \code{NA}.  If equal to \code{NA}, then corresponding limit will
+be based on \code{nicerange()}. The default is \code{NULL}.}
 
-\item{support}{The type of support.  If equal to "Continuous", then data are
-from a continuous distribution.  If equal to "Ordinal", then data are from
+\item{support}{Type of support.  If equal to \code{"Continuous"}, then data are
+from a continuous distribution.  If equal to \code{"Ordinal"}, then data are from
 a discrete distribution defined for integers only.  The default is
-"Continuous".}
+\code{"Continuous"}.}
 }
 \value{
-A list containing the ASH density estimate.  List consists of
+List containing the ASH density estimate.  List consists of
   \itemize{
-    \item tcen - x-coordinate for center of bin
-    \item f - y-coordinate for density estimate height
+    \item \code{tcen} - x-coordinate for center of bin
+    \item \code{f} - y-coordinate for density estimate height
   }
 }
 \description{
@@ -49,7 +49,6 @@ x <- rnorm(100, 10, sqrt(10))
 wgt <- runif(100, 10, 100)
 rslt <- ash1_wgt(x, wgt)
 plot(rslt)
-
 }
 \references{
 Scott, D. W. (1985). "Averaged shifted histograms: effective nonparametric 

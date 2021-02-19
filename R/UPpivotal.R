@@ -1,14 +1,14 @@
-################################################################################
-# Function: UPpivotal
+###############################################################################
+# Function: UPpivotal (exported)
 # Adapted by: Tony Olsen
 # Date: September 9, 2020
 #
-#' This function is from the R library "sampling". It selects an unequal probability
+#' This function is from the R package "sampling". It selects an unequal probability
 #' sample from a finite population.
 #' 
 #' @param pik Vector of inclusion probabilities for the sample frame
 #'
-#' @return A vector of "0" and "1" that indicates if point in the sample frame is
+#' @return A vector of \code{0} and \code{1} that indicates if point in the sample frame is
 #'   in the sample.
 #'
 #' @author From R package sampling
@@ -16,7 +16,7 @@
 #' @keywords survey
 #'
 #' @export
-################################################################################
+###############################################################################
 
 
 UPpivotal <- function (pik, eps = 1e-06) 

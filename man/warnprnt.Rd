@@ -8,12 +8,12 @@ warnprnt(warn_df = get("warn_df", envir = .GlobalEnv), m = 1:nrow(warn_df))
 }
 \arguments{
 \item{warn_df}{Data frame that contains warning messages.  The default is
-"warn_df", which is the name given to the warnings data frame created by
+\code{"warn_df"}, which is the name given to the warnings data frame created by
 functions in the spsurvey package.}
 
 \item{m}{Vector of indices for warning messages that are to be printed. The
 default is a vector containing the integers from 1 through the number of
-rows in warn_df, which will print all warning messages in the data frame.}
+rows in \code{warn_df}, which will print all warning messages in the data frame.}
 }
 \value{
 Invisible return.  Prints warnings.

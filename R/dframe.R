@@ -1,17 +1,20 @@
-###################################################################################
-# Function: dframe
+###############################################################################
+# Function: dframe (exported)
 # Programmers: Michael Dumelle
 # Date: January 22, 2021
 #' Create an dframe object
 #'
-#' @description dframe gives data frames, `sp`, and `sf` objects class `"dframe"` to be used
-#' in `summary()` generics. `sp` objects are coerced to `sf`
-#' objects prior to giving class `dframe`.
+#' @description dframe gives data frames, \code{sp}, and \code{sf} objects class \code{dframe} to be used
+#' in \code{summary()} generics. \code{sp} objects are coerced to \code{sf}
+#' objects prior to giving class \code{dframe}.
 #' 
-#' @param object An `sp` or `sf` object
+#' @param object An \code{sp} or \code{sf} object
 #'
-#' @return An `dframe` object
+#' @return An \code{dframe} object
+#' 
 #' @export
+#' 
+#' @author Michael Dumelle
 #'
 #' @examples
 #' \dontrun{

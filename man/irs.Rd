@@ -2,12 +2,7 @@
 % Please edit documentation in R/irs.R
 \name{irs}
 \alias{irs}
-\title{Select an independent random sample from a point, linear, or areal frame based on
-a survey design specification. The survey design may be stratified and within each stratum
-may be equal probability, unequal probability by categories or unequal probabilty
-proportional to an auxillary variable. Additional options include selecting additional 
-sites as an "over" sample, selecting nearby replacement sites, including legacy sites, 
-and requiring minimum distance between sites.}
+\title{Select an Independent random sample (IRS)}
 \usage{
 irs(
   sframe,
@@ -32,7 +27,7 @@ irs(
 )
 }
 \arguments{
-\item{sframe}{Sample frame as an sf object. If the design is stratified, unequal probability 
+\item{sframe}{Sample frame as an \code{sf} object. If the design is stratified, unequal probability 
 or proportional probability, then sample frame must include variables that identify the 
 stratum; and the category or auxillary variables for unequal selection. The coordinate 
 system for sframe must be one where distance for coordinates is meaningful. If legacy sites
@@ -40,91 +35,91 @@ are included in a finite sample frame, then a legacy variable must be provided t
 identify elements that are legacy sites.}
 
 \item{n_base}{The sample size required. If single stratum, then single numeric value.
-If sample is stratified, then numeric vector with same length as "stratum" and sample sizes
-required in same order as strata in "stratum". Must be specified.}
+If sample is stratified, then numeric vector with same length as \code{"stratum"} and sample sizes
+required in same order as strata in \code{"stratum"}. Must be specified.}
 
 \item{stratum}{Single character value or character vector that identifies the strata for
-the design.  Default is NULL which means no stratification and all elements in the sample
+the design.  Default is \code{NULL} which means no stratification and all elements in the sample
 frame are assumed to be included.}
 
 \item{seltype}{Single character value or character vector that identifies the type of 
-random selection, which must be one of following: "equal" for equal probability selection, 
-"unequal" for unequal probability selection by the categories specified in caty_n or 
-"proportional" for unequal probability selection proportional to the auxiliary variable
-aux_var. If single character, then seltype applies to all strata. If vector, then each 
-stratum may have different selection type. Default is single character value of "equal".}
+random selection, which must be one of following: \code{"equal"} for equal probability selection, 
+\code{"unequal"} for unequal probability selection by the categories specified in \code{caty_n} or 
+\code{"proportional"} for unequal probability selection proportional to the auxiliary variable
+\code{aux_var}. If single character, then \code{seltype} applies to all strata. If vector, then each 
+stratum may have different selection type. Default is single character value of \code{"equal"}.}
+
+\item{wgt_units}{The units for weights if different from units in the \code{sf} object. Default
+is \code{NULL}. Unit conversion uses \code{set_unit}s in \code{sf} package.}
 
 \item{pt_density}{For linear and area sample frame, the point density for the systematic
-sample. Must be in units of the sframe sf.object. Default is NULL.}
+sample. Must be in units of the \code{sframe} \code{sf} object. Default is \code{NULL}.}
 
-\item{caty_n}{If design is not stratified and seltype is "unequal", a named character vector
-with the expected sample size for each category specified in variable caty_var. If design
+\item{caty_n}{If design is not stratified and seltype is \code{"unequal"}, a named character vector
+with the expected sample size for each category specified in variable \code{caty_var}. If design
 is stratified, then either a named character vector with the expected sample size for each
 category for all strata or if the expected sample size for each category may differ, then
 a list of named character vectors with the expected sample size for each category in the
-stratum. The list must be in same order as the "stratum" variable. For each stratum, 
-the sum of caty_n values must equal n_base for that stratum. Default is NULL.}
+stratum. The list must be in same order as the \code{"stratum"} variable. For each stratum, 
+the sum of \code{caty_n} values must equal \code{n_base} for that stratum. Default is \code{NULL}.}
 
-\item{n_over}{If seltype is "equal" and is not stratified, a numeric value specifying the 
-over sample size requested. If seltype is "equal" and is stratified either a numeric value
+\item{n_over}{If \code{seltype} is \code{"equal"} and is not stratified, a numeric value specifying the 
+over sample size requested. If \code{seltype} is \code{"equal"} and is stratified either a numeric value
 specifying the over sample size that will be applied to each stratum or a numeric vector
-specifying the over sample size for each stratum listed in same order as "strata".  
-If seltype is "unequal" and is not stratified, a named character vector with the over sample size 
-for each category where names are the same as "caty_n". If seltype is "unequal" and is 
-stratified,  either a numeric vector specifying the over sample size for each category in
-"caty_n" that will be applied to each stratum or a list of named numeric vectors with 
-the over sample size for each "caty_n" category for each stratum. List must be in same order
-as the "stratum" variable order. Default is NULL.}
+specifying the over sample size for each stratum listed in same order as \code{"strata"}.  
+If seltype is \code{"unequal"} and is not stratified, a named character vector with the over sample size 
+for each category where names are the same as \code{"caty_n"}. If seltype is \code{"unequal"} and is 
+stratified, either a numeric vector specifying the over sample size for each category in
+\code{"caty_n"} that will be applied to each stratum or a list of named numeric vectors with 
+the over sample size for each \code{"caty_n"} category for each stratum. List must be in same order
+as the \code{"stratum"} variable order. Default is \code{NULL}.}
 
 \item{n_near}{Numeric value specifying the number of nearby points to select as
-possible replacement sites if a site cannot be sampled. Default is NULL. If specified,
-must be integer from 1 to 10.}
+possible replacement sites if a site cannot be sampled. Default is \code{NULL}. If specified,
+must be integer from \code{1} to \code{10}.}
 
 \item{stratum_var}{Character string containing the name of the column from
-sframe that identifies stratum membership for each element in the frame.
-If stratum equals NULL, the design is unstratified and all elements in sample frame
-are eligible to be selected in the sample. The default is NULL.}
+\code{sframe} that identifies stratum membership for each element in the frame.
+If stratum equals \code{NULL}, the design is unstratified and all elements in sample frame
+are eligible to be selected in the sample. The default is \code{NULL}.}
 
 \item{caty_var}{Character string containing the name of the column from
-sframe that identifies the unequal probability category for each element
-in the frame.  Default is NULL.}
+\code{sframe} that identifies the unequal probability category for each element
+in the frame.  Default is \code{NULL}.}
 
-\item{aux_var}{Character string that is the name of the column from sframe that
+\item{aux_var}{Character string that is the name of the column from \code{sframe} that
 identifies the auxiliary variable value for each element in the sample frame
 that will be used to calculate inclusion probabilities when the survey design
-specifies that the selection type (seltype) is "proportional". Default is NULL.}
+specifies that the selection type (\code{seltype}) is \code{"proportional"}. Default is \code{NULL}.}
 
-\item{legacy_option}{Logical variable that when TRUE legacy sites are to be included 
-in the survey design. Default is FALSE}
-
-\item{legacy_sites}{sf object of legacy sites to be included in the survey design when 
-sample frame is linear or area. Note legacy_option must be equal to TRUE. The sf object 
-must include the variables stratum_var, caty_variable and aux_variable if required by 
-the survey design.  The legacy_var is required and the contents of the variable must 
-either be a legacy siteID if the sample frame element is a legacy site or must 
-be equal to NA otherwise.}
+\item{legacy_sites}{\code{sf} object of legacy sites to be included in the survey design when 
+sample frame is linear or area. Note \code{legacy_option} must be equal to \code{TRUE}. The \code{sf} object 
+must include the variables \code{stratum_var}, \code{caty_variable} and \code{aux_variable} if required by 
+the survey design.  The \code{legacy_var} is required and the contents of the variable must 
+either be a legacy \code{siteID} if the sample frame element is a legacy site or must 
+be equal to \code{NA} otherwise.}
 
 \item{legacy_var}{For finite sample frames when legacy sites are to be included in the 
-survey design, a character string that is the name of the character variable in sframe that
+survey design, a character string that is the name of the character variable in \code{sframe} that
 identifies which elements in the sample frame are legacy sites. The contents of the
-variable must either be a legacy siteID if the sample frame element is a legacy site or must 
-be equal to NA otherwise. Default is NULL.}
+variable must either be a legacy \code{siteID} if the sample frame element is a legacy site or must 
+be equal to \code{NA} otherwise. Default is \code{NULL}.}
 
 \item{mindis}{Numeric value for the minimum distance required between elements
 in the sample. If design is stratified, then mindis applies only within each stratum.
-Units must be the same units as in sf geometry. Default is NULL.}
+Units must be the same units as in \code{sf} geometry. Default is \code{NULL}.}
 
 \item{DesignID}{Name for the design, which is used to create a site ID for
-each site.  Default is "Site".}
+each site.  Default is \code{"Site"}.}
 
-\item{SiteBegin}{Number to use for first site in the design.  Default is 1.}
+\item{SiteBegin}{Number to use for first site in the design.  Default is \code{1}.}
 
 \item{maxtry}{Number of maximum attempts to ensure minimum distance (mindis) between sites.
-Default is 10.}
+Default is \code{10}.}
 }
 \value{
-sites A list of three sf objects containing the base sites (sites_base),
-  the n_over sites (sites_over) and the n_near sites (sites_near) selected 
+sites A list of three \code{sf} objects containing the base sites (\code{sites_base}),
+  the \code{n_over} sites (\code{sites_over}) and the \code{n_near} sites (\code{sites_near}) selected 
   that meet the survey design requirementse plus a design list object that documents
   the survey design used.
 }

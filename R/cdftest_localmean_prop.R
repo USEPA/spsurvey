@@ -1,5 +1,5 @@
-################################################################################
-# Function: cdftest_localmean_prop
+###############################################################################
+# Function: cdftest_localmean_prop (exported)
 # Programmer: Tom Kincaid
 # Date: October 22, 2020
 # Revised: November 2, 2020 to correctly process the column variable when it
@@ -10,7 +10,7 @@
 #' This function organizes input and output for calculation of the local mean
 #' variance/covariance estimator for estimated proportions for categorical data.
 #'
-#' @param design Object of class survey.design that specifies a complex survey
+#' @param design Object of class \code{survey.design} that specifies a complex survey
 #'   design.
 #'
 #' @param design_names Character vector that provides names of survey design
@@ -19,8 +19,8 @@
 #' @param popcorrect Logical value that indicates whether the finite population
 #'   correction factor should be employed during variance estimation.
 #'
-#' @param vartype The choice of variance estimator, where "Local" = local mean
-#'   estimator and "SRS" = SRS estimator.
+#' @param vartype The choice of variance estimator, where \code{"Local"} = local mean
+#'   estimator and \code{"SRS"} = SRS estimator.
 #'
 #' @param warn_ind Logical value that indicates whether warning messages were
 #'   generated.
@@ -49,7 +49,7 @@
 #' @keywords survey
 #'
 #' @export
-################################################################################
+###############################################################################
 
 cdftest_localmean_prop <- function(design, design_names, popcorrect, vartype,
   warn_ind, warn_df, warn_vec) {

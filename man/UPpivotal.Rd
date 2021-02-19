@@ -2,7 +2,7 @@
 % Please edit documentation in R/UPpivotal.R
 \name{UPpivotal}
 \alias{UPpivotal}
-\title{This function is from the R library "sampling". It selects an unequal probability
+\title{This function is from the R package "sampling". It selects an unequal probability
 sample from a finite population.}
 \usage{
 UPpivotal(pik, eps = 1e-06)
@@ -11,11 +11,11 @@ UPpivotal(pik, eps = 1e-06)
 \item{pik}{Vector of inclusion probabilities for the sample frame}
 }
 \value{
-A vector of "0" and "1" that indicates if point in the sample frame is
+A vector of \code{0} and \code{1} that indicates if point in the sample frame is
   in the sample.
 }
 \description{
-This function is from the R library "sampling". It selects an unequal probability
+This function is from the R package "sampling". It selects an unequal probability
 sample from a finite population.
 }
 \author{

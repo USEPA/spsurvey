@@ -1,5 +1,5 @@
-################################################################################
-# Function: cat_localmean_prop
+###############################################################################
+# Function: cat_localmean_prop (exported)
 # Programmer: Tom Kincaid
 # Date: July 23, 2020
 # Revised: October 23, 2020 to correct a coding error when calculating
@@ -29,7 +29,7 @@
 #' @param nlev_ivar Numeric value that provides the number of levels of the
 #'   categorical response variable.
 #'
-#' @param design Object of class survey.design that specifies a complex survey
+#' @param design Object of class \code{survey.design} that specifies a complex survey
 #'   design.
 #'
 #' @param design_names Character vector that provides names of survey design
@@ -41,8 +41,8 @@
 #' @param popcorrect Logical value that indicates whether the finite population
 #'   correction factor should be employed during variance estimation.
 #'
-#' @param vartype The choice of variance estimator, where "Local" = local mean
-#'   estimator and "SRS" = SRS estimator.
+#' @param vartype The choice of variance estimator, where \code{"Local"} = local mean
+#'   estimator and \code{"SRS"} = SRS estimator.
 #'
 #' @param mult Numeric value that provides the Normal distribution confidence
 #'   bound multiplier.
@@ -78,7 +78,7 @@
 #' @keywords survey
 #'
 #' @export
-################################################################################
+###############################################################################
 
 cat_localmean_prop <- function(itype, lev_itype, nlev_itype, ivar, lev_ivar,
   nlev_ivar, design, design_names, rslt_P, popcorrect, vartype, mult, warn_ind,

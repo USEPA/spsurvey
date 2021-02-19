@@ -54,10 +54,10 @@ Used for internal collection of messages only.}
 Used for internal collection of messages only.}
 }
 \value{
-rslts A list consisting of an sf object for base sites, an sf object of 
-  n_over sites (NULL if none) an sf object of n_near sites (NULL if none) where
-  the sf objects containing the sites selected that meet the survey design requirements 
-  and warn_ind - logical value for warning indicator and warn_df - a data.frame
+rslts A list consisting of an \code{sf} object for base sites, an \code{sf} object of 
+  \code{n_over} sites (\code{NULL} if none) an \code{sf} object of \code{n_near} sites (\code{NULL} if none) where
+  the \code{sf} objects containing the sites selected that meet the survey design requirements 
+  and \code{warn_ind} - logical value for warning indicator and \code{warn_df} - a data frame
   for warning messages.
 }
 \description{

@@ -1,46 +1,72 @@
+###############################################################################
+# Function: plot.sframe and plot.design (exported)
+# Programmers: Michael Dumelle
+# Date: January 22, 2021
 #' Plot sample frame and design objects
 #' 
-#' @description Plot sample frames and design objects. This function is
-#' largely built on `plot.sf()`, and all `spsurvey` plotting methods can
-#' supply additional arguments to `plot.sf()`. For more information
-#' regarding `plot.sf()`, run `?plot.sf()`.
+#' @description Plot sample frames and design objects. 
+#' 
+#' This function is largely built on \code{plot.sf()}, and all spsurvey plotting methods can
+#' supply additional arguments to \code{plot.sf()}. For more information, run
+#' \code{vignette(plotting, package = "spsurvey"}. For more information on
+#' plotting in \code{sf}, run \code{?plot.sf()}. 
 #'
-#' @param x object of class "sframe" or "design"
-#' @param y ignored if `x` has class "sframe"; an object of class "sframe"
-#' if `x` has class "design"
+#' @param x object of class \code{sframe} or \code{design}.
+#' 
+#' @param y ignored if \code{x} has class \code{sframe}; an object of class \code{sframe}
+#' if \code{x} has class \code{design}.
+#' 
 #' @param formula A formula. Left hand side variables can be numeric or
 #' categorical (or factor) and right hand side variables can be categorical
 #' (or factor). Right hand side variables that are numeric will be coerced to
 #' a categorical (or factor) variable. If an intercept is included in the right
 #' hand side formula, the total will also be summarized.
+#' 
 #' @param variable_args A named list. The name of each list corresponds to a
-#' right hand side variable in `formula`. Values in the list are composed of 
+#' right hand side variable in \code{formula}. Values in the list are composed of 
 #' graphical arguments that are to be passed to \strong{every} level of the
 #' variable.
+#' 
 #' @param level_args A named list. The name of each list corresponds to a
-#' right hand side variable in `formula`. The first name of each sublist 
-#' should be "levels" and contain all levels of the variable. Subsequent
+#' right hand side variable in \code{formula}. The first name of each sublist 
+#' should be \code{"levels"} and contain all levels of the variable. Subsequent
 #' names correspond to graphical arguments that are to be passed to
 #' the specified levels (in order). Values must be specified
-#' for every level of each graphical argument, but applicable `sf` defaults
-#' will be matched by inputting the value `NA`
+#' for every level of each graphical argument, but applicable \code{sf} defaults
+#' will be matched by inputting the value \code{NA}.
+#' 
 #' @param geom Should separate geometries for each level of the right hand
-#' side `formula` variables be plotted? Defaults to `FALSE`
+#' side \code{formula} variables be plotted? Defaults to \code{FALSE}.
+#' 
 #' @param onlyshow A string indicating the level of the single right hand side
 #' variable for which a summary is requested.
+#' 
 #' @param fix_bbox Should the geometry bounding box be fixed across plots? 
-#' Defaults to `TRUE`. If `TRUE`, the bounding box will be the largest
-#' possible given `x` and `y`.
-#' @showlegacy Should legacy sites be plotted separately from `sites_base`?
-#' Defaults to `FALSE`.
-#' @param ... Additional arguments to pass to `plot.sf()`. 
+#' Defaults to \code{TRUE}. If \code{TRUE}, the bounding box will be the largest
+#' possible given \code{x} and \code{y}.
+#' 
+#' @showlegacy Should legacy sites be plotted separately from \code{sites_base}?
+#' Defaults to \code{FALSE}.
+#' 
+#' @param ... Additional arguments to pass to \code{plot.sf()}. 
+#' 
+#' @author Michael Dumelle \email{Dumelle.Michael@@epa.gov}
 #' 
 #' @name plot
+#' 
 #' @method plot sframe
-#' @return
+#' 
 #' @export
 #'
 #' @examples
+#' \dontrun{
+#' plot(NE_Lakes)
+#' plot(NE_Lakes, formula = ~ ELEVATION_CAT)
+#' plot(NE_Lakes, formula = AREA_HA ~ ELEVATION_CAT)
+#' sample <- grts(NE_Lakes, 30)
+#' plot(sample, NE_Lakes)
+#' }
+###############################################################################
 plot.sframe <- function(x, y, formula = ~ 1, variable_args = NULL, level_args = NULL,
                         geom = FALSE, onlyshow = NULL, fix_bbox = TRUE, ...) {
   
@@ -219,7 +245,9 @@ plot.sframe <- function(x, y, formula = ~ 1, variable_args = NULL, level_args = 
 }
 
 #' @name plot
+#' 
 #' @method plot design
+#' 
 #' @export
 plot.design <- function(x, y = NULL, formula = ~ sites, sites = NULL, 
                           variable_args = NULL, level_args = NULL, geom = FALSE, onlyshow = NULL,

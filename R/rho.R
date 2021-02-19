@@ -1,5 +1,5 @@
-###################################################################################
-# Function: rho
+###############################################################################
+# Function: rho (exported)
 # Programmers: Tony Olsen
 # Date: September 9, 2020
 #'
@@ -9,14 +9,14 @@
 #'   
 #' @return sites Sample object returned in reverse hierarchical order
 #'
-#' @author Tony Olsen email{olsen.tony@epa.gov}
+#' @author Tony Olsen \email{olsen.tony@@epa.gov}
 #'
 #' @keywords survey
 #'
 #' @examples 
 #'
 #' @export
-#################################################################################
+###############################################################################
 
 rho <- function(sites) {
 

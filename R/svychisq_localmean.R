@@ -1,5 +1,5 @@
-################################################################################
-# Function: svychisq_localmean
+###############################################################################
+# Function: svychisq_localmean (exported)
 # Programmers: Thomas Lumley
 #              Tom Kincaid
 # Date: January 7, 2014
@@ -11,7 +11,7 @@
 #' Design-Based Contingency Table Tests
 #'
 #' This function implements design-based contingency table tests.  It is a
-#' modified version of the svychisq function in the survey package.  The
+#' modified version of the \code{svychisq} function in the survey package.  The
 #' modification allows use of the local mean variance algorithms for calculating
 #' variance of contingency table means and totals.
 #'
@@ -23,52 +23,52 @@
 #' @param statistic Character value specifying the test statistic.  See Details.
 #'
 #' @param vartype  Character value identifying the choice for variance
-#'   estimator, where "Local" = local mean estimator and "SRS" = simple random
-#'   sampling estimator.  The default is "Local".
+#'   estimator, where \code{"Local"} = local mean estimator and \code{"SRS"} = simple random
+#'   sampling estimator.  The default is \code{"Local"}.
 #'
 #' @param var_totals Vector containing variance of totals for the contingency
 #'   table, which is required for calculating the Wald statistics when vartype
-#'   equals "Local.  The default is NULL.
+#'   equals \code{"Local"}.  The default is \code{NULL}.
 #'
 #' @param var_means Vector containing variance of means for contingency table
-#'   cells, which is required for calculating the Rao_Scott statistics when
-#'   vartype equals "Local.  The default is NULL.
+#'   cells, which is required for calculating the Rao-Scott statistics when
+#'   vartype equals \code{"Local"}.  The default is \code{NULL}.
 #'
 #' @section Details:
-#' svychisq_localmean computes first and second-order Rao-Scott corrections to
+#' \code{svychisq_localmean} computes first and second-order Rao-Scott corrections to
 #' the Pearson chi-squared test and two Wald-type tests.  For calculating the
 #' variance of contingency table means and totals, the function can use either
 #' the local mean variance estimator or the simple random sampling variance
 #' estimator.
 #'
-#' The default test (statistic equals "F") is the Rao-Scott second-order
+#' The default test (statistic equals \code{"F"}) is the Rao-Scott second-order
 #' correction. The p-value is computed using a Satterthwaite approximation to
 #' the distribution with denominator degrees of freedom as recommended by Thomas
 #' and Rao (1990).
 #'
-#  The test specified by statistic equals "Chisq" adjusts the Pearson
-#  chi-squared statistic by a design effect estimate and then compares that
-#  value to the chi-squared distribution it would have under simple random
-#  sampling.
+#' The test specified by statistic equals \code{"Chisq"} adjusts the Pearson
+#' chi-squared statistic by a design effect estimate and then compares that
+#' value to the chi-squared distribution it would have under simple random
+#' sampling.
 #'
-#' The test specified by statistic equals "Wald" is the procedure proposed by
+#' The test specified by statistic equals \code{"Wald"} is the procedure proposed by
 #' Koch et al (1975) and used by the SUDAAN software package. It is a Wald test
 #' based on the differences between the observed cells counts and those expected
 #' under independence.
 #'
-#' The test specified by statistic equals "adjWald" reduces the Wald statistic
+#' The test specified by statistic equals \code{"adjWald"} reduces the Wald statistic
 #' when the number of sites is small compared to the number of degrees of
 #' freedom of the test. Thomas and Rao (1990) compared The two Wald tests and
 #' found the adjustment benefical.
 #'
-#' The test specified by statistic equals "lincom" replaces the numerator of the
+#' The test specified by statistic equals \code{"lincom"} replaces the numerator of the
 #' Rao-Scott F with the exact asymptotic distribution, which is a linear
-#' combination of chi-squared variables (see pchisqsum).  The CompQuadForm
-#' package is required when statistic equals "lincom" is specified.
+#' combination of chi-squared variables (see \code{pchisqsum}).  The CompQuadForm
+#' package is required when statistic equals \code{"lincom"} is specified.
 #'
-#' The test specified by statistic equals "saddlepoint" uses a saddlepoint
+#' The test specified by statistic equals \code{"saddlepoint"} uses a saddlepoint
 #' approximation to the  exact asymptotic distribution mentioned previously.
-#' The CompQuadForm package is not required when statistic equals "lincom" is
+#' The CompQuadForm package is not required when statistic equals \code{"lincom"} is
 #' specified. The saddlepoint approximation is especially useful when the
 #' p-value is very small (e.g., large-scale multiple testing problems).
 #'
@@ -122,7 +122,7 @@
 #'   vartype = "SRS")
 #'
 #' @export
-################################################################################
+###############################################################################
 
 svychisq_localmean <- function(formula, design, statistic = c("F", "Chisq",
   "Wald","adjWald","lincom", "saddlepoint"), vartype = "Local",

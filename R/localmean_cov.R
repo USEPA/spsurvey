@@ -1,5 +1,5 @@
-################################################################################
-# Function: localmean_cov
+###############################################################################
+# Function: localmean_cov (exported)
 # Programmer: Tom Kincaid
 # Date: March 10, 2020
 #
@@ -12,8 +12,8 @@
 #'   for the sample points.
 #'
 #' @param weight_1st List from the local mean weight function containing two
-#'   elements: a matrix named ij composed of the index values of neighboring
-#'   points and a vector named gwt composed of weights.
+#'   elements: a matrix named \code{ij} composed of the index values of neighboring
+#'   points and a vector named \code{gwt} composed of weights.
 #'
 #' @return The local mean estimator of the variance-covariance matrix.
 #'
@@ -22,7 +22,7 @@
 #' @keywords survey
 #'
 #' @export
-################################################################################
+###############################################################################
 
 localmean_cov <- function(zmat, weight_1st) {
 

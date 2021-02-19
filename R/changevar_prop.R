@@ -1,5 +1,5 @@
-################################################################################
-# Function: changevar_prop
+###############################################################################
+# Function: changevar_prop (exported)
 # Programmer: Tom Kincaid
 # Date: July 22, 2020
 #'
@@ -28,7 +28,7 @@
 #'
 #' @param catvar2 Vector of the response value for each site for survey two.
 #'
-#' @param wgt Vector of the final adjusted weight (inverse of the sample
+#' @param wgt Vector of the final adjusted weight (reciprocal of the sample
 #'  inclusion probability) for each site, which is either the weight for a
 #'  single-stage sample or the stage two weight for a two-stage sample.
 #'
@@ -41,9 +41,9 @@
 #'  for a two-stage sample.
 #'
 #' @param revisitwgt Logical value that indicates whether each repeat visit
-#'  site has the same survey design weight in the two surveys, where TRUE = the
-#'  weight for each repeat visit site is the same and FALSE = the weight for
-#'  each repeat visit site is not the same.  When this argument is FALSE, all
+#'  site has the same survey design weight in the two surveys, where \code{TRUE} = the
+#'  weight for each repeat visit site is the same and \code{FALSE} = the weight for
+#'  each repeat visit site is not the same.  When this argument is \code{FALSE}, all
 #'  of the repeat visit sites are assigned equal weights when calculating the
 #'  covariance component of the change estimate standard error.
 #'
@@ -52,13 +52,13 @@
 #' @param prop2 The set of category proportion estimates for survey two.
 #'
 #' @param stratum_ind Logical value that indicates whether the sample is
-#'  stratified, where TRUE = a stratified sample and FALSE = not a stratified
+#'  stratified, where \code{TRUE} = a stratified sample and \code{FALSE} = not a stratified
 #'  sample.
 #'
 #' @param stratum_level The stratum level.
 #'
 #' @param cluster_ind Logical value that indicates whether the sample is a
-#'  two- stage sample, where TRUE = a two-stage sample and FALSE = not a
+#'  two- stage sample, where \code{TRUE} = a two-stage sample and \code{FALSE} = not a
 #'  two-stage sample.
 #'
 #' @param clusterID Vector of the stage one sampling unit (primary sampling unit
@@ -71,12 +71,12 @@
 #' @param y1 Vector of the stage one y-coordinate for location for each site.
 #'
 #' @param pcfactor_ind Logical value that indicates whether the finite
-#'  population correction factor is used during variance estimation, where TRUE
-#'  = use the population correction factor and FALSE = do not use the factor.
+#'  population correction factor is used during variance estimation, where \code{TRUE}
+#'  = use the population correction factor and \code{FALSE} = do not use the factor.
 #'  To employ the correction factor for a single-stage sample, a value must be
-#'  supplied for argument fpcsize.  To employ the correction factor for a
-#'  two-stage sample, values must be supplied for arguments Ncluster and
-#'  stage1size.
+#'  supplied for argument \code{fpcsize}.  To employ the correction factor for a
+#'  two-stage sample, values must be supplied for arguments \code{Ncluster} and
+#'  \code{stage1size}.
 #'
 #' @param fpcsize Size of the resource, which is required for calculation of the
 #'  finite population correction factor for a single-stage sample.
@@ -89,11 +89,11 @@
 #'  two-stage sample, which is required for calculation of the finite
 #'  population correction factor for a two-stage sample.
 #'
-#' @param vartype The choice of variance estimator, where "Local" = local mean
-#'  estimator and "SRS" = SRS estimator.
+#' @param vartype The choice of variance estimator, where \code{"Local"} = local mean
+#'  estimator and \code{"SRS"} = SRS estimator.
 #'
 #' @param warn_ind Logical value that indicates whether warning messages were
-#'  generated, where TRUE = warning messages were generated and FALSE = warning
+#'  generated, where \code{TRUE} = warning messages were generated and \code{FALSE} = warning
 #'  messages were not generated.
 #'
 #' @param warn_df Data frame for storing warning messages.
@@ -101,10 +101,10 @@
 #' @param warn_vec Vector that contains names of the population type, the
 #'  subpopulation, and an indicator.
 #'
-#' @return An object in list format composed of a vector named rslt, which
+#' @return An object in list format composed of a vector named \code{rslt}, which
 #'  contains the covariance or correlation estimates, a logical variable named
-#'  warn,ind, which is the indicator for warning messges, and a data frame
-#'  named warn_df, which contains warning messages.
+#'  \code{warn_ind}, which is the indicator for warning messges, and a data frame
+#'  named \code{warn_df}, which contains warning messages.
 #'
 #' @section Other Functions Required:
 #'  \describe{
@@ -119,7 +119,7 @@
 #' @keywords survey
 #'
 #' @export
-################################################################################
+###############################################################################
 
 changevar_prop <- function(catvar_levels, catvar1, catvar2, wgt, x, y,
   revisitwgt, prop1, prop2, stratum_ind, stratum_level, cluster_ind, clusterID,

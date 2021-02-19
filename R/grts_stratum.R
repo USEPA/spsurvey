@@ -1,5 +1,5 @@
-###################################################################################
-# Function: grts_stratum
+###############################################################################
+# Function: grts_stratum (exported)
 # Programmers: Tony Olsen
 # Date: January 22, 2021
 #'
@@ -10,40 +10,12 @@
 #' sample. Then the grts algorithm is applied to the systematic point sample. The selection
 #' in all cases is based on the survey design specification for the stratum.
 #'
-#' @param stratum Character value for the stratum name.
-#' 
-#' @param dsgn List of componenents that specify the survey design. Includes all strata.
-#'   See grts for contents of dsgn.
-#' 
-#' @param sframe Sample frame as an sf object. If the design is stratified,
-#'   unequal probability, proportional probability or has legacy sites, then sample frame 
-#'   must include variables that identify the stratum; category, auxillary and legacy variables
-#'   for unequal selection; or that identify elements that are legacy sites. 
-#'   The coordinate system for sframe must be one where distance for coordinates is meaningful.
-#'
-#' @param sf_type The sample frame geometry type: point, linear or area
-#' 
-#' @param pt_density For linear and area sample frame, the point density for the systematic
-#'   sample. Must be in units of the sframe sf.object. Default is NULL.
-#'
-#' @param legacy_option Logical variable that when TRUE legacy sites are to be included 
-#'   in the survey design. Default is FALSE
+#' @inheritParams grts_stratum
 #'    
-#' @param legacy_sites An sf object of legacy sites to be included in the survey design.
-#' 
-#' @param maxtry Number of maximum attempts to ensure minimum distance between sites.
-#'   Default is 10.
-#'
-#' @param warn_ind  A logical value where TRUE indicates a warning message.
-#'   Used for internal collection of messages only.
-#'
-#' @param warn_df A data frame containing messages warning of potential issues.
-#'   Used for internal collection of messages only.
-#'   
-#' @return rslts A list consisting of an sf object for base sites, an sf object of 
-#'   n_over sites (NULL if none) an sf object of n_near sites (NULL if none) where
-#'   the sf objects containing the sites selected that meet the survey design requirements 
-#'   and warn_ind - logical value for warning indicator and warn_df - a data.frame
+#' @return rslts A list consisting of an \code{sf} object for base sites, an \code{sf} object of 
+#'   \code{n_over} sites (\code{NULL} if none) an \code{sf} object of \code{n_near} sites (\code{NULL} if none) where
+#'   the \code{sf} objects containing the sites selected that meet the survey design requirements 
+#'   and \code{warn_ind} - logical value for warning indicator and \code{warn_df} - a data frame
 #'   for warning messages.
 #'
 #' @section Other functions required:
@@ -57,7 +29,7 @@
 #'       points}
 #'     }
 #'
-#' @author Tony Olsen email{olsen.tony@epa.gov}
+#' @author Tony Olsen \email{olsen.tony@@epa.gov}
 #'
 #' @keywords survey
 #'
@@ -67,7 +39,7 @@
 #' }
 #'
 #' @export
-#################################################################################
+###############################################################################
 
 grts_stratum <- function(stratum, dsgn, sframe, sf_type, pt_density = NULL, 
                          legacy_option = NULL, legacy_sites = NULL, maxtry = 10,

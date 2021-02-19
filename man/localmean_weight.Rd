@@ -15,12 +15,12 @@ localmean_weight(x, y, prb, nbh = 4, vincr = 1e-05 * abs(mean(y)))
 
 \item{nbh}{Number of neighboring points to use in the calculations.}
 
-\item{vincr}{The variance increment for correcting an La.svd error.  The
-default is 0.00001*abs(mean(y)).}
+\item{vincr}{The variance increment for correcting an \code{La.svd} error.  The
+default is \code{0.00001*abs(mean(y))}.}
 }
 \value{
-List containing two elements: a matrix named ij composed of the index
-  values of neighboring points and a vector named gwt composed of weights.
+List containing two elements: a matrix named \code{ij} composed of the index
+  values of neighboring points and a vector named \code{gwt} composed of weights.
 }
 \description{
 This function calculates the index values of neighboring points and

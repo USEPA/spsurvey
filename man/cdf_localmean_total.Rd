@@ -34,7 +34,7 @@ subpopulation variable.}
 \item{ivar}{Character value that identifies a factor variable in the design
 argument containing categorical response values.}
 
-\item{design}{Object of class survey.design that specifies a complex survey
+\item{design}{Object of class \code{survey.design} that specifies a complex survey
 design.}
 
 \item{design_names}{Character vector that provides names of survey design
@@ -51,8 +51,8 @@ for the continuous response variable.}
 \item{popcorrect}{Logical value that indicates whether the finite population
 correction factor should be employed during variance estimation.}
 
-\item{vartype}{The choice of variance estimator, where "Local" = local mean
-estimator and "SRS" = SRS estimator.}
+\item{vartype}{The choice of variance estimator, where \code{"Local"} = local mean
+estimator and \code{"SRS"} = SRS estimator.}
 
 \item{mult}{Numeric value that provides the Normal distribution confidence
 bound multiplier.}

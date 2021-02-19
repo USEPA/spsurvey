@@ -1,5 +1,5 @@
-################################################################################
-# Function: revisit_bibd
+###############################################################################
+# Function: revisit_bibd (exported)
 # Programmer: Tony Olsen
 # Date: March 14, 2019
 #'
@@ -30,12 +30,12 @@
 #'   period.
 #'
 #' @param skip  Number of sampling occasions to skip between planned sampling
-#'   periods, e.g., sampling will occur only every 5 periods if skip = 5.
+#'   periods, e.g., sampling will occur only every 5 periods if \code{skip = 5}.
 #'
 #' @param iter  Maximum number of iterations in search for D-optimal
-#'   Generallized Youden Design.
+#'   Generalized Youden Design.
 #'
-#' @details  The function uses find.BIB function from crossdes package to
+#' @details  The function uses \code{find.BIB} function from crossdes package to
 #' search for a D-optimal block design.  crossdes uses package AlgDesign
 #' to search balanced incomplete block designs.
 #'
@@ -70,7 +70,7 @@
 #' revisit_bibd(n_period = 20, n_pnl = 20, n_visit = 3, nsamp = 20)
 #'
 #' @export
-################################################################################
+###############################################################################
 
 revisit_bibd <- function (n_period, n_pnl, n_visit, nsamp, panel_name = "BIB",
    begin = 1, skip = 1, iter = 30 ) {

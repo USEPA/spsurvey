@@ -36,7 +36,7 @@ changevar_mean(
 
 \item{z2}{Vector of the response value for each site for survey two.}
 
-\item{wgt}{Vector of the final adjusted weight (inverse of the sample
+\item{wgt}{Vector of the final adjusted weight (reciprocal of the sample
 inclusion probability) for each site, which is either the weight for a
 single-stage sample or the stage two weight for a two-stage sample.}
 
@@ -49,9 +49,9 @@ the y- coordinate for a single-stage sample or the stage two y-coordinate
 for a two-stage sample.}
 
 \item{revisitwgt}{Logical value that indicates whether each repeat visit site
-has the same survey design weight in the two surveys, where TRUE = the
-weight for each repeat visit site is the same and FALSE = the weight for
-each repeat visit site is not the same.  When this argument is FALSE, all
+has the same survey design weight in the two surveys, where \code{TRUE} = the
+weight for each repeat visit site is the same and \code{FALSE} = the weight for
+each repeat visit site is not the same.  When this argument is \code{FALSE}, all
 of the repeat visit sites are assigned equal weights when calculating the
 covariance component of the change estimate standard error.}
 
@@ -60,13 +60,13 @@ covariance component of the change estimate standard error.}
 \item{mean2}{The estimated mean for survey two.}
 
 \item{stratum_ind}{Logical value that indicates whether the sample is
-stratified, where TRUE = a stratified sample and FALSE = not a stratified
+stratified, where \code{TRUE} = a stratified sample and \code{FALSE} = not a stratified
 sample.}
 
 \item{stratum_level}{The stratum level.}
 
 \item{cluster_ind}{Logical value that indicates whether the sample is a
-two- stage sample, where TRUE = a two-stage sample and FALSE = not a
+two- stage sample, where \code{TRUE} = a two-stage sample and \code{FALSE} = not a
 two-stage sample.}
 
 \item{clusterID}{Vector of the stage one sampling unit (primary sampling unit
@@ -79,12 +79,12 @@ or cluster) code for each site.}
 \item{y1}{Vector of the stage one y-coordinate for location for each site.}
 
 \item{pcfactor_ind}{Logical value that indicates whether the finite
-population correction factor is used during variance estimation, where TRUE
-= use the population correction factor and FALSE = do not use the factor.
+population correction factor is used during variance estimation, where \code{TRUE}
+= use the population correction factor and \code{FALSE} = do not use the factor.
 To employ the correction factor for a single-stage sample, a value must be
-supplied for argument fpcsize.  To employ the correction factor for a
-two-stage sample, values must be supplied for arguments Ncluster and
-stage1size.}
+supplied for argument \code{fpcsize}.  To employ the correction factor for a
+two-stage sample, values must be supplied for arguments \code{Ncluster} and
+\code{stage1size}.}
 
 \item{fpcsize}{Size of the resource, which is required for calculation of the
 finite population correction factor for a single-stage sample.}
@@ -97,11 +97,11 @@ factor for a two-stage sample.}
 two-stage sample, which is required for calculation of the finite
 population correction factor for a two-stage sample.}
 
-\item{vartype}{The choice of variance estimator, where "Local" = local mean
-estimator and "SRS" = SRS estimator.}
+\item{vartype}{The choice of variance estimator, where \code{"Local"} = local mean
+estimator and \code{"SRS"} = SRS estimator.}
 
 \item{warn_ind}{Logical value that indicates whether warning messages were
-generated, where TRUE = warning messages were generated and FALSE = warning
+generated, where \code{TRUE} = warning messages were generated and \code{FALSE} = warning
 messages were not generated.}
 
 \item{warn_df}{Data frame for storing warning messages.}
@@ -110,10 +110,10 @@ messages were not generated.}
 subpopulation, and an indicator.}
 }
 \value{
-An object in list format composed of a vector named rslt, which
+An object in list format composed of a vector named \code{rslt}, which
   contains the covariance or correlation estimate, a logical variable named
-  warn,ind, which is the indicator for warning messges, and a data frame
-  named warn_df, which contains warning messages.
+  \code{warn_ind}, which is the indicator for warning messges, and a data frame
+  named \code{warn_df}, which contains warning messages.
 }
 \description{
 This function calculates estimates of the variance-covariance matrix of the

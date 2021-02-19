@@ -1,5 +1,5 @@
-################################################################################
-# Function: grtspts_mindis
+###############################################################################
+# Function: grtspts_mindis (exported)
 # Programmer:  Tony Olsen
 # Date: September 28, 2020
 #
@@ -7,31 +7,31 @@
 #'
 #' @param mindis Minimum distance required between sites in sample.
 #'
-#' @param sframe The sf object containing variables: id and ip.
+#' @param sframe The \code{sf} object containing variables: \code{id} and \code{ip}.
 #' 
 #' @param samplesize The sample size required for the stratum.
 #' 
 #' @param stratum Character string that identifies stratum membership for each element 
-#'   in the frame. Cannot be NULL.
+#'   in the frame. Cannot be \code{NULL}.
 #'
 #' @param maxtry Number of maximum attempts to ensure minimum distance between sites.
-#'   Default is 10.
+#'   Default is \code{10}.
 #'   
-#' @param legacy_option Logical variable where if equal to TRUE, legacy sites are
+#' @param legacy_option Logical variable where if equal to \code{TRUE}, legacy sites are
 #'   to be incorporated into survey design.
 #'
 #' @param legacy_var Character value for name of column for legacy site variable.
-#'   Default is NULL.
+#'   Default is \code{NULL}.
 #'
-#' @param warn_ind  A logical value where TRUE indicates a warning message.
+#' @param warn_ind  A logical value where \code{TRUE} indicates a warning message.
 #'   Used for internal collection of messages only.
 #'
 #' @param warn_df A data frame containing messages warning of potential issues.
 #'   Used for internal collection of messages only.
 #'
 #'
-#' @return sites A list of sf object of sample points, an sf object of over sample
-#'   points if any, warning indicator and warning messages data.frame
+#' @return sites A list of \code{sf} object of sample points, an \code{sf} object of over sample
+#'   points if any, warning indicator and warning messages \code{data.frame}.
 #'
 #' @section Other Functions Required:
 #'   \describe{
@@ -40,12 +40,12 @@
 #'     \item{\code{UPpivotal}}{selects sample point(s)}
 #'   }
 #'
-#' @author Tony Olsen \email{Olsen.Tony@epa.gov}
+#' @author Tony Olsen \email{Olsen.Tony@@epa.gov}
 #'
 #' @keywords survey
 #'
 #' @export
-################################################################################
+###############################################################################
 
 grtspts_mindis <- function(mindis, sframe, samplesize, stratum, maxtry = 10,
                            legacy_option = NULL, legacy_var = NULL, 

@@ -1,4 +1,4 @@
-################################################################################
+###############################################################################
 # Function: percentile_est
 # Programmer: Tom Kincaid
 # Date: July 23, 2020
@@ -26,21 +26,21 @@
 #'
 #' @param ivar Character value that identifies the response variable.
 #'
-#' @param design Object of class survey.design that specifies a complex survey
+#' @param design Object of class \code{survey.design} that specifies a complex survey
 #'   design.
 #'
 #' @param design_names Character vector that provides names of survey design
-#'   variables in the design argument.
+#'   variables in the \code{design} argument.
 #'
 #' @param var_nondetect Character value that identifies the name of a logical
-#'   variable in the dframe data frame specifying the presence of not detected
+#'   variable in the \code{dframe} data frame specifying the presence of not detected
 #'   (nondetect) values for the response variable.
 #'
 #' @param popcorrect Logical value that indicates whether the finite population
 #'   correction factor should be employed during variance estimation.
 #'
-#' @param vartype The choice of variance estimator, where "Local" = local mean
-#'   estimator and "SRS" = SRS estimator.
+#' @param vartype The choice of variance estimator, where \code{"Local"} = local mean
+#'   estimator and \code{"SRS"} = SRS estimator.
 #'
 #' @param conf Numeric value for the confidence level.
 #'
@@ -82,7 +82,7 @@
 #'       complex survey design}
 #'   }
 #'
-#' @author Tom Kincaid \email{Kincaid.Tom@epa.gov}
+#' @author Tom Kincaid \email{Kincaid.Tom@@epa.gov}
 #'
 #' @seealso
 #'   \code{\link{confint}}
@@ -95,7 +95,7 @@
 #' @keywords survey univar
 #'
 #' @export
-################################################################################
+###############################################################################
 
 percentile_est <- function(pctsum, dframe, itype, lev_itype, nlev_itype, ivar,
   design, design_names, var_nondetect, popcorrect,  vartype, conf, mult, pctval,

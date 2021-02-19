@@ -9,21 +9,21 @@ cdf_prop(z, wgt, val, cluster_ind, cluster = NULL, wgt1 = NULL)
 \arguments{
 \item{z}{Vector of the response value for each site.}
 
-\item{wgt}{Vector of the final adjusted weight (inverse of the sample
+\item{wgt}{Vector of the final adjusted weight (reciprocal of the sample
 inclusion probability) for each site, which is either the weight for a
 single- stage sample or the stage two weight for a two-stage sample.}
 
 \item{val}{Vector of the set of values at which the CDF is estimated.}
 
 \item{cluster_ind}{Logical value that indicates whether the sample is a
-two-stage sample, where TRUE = a two-stage sample and FALSE = not a
+two-stage sample, where \code{TRUE} = a two-stage sample and \code{FALSE} = not a
 two-stage sample.}
 
 \item{cluster}{Vector of the stage one sampling unit (primary sampling unit
-or cluster) code for each site.  The default value is NULL.}
+or cluster) code for each site.  The default value is \code{NULL}.}
 
 \item{wgt1}{= Vector of the final adjusted stage one weight for each site.
-The default value is NULL.}
+The default value is \code{NULL}.}
 }
 \value{
 The CDF estimate.

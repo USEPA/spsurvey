@@ -39,47 +39,47 @@ period interaction variability for the indicators}
 \item{index_var}{Vector of variance component estimates for index (residual)
 error for the indicators}
 
-\item{unit_rho}{Correlation across units. Default is 1}
+\item{unit_rho}{Correlation across units. Default is \code{1}.}
 
-\item{period_rho}{Correlation across periods. Default is 0}
+\item{period_rho}{Correlation across periods. Default is \code{0}.}
 
 \item{paneldsgn}{A list of panel designs each as a matrix.  Each element of
-the list is a matrix with dimnames (dimensions: number of panels (rows) by
+the list is a matrix with \code{dimnames} (dimensions: number of panels (rows) by
 number of periods (columns)) containing the number of units visited for 
 each combination of panel and period.  Dimnames for columns must be
 convertable to an integer (e.g., 2016).  All designs must span the same
 number of periods.  Typically, the panel designs are the output of the
-function revisit_dsgn.}
+function \code{revisit_dsgn}.}
 
-\item{nrepeats}{Either NULL or a list of matrices the same length as
-paneldsgn specifying the number of revisits made to units in a panel in the
-same period for each design.  Specifying NULL indicates that number of
+\item{nrepeats}{Either \code{NULL} or a list of matrices the same length as
+\code{paneldsgn} specifying the number of revisits made to units in a panel in the
+same period for each design.  Specifying \code{NULL} indicates that number of
 revisits to units is the same for all panels and for all periods and for
-all panel designs. The default is NULL, a single visit. Names must match
-list names in paneldsgn.}
+all panel designs. The default is \code{NULL}, a single visit. Names must match
+list names in \code{paneldsgn}.}
 
-\item{trend_type}{Trend type is either "mean" where trend is applied as
-percent trend in the indicator mean or "percent" where the trend is applied
+\item{trend_type}{Trend type is either \code{"mean"} where trend is applied as
+percent trend in the indicator mean or \code{"percent"} where the trend is applied
 as percent trend in the proportion (percent) of the distribution that is
-below or above a fixed value. Default is trend_type="mean"}
+below or above a fixed value. Default is \code{trend_type="mean"}}
 
-\item{ind_pct}{When trend_type is equal to "percent", a vector of the
+\item{ind_pct}{When \code{trend_type} is equal to \code{"percent"}, a vector of the
 values of the indicator fixed value that defines the percent.  Default is
 NULL}
 
-\item{ind_tail}{When trend_type is equal to "percent", a character vector
-with values of either "lower" or "upper" for each indicator.  "lower"
+\item{ind_tail}{When trend_type is equal to \code{"percent"}, a character vector
+with values of either \code{"lower"} or \code{"upper"} for each indicator.  \code{"lower"}
 states that the percent is associated with the lower tail of the
-distribution and "upper" states that the percent is associated with the
-upper tail of the distribution. Default is NULL.}
+distribution and \code{"upper"} states that the percent is associated with the
+upper tail of the distribution. Default is \code{NULL}.}
 
 \item{trend}{Single value or vector of assumed percent change from
 initial value in the indicator for each period. Assumes the trend is
 expressed as percent per period. Note that the trend may be either positive
-or negative. The default is trend=2.}
+or negative. The default is \code{2}.}
 
 \item{alpha}{Single value or vector of significance level for linear
-trend test, alpha, Type I error, level.  The defualt is 0.05.}
+trend test, alpha, Type I error, level.  The defualt is \code{0.05}.}
 }
 \value{
 A list with components trend_type, ind_pct, ind_tail, trend values

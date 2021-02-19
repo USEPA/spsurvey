@@ -7,7 +7,7 @@
 insideLinearGridCell(sfobject, rdx.u, xc, yc, dx, dy)
 }
 \arguments{
-\item{sfobject}{The sf linestring object.}
+\item{sfobject}{The \code{sf} polygon object.}
 
 \item{rdx.u}{Vector of cell IDs.}
 
@@ -20,8 +20,8 @@ insideLinearGridCell(sfobject, rdx.u, xc, yc, dx, dy)
 \item{dy}{The y-axis grid cell dimension.}
 }
 \value{
-Data frame containing the following variables: cellID, featureLength,
-  and featureID.
+Data frame containing the following variables: \code{cellID}, \code{featureArea},
+  and \code{featureID}.
 }
 \description{
 For each grid cell, this function calculates the clipped length of each

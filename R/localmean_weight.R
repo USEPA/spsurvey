@@ -1,5 +1,5 @@
-################################################################################
-# Function: localmean_weight
+###############################################################################
+# Function: localmean_weight (exported)
 # Programmers: Don Stevens and Tom Kincaid
 # Date: February 6, 2020
 #
@@ -16,18 +16,18 @@
 #'
 #' @param nbh Number of neighboring points to use in the calculations.
 #'
-#' @param vincr The variance increment for correcting an La.svd error.  The
-#'   default is 0.00001*abs(mean(y)).
+#' @param vincr The variance increment for correcting an \code{La.svd} error.  The
+#'   default is \code{0.00001*abs(mean(y))}.
 #'
-#' @return List containing two elements: a matrix named ij composed of the index
-#'   values of neighboring points and a vector named gwt composed of weights.
+#' @return List containing two elements: a matrix named \code{ij} composed of the index
+#'   values of neighboring points and a vector named \code{gwt} composed of weights.
 #'
-#' @author  Don Stevens \email{Kincaid.Tom@epa.gov}
+#' @author  Don Stevens \email{Kincaid.Tom@@epa.gov}
 #'
 #' @seealso \code{\link{localmean_weight2}}
 #'
 #' @export
-################################################################################
+###############################################################################
 
 localmean_weight <- function(x, y, prb, nbh = 4, vincr = 0.00001*abs(mean(y))) {
 

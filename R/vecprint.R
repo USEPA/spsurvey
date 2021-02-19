@@ -1,5 +1,5 @@
-################################################################################
-# Function: vecprint
+###############################################################################
+# Function: vecprint (exported)
 # Programmer: Tom Kincaid
 # Date: February 6, 2004
 # Last Revised:  May 3, 2004
@@ -15,12 +15,12 @@
 #'
 #' @param x Character vector.
 #'
-#' @param n_char The maximum number of characters per line.  The default is 78.
+#' @param n_char The maximum number of characters per line.  The default is \code{78}.
 #'
 #' @return  Character string that is suitable for printing by the functions:
-#'   stop, warning, or cat.
+#'   \code{stop}, \code{warning}, or \code{cat}.
 #'
-#' @author Tom Kincaid \email{Kincaid.Tom@epa.gov}
+#' @author Tom Kincaid \email{Kincaid.Tom@@epa.gov}
 #'
 #' @examples
 #' sites <- paste("Site Number", 1:50)
@@ -33,7 +33,7 @@
 #'   analysis:\n", sites_str, sep=""))
 #'
 #' @export
-################################################################################
+###############################################################################
 
 vecprint <- function(x, n_char = 78) {
 

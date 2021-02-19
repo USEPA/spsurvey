@@ -1,5 +1,5 @@
-################################################################################
-# Function: survey_design
+###############################################################################
+# Function: survey_design (exported)
 # Programmer: Tom Kincaid
 # Date: December 16, 2020
 #
@@ -13,75 +13,75 @@
 #'   variables, and subpopulation (domain) variables.
 #'
 #' @param siteID Character value providing name of the site ID variable in
-#'   the dframe data frame.  For a two-stage sample, the site ID variable
+#'   the \code{dframe} data frame.  For a two-stage sample, the site ID variable
 #'   identifies stage two site IDs.
 #'
 #' @param weight Character value providing name of the survey design weight
-#'   variable in the dframe data frame.  For a two-stage sample, the weight
+#'   variable in the \code{dframe} data frame.  For a two-stage sample, the weight
 #'   variable identifies stage two weights.
 #'
 #' @param stratum_ind Logical value that indicates whether the sample is
-#'   stratified, where TRUE = a stratified sample and FALSE = an unstratified
+#'   stratified, where \code{TRUE} = a stratified sample and \code{FALSE} = an unstratified
 #'   sample.
 #'
 #' @param stratumID Character value providing name of the stratum ID variable in
-#'   the dframe data frame.
+#'   the \code{dframe} data frame.
 #'
 #' @param cluster_ind Logical value that indicates whether the sample contains
-#'   two stages, where TRUE = a two-stage sample and FALSE = a single stage
+#'   two stages, where \code{TRUE} = a two-stage sample and \code{FALSE} = a single stage
 #'   sample.
 #'
 #' @param clusterID Character value providing name of the cluster (stage one) ID
-#'   variable in the dframe data frame.  Note that cluster IDs are required for
+#'   variable in the \code{dframe} data frame.  Note that cluster IDs are required for
 #'   a two-stage sample.
 #'
 #' @param weight1 Character value providing name of the stage one weight
-#'   variable in the dframe data frame.
+#'   variable in the \code{dframe} data frame.
 #'
 #' @param sizeweight Logical value that indicates whether size weights should be
-#'   used during estimation, where TRUE = use size weights and FALSE = do not
+#'   used during estimation, where \code{TRUE} = use size weights and \code{FALSE} = do not
 #'   use size weights.
 #'
 #' @param sweight Character value providing name of the size weight variable in
-#'   the dframe data frame.  For a two-stage sample, the size weight variable
+#'   the \code{dframe} data frame.  For a two-stage sample, the size weight variable
 #'   identifies stage two size weights.
 #'
 #' @param sweight1 Character value providing name of the stage one size weight
-#'   variable in the dframe data frame.
+#'   variable in the \code{dframe} data frame.
 #'
 #' @param popcorrect Logical value that indicates whether the finite population
 #'   correction factor is used during variance estimation.
 #'
-#' @param fpcsize Character value providing name of the variable in the dframe
+#' @param fpcsize Character value providing name of the variable in the \code{dframe}
 #'   data frame that identifies size of the resource, which is required for
 #'   calculation of the finite population correction factor for a single-stage
 #'   sample.
 #'
-#' @param Ncluster Character value providing name of the variable in the dframe
+#' @param Ncluster Character value providing name of the variable in the \code{dframe}
 #'   data frame that identifies the number of clusters (stage one sampling
 #'   units) in the resource, which is required for calculation of the finite
 #'   population correction factor for a two-stage sample.  This argument is also
 #'   required for a two-stage sample when the popsize argument is not equal to
-#'   NULL and the vartype argument equals "Local".
+#'   \code{NULL} and the \code{vartype} argument equals \code{"Local"}.
 #'
 #' @param stage1size Character value providing name of the variable in the
-#'   dframe data frame that identifies cluster size, i.e. the number of the
+#'   \code{dframe} data frame that identifies cluster size, i.e. the number of the
 #'   stage two sampling units in the resource for a cluster.  Note that cluster
 #'   size is required for calculation of the finite population correction factor
 #'   for a two-stage sample.
 #'
 #' @param vartype Character value providing choice of the variance estimator,
-#'   where "Local" = the local mean estimator, "SRS" = the simple random
-#'   sampling estimator, "HT" = the Horvitz-Thompson estimator, and "YG" = the
+#'   where \code{"Local"} = the local mean estimator, \code{"SRS"} = the simple random
+#'   sampling estimator, \code{"HT"} = the Horvitz-Thompson estimator, and \code{"YG"} = the
 #'   Yates-Grundy estimator.
 #'
 #' @param jointprob Character value providing choice of joint inclusion
 #'   probability approximation for use with Horvitz-Thompson and Yates-Grundy
-#'   variance estimators, where "overton" indicates the Overton approximation,
-#'   "hr" indicates the Hartley_Rao approximation, and "brewer" equals the
+#'   variance estimators, where \code{"overton"} indicates the Overton approximation,
+#'   \code{"hr"} indicates the Hartley_Rao approximation, and \code{"brewer"} equals the
 #'   Brewer approximation.
 #'
-#' @return An object of class survey.design2.
+#' @return An object of class \code{survey.design2}.
 #'
 #' @section Other Functions Required:
 #'   \describe{
@@ -96,7 +96,7 @@
 #' @keywords survey
 #'
 #' @export
-################################################################################
+###############################################################################
 
 survey_design <- function(dframe, siteID, weight, stratum_ind, stratumID,
   cluster_ind, clusterID, weight1, sizeweight, sweight, sweight1, popcorrect,

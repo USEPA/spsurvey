@@ -1,5 +1,5 @@
-################################################################################
-# Function: ash1_wgt.R
+###############################################################################
+# Function: ash1_wgt.R (exported)
 # Programmer: Tony Olsen
 #	Based on original script by Susan Hornsby
 # Date: February 1, 2005
@@ -10,29 +10,29 @@
 #' Calculate the average shifted histogram estimate of a density based on data
 #'   from a survey design with weights.
 #'
-#' @param x Vector of data used to estimate the density. NAs are allowed
+#' @param x Vector used to estimate the density. \code{NA} values are allowed.
 #'
-#' @param wgt Vector of Weights for each observation from a probability sample.
-#'   The default is equal weights (equal probability).
+#' @param wgt Vector of weights for each observation from a
+#'   probability sample. The default assigns equal weights (equal probability).
 #'
-#' @param m The number of empty bins to add to the ends when the range is not
-#'   completely specified.  The default is 5.
+#' @param m Number of empty bins to add to the ends when the range is not
+#'   completely specified.  The default is \code{5}.
 #'
-#' @param nbin The number of bins for density estimation.  The default is 50.
+#' @param nbin Number of bins for density estimation.  The default is \code{50}.
 #'
 #' @param ab Optional range for support associated with the density. Both
-#'   values may be equal to NA.  If equal to NA, then corresponding limit will
-#'   be based on nicerange(). The default is NULL.
+#'   values may be equal to \code{NA}.  If equal to \code{NA}, then corresponding limit will
+#'   be based on \code{nicerange()}. The default is \code{NULL}.
 #'
-#' @param support The type of support.  If equal to "Continuous", then data are
-#'   from a continuous distribution.  If equal to "Ordinal", then data are from
+#' @param support Type of support.  If equal to \code{"Continuous"}, then data are
+#'   from a continuous distribution.  If equal to \code{"Ordinal"}, then data are from
 #'   a discrete distribution defined for integers only.  The default is
-#'   "Continuous".
+#'   \code{"Continuous"}.
 #'
-#' @return A list containing the ASH density estimate.  List consists of
+#' @return List containing the ASH density estimate.  List consists of
 #'   \itemize{
-#'     \item tcen - x-coordinate for center of bin
-#'     \item f - y-coordinate for density estimate height
+#'     \item \code{tcen} - x-coordinate for center of bin
+#'     \item \code{f} - y-coordinate for density estimate height
 #'   }
 #'
 #' @keywords survey misc
@@ -44,15 +44,13 @@
 #'   density estimators in several dimensions." The Annals of Statistics 13(3):
 #'   1024-1040.
 #'
+#' 
 #' @examples
 #' x <- rnorm(100, 10, sqrt(10))
 #' wgt <- runif(100, 10, 100)
 #' rslt <- ash1_wgt(x, wgt)
 #' plot(rslt)
-#'
 #' @export
-################################################################################
-
 ash1_wgt <- function(x, wgt = rep (1, length (x)), m = 5, nbin = 50, ab = NULL,
    support = "Continuous") {
 
@@ -122,22 +120,6 @@ ash1_wgt <- function(x, wgt = rep (1, length (x)), m = 5, nbin = 50, ab = NULL,
 
 bin1_wgt <- function(x, wgt=rep(1,length(x)), nbin=50,
                      ab=nicerange(x), support="Continuous") {
-
-# Arguments
-#   x  Vector of data to be used to estimate density. NAs are allowed.
-#
-#   wgt  vector of weights for each observation from a probability sample.
-#            default is equal weights (equal probability)
-#
-#   nbin  Number of bins for density estimate
-#
-#   ab  optional range for support associated with the density.  Both values may
-#       be equal to NA.  If equal to NA, then corresponding limit will be based
-#       on nicerange().
-#
-#   support  If equal to "Continuous", then data are from a continuous
-#            distribution.  If equal to "Ordinal", then data are from a discrete
-#            distribution defined for integers only.
 
 # Remove any missing data
 	x <- x[!is.na(x)]

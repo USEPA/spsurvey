@@ -1,37 +1,14 @@
-################################################################################
-# Function: grtspts_mindis
+###############################################################################
+# Function: grtspts_mindis (exported)
 # Programmer:  Tony Olsen
 # Date: January 22, 2021
 #
 #' Select an irs sample with minimum distance between sites.
 #'
-#' @param mindis Minimum distance required between sites in sample.
+#' @inheritParams grtspts_mindis
 #'
-#' @param sframe The sf object containing variables: id and ip.
-#' 
-#' @param samplesize The sample size required for the stratum.
-#' 
-#' @param stratum Character string that identifies stratum membership for each element 
-#'   in the frame. Cannot be NULL.
-#'
-#' @param maxtry Number of maximum attempts to ensure minimum distance between sites.
-#'   Default is 10.
-#'   
-#' @param legacy_option Logical variable where if equal to TRUE, legacy sites are
-#'   to be incorporated into survey design.
-#'
-#' @param legacy_var Character value for name of column for legacy site variable.
-#'   Default is NULL.
-#'
-#' @param warn_ind  A logical value where TRUE indicates a warning message.
-#'   Used for internal collection of messages only.
-#'
-#' @param warn_df A data frame containing messages warning of potential issues.
-#'   Used for internal collection of messages only.
-#'
-#'
-#' @return sites A list of sf object of sample points, an sf object of over sample
-#'   points if any, warning indicator and warning messages data.frame
+#' @return sites A list of \code{sf} object of sample points, an \code{sf} object of over sample
+#'   points if any, warning indicator and warning messages \code{data.frame}.
 #'
 #' @section Other Functions Required:
 #'   \describe{
@@ -46,7 +23,7 @@
 #' @keywords survey
 #'
 #' @export
-################################################################################
+###############################################################################
 
 irspts_mindis <- function(mindis, sframe, samplesize, stratum, maxtry = 10,
                            legacy_option = NULL, legacy_var = NULL, 

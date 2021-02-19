@@ -1,16 +1,17 @@
-###################################################################################
-# Function: sframe
+###############################################################################
+# Function: sframe (exported)
 # Programmers: Michael Dumelle
 # Date: January 22, 2021
 #' Create an sframe object
 #'
-#' @description sframe gives `sp` and `sf` objects class `"sframe"` to be used
-#' in `summary()` and `plot()` generics. `sp` objects are coerced to `sf`
-#' objects prior to giving class `sframe`.
+#' @description sframe gives \code{sp} and \code{sf} objects class \code{"sframe"} to be used
+#' in \code{summary()} and \code{plot()} generics. \code{sp} objects are coerced to \code{sf}
+#' objects prior to giving class \code{sframe}.
 #' 
-#' @param object An `sp` or `sf` object
+#' @param object An \code{sp} or \code{sf} object
 #'
-#' @return An `sframe` object
+#' @return An \code{sframe} object
+#' 
 #' @export
 #'
 #' @examples
@@ -18,6 +19,7 @@
 #' data("NE_lakes")
 #' NE_lakes <- sframe(NE_lakes)
 #' }
+###############################################################################
 sframe <- function(object) {
   if ("sframe" %in% class(object)) {
     stop("object is already an sframe object")

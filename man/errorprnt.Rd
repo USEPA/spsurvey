@@ -8,7 +8,7 @@ errorprnt(error_vec = get("error_vec", envir = .GlobalEnv))
 }
 \arguments{
 \item{error_vec}{Data frame that contains error messages.  The default is
-"error_vec", which is the name given to the error messagess vector created
+\code{"error_vec"}, which is the name given to the error messagess vector created
 by functions in the spsurvey package.}
 }
 \value{

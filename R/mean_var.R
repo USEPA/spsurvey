@@ -1,4 +1,4 @@
-################################################################################
+###############################################################################
 # Function: mean_var
 # Programmer: Tom Kincaid
 # Date: June 24, 2010
@@ -14,7 +14,7 @@
 #'
 #' @param z Vector of the response value for each site.
 #'
-#' @param wgt Vector of the final adjusted weight (inverse of the sample
+#' @param wgt Vector of the final adjusted weight (reciprocal of the sample
 #'   inclusion probability) for each site, which is either the weight for a
 #'   single-stage sample or the stage two weight for a two-stage sample.
 #'
@@ -29,13 +29,13 @@
 #' @param mean_est The mean estimate.
 #'
 #' @param stratum_ind Logical value that indicates whether the sample is
-#'   stratified, where TRUE = a stratified sample and FALSE = not a stratified
+#'   stratified, where \code{TRUE} = a stratified sample and \code{FALSE} = not a stratified
 #'   sample.
 #'
 #' @param stratum_level The stratum level.
 #'
 #' @param cluster_ind  Logical value that indicates whether the sample is a
-#'   two-stage sample, where TRUE = a two-stage sample and FALSE = not a
+#'   two-stage sample, where \code{TRUE} = a two-stage sample and \code{FALSE} = not a
 #'   two-stage sample.
 #'
 #' @param cluster Vector of the stage one sampling unit (primary sampling unit
@@ -48,12 +48,12 @@
 #' @param y1 Vector of the stage one y-coordinate for location for each site.
 #'
 #' @param pcfactor_ind Logical value that indicates whether the finite
-#'   population correction factor is used during variance estimation, where TRUE
-#'   = use the population correction factor and FALSE = do not use the factor.
+#'   population correction factor is used during variance estimation, where \code{TRUE}
+#'   = use the population correction factor and \code{FALSE} = do not use the factor.
 #'   To employ the correction factor for a single-stage sample, a value must be
-#'   supplied for argument fpcsize.  To employ the correction factor for a
-#'   two-stage sample, values must be supplied for arguments Ncluster and
-#'   stage1size.
+#'   supplied for argument \code{fpcsize}.  To employ the correction factor for a
+#'   two-stage sample, values must be supplied for arguments \code{Ncluster} and
+#'   \code{stage1size}.
 #'
 #' @param fpcsize Size of the resource, which is required for calculation of the
 #'   finite population correction factor for a single-stage sample.
@@ -70,13 +70,13 @@
 #'   names attribute set to identify the stage one sampling unit codes.  For a
 #'   stratified sample, the names attribute must be set to identify both stratum
 #'   codes and stage one sampling unit codes using a convention where the two
-#'   codes are separated by the & symbol, e.g., "Stratum 1&Cluster 1".
+#'   codes are separated by the & symbol, e.g., \code{"Stratum 1&Cluster 1"}.
 #'
-#' @param vartype The choice of variance estimator, where "Local" = local mean
-#'   estimator and "SRS" = SRS estimator.
+#' @param vartype The choice of variance estimator, where \code{"Local"} = local mean
+#'   estimator and \code{"SRS"} = SRS estimator.
 #'
 #' @param warn_ind LogicLal value that indicates whether warning messages were
-#'   generated, where TRUE = warning messages were generated and FALSE = warning
+#'   generated, where \code{TRUE} = warning messages were generated and \code{FALSE} = warning
 #'   messages were not generated.
 #'
 #' @param warn_df Data frame for storing warning messages.
@@ -84,9 +84,9 @@
 #' @param warn_vec Vector that contains names of the population type, the
 #'   subpopulation, and an indicator.
 #'
-#' @return Object in list format composed of a vector named varest, which
-#'   contains variance estimates, a logical variable named warn,ind, which is
-#'   the indicator for warning messges, and a data frame named warn_df, which
+#' @return Object in list format composed of a vector named \code{varest}, which
+#'   contains variance estimates, a logical variable named \code{warn_ind}, which is
+#'   the indicator for warning messges, and a data frame named \code{warn_df}, which
 #'   contains warning messages.
 #'
 #' @section Other Functions Required:
@@ -102,7 +102,7 @@
 #' @keywords survey
 #'
 #' @export
-################################################################################
+###############################################################################
 
 mean_var <- function(z, wgt, x, y, mean_est, stratum_ind, stratum_level,
   cluster_ind, cluster, wgt1, x1, y1, pcfactor_ind, fpcsize, Ncluster,

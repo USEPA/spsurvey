@@ -13,4 +13,4 @@
 #'   (10,50],(5,10],(50,500], (500,1e+04])}
 #'   \item{geometry}{simple features geometry list-column}
 #' }
-"NE_lakes"
+"NE_Lakes"

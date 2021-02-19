@@ -17,22 +17,22 @@ grtspts_ip(
 )
 }
 \arguments{
-\item{type}{Character string with values of equal, unequal or proportional. Default
-is equal.}
+\item{type}{Character string with values of \code{"equal"}, \code{"unequal"} or \code{"proportional"}. Default
+is \code{"equal"}.}
 
-\item{n_base}{Sample size for the stratum. If type is equal or proportional, then n_base
-is numeric value for the total sample size for the stratum. If type is unequal,
-then n_base is a named vector where names are the unequal probability categories with the
-expected sample size for each category. Names in n_base must be a subset of the values in caty.
+\item{n_base}{Sample size for the stratum. If type is \code{"equal"} or \code{"proportional"}, then \code{n_base}
+is numeric value for the total sample size for the stratum. If type is \code{"unequal"},
+then \code{n_base} is a named vector where names are the unequal probability categories with the
+expected sample size for each category. Names in \code{n_base} must be a subset of the values in \code{caty}.
 The sum of the category sample sizes is the total sample size for the stratum.}
 
 \item{Nstratum}{Number of elements in the stratum. Each element will be assigned an
-inclusion probabibility. Only required when type is "equal". Default is NULL}
+inclusion probabibility. Only required when type is \code{"equal"}. Default is \code{NULL}.}
 
-\item{caty}{If type is unequal, a character variable that identifies the category
+\item{caty}{If type is \code{"unequal"}, a character variable that identifies the category
 for each element of the sample frame that may be used for an unequal probability
-design. All categories in n_base must be present in pt_caty but additional categories
-are allowed but will not be included in the survey design for the statum. Default is NULL.}
+design. All categories in \code{n_base} must be present in \code{pt_caty} but additional categories
+are allowed but will not be included in the survey design for the statum. Default is \code{NULL}.}
 
 \item{aux}{If type is proportional, a numeric vector that will be used to select
 points proportional to the variable. Default is NULL.}
@@ -65,7 +65,7 @@ tmp
 
 }
 \author{
-Tony Olsen email{olsen.tony@epa.gov}
+Tony Olsen \email{olsen.tony@epa.gov}
 }
 \keyword{inclusion}
 \keyword{probability}

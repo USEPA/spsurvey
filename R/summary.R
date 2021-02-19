@@ -1,12 +1,12 @@
-###################################################################################
-# Function: summary.sframe and summary.design
+###############################################################################
+# Function: summary.sframe and summary.design (exported)
 # Programmers: Michael Dumelle
 # Date: January 22, 2021
 #' Calculate summaries of design objects
 #' 
 #' @description 
-#' `summary` summarizes sample frames or design objects, depending on 
-#' which is provided. For design objects,sites in the base sample and
+#' \code{summary()} summarizes sample frames or design objects, depending on 
+#' which is provided. For design objects, sites in the base sample and
 #' replacement sites (if they exist) are summarized. The right hand of the 
 #' formula specifies the categorical variables (or factors) you want to
 #' summarize by. If the left hand side of the formula is empty, the
@@ -15,8 +15,8 @@
 #' contains a variable, the summary will be of the left hand size variable
 #' grouped by each of the right hand variables.
 #'
-#' @param object A sample frame object having class `sframe` or a design object
-#'  output from `grts()` or `irs()` having class "design".
+#' @param object A sample frame object having class \code{sframe} or a design object
+#'  output from \code{grts()} or \code{irs()} having class \code{design}.
 #' @param formula A formula. Left hand side variables can be numeric or
 #' categorical (or factor) and right hand side variables can be categorical
 #' (or factor). Right hand side variables that are numeric will be coerced
@@ -24,10 +24,10 @@
 #' right hand side formula, the total will also be summarized.
 #' @param onlyshow A string indicating the level of the single right hand side
 #' variable for which a summary is requested.
-#' @param ... Additional arguments to pass to `summary()`. If the left hand
+#' @param ... Additional arguments to pass to \code{summary()}. If the left hand
 #' side of the formula is empty, the appropriate generic arguments are passed
-#' to summary.data.frame. If the left hand side of the formula is provided, 
-#' the appropriate generic arguments are passed to summary.default
+#' to \code{summary.data.frame}. If the left hand side of the formula is provided, 
+#' the appropriate generic arguments are passed to \code{summary.default}.
 #'
 #' @return If the left hand side of the formula is empty, a named list 
 #' containing summaries of the count distribution for each right hand side
@@ -37,8 +37,12 @@
 #' hand side) is returned for each right hand side variable.
 #' 
 #' @name summary
+#' 
 #' @method summary sframe
+#' 
 #' @export
+#' 
+#' @author Michael Dumelle \email{Dumelle.Michael@@epa.gov}
 #'
 #' @examples
 #' \dontrun{
@@ -49,6 +53,7 @@
 #'    summary(sample, ELEVATION ~ 1)
 #'    summary(sample, ~ ELEVATION_CAT * AREA_HA_CAT)
 #' }
+###############################################################################
 summary.sframe <- function(object, formula, onlyshow = NULL, ...) {
   # making formlist (utils.R)
   formlist <- make_formlist(formula, onlyshow, object)

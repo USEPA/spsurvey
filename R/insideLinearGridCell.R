@@ -1,5 +1,5 @@
-################################################################################
-# Function: insideLinearGridCell
+###############################################################################
+# Function: insideLinearGridCell (exported)
 # Programmer: Tom Kincaid
 # Date: July 8, 2019
 #
@@ -8,27 +8,17 @@
 #' For each grid cell, this function calculates the clipped length of each
 #' linestring feature contained in the cell.
 #'
-#' @param sfobject The sf linestring object.
+#' @inheritParams insideAreaGridCell
 #'
-#' @param rdx.u Vector of cell IDs.
-#'
-#' @param xc Vector of x-coordinates for the grid cells.
-#'
-#' @param yc Vector of y-coordinates for the grid cells.
-#'
-#' @param dx The x-axis grid cell dimension.
-#'
-#' @param dy The y-axis grid cell dimension.
-#'
-#' @return Data frame containing the following variables: cellID, featureLength,
-#'   and featureID.
+#' @return Data frame containing the following variables: \code{cellID}, \code{featureArea},
+#'   and \code{featureID}.
 #'
 #' @author Tom Kincaid \email{Kincaid.Tom@epa.gov}
 #'
 #' @keywords survey
 #'
 #' @export
-################################################################################
+###############################################################################
 
 insideLinearGridCell <- function(sfobject, rdx.u, xc, yc, dx, dy) {
 

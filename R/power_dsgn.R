@@ -1,5 +1,5 @@
-################################################################################
-# Function:   power.dsgn
+###############################################################################
+# Function:   power.dsgn (exported)
 # Programmer: Tony Olsen
 # Date: March 14, 2019
 #'
@@ -27,47 +27,47 @@
 #' @param index_var  Vector of variance component estimates for index (residual)
 #'   error for the indicators
 #'
-#' @param unit_rho  Correlation across units. Default is 1
+#' @param unit_rho  Correlation across units. Default is \code{1}.
 #'
-#' @param period_rho  Correlation across periods. Default is 0
+#' @param period_rho  Correlation across periods. Default is \code{0}.
 #'
 #' @param paneldsgn  A list of panel designs each as a matrix.  Each element of
-#'   the list is a matrix with dimnames (dimensions: number of panels (rows) by
+#'   the list is a matrix with \code{dimnames} (dimensions: number of panels (rows) by
 #'   number of periods (columns)) containing the number of units visited for 
 #'   each combination of panel and period.  Dimnames for columns must be
 #'   convertable to an integer (e.g., 2016).  All designs must span the same
 #'   number of periods.  Typically, the panel designs are the output of the
-#'   function revisit_dsgn.
+#'   function \code{revisit_dsgn}.
 #'
-#' @param nrepeats  Either NULL or a list of matrices the same length as
-#'   paneldsgn specifying the number of revisits made to units in a panel in the
-#'   same period for each design.  Specifying NULL indicates that number of
+#' @param nrepeats  Either \code{NULL} or a list of matrices the same length as
+#'   \code{paneldsgn} specifying the number of revisits made to units in a panel in the
+#'   same period for each design.  Specifying \code{NULL} indicates that number of
 #'   revisits to units is the same for all panels and for all periods and for
-#'   all panel designs. The default is NULL, a single visit. Names must match
-#'   list names in paneldsgn.
+#'   all panel designs. The default is \code{NULL}, a single visit. Names must match
+#'   list names in \code{paneldsgn}.
 #'
-#' @param trend_type  Trend type is either "mean" where trend is applied as
-#'   percent trend in the indicator mean or "percent" where the trend is applied
+#' @param trend_type  Trend type is either \code{"mean"} where trend is applied as
+#'   percent trend in the indicator mean or \code{"percent"} where the trend is applied
 #'   as percent trend in the proportion (percent) of the distribution that is
-#'   below or above a fixed value. Default is trend_type="mean"
+#'   below or above a fixed value. Default is \code{trend_type="mean"}
 #'
-#' @param ind_pct  When trend_type is equal to "percent", a vector of the
+#' @param ind_pct  When \code{trend_type} is equal to \code{"percent"}, a vector of the
 #'   values of the indicator fixed value that defines the percent.  Default is
 #'   NULL
 #'
-#' @param ind_tail  When trend_type is equal to "percent", a character vector
-#'   with values of either "lower" or "upper" for each indicator.  "lower"
+#' @param ind_tail  When trend_type is equal to \code{"percent"}, a character vector
+#'   with values of either \code{"lower"} or \code{"upper"} for each indicator.  \code{"lower"}
 #'   states that the percent is associated with the lower tail of the
-#'   distribution and "upper" states that the percent is associated with the
-#'   upper tail of the distribution. Default is NULL.
+#'   distribution and \code{"upper"} states that the percent is associated with the
+#'   upper tail of the distribution. Default is \code{NULL}.
 #'
 #' @param trend  Single value or vector of assumed percent change from
 #'   initial value in the indicator for each period. Assumes the trend is
 #'   expressed as percent per period. Note that the trend may be either positive
-#'   or negative. The default is trend=2.
+#'   or negative. The default is \code{2}.
 #'
 #' @param alpha  Single value or vector of significance level for linear
-#'   trend test, alpha, Type I error, level.  The defualt is 0.05.
+#'   trend test, alpha, Type I error, level.  The defualt is \code{0.05}.
 #'
 #' @details Calculates the power for detecting a change in the mean for
 #'   different panel design structures. The model incorporates unit, period,
@@ -98,7 +98,7 @@
 #'   trend names, alpha_names), an array of indicator mean values for each trend
 #'   and the function call.
 #'
-#' @author Tony Olsen \email{Olsen.Tony@epa.gov}
+#' @author Tony Olsen \email{Olsen.Tony@@epa.gov}
 #'
 #' @seealso 
 #'   \describe{
@@ -126,7 +126,7 @@
 #'             nrepeats = NULL, trend_type = "mean", trend= 1.0, alpha=0.05)
 #'
 #' @export
-################################################################################
+###############################################################################
 
 power.dsgn <- function(ind_names, ind_values, unit_var, period_var,
    unitperiod_var, index_var, unit_rho = 1, period_rho = 0, paneldsgn,

@@ -8,34 +8,34 @@ panel_summary(paneldsgn, visitdsgn = NULL)
 }
 \arguments{
 \item{paneldsgn}{Two-dimensional array with dimnames specifying revisit
-panel design. Typically, array is output from revisit_dsgn, revisit_bibd or
-revisit_rand functions.}
+panel design. Typically, array is output from \code{revisit_dsgn}, \code{revisit_bibd} or
+\code{revisit_rand} functions.}
 
-\item{visitdsgn}{Two-dimensional array with same dimensions as paneldsgn
+\item{visitdsgn}{Two-dimensional array with same dimensions as \code{paneldsgn}
 specifying the number of times a sample unit is sampled at each time
-period. Default is visitdsgn=NULL, where default assumes that a sample unit
+period. Default is \code{visitdsgn=NULL}, where default assumes that a sample unit
 will be sampled only once at each time period.}
 }
 \value{
 List of six elements.
-  \itemize{ \item n_panel - number of panels in revisit design
+  \itemize{ \item \code{n_panel} - number of panels in revisit design
 
-  \item n_period - number of time periods in revisit design
+  \item \code{n_period} - number of time periods in revisit design
 
-  \item n_total - total number of sample events across all panels and all
+  \item \code{n_total} - total number of sample events across all panels and all
   time periods, accounting for visitdsgn, that will be sampled in the revisit
   design
 
-  \item n_periodunit - Vector of the number of time periods a unit will be
+  \item \code{n_periodunit} - Vector of the number of time periods a unit will be
   sampled in each panel
 
-  \item n_unitpnl - Vector of the number of sample units, accounting for
+  \item \code{n_unitpnl} - Vector of the number of sample units, accounting for
   visitdsgn, that will be sampled in each panel
 
-  \item n_unitperiod - Vector of the number of sample units, accounting for
+  \item \code{n_unitperiod} - Vector of the number of sample units, accounting for
   visitdsgn, that will be sampled during each time period
 
-  \item ncum_unit - Vector of the cumulative number of unique units that will
+  \item \code{ncum_unit} - Vector of the cumulative number of unique units that will
   be sampled in time periods up to and including the current time period.
   }
 }

@@ -19,31 +19,31 @@ grtspts_mindis(
 \arguments{
 \item{mindis}{Minimum distance required between sites in sample.}
 
-\item{sframe}{The sf object containing variables: id and ip.}
+\item{sframe}{The \code{sf} object containing variables: \code{id} and \code{ip}.}
 
 \item{samplesize}{The sample size required for the stratum.}
 
 \item{stratum}{Character string that identifies stratum membership for each element 
-in the frame. Cannot be NULL.}
+in the frame. Cannot be \code{NULL}.}
 
 \item{maxtry}{Number of maximum attempts to ensure minimum distance between sites.
-Default is 10.}
+Default is \code{10}.}
 
-\item{legacy_option}{Logical variable where if equal to TRUE, legacy sites are
+\item{legacy_option}{Logical variable where if equal to \code{TRUE}, legacy sites are
 to be incorporated into survey design.}
 
 \item{legacy_var}{Character value for name of column for legacy site variable.
-Default is NULL.}
+Default is \code{NULL}.}
 
-\item{warn_ind}{A logical value where TRUE indicates a warning message.
+\item{warn_ind}{A logical value where \code{TRUE} indicates a warning message.
 Used for internal collection of messages only.}
 
 \item{warn_df}{A data frame containing messages warning of potential issues.
 Used for internal collection of messages only.}
 }
 \value{
-sites A list of sf object of sample points, an sf object of over sample
-  points if any, warning indicator and warning messages data.frame
+sites A list of \code{sf} object of sample points, an \code{sf} object of over sample
+  points if any, warning indicator and warning messages \code{data.frame}.
 }
 \description{
 Select a grts sample with minimum distance between sites.

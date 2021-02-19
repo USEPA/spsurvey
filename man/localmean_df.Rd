@@ -9,8 +9,8 @@ localmean_df(weight_1st)
 }
 \arguments{
 \item{weight_1st}{List from the local mean weight function containing two
-elements: a matrix named ij composed of the index values of neighboring
-points and a vector named gwt composed of weights.}
+elements: a matrix named \code{ij} composed of the index values of neighboring
+points and a vector named \code{gwt} composed of weights.}
 }
 \value{
 The degrees of freedom of the local mean variance-covariance

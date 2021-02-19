@@ -1,5 +1,5 @@
-################################################################################
-# Function: input_check
+###############################################################################
+# Function: input_check (exported)
 # Programmer: Tom Kincaid
 # Date: October 9, 2020
 # Revised: November 5, 2020 to correct an error when checking size-weights for
@@ -16,25 +16,26 @@
 #'   variables, and subpopulation (domain) variables.
 #'
 #' @param design_names Vector composed of character values that identify the
-#'   names of the following survey design variables in the dframe argument:
-#'   siteID, weight, xcoord, ycoord, stratumID, clusterID, weight1, xcoord1,
-#'   ycoord1, sweight, sweight1, fpcsize, Ncluster, stage1size.
+#'   names of the following survey design variables in the \code{dframe} data frame:
+#'   \code{siteID}, \code{weight}, \code{xcoord}, \code{ycoord}, \code{stratumID},
+#'   \code{clusterID}, \code{weight1}, \code{xcoord1},
+#'   \code{ycoord1}, \code{sweight}, \code{sweight1}, \code{fpcsize}, \code{Ncluster}, \code{stage1size}.
 #'
 #' @param vars_cat Vector composed of character values that identify the
-#'   names of categorical response variables in the dframe data frame.
+#'   names of categorical response variables in the \code{dframe} data frame.
 #'
 #' @param vars_cont Vector composed of character values that identify the
-#'   names of continuous response variables in the dframe data frame.
+#'   names of continuous response variables in the \code{dframe} data frame.
 #'
 #' @param vars_stressor Vector composed of character values that identify the
-#'   names of stressor variables in the dframe argument.
+#'   names of stressor variables in the \code{dframe} data frame.
 #'
 #' @param vars_nondetect Vector composed of character values that identify the
-#'   names of logical variables in the dframe data frame specifying the presence
+#'   names of logical variables in the \code{dframe} data frame specifying the presence
 #'   of not detected (nondetect) values for response variables.
 #'
 #' @param subpops Vector composed of character values that identify the
-#'   names of subpopulation variables in the dframe argument.
+#'   names of subpopulation variables in the \code{dframe} data frame.
 #'
 #' @param sizeweight Logical value that indicates whether size weights should be
 #'   used during estimation.
@@ -45,14 +46,14 @@
 #' @param popsize List providing known size of the resource.
 #'
 #' @param vartype Character value providing choice of the variance estimator,
-#'   where "Local" = the local mean estimator, "SRS" = the simple random
-#'   sampling estimator, "HT" = the Horvitz-Thompson estimator, and "YG" = the
+#'   where \code{"Local"} = the local mean estimator, \code{"SRS"} = the simple random
+#'   sampling estimator, \code{"HT"} = the Horvitz-Thompson estimator, and \code{"YG"} = the
 #'   Yates-Grundy estimator.
 #'
 #' @param jointprob Character value providing choice of joint inclusion
 #'   probability approximation for use with Horvitz-Thompson and Yates-Grundy
-#'   variance estimators, where "overton" indicates the Overton approximation,
-#'   "hr" indicates the Hartley_Rao approximation, and "brewer" equals the
+#'   variance estimators, where \code{"overton"} indicates the Overton approximation,
+#'   \code{"hr"} indicates the Hartley_Rao approximation, and \code{"brewer"} equals the
 #'   Brewer approximation.
 #'
 #' @param conf Numeric value providing the confidence level.
@@ -72,8 +73,8 @@
 #'
 #' @param error_vec Vector for storing error messages.
 #'
-#' @return A list consisting of dframe, vars_cat, vars_cont, vars_stressor,
-#'   subpops, popsize, vartype, jointprob, error_ind, and error_vec.
+#' @return A list consisting of \code{dframe}, \code{vars_cat}, \code{vars_cont}, \code{vars_stressor},
+#'   \code{subpops}, \code{popsize}, \code{vartype}, \code{jointprob}, \code{error_ind}, and \code{error_vec}.
 #'
 #' @section Other Functions Required:
 #'   \describe{
@@ -84,7 +85,7 @@
 #' @author Tom Kincaid \email{Kincaid.Tom@epa.gov}
 #'
 #' @export
-################################################################################
+###############################################################################
 
 input_check <- function(dframe, design_names, vars_cat, vars_cont,
   vars_stressor, vars_nondetect, subpops, sizeweight, popcorrect, popsize,

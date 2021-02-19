@@ -9,11 +9,11 @@ vecprint(x, n_char = 78)
 \arguments{
 \item{x}{Character vector.}
 
-\item{n_char}{The maximum number of characters per line.  The default is 78.}
+\item{n_char}{The maximum number of characters per line.  The default is \code{78}.}
 }
 \value{
 Character string that is suitable for printing by the functions:
-  stop, warning, or cat.
+  \code{stop}, \code{warning}, or \code{cat}.
 }
 \description{
 This function takes an input vector and outputs a character string with line

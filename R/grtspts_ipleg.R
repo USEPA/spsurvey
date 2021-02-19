@@ -1,6 +1,5 @@
-
-###################################################################################
-# Function: grtspts_ipleg
+###############################################################################
+# Function: grtspts_ipleg (exported)
 # Programmers: Tony Olsen
 # Date: January 22, 2021
 #'
@@ -11,14 +10,14 @@
 #'   sample frame must be included in the sample as legacy sites
 #'
 #' @param legacy A logical vector that identifies whether an element of the sample
-#'   frame is a legacy site (TRUE) or not (FALSE) that must be included in the sample.
+#'   frame is a legacy site (\code{TRUE}) or not (\code{FALSE}) that must be included in the sample.
 #'
 #' @return A numeric vector of inclusion probabilities with all values being greater
-#'   than 0 and less than or equal 1. Values equal to 1 will be selected with certainty.
-#'   Values equal to 0 will not be selected. Legacy sites will have an inclusion
-#'   probability equal to 1.
+#'   than \code{0} and less than or equal \code{1}. Values equal to \code{1} will be selected with certainty.
+#'   Values equal to \code{0} will not be selected. Legacy sites will have an inclusion
+#'   probability equal to \code{1}.
 #'
-#' @author Tony Olsen email{olsen.tony@epa.gov}
+#' @author Tony Olsen \email{olsen.tony@@epa.gov}
 #'
 #' @keywords survey, inclusion probability
 #'
@@ -29,7 +28,7 @@
 #' tmp
 #'
 #' @export
-###################################################################################
+###############################################################################
 grtspts_ipleg <- function(ip, legacy) {
   # determine sample size
   n <- sum(ip)

@@ -19,6 +19,6 @@ Place the sites selected by the UPpivotal method in reverse hierarchical order
 
 }
 \author{
-Tony Olsen email{olsen.tony@epa.gov}
+Tony Olsen \email{olsen.tony@epa.gov}
 }
 \keyword{survey}

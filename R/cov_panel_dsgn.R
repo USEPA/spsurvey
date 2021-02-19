@@ -1,5 +1,5 @@
-################################################################################
-# Function: cov_panel_dsgn
+###############################################################################
+# Function: cov_panel_dsgn (exported)
 # Programmers: Tom Kincaid
 #              Tony Olsen
 # Date: March 14, 2019
@@ -18,38 +18,38 @@
 #'   combination of panel and period. Default is matrix(50, 1, 10) which is a
 #'   single panel of 50 units visited 10 times, typical time is a period.
 #'
-#' @param nrepeats   Either NULL or a list of matrices the same length as
+#' @param nrepeats   Either \code{NULL} or a list of matrices the same length as
 #'   paneldsgn specifying the number of revisits made to units in a panel in the
-#'   same period for each design.  Specifying NULL indicates that number of
+#'   same period for each design.  Specifying \code{NULL} indicates that number of
 #'   revisits to units is the same for all panels and for all periods and for
-#'   all panel designs. The default is NULL, a single visit. Names must match
-#'   list names in paneldsgn.
+#'   all panel designs. The default is \code{NULL}, a single visit. Names must match
+#'   list names in \code{paneldsgn}.
 #'
-#' @param unit_var   The variance component estimate for unit (the default is
-#'   Null)
+#' @param unit_var   The variance component estimate for unit. The default is
+#'   \code{NULL}.
 #'
-#' @param period_var   The variance component estimate for period (the default
-#'   is Null)
-#'
+#' @param period_var   The variance component estimate for period The default is
+#'   \code{NULL}.
+#'   
 #' @param unitperiod_var The variance component estimate for unit by period
-#'   interaction (the default is Null)
+#'   interaction. The default is \code{NULL}.
 #'
-#' @param index_var  The variance component estimate for index error (the
-#'   def0ult is Null)
+#' @param index_var  The variance component estimate for index error. The
+#'   default is \code{NULL}.
 #'
-#' @param unit_rho   unit correlation across periods (the default is 1)
+#' @param unit_rho   Unit correlation across periods. The default is \code{1}.
 #'
-#' @param period_rho   period autocorrelation (the default is 0)
+#' @param period_rho   Period autocorrelation. The default is \code{0}.
 #'
 #' @details Covariance structure accounts for the panel design and the four
 #'   variance components: unit variation, period variation, unit by period
 #'   interaction variation and index (or residual) variation. Uses the model
 #'   structure defined by Urquhart.
 #'
-#'   If nrepeats is NULL, then no units sampled more than once in a specific
+#'   If \code{nrepeats} is \code{NULL}, then no units sampled more than once in a specific
 #'   panel, period combination) aned then unit by period and index variances are
 #'   added together or user may have only estimated unit, period and unit by
-#'   period variance components so that index component is zero It calculates
+#'   period variance components so that index component is zero. It calculates
 #'   the covariance matrix for the simple linear regression. The standard error
 #'   for a linear trend coeficient is the square root of the variance.
 #'
@@ -70,9 +70,9 @@
 #'   A. B. Cooper, and D. S. Licht (eds.). Cambridge University Press, New York,
 #'   pp. 151-173.
 #
-#' @return A list containing the covariance matrix (cov) for the panel design,
-#'   the input panel design (paneldsgn), the input nrepeats design
-#'   (nrepeats.dsgn) and the function call.
+#' @return A list containing the covariance matrix (\code{cov}) for the panel design,
+#'   the input panel design (\code{paneldsgn}), the input nrepeats design
+#'   (\code{nrepeats.dsgn}) and the function call.
 #'
 #' @author Tony Olsen \email{Olsen.Tony@epa.gov}
 #'
@@ -94,7 +94,7 @@
 #' @keywords survey
 #'
 #' @export
-################################################################################
+###############################################################################
 
 cov_panel_dsgn <- function(paneldsgn = matrix(50,1,10), nrepeats = 1,
    unit_var = NULL, period_var = NULL, unitperiod_var = NULL, index_var = NULL,

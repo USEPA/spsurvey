@@ -1,5 +1,5 @@
-###################################################################################
-# Function: grtspts_ip
+###############################################################################
+# Function: grtspts_ip (exported)
 # Programmers: Tony Olsen, Tom Kincaid
 # Date: January 22, 2021
 #'
@@ -7,22 +7,22 @@
 #' on categories or proportional to a variable. The inclusion probabilities are
 #' calculated assuming a single stratum.
 #'
-#' @param type Character string with values of equal, unequal or proportional. Default
-#'   is equal.
+#' @param type Character string with values of \code{"equal"}, \code{"unequal"} or \code{"proportional"}. Default
+#'   is \code{"equal"}.
 #'
-#' @param n_base Sample size for the stratum. If type is equal or proportional, then n_base
-#'   is numeric value for the total sample size for the stratum. If type is unequal,
-#'   then n_base is a named vector where names are the unequal probability categories with the
-#'   expected sample size for each category. Names in n_base must be a subset of the values in caty.
+#' @param n_base Sample size for the stratum. If type is \code{"equal"} or \code{"proportional"}, then \code{n_base}
+#'   is numeric value for the total sample size for the stratum. If type is \code{"unequal"},
+#'   then \code{n_base} is a named vector where names are the unequal probability categories with the
+#'   expected sample size for each category. Names in \code{n_base} must be a subset of the values in \code{caty}.
 #'   The sum of the category sample sizes is the total sample size for the stratum.
 #'
 #' @param Nstratum Number of elements in the stratum. Each element will be assigned an
-#'   inclusion probabibility. Only required when type is "equal". Default is NULL
+#'   inclusion probabibility. Only required when type is \code{"equal"}. Default is \code{NULL}.
 #'
-#' @param caty If type is unequal, a character variable that identifies the category
+#' @param caty If type is \code{"unequal"}, a character variable that identifies the category
 #'   for each element of the sample frame that may be used for an unequal probability
-#'   design. All categories in n_base must be present in pt_caty but additional categories
-#'   are allowed but will not be included in the survey design for the statum. Default is NULL.
+#'   design. All categories in \code{n_base} must be present in \code{pt_caty} but additional categories
+#'   are allowed but will not be included in the survey design for the statum. Default is \code{NULL}.
 #'
 #' @param aux If type is proportional, a numeric vector that will be used to select
 #'   points proportional to the variable. Default is NULL.
@@ -37,7 +37,7 @@
 #'   than 0 and less than or equal 1. Values equal to 1 will be selected with certainty.
 #'   Values equal to 0 will not be selected.
 #'
-#' @author Tony Olsen email{olsen.tony@epa.gov}
+#' @author Tony Olsen \email{olsen.tony@@epa.gov}
 #'
 #' @keywords survey, inclusion probability
 #'
@@ -52,7 +52,7 @@
 #' tmp
 #'
 #' @export
-#################################################################################
+###############################################################################
 
 grtspts_ip <- function(type = "equal", n_base, Nstratum = NULL, caty = NULL,
                        aux = NULL, warn_ind = NULL, warn_df = NULL) {

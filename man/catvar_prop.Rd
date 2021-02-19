@@ -47,16 +47,16 @@ y-coordinate for a two-stage sample.}
 \item{prop}{Vector of the proportion estimates.}
 
 \item{prop_names}{Vector of the category names for the response variable plus
-"Total".}
+\code{"Total"}.}
 
 \item{stratum_ind}{Logical value that indicates whether the sample is
-stratified, where TRUE = a stratified sample and FALSE = not a stratified
+stratified, where \code{TRUE} = a stratified sample and \code{FALSE} = not a stratified
 sample.}
 
 \item{stratum_level}{The stratum level.}
 
 \item{cluster_ind}{Logical value that indicates whether the sample is a
-two-stage sample, where TRUE = a two-stage sample and FALSE = not a
+two-stage sample, where \code{TRUE} = a two-stage sample and \code{FALSE} = not a
 two-stage sample.}
 
 \item{clusterID}{Vector of the stage one sampling unit (primary sampling unit
@@ -69,12 +69,12 @@ or cluster) code for each site.}
 \item{y1}{Vector of the stage one y-coordinate for location for each site.}
 
 \item{pcfactor_ind}{Logical value that indicates whether the finite
-population correction factor is used during variance estimation, where TRUE
-= use the population correction factor and FALSE = do not use the factor.
+population correction factor is used during variance estimation, where \code{TRUE}
+= use the population correction factor and \code{FALSE} = do not use the factor.
 To employ the correction factor for a single-stage sample, a value must be
-supplied for argument fpcsize.  To employ the correction factor for a
-two-stage sample, values must be supplied for arguments Ncluster and
-stage1size.}
+supplied for argument \code{fpcsize}.  To employ the correction factor for a
+two-stage sample, values must be supplied for arguments \code{Ncluster} and
+\code{stage1size}.}
 
 \item{fpcsize}{Size of the resource, which is required for calculation of the
 finite population correction factor for a single-stage sample.}
@@ -87,11 +87,11 @@ factor for a two-stage sample.}
 two-stage sample, which is required for calculation of the finite
 population correction factor for a two-stage sample.}
 
-\item{vartype}{The choice of variance estimator, where "Local" = local mean
-estimator and "SRS" = SRS estimator.}
+\item{vartype}{The choice of variance estimator, where \code{"Local"} = local mean
+estimator and \code{"SRS"} = SRS estimator.}
 
 \item{warn_ind}{Logical value that indicates whether warning messages were
-generated, where TRUE = warning messages were generated and FALSE = warning
+generated, where \code{TRUE} = warning messages were generated and \code{FALSE} = warning
 messages were not generated.}
 
 \item{warn_df}{Data frame for storing warning messages.}

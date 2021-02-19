@@ -1,5 +1,5 @@
-################################################################################
-# Function: attrisk_var
+###############################################################################
+# Function: attrisk_var (exported)
 # Programmer: Tom Kincaid
 # Date: June 24, 2020
 #
@@ -18,16 +18,18 @@
 #' @param stressor Vector of the categorical stressor variable.
 #'
 #' @param response_levels Vector of category values (levels) for the
-#'   categorical response variable.  If response_levels equals NULL, then values
-#'   "Poor" and "Good" are used for the first level and second level of the
-#'   response variable, respectively.  The default is NULL.
+#'   categorical response variable.  If \code{response_levels} equals
+#'   \code{NULL}, then values \code{"Poor"} and \code{"Good"} are used for the first level
+#'   and second level of the response variable, respectively.  The default is
+#'   \code{NULL}.
 #'
 #' @param stressor_levels Vector of category values (levels) for the
-#'   categorical stressor variable.  If stressor_levels equals NULL, then values
-#'   "Poor" and "Good" are used for the first level and second level of the
-#'   stressor variable, respectively.  The default is NULL.
+#'   categorical stressor variable.  If \code{stressor_levels} equals
+#'   \code{NULL}, then values \code{"Poor"} and \code{"Good"} are used for the first level
+#'   and second level of the stressor variable, respectively.  The default is
+#'   \code{NULL}.
 #'
-#' @param wgt Vector of the final adjusted weight (inverse of the sample
+#' @param wgt Vector of the final adjusted weight (reciprocal of the sample
 #'   inclusion probability) for each site, which is either the weight for a
 #'   single-stage sample or the stage two weight for a two-stage sample.
 #'
@@ -40,14 +42,14 @@
 #'   for a two-stage sample.
 #'
 #' @param stratum_ind Logical value that indicates whether the sample is
-#'   stratified, where TRUE = a stratified sample and FALSE = not a stratified
-#'   sample.
+#'   stratified, where \code{TRUE} = a stratified sample and \code{FALSE} = 
+#'   not a stratified  sample.
 #'
 #' @param stratum_level Vector of the stratum levels for the sites.
 #'
 #' @param cluster_ind Logical value that indicates whether the sample is a
-#'   two- stage sample, where TRUE = a two-stage sample and FALSE = not a
-#'   two-stage sample.
+#'   two-stage sample, where \code{TRUE} = a two-stage sample and \code{FALSE}
+#'   = not a two-stage sample.
 #'
 #' @param cluster Vector of the stage one sampling unit (primary sampling unit
 #'   or cluster) code for each site.
@@ -59,15 +61,15 @@
 #' @param y1 Vector of the stage one y-coordinate for location for each site.
 #'
 #' @param pcfactor_ind Logical value that indicates whether the finite
-#'   population correction factor is used during variance estimation, where TRUE
-#'   = use the population correction factor and FALSE = do not use the factor.
-#'   To employ the correction factor for a single-stage sample, a value must be
-#'   supplied for argument fpcsize.  To employ the correction factor for a
-#'   two-stage sample, values must be supplied for arguments Ncluster and
-#'   stage1size.
+#'   population correction factor is used during variance estimation, where
+#'   \code{TRUE} = use the population correction factor and \code{FALSE} = do
+#'   not use the factor. To employ the correction factor for a single-stage
+#'   sample, a value must be supplied for argument \code{fpcsize}.  To employ the
+#'   correction factor for a two-stage sample, values must be supplied for
+#'   arguments \code{Ncluster} and \code{stage1size}.
 #'
 #' @param fpcsize Size of the resource, which is required for calculation of the
-#'   finite population correction factor for a single-stage sample.
+#'   finite population correction factor for a single-stage sample. 
 #'
 #' @param Ncluster The number of stage one sampling units in the resource,
 #'   which is required for calculation of the finite population correction
@@ -77,12 +79,12 @@
 #'   two-stage sample, which is required for calculation of the finite
 #'   population correction factor for a two-stage sample.
 #'
-#' @param vartype The choice of variance estimator, where "Local" = local mean
-#'   estimator and "SRS" = SRS estimator.
+#' @param vartype The choice of variance estimator, where \code{"Local"} = local mean
+#'   estimator and \code{"SRS"} = SRS estimator.
 #'
 #' @param  warn_ind  Logical value that indicates whether warning messages were
-#'   generated, where TRUE = warning messages were generated and FALSE = warning
-#'   messages were not generated.
+#'   generated, where \code{TRUE} = warning messages were generated and
+#'   \code{FALSE} = warning messages were not generated.
 #'
 #' @param warn_df A data frame for storing warning messages.
 #'
@@ -110,8 +112,6 @@
 #' @keywords survey
 #'
 #' @export
-################################################################################
-
 attrisk_var <- function(response, stressor, response_levels, stressor_levels,
   wgt, x, y, stratum_ind, stratum_level, cluster_ind, cluster, wgt1, x1, y1,
   pcfactor_ind, fpcsize, Ncluster, stage1size, vartype, warn_ind,

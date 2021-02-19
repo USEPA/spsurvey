@@ -16,15 +16,15 @@ localmean_weight2(x, y, prb, nbh)
 \item{nbh}{Number of neighboring points to use in the calculations.}
 }
 \value{
-Either an object of class "try-error" when the ginv function
-  terminates with an error or a generalized inverse matrix when the ginv
+Either an object of class \code{"try-error"} when the \code{ginv} function
+  terminates with an error or a generalized inverse matrix when the \code{ginv}
   function terminates normally.
 }
 \description{
 This function calculates the initial section of the localmean_weight function
 and serves to allow recovery from an error in the singular value
-decomposition function (La.svd) that is called by the generalized inverse
-function (ginv) in the MASS package.
+decomposition function \code{(La.svd)} that is called by the generalized inverse
+function \code{(ginv)} in the MASS package.
 }
 \author{
 Don Stevens  Tom Kincaid \email{Kincaid.Tom@epa.gov}

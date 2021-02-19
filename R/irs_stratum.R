@@ -1,5 +1,5 @@
-###################################################################################
-# Function: irs_stratum
+###############################################################################
+# Function: irs_stratum (exported)
 # Programmers: Tony Olsen
 # Date: January 22, 2021
 #'
@@ -40,10 +40,10 @@
 #' @param warn_df A data frame containing messages warning of potential issues.
 #'   Used for internal collection of messages only.
 #'   
-#' @return rslts A list consisting of an sf object for base sites, an sf object of 
-#'   n_over sites (NULL if none) an sf object of n_near sites (NULL if none) where
-#'   the sf objects containing the sites selected that meet the survey design requirements 
-#'   and warn_ind - logical value for warning indicator and warn_df - a data.frame
+#' @return rslts A list consisting of an \code{sf} object for base sites, an \code{sf} object of 
+#'   \code{n_over} sites (\code{NULL} if none) an \code{sf} object of \code{n_near} sites (\code{NULL} if none) where
+#'   the \code{sf} objects containing the sites selected that meet the survey design requirements 
+#'   and \code{warn_ind} - logical value for warning indicator and \code{warn_df} - a data frame
 #'   for warning messages.
 #'
 #' @section Other functions required:
@@ -64,7 +64,7 @@
 #' }
 #'
 #' @export
-#################################################################################
+###############################################################################
 
 irs_stratum <- function(stratum, dsgn, sframe, sf_type, pt_density = NULL, 
                          legacy_option = NULL, legacy_sites = NULL, maxtry = 10,
