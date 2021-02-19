@@ -1,7 +1,7 @@
 Package: spsurvey
-Title: Spatial Survey Design and Analysis
-Version: 4.1.2
-Date: 2020-3-31
+Title: Spatial Probability Survey Design and Analysis
+Version: 5.0.0
+Date: 2021-3-31
 Authors@R: c(
     person("Michael", "Dumelle", role=c("aut","cre"),
            email = "Dumelle.Michael@epa.gov"),
@@ -14,7 +14,7 @@ Authors@R: c(
     person("Don", "Stevens",  role="ctb"),
     person("Denis", "White",  role="ctb")
     )
-Maintainer: Marc Weber <Weber.Marc@epa.gov>
+Maintainer: Michael Dumelle <Dumelle.Michael@epa.gov>
 Depends:
     R (>= 3.3.0),
     sf,
@@ -48,11 +48,9 @@ Imports:
     deldir,
     graphics,
     grDevices,
-    Hmisc,
     MASS,
-    rgeos,
-    sp,
-    stats
+    stats,
+    units
 VignetteBuilder: knitr
 Encoding: UTF-8
 LazyData: true
