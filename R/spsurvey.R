@@ -38,6 +38,7 @@
 #' @importFrom stats addmargins chisq.test confint dist dnorm ftable model.frame
 #'             model.matrix na.omit na.pass optimize pchisq pf pnorm qnorm rnorm runif
 #'             terms update var weights
+#' @importFrom units set_units
 #'             
 #'
 #'
