@@ -45,7 +45,7 @@
 #' Defaults to \code{TRUE}. If \code{TRUE}, the bounding box will be the largest
 #' possible given \code{x} and \code{y}.
 #'
-#' @showlegacy Should legacy sites be plotted separately from \code{sites_base}?
+#' @param showlegacy Should legacy sites be plotted separately from \code{sites_base}?
 #' Defaults to \code{FALSE}.
 #'
 #' @param ... Additional arguments to pass to \code{plot.sf()}.

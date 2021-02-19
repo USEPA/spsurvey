@@ -2,7 +2,12 @@
 # Function: replace_near.R (exported)
 # Programmer:  Michael Dumelle and Tony Olsen
 # Date: December 23, 2020
-#
+# 
+#' Replacement sites generated via nearest neighbors
+#' 
+#' Returns 1 to 10 nearest neighbor replacement sites for each site in the 
+#'   base sample
+#' 
 #' @param over.near number of nearby sites to be used as potential replacement(s)
 #'    if a site cannot be sampled for any reason. Must be integer from \code{1} to \code{10}.
 #'    Default is \code{NULL}.

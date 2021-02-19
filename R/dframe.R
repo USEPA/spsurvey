@@ -13,7 +13,7 @@
 #' @return An \code{dframe} object
 #'
 #' @export
-#'
+#' 
 #' @author Michael Dumelle
 #'
 #' @examples
@@ -29,7 +29,7 @@ dframe <- function(object) {
     dframe <- structure(object, class = c("dframe", class(object)))
     return(dframe)
   } else if (!is.null(attr(class(object), "package")) && "sp" %in% attr(class(object), "package")) {
-    dframe <- as(object, "sf")
+    dframe <- st_as_sf(object)
     dframe <- structure(dframe, class = c("dframe", class(dframe)))
     return(dframe)
   } else if ("data.frame" %in% class(object)) {

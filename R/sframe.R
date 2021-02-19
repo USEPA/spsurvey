@@ -11,6 +11,7 @@
 #' @param object An \code{sp} or \code{sf} object
 #'
 #' @return An \code{sframe} object
+#' 
 #'
 #' @export
 #'
@@ -28,7 +29,7 @@ sframe <- function(object) {
     sframe <- structure(object, class = c("sframe", class(object)))
     return(sframe)
   } else if (!is.null(attr(class(object), "package")) && "sp" %in% attr(class(object), "package")) {
-    sframe <- as(object, "sf")
+    sframe <- st_as_sf(object)
     sframe <- structure(sframe, class = c("sframe", class(sframe)))
     return(sframe)
   } else {
