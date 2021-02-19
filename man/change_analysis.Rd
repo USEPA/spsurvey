@@ -256,16 +256,18 @@ dframe <- data.frame(
   wgt = runif(200, 10, 100),
   xcoord = runif(200),
   ycoord = runif(200),
-  stratum = rep(rep(c("Stratum 1", "Stratum 2"), c(2,2)), 50),
-  CatVar = rep(c("North","South"), 100),
+  stratum = rep(rep(c("Stratum 1", "Stratum 2"), c(2, 2)), 50),
+  CatVar = rep(c("North", "South"), 100),
   All_Sites = rep("All Sites", 200),
-  Resource_Class = sample(c("Good","Fair","Poor"), 200, replace=TRUE))
+  Resource_Class = sample(c("Good", "Fair", "Poor"), 200, replace = TRUE)
+)
 myvars <- c("CatVar")
 mysubpops <- c("All_Sites", "Resource_Class")
-change_analysis(dframe, vars_cat = myvars, subpops = mysubpops,
+change_analysis(dframe,
+  vars_cat = myvars, subpops = mysubpops,
   surveyID = "surveyID", siteID = "siteID", weight = "wgt",
-  xcoord = "xcoord", ycoord = "ycoord", stratumID = "stratum")
-
+  xcoord = "xcoord", ycoord = "ycoord", stratumID = "stratum"
+)
 }
 \seealso{
 \code{\link{calibrate}}

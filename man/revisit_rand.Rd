@@ -61,13 +61,18 @@ The revisit design for a survey is created by random selection of
   occasions that will be visited by a panel is random.
 }
 \examples{
-revisit_rand(n_period = 20, n_pnl = 10, rand_control = "none", n_visit = 50,
-             nsamp = 20)
-revisit_rand(n_period = 20, n_pnl = 10, rand_control = "panel", n_visit = 5,
-             nsamp = 10)
-revisit_rand(n_period = 20, n_pnl = 10, rand_control = "period",
-              n_visit = 5, nsamp = 10)
-
+revisit_rand(
+  n_period = 20, n_pnl = 10, rand_control = "none", n_visit = 50,
+  nsamp = 20
+)
+revisit_rand(
+  n_period = 20, n_pnl = 10, rand_control = "panel", n_visit = 5,
+  nsamp = 10
+)
+revisit_rand(
+  n_period = 20, n_pnl = 10, rand_control = "period",
+  n_visit = 5, nsamp = 10
+)
 }
 \seealso{
 \describe{

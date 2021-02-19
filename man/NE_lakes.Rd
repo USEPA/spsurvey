@@ -19,8 +19,8 @@ A data frame with 6121 rows and 5 variables:
 NE_Lakes
 }
 \description{
-A simple features (sf) point data.frame of 6121 lakes that was created 
-from a shapefile of lakes in the southern New England region of the U.S. 
+A simple features (sf) point data.frame of 6121 lakes that was created
+from a shapefile of lakes in the southern New England region of the U.S.
 containing the area category in hectares and coordinates. The variables are as follows:
 }
 \keyword{datasets}

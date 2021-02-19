@@ -8,7 +8,7 @@ adjwgt(sites, wgt, wtcat, framesize)
 }
 \arguments{
 \item{sites}{Vector indicating site use; \code{TRUE} indicates the site
-should be inlcuded in the weight adjustment and \code{FALSE} indicates 
+should be inlcuded in the weight adjustment and \code{FALSE} indicates
 the site should not be included in the weight adjustment.}
 
 \item{wgt}{Vector of initial weights for each site. These equal
@@ -34,11 +34,11 @@ This function adjusts initial survey design weights when
   is done separately for each category specified in \code{wtcat}.
 }
 \examples{
-sites <- as.logical(rep(rep(c("TRUE","FALSE"), c(9,1)), 5))
+sites <- as.logical(rep(rep(c("TRUE", "FALSE"), c(9, 1)), 5))
 wgt <- runif(50, 10, 100)
-wtcat <- rep(c("A","B"), c(30, 20))
+wtcat <- rep(c("A", "B"), c(30, 20))
 framesize <- c(15, 10)
-names(framesize) <- c("A","B")
+names(framesize) <- c("A", "B")
 adjwgt(sites, wgt, wtcat, framesize)
 }
 \author{

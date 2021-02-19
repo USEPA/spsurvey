@@ -45,7 +45,7 @@ error for the indicators}
 
 \item{paneldsgn}{A list of panel designs each as a matrix.  Each element of
 the list is a matrix with \code{dimnames} (dimensions: number of panels (rows) by
-number of periods (columns)) containing the number of units visited for 
+number of periods (columns)) containing the number of units visited for
 each combination of panel and period.  Dimnames for columns must be
 convertable to an integer (e.g., 2016).  All designs must span the same
 number of periods.  Typically, the panel designs are the output of the
@@ -104,13 +104,17 @@ Calculates the power for detecting a change in the mean for
 }
 \examples{
 # Power for rotating panel with sample size 60
-power.dsgn("Variable_Name", ind_values = 43, unit_var = 280, period_var = 4,
-           unitperiod_var = 40, index_var = 90, unit_rho = 1, period_rho = 0,
-           paneldsgn = list(NoR60=revisit_dsgn(20,
-                            panels=list(NoR60=list(n=60, pnl_dsgn = c(1, NA),
-                            pnl_n = NA, start_option = "None")), begin = 1)),
-            nrepeats = NULL, trend_type = "mean", trend= 1.0, alpha=0.05)
-
+power.dsgn("Variable_Name",
+  ind_values = 43, unit_var = 280, period_var = 4,
+  unitperiod_var = 40, index_var = 90, unit_rho = 1, period_rho = 0,
+  paneldsgn = list(NoR60 = revisit_dsgn(20,
+    panels = list(NoR60 = list(
+      n = 60, pnl_dsgn = c(1, NA),
+      pnl_n = NA, start_option = "None"
+    )), begin = 1
+  )),
+  nrepeats = NULL, trend_type = "mean", trend = 1.0, alpha = 0.05
+)
 }
 \references{
 Urquhart, N. S., W. S. Overton, et al. (1993) Comparing sampling designs

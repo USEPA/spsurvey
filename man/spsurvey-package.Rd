@@ -46,9 +46,7 @@ Authors:
 Other contributors:
 \itemize{
   \item Don Stevens [contributor]
-  \item Christian Platt [contributor]
   \item Denis White [contributor]
-  \item Richard Remington [contributor]
 }
 
 }

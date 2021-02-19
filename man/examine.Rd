@@ -37,10 +37,10 @@ df <- data.frame(
   SiteID = 1:100,
   Catvar = sample(LETTERS[1:5], 100, TRUE),
   Contvar = rnorm(100, 10, 1),
-  Gender = rep(c("Male", "Female"), rep(50, 2)))
+  Gender = rep(c("Male", "Female"), rep(50, 2))
+)
 examine(df, ord = FALSE)
 examine(df, "Gender", FALSE)
-
 }
 \author{
 Tom Kincaid \email{Kincaid.Tom@epa.gov}

@@ -59,7 +59,7 @@ the y- coordinate for a single-stage sample or the stage two y-coordinate
 for a two-stage sample.}
 
 \item{stratum_ind}{Logical value that indicates whether the sample is
-stratified, where \code{TRUE} = a stratified sample and \code{FALSE} = 
+stratified, where \code{TRUE} = a stratified sample and \code{FALSE} =
 not a stratified  sample.}
 
 \item{stratum_level}{Vector of the stratum levels for the sites.}

@@ -231,16 +231,19 @@ dframe <- data.frame(
   stratum = rep(c("Stratum1", "Stratum2"), 50),
   ContVar = rnorm(100, 10, 1),
   All_Sites = rep("All Sites", 100),
-  Resource_Class = rep(c("Good","Poor"), c(55,45)))
+  Resource_Class = rep(c("Good", "Poor"), c(55, 45))
+)
 myvars <- c("ContVar")
 mysubpops <- c("All_Sites", "Resource_Class")
 mypopsize <- data.frame(
   Resource_Class = c("Good", "Poor"),
-  Total = c(4000, 1500))
-cont_analysis(dframe, vars = myvars, subpops = mysubpops, siteID = "siteID",
+  Total = c(4000, 1500)
+)
+cont_analysis(dframe,
+  vars = myvars, subpops = mysubpops, siteID = "siteID",
   weight = "wgt", xcoord = "xcoord", ycoord = "ycoord",
-  stratumID = "stratum", popsize = mypopsize)
-
+  stratumID = "stratum", popsize = mypopsize
+)
 }
 \seealso{
 \code{\link{calibrate}}

@@ -22,4 +22,5 @@ objects prior to giving class \code{sframe}.
 data("NE_lakes")
 NE_lakes <- sframe(NE_lakes)
 }
+###############################################################################
 }

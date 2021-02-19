@@ -51,7 +51,7 @@ rslt <- ash1_wgt(x, wgt)
 plot(rslt)
 }
 \references{
-Scott, D. W. (1985). "Averaged shifted histograms: effective nonparametric 
+Scott, D. W. (1985). "Averaged shifted histograms: effective nonparametric
   density estimators in several dimensions." The Annals of Statistics 13(3):
   1024-1040.
 }

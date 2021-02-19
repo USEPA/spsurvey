@@ -45,12 +45,12 @@ a categorical (or factor) variable. If an intercept is included in the right
 hand side formula, the total will also be summarized.}
 
 \item{variable_args}{A named list. The name of each list corresponds to a
-right hand side variable in \code{formula}. Values in the list are composed of 
+right hand side variable in \code{formula}. Values in the list are composed of
 graphical arguments that are to be passed to \strong{every} level of the
 variable.}
 
 \item{level_args}{A named list. The name of each list corresponds to a
-right hand side variable in \code{formula}. The first name of each sublist 
+right hand side variable in \code{formula}. The first name of each sublist
 should be \code{"levels"} and contain all levels of the variable. Subsequent
 names correspond to graphical arguments that are to be passed to
 the specified levels (in order). Values must be specified
@@ -63,14 +63,17 @@ side \code{formula} variables be plotted? Defaults to \code{FALSE}.}
 \item{onlyshow}{A string indicating the level of the single right hand side
 variable for which a summary is requested.}
 
-\item{fix_bbox}{Should the geometry bounding box be fixed across plots? 
+\item{fix_bbox}{Should the geometry bounding box be fixed across plots?
 Defaults to \code{TRUE}. If \code{TRUE}, the bounding box will be the largest
 possible given \code{x} and \code{y}.}
 
 \item{...}{Additional arguments to pass to \code{plot.sf()}.}
+
+\item{showlegacy}{Should legacy sites be plotted separately from \code{sites_base}?
+Defaults to \code{FALSE}.}
 }
 \description{
-Plot sample frames and design objects. 
+Plot sample frames and design objects.
 
 This function is largely built on \code{plot.sf()}, and all spsurvey plotting methods can
 supply additional arguments to \code{plot.sf()}. For more information, run
@@ -80,11 +83,12 @@ plotting in \code{sf}, run \code{?plot.sf()}.
 \examples{
 \dontrun{
 plot(NE_Lakes)
-plot(NE_Lakes, formula = ~ ELEVATION_CAT)
+plot(NE_Lakes, formula = ~ELEVATION_CAT)
 plot(NE_Lakes, formula = AREA_HA ~ ELEVATION_CAT)
 sample <- grts(NE_Lakes, 30)
 plot(sample, NE_Lakes)
 }
+###############################################################################
 }
 \author{
 Michael Dumelle \email{Dumelle.Michael@epa.gov}

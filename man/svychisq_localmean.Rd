@@ -104,21 +104,27 @@ p-value is very small (e.g., large-scale multiple testing problems).
 n <- 100
 resp <- rnorm(n, 10, 1)
 wgt <- runif(n, 10, 100)
-xcoord = runif(n)
-ycoord = runif(n)
-sample1 <- data.frame(samp = "sample1", z = resp, wgt = wgt, x = xcoord,
-  y = ycoord)
-sample2 <- data.frame(samp = "sample2", z = resp+0.5, wgt = wgt, x = xcoord,
-  y = ycoord)
-bounds <- sort(c(sample1$z, sample2$z))[floor(seq((2*n)/3, (2*n),
-  length=3))]
+xcoord <- runif(n)
+ycoord <- runif(n)
+sample1 <- data.frame(
+  samp = "sample1", z = resp, wgt = wgt, x = xcoord,
+  y = ycoord
+)
+sample2 <- data.frame(
+  samp = "sample2", z = resp + 0.5, wgt = wgt, x = xcoord,
+  y = ycoord
+)
+bounds <- sort(c(sample1$z, sample2$z))[floor(seq((2 * n) / 3, (2 * n),
+  length = 3
+))]
 dframe <- rbind(sample1, sample2)
-dframe$id <- paste0("Site", 1:(2*n))
-dframe$catvar <- cut(dframe$z, c(-Inf,  bounds))
+dframe$id <- paste0("Site", 1:(2 * n))
+dframe$catvar <- cut(dframe$z, c(-Inf, bounds))
 design <- survey::svydesign(id = ~id, weights = ~wgt, data = dframe)
-svychisq_localmean(~samp+catvar, design, statistic = "adjWald",
-  vartype = "SRS")
-
+svychisq_localmean(~ samp + catvar, design,
+  statistic = "adjWald",
+  vartype = "SRS"
+)
 }
 \seealso{
 \code{\link{cat_localmean_prop}}

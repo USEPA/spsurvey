@@ -23,7 +23,7 @@ irspts_mindis(
 
 \item{samplesize}{The sample size required for the stratum.}
 
-\item{stratum}{Character string that identifies stratum membership for each element 
+\item{stratum}{Character string that identifies stratum membership for each element
 in the frame. Cannot be \code{NULL}.}
 
 \item{maxtry}{Number of maximum attempts to ensure minimum distance between sites.

@@ -114,7 +114,7 @@ arguments \code{weight} and \code{weight1}. The default value is
 
 \item{sweight}{Value providing the name of the size weight variable in
 the \code{dframe} data frame.  For a two-stage sample, the size weight
-variable identifies stage two size weights.  The default value is 
+variable identifies stage two size weights.  The default value is
 \code{NULL}.}
 
 \item{sweight1}{Value providing the name of the stage one size weight
@@ -147,7 +147,7 @@ cluster size is required for calculation of the finite population
 correction factor for a two-stage sample. The default value is \code{NULL}.}
 
 \item{popsize}{Object that provides values for the population argument of
-the \code{calibrate} or \code{postStratify} functions.  For the 
+the \code{calibrate} or \code{postStratify} functions.  For the
 \code{calibrate} function, the object is a named list, where the names
 identify factor variables in the \code{dframe} data frame.  Each element
 of the list is a named vector containing the population total for each
@@ -238,19 +238,21 @@ dframe <- data.frame(
   xcoord = runif(100),
   ycoord = runif(100),
   stratum = rep(c("Stratum1", "Stratum2"), 50),
-  RespVar1=sample(c("Poor", "Good"), 100, replace=TRUE),
-  RespVar2=sample(c("Poor", "Good"), 100, replace=TRUE),
-  StressVar=sample(c("Poor", "Good"), 100, replace=TRUE),
+  RespVar1 = sample(c("Poor", "Good"), 100, replace = TRUE),
+  RespVar2 = sample(c("Poor", "Good"), 100, replace = TRUE),
+  StressVar = sample(c("Poor", "Good"), 100, replace = TRUE),
   All_Sites = rep("All Sites", 100),
-  Resource_Class=rep(c("Agr", "Forest"), c(55,45)))
+  Resource_Class = rep(c("Agr", "Forest"), c(55, 45))
+)
 myresponse <- c("RespVar1", "RespVar2")
 mystressor <- c("StressVar")
 mysubpops <- c("All_Sites", "Resource_Class")
-attrisk_analysis(dframe, vars_response = myresponse,
+attrisk_analysis(dframe,
+  vars_response = myresponse,
   vars_stressor = mystressor, subpops = mysubpops, siteID = "siteID",
   weight = "wgt", xcoord = "xcoord", ycoord = "ycoord",
-  stratumID = "stratum")
-
+  stratumID = "stratum"
+)
 }
 \seealso{
 \code{\link{attrisk_var}}

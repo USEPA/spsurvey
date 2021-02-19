@@ -229,19 +229,21 @@ dframe <- data.frame(
   xcoord = runif(100),
   ycoord = runif(100),
   stratum = rep(c("Stratum1", "Stratum2"), 50),
-  RespVar1=sample(c("Poor", "Good"), 100, replace=TRUE),
-  RespVar2=sample(c("Poor", "Good"), 100, replace=TRUE),
-  StressVar=sample(c("Poor", "Good"), 100, replace=TRUE),
+  RespVar1 = sample(c("Poor", "Good"), 100, replace = TRUE),
+  RespVar2 = sample(c("Poor", "Good"), 100, replace = TRUE),
+  StressVar = sample(c("Poor", "Good"), 100, replace = TRUE),
   All_Sites = rep("All Sites", 100),
-  Resource_Class=rep(c("Agr", "Forest"), c(55,45)))
+  Resource_Class = rep(c("Agr", "Forest"), c(55, 45))
+)
 myresponse <- c("RespVar1", "RespVar2")
 mystressor <- c("StressVar")
 mysubpops <- c("All_Sites", "Resource_Class")
-relrisk_analysis(dframe, vars_response = myresponse,
+relrisk_analysis(dframe,
+  vars_response = myresponse,
   vars_stressor = mystressor, subpops = mysubpops, siteID = "siteID",
   weight = "wgt", xcoord = "xcoord", ycoord = "ycoord",
-  stratumID = "stratum")
-
+  stratumID = "stratum"
+)
 }
 \seealso{
 \code{\link{relrisk_var}}

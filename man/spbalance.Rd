@@ -19,7 +19,7 @@ having class \code{"design"}.}
 \item{sframe}{An \code{sframe} or \code{sf} object.}
 
 \item{sites}{The sites in object for which spatial balance metrics
-are desired. This argument must be \code{"sites_base"}, \code{"sites_over"}, or 
+are desired. This argument must be \code{"sites_base"}, \code{"sites_over"}, or
 \code{"sites_near"}. Defaults to \code{"sites_base"}.}
 
 \item{metrics}{A character vector of spatial balance metrics:
@@ -37,7 +37,7 @@ tesselation be returned? Defaults to FALSE.}
 A list having names equal to each strata.
 }
 \description{
-This function computes the spatial balance of a design with respect 
+This function computes the spatial balance of a design with respect
 to the sample frame (\code{sframe}) using Dirichlet Tesselations, measuring the
 extent to which a object is a miniature of \code{sframe}. This function is
 applicable for unstratified or stratified designs with equal selection
@@ -48,4 +48,5 @@ probabilities.
 sample <- grts(NE_Lakes, 30)
 spbalance(sample, NE_Lakes)
 }
+###############################################################################
 }

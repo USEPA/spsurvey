@@ -23,9 +23,9 @@ grts_stratum(
 )
 }
 \value{
-rslts A list consisting of an \code{sf} object for base sites, an \code{sf} object of 
+rslts A list consisting of an \code{sf} object for base sites, an \code{sf} object of
   \code{n_over} sites (\code{NULL} if none) an \code{sf} object of \code{n_near} sites (\code{NULL} if none) where
-  the \code{sf} objects containing the sites selected that meet the survey design requirements 
+  the \code{sf} objects containing the sites selected that meet the survey design requirements
   and \code{warn_ind} - logical value for warning indicator and \code{warn_df} - a data frame
   for warning messages.
 }
@@ -52,7 +52,7 @@ in all cases is based on the survey design specification for the stratum.
 
 \examples{
 \dontrun{
-  test_sample <- grts(stratum, dsgn=test_design, sframe = "test_sf", sf_type = "point")
+test_sample <- grts(stratum, dsgn = test_design, sframe = "test_sf", sf_type = "point")
 }
 
 }

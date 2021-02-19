@@ -56,13 +56,16 @@ calculated assuming a single stratum.
 \examples{
 tmp <- grtspts_ip(type = "equal", n_base = 10, Nstratum = 25)
 tmp
-tmp <- grtspts_ip(type = "unequal", n_base = c(small = 5, large = 5),
-          caty = c(rep("small", 15), rep("large", 10)))
+tmp <- grtspts_ip(
+  type = "unequal", n_base = c(small = 5, large = 5),
+  caty = c(rep("small", 15), rep("large", 10))
+)
 tmp
-tmp <- grtspts_ip(type = "proportional", n_base = 10,
-                  aux = c(rnorm(20, 3), -2, 30, 40, 0, 0))
+tmp <- grtspts_ip(
+  type = "proportional", n_base = 10,
+  aux = c(rnorm(20, 3), -2, 30, 40, 0, 0)
+)
 tmp
-
 }
 \author{
 Tony Olsen \email{olsen.tony@epa.gov}

@@ -31,8 +31,7 @@ cat(sites_str)
 temp <- c(1, 5, 21:25, 33:37)
 sites_str <- vecprint(sites[temp])
 warning(paste("\nThe following site ID values were removed from the
-  analysis:\n", sites_str, sep=""))
-
+  analysis:\n", sites_str, sep = ""))
 }
 \author{
 Tom Kincaid \email{Kincaid.Tom@epa.gov}

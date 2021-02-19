@@ -18,15 +18,15 @@ A sorted sample frame.
 }
 \description{
 This function creates a tessellation of the two dimensional space, attributes
-an address to each unit in the population and sorts the sampling frame in the 
-order given by the addresses. This function was used directly from Guillaume Chauvet and Ronan Le Gleut 
-as they describe in their paper Inference under pivotal sampling: Properties, 
+an address to each unit in the population and sorts the sampling frame in the
+order given by the addresses. This function was used directly from Guillaume Chauvet and Ronan Le Gleut
+as they describe in their paper Inference under pivotal sampling: Properties,
 variance estimation, and application to tesselation for spatial sampling,
 Scand J Statist. 2020;1–24.
 }
 \details{
-GET ADDRESS: function to attriubute an address to each unit and to sort the 
-sampling frame. The parameter rand allows a randomization of the tessellation. 
+GET ADDRESS: function to attriubute an address to each unit and to sort the
+sampling frame. The parameter rand allows a randomization of the tessellation.
 The output is the order in which the sampling frame should be sorted.
 
 BETWEEN: function to project the coordinates between two bounds low and up.

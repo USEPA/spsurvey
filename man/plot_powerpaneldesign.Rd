@@ -119,27 +119,36 @@ By default the plot function produces a standard power curve at end
 }
 \examples{
 # Construct a rotating panel design with sample size of 60
-R60N <- revisit_dsgn (20, panels=list(R60N=list(n=60, pnl_dsgn = c(1, NA),
-                      pnl_n=NA, start_option="None")), begin=1 )
+R60N <- revisit_dsgn(20, panels = list(R60N = list(
+  n = 60, pnl_dsgn = c(1, NA),
+  pnl_n = NA, start_option = "None"
+)), begin = 1)
 
 # Construct a fixed panel design with sample size of 60
-F60 <- revisit_dsgn (20, panels=list(F60=list(n=60, pnl_dsgn = c(1, 0),
-                     pnl_n=NA, start_option="None")), begin=1 )
+F60 <- revisit_dsgn(20, panels = list(F60 = list(
+  n = 60, pnl_dsgn = c(1, 0),
+  pnl_n = NA, start_option = "None"
+)), begin = 1)
 
 # Power for rotating panel with sample size 60
-Power_tst <- power_dsgn("Variable_Name", ind_values = 43, unit_var = 280,
-                        period_var = 4, unitperiod_var = 40, index_var = 90,
-                        unit_rho = 1, period_rho = 0, paneldsgn = list(
-                          R60N=R60N, F60=F60), nrepeats = NULL,
-                        trend_type = "mean", trend= c(1.0, 2.0), alpha=0.05 )
+Power_tst <- power_dsgn("Variable_Name",
+  ind_values = 43, unit_var = 280,
+  period_var = 4, unitperiod_var = 40, index_var = 90,
+  unit_rho = 1, period_rho = 0, paneldsgn = list(
+    R60N = R60N, F60 = F60
+  ), nrepeats = NULL,
+  trend_type = "mean", trend = c(1.0, 2.0), alpha = 0.05
+)
 plot_powerpaneldesign(Power_tst)
 plot_powerpaneldesign(Power_tst, dsgns = c("F60", "R60N"))
 plot_powerpaneldesign(Power_tst, dsgns = c("F60", "R60N"), trend = 1.0)
 \dontrun{
 pdf("Power_tst.pdf")
-plot_powerpaneldesign(Power_tst, plot_type = "relative", comp_type = "design",
-     trend_type = "mean", trend = c(1, 2), dsgns = c("R60N", "F60"),
-     indicator="Variable_Name")
+plot_powerpaneldesign(Power_tst,
+  plot_type = "relative", comp_type = "design",
+  trend_type = "mean", trend = c(1, 2), dsgns = c("R60N", "F60"),
+  indicator = "Variable_Name"
+)
 graphics.off()
 }
 

@@ -26,10 +26,11 @@ legacy elements that must be in the sample.
 }
 \examples{
 a <- runif(30)
-tmp <- grtspts_ipleg(ip = 10 * a/sum(a), legacy = c(TRUE, rep(FALSE, 5), TRUE, TRUE,
-                 rep(FALSE, 22)) )
+tmp <- grtspts_ipleg(ip = 10 * a / sum(a), legacy = c(
+  TRUE, rep(FALSE, 5), TRUE, TRUE,
+  rep(FALSE, 22)
+))
 tmp
-
 }
 \author{
 Tony Olsen \email{olsen.tony@epa.gov}

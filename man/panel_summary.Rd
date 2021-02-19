@@ -54,16 +54,17 @@ The revisit panel design and the visit design (if present) are
 }
 \examples{
 # Serially alternating panel revisit design summary
-sa_dsgn <- revisit_dsgn(20, panels=list(SA60N=list(n=60, pnl_dsgn = c(1, 4),
-                        pnl_n=NA, start_option="None")), begin=1 )
+sa_dsgn <- revisit_dsgn(20, panels = list(SA60N = list(
+  n = 60, pnl_dsgn = c(1, 4),
+  pnl_n = NA, start_option = "None"
+)), begin = 1)
 panel_summary(sa_dsgn)
 
 # Add visit design where first panel is sampled twice at every time period
 sa_visit <- sa_dsgn
 sa_visit [sa_visit > 0] <- 1
-sa_visit [1, sa_visit[1,] > 0] <- 2
+sa_visit [1, sa_visit[1, ] > 0] <- 2
 panel_summary(sa_dsgn, sa_visit)
-
 }
 \seealso{
 \describe{

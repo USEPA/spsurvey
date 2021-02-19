@@ -40,11 +40,11 @@ to be incorporated into survey design.}
 the design.  Default is \code{NULL} which means no stratification and all elements in the sample
 frame are assumed to be included.}
 
-\item{seltype}{Single character value or character vector that identifies the type of 
-random selection, which must be one of following: \code{"equal"} for equal probability selection, 
-\code{"unequal"} for unequal probability selection by the categories specified in \code{caty_n} or 
+\item{seltype}{Single character value or character vector that identifies the type of
+random selection, which must be one of following: \code{"equal"} for equal probability selection,
+\code{"unequal"} for unequal probability selection by the categories specified in \code{caty_n} or
 \code{"proportional"} for unequal probability selection proportional to the auxiliary variable
-\code{aux_var}. If single character, then seltype applies to all strata. If vector, then each 
+\code{aux_var}. If single character, then seltype applies to all strata. If vector, then each
 stratum may have different selection type. Default is single character value of \code{"equal"}.}
 
 \item{n_base}{The sample size required. If single stratum, then single numeric value.
@@ -56,17 +56,17 @@ with the expected sample size for each category specified in variable \code{caty
 is stratified, then either a named character vector with the expected sample size for each
 category for all strata or if the expected sample size for each category may differ, then
 a list of named character vectors with the expected sample size for each category in the
-stratum. The list must be in same order as the \code{"stratum"} variable. For each stratum, 
+stratum. The list must be in same order as the \code{"stratum"} variable. For each stratum,
 the sum of \code{caty_n} values must equal \code{n_base} for that stratum. Default is \code{NULL}.}
 
-\item{n_over}{If seltype is \code{"equal"} and is not stratified, a numeric value specifying the 
+\item{n_over}{If seltype is \code{"equal"} and is not stratified, a numeric value specifying the
 over sample size requested. If seltype is \code{"equal"} and is stratified either a numeric value
 specifying the over sample size that will be applied to each stratum or a numeric vector
-specifying the over sample size for each stratum listed in same order as \code{"strata"}.  
-If seltype is \code{"unequal"} and is not stratified, a named character vector with the over sample size 
-for each category where names are the same as \code{"caty_n"}. If seltype is \code{"unequal"} and is 
+specifying the over sample size for each stratum listed in same order as \code{"strata"}.
+If seltype is \code{"unequal"} and is not stratified, a named character vector with the over sample size
+for each category where names are the same as \code{"caty_n"}. If seltype is \code{"unequal"} and is
 stratified,  either a numeric vector specifying the over sample size for each category in
-\code{"caty_n"} that will be applied to each stratum or a list of named numeric vectors with 
+\code{"caty_n"} that will be applied to each stratum or a list of named numeric vectors with
 the over sample size for each \code{"caty_n"} category for each stratum. List must be in same order
 as the \code{"stratum"} variable order. Default is \code{NULL}.}
 

@@ -120,27 +120,38 @@ The function creates revisit designs using the concepts in McDonald
 \examples{
 # One panel of  60 sample units sampled at every time period: [1-0]
 revisit_dsgn(20, panels = list(
-  Annual=list(n = 60, pnl_dsgn = c(1, 0), pnl.n = NA,
-              start_option = "None")), begin=1)
+  Annual = list(
+    n = 60, pnl_dsgn = c(1, 0), pnl.n = NA,
+    start_option = "None"
+  )
+), begin = 1)
 
 # Rotating panels of 60 units sampled once and never again: [1-n].  Number
 # of panels equal n_period.
-revisit_dsgn(20, panels=list(
-  R60N=list(n=60, pnl_dsgn = c(1, NA), pnl_n=NA, start_option="None")),
-            begin=1 )
+revisit_dsgn(20,
+  panels = list(
+    R60N = list(n = 60, pnl_dsgn = c(1, NA), pnl_n = NA, start_option = "None")
+  ),
+  begin = 1
+)
 
 # Serially alternating panel with three visits to sample unit then skip
 # next two time periods: [3-2]
-revisit_dsgn(20, panels=list(
-  SA60PE=list(n=20, pnl_dsgn = c(3, 2), pnl_n=NA,
-             start_option="Partial_End")), begin=1 )
+revisit_dsgn(20, panels = list(
+  SA60PE = list(
+    n = 20, pnl_dsgn = c(3, 2), pnl_n = NA,
+    start_option = "Partial_End"
+  )
+), begin = 1)
 
 # Split panel of sample units combining above two panel designs: [1-0, 1-n]
-revisit_dsgn(n_period=20, begin=2017,  panels = list(
-  Annual=list(n = 60, pnl_dsgn = c(1, 0), pnl.n = NA,
-              start_option = "None"),
-  R60N=list(n=60, pnl_dsgn = c(1, NA), pnl_n=NA, start_option="None") ))
-
+revisit_dsgn(n_period = 20, begin = 2017, panels = list(
+  Annual = list(
+    n = 60, pnl_dsgn = c(1, 0), pnl.n = NA,
+    start_option = "None"
+  ),
+  R60N = list(n = 60, pnl_dsgn = c(1, NA), pnl_n = NA, start_option = "None")
+))
 }
 \references{
 McDonald, T. (2003). Review of environmental monitoring methods: survey

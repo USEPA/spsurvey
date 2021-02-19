@@ -60,7 +60,6 @@ to search balanced incomplete block designs.
 # Balanced incomplete block design with 20 sample occasions, 20 panels,
 # 3 visits to each unit, and 20 units in each panel.
 revisit_bibd(n_period = 20, n_pnl = 20, n_visit = 3, nsamp = 20)
-
 }
 \references{
 Cook R. D.  and C. Nachtsheim. (1989). Computer-aided blocking of factorial

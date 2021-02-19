@@ -228,14 +228,15 @@ respectively, and the geometry column is dropped from the object.
 
 \examples{
 n <- 200
-mysiteID <- paste("Site", 1:n, sep="")
+mysiteID <- paste("Site", 1:n, sep = "")
 dframe <- data.frame(
   siteID = mysiteID,
   wgt = runif(n, 10, 100),
   xcoord = runif(n),
   ycoord = runif(n),
-  stratum = rep(c("Stratum1", "Stratum2"), n/2),
-  Resource_Class = sample(c("Agr", "Forest", "Urban"), n, replace=TRUE))
+  stratum = rep(c("Stratum1", "Stratum2"), n / 2),
+  Resource_Class = sample(c("Agr", "Forest", "Urban"), n, replace = TRUE)
+)
 ContVar <- numeric(n)
 tst <- dframe$Resource_Class == "Agr"
 ContVar[tst] <- rnorm(sum(tst), 10, 1)
@@ -249,11 +250,13 @@ mysubpops <- c("Resource_Class")
 mypopsize <- data.frame(
   Resource_Class = rep(c("Agr", "Forest", "Urban"), rep(2, 3)),
   stratum = rep(c("Stratum1", "Stratum2"), 3),
-  Total = c(2500, 1500, 1000, 500, 600, 450))
-cont_cdftest(dframe, vars = myvars, subpops = mysubpops, siteID = "siteID",
+  Total = c(2500, 1500, 1000, 500, 600, 450)
+)
+cont_cdftest(dframe,
+  vars = myvars, subpops = mysubpops, siteID = "siteID",
   weight = "wgt", xcoord = "xcoord", ycoord = "ycoord",
-  stratumID = "stratum", popsize = mypopsize, testname="RaoScott_First")
-
+  stratumID = "stratum", popsize = mypopsize, testname = "RaoScott_First"
+)
 }
 \seealso{
 \code{\link{calibrate}}
