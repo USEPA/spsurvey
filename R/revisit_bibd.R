@@ -48,7 +48,7 @@
 #'
 #' @author Tony Olsen \email{Olsen.Tony@epa.gov}
 #'
-#' @seealso 
+#' @seealso
 #'   \describe{
 #'     \item{\code{\link{revisit_dsgn}}}{create a panel revisit design}
 #'     \item{\code{\link{revisit_rand}}}{create a revisit design with random
@@ -68,33 +68,38 @@
 #' # Balanced incomplete block design with 20 sample occasions, 20 panels,
 #' # 3 visits to each unit, and 20 units in each panel.
 #' revisit_bibd(n_period = 20, n_pnl = 20, n_visit = 3, nsamp = 20)
-#'
 #' @export
 ###############################################################################
 
-revisit_bibd <- function (n_period, n_pnl, n_visit, nsamp, panel_name = "BIB",
-   begin = 1, skip = 1, iter = 30 ) {
+revisit_bibd <- function(n_period, n_pnl, n_visit, nsamp, panel_name = "BIB",
+                         begin = 1, skip = 1, iter = 30) {
 
   # check input parameters for meeting requirements
-  if ( !(n_period > n_visit & n_pnl >= n_period & n_visit > 1)) {
-    stop ("\nInput parameters do not satisfy minimal conditions")
+  if (!(n_period > n_visit & n_pnl >= n_period & n_visit > 1)) {
+    stop("\nInput parameters do not satisfy minimal conditions")
   }
 
   # use crossdes package functions to generate BIB design
   bib <- find.BIB(n_period, n_pnl, n_visit, iter = iter)
-  pan_dsgn <- table (c(rep(1:n_pnl, rep(n_visit, n_pnl))), as.vector(t(bib)) )
-  pan_dsgn[pan_dsgn ==1] <- nsamp
+  pan_dsgn <- table(c(rep(1:n_pnl, rep(n_visit, n_pnl))), as.vector(t(bib)))
+  pan_dsgn[pan_dsgn == 1] <- nsamp
 
   # assign dimnames
   if (nrow(pan_dsgn) < 10) {
-    dimnames (pan_dsgn) <- list(c(paste(panel_name, 1:nrow(pan_dsgn), sep="_") ),
-                                seq(begin, by = skip, length.out=ncol(pan_dsgn)) )
+    dimnames(pan_dsgn) <- list(
+      c(paste(panel_name, 1:nrow(pan_dsgn), sep = "_")),
+      seq(begin, by = skip, length.out = ncol(pan_dsgn))
+    )
   }
   else {
-    dimnames (pan_dsgn) <- list(c(paste(panel_name, 1:9, sep="_0"),
-                                  paste(panel_name, 10:nrow(pan_dsgn), sep="_") ),
-                                seq(begin, by = skip, length.out=ncol(pan_dsgn)) )
+    dimnames(pan_dsgn) <- list(
+      c(
+        paste(panel_name, 1:9, sep = "_0"),
+        paste(panel_name, 10:nrow(pan_dsgn), sep = "_")
+      ),
+      seq(begin, by = skip, length.out = ncol(pan_dsgn))
+    )
   }
-  class (pan_dsgn) <- "paneldesign"
-  return (pan_dsgn)
+  class(pan_dsgn) <- "paneldesign"
+  return(pan_dsgn)
 }

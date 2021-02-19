@@ -32,25 +32,28 @@
 
 insideAreaGridCell <- function(sfobject, rdx.u, xc, yc, dx, dy) {
 
-# Create a data frame for results
+  # Create a data frame for results
 
   cell.df <- data.frame()
 
-# Calculate clipped feature areas for each cell
+  # Calculate clipped feature areas for each cell
 
-  for(i in 1:length(xc)) {
-    temp <- rbind(c(xc[i] - dx, yc[i] - dy), c(xc[i], yc[i] - dy),
-                  c(xc[i], yc[i]), c(xc[i] - dx, yc[i]),
-                  c(xc[i] - dx, yc[i] - dy))
+  for (i in 1:length(xc)) {
+    temp <- rbind(
+      c(xc[i] - dx, yc[i] - dy), c(xc[i], yc[i] - dy),
+      c(xc[i], yc[i]), c(xc[i] - dx, yc[i]),
+      c(xc[i] - dx, yc[i] - dy)
+    )
     sfcell <- st_sf(st_sfc(st_polygon(list(temp)), crs = st_crs(sfobject)))
     tempsf <- st_intersection(sfobject, sfcell)
     cell.df <- rbind(cell.df, cbind(
-                       cellID = rdx.u[i],
-                       featureArea = as.numeric(st_area(tempsf)),
-                       featureID = tempsf$id))
+      cellID = rdx.u[i],
+      featureArea = as.numeric(st_area(tempsf)),
+      featureID = tempsf$id
+    ))
   }
 
-# Return the data frame containing results
- 
+  # Return the data frame containing results
+
   return(cell.df)
 }

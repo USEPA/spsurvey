@@ -48,7 +48,7 @@
 #'
 #' @author Tony Olsen \email{Olsen.Tony@epa.gov}
 #'
-#' @seealso 
+#' @seealso
 #'   \describe{
 #'     \item{\code{\link{revisit_dsgn}}}{create a panel revisit design}
 #'     \item{\code{\link{revisit_bibd}}}{create a balanced incomplete block
@@ -65,57 +65,77 @@
 #' @keywords survey
 #'
 #' @examples
-#' revisit_rand(n_period = 20, n_pnl = 10, rand_control = "none", n_visit = 50,
-#'              nsamp = 20)
-#' revisit_rand(n_period = 20, n_pnl = 10, rand_control = "panel", n_visit = 5,
-#'              nsamp = 10)
-#' revisit_rand(n_period = 20, n_pnl = 10, rand_control = "period",
-#'               n_visit = 5, nsamp = 10)
-#'
+#' revisit_rand(
+#'   n_period = 20, n_pnl = 10, rand_control = "none", n_visit = 50,
+#'   nsamp = 20
+#' )
+#' revisit_rand(
+#'   n_period = 20, n_pnl = 10, rand_control = "panel", n_visit = 5,
+#'   nsamp = 10
+#' )
+#' revisit_rand(
+#'   n_period = 20, n_pnl = 10, rand_control = "period",
+#'   n_visit = 5, nsamp = 10
+#' )
 #' @export
 ###############################################################################
 
-revisit_rand <- function (n_period, n_pnl, rand_control = "period",  n_visit,
-   nsamp, panel_name = "Random", begin = 1, skip = 1) {
-
-  if ( !(rand_control %in% c("none", "panel", "period")) ) {
-    stop ("\nRandom control not equal to none, panel or period")
+revisit_rand <- function(n_period, n_pnl, rand_control = "period", n_visit,
+                         nsamp, panel_name = "Random", begin = 1, skip = 1) {
+  if (!(rand_control %in% c("none", "panel", "period"))) {
+    stop("\nRandom control not equal to none, panel or period")
   }
 
-  if (rand_control == "panel" ) {
-    pan_dsgn <- matrix(rep (c(rep(nsamp, n_visit), rep (0, n_period - n_visit)), n_pnl),
-                       ncol=n_period, byrow = TRUE)
-    pan_dsgn <- t (apply (pan_dsgn, 1, function(x) sample(x, size = length(x),
-      replace = FALSE)) )
+  if (rand_control == "panel") {
+    pan_dsgn <- matrix(rep(c(rep(nsamp, n_visit), rep(0, n_period - n_visit)), n_pnl),
+      ncol = n_period, byrow = TRUE
+    )
+    pan_dsgn <- t(apply(pan_dsgn, 1, function(x) {
+      sample(x,
+        size = length(x),
+        replace = FALSE
+      )
+    }))
   }
 
-  if (rand_control == "period" ) {
-    pan_dsgn <- matrix(rep (c(rep(nsamp, n_visit), rep (0, n_pnl - n_visit)), n_period),
-                       ncol=n_period)
-    pan_dsgn <- apply (pan_dsgn, 2, function(x) sample(x, size = length(x),
-      replace = FALSE))
+  if (rand_control == "period") {
+    pan_dsgn <- matrix(rep(c(rep(nsamp, n_visit), rep(0, n_pnl - n_visit)), n_period),
+      ncol = n_period
+    )
+    pan_dsgn <- apply(pan_dsgn, 2, function(x) {
+      sample(x,
+        size = length(x),
+        replace = FALSE
+      )
+    })
   }
 
   if (rand_control == "none") {
-    pan_dsgn <- c( rep(nsamp, n_visit), rep (0, (n_pnl * n_period) - n_visit) )
-    pan_dsgn <- sample (pan_dsgn, size = length(pan_dsgn), replace = FALSE )
-    pan_dsgn <- matrix (pan_dsgn, nrow = n_pnl)
+    pan_dsgn <- c(rep(nsamp, n_visit), rep(0, (n_pnl * n_period) - n_visit))
+    pan_dsgn <- sample(pan_dsgn, size = length(pan_dsgn), replace = FALSE)
+    pan_dsgn <- matrix(pan_dsgn, nrow = n_pnl)
   }
 
   # drop panels if no visits
-  keep <- ifelse (apply (pan_dsgn, 1, sum) > 0, TRUE, FALSE)
+  keep <- ifelse(apply(pan_dsgn, 1, sum) > 0, TRUE, FALSE)
   pan_dsgn <- pan_dsgn[keep, ]
 
   # assign dimnames
   if (nrow(pan_dsgn) < 10) {
-    dimnames (pan_dsgn) <- list(c(paste(panel_name, 1:nrow(pan_dsgn), sep="_") ),
-                               seq(begin, by = skip, length.out=ncol(pan_dsgn)) )
+    dimnames(pan_dsgn) <- list(
+      c(paste(panel_name, 1:nrow(pan_dsgn), sep = "_")),
+      seq(begin, by = skip, length.out = ncol(pan_dsgn))
+    )
   }
   else {
-    dimnames (pan_dsgn) <- list(c(paste(panel_name, 1:9, sep="_0"),
-                                 paste(panel_name, 10:nrow(pan_dsgn), sep="_") ),
-                               seq(begin, by = skip, length.out=ncol(pan_dsgn)) )
+    dimnames(pan_dsgn) <- list(
+      c(
+        paste(panel_name, 1:9, sep = "_0"),
+        paste(panel_name, 10:nrow(pan_dsgn), sep = "_")
+      ),
+      seq(begin, by = skip, length.out = ncol(pan_dsgn))
+    )
   }
-  class (pan_dsgn) <- "paneldesign"
-  return (pan_dsgn)
+  class(pan_dsgn) <- "paneldesign"
+  return(pan_dsgn)
 }

@@ -13,8 +13,8 @@
 #'   is done separately for each category specified in \code{wtcat}.
 #'
 #' @param sites Vector indicating site use; \code{TRUE} indicates the site
-#'   should be inlcuded in the weight adjustment and \code{FALSE} indicates 
-#'   the site should not be included in the weight adjustment. 
+#'   should be inlcuded in the weight adjustment and \code{FALSE} indicates
+#'   the site should not be included in the weight adjustment.
 #'
 #' @param wgt Vector of initial weights for each site. These equal
 #'   the reciprocal of the sample inclusion probabilities.
@@ -24,7 +24,7 @@
 #'
 #' @param framesize Vector containing the known size of the frame
 #'   for each category name in wtcat. The names attribute much match the
-#'   category names in \code{wtcat}. 
+#'   category names in \code{wtcat}.
 #'
 #' @return Vector of adjusted weights, where the adjusted weight is set
 #'   to \code{0} for sites whose value in the sites argument was set to
@@ -33,26 +33,26 @@
 #' @author Tony Olsen \email{olsen.tony@epa.gov}
 #'
 #' @keywords survey misc
-#' 
+#'
 #' @examples
-#' sites <- as.logical(rep(rep(c("TRUE","FALSE"), c(9,1)), 5))
+#' sites <- as.logical(rep(rep(c("TRUE", "FALSE"), c(9, 1)), 5))
 #' wgt <- runif(50, 10, 100)
-#' wtcat <- rep(c("A","B"), c(30, 20))
+#' wtcat <- rep(c("A", "B"), c(30, 20))
 #' framesize <- c(15, 10)
-#' names(framesize) <- c("A","B")
+#' names(framesize) <- c("A", "B")
 #' adjwgt(sites, wgt, wtcat, framesize)
 #' @export
 adjwgt <- function(sites, wgt, wtcat, framesize) {
 
-# Sum initial weights by wtcat for evaluated sites
+  # Sum initial weights by wtcat for evaluated sites
 
-	wgtsum <- tapply(wgt[sites], wtcat[sites], sum)
+  wgtsum <- tapply(wgt[sites], wtcat[sites], sum)
 
-# Adjustment factor to be applied to weights for adjustment category
+  # Adjustment factor to be applied to weights for adjustment category
 
-	adjfac <- framesize/wgtsum[match(names(framesize), names(wgtsum))]
-	wtadj <- adjfac[match(wtcat, names(adjfac))]
-	adjwgt <- wgt * wtadj
-	adjwgt[!sites] <- 0
-	as.vector(adjwgt)
+  adjfac <- framesize / wgtsum[match(names(framesize), names(wgtsum))]
+  wtadj <- adjfac[match(wtcat, names(adjfac))]
+  adjwgt <- wgt * wtadj
+  adjwgt[!sites] <- 0
+  as.vector(adjwgt)
 }

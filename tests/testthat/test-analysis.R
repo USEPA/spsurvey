@@ -8,8 +8,9 @@ load(system.file("extdata", "NLA_IN.rda", package = "spsurvey"))
 
 # Create a population size data frame
 popsize <- data.frame(
-   LAKE_ORGN = c("MAN_MADE", "NATURAL"),
-   Total = c(16000, 4000))
+  LAKE_ORGN = c("MAN_MADE", "NATURAL"),
+  Total = c(16000, 4000)
+)
 
 #
 # Section for the categorical data analysis function
@@ -23,9 +24,11 @@ subpops <- c("All_Sites", "LAKE_ORGN")
 
 # Perform tests
 
-Condition_Estimates <- cat_analysis(dframe = NLA_IN, vars = vars,
+Condition_Estimates <- cat_analysis(
+  dframe = NLA_IN, vars = vars,
   subpops = subpops, siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD",
-  ycoord = "YCOORD")
+  ycoord = "YCOORD"
+)
 
 test_that("Categorical: Unstratified single-stage analysis, local mean variance", {
   expect_true(exists("Condition_Estimates"))
@@ -33,9 +36,11 @@ test_that("Categorical: Unstratified single-stage analysis, local mean variance"
   expect_equal(nrow(Condition_Estimates), 9)
 })
 
-Condition_Estimates <- cat_analysis(dframe = NLA_IN, vars = vars,
+Condition_Estimates <- cat_analysis(
+  dframe = NLA_IN, vars = vars,
   subpops = subpops, siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD",
-  ycoord = "YCOORD", popsize = popsize)
+  ycoord = "YCOORD", popsize = popsize
+)
 
 test_that("Categorical: with known population sizes", {
   expect_true(exists("Condition_Estimates"))
@@ -43,9 +48,11 @@ test_that("Categorical: with known population sizes", {
   expect_equal(nrow(Condition_Estimates), 9)
 })
 
-Condition_Estimates <- cat_analysis(dframe = NLA_IN, vars = vars,
+Condition_Estimates <- cat_analysis(
+  dframe = NLA_IN, vars = vars,
   subpops = subpops, siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD",
-  ycoord = "YCOORD", popcorrect = TRUE, fpcsize = "fpcsize")
+  ycoord = "YCOORD", popcorrect = TRUE, fpcsize = "fpcsize"
+)
 
 test_that("Categorical: with finite population correction factor", {
   expect_true(exists("Condition_Estimates"))
@@ -53,9 +60,11 @@ test_that("Categorical: with finite population correction factor", {
   expect_equal(nrow(Condition_Estimates), 9)
 })
 
-Condition_Estimates <- cat_analysis(dframe = NLA_IN, vars = vars,
+Condition_Estimates <- cat_analysis(
+  dframe = NLA_IN, vars = vars,
   subpops = subpops, siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD",
-  ycoord = "YCOORD", stratumID = "URBN_NLA17")
+  ycoord = "YCOORD", stratumID = "URBN_NLA17"
+)
 
 test_that("Categorical: Stratified single-stage analysis, local mean variance", {
   expect_true(exists("Condition_Estimates"))
@@ -63,9 +72,11 @@ test_that("Categorical: Stratified single-stage analysis, local mean variance", 
   expect_equal(nrow(Condition_Estimates), 9)
 })
 
-Condition_Estimates <- cat_analysis(dframe = NLA_IN, vars = vars,
+Condition_Estimates <- cat_analysis(
+  dframe = NLA_IN, vars = vars,
   subpops = subpops, siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD",
-  ycoord = "YCOORD", stratumID = "URBN_NLA17", popsize = popsize)
+  ycoord = "YCOORD", stratumID = "URBN_NLA17", popsize = popsize
+)
 
 test_that("Categorical: with known population sizes", {
   expect_true(exists("Condition_Estimates"))
@@ -73,10 +84,12 @@ test_that("Categorical: with known population sizes", {
   expect_equal(nrow(Condition_Estimates), 9)
 })
 
-Condition_Estimates <- cat_analysis(dframe = NLA_IN, vars = vars,
+Condition_Estimates <- cat_analysis(
+  dframe = NLA_IN, vars = vars,
   subpops = subpops, siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD",
   ycoord = "YCOORD", stratumID = "URBN_NLA17", popcorrect = TRUE,
-  fpcsize = "fpcsize")
+  fpcsize = "fpcsize"
+)
 
 test_that("Categorical: with finite population correction factor", {
   expect_true(exists("Condition_Estimates"))
@@ -84,10 +97,12 @@ test_that("Categorical: with finite population correction factor", {
   expect_equal(nrow(Condition_Estimates), 9)
 })
 
-Condition_Estimates <- cat_analysis(dframe = NLA_IN, vars = vars,
+Condition_Estimates <- cat_analysis(
+  dframe = NLA_IN, vars = vars,
   subpops = subpops, siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD",
   ycoord = "YCOORD", clusterID = "clusterID", weight1 = "weight1",
-  xcoord1 = "xcoord1", ycoord1 = "ycoord1", vartype = "SRS")
+  xcoord1 = "xcoord1", ycoord1 = "ycoord1", vartype = "SRS"
+)
 
 test_that("Categorical: Unstratified two-stage analysis, SRS variance", {
   expect_true(exists("Condition_Estimates"))
@@ -95,11 +110,13 @@ test_that("Categorical: Unstratified two-stage analysis, SRS variance", {
   expect_equal(nrow(Condition_Estimates), 9)
 })
 
-Condition_Estimates <- cat_analysis(dframe = NLA_IN, vars = vars,
+Condition_Estimates <- cat_analysis(
+  dframe = NLA_IN, vars = vars,
   subpops = subpops, siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD",
   ycoord = "YCOORD", clusterID = "clusterID", weight1 = "weight1",
   xcoord1 = "xcoord1", ycoord1 = "ycoord1", popsize = popsize,
-  Ncluster = "Ncluster", vartype = "SRS")
+  Ncluster = "Ncluster", vartype = "SRS"
+)
 
 test_that("Categorical: with known population sizes", {
   expect_true(exists("Condition_Estimates"))
@@ -107,11 +124,13 @@ test_that("Categorical: with known population sizes", {
   expect_equal(nrow(Condition_Estimates), 9)
 })
 
-Condition_Estimates <- cat_analysis(dframe = NLA_IN, vars = vars,
+Condition_Estimates <- cat_analysis(
+  dframe = NLA_IN, vars = vars,
   subpops = subpops, siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD",
   ycoord = "YCOORD", clusterID = "clusterID", weight1 = "weight1",
   xcoord1 = "xcoord1", ycoord1 = "ycoord1", popcorrect = TRUE,
-  Ncluster = "Ncluster", stage1size="stage1size", vartype = "SRS")
+  Ncluster = "Ncluster", stage1size = "stage1size", vartype = "SRS"
+)
 
 test_that("Categorical: with finite population correction factor", {
   expect_true(exists("Condition_Estimates"))
@@ -119,11 +138,13 @@ test_that("Categorical: with finite population correction factor", {
   expect_equal(nrow(Condition_Estimates), 9)
 })
 
-Condition_Estimates <- cat_analysis(dframe = NLA_IN, vars = vars,
+Condition_Estimates <- cat_analysis(
+  dframe = NLA_IN, vars = vars,
   subpops = subpops, siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD",
   ycoord = "YCOORD", stratumID = "URBN_NLA17", clusterID = "clusterID",
   weight1 = "weight1", xcoord1 = "xcoord1", ycoord1 = "ycoord1",
-  vartype = "SRS")
+  vartype = "SRS"
+)
 
 test_that("Categorical: Stratified two-stage analysis, SRS variance", {
   expect_true(exists("Condition_Estimates"))
@@ -131,11 +152,13 @@ test_that("Categorical: Stratified two-stage analysis, SRS variance", {
   expect_equal(nrow(Condition_Estimates), 9)
 })
 
-Condition_Estimates <- cat_analysis(dframe = NLA_IN, vars = vars,
+Condition_Estimates <- cat_analysis(
+  dframe = NLA_IN, vars = vars,
   subpops = subpops, siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD",
   ycoord = "YCOORD", stratumID = "URBN_NLA17", clusterID = "clusterID",
   weight1 = "weight1", xcoord1 = "xcoord1", ycoord1 = "ycoord1",
-  popsize = popsize, Ncluster = "Ncluster", vartype = "SRS")
+  popsize = popsize, Ncluster = "Ncluster", vartype = "SRS"
+)
 
 test_that("Categorical: with known population sizes", {
   expect_true(exists("Condition_Estimates"))
@@ -143,12 +166,14 @@ test_that("Categorical: with known population sizes", {
   expect_equal(nrow(Condition_Estimates), 9)
 })
 
-Condition_Estimates <- cat_analysis(dframe = NLA_IN, vars = vars,
+Condition_Estimates <- cat_analysis(
+  dframe = NLA_IN, vars = vars,
   subpops = subpops, siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD",
   ycoord = "YCOORD", stratumID = "URBN_NLA17", clusterID = "clusterID",
   weight1 = "weight1", xcoord1 = "xcoord1", ycoord1 = "ycoord1",
-  popcorrect = TRUE, Ncluster = "Ncluster", stage1size="stage1size",
-  vartype = "SRS")
+  popcorrect = TRUE, Ncluster = "Ncluster", stage1size = "stage1size",
+  vartype = "SRS"
+)
 
 test_that("Categorical: with finite population correction factor", {
   expect_true(exists("Condition_Estimates"))
@@ -156,8 +181,10 @@ test_that("Categorical: with finite population correction factor", {
   expect_equal(nrow(Condition_Estimates), 9)
 })
 
-Condition_Estimates <- cat_analysis(dframe = NLA_IN, vars = vars,
-  subpops = subpops, siteID = "SITE_ID", weight = "WGT_TP", vartype = "HT")
+Condition_Estimates <- cat_analysis(
+  dframe = NLA_IN, vars = vars,
+  subpops = subpops, siteID = "SITE_ID", weight = "WGT_TP", vartype = "HT"
+)
 
 test_that("Categorical: Unstratified single-stage analysis, HT-Overton variance", {
   expect_true(exists("Condition_Estimates"))
@@ -165,9 +192,11 @@ test_that("Categorical: Unstratified single-stage analysis, HT-Overton variance"
   expect_equal(nrow(Condition_Estimates), 9)
 })
 
-Condition_Estimates <- cat_analysis(dframe = NLA_IN, vars = vars,
+Condition_Estimates <- cat_analysis(
+  dframe = NLA_IN, vars = vars,
   subpops = subpops, siteID = "SITE_ID", weight = "WGT_TP", vartype = "HT",
-  jointprob = "hr")
+  jointprob = "hr"
+)
 
 test_that("Categorical: Unstratified single-stage analysis, HT-HR variance", {
   expect_true(exists("Condition_Estimates"))
@@ -175,9 +204,11 @@ test_that("Categorical: Unstratified single-stage analysis, HT-HR variance", {
   expect_equal(nrow(Condition_Estimates), 9)
 })
 
-Condition_Estimates <- cat_analysis(dframe = NLA_IN, vars = vars,
+Condition_Estimates <- cat_analysis(
+  dframe = NLA_IN, vars = vars,
   subpops = subpops, siteID = "SITE_ID", weight = "WGT_TP", vartype = "HT",
-  jointprob = "brewer")
+  jointprob = "brewer"
+)
 
 test_that("Categorical: Unstratified single-stage analysis, HT-Brewer variance", {
   expect_true(exists("Condition_Estimates"))
@@ -185,9 +216,11 @@ test_that("Categorical: Unstratified single-stage analysis, HT-Brewer variance",
   expect_equal(nrow(Condition_Estimates), 9)
 })
 
-Condition_Estimates <- cat_analysis(dframe = NLA_IN, vars = vars,
+Condition_Estimates <- cat_analysis(
+  dframe = NLA_IN, vars = vars,
   subpops = subpops, siteID = "SITE_ID", weight = "WGT_TP",
-  stratumID = "URBN_NLA17", vartype = "HT", jointprob = "brewer")
+  stratumID = "URBN_NLA17", vartype = "HT", jointprob = "brewer"
+)
 
 test_that("Categorical: Stratified single-stage analysis, HT-Brewer variance", {
   expect_true(exists("Condition_Estimates"))
@@ -195,10 +228,12 @@ test_that("Categorical: Stratified single-stage analysis, HT-Brewer variance", {
   expect_equal(nrow(Condition_Estimates), 9)
 })
 
-Condition_Estimates <- cat_analysis(dframe = NLA_IN, vars = vars,
+Condition_Estimates <- cat_analysis(
+  dframe = NLA_IN, vars = vars,
   subpops = subpops, siteID = "SITE_ID", weight = "WGT_TP",
   clusterID = "clusterID", weight1 = "weight1", vartype = "HT",
-  jointprob = "brewer")
+  jointprob = "brewer"
+)
 
 test_that("Categorical: Unstratified two-stage analysis, HT-Brewer variance", {
   expect_true(exists("Condition_Estimates"))
@@ -206,10 +241,12 @@ test_that("Categorical: Unstratified two-stage analysis, HT-Brewer variance", {
   expect_equal(nrow(Condition_Estimates), 9)
 })
 
-Condition_Estimates <- cat_analysis(dframe = NLA_IN, vars = vars,
+Condition_Estimates <- cat_analysis(
+  dframe = NLA_IN, vars = vars,
   subpops = subpops, siteID = "SITE_ID", weight = "WGT_TP",
   stratumID = "URBN_NLA17", clusterID = "clusterID", weight1 = "weight1",
-  vartype = "HT", jointprob = "brewer")
+  vartype = "HT", jointprob = "brewer"
+)
 
 test_that("Categorical: Stratified two-stage analysis, HT-Brewer variance", {
   expect_true(exists("Condition_Estimates"))
@@ -217,8 +254,10 @@ test_that("Categorical: Stratified two-stage analysis, HT-Brewer variance", {
   expect_equal(nrow(Condition_Estimates), 9)
 })
 
-Condition_Estimates <- cat_analysis(dframe = NLA_IN, vars = vars,
-  subpops = subpops, siteID = "SITE_ID", weight = "WGT_TP",  vartype = "YG")
+Condition_Estimates <- cat_analysis(
+  dframe = NLA_IN, vars = vars,
+  subpops = subpops, siteID = "SITE_ID", weight = "WGT_TP", vartype = "YG"
+)
 
 test_that("Categorical: Unstratified single-stage analysis, YG-Overton variance", {
   expect_true(exists("Condition_Estimates"))
@@ -226,9 +265,11 @@ test_that("Categorical: Unstratified single-stage analysis, YG-Overton variance"
   expect_equal(nrow(Condition_Estimates), 9)
 })
 
-Condition_Estimates <- cat_analysis(dframe = NLA_IN, vars = vars,
-  subpops = subpops, siteID = "SITE_ID", weight = "WGT_TP",  vartype = "YG",
-  jointprob = "hr")
+Condition_Estimates <- cat_analysis(
+  dframe = NLA_IN, vars = vars,
+  subpops = subpops, siteID = "SITE_ID", weight = "WGT_TP", vartype = "YG",
+  jointprob = "hr"
+)
 
 test_that("Categorical: Unstratified single-stage analysis, YG-HR variance", {
   expect_true(exists("Condition_Estimates"))
@@ -247,8 +288,10 @@ dframe <- droplevels(subset(NLA_IN, YEAR == 2017))
 vars <- c("ContVar")
 
 # Perform tests
-CDF_Estimates <- cont_analysis(dframe = dframe, vars = vars, subpops = subpops,
-  siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD", ycoord = "YCOORD")
+CDF_Estimates <- cont_analysis(
+  dframe = dframe, vars = vars, subpops = subpops,
+  siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD", ycoord = "YCOORD"
+)
 
 test_that("Continuous: Unstratified single-stage analysis", {
   expect_true(exists("CDF_Estimates"))
@@ -258,9 +301,11 @@ test_that("Continuous: Unstratified single-stage analysis", {
   expect_equal(nrow(CDF_Estimates$Pct), 24)
 })
 
-CDF_Estimates <- cont_analysis(dframe = dframe, vars = vars, subpops = subpops,
+CDF_Estimates <- cont_analysis(
+  dframe = dframe, vars = vars, subpops = subpops,
   siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD", ycoord = "YCOORD",
-  popsize = popsize)
+  popsize = popsize
+)
 
 test_that("Continuous: with known population sizes", {
   expect_true(exists("CDF_Estimates"))
@@ -270,9 +315,11 @@ test_that("Continuous: with known population sizes", {
   expect_equal(nrow(CDF_Estimates$Pct), 24)
 })
 
-CDF_Estimates <- cont_analysis(dframe = dframe, vars = vars, subpops = subpops,
+CDF_Estimates <- cont_analysis(
+  dframe = dframe, vars = vars, subpops = subpops,
   siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD", ycoord = "YCOORD",
-  popcorrect = TRUE, fpcsize = "fpcsize")
+  popcorrect = TRUE, fpcsize = "fpcsize"
+)
 
 test_that("Continuous: with finite population correction factor", {
   expect_true(exists("CDF_Estimates"))
@@ -282,9 +329,11 @@ test_that("Continuous: with finite population correction factor", {
   expect_equal(nrow(CDF_Estimates$Pct), 24)
 })
 
-CDF_Estimates <- cont_analysis(dframe = dframe, vars = vars, subpops = subpops,
+CDF_Estimates <- cont_analysis(
+  dframe = dframe, vars = vars, subpops = subpops,
   siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD", ycoord = "YCOORD",
-  stratumID = "URBN_NLA17")
+  stratumID = "URBN_NLA17"
+)
 
 test_that("Continuous: Stratified single-stage analysis", {
   expect_true(exists("CDF_Estimates"))
@@ -294,9 +343,11 @@ test_that("Continuous: Stratified single-stage analysis", {
   expect_equal(nrow(CDF_Estimates$Pct), 24)
 })
 
-CDF_Estimates <- cont_analysis(dframe = dframe, vars = vars, subpops = subpops,
+CDF_Estimates <- cont_analysis(
+  dframe = dframe, vars = vars, subpops = subpops,
   siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD", ycoord = "YCOORD",
-  stratumID = "URBN_NLA17", popsize = popsize)
+  stratumID = "URBN_NLA17", popsize = popsize
+)
 
 test_that("Continuous: with known population sizes", {
   expect_true(exists("CDF_Estimates"))
@@ -306,9 +357,11 @@ test_that("Continuous: with known population sizes", {
   expect_equal(nrow(CDF_Estimates$Pct), 24)
 })
 
-CDF_Estimates <- cont_analysis(dframe = dframe, vars = vars, subpops = subpops,
+CDF_Estimates <- cont_analysis(
+  dframe = dframe, vars = vars, subpops = subpops,
   siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD", ycoord = "YCOORD",
-  stratumID = "URBN_NLA17", popcorrect = TRUE, fpcsize = "fpcsize")
+  stratumID = "URBN_NLA17", popcorrect = TRUE, fpcsize = "fpcsize"
+)
 
 test_that("Continuous: with finite population correction factor", {
   expect_true(exists("CDF_Estimates"))
@@ -318,10 +371,12 @@ test_that("Continuous: with finite population correction factor", {
   expect_equal(nrow(CDF_Estimates$Pct), 24)
 })
 
-CDF_Estimates <- cont_analysis(dframe = dframe, vars = vars, subpops = subpops,
-  siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD",  ycoord = "YCOORD",
+CDF_Estimates <- cont_analysis(
+  dframe = dframe, vars = vars, subpops = subpops,
+  siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD", ycoord = "YCOORD",
   clusterID = "clusterID", weight1 = "weight1", xcoord1 = "xcoord1",
-  ycoord1 = "ycoord1", vartype = "SRS")
+  ycoord1 = "ycoord1", vartype = "SRS"
+)
 
 test_that("Continuous: Unstratified two-stage analysis", {
   expect_true(exists("CDF_Estimates"))
@@ -331,10 +386,12 @@ test_that("Continuous: Unstratified two-stage analysis", {
   expect_equal(nrow(CDF_Estimates$Pct), 24)
 })
 
-CDF_Estimates <- cont_analysis(dframe = dframe, vars = vars, subpops = subpops,
+CDF_Estimates <- cont_analysis(
+  dframe = dframe, vars = vars, subpops = subpops,
   siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD", ycoord = "YCOORD",
   clusterID = "clusterID", weight1 = "weight1", xcoord1 = "xcoord1",
-  ycoord1 = "ycoord1", popsize = popsize, Ncluster = "Ncluster", vartype = "SRS")
+  ycoord1 = "ycoord1", popsize = popsize, Ncluster = "Ncluster", vartype = "SRS"
+)
 
 test_that("Continuous: with known population sizes", {
   expect_true(exists("CDF_Estimates"))
@@ -344,11 +401,13 @@ test_that("Continuous: with known population sizes", {
   expect_equal(nrow(CDF_Estimates$Pct), 24)
 })
 
-CDF_Estimates <- cont_analysis(dframe = dframe, vars = vars, subpops = subpops,
+CDF_Estimates <- cont_analysis(
+  dframe = dframe, vars = vars, subpops = subpops,
   siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD", ycoord = "YCOORD",
   clusterID = "clusterID", weight1 = "weight1", xcoord1 = "xcoord1",
   ycoord1 = "ycoord1", popcorrect = TRUE, Ncluster = "Ncluster",
-  stage1size="stage1size", vartype = "SRS")
+  stage1size = "stage1size", vartype = "SRS"
+)
 
 test_that("Continuous: with finite population correction factor", {
   expect_true(exists("CDF_Estimates"))
@@ -358,10 +417,12 @@ test_that("Continuous: with finite population correction factor", {
   expect_equal(nrow(CDF_Estimates$Pct), 24)
 })
 
-CDF_Estimates <- cont_analysis(dframe = dframe, vars = vars, subpops = subpops,
+CDF_Estimates <- cont_analysis(
+  dframe = dframe, vars = vars, subpops = subpops,
   siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD", ycoord = "YCOORD",
   stratumID = "URBN_NLA17", clusterID = "clusterID", weight1 = "weight1",
-  xcoord1 = "xcoord1", ycoord1 = "ycoord1", vartype = "SRS")
+  xcoord1 = "xcoord1", ycoord1 = "ycoord1", vartype = "SRS"
+)
 
 test_that("Continuous: Stratified two-stage analysis", {
   expect_true(exists("CDF_Estimates"))
@@ -371,11 +432,13 @@ test_that("Continuous: Stratified two-stage analysis", {
   expect_equal(nrow(CDF_Estimates$Pct), 24)
 })
 
-CDF_Estimates <- cont_analysis(dframe = dframe, vars = vars, subpops = subpops,
+CDF_Estimates <- cont_analysis(
+  dframe = dframe, vars = vars, subpops = subpops,
   siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD", ycoord = "YCOORD",
   stratumID = "URBN_NLA17", clusterID = "clusterID", weight1 = "weight1",
   xcoord1 = "xcoord1", ycoord1 = "ycoord1", popsize = popsize,
-  Ncluster = "Ncluster", vartype = "SRS")
+  Ncluster = "Ncluster", vartype = "SRS"
+)
 
 test_that("Continuous: with known population sizes", {
   expect_true(exists("CDF_Estimates"))
@@ -385,11 +448,13 @@ test_that("Continuous: with known population sizes", {
   expect_equal(nrow(CDF_Estimates$Pct), 24)
 })
 
-CDF_Estimates <- cont_analysis(dframe = dframe, vars = vars, subpops = subpops,
+CDF_Estimates <- cont_analysis(
+  dframe = dframe, vars = vars, subpops = subpops,
   siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD", ycoord = "YCOORD",
   stratumID = "URBN_NLA17", clusterID = "clusterID", weight1 = "weight1",
   xcoord1 = "xcoord1", ycoord1 = "ycoord1", popcorrect = TRUE,
-  Ncluster = "Ncluster", stage1size="stage1size", vartype = "SRS")
+  Ncluster = "Ncluster", stage1size = "stage1size", vartype = "SRS"
+)
 
 test_that("Continuous: with finite population correction factor", {
   expect_true(exists("CDF_Estimates"))
@@ -409,10 +474,12 @@ vars_response <- c("BENT_MMI_COND_2017")
 vars_stressor <- c("PTL_COND", "NTL_COND")
 
 # Perform tests
-RelRisk_Estimates <- relrisk_analysis(dframe = NLA_IN,
-  vars_response = vars_response, vars_stressor= vars_stressor,
+RelRisk_Estimates <- relrisk_analysis(
+  dframe = NLA_IN,
+  vars_response = vars_response, vars_stressor = vars_stressor,
   subpops = subpops, siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD",
-  ycoord = "YCOORD")
+  ycoord = "YCOORD"
+)
 
 test_that("Relative Risk: Unstratified single-stage analysis", {
   expect_true(exists("RelRisk_Estimates"))
@@ -420,10 +487,12 @@ test_that("Relative Risk: Unstratified single-stage analysis", {
   expect_equal(nrow(RelRisk_Estimates), 6)
 })
 
-RelRisk_Estimates <- relrisk_analysis(dframe = NLA_IN,
-  vars_response = vars_response, vars_stressor= vars_stressor,
+RelRisk_Estimates <- relrisk_analysis(
+  dframe = NLA_IN,
+  vars_response = vars_response, vars_stressor = vars_stressor,
   subpops = subpops, siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD",
-  ycoord = "YCOORD", popsize = popsize)
+  ycoord = "YCOORD", popsize = popsize
+)
 
 test_that("Relative Risk: with known population sizes", {
   expect_true(exists("RelRisk_Estimates"))
@@ -431,10 +500,12 @@ test_that("Relative Risk: with known population sizes", {
   expect_equal(nrow(RelRisk_Estimates), 6)
 })
 
-RelRisk_Estimates <- relrisk_analysis(dframe = NLA_IN,
-  vars_response = vars_response, vars_stressor= vars_stressor,
+RelRisk_Estimates <- relrisk_analysis(
+  dframe = NLA_IN,
+  vars_response = vars_response, vars_stressor = vars_stressor,
   subpops = subpops, siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD",
-  ycoord = "YCOORD", popcorrect = TRUE, fpcsize = "fpcsize")
+  ycoord = "YCOORD", popcorrect = TRUE, fpcsize = "fpcsize"
+)
 
 test_that("Relative Risk: with finite population correction factor", {
   expect_true(exists("RelRisk_Estimates"))
@@ -442,10 +513,12 @@ test_that("Relative Risk: with finite population correction factor", {
   expect_equal(nrow(RelRisk_Estimates), 6)
 })
 
-RelRisk_Estimates <- relrisk_analysis(dframe = NLA_IN,
-  vars_response = vars_response, vars_stressor= vars_stressor,
+RelRisk_Estimates <- relrisk_analysis(
+  dframe = NLA_IN,
+  vars_response = vars_response, vars_stressor = vars_stressor,
   subpops = subpops, siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD",
-  ycoord = "YCOORD", stratumID = "URBN_NLA17")
+  ycoord = "YCOORD", stratumID = "URBN_NLA17"
+)
 
 test_that("Relative Risk: Stratified single-stage analysis", {
   expect_true(exists("RelRisk_Estimates"))
@@ -453,10 +526,12 @@ test_that("Relative Risk: Stratified single-stage analysis", {
   expect_equal(nrow(RelRisk_Estimates), 6)
 })
 
-RelRisk_Estimates <- relrisk_analysis(dframe = NLA_IN,
-  vars_response = vars_response, vars_stressor= vars_stressor,
+RelRisk_Estimates <- relrisk_analysis(
+  dframe = NLA_IN,
+  vars_response = vars_response, vars_stressor = vars_stressor,
   subpops = subpops, siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD",
-  ycoord = "YCOORD", stratumID = "URBN_NLA17", popsize = popsize)
+  ycoord = "YCOORD", stratumID = "URBN_NLA17", popsize = popsize
+)
 
 test_that("Relative Risk: with known population sizes", {
   expect_true(exists("RelRisk_Estimates"))
@@ -464,11 +539,13 @@ test_that("Relative Risk: with known population sizes", {
   expect_equal(nrow(RelRisk_Estimates), 6)
 })
 
-RelRisk_Estimates <- relrisk_analysis(dframe = NLA_IN,
-  vars_response = vars_response, vars_stressor= vars_stressor,
+RelRisk_Estimates <- relrisk_analysis(
+  dframe = NLA_IN,
+  vars_response = vars_response, vars_stressor = vars_stressor,
   subpops = subpops, siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD",
   ycoord = "YCOORD", stratumID = "URBN_NLA17", popcorrect = TRUE,
-  fpcsize = "fpcsize")
+  fpcsize = "fpcsize"
+)
 
 test_that("Relative Risk: with finite population correction factor", {
   expect_true(exists("RelRisk_Estimates"))
@@ -476,11 +553,13 @@ test_that("Relative Risk: with finite population correction factor", {
   expect_equal(nrow(RelRisk_Estimates), 6)
 })
 
-RelRisk_Estimates <- relrisk_analysis(dframe = NLA_IN,
-  vars_response = vars_response, vars_stressor= vars_stressor,
+RelRisk_Estimates <- relrisk_analysis(
+  dframe = NLA_IN,
+  vars_response = vars_response, vars_stressor = vars_stressor,
   subpops = subpops, siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD",
   ycoord = "YCOORD", clusterID = "clusterID", weight1 = "weight1",
-  xcoord1 = "xcoord1", ycoord1 = "ycoord1")
+  xcoord1 = "xcoord1", ycoord1 = "ycoord1"
+)
 
 test_that("Relative Risk: Unstratified two-stage analysis", {
   expect_true(exists("RelRisk_Estimates"))
@@ -488,12 +567,14 @@ test_that("Relative Risk: Unstratified two-stage analysis", {
   expect_equal(nrow(RelRisk_Estimates), 6)
 })
 
-RelRisk_Estimates <- relrisk_analysis(dframe = NLA_IN,
-  vars_response = vars_response, vars_stressor= vars_stressor,
+RelRisk_Estimates <- relrisk_analysis(
+  dframe = NLA_IN,
+  vars_response = vars_response, vars_stressor = vars_stressor,
   subpops = subpops, siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD",
   ycoord = "YCOORD", clusterID = "clusterID", weight1 = "weight1",
   xcoord1 = "xcoord1", ycoord1 = "ycoord1", popsize = popsize,
-  Ncluster = "Ncluster")
+  Ncluster = "Ncluster"
+)
 
 test_that("Relative Risk: with known population sizes", {
   expect_true(exists("RelRisk_Estimates"))
@@ -501,12 +582,14 @@ test_that("Relative Risk: with known population sizes", {
   expect_equal(nrow(RelRisk_Estimates), 6)
 })
 
-RelRisk_Estimates <- relrisk_analysis(dframe = NLA_IN,
-  vars_response = vars_response, vars_stressor= vars_stressor,
+RelRisk_Estimates <- relrisk_analysis(
+  dframe = NLA_IN,
+  vars_response = vars_response, vars_stressor = vars_stressor,
   subpops = subpops, siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD",
   ycoord = "YCOORD", clusterID = "clusterID", weight1 = "weight1",
   xcoord1 = "xcoord1", ycoord1 = "ycoord1", popcorrect = TRUE,
-  Ncluster = "Ncluster", stage1size="stage1size")
+  Ncluster = "Ncluster", stage1size = "stage1size"
+)
 
 test_that("Relative Risk: with finite population correction factor", {
   expect_true(exists("RelRisk_Estimates"))
@@ -514,12 +597,14 @@ test_that("Relative Risk: with finite population correction factor", {
   expect_equal(nrow(RelRisk_Estimates), 6)
 })
 
-RelRisk_Estimates <- relrisk_analysis(dframe = NLA_IN,
-  vars_response = vars_response, vars_stressor= vars_stressor,
+RelRisk_Estimates <- relrisk_analysis(
+  dframe = NLA_IN,
+  vars_response = vars_response, vars_stressor = vars_stressor,
   subpops = subpops, siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD",
   ycoord = "YCOORD", stratumID = "URBN_NLA17", clusterID = "clusterID",
   weight1 = "weight1", xcoord1 = "xcoord1", ycoord1 = "ycoord1",
-  vartype = "SRS")
+  vartype = "SRS"
+)
 
 test_that("Relative Risk: Stratified two-stage analysis", {
   expect_true(exists("RelRisk_Estimates"))
@@ -527,12 +612,14 @@ test_that("Relative Risk: Stratified two-stage analysis", {
   expect_equal(nrow(RelRisk_Estimates), 6)
 })
 
-RelRisk_Estimates <- relrisk_analysis(dframe = NLA_IN,
-  vars_response = vars_response, vars_stressor= vars_stressor,
+RelRisk_Estimates <- relrisk_analysis(
+  dframe = NLA_IN,
+  vars_response = vars_response, vars_stressor = vars_stressor,
   subpops = subpops, siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD",
   ycoord = "YCOORD", stratumID = "URBN_NLA17", clusterID = "clusterID",
   weight1 = "weight1", xcoord1 = "xcoord1", ycoord1 = "ycoord1",
-  popsize = popsize, Ncluster = "Ncluster", vartype = "SRS")
+  popsize = popsize, Ncluster = "Ncluster", vartype = "SRS"
+)
 
 test_that("Relative Risk: with known population sizes", {
   expect_true(exists("RelRisk_Estimates"))
@@ -540,13 +627,15 @@ test_that("Relative Risk: with known population sizes", {
   expect_equal(nrow(RelRisk_Estimates), 6)
 })
 
-RelRisk_Estimates <- relrisk_analysis(dframe = NLA_IN,
-  vars_response = vars_response, vars_stressor= vars_stressor,
+RelRisk_Estimates <- relrisk_analysis(
+  dframe = NLA_IN,
+  vars_response = vars_response, vars_stressor = vars_stressor,
   subpops = subpops, siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD",
   ycoord = "YCOORD", stratumID = "URBN_NLA17", clusterID = "clusterID",
   weight1 = "weight1", xcoord1 = "xcoord1", ycoord1 = "ycoord1",
-  popcorrect = TRUE, Ncluster = "Ncluster", stage1size="stage1size",
-  vartype = "SRS")
+  popcorrect = TRUE, Ncluster = "Ncluster", stage1size = "stage1size",
+  vartype = "SRS"
+)
 
 test_that("Relative Risk: with finite population correction factor", {
   expect_true(exists("RelRisk_Estimates"))
@@ -559,10 +648,12 @@ test_that("Relative Risk: with finite population correction factor", {
 #
 
 # Perform tests
-AttRisk_Estimates <- attrisk_analysis(dframe = NLA_IN,
-  vars_response = vars_response, vars_stressor= vars_stressor,
+AttRisk_Estimates <- attrisk_analysis(
+  dframe = NLA_IN,
+  vars_response = vars_response, vars_stressor = vars_stressor,
   subpops = subpops, siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD",
-  ycoord = "YCOORD")
+  ycoord = "YCOORD"
+)
 
 test_that("Attributable Risk: Unstratified single-stage analysis", {
   expect_true(exists("AttRisk_Estimates"))
@@ -570,10 +661,12 @@ test_that("Attributable Risk: Unstratified single-stage analysis", {
   expect_equal(nrow(AttRisk_Estimates), 6)
 })
 
-AttRisk_Estimates <- attrisk_analysis(dframe = NLA_IN,
-  vars_response = vars_response, vars_stressor= vars_stressor,
+AttRisk_Estimates <- attrisk_analysis(
+  dframe = NLA_IN,
+  vars_response = vars_response, vars_stressor = vars_stressor,
   subpops = subpops, siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD",
-  ycoord = "YCOORD", popsize = popsize)
+  ycoord = "YCOORD", popsize = popsize
+)
 
 test_that("Attributable Risk: with known population sizes", {
   expect_true(exists("AttRisk_Estimates"))
@@ -581,10 +674,12 @@ test_that("Attributable Risk: with known population sizes", {
   expect_equal(nrow(AttRisk_Estimates), 6)
 })
 
-AttRisk_Estimates <- attrisk_analysis(dframe = NLA_IN,
-  vars_response = vars_response, vars_stressor= vars_stressor,
+AttRisk_Estimates <- attrisk_analysis(
+  dframe = NLA_IN,
+  vars_response = vars_response, vars_stressor = vars_stressor,
   subpops = subpops, siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD",
-  ycoord = "YCOORD", popcorrect = TRUE, fpcsize = "fpcsize")
+  ycoord = "YCOORD", popcorrect = TRUE, fpcsize = "fpcsize"
+)
 
 test_that("Attributable Risk: with finite population correction factor", {
   expect_true(exists("AttRisk_Estimates"))
@@ -592,10 +687,12 @@ test_that("Attributable Risk: with finite population correction factor", {
   expect_equal(nrow(AttRisk_Estimates), 6)
 })
 
-AttRisk_Estimates <- attrisk_analysis(dframe = NLA_IN,
-  vars_response = vars_response, vars_stressor= vars_stressor,
+AttRisk_Estimates <- attrisk_analysis(
+  dframe = NLA_IN,
+  vars_response = vars_response, vars_stressor = vars_stressor,
   subpops = subpops, siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD",
-  ycoord = "YCOORD", stratumID = "URBN_NLA17")
+  ycoord = "YCOORD", stratumID = "URBN_NLA17"
+)
 
 test_that("Attributable Risk: Stratified single-stage analysis", {
   expect_true(exists("AttRisk_Estimates"))
@@ -603,10 +700,12 @@ test_that("Attributable Risk: Stratified single-stage analysis", {
   expect_equal(nrow(AttRisk_Estimates), 6)
 })
 
-AttRisk_Estimates <- attrisk_analysis(dframe = NLA_IN,
-  vars_response = vars_response, vars_stressor= vars_stressor,
+AttRisk_Estimates <- attrisk_analysis(
+  dframe = NLA_IN,
+  vars_response = vars_response, vars_stressor = vars_stressor,
   subpops = subpops, siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD",
-  ycoord = "YCOORD", stratumID = "URBN_NLA17", popsize = popsize)
+  ycoord = "YCOORD", stratumID = "URBN_NLA17", popsize = popsize
+)
 
 test_that("Attributable Risk: with known population sizes", {
   expect_true(exists("AttRisk_Estimates"))
@@ -614,11 +713,13 @@ test_that("Attributable Risk: with known population sizes", {
   expect_equal(nrow(AttRisk_Estimates), 6)
 })
 
-AttRisk_Estimates <- attrisk_analysis(dframe = NLA_IN,
-  vars_response = vars_response, vars_stressor= vars_stressor,
+AttRisk_Estimates <- attrisk_analysis(
+  dframe = NLA_IN,
+  vars_response = vars_response, vars_stressor = vars_stressor,
   subpops = subpops, siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD",
   ycoord = "YCOORD", stratumID = "URBN_NLA17", popcorrect = TRUE,
-  fpcsize = "fpcsize")
+  fpcsize = "fpcsize"
+)
 
 test_that("Attributable Risk: with finite population correction factor", {
   expect_true(exists("AttRisk_Estimates"))
@@ -626,11 +727,13 @@ test_that("Attributable Risk: with finite population correction factor", {
   expect_equal(nrow(AttRisk_Estimates), 6)
 })
 
-AttRisk_Estimates <- attrisk_analysis(dframe = NLA_IN,
-  vars_response = vars_response, vars_stressor= vars_stressor,
+AttRisk_Estimates <- attrisk_analysis(
+  dframe = NLA_IN,
+  vars_response = vars_response, vars_stressor = vars_stressor,
   subpops = subpops, siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD",
   ycoord = "YCOORD", clusterID = "clusterID", weight1 = "weight1",
-  xcoord1 = "xcoord1", ycoord1 = "ycoord1")
+  xcoord1 = "xcoord1", ycoord1 = "ycoord1"
+)
 
 test_that("Attributable Risk: Unstratified two-stage analysis", {
   expect_true(exists("AttRisk_Estimates"))
@@ -638,12 +741,14 @@ test_that("Attributable Risk: Unstratified two-stage analysis", {
   expect_equal(nrow(AttRisk_Estimates), 6)
 })
 
-AttRisk_Estimates <- attrisk_analysis(dframe = NLA_IN,
-  vars_response = vars_response, vars_stressor= vars_stressor,
+AttRisk_Estimates <- attrisk_analysis(
+  dframe = NLA_IN,
+  vars_response = vars_response, vars_stressor = vars_stressor,
   subpops = subpops, siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD",
   ycoord = "YCOORD", clusterID = "clusterID", weight1 = "weight1",
   xcoord1 = "xcoord1", ycoord1 = "ycoord1", popsize = popsize,
-  Ncluster = "Ncluster")
+  Ncluster = "Ncluster"
+)
 
 test_that("Attributable Risk: with known population sizes", {
   expect_true(exists("AttRisk_Estimates"))
@@ -651,12 +756,14 @@ test_that("Attributable Risk: with known population sizes", {
   expect_equal(nrow(AttRisk_Estimates), 6)
 })
 
-AttRisk_Estimates <- attrisk_analysis(dframe = NLA_IN,
-  vars_response = vars_response, vars_stressor= vars_stressor,
+AttRisk_Estimates <- attrisk_analysis(
+  dframe = NLA_IN,
+  vars_response = vars_response, vars_stressor = vars_stressor,
   subpops = subpops, siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD",
   ycoord = "YCOORD", clusterID = "clusterID", weight1 = "weight1",
   xcoord1 = "xcoord1", ycoord1 = "ycoord1", popcorrect = TRUE,
-  Ncluster = "Ncluster", stage1size="stage1size")
+  Ncluster = "Ncluster", stage1size = "stage1size"
+)
 
 test_that("Attributable Risk: with finite population correction factor", {
   expect_true(exists("AttRisk_Estimates"))
@@ -664,12 +771,14 @@ test_that("Attributable Risk: with finite population correction factor", {
   expect_equal(nrow(AttRisk_Estimates), 6)
 })
 
-AttRisk_Estimates <- attrisk_analysis(dframe = NLA_IN,
-  vars_response = vars_response, vars_stressor= vars_stressor,
+AttRisk_Estimates <- attrisk_analysis(
+  dframe = NLA_IN,
+  vars_response = vars_response, vars_stressor = vars_stressor,
   subpops = subpops, siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD",
   ycoord = "YCOORD", stratumID = "URBN_NLA17", clusterID = "clusterID",
   weight1 = "weight1", xcoord1 = "xcoord1", ycoord1 = "ycoord1",
-  vartype = "SRS")
+  vartype = "SRS"
+)
 
 test_that("Attributable Risk: Stratified two-stage analysis", {
   expect_true(exists("AttRisk_Estimates"))
@@ -677,12 +786,14 @@ test_that("Attributable Risk: Stratified two-stage analysis", {
   expect_equal(nrow(AttRisk_Estimates), 6)
 })
 
-AttRisk_Estimates <- attrisk_analysis(dframe = NLA_IN,
-  vars_response = vars_response, vars_stressor= vars_stressor,
+AttRisk_Estimates <- attrisk_analysis(
+  dframe = NLA_IN,
+  vars_response = vars_response, vars_stressor = vars_stressor,
   subpops = subpops, siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD",
   ycoord = "YCOORD", stratumID = "URBN_NLA17", clusterID = "clusterID",
   weight1 = "weight1", xcoord1 = "xcoord1", ycoord1 = "ycoord1",
-  popsize = popsize, Ncluster = "Ncluster", vartype = "SRS")
+  popsize = popsize, Ncluster = "Ncluster", vartype = "SRS"
+)
 
 test_that("Attributable Risk: with known population sizes", {
   expect_true(exists("AttRisk_Estimates"))
@@ -690,13 +801,15 @@ test_that("Attributable Risk: with known population sizes", {
   expect_equal(nrow(AttRisk_Estimates), 6)
 })
 
-AttRisk_Estimates <- attrisk_analysis(dframe = NLA_IN,
-  vars_response = vars_response, vars_stressor= vars_stressor,
+AttRisk_Estimates <- attrisk_analysis(
+  dframe = NLA_IN,
+  vars_response = vars_response, vars_stressor = vars_stressor,
   subpops = subpops, siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD",
   ycoord = "YCOORD", stratumID = "URBN_NLA17", clusterID = "clusterID",
   weight1 = "weight1", xcoord1 = "xcoord1", ycoord1 = "ycoord1",
-  popcorrect = TRUE, Ncluster = "Ncluster", stage1size="stage1size",
-  vartype = "SRS")
+  popcorrect = TRUE, Ncluster = "Ncluster", stage1size = "stage1size",
+  vartype = "SRS"
+)
 
 test_that("Attributable Risk: with finite population correction factor", {
   expect_true(exists("AttRisk_Estimates"))
@@ -720,14 +833,17 @@ subpops <- c("All_Sites")
 
 # Create a population size data frame
 popsize <- data.frame(
-   All_Sites = c("Indiana Lakes"),
-   Total = c(20000))
+  All_Sites = c("Indiana Lakes"),
+  Total = c(20000)
+)
 
 # Perform tests
-Change_Estimates <- change_analysis(dframe = dframe, vars_cat = vars_cat,
+Change_Estimates <- change_analysis(
+  dframe = dframe, vars_cat = vars_cat,
   vars_cont = vars_cont, test = c("mean", "median"), subpops = subpops,
   surveyID = "YEAR", siteID = "UNIQUE_ID", weight = "WGT_TP", xcoord = "XCOORD",
-  ycoord = "YCOORD")
+  ycoord = "YCOORD"
+)
 
 test_that("Change: Unstratified single-stage analysis", {
   expect_true(exists("Change_Estimates"))
@@ -739,10 +855,12 @@ test_that("Change: Unstratified single-stage analysis", {
   expect_equal(nrow(Change_Estimates$contsum_median), 2)
 })
 
-Change_Estimates <- change_analysis(dframe = dframe, vars_cat = vars_cat,
+Change_Estimates <- change_analysis(
+  dframe = dframe, vars_cat = vars_cat,
   vars_cont = vars_cont, test = c("mean", "median"), subpops = subpops,
   surveyID = "YEAR", siteID = "UNIQUE_ID", weight = "WGT_TP", xcoord = "XCOORD",
-  ycoord = "YCOORD", popsize = popsize)
+  ycoord = "YCOORD", popsize = popsize
+)
 
 test_that("Change: with known population sizes", {
   expect_true(exists("Change_Estimates"))
@@ -754,10 +872,12 @@ test_that("Change: with known population sizes", {
   expect_equal(nrow(Change_Estimates$contsum_median), 2)
 })
 
-Change_Estimates <- change_analysis(dframe = dframe, vars_cat = vars_cat,
+Change_Estimates <- change_analysis(
+  dframe = dframe, vars_cat = vars_cat,
   vars_cont = vars_cont, test = c("mean", "median"), subpops = subpops,
   surveyID = "YEAR", siteID = "UNIQUE_ID", weight = "WGT_TP", xcoord = "XCOORD",
-  ycoord = "YCOORD", popcorrect = TRUE, fpcsize = "fpcsize")
+  ycoord = "YCOORD", popcorrect = TRUE, fpcsize = "fpcsize"
+)
 
 test_that("Change: with finite population correction factor", {
   expect_true(exists("Change_Estimates"))
@@ -769,10 +889,12 @@ test_that("Change: with finite population correction factor", {
   expect_equal(nrow(Change_Estimates$contsum_median), 2)
 })
 
-Change_Estimates <- change_analysis(dframe = dframe, vars_cat = vars_cat,
+Change_Estimates <- change_analysis(
+  dframe = dframe, vars_cat = vars_cat,
   vars_cont = vars_cont, test = c("mean", "median"), subpops = subpops,
   surveyID = "YEAR", siteID = "UNIQUE_ID", weight = "WGT_TP", xcoord = "XCOORD",
-  ycoord = "YCOORD", stratumID = "LAKE_ORGN")
+  ycoord = "YCOORD", stratumID = "LAKE_ORGN"
+)
 
 test_that("Change: Stratified single-stage analysis", {
   expect_true(exists("Change_Estimates"))
@@ -784,11 +906,13 @@ test_that("Change: Stratified single-stage analysis", {
   expect_equal(nrow(Change_Estimates$contsum_median), 2)
 })
 
-Change_Estimates <- change_analysis(dframe = dframe, vars_cat = vars_cat,
+Change_Estimates <- change_analysis(
+  dframe = dframe, vars_cat = vars_cat,
   vars_cont = vars_cont, test = c("mean", "median"), subpops = subpops,
   surveyID = "YEAR", siteID = "UNIQUE_ID", weight = "WGT_TP", xcoord = "XCOORD",
   ycoord = "YCOORD", stratumID = "LAKE_ORGN", popcorrect = TRUE,
-  fpcsize = "fpcsize")
+  fpcsize = "fpcsize"
+)
 
 test_that("Change: with finite population correction factor", {
   expect_true(exists("Change_Estimates"))
@@ -800,11 +924,13 @@ test_that("Change: with finite population correction factor", {
   expect_equal(nrow(Change_Estimates$contsum_median), 2)
 })
 
-Change_Estimates <- change_analysis(dframe = dframe, vars_cat = vars_cat,
+Change_Estimates <- change_analysis(
+  dframe = dframe, vars_cat = vars_cat,
   vars_cont = vars_cont, test = c("mean", "median"), subpops = subpops,
   surveyID = "YEAR", siteID = "UNIQUE_ID", weight = "WGT_TP", xcoord = "XCOORD",
   ycoord = "YCOORD", clusterID = "clusterID", weight1 = "weight1",
-  xcoord1 = "xcoord1", ycoord1 = "ycoord1", vartype = "SRS")
+  xcoord1 = "xcoord1", ycoord1 = "ycoord1", vartype = "SRS"
+)
 
 test_that("Change: Unstratified two-stage analysis", {
   expect_true(exists("Change_Estimates"))
@@ -816,12 +942,14 @@ test_that("Change: Unstratified two-stage analysis", {
   expect_equal(nrow(Change_Estimates$contsum_median), 2)
 })
 
-Change_Estimates <- change_analysis(dframe = dframe, vars_cat = vars_cat,
+Change_Estimates <- change_analysis(
+  dframe = dframe, vars_cat = vars_cat,
   vars_cont = vars_cont, test = c("mean", "median"), subpops = subpops,
   surveyID = "YEAR", siteID = "UNIQUE_ID", weight = "WGT_TP", xcoord = "XCOORD",
   ycoord = "YCOORD", clusterID = "clusterID", weight1 = "weight1",
   xcoord1 = "xcoord1", ycoord1 = "ycoord1", popsize = popsize,
-  Ncluster = "Ncluster", vartype = "SRS")
+  Ncluster = "Ncluster", vartype = "SRS"
+)
 
 test_that("Change: with known population sizes", {
   expect_true(exists("Change_Estimates"))
@@ -833,12 +961,14 @@ test_that("Change: with known population sizes", {
   expect_equal(nrow(Change_Estimates$contsum_median), 2)
 })
 
-Change_Estimates <- change_analysis(dframe = dframe, vars_cat = vars_cat,
+Change_Estimates <- change_analysis(
+  dframe = dframe, vars_cat = vars_cat,
   vars_cont = vars_cont, test = c("mean", "median"), subpops = subpops,
   surveyID = "YEAR", siteID = "UNIQUE_ID", weight = "WGT_TP", xcoord = "XCOORD",
   ycoord = "YCOORD", clusterID = "clusterID", weight1 = "weight1",
   xcoord1 = "xcoord1", ycoord1 = "ycoord1", popcorrect = TRUE,
-  Ncluster = "Ncluster", stage1size="stage1size", vartype = "SRS")
+  Ncluster = "Ncluster", stage1size = "stage1size", vartype = "SRS"
+)
 
 test_that("Change: with finite population correction factor", {
   expect_true(exists("Change_Estimates"))
@@ -850,12 +980,14 @@ test_that("Change: with finite population correction factor", {
   expect_equal(nrow(Change_Estimates$contsum_median), 2)
 })
 
-Change_Estimates <- change_analysis(dframe = dframe, vars_cat = vars_cat,
+Change_Estimates <- change_analysis(
+  dframe = dframe, vars_cat = vars_cat,
   vars_cont = vars_cont, test = c("mean", "median"), subpops = subpops,
   surveyID = "YEAR", siteID = "UNIQUE_ID", weight = "WGT_TP", xcoord = "XCOORD",
   ycoord = "YCOORD", stratumID = "LAKE_ORGN", clusterID = "clusterID",
   weight1 = "weight1", xcoord1 = "xcoord1", ycoord1 = "ycoord1",
-  vartype = "SRS")
+  vartype = "SRS"
+)
 
 test_that("Change: Stratified two-stage analysis", {
   expect_true(exists("Change_Estimates"))
@@ -867,12 +999,14 @@ test_that("Change: Stratified two-stage analysis", {
   expect_equal(nrow(Change_Estimates$contsum_median), 2)
 })
 
-Change_Estimates <- change_analysis(dframe = dframe, vars_cat = vars_cat,
+Change_Estimates <- change_analysis(
+  dframe = dframe, vars_cat = vars_cat,
   vars_cont = vars_cont, test = c("mean", "median"), subpops = subpops,
   surveyID = "YEAR", siteID = "UNIQUE_ID", weight = "WGT_TP", xcoord = "XCOORD",
   ycoord = "YCOORD", stratumID = "LAKE_ORGN", clusterID = "clusterID",
   weight1 = "weight1", xcoord1 = "xcoord1", ycoord1 = "ycoord1",
-  popsize = popsize, Ncluster = "Ncluster", vartype = "SRS")
+  popsize = popsize, Ncluster = "Ncluster", vartype = "SRS"
+)
 
 test_that("Change: with known population sizes", {
   expect_true(exists("Change_Estimates"))
@@ -884,13 +1018,15 @@ test_that("Change: with known population sizes", {
   expect_equal(nrow(Change_Estimates$contsum_median), 2)
 })
 
-Change_Estimates <- change_analysis(dframe = dframe, vars_cat = vars_cat,
+Change_Estimates <- change_analysis(
+  dframe = dframe, vars_cat = vars_cat,
   vars_cont = vars_cont, test = c("mean", "median"), subpops = subpops,
   surveyID = "YEAR", siteID = "UNIQUE_ID", weight = "WGT_TP", xcoord = "XCOORD",
   ycoord = "YCOORD", stratumID = "LAKE_ORGN", clusterID = "clusterID",
   weight1 = "weight1", xcoord1 = "xcoord1", ycoord1 = "ycoord1",
-  popcorrect = TRUE, Ncluster = "Ncluster", stage1size="stage1size",
-  vartype = "SRS")
+  popcorrect = TRUE, Ncluster = "Ncluster", stage1size = "stage1size",
+  vartype = "SRS"
+)
 
 test_that("Change: with finite population correction factor", {
   expect_true(exists("Change_Estimates"))
@@ -914,9 +1050,11 @@ vars <- c("ContVar")
 subpops <- c("LAKE_ORGN", "AG_ECO9")
 
 # Perform tests
-CDF_Tests <- cont_cdftest(dframe = NLA_IN, vars = vars, subpops = subpops,
+CDF_Tests <- cont_cdftest(
+  dframe = NLA_IN, vars = vars, subpops = subpops,
   siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD", ycoord = "YCOORD",
-  testname = "adjWald")
+  testname = "adjWald"
+)
 
 test_that("CDF Inference: Unstratified single-stage analysis - adjusted Wald", {
   expect_true(exists("CDF_Estimates"))
@@ -925,9 +1063,11 @@ test_that("CDF Inference: Unstratified single-stage analysis - adjusted Wald", {
   expect_equal(nrow(CDF_Tests), 4)
 })
 
-CDF_Tests <- cont_cdftest(dframe = NLA_IN, vars = vars, subpops = subpops,
+CDF_Tests <- cont_cdftest(
+  dframe = NLA_IN, vars = vars, subpops = subpops,
   siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD", ycoord = "YCOORD",
-  testname = "RaoScott_First")
+  testname = "RaoScott_First"
+)
 
 test_that("CDF Inference: Unstratified single-stage analysis - RaoScott_First", {
   expect_true(exists("CDF_Estimates"))
@@ -936,9 +1076,11 @@ test_that("CDF Inference: Unstratified single-stage analysis - RaoScott_First", 
   expect_equal(nrow(CDF_Tests), 4)
 })
 
-CDF_Tests <- cont_cdftest(dframe = NLA_IN, vars = vars, subpops = subpops,
+CDF_Tests <- cont_cdftest(
+  dframe = NLA_IN, vars = vars, subpops = subpops,
   siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD", ycoord = "YCOORD",
-  popsize = popsize, testname = "adjWald")
+  popsize = popsize, testname = "adjWald"
+)
 
 test_that("CDF Inference: with known population sizes - adjusted Wald", {
   expect_true(exists("CDF_Estimates"))
@@ -947,9 +1089,11 @@ test_that("CDF Inference: with known population sizes - adjusted Wald", {
   expect_equal(nrow(CDF_Tests), 4)
 })
 
-CDF_Tests <- cont_cdftest(dframe = NLA_IN, vars = vars, subpops = subpops,
+CDF_Tests <- cont_cdftest(
+  dframe = NLA_IN, vars = vars, subpops = subpops,
   siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD", ycoord = "YCOORD",
-  popsize = popsize, testname = "RaoScott_First")
+  popsize = popsize, testname = "RaoScott_First"
+)
 
 test_that("CDF Inference: with known population sizes - RaoScott_First", {
   expect_true(exists("CDF_Estimates"))
@@ -958,9 +1102,11 @@ test_that("CDF Inference: with known population sizes - RaoScott_First", {
   expect_equal(nrow(CDF_Tests), 4)
 })
 
-CDF_Tests <- cont_cdftest(dframe = NLA_IN, vars = vars, subpops = subpops,
+CDF_Tests <- cont_cdftest(
+  dframe = NLA_IN, vars = vars, subpops = subpops,
   siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD", ycoord = "YCOORD",
-  popcorrect = TRUE, fpcsize = "fpcsize", testname = "adjWald")
+  popcorrect = TRUE, fpcsize = "fpcsize", testname = "adjWald"
+)
 
 test_that("CDF Inference: with finite population correction factor - adjusted Wald", {
   expect_true(exists("CDF_Estimates"))
@@ -969,9 +1115,11 @@ test_that("CDF Inference: with finite population correction factor - adjusted Wa
   expect_equal(nrow(CDF_Tests), 4)
 })
 
-CDF_Tests <- cont_cdftest(dframe = NLA_IN, vars = vars, subpops = subpops,
+CDF_Tests <- cont_cdftest(
+  dframe = NLA_IN, vars = vars, subpops = subpops,
   siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD", ycoord = "YCOORD",
-  popcorrect = TRUE, fpcsize = "fpcsize", testname = "RaoScott_First")
+  popcorrect = TRUE, fpcsize = "fpcsize", testname = "RaoScott_First"
+)
 
 test_that("CDF Inference: with finite population correction factor - RaoScott_First", {
   expect_true(exists("CDF_Estimates"))
@@ -980,9 +1128,11 @@ test_that("CDF Inference: with finite population correction factor - RaoScott_Fi
   expect_equal(nrow(CDF_Tests), 4)
 })
 
-CDF_Tests <- cont_cdftest(dframe = NLA_IN, vars = vars, subpops = subpops,
+CDF_Tests <- cont_cdftest(
+  dframe = NLA_IN, vars = vars, subpops = subpops,
   siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD", ycoord = "YCOORD",
-  stratumID = "URBN_NLA17", testname = "adjWald")
+  stratumID = "URBN_NLA17", testname = "adjWald"
+)
 
 test_that("CDF Inference: Stratified single-stage analysis - adjusted Wald", {
   expect_true(exists("CDF_Estimates"))
@@ -991,9 +1141,11 @@ test_that("CDF Inference: Stratified single-stage analysis - adjusted Wald", {
   expect_equal(nrow(CDF_Tests), 4)
 })
 
-CDF_Tests <- cont_cdftest(dframe = NLA_IN, vars = vars, subpops = subpops,
+CDF_Tests <- cont_cdftest(
+  dframe = NLA_IN, vars = vars, subpops = subpops,
   siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD", ycoord = "YCOORD",
-  stratumID = "URBN_NLA17", testname = "RaoScott_First")
+  stratumID = "URBN_NLA17", testname = "RaoScott_First"
+)
 
 test_that("CDF Inference: Stratified single-stage analysis - RaoScott_First", {
   expect_true(exists("CDF_Estimates"))
@@ -1002,9 +1154,11 @@ test_that("CDF Inference: Stratified single-stage analysis - RaoScott_First", {
   expect_equal(nrow(CDF_Tests), 4)
 })
 
-CDF_Tests <- cont_cdftest(dframe = NLA_IN, vars = vars, subpops = subpops,
+CDF_Tests <- cont_cdftest(
+  dframe = NLA_IN, vars = vars, subpops = subpops,
   siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD", ycoord = "YCOORD",
-  stratumID = "URBN_NLA17", popsize = popsize, testname = "adjWald")
+  stratumID = "URBN_NLA17", popsize = popsize, testname = "adjWald"
+)
 
 test_that("CDF Inference: with known population sizes - adjusted Wald", {
   expect_true(exists("CDF_Estimates"))
@@ -1013,9 +1167,11 @@ test_that("CDF Inference: with known population sizes - adjusted Wald", {
   expect_equal(nrow(CDF_Tests), 4)
 })
 
-CDF_Tests <- cont_cdftest(dframe = NLA_IN, vars = vars, subpops = subpops,
+CDF_Tests <- cont_cdftest(
+  dframe = NLA_IN, vars = vars, subpops = subpops,
   siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD", ycoord = "YCOORD",
-  stratumID = "URBN_NLA17", popsize = popsize, testname = "RaoScott_First")
+  stratumID = "URBN_NLA17", popsize = popsize, testname = "RaoScott_First"
+)
 
 test_that("CDF Inference: with known population sizes - RaoScott_First", {
   expect_true(exists("CDF_Estimates"))
@@ -1024,10 +1180,12 @@ test_that("CDF Inference: with known population sizes - RaoScott_First", {
   expect_equal(nrow(CDF_Tests), 4)
 })
 
-CDF_Tests <- cont_cdftest(dframe = NLA_IN, vars = vars, subpops = subpops,
+CDF_Tests <- cont_cdftest(
+  dframe = NLA_IN, vars = vars, subpops = subpops,
   siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD", ycoord = "YCOORD",
   stratumID = "URBN_NLA17", popcorrect = TRUE, fpcsize = "fpcsize",
-  testname = "adjWald")
+  testname = "adjWald"
+)
 
 test_that("CDF Inference: with finite population correction factor - adjusted Wald", {
   expect_true(exists("CDF_Estimates"))
@@ -1036,10 +1194,12 @@ test_that("CDF Inference: with finite population correction factor - adjusted Wa
   expect_equal(nrow(CDF_Tests), 4)
 })
 
-CDF_Tests <- cont_cdftest(dframe = NLA_IN, vars = vars, subpops = subpops,
+CDF_Tests <- cont_cdftest(
+  dframe = NLA_IN, vars = vars, subpops = subpops,
   siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD", ycoord = "YCOORD",
   stratumID = "URBN_NLA17", popcorrect = TRUE, fpcsize = "fpcsize",
-  testname = "RaoScott_First")
+  testname = "RaoScott_First"
+)
 
 test_that("CDF Inference: with finite population correction factor - RaoScott_First", {
   expect_true(exists("CDF_Estimates"))
@@ -1048,10 +1208,12 @@ test_that("CDF Inference: with finite population correction factor - RaoScott_Fi
   expect_equal(nrow(CDF_Tests), 4)
 })
 
-CDF_Tests <- cont_cdftest(dframe = NLA_IN, vars = vars, subpops = subpops,
+CDF_Tests <- cont_cdftest(
+  dframe = NLA_IN, vars = vars, subpops = subpops,
   siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD", ycoord = "YCOORD",
   clusterID = "clusterID", weight1 = "weight1", xcoord1 = "xcoord1",
-  ycoord1 = "ycoord1", vartype = "SRS", testname = "adjWald")
+  ycoord1 = "ycoord1", vartype = "SRS", testname = "adjWald"
+)
 
 test_that("CDF Inference: Unstratified two-stage analysis - adjusted Wald", {
   expect_true(exists("CDF_Estimates"))
@@ -1060,10 +1222,12 @@ test_that("CDF Inference: Unstratified two-stage analysis - adjusted Wald", {
   expect_equal(nrow(CDF_Tests), 4)
 })
 
-CDF_Tests <- cont_cdftest(dframe = NLA_IN, vars = vars, subpops = subpops,
+CDF_Tests <- cont_cdftest(
+  dframe = NLA_IN, vars = vars, subpops = subpops,
   siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD", ycoord = "YCOORD",
   clusterID = "clusterID", weight1 = "weight1", xcoord1 = "xcoord1",
-  ycoord1 = "ycoord1", vartype = "SRS", testname = "RaoScott_First")
+  ycoord1 = "ycoord1", vartype = "SRS", testname = "RaoScott_First"
+)
 
 test_that("CDF Inference: Unstratified two-stage analysis - RaoScott_First", {
   expect_true(exists("CDF_Estimates"))
@@ -1072,11 +1236,13 @@ test_that("CDF Inference: Unstratified two-stage analysis - RaoScott_First", {
   expect_equal(nrow(CDF_Tests), 4)
 })
 
-CDF_Tests <- cont_cdftest(dframe = NLA_IN, vars = vars, subpops = subpops,
+CDF_Tests <- cont_cdftest(
+  dframe = NLA_IN, vars = vars, subpops = subpops,
   siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD", ycoord = "YCOORD",
   clusterID = "clusterID", weight1 = "weight1", xcoord1 = "xcoord1",
   ycoord1 = "ycoord1", popsize = popsize, Ncluster = "Ncluster",
-  vartype = "SRS", testname = "adjWald")
+  vartype = "SRS", testname = "adjWald"
+)
 
 test_that("CDF Inference: with known population sizes - adjusted Wald", {
   expect_true(exists("CDF_Estimates"))
@@ -1085,11 +1251,13 @@ test_that("CDF Inference: with known population sizes - adjusted Wald", {
   expect_equal(nrow(CDF_Tests), 4)
 })
 
-CDF_Tests <- cont_cdftest(dframe = NLA_IN, vars = vars, subpops = subpops,
+CDF_Tests <- cont_cdftest(
+  dframe = NLA_IN, vars = vars, subpops = subpops,
   siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD", ycoord = "YCOORD",
   clusterID = "clusterID", weight1 = "weight1", xcoord1 = "xcoord1",
   ycoord1 = "ycoord1", popsize = popsize, Ncluster = "Ncluster",
-  vartype = "SRS", testname = "RaoScott_First")
+  vartype = "SRS", testname = "RaoScott_First"
+)
 
 test_that("CDF Inference: with known population sizes - RaoScott_First", {
   expect_true(exists("CDF_Estimates"))
@@ -1098,11 +1266,13 @@ test_that("CDF Inference: with known population sizes - RaoScott_First", {
   expect_equal(nrow(CDF_Tests), 4)
 })
 
-CDF_Tests <- cont_cdftest(dframe = NLA_IN, vars = vars, subpops = subpops,
+CDF_Tests <- cont_cdftest(
+  dframe = NLA_IN, vars = vars, subpops = subpops,
   siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD", ycoord = "YCOORD",
   clusterID = "clusterID", weight1 = "weight1", xcoord1 = "xcoord1",
   ycoord1 = "ycoord1", popcorrect = TRUE, Ncluster = "Ncluster",
-  stage1size="stage1size", vartype = "SRS", testname = "adjWald")
+  stage1size = "stage1size", vartype = "SRS", testname = "adjWald"
+)
 
 test_that("CDF Inference: with finite population correction factor - adjusted Wald", {
   expect_true(exists("CDF_Estimates"))
@@ -1111,11 +1281,13 @@ test_that("CDF Inference: with finite population correction factor - adjusted Wa
   expect_equal(nrow(CDF_Tests), 4)
 })
 
-CDF_Tests <- cont_cdftest(dframe = NLA_IN, vars = vars, subpops = subpops,
+CDF_Tests <- cont_cdftest(
+  dframe = NLA_IN, vars = vars, subpops = subpops,
   siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD", ycoord = "YCOORD",
   clusterID = "clusterID", weight1 = "weight1", xcoord1 = "xcoord1",
   ycoord1 = "ycoord1", popcorrect = TRUE, Ncluster = "Ncluster",
-  stage1size="stage1size", vartype = "SRS", testname = "RaoScott_First")
+  stage1size = "stage1size", vartype = "SRS", testname = "RaoScott_First"
+)
 
 test_that("CDF Inference: with finite population correction factor - RaoScott_First", {
   expect_true(exists("CDF_Estimates"))
@@ -1124,11 +1296,13 @@ test_that("CDF Inference: with finite population correction factor - RaoScott_Fi
   expect_equal(nrow(CDF_Tests), 4)
 })
 
-CDF_Tests <- cont_cdftest(dframe = NLA_IN, vars = vars, subpops = subpops,
+CDF_Tests <- cont_cdftest(
+  dframe = NLA_IN, vars = vars, subpops = subpops,
   siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD", ycoord = "YCOORD",
   stratumID = "URBN_NLA17", clusterID = "clusterID", weight1 = "weight1",
   xcoord1 = "xcoord1", ycoord1 = "ycoord1", vartype = "SRS",
-  testname = "adjWald")
+  testname = "adjWald"
+)
 
 test_that("CDF Inference: Stratified two-stage analysis - adjusted Wald", {
   expect_true(exists("CDF_Estimates"))
@@ -1137,11 +1311,13 @@ test_that("CDF Inference: Stratified two-stage analysis - adjusted Wald", {
   expect_equal(nrow(CDF_Tests), 4)
 })
 
-CDF_Tests <- cont_cdftest(dframe = NLA_IN, vars = vars, subpops = subpops,
+CDF_Tests <- cont_cdftest(
+  dframe = NLA_IN, vars = vars, subpops = subpops,
   siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD", ycoord = "YCOORD",
   stratumID = "URBN_NLA17", clusterID = "clusterID", weight1 = "weight1",
   xcoord1 = "xcoord1", ycoord1 = "ycoord1", vartype = "SRS",
-  testname = "RaoScott_First")
+  testname = "RaoScott_First"
+)
 
 test_that("CDF Inference: Stratified two-stage analysis - RaoScott_First", {
   expect_true(exists("CDF_Estimates"))
@@ -1150,11 +1326,13 @@ test_that("CDF Inference: Stratified two-stage analysis - RaoScott_First", {
   expect_equal(nrow(CDF_Tests), 4)
 })
 
-CDF_Tests <- cont_cdftest(dframe = NLA_IN, vars = vars, subpops = subpops,
+CDF_Tests <- cont_cdftest(
+  dframe = NLA_IN, vars = vars, subpops = subpops,
   siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD", ycoord = "YCOORD",
   stratumID = "URBN_NLA17", clusterID = "clusterID", weight1 = "weight1",
   xcoord1 = "xcoord1", ycoord1 = "ycoord1", popsize = popsize,
-  Ncluster = "Ncluster", vartype = "SRS", testname = "adjWald")
+  Ncluster = "Ncluster", vartype = "SRS", testname = "adjWald"
+)
 
 test_that("CDF Inference: with known population sizes - adjusted Wald", {
   expect_true(exists("CDF_Estimates"))
@@ -1163,11 +1341,13 @@ test_that("CDF Inference: with known population sizes - adjusted Wald", {
   expect_equal(nrow(CDF_Tests), 4)
 })
 
-CDF_Tests <- cont_cdftest(dframe = NLA_IN, vars = vars, subpops = subpops,
+CDF_Tests <- cont_cdftest(
+  dframe = NLA_IN, vars = vars, subpops = subpops,
   siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD", ycoord = "YCOORD",
   stratumID = "URBN_NLA17", clusterID = "clusterID", weight1 = "weight1",
   xcoord1 = "xcoord1", ycoord1 = "ycoord1", popsize = popsize,
-  Ncluster = "Ncluster", vartype = "SRS", testname = "RaoScott_First")
+  Ncluster = "Ncluster", vartype = "SRS", testname = "RaoScott_First"
+)
 
 test_that("CDF Inference: with known population sizes - RaoScott_First", {
   expect_true(exists("CDF_Estimates"))
@@ -1176,12 +1356,14 @@ test_that("CDF Inference: with known population sizes - RaoScott_First", {
   expect_equal(nrow(CDF_Tests), 4)
 })
 
-CDF_Tests <- cont_cdftest(dframe = NLA_IN, vars = vars, subpops = subpops,
+CDF_Tests <- cont_cdftest(
+  dframe = NLA_IN, vars = vars, subpops = subpops,
   siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD", ycoord = "YCOORD",
   stratumID = "URBN_NLA17", clusterID = "clusterID", weight1 = "weight1",
   xcoord1 = "xcoord1", ycoord1 = "ycoord1", popcorrect = TRUE,
-  Ncluster = "Ncluster", stage1size="stage1size", vartype = "SRS",
-  testname = "adjWald")
+  Ncluster = "Ncluster", stage1size = "stage1size", vartype = "SRS",
+  testname = "adjWald"
+)
 
 test_that("CDF Inference: with finite population correction factor - adjusted Wald", {
   expect_true(exists("CDF_Estimates"))
@@ -1190,12 +1372,14 @@ test_that("CDF Inference: with finite population correction factor - adjusted Wa
   expect_equal(nrow(CDF_Tests), 4)
 })
 
-CDF_Tests <- cont_cdftest(dframe = NLA_IN, vars = vars, subpops = subpops,
+CDF_Tests <- cont_cdftest(
+  dframe = NLA_IN, vars = vars, subpops = subpops,
   siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD", ycoord = "YCOORD",
   stratumID = "URBN_NLA17", clusterID = "clusterID", weight1 = "weight1",
   xcoord1 = "xcoord1", ycoord1 = "ycoord1", popcorrect = TRUE,
-  Ncluster = "Ncluster", stage1size="stage1size", vartype = "SRS",
-  testname = "RaoScott_First")
+  Ncluster = "Ncluster", stage1size = "stage1size", vartype = "SRS",
+  testname = "RaoScott_First"
+)
 
 test_that("CDF Inference: with finite population correction factor - RaoScott_First", {
   expect_true(exists("CDF_Estimates"))

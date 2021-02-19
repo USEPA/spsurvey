@@ -48,13 +48,13 @@ make_varsf <- function(object, formlist) {
   # can possibly deprecate this in the future by making use of
   # model.frame and extracting the main effects and using them to make the interactions
   # only real advantage will be creating variables for use mid formula with numeric variables
-  
+
 
 
   if (formlist$intercept && is.null(formlist$response) && length(formlist$varlabels) == 0) {
     return(object)
   } else {
-    # store geometry 
+    # store geometry
     if ("sf" %in% class(object)) {
       object_geometry <- st_geometry(object)
       object_df <- st_drop_geometry(object)
@@ -75,7 +75,7 @@ make_varsf <- function(object, formlist) {
     # converted to synctactic name with .
     if ("sf" %in% class(object)) {
       varsf <- st_as_sf(varsf, geometry = object_geometry)
-    } 
+    }
     return(varsf)
   }
 }
@@ -138,7 +138,6 @@ check_rhs_cat <- function(varsf, formlist) {
 }
 
 match_sf_defaults <- function(varsf, list_args) {
-
   sf_default_df <- data.frame(
     geometry = c("POINT", "MULTIPOINT", "LINESTRING", "MULTILINESTRING", "POLYGON", "MULTIPOLYGON"),
     pch = c(1, 1, 1, 1, NA, NA),
@@ -159,13 +158,12 @@ match_sf_defaults <- function(varsf, list_args) {
 
   names_list_args <- names(list_args)
   list_args <- lapply(names_list_args, function(x) {
-      if (x %in% names(sf_defaults) && any(is.na(list_args[[x]]))) {
-        list_args[[x]] <- ifelse(is.na(list_args[[x]]), sf_defaults[[x]], list_args[[x]])
-      } else {
-        list_args[[x]] <- list_args[[x]]
-      }
+    if (x %in% names(sf_defaults) && any(is.na(list_args[[x]]))) {
+      list_args[[x]] <- ifelse(is.na(list_args[[x]]), sf_defaults[[x]], list_args[[x]])
+    } else {
+      list_args[[x]] <- list_args[[x]]
     }
-  )
+  })
   names(list_args) <- names_list_args
   list_args
 }

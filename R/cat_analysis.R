@@ -196,46 +196,49 @@
 #'   stratum = rep(c("Stratum1", "Stratum2"), 50),
 #'   CatVar = rep(c("north", "south", "east", "west"), 25),
 #'   All_Sites = rep("All Sites", 100),
-#'   Resource_Class = rep(c("Good","Poor"), c(55,45)))
+#'   Resource_Class = rep(c("Good", "Poor"), c(55, 45))
+#' )
 #' myvars <- c("CatVar")
 #' mysubpops <- c("All_Sites", "Resource_Class")
 #' mypopsize <- data.frame(
 #'   Resource_Class = c("Good", "Poor"),
-#'   Total = c(4000, 1500))
-#' cat_analysis(dframe, vars = myvars, subpops = mysubpops, siteID = "siteID",
+#'   Total = c(4000, 1500)
+#' )
+#' cat_analysis(dframe,
+#'   vars = myvars, subpops = mysubpops, siteID = "siteID",
 #'   weight = "wgt", xcoord = "xcoord", ycoord = "ycoord",
-#'   stratumID = "stratum", popsize = mypopsize)
-#'
+#'   stratumID = "stratum", popsize = mypopsize
+#' )
 #' @export
 cat_analysis <- function(dframe, vars, subpops = NULL, siteID = "siteID",
-  weight = "weight", xcoord = NULL, ycoord = NULL, stratumID = NULL,
-  clusterID = NULL, weight1 = NULL, xcoord1 = NULL, ycoord1 = NULL,
-  sizeweight = FALSE, sweight = NULL, sweight1 = NULL, popcorrect = FALSE,
-  fpcsize = NULL, Ncluster = NULL, stage1size = NULL, popsize = NULL,
-  vartype = "Local", jointprob = "overton", conf = 95) {
+                         weight = "weight", xcoord = NULL, ycoord = NULL, stratumID = NULL,
+                         clusterID = NULL, weight1 = NULL, xcoord1 = NULL, ycoord1 = NULL,
+                         sizeweight = FALSE, sweight = NULL, sweight1 = NULL, popcorrect = FALSE,
+                         fpcsize = NULL, Ncluster = NULL, stage1size = NULL, popsize = NULL,
+                         vartype = "Local", jointprob = "overton", conf = 95) {
 
-# Create a vector for error messages
+  # Create a vector for error messages
 
   error_ind <- FALSE
   error_vec <- NULL
 
-# Create a data frame for warning messages
+  # Create a data frame for warning messages
 
   warn_ind <- FALSE
   warn_df <- NULL
   fname <- "cat_analysis"
 
-# Ensure that the dframe argument was provided
+  # Ensure that the dframe argument was provided
 
-  if(missing(dframe) | is.null(dframe)) {
+  if (missing(dframe) | is.null(dframe)) {
     stop("\nThe dframe argument must be provided.\n")
   }
 
-# If the dframe argument is an sf object, extract coordinates from the geometry
-# column, assign values "xcoord" and "ycoord" to arguments xcoord and ycoord,
-# respectively, and drop the geometry column from the object
+  # If the dframe argument is an sf object, extract coordinates from the geometry
+  # column, assign values "xcoord" and "ycoord" to arguments xcoord and ycoord,
+  # respectively, and drop the geometry column from the object
 
-  if("sf" %in% class(dframe)) {
+  if ("sf" %in% class(dframe)) {
     temp <- st_coordinates(dframe)
     xcoord <- "xcoord"
     dframe$xcoord <- temp[, "X"]
@@ -244,22 +247,22 @@ cat_analysis <- function(dframe, vars, subpops = NULL, siteID = "siteID",
     dframe <- st_set_geometry(dframe, NULL)
   }
 
-# Ensure that unused levels are dropped from factor variables in the dframe data
-# frame
+  # Ensure that unused levels are dropped from factor variables in the dframe data
+  # frame
 
   dframe <- droplevels(dframe)
 
-# Provide default site ID's if site ID is missing
-  
+  # Provide default site ID's if site ID is missing
+
   if (missing(siteID)) {
     siteID <- "siteID"
     dframe$siteID <- paste0(siteID, 1:nrow(dframe))
     ind <- TRUE
   } else {
-    
+
     # If site ID is not missing, ensure that the dframe data frame contains the site ID variable
-    
-    if(!(siteID %in% names(dframe))) {
+
+    if (!(siteID %in% names(dframe))) {
       ind <- FALSE
       error_ind <- TRUE
       msg <- paste0("The name provided for the siteID argument, \"", siteID, "\", does not occur among \nthe names for the dframe data frame.\n")
@@ -269,32 +272,34 @@ cat_analysis <- function(dframe, vars, subpops = NULL, siteID = "siteID",
     }
   }
 
-# Check site IDs for repeat values and, as necessary, create unique site IDs and
-# output a warning message
+  # Check site IDs for repeat values and, as necessary, create unique site IDs and
+  # output a warning message
 
-  if(ind) {
+  if (ind) {
     dframe$siteID <- dframe[, siteID]
     temp <- with(dframe, sapply(split(siteID, siteID), length))
-    if(any(temp > 1)) {
+    if (any(temp > 1)) {
       warn_ind <- TRUE
       temp_str <- vecprint(names(temp)[temp > 1])
       warn <- paste("The following site ID values occur more than once among the values that were \ninput to the function:\n", temp_str)
       act <- "Unique site ID values were created.\n"
-      warn_df <- rbind(warn_df, data.frame(func=I(fname), subpoptype=NA,
-        subpop=NA, indicator=NA, stratum=NA, warning=I(warn), action=I(act)))
+      warn_df <- rbind(warn_df, data.frame(
+        func = I(fname), subpoptype = NA,
+        subpop = NA, indicator = NA, stratum = NA, warning = I(warn), action = I(act)
+      ))
       dframe$siteID <- uniqueID(dframe$siteID)
     }
   }
 
-# Ensure that the dframe data frame contains the survey weight variable
+  # Ensure that the dframe data frame contains the survey weight variable
 
-  if(!(weight %in% names(dframe))) {
+  if (!(weight %in% names(dframe))) {
     error_ind <- TRUE
     msg <- paste0("The name provided for the weight argument, \"", weight, "\", does not occur among \nthe names for the dframe data frame.\n")
     error_vec <- c(error_vec, msg)
   }
-  
-# Setting a default finite population correction value for non-clustered designs
+
+  # Setting a default finite population correction value for non-clustered designs
   if (popcorrect && is.null(clusterID)) {
     # if fpcsize is not provide it set it equal to the sum of the weights
     if (is.null(fpcsize)) {
@@ -307,7 +312,7 @@ cat_analysis <- function(dframe, vars, subpops = NULL, siteID = "siteID",
     }
   }
 
-# Create a list containing names of survey design variables
+  # Create a list containing names of survey design variables
 
   design_names <- list(
     siteID = siteID,
@@ -323,31 +328,33 @@ cat_analysis <- function(dframe, vars, subpops = NULL, siteID = "siteID",
     sweight1 = sweight1,
     fpcsize = fpcsize,
     Ncluster = Ncluster,
-    stage1size = stage1size)
+    stage1size = stage1size
+  )
 
-# Ensure that a value was provided for the vars (response variable names)
-# argument
+  # Ensure that a value was provided for the vars (response variable names)
+  # argument
 
-  if(missing(vars)) {
+  if (missing(vars)) {
     error_ind <- TRUE
     msg <- "A value must be provided for the vars (response variable names) argument.\n"
     error_vec <- c(error_vec, msg)
   }
 
-# If a value was not provided for the subpops (subpopulation names) argument,
-# assign the value "All_Sites" to the subpops argument and create a factor
-# named "All_Sites" in the dframe data frame that takes the value "All Sites"
+  # If a value was not provided for the subpops (subpopulation names) argument,
+  # assign the value "All_Sites" to the subpops argument and create a factor
+  # named "All_Sites" in the dframe data frame that takes the value "All Sites"
 
-  if(is.null(subpops)) {
+  if (is.null(subpops)) {
     subpops <- "All_Sites"
     dframe$All_Sites <- "All Sites"
     dframe$All_Sites <- factor(dframe$All_Sites)
   }
 
-# Check input arguments
+  # Check input arguments
   temp <- input_check(dframe, design_names, vars, NULL, NULL, NULL, subpops,
     sizeweight, popcorrect, popsize, vartype, jointprob, conf,
-    error_ind = error_ind, error_vec = error_vec)
+    error_ind = error_ind, error_vec = error_vec
+  )
   dframe <- temp$dframe
   vars <- temp$vars_cat
   subpops <- temp$subpops
@@ -357,20 +364,20 @@ cat_analysis <- function(dframe, vars, subpops = NULL, siteID = "siteID",
   error_ind <- temp$error_ind
   error_vec <- temp$error_vec
 
-# As necessary, output a message indicating that error messages were generated
-# during execution of the program
+  # As necessary, output a message indicating that error messages were generated
+  # during execution of the program
 
-  if(error_ind) {
+  if (error_ind) {
     error_vec <<- error_vec
-    if(length(error_vec) == 1) {
+    if (length(error_vec) == 1) {
       cat("During execution of the program, an error message was generated.  The error \nmessage is stored in a vector named 'error_vec'.  Enter the following command \nto view the error message: errorprnt()\n")
     } else {
       cat(paste("During execution of the program,", length(error_vec), "error messages were generated.  The error \nmessages are stored in a vector named 'error_vec'.  Enter the following \ncommand to view the error messages: errorprnt()\n"))
     }
 
-    if(warn_ind) {
+    if (warn_ind) {
       warn_df <<- warn_df
-      if(nrow(warn_df) == 1) {
+      if (nrow(warn_df) == 1) {
         cat("During execution of the program, a warning message was generated.  The warning \nmessage is stored in a data frame named 'warn_df'.  Enter the following command \nto view the warning message: warnprnt()\n")
       } else {
         cat(paste("During execution of the program,", nrow(warn_df), "warning messages were generated.  The warning \nmessages are stored in a data frame named 'warn_df'.  Enter the following \ncommand to view the warning messages: warnprnt() \nTo view a subset of the warning messages (say, messages number 1, 3, and 5), \nenter the following command: warnprnt(m=c(1,3,5))\n"))
@@ -379,52 +386,56 @@ cat_analysis <- function(dframe, vars, subpops = NULL, siteID = "siteID",
     stop("See the preceding message(s).")
   }
 
-# Assign a logical value to the indicator variable for a stratified sample
+  # Assign a logical value to the indicator variable for a stratified sample
 
   stratum_ind <- !is.null(stratumID)
 
-# For a stratified sample, remove strata that contain a single site
+  # For a stratified sample, remove strata that contain a single site
 
-  if(stratum_ind) {
+  if (stratum_ind) {
     dframe[, stratumID] <- factor(dframe[, stratumID])
     stratum_levels <- levels(dframe[, stratumID])
     nstrata <- length(stratum_levels)
     ind <- FALSE
-    for(i in 1:nstrata) {
+    for (i in 1:nstrata) {
       tst <- dframe[, stratumID] == stratum_levels[i]
-      if(sum(tst) == 1) {
+      if (sum(tst) == 1) {
         warn_ind <- TRUE
         warn <- paste0("The stratum named \"", stratum_levels[i], "\" contains a single value and was removed from the analysis.\n")
         act <- "Stratum was removed from the analysis.\n"
-        warn_df <- rbind(warn_df, data.frame(func=I(fname), subpoptype=NA,
-          subpop=NA, indicator=NA, stratum=NA, warning=I(warn), action=I(act)))
-        dframe <- dframe[!tst,]
+        warn_df <- rbind(warn_df, data.frame(
+          func = I(fname), subpoptype = NA,
+          subpop = NA, indicator = NA, stratum = NA, warning = I(warn), action = I(act)
+        ))
+        dframe <- dframe[!tst, ]
         ind <- TRUE
       }
     }
-    if(ind) {
+    if (ind) {
       dframe[, stratumID] <- factor(dframe[, stratumID])
       stratum_levels <- levels(dframe[, stratumID])
       nstrata <- length(stratum_levels)
     }
   }
 
-# Assign a logical value to the indicator variable for a two-stage sample
+  # Assign a logical value to the indicator variable for a two-stage sample
 
   cluster_ind <- !is.null(clusterID)
 
-# Create the survey design object
+  # Create the survey design object
 
-  design <- survey_design(dframe, siteID, weight, stratum_ind, stratumID,
+  design <- survey_design(
+    dframe, siteID, weight, stratum_ind, stratumID,
     cluster_ind, clusterID, weight1, sizeweight, sweight, sweight1, popcorrect,
-    fpcsize, Ncluster, stage1size, vartype, jointprob)
+    fpcsize, Ncluster, stage1size, vartype, jointprob
+  )
 
-# If popsize is not equal to NULL, then call either the postStratify or
-# calibrate function, as appropriate
+  # If popsize is not equal to NULL, then call either the postStratify or
+  # calibrate function, as appropriate
 
-  if(!is.null(popsize)) {
-    if(all(class(popsize) %in% c("data.frame", "table", "xtabs"))) {
-      if("data.frame" %in% class(popsize)) {
+  if (!is.null(popsize)) {
+    if (all(class(popsize) %in% c("data.frame", "table", "xtabs"))) {
+      if ("data.frame" %in% class(popsize)) {
         pnames <- names(popsize)[-ncol(popsize)]
       } else {
         pnames <- names(dimnames(popsize))
@@ -434,94 +445,94 @@ cat_analysis <- function(dframe, vars, subpops = NULL, siteID = "siteID",
       cnames <- cal_names(make.formula(names(popsize)), design)
       pop_totals <- numeric(length(cnames))
       names(pop_totals) <- cnames
-      pop_totals[1] <-sum(popsize[[1]])
+      pop_totals[1] <- sum(popsize[[1]])
       k <- 2
-      for(i in names(popsize)) {
+      for (i in names(popsize)) {
         temp <- popsize[[i]]
-        for(j in 2:length(temp)) {
-          pop_totals[k] <-temp[j]
-          k <- k+1
+        for (j in 2:length(temp)) {
+          pop_totals[k] <- temp[j]
+          k <- k + 1
         }
       }
       design <- calibrate(design, make.formula(cnames), pop_totals)
     }
   }
 
-# If popsize is not equal to NULL and vartype equals "Local", then assign
-# adjusted weights to the appropriate weight variable(s) in the design$variables
-# data frame
+  # If popsize is not equal to NULL and vartype equals "Local", then assign
+  # adjusted weights to the appropriate weight variable(s) in the design$variables
+  # data frame
 
-  if(!is.null(popsize) && vartype == "Local") {
-    if(cluster_ind) {
+  if (!is.null(popsize) && vartype == "Local") {
+    if (cluster_ind) {
       ncluster <- length(unique(design$variables[, clusterID]))
       design$variables$wgt1 <- unique(design$variables[, Ncluster]) / ncluster
-      design$variables$wgt2 <- weights(design)/design$variables$wgt1
+      design$variables$wgt2 <- weights(design) / design$variables$wgt1
     } else {
       design$variables$wgt <- weights(design)
     }
   }
 
-# Assign the confidence bound multiplier
+  # Assign the confidence bound multiplier
 
-  mult  <- qnorm(0.5 + (conf/100)/2)
+  mult <- qnorm(0.5 + (conf / 100) / 2)
 
-# Create the catsum (results) data frame
+  # Create the catsum (results) data frame
 
   catsum <- NULL
 
-# Loop through all subpopulations (domains)
+  # Loop through all subpopulations (domains)
 
-  for(itype in subpops) {
-
+  for (itype in subpops) {
     lev_itype <- levels(dframe[, itype])
     nlev_itype <- length(lev_itype)
 
-# Loop through all response variables (vars)
+    # Loop through all response variables (vars)
 
-    for(ivar in vars) {
-
+    for (ivar in vars) {
       lev_ivar <- levels(dframe[, ivar])
       nlev_ivar <- length(lev_ivar)
 
-# Calculate estimates
+      # Calculate estimates
 
-      temp <- category_est(catsum, dframe, itype, lev_itype, nlev_itype, ivar,
+      temp <- category_est(
+        catsum, dframe, itype, lev_itype, nlev_itype, ivar,
         lev_ivar, nlev_ivar, design, design_names, popcorrect, vartype, conf,
-        mult, warn_ind, warn_df)
+        mult, warn_ind, warn_df
+      )
       catsum <- temp$catsum
       warn_ind <- temp$warn_ind
       warn_df <- temp$warn_df
 
-# End of the loop for response variables
-
+      # End of the loop for response variables
     }
 
-# End of the loop for subpopulations
-
+    # End of the loop for subpopulations
   }
 
-# As necessary, output a message indicating that warning messages were generated
-# during execution of the program
+  # As necessary, output a message indicating that warning messages were generated
+  # during execution of the program
 
-  if(warn_ind) {
+  if (warn_ind) {
     warn_df <<- warn_df
-    if(nrow(warn_df) == 1) {
+    if (nrow(warn_df) == 1) {
       cat("During execution of the program, a warning message was generated.  The warning \nmessage is stored in a data frame named 'warn_df'.  Enter the following command \nto view the warning message: warnprnt()\n")
     } else {
       cat(paste("During execution of the program,", nrow(warn_df), "warning messages were generated.  The warning \nmessages are stored in a data frame named 'warn_df'.  Enter the following \ncommand to view the warning messages: warnprnt() \nTo view a subset of the warning messages (say, messages number 1, 3, and 5), \nenter the following command: warnprnt(m=c(1,3,5))\n"))
     }
   }
 
-# Assign dimension names to the catsum data frame
+  # Assign dimension names to the catsum data frame
 
-  dimnames(catsum) <- list(1:nrow(catsum), c("Type", "Subpopulation",
+  dimnames(catsum) <- list(1:nrow(catsum), c(
+    "Type", "Subpopulation",
     "Indicator", "Category", "nResp", "Estimate.P", "StdError.P",
     "MarginofError.P", paste0("LCB", conf, "Pct.P"),
     paste0("UCB", conf, "Pct.P"), "Estimate.U", "StdError.U",
     "MarginofError.U", paste0("LCB", conf, "Pct.U"),
-    paste0("UCB", conf, "Pct.U")))
+    paste0("UCB", conf, "Pct.U")
+  ))
 
-# Return the catsum data frame
+  # Return the catsum data frame
 
   catsum
 }

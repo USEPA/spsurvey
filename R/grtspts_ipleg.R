@@ -23,10 +23,11 @@
 #'
 #' @examples
 #' a <- runif(30)
-#' tmp <- grtspts_ipleg(ip = 10 * a/sum(a), legacy = c(TRUE, rep(FALSE, 5), TRUE, TRUE,
-#'                  rep(FALSE, 22)) )
+#' tmp <- grtspts_ipleg(ip = 10 * a / sum(a), legacy = c(
+#'   TRUE, rep(FALSE, 5), TRUE, TRUE,
+#'   rep(FALSE, 22)
+#' ))
 #' tmp
-#'
 #' @export
 ###############################################################################
 grtspts_ipleg <- function(ip, legacy) {
@@ -41,12 +42,12 @@ grtspts_ipleg <- function(ip, legacy) {
 
   # adjust non legacy ip to sum to n - nleg
   tst <- 0
-  while(nge1 != tst) {
+  while (nge1 != tst) {
     tmp <- ip[!elem_nge1]
-    ip[!elem_nge1] <- (n - nge1) * tmp/sum(tmp)
+    ip[!elem_nge1] <- (n - nge1) * tmp / sum(tmp)
     tst <- nge1
     element_ge1 <- ip >= 1
     nge1 <- sum(element_ge1)
   }
-  invisible (ip)
+  invisible(ip)
 }

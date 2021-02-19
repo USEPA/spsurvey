@@ -37,58 +37,59 @@
 #'   SiteID = 1:100,
 #'   Catvar = sample(LETTERS[1:5], 100, TRUE),
 #'   Contvar = rnorm(100, 10, 1),
-#'   Gender = rep(c("Male", "Female"), rep(50, 2)))
+#'   Gender = rep(c("Male", "Female"), rep(50, 2))
+#' )
 #' examine(df, ord = FALSE)
 #' examine(df, "Gender", FALSE)
-#'
 #' @export
 ###############################################################################
 
 examine <- function(dframe, subpop = NULL, ord = TRUE, cmax = 50) {
 
-# Assign variable names to the varnames object
-if(ord) {
-  varnames <- sort(names(dframe))
-} else {
-  varnames <- names(dframe)
-}
-
-# As necessary, assign subpopulation names to the subnames object
-if(!is.null(subpop)) {
-  subnames <- sort(unique(dframe[,subpop]))
-}
-
-# Examine variables
-for(v in varnames) {
-  if(is.null(subpop)) {
-    if(length(unique(dframe[,v])) <= cmax) {
-      cat(paste("\n\n", v, ":\n", sep=""))
-      print(addmargins(table(dframe[,v], useNA="ifany")))
-    } else {
-      cat("\n\n")
-      print(describe(dframe[,v], descript = paste(v, ":\n", sep="")))
-    }
+  # Assign variable names to the varnames object
+  if (ord) {
+    varnames <- sort(names(dframe))
   } else {
-    if(length(unique(dframe[,v])) <= cmax) {
-      if(v != subpop) {
-        cat(paste("\n\n", v, " grouped by ", subpop, ":\n", sep=""))
-        print(addmargins(table(dframe[,subpop], dframe[,v], useNA="ifany")))
+    varnames <- names(dframe)
+  }
+
+  # As necessary, assign subpopulation names to the subnames object
+  if (!is.null(subpop)) {
+    subnames <- sort(unique(dframe[, subpop]))
+  }
+
+  # Examine variables
+  for (v in varnames) {
+    if (is.null(subpop)) {
+      if (length(unique(dframe[, v])) <= cmax) {
+        cat(paste("\n\n", v, ":\n", sep = ""))
+        print(addmargins(table(dframe[, v], useNA = "ifany")))
       } else {
-        cat(paste("\n\n", v, ":\n", sep=""))
-        print(addmargins(table(dframe[,v], useNA="ifany")))
+        cat("\n\n")
+        print(describe(dframe[, v], descript = paste(v, ":\n", sep = "")))
       }
     } else {
-      for(s in subnames) {
-        cat("\n\n")
-        tempdf <- droplevels(dframe[dframe[,subpop] == s,])
-        print(describe(tempdf[,v], descript = paste(v, " for ", subpop,
-          " equal to ", s, ":\n", sep="")))
+      if (length(unique(dframe[, v])) <= cmax) {
+        if (v != subpop) {
+          cat(paste("\n\n", v, " grouped by ", subpop, ":\n", sep = ""))
+          print(addmargins(table(dframe[, subpop], dframe[, v], useNA = "ifany")))
+        } else {
+          cat(paste("\n\n", v, ":\n", sep = ""))
+          print(addmargins(table(dframe[, v], useNA = "ifany")))
+        }
+      } else {
+        for (s in subnames) {
+          cat("\n\n")
+          tempdf <- droplevels(dframe[dframe[, subpop] == s, ])
+          print(describe(tempdf[, v], descript = paste(v, " for ", subpop,
+            " equal to ", s, ":\n",
+            sep = ""
+          )))
+        }
       }
     }
   }
-}
 
-# Return a NULL value
-invisible(NULL)
-
+  # Return a NULL value
+  invisible(NULL)
 }

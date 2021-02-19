@@ -102,7 +102,7 @@
 #'
 #' @param sweight Value providing the name of the size weight variable in
 #'   the \code{dframe} data frame.  For a two-stage sample, the size weight
-#'   variable identifies stage two size weights.  The default value is 
+#'   variable identifies stage two size weights.  The default value is
 #'   \code{NULL}.
 #'
 #' @param sweight1 Value providing the name of the stage one size weight
@@ -135,7 +135,7 @@
 #'   correction factor for a two-stage sample. The default value is \code{NULL}.
 #'
 #' @param popsize Object that provides values for the population argument of
-#'   the \code{calibrate} or \code{postStratify} functions.  For the 
+#'   the \code{calibrate} or \code{postStratify} functions.  For the
 #'   \code{calibrate} function, the object is a named list, where the names
 #'   identify factor variables in the \code{dframe} data frame.  Each element
 #'   of the list is a named vector containing the population total for each
@@ -221,52 +221,54 @@
 #'   xcoord = runif(100),
 #'   ycoord = runif(100),
 #'   stratum = rep(c("Stratum1", "Stratum2"), 50),
-#'   RespVar1=sample(c("Poor", "Good"), 100, replace=TRUE),
-#'   RespVar2=sample(c("Poor", "Good"), 100, replace=TRUE),
-#'   StressVar=sample(c("Poor", "Good"), 100, replace=TRUE),
+#'   RespVar1 = sample(c("Poor", "Good"), 100, replace = TRUE),
+#'   RespVar2 = sample(c("Poor", "Good"), 100, replace = TRUE),
+#'   StressVar = sample(c("Poor", "Good"), 100, replace = TRUE),
 #'   All_Sites = rep("All Sites", 100),
-#'   Resource_Class=rep(c("Agr", "Forest"), c(55,45)))
+#'   Resource_Class = rep(c("Agr", "Forest"), c(55, 45))
+#' )
 #' myresponse <- c("RespVar1", "RespVar2")
 #' mystressor <- c("StressVar")
 #' mysubpops <- c("All_Sites", "Resource_Class")
-#' attrisk_analysis(dframe, vars_response = myresponse,
+#' attrisk_analysis(dframe,
+#'   vars_response = myresponse,
 #'   vars_stressor = mystressor, subpops = mysubpops, siteID = "siteID",
 #'   weight = "wgt", xcoord = "xcoord", ycoord = "ycoord",
-#'   stratumID = "stratum")
-#'
+#'   stratumID = "stratum"
+#' )
 #' @export
 attrisk_analysis <- function(dframe, vars_response, vars_stressor,
-  response_levels = rep(list(c("Poor","Good")), length(vars_response)),
-  stressor_levels = rep(list(c("Poor","Good")), length(vars_stressor)),
-  subpops = NULL, siteID = "siteID", weight = "weight", xcoord = NULL,
-  ycoord = NULL, stratumID = NULL, clusterID = NULL, weight1 = NULL,
-  xcoord1 = NULL, ycoord1 = NULL, sizeweight = FALSE, sweight = NULL,
-  sweight1 = NULL, popcorrect = FALSE, fpcsize = NULL, Ncluster = NULL,
-  stage1size = NULL, popsize = NULL, vartype = "Local", jointprob = "overton",
-  conf = 95) {
+                             response_levels = rep(list(c("Poor", "Good")), length(vars_response)),
+                             stressor_levels = rep(list(c("Poor", "Good")), length(vars_stressor)),
+                             subpops = NULL, siteID = "siteID", weight = "weight", xcoord = NULL,
+                             ycoord = NULL, stratumID = NULL, clusterID = NULL, weight1 = NULL,
+                             xcoord1 = NULL, ycoord1 = NULL, sizeweight = FALSE, sweight = NULL,
+                             sweight1 = NULL, popcorrect = FALSE, fpcsize = NULL, Ncluster = NULL,
+                             stage1size = NULL, popsize = NULL, vartype = "Local", jointprob = "overton",
+                             conf = 95) {
 
-# Create a vector for error messages
+  # Create a vector for error messages
 
   error_ind <- FALSE
   error_vec <- NULL
 
-# Create a data frame for warning messages
+  # Create a data frame for warning messages
 
   warn_ind <- FALSE
   warn_df <- NULL
   fname <- "attrisk_analysis"
 
-# Ensure that the dframe argument was provided
+  # Ensure that the dframe argument was provided
 
-  if(missing(dframe) | is.null(dframe)) {
+  if (missing(dframe) | is.null(dframe)) {
     stop("\nThe dframe argument must be provided.\n")
   }
 
-# If the dframe argument is an sf object, extract coordinates from the geometry
-# column, assign values "xcoord" and "ycoord" to arguments xcoord and ycoord,
-# respectively, and drop the geometry column from the object
+  # If the dframe argument is an sf object, extract coordinates from the geometry
+  # column, assign values "xcoord" and "ycoord" to arguments xcoord and ycoord,
+  # respectively, and drop the geometry column from the object
 
-  if("sf" %in% class(dframe)) {
+  if ("sf" %in% class(dframe)) {
     temp <- st_coordinates(dframe)
     xcoord <- "xcoord"
     dframe$xcoord <- temp[, "X"]
@@ -275,14 +277,14 @@ attrisk_analysis <- function(dframe, vars_response, vars_stressor,
     dframe <- st_set_geometry(dframe, NULL)
   }
 
-# Ensure that unused levels are dropped from factor variables in the dframe data
-# frame
+  # Ensure that unused levels are dropped from factor variables in the dframe data
+  # frame
 
   dframe <- droplevels(dframe)
 
-# Ensure that the dframe data frame contains the site ID variable
+  # Ensure that the dframe data frame contains the site ID variable
 
-  if(!(siteID %in% names(dframe))) {
+  if (!(siteID %in% names(dframe))) {
     ind <- FALSE
     error_ind <- TRUE
     msg <- paste0("The name provided for the siteID argument, \"", siteID, "\", does not occur among \nthe names for the dframe data frame.\n")
@@ -291,32 +293,34 @@ attrisk_analysis <- function(dframe, vars_response, vars_stressor,
     ind <- TRUE
   }
 
-# Check site IDs for repeat values and, as necessary, create unique site IDs and
-# output a warning message
+  # Check site IDs for repeat values and, as necessary, create unique site IDs and
+  # output a warning message
 
-  if(ind) {
+  if (ind) {
     dframe$siteID <- dframe[, siteID]
     temp <- with(dframe, sapply(split(siteID, siteID), length))
-    if(any(temp > 1)) {
+    if (any(temp > 1)) {
       warn_ind <- TRUE
       temp_str <- vecprint(names(temp)[temp > 1])
       warn <- paste("The following site ID values occur more than once among the values that were \ninput to the function:\n", temp_str)
       act <- "Unique site ID values were created.\n"
-      warn_df <- rbind(warn_df, data.frame(func=I(fname), subpoptype=NA,
-        subpop=NA, indicator=NA, stratum=NA, warning=I(warn), action=I(act)))
+      warn_df <- rbind(warn_df, data.frame(
+        func = I(fname), subpoptype = NA,
+        subpop = NA, indicator = NA, stratum = NA, warning = I(warn), action = I(act)
+      ))
       dframe$siteID <- uniqueID(dframe$siteID)
     }
   }
 
-# Ensure that the dframe data frame contains the survey weight variable
+  # Ensure that the dframe data frame contains the survey weight variable
 
-  if(!(weight %in% names(dframe))) {
+  if (!(weight %in% names(dframe))) {
     error_ind <- TRUE
     msg <- paste0("The name provided for the weight argument, \"", weight, "\", does not occur among \nthe names for the dframe data frame.\n")
     error_vec <- c(error_vec, msg)
   }
 
-# Create a list containing names of survey design variables
+  # Create a list containing names of survey design variables
 
   design_names <- list(
     siteID = siteID,
@@ -332,41 +336,43 @@ attrisk_analysis <- function(dframe, vars_response, vars_stressor,
     sweight1 = sweight1,
     fpcsize = fpcsize,
     Ncluster = Ncluster,
-    stage1size = stage1size)
+    stage1size = stage1size
+  )
 
-# Ensure that a value was provided for the vars_response (response variable
-# names) argument
+  # Ensure that a value was provided for the vars_response (response variable
+  # names) argument
 
-  if(missing(vars_response)) {
+  if (missing(vars_response)) {
     error_ind <- TRUE
     msg <- "A value must be provided for the vars_response (response variable names) argument.\n"
     error_vec <- c(error_vec, msg)
   }
 
-# Ensure that a value was provided for the vars_stressor (stressor variable
-# names) argument
+  # Ensure that a value was provided for the vars_stressor (stressor variable
+  # names) argument
 
-  if(missing(vars_stressor)) {
+  if (missing(vars_stressor)) {
     error_ind <- TRUE
     msg <- "A value must be provided for the vars_stressor (stressor variable names) argument.\n"
     error_vec <- c(error_vec, msg)
   }
 
-# If a value was not provided for the subpops (subpopulation names) argument,
-# assign the value "All_Sites" to the subpops argument and create a factor
-# named "All_Sites" in the dframe data frame that takes the value "All Sites"
+  # If a value was not provided for the subpops (subpopulation names) argument,
+  # assign the value "All_Sites" to the subpops argument and create a factor
+  # named "All_Sites" in the dframe data frame that takes the value "All Sites"
 
-  if(is.null(subpops)) {
+  if (is.null(subpops)) {
     subpops <- "All_Sites"
     dframe$All_Sites <- "All Sites"
     dframe$All_Sites <- factor(dframe$All_Sites)
   }
 
-# Check input arguments
+  # Check input arguments
 
   temp <- input_check(dframe, design_names, vars_response, NULL, vars_stressor,
     NULL, subpops, sizeweight, popcorrect, popsize, vartype, jointprob, conf,
-    error_ind = error_ind, error_vec = error_vec)
+    error_ind = error_ind, error_vec = error_vec
+  )
   dframe <- temp$dframe
   vars_response <- temp$vars_cat
   vars_stressor <- temp$vars_stressor
@@ -377,40 +383,41 @@ attrisk_analysis <- function(dframe, vars_response, vars_stressor,
   error_ind <- temp$error_ind
   error_vec <- temp$error_vec
 
-# Check arguments response_levels and stressor_levels
+  # Check arguments response_levels and stressor_levels
 
-  if(is.null(response_levels)) {
+  if (is.null(response_levels)) {
     error_ind <- TRUE
     msg <- "Argument response_levels must be provided.\n"
     error_vec <- c(error_vec, msg)
   } else {
-    if(!is.list(response_levels)) {
+    if (!is.list(response_levels)) {
       error_ind <- TRUE
       msg <- "Argument response_levels must be a list.\n"
       error_vec <- c(error_vec, msg)
     }
-    if(length(response_levels) != length(vars_response)) {
+    if (length(response_levels) != length(vars_response)) {
       error_ind <- TRUE
       msg <- "Argument response_levels must be the same length as argument vars_response.\n"
       error_vec <- c(error_vec, msg)
     }
-    if(any(sapply(response_levels, function(x) length(x) != 2))) {
+    if (any(sapply(response_levels, function(x) length(x) != 2))) {
       error_ind <- TRUE
       msg <- "Each element of argument response_levels must contain only two values.\n"
       error_vec <- c(error_vec, msg)
     }
-    if(any(sapply(response_levels, function(x) !is.character(x)))) {
+    if (any(sapply(response_levels, function(x) !is.character(x)))) {
       error_ind <- TRUE
       msg <- "Each element of argument response_levels must contain character values.\n"
       error_vec <- c(error_vec, msg)
     }
-    if(all(vars_response %in% names(dframe))) {
+    if (all(vars_response %in% names(dframe))) {
       tst <- logical(length(vars_response))
-      for(i in 1:length(vars_response)) {
-        if(!all(response_levels[[i]] %in% levels(dframe[, vars_response[i]])))
+      for (i in 1:length(vars_response)) {
+        if (!all(response_levels[[i]] %in% levels(dframe[, vars_response[i]]))) {
           tst[i] <- TRUE
+        }
       }
-      if(any(tst)) {
+      if (any(tst)) {
         temp_str <- vecprint(vars_response[tst])
         error_ind <- TRUE
         msg <- paste0("\nCategory names for the following response variables do not match category names \nin the response_levels argument:\n", temp_str)
@@ -419,38 +426,39 @@ attrisk_analysis <- function(dframe, vars_response, vars_stressor,
     }
   }
 
-  if(is.null(stressor_levels)) {
+  if (is.null(stressor_levels)) {
     error_ind <- TRUE
     msg <- "Argument stressor_levels must be provided.\n"
     error_vec <- c(error_vec, msg)
   } else {
-    if(!is.list(stressor_levels)) {
+    if (!is.list(stressor_levels)) {
       error_ind <- TRUE
       msg <- "Argument stressor_levels must be a list.\n"
       error_vec <- c(error_vec, msg)
     }
-    if(length(stressor_levels) != length(vars_stressor)) {
+    if (length(stressor_levels) != length(vars_stressor)) {
       error_ind <- TRUE
       msg <- "Argument stressor_levels must be the same length as argument vars_stressor.\n"
       error_vec <- c(error_vec, msg)
     }
-    if(any(sapply(stressor_levels, function(x) length(x) != 2))) {
+    if (any(sapply(stressor_levels, function(x) length(x) != 2))) {
       error_ind <- TRUE
       msg <- "Each element of argument stressor_levels must contain only two values.\n"
       error_vec <- c(error_vec, msg)
     }
-    if(any(sapply(stressor_levels, function(x) !is.character(x)))) {
+    if (any(sapply(stressor_levels, function(x) !is.character(x)))) {
       error_ind <- TRUE
       msg <- "Each element of argument stressor_levels must contain character values.\n"
       error_vec <- c(error_vec, msg)
     }
-    if(all(vars_stressor %in% names(dframe))) {
+    if (all(vars_stressor %in% names(dframe))) {
       tst <- logical(length(vars_stressor))
-      for(i in 1:length(vars_stressor)) {
-        if(!all(stressor_levels[[i]] %in% levels(dframe[, vars_stressor[i]])))
+      for (i in 1:length(vars_stressor)) {
+        if (!all(stressor_levels[[i]] %in% levels(dframe[, vars_stressor[i]]))) {
           tst[i] <- TRUE
+        }
       }
-      if(any(tst)) {
+      if (any(tst)) {
         temp_str <- vecprint(vars_stressor[tst])
         error_ind <- TRUE
         msg <- paste0("\nCategory names for the following stressor variables do not match category names \nin the stressor_levels argument:\n", temp_str)
@@ -459,13 +467,13 @@ attrisk_analysis <- function(dframe, vars_response, vars_stressor,
     }
   }
 
-# As nesessary, provide names for the response_levels and stressor_levels lists
+  # As nesessary, provide names for the response_levels and stressor_levels lists
 
-  if(!is.null(response_levels)) {
-    if(is.null(names(response_levels))) {
+  if (!is.null(response_levels)) {
+    if (is.null(names(response_levels))) {
       names(response_levels) <- vars_response
     } else {
-      if(!all(names(response_levels)) %in% vars_response) {
+      if (!all(names(response_levels)) %in% vars_response) {
         error_ind <- TRUE
         msg <- "Names for the response_levels list do not match the values in the vars_response \nargument."
         error_vec <- c(error_vec, msg)
@@ -473,11 +481,11 @@ attrisk_analysis <- function(dframe, vars_response, vars_stressor,
     }
   }
 
-  if(!is.null(stressor_levels)) {
-    if(is.null(names(stressor_levels))) {
+  if (!is.null(stressor_levels)) {
+    if (is.null(names(stressor_levels))) {
       names(stressor_levels) <- vars_stressor
     } else {
-      if(!all(names(stressor_levels) %in% vars_stressor)) {
+      if (!all(names(stressor_levels) %in% vars_stressor)) {
         error_ind <- TRUE
         msg <- "Names for the stressor_levels list do not match the values in the vars_stressor \nargument."
         error_vec <- c(error_vec, msg)
@@ -485,20 +493,20 @@ attrisk_analysis <- function(dframe, vars_response, vars_stressor,
     }
   }
 
-# As necessary, output a message indicating that error messages were generated
-# during execution of the program
+  # As necessary, output a message indicating that error messages were generated
+  # during execution of the program
 
-  if(error_ind) {
+  if (error_ind) {
     error_vec <<- error_vec
-    if(length(error_vec) == 1) {
+    if (length(error_vec) == 1) {
       cat("During execution of the program, an error message was generated.  The error \nmessage is stored in a vector named 'error_vec'.  Enter the following command \nto view the error message: errorprnt()\n")
     } else {
       cat(paste("During execution of the program,", length(error_vec), "error messages were generated.  The error \nmessages are stored in a vector named 'error_vec'.  Enter the following \ncommand to view the error messages: errorprnt()\n"))
     }
 
-    if(warn_ind) {
+    if (warn_ind) {
       warn_df <<- warn_df
-      if(nrow(warn_df) == 1) {
+      if (nrow(warn_df) == 1) {
         cat("During execution of the program, a warning message was generated.  The warning \nmessage is stored in a data frame named 'warn_df'.  Enter the following command \nto view the warning message: warnprnt()\n")
       } else {
         cat(paste("During execution of the program,", nrow(warn_df), "warning messages were generated.  The warning \nmessages are stored in a data frame named 'warn_df'.  Enter the following \ncommand to view the warning messages: warnprnt() \nTo view a subset of the warning messages (say, messages number 1, 3, and 5), \nenter the following command: warnprnt(m=c(1,3,5))\n"))
@@ -507,52 +515,56 @@ attrisk_analysis <- function(dframe, vars_response, vars_stressor,
     stop("See the preceding message(s).")
   }
 
-# Assign a logical value to the indicator variable for a stratified sample
+  # Assign a logical value to the indicator variable for a stratified sample
 
   stratum_ind <- !is.null(stratumID)
 
-# For a stratified sample, remove strata that contain a single site
+  # For a stratified sample, remove strata that contain a single site
 
-  if(stratum_ind) {
+  if (stratum_ind) {
     dframe[, stratumID] <- factor(dframe[, stratumID])
     stratum_levels <- levels(dframe[, stratumID])
     nstrata <- length(stratum_levels)
     ind <- FALSE
-    for(i in 1:nstrata) {
+    for (i in 1:nstrata) {
       tst <- dframe[, stratumID] == stratum_levels[i]
-      if(sum(tst) == 1) {
+      if (sum(tst) == 1) {
         warn_ind <- TRUE
         warn <- paste("The stratum named \"", stratum_levels[i], "\" contains a single value and was removed from the analysis.\n")
         act <- "Stratum was removed from the analysis.\n"
-        warn_df <- rbind(warn_df, data.frame(func=I(fname), subpoptype=NA,
-          subpop=NA, indicator=NA, stratum=NA, warning=I(warn), action=I(act)))
-        dframe <- dframe[!tst,]
+        warn_df <- rbind(warn_df, data.frame(
+          func = I(fname), subpoptype = NA,
+          subpop = NA, indicator = NA, stratum = NA, warning = I(warn), action = I(act)
+        ))
+        dframe <- dframe[!tst, ]
         ind <- TRUE
       }
     }
-    if(ind) {
+    if (ind) {
       dframe[, stratumID] <- factor(dframe[, stratumID])
       stratum_levels <- levels(dframe[, stratumID])
       nstrata <- length(stratum_levels)
     }
   }
 
-# Assign a logical value to the indicator variable for a two-stage sample
+  # Assign a logical value to the indicator variable for a two-stage sample
 
   cluster_ind <- !is.null(clusterID)
 
-# Create the survey design object
+  # Create the survey design object
 
-  design <- survey_design(dframe, siteID, weight, stratum_ind, stratumID,
+  design <- survey_design(
+    dframe, siteID, weight, stratum_ind, stratumID,
     cluster_ind, clusterID, weight1, sizeweight, sweight, sweight1, popcorrect,
-    fpcsize, Ncluster, stage1size, vartype, jointprob)
+    fpcsize, Ncluster, stage1size, vartype, jointprob
+  )
 
-# If popsize is not equal to NULL, then call either the postStratify or
-# calibrate function, as appropriate
+  # If popsize is not equal to NULL, then call either the postStratify or
+  # calibrate function, as appropriate
 
-  if(!is.null(popsize)) {
-    if(all(class(popsize) %in% c("data.frame", "table", "xtabs"))) {
-      if("data.frame" %in% class(popsize)) {
+  if (!is.null(popsize)) {
+    if (all(class(popsize) %in% c("data.frame", "table", "xtabs"))) {
+      if ("data.frame" %in% class(popsize)) {
         pnames <- names(popsize)[-ncol(popsize)]
       } else {
         pnames <- names(dimnames(popsize))
@@ -562,151 +574,153 @@ attrisk_analysis <- function(dframe, vars_response, vars_stressor,
       cnames <- cal_names(make.formula(names(popsize)), design)
       pop_totals <- numeric(length(cnames))
       names(pop_totals) <- cnames
-      pop_totals[1] <-sum(popsize[[1]])
+      pop_totals[1] <- sum(popsize[[1]])
       k <- 2
-      for(i in names(popsize)) {
+      for (i in names(popsize)) {
         temp <- popsize[[i]]
-        for(j in 2:length(temp)) {
-          pop_totals[k] <-temp[j]
-          k <- k+1
+        for (j in 2:length(temp)) {
+          pop_totals[k] <- temp[j]
+          k <- k + 1
         }
       }
       design <- calibrate(design, make.formula(cnames), pop_totals)
     }
   }
 
-# If popsize is not equal to NULL and vartype equals "Local", then assign
-# adjusted weights to the appropriate weight variable(s) in the design$variables
-# data frame
+  # If popsize is not equal to NULL and vartype equals "Local", then assign
+  # adjusted weights to the appropriate weight variable(s) in the design$variables
+  # data frame
 
-  if(!is.null(popsize) && vartype == "Local") {
-    if(cluster_ind) {
+  if (!is.null(popsize) && vartype == "Local") {
+    if (cluster_ind) {
       ncluster <- length(unique(design$variables[, clusterID]))
       design$variables$wgt1 <- unique(design$variables[, Ncluster]) / ncluster
-      design$variables$wgt2 <- weights(design)/design$variables$wgt1
+      design$variables$wgt2 <- weights(design) / design$variables$wgt1
     } else {
       design$variables$wgt <- weights(design)
     }
   }
 
-# For variables that exist in the design$variables data frame, assign survey
-# design variables
+  # For variables that exist in the design$variables data frame, assign survey
+  # design variables
 
   dframe <- design$variables
-  for(i in names(design_names)) {
-    if(is.null(design_names[[i]])) {
-      eval(parse(text=paste0(i, " <- NULL")))
+  for (i in names(design_names)) {
+    if (is.null(design_names[[i]])) {
+      eval(parse(text = paste0(i, " <- NULL")))
     } else {
-      eval(parse(text=paste0(i, " <- dframe[, \"", design_names[[i]], "\"]")))
+      eval(parse(text = paste0(i, " <- dframe[, \"", design_names[[i]], "\"]")))
     }
   }
 
-# Assign values to weight variables
+  # Assign values to weight variables
 
-  if(cluster_ind) {
+  if (cluster_ind) {
     wgt1 <- dframe$wgt1
     wgt2 <- dframe$wgt2
   } else {
     wgt <- dframe$wgt
   }
 
-# Create the arsum (results) data frame
+  # Create the arsum (results) data frame
 
   arsum <- NULL
 
-# Assign the confidence bound multiplier
+  # Assign the confidence bound multiplier
 
-  mult  <- qnorm(0.5 + (conf/100)/2)
+  mult <- qnorm(0.5 + (conf / 100) / 2)
 
-# Loop through all subpopulations (domains)
+  # Loop through all subpopulations (domains)
 
-  for(itype in subpops) {
-
+  for (itype in subpops) {
     lev_itype <- levels(dframe[, itype])
     nlev_itype <- length(lev_itype)
 
-# Loop through all response variables (vars_response)
+    # Loop through all response variables (vars_response)
 
-    for(ivar_r in vars_response) {
+    for (ivar_r in vars_response) {
 
-# Loop through all stressor variables (vars_stressor)
+      # Loop through all stressor variables (vars_stressor)
 
-      for(ivar_s in vars_stressor) {
+      for (ivar_s in vars_stressor) {
 
-# Loop through all levels of the subpopulation
+        # Loop through all levels of the subpopulation
 
-        for(isubpop in lev_itype) {
-
+        for (isubpop in lev_itype) {
           tst <- !is.na(dframe[, itype]) & dframe[, itype] == isubpop &
             !is.na(dframe[, ivar_r]) & !is.na(dframe[, ivar_s])
 
-# Compute sum of the weights
+          # Compute sum of the weights
 
-          if(cluster_ind) {
+          if (cluster_ind) {
             popsize_hat <- sum(wgt1[tst] * wgt2[tst])
           } else {
             popsize_hat <- sum(wgt[tst])
           }
 
-# Assign response variable values
+          # Assign response variable values
 
           response <- dframe[, ivar_r]
           nresp <- length(response)
 
-# Assign stressor variable values
+          # Assign stressor variable values
 
           stressor <- dframe[, ivar_s]
 
-# Create the warn_vec object
+          # Create the warn_vec object
 
           warn_vec <- c(itype, isubpop, paste(ivar_r, "and", ivar_s))
 
-#
-# Branch to handle stratified and unstratified data
-#
+          #
+          # Branch to handle stratified and unstratified data
+          #
 
-          if(stratum_ind) {
+          if (stratum_ind) {
 
-#
-# Begin the section for stratified data
-#
+            #
+            # Begin the section for stratified data
+            #
 
-# Initialize variables for all strata combined
+            # Initialize variables for all strata combined
             wgt_total <- 0
             varest <- 0
 
-#
-# Begin the subsection for individual strata
-#
+            #
+            # Begin the subsection for individual strata
+            #
 
-            for(i in 1:nstrata) {
+            for (i in 1:nstrata) {
 
-# Calculate required values
+              # Calculate required values
 
               stratum_i <- tst & stratumID == stratum_levels[i]
               response_st <- response[stratum_i]
               stressor_st <- stressor[stratum_i]
-              if(cluster_ind) {
+              if (cluster_ind) {
                 wgt1_st <- wgt1[stratum_i]
                 wgt2_st <- wgt2[stratum_i]
               } else {
                 wgt_st <- wgt[stratum_i]
               }
 
-# Compute the 2x2 table of weight totals
+              # Compute the 2x2 table of weight totals
 
-              wgt_total_st <- svytable(make.formula(paste(ivar_r, "+",
-              ivar_s)), design = subset(design, stratum_i))
+              wgt_total_st <- svytable(make.formula(paste(
+                ivar_r, "+",
+                ivar_s
+              )), design = subset(design, stratum_i))
 
-# Calculate the variance-covariance estimate for the cell and marginal totals
-              if(cluster_ind) {
-                temp <- attrisk_var(response[stratum_i], stressor[stratum_i],
+              # Calculate the variance-covariance estimate for the cell and marginal totals
+              if (cluster_ind) {
+                temp <- attrisk_var(
+                  response[stratum_i], stressor[stratum_i],
                   response_levels[[ivar_r]], stressor_levels[[ivar_s]],
                   wgt2[stratum_i], xcoord[stratum_i], ycoord[stratum_i],
                   stratum_ind, stratum_levels[i], cluster_ind,
                   clusterID[stratum_i], wgt1[stratum_i], xcoord1[stratum_i],
                   ycoord1[stratum_i], popcorrect, NULL, Ncluster[stratum_i],
-                  stage1size[stratum_i], vartype, warn_ind, warn_df, warn_vec)
+                  stage1size[stratum_i], vartype, warn_ind, warn_df, warn_vec
+                )
               } else {
                 temp <- attrisk_var(response[stratum_i], stressor[stratum_i],
                   response_levels[[ivar_r]], stressor_levels[[ivar_s]],
@@ -714,295 +728,349 @@ attrisk_analysis <- function(dframe, vars_response, vars_stressor,
                   stratum_ind, stratum_levels[i], cluster_ind,
                   pcfactor_ind = popcorrect, fpcsize = fpcsize[stratum_i],
                   vartype = vartype, warn_ind = warn_ind, warn_df = warn_df,
-                  warn_vec = warn_vec)
+                  warn_vec = warn_vec
+                )
               }
               varest.st <- temp$varest
               warn_ind <- temp$warn_ind
               warn_df <- temp$warn_df
 
-# Add estimates to the variables for all strata combined
+              # Add estimates to the variables for all strata combined
 
               wgt_total <- wgt_total + wgt_total_st
               varest <- varest + varest.st
 
-#
-# End the subsection for individual strata
-#
-
+              #
+              # End the subsection for individual strata
+              #
             }
 
-# Add margins to the wgt_total table
+            # Add margins to the wgt_total table
 
             wgt_total <- addmargins(wgt_total)
 
-# Assign cell weight totals
+            # Assign cell weight totals
 
-            total1 <- wgt_total[response_levels[[ivar_r]][1],
-              stressor_levels[[ivar_s]][1]]
-            total2 <- wgt_total[response_levels[[ivar_r]][2],
-              stressor_levels[[ivar_s]][1]]
-            total3 <- wgt_total[response_levels[[ivar_r]][1],
-              stressor_levels[[ivar_s]][2]]
-            total4 <- wgt_total[response_levels[[ivar_r]][2],
-              stressor_levels[[ivar_s]][2]]
+            total1 <- wgt_total[
+              response_levels[[ivar_r]][1],
+              stressor_levels[[ivar_s]][1]
+            ]
+            total2 <- wgt_total[
+              response_levels[[ivar_r]][2],
+              stressor_levels[[ivar_s]][1]
+            ]
+            total3 <- wgt_total[
+              response_levels[[ivar_r]][1],
+              stressor_levels[[ivar_s]][2]
+            ]
+            total4 <- wgt_total[
+              response_levels[[ivar_r]][2],
+              stressor_levels[[ivar_s]][2]
+            ]
 
-# Calculate the estimate of attributable risk for all strata combined
+            # Calculate the estimate of attributable risk for all strata combined
 
-            if(total2 == 0 || total4 == 0) {
+            if (total2 == 0 || total4 == 0) {
               ar <- NA
               warn_ind <- TRUE
               temp <- ifelse(total2 == 0, stressor_levels[[ivar_s]][1], stressor_levels[[ivar_s]][2])
-              warn <- paste("Since there are no observations for level \"", temp, "\" of the stressor \nvariable, the attributable risk estimate and its standard error cannot be \ncalculated for stratum \"", stratum_levels[i], "\".  Also, the stratum \nwas removed from the analysis.\n", sep="")
-              act <- paste("The attributable risk estimate and its standard error were not calculated for \nstratum \"", stratum_levels[i], "\".  Also, the stratum was removed from \nthe analysis.\n", sep="")
-              warn_df <- rbind(warn_df, data.frame(func=I(fname),
-                subpoptype=warn_vec[1], subpop=warn_vec[2],
-                indicator=warn_vec[3], stratum=NA, warning=I(warn),
-                action=I(act)))
-            } else if(total1 == 0 && total3 != 0) {
+              warn <- paste("Since there are no observations for level \"", temp, "\" of the stressor \nvariable, the attributable risk estimate and its standard error cannot be \ncalculated for stratum \"", stratum_levels[i], "\".  Also, the stratum \nwas removed from the analysis.\n", sep = "")
+              act <- paste("The attributable risk estimate and its standard error were not calculated for \nstratum \"", stratum_levels[i], "\".  Also, the stratum was removed from \nthe analysis.\n", sep = "")
+              warn_df <- rbind(warn_df, data.frame(
+                func = I(fname),
+                subpoptype = warn_vec[1], subpop = warn_vec[2],
+                indicator = warn_vec[3], stratum = NA, warning = I(warn),
+                action = I(act)
+              ))
+            } else if (total1 == 0 && total3 != 0) {
               ar <- 0
               warn_ind <- TRUE
-              warn <- paste("Since there are no observations for the cell defined by level \"", response_levels[[ivar_r]][1], "\" \nof the response variable and level \"", stressor_levels[[ivar_s]][1], "\" of the stressor \nvariable, the attributable risk estimate is zero and standard error of the attributable \nrisk estimate cannot be calculated for stratum \"", stratum_levels[i], "\".  \nAlso, the stratum was removed from the analysis.\n", sep="")
-              act <- paste("Standard error of the attributable risk estimate was not calculated for stratum \n\"", stratum_levels[i], "\".  Also, the stratum was removed from the \nanalysis.\n", sep="")
-              warn_df <- rbind(warn_df, data.frame(func=I(fname),
-                subpoptype=warn_vec[1], subpop=warn_vec[2],
-                indicator=warn_vec[3], stratum=NA, warning=I(warn),
-              action=I(act)))
-            } else if(total1 == 0 && total3 == 0) {
+              warn <- paste("Since there are no observations for the cell defined by level \"", response_levels[[ivar_r]][1], "\" \nof the response variable and level \"", stressor_levels[[ivar_s]][1], "\" of the stressor \nvariable, the attributable risk estimate is zero and standard error of the attributable \nrisk estimate cannot be calculated for stratum \"", stratum_levels[i], "\".  \nAlso, the stratum was removed from the analysis.\n", sep = "")
+              act <- paste("Standard error of the attributable risk estimate was not calculated for stratum \n\"", stratum_levels[i], "\".  Also, the stratum was removed from the \nanalysis.\n", sep = "")
+              warn_df <- rbind(warn_df, data.frame(
+                func = I(fname),
+                subpoptype = warn_vec[1], subpop = warn_vec[2],
+                indicator = warn_vec[3], stratum = NA, warning = I(warn),
+                action = I(act)
+              ))
+            } else if (total1 == 0 && total3 == 0) {
               ar <- NA
               warn_ind <- TRUE
-              warn <- paste("Since there are no observations for the cell defined by level \"", response_levels[[ivar_r]][1], "\" \nof the response variable and level \"", stressor_levels[[ivar_s]][1], "\" of the stressor \nvariable and for the cell defined by level \"", response_levels[[ivar_r]][1], "\" of the \nresponse variable and level \"", stressor_levels[[ivar_s]][2], "\" of the stressor variable, \nthe attributable risk estimate and its standard error cannot be calculated for \nstratum \"", stratum_levels[i], "\".  Also, the stratum was removed from \nthe analysis.\n", sep="")
-              act <- paste("The attributable risk estimate and its standard error were not calculated for \nstratum \"", stratum_levels[i], "\".  Also, the stratum was removed from \nthe analysis.\n", sep="")
-              warn_df <- rbind(warn_df, data.frame(func=I(fname),
-                subpoptype=warn_vec[1], subpop=warn_vec[2],
-                indicator=warn_vec[3], stratum=NA, warning=I(warn),
-                action=I(act)))
-            } else if(total3 == 0) {
+              warn <- paste("Since there are no observations for the cell defined by level \"", response_levels[[ivar_r]][1], "\" \nof the response variable and level \"", stressor_levels[[ivar_s]][1], "\" of the stressor \nvariable and for the cell defined by level \"", response_levels[[ivar_r]][1], "\" of the \nresponse variable and level \"", stressor_levels[[ivar_s]][2], "\" of the stressor variable, \nthe attributable risk estimate and its standard error cannot be calculated for \nstratum \"", stratum_levels[i], "\".  Also, the stratum was removed from \nthe analysis.\n", sep = "")
+              act <- paste("The attributable risk estimate and its standard error were not calculated for \nstratum \"", stratum_levels[i], "\".  Also, the stratum was removed from \nthe analysis.\n", sep = "")
+              warn_df <- rbind(warn_df, data.frame(
+                func = I(fname),
+                subpoptype = warn_vec[1], subpop = warn_vec[2],
+                indicator = warn_vec[3], stratum = NA, warning = I(warn),
+                action = I(act)
+              ))
+            } else if (total3 == 0) {
               ar <- NA
               warn_ind <- TRUE
-              warn <- paste("Since there are no observations for the cell defined by level \"", response_levels[[ivar_r]][1], "\" \nof the response variable and level \"", stressor_levels[[ivar_s]][2], "\" of the stressor \nvariable, the attributable risk estimate and its standard error cannot be \ncalculated for stratum \"", stratum_levels[i], "\".  Also, the stratum \nwas removed from the analysis.\n", sep="")
-              act <- paste("The attributable risk estimate and its standard error were not calculated for \nstratum \"", stratum_levels[i], "\".  Also, the stratum was removed from \nthe analysis.\n", sep="")
-              warn_df <- rbind(warn_df, data.frame(func=I(fname),
-                subpoptype=warn_vec[1], subpop=warn_vec[2],
-                indicator=warn_vec[3], stratum=NA, warning=I(warn),
-                action=I(act)))
+              warn <- paste("Since there are no observations for the cell defined by level \"", response_levels[[ivar_r]][1], "\" \nof the response variable and level \"", stressor_levels[[ivar_s]][2], "\" of the stressor \nvariable, the attributable risk estimate and its standard error cannot be \ncalculated for stratum \"", stratum_levels[i], "\".  Also, the stratum \nwas removed from the analysis.\n", sep = "")
+              act <- paste("The attributable risk estimate and its standard error were not calculated for \nstratum \"", stratum_levels[i], "\".  Also, the stratum was removed from \nthe analysis.\n", sep = "")
+              warn_df <- rbind(warn_df, data.frame(
+                func = I(fname),
+                subpoptype = warn_vec[1], subpop = warn_vec[2],
+                indicator = warn_vec[3], stratum = NA, warning = I(warn),
+                action = I(act)
+              ))
             } else {
-              theta <- (popsize_hat*total3)/((total1 + total3)*(total3 +
+              theta <- (popsize_hat * total3) / ((total1 + total3) * (total3 +
                 total4))
               ar <- 1 - theta
             }
 
-# Calculate the standard error estimate of the log of attributable risk for all
-# strata combined
+            # Calculate the standard error estimate of the log of attributable risk for all
+            # strata combined
 
-            if(total3 == 0 || (total1 + total3) == 0 || (total3 + total4) == 0) {
+            if (total3 == 0 || (total1 + total3) == 0 || (total3 + total4) == 0) {
               arlog_se <- NA
             } else {
               pder <- numeric(4)
-              pder[1] <- 1/popsize_hat - 1/(total1 + total3)
-              pder[2] <- 1/popsize_hat
-              pder[3]<-  1/popsize_hat + 1/total3 - 1/(total1 + total3) -
-                1/(total3 + total4)
-              pder[4]<-  1/popsize_hat - 1/(total3 + total4)
-              pder <- 1/c(total1, -total2, -total3, total4)
+              pder[1] <- 1 / popsize_hat - 1 / (total1 + total3)
+              pder[2] <- 1 / popsize_hat
+              pder[3] <- 1 / popsize_hat + 1 / total3 - 1 / (total1 + total3) -
+                1 / (total3 + total4)
+              pder[4] <- 1 / popsize_hat - 1 / (total3 + total4)
+              pder <- 1 / c(total1, -total2, -total3, total4)
               arlog_se <- sqrt(t(pder) %*% varest %*% pder)
             }
 
-#
-# End the section for stratified data
-#
-
+            #
+            # End the section for stratified data
+            #
           } else {
 
-#
-# Begin the section for unstratified data
-#
+            #
+            # Begin the section for unstratified data
+            #
 
-# Check whether the vector of response values contains a single element
-            if(nresp == 1)
+            # Check whether the vector of response values contains a single element
+            if (nresp == 1) {
               stop("\nEstimates cannot be calculated since the vector of response values contains a \nsingle element.")
+            }
 
-# Compute the 2x2 table of weight totals
+            # Compute the 2x2 table of weight totals
 
-            wgt_total <- addmargins(svytable(make.formula(paste(ivar_r, "+",
-              ivar_s)), design = subset(design, tst)))
+            wgt_total <- addmargins(svytable(make.formula(paste(
+              ivar_r, "+",
+              ivar_s
+            )), design = subset(design, tst)))
 
-# Assign cell weight totals
+            # Assign cell weight totals
 
-            total1 <- wgt_total[response_levels[[ivar_r]][1],
-              stressor_levels[[ivar_s]][1]]
-            total2 <- wgt_total[response_levels[[ivar_r]][2],
-              stressor_levels[[ivar_s]][1]]
-            total3 <- wgt_total[response_levels[[ivar_r]][1],
-              stressor_levels[[ivar_s]][2]]
-            total4 <- wgt_total[response_levels[[ivar_r]][2],
-              stressor_levels[[ivar_s]][2]]
+            total1 <- wgt_total[
+              response_levels[[ivar_r]][1],
+              stressor_levels[[ivar_s]][1]
+            ]
+            total2 <- wgt_total[
+              response_levels[[ivar_r]][2],
+              stressor_levels[[ivar_s]][1]
+            ]
+            total3 <- wgt_total[
+              response_levels[[ivar_r]][1],
+              stressor_levels[[ivar_s]][2]
+            ]
+            total4 <- wgt_total[
+              response_levels[[ivar_r]][2],
+              stressor_levels[[ivar_s]][2]
+            ]
 
-# Calculate the estimate of attributable risk
+            # Calculate the estimate of attributable risk
 
-            if(total3 == 0 & total1 != 0 & total4 != 0) {
+            if (total3 == 0 & total1 != 0 & total4 != 0) {
               ar <- 0
               warn_ind <- TRUE
-              warn <- paste("Since there are no observations for the cell defined by level \"", response_levels[[ivar_r]][1], "\" \nof the response variable and level \"", stressor_levels[[ivar_s]][2], "\" of the stressor variable, \nthe attributable risk estimate is zero and standard error of the attributable risk \nestimate cannot be calculated.\n", sep="")
+              warn <- paste("Since there are no observations for the cell defined by level \"", response_levels[[ivar_r]][1], "\" \nof the response variable and level \"", stressor_levels[[ivar_s]][2], "\" of the stressor variable, \nthe attributable risk estimate is zero and standard error of the attributable risk \nestimate cannot be calculated.\n", sep = "")
               act <- "Standard error of the attributable risk estimate was not calculated.\n"
-              warn_df <- rbind(warn_df, data.frame(func=I(fname),
-                subpoptype=warn_vec[1], subpop=warn_vec[2],
-                indicator=warn_vec[3], stratum=NA, warning=I(warn),
-                action=I(act)))
-            } else if((total1 + total3) == 0) {
+              warn_df <- rbind(warn_df, data.frame(
+                func = I(fname),
+                subpoptype = warn_vec[1], subpop = warn_vec[2],
+                indicator = warn_vec[3], stratum = NA, warning = I(warn),
+                action = I(act)
+              ))
+            } else if ((total1 + total3) == 0) {
               ar <- NA
               warn_ind <- TRUE
-              warn <- paste("Since there are no observations for level \"", response_levels[[ivar_r]][1], "\" of the response \nvariable, the attributable risk estimate and its standard error cannot be \ncalculated.\n", sep="")
+              warn <- paste("Since there are no observations for level \"", response_levels[[ivar_r]][1], "\" of the response \nvariable, the attributable risk estimate and its standard error cannot be \ncalculated.\n", sep = "")
               act <- "The attributable risk estimate and its standard error were not calculated.\n"
-              warn_df <- rbind(warn_df, data.frame(func=I(fname),
-                subpoptype=warn_vec[1], subpop=warn_vec[2],
-                indicator=warn_vec[3], stratum=NA, warning=I(warn),
-                action=I(act)))
-            } else if((total3 + total4) == 0) {
+              warn_df <- rbind(warn_df, data.frame(
+                func = I(fname),
+                subpoptype = warn_vec[1], subpop = warn_vec[2],
+                indicator = warn_vec[3], stratum = NA, warning = I(warn),
+                action = I(act)
+              ))
+            } else if ((total3 + total4) == 0) {
               ar <- NA
               warn_ind <- TRUE
-              warn <- paste("Since there are no observations for level \"", stressor_levels[[ivar_s]][2], "\" of the stressor \nvariable, the attributable risk estimate and its standard error cannot be \ncalculated.\n", sep="")
+              warn <- paste("Since there are no observations for level \"", stressor_levels[[ivar_s]][2], "\" of the stressor \nvariable, the attributable risk estimate and its standard error cannot be \ncalculated.\n", sep = "")
               act <- "The attributable risk estimate and its standard error were not calculated.\n"
-              warn_df <- rbind(warn_df, data.frame(func=I(fname),
-                subpoptype=warn_vec[1], subpop=warn_vec[2],
-                indicator=warn_vec[3], stratum=NA, warning=I(warn),
-                action=I(act)))
+              warn_df <- rbind(warn_df, data.frame(
+                func = I(fname),
+                subpoptype = warn_vec[1], subpop = warn_vec[2],
+                indicator = warn_vec[3], stratum = NA, warning = I(warn),
+                action = I(act)
+              ))
             } else {
-              theta <- (popsize_hat*total3)/((total1 + total3)*(total3 +
+              theta <- (popsize_hat * total3) / ((total1 + total3) * (total3 +
                 total4))
               ar <- 1 - theta
             }
 
-# Determine whether the standard error can be calculated
+            # Determine whether the standard error can be calculated
 
-            if(total3 == 0 || (total1 + total3) == 0 || (total3 + total4) == 0) {
+            if (total3 == 0 || (total1 + total3) == 0 || (total3 + total4) == 0) {
               arlog_se <- NA
             } else {
 
-# Calculate the variance-covariance estimate for the cell totals
+              # Calculate the variance-covariance estimate for the cell totals
 
-              if(cluster_ind) {
-                temp <- attrisk_var(response[tst], stressor[tst],
+              if (cluster_ind) {
+                temp <- attrisk_var(
+                  response[tst], stressor[tst],
                   response_levels[[ivar_r]], stressor_levels[[ivar_s]],
                   wgt2[tst], xcoord[tst], ycoord[tst], stratum_ind, NULL,
                   cluster_ind, clusterID[tst], wgt1[tst], xcoord1[tst],
                   ycoord1[tst], popcorrect, NULL, Ncluster[tst],
-                  stage1size[tst], vartype, warn_ind, warn_df, warn_vec)
+                  stage1size[tst], vartype, warn_ind, warn_df, warn_vec
+                )
               } else {
                 temp <- attrisk_var(response[tst], stressor[tst],
                   response_levels[[ivar_r]], stressor_levels[[ivar_s]],
                   wgt[tst], xcoord[tst], ycoord[tst], stratum_ind, NULL,
-                  cluster_ind, pcfactor_ind = popcorrect,
+                  cluster_ind,
+                  pcfactor_ind = popcorrect,
                   fpcsize = fpcsize[tst], vartype = vartype,
                   warn_ind = warn_ind, warn_df = warn_df,
-                  warn_vec = warn_vec)
+                  warn_vec = warn_vec
+                )
               }
-                varest <- temp$varest
-                warn_ind <- temp$warn_ind
-                warn_df <- temp$warn_df
+              varest <- temp$varest
+              warn_ind <- temp$warn_ind
+              warn_df <- temp$warn_df
 
-# Calculate the standard error estimate of the log of theta
-         pder <- numeric(4)
-         pder[1] <- 1/popsize_hat - 1/(total1 + total3)
-         pder[2] <- 1/popsize_hat
-         pder[3]<-  1/popsize_hat + 1/total3 - 1/(total1 + total3) -
-                    1/(total3 + total4)
-         pder[4]<-  1/popsize_hat - 1/(total3 + total4)
-         arlog_se <- sqrt(t(pder) %*% varest %*% pder)
-      }
+              # Calculate the standard error estimate of the log of theta
+              pder <- numeric(4)
+              pder[1] <- 1 / popsize_hat - 1 / (total1 + total3)
+              pder[2] <- 1 / popsize_hat
+              pder[3] <- 1 / popsize_hat + 1 / total3 - 1 / (total1 + total3) -
+                1 / (total3 + total4)
+              pder[4] <- 1 / popsize_hat - 1 / (total3 + total4)
+              arlog_se <- sqrt(t(pder) %*% varest %*% pder)
+            }
 
-#
-# End section for unstratified data
-#
-
+            #
+            # End section for unstratified data
+            #
           }
 
-# Calculate confidence limits for the estimate of relative risk
+          # Calculate confidence limits for the estimate of relative risk
 
-        if(is.na(arlog_se)) {
-          cl <- NA
-        } else {
-          cl <- c(1 - exp(log(theta) + arlog_se * mult),
-            1 - exp(log(theta) - arlog_se * mult))
+          if (is.na(arlog_se)) {
+            cl <- NA
+          } else {
+            cl <- c(
+              1 - exp(log(theta) + arlog_se * mult),
+              1 - exp(log(theta) - arlog_se * mult)
+            )
+          }
+
+          # Calculate the table of cell and margin counts
+
+          cc <- addmargins(table(list(
+            response = response[tst],
+            stressor = stressor[tst]
+          )))
+
+          # Calculate the table of cell and margin proportion estimates
+
+          cp <- wgt_total / wgt_total["Sum", "Sum"]
+
+          # Append results to the arsum data frame
+
+          arsum <- rbind(arsum, data.frame(
+            Type = itype,
+            Subpopulation = isubpop,
+            Response = ivar_r,
+            Stressor = ivar_s,
+            nResp = cc[3, 3],
+            Estimate = ar,
+            StdError_log = arlog_se,
+            MarginofError_log = mult * arlog_se,
+            LCB = cl[1],
+            UCB = cl[2],
+            WeightTotal = wgt_total["Sum", "Sum"],
+            CellCounts_11 = cc[
+              response_levels[[ivar_r]][1],
+              stressor_levels[[ivar_s]][1]
+            ],
+            CellCounts_12 = cc[
+              response_levels[[ivar_r]][1],
+              stressor_levels[[ivar_s]][2]
+            ],
+            CellCounts_21 = cc[
+              response_levels[[ivar_r]][2],
+              stressor_levels[[ivar_s]][1]
+            ],
+            CellCounts_22 = cc[
+              response_levels[[ivar_r]][2],
+              stressor_levels[[ivar_s]][2]
+            ],
+            CellProportions_11 = cp[
+              response_levels[[ivar_r]][1],
+              stressor_levels[[ivar_s]][1]
+            ],
+            CellProportions_12 = cp[
+              response_levels[[ivar_r]][1],
+              stressor_levels[[ivar_s]][2]
+            ],
+            CellProportions_21 = cp[
+              response_levels[[ivar_r]][2],
+              stressor_levels[[ivar_s]][1]
+            ],
+            CellProportions_22 = cp[
+              response_levels[[ivar_r]][2],
+              stressor_levels[[ivar_s]][2]
+            ]
+          ))
+
+          # End of the loop for levels of the subpopulation
         }
 
-# Calculate the table of cell and margin counts
-
-        cc <- addmargins(table(list(response = response[tst],
-          stressor = stressor[tst])))
-
-# Calculate the table of cell and margin proportion estimates
-
-        cp <- wgt_total / wgt_total["Sum", "Sum"]
-
-# Append results to the arsum data frame
-
-        arsum <- rbind(arsum, data.frame(
-          Type = itype,
-          Subpopulation = isubpop,
-          Response = ivar_r,
-          Stressor = ivar_s,
-          nResp = cc[3, 3],
-          Estimate = ar,
-          StdError_log = arlog_se,
-          MarginofError_log = mult * arlog_se,
-          LCB = cl[1],
-          UCB = cl[2],
-          WeightTotal = wgt_total["Sum", "Sum"],
-          CellCounts_11 = cc[response_levels[[ivar_r]][1],
-            stressor_levels[[ivar_s]][1]],
-          CellCounts_12 = cc[response_levels[[ivar_r]][1],
-            stressor_levels[[ivar_s]][2]],
-          CellCounts_21 = cc[response_levels[[ivar_r]][2],
-            stressor_levels[[ivar_s]][1]],
-          CellCounts_22 = cc[response_levels[[ivar_r]][2],
-            stressor_levels[[ivar_s]][2]],
-          CellProportions_11 = cp[response_levels[[ivar_r]][1],
-            stressor_levels[[ivar_s]][1]],
-          CellProportions_12 = cp[response_levels[[ivar_r]][1],
-            stressor_levels[[ivar_s]][2]],
-          CellProportions_21 = cp[response_levels[[ivar_r]][2],
-            stressor_levels[[ivar_s]][1]],
-          CellProportions_22 = cp[response_levels[[ivar_r]][2],
-            stressor_levels[[ivar_s]][2]]))
-
-# End of the loop for levels of the subpopulation
-
-        }
-
-# End of the loop for stressor variables
-
+        # End of the loop for stressor variables
       }
 
-# End of the loop for response variables
-
+      # End of the loop for response variables
     }
 
-# End of the loop for subpopulations
-
+    # End of the loop for subpopulations
   }
 
-# As necessary, output a message indicating that warning messages were generated
-# during execution of the program
+  # As necessary, output a message indicating that warning messages were generated
+  # during execution of the program
 
-  if(warn_ind) {
+  if (warn_ind) {
     warn_df <<- warn_df
-    if(nrow(warn_df) == 1) {
+    if (nrow(warn_df) == 1) {
       cat("During execution of the program, a warning message was generated.  The warning \nmessage is stored in a data frame named 'warn_df'.  Enter the following command \nto view the warning message: warnprnt()\n")
     } else {
       cat(paste("During execution of the program,", nrow(warn_df), "warning messages were generated.  The warning \nmessages are stored in a data frame named 'warn_df'.  Enter the following \ncommand to view the warning messages: warnprnt() \nTo view a subset of the warning messages (say, messages number 1, 3, and 5), \nenter the following command: warnprnt(m=c(1,3,5))\n"))
     }
   }
 
-# Assign dimension names to the arsum data frame
+  # Assign dimension names to the arsum data frame
 
-  dimnames(arsum) <- list(1:nrow(arsum), c("Type", "Subpopulation", "Response",
+  dimnames(arsum) <- list(1:nrow(arsum), c(
+    "Type", "Subpopulation", "Response",
     "Stressor", "nResp", "Estimate", "StdError_log", "MarginofError_log",
     paste0("LCB", conf, "Pct"), paste0("UCB", conf, "Pct"), "WeightTotal",
     "CellCounts_11", "CellCounts_12", "CellCounts_21", "CellCounts_22",
     "CellProportions_11", "CellProportions_12", "CellProportions_21",
-    "CellProportions_22"))
+    "CellProportions_22"
+  ))
 
-# Return the arsum data frame
+  # Return the arsum data frame
 
   arsum
 }

@@ -30,7 +30,7 @@
 #'
 #' @param period_var   The variance component estimate for period The default is
 #'   \code{NULL}.
-#'   
+#'
 #' @param unitperiod_var The variance component estimate for unit by period
 #'   interaction. The default is \code{NULL}.
 #'
@@ -76,7 +76,7 @@
 #'
 #' @author Tony Olsen \email{Olsen.Tony@epa.gov}
 #'
-#' @seealso 
+#' @seealso
 #'   \describe{
 #'     \item{\code{\link{revisit_dsgn}}}{create a panel revisit design}
 #'     \item{\code{\link{revisit_bibd}}}{create a balanced incomplete block
@@ -96,64 +96,72 @@
 #' @export
 ###############################################################################
 
-cov_panel_dsgn <- function(paneldsgn = matrix(50,1,10), nrepeats = 1,
-   unit_var = NULL, period_var = NULL, unitperiod_var = NULL, index_var = NULL,
-   unit_rho = 1, period_rho = 0) {
+cov_panel_dsgn <- function(paneldsgn = matrix(50, 1, 10), nrepeats = 1,
+                           unit_var = NULL, period_var = NULL, unitperiod_var = NULL, index_var = NULL,
+                           unit_rho = 1, period_rho = 0) {
+  paneldsgn <- as.matrix(paneldsgn)
+  nperiod <- ncol(paneldsgn)
+  npanel <- nrow(paneldsgn)
 
-  paneldsgn <- as.matrix (paneldsgn)
-  nperiod <- ncol (paneldsgn)
-  npanel <- nrow (paneldsgn)
-
-  if (any(is.null(unit_var), is.null(period_var), is.null(unitperiod_var), is.null(index_var)) ) {
+  if (any(is.null(unit_var), is.null(period_var), is.null(unitperiod_var), is.null(index_var))) {
     stop("Must provide four variance components. index_var may be zero if nrepeats=1")
   }
 
   # Create covariance matrix for period correlation
   rhomat <- matrix(0, nrow = nperiod, ncol = nperiod)
   if (nperiod > 1) {
-    rhomat[1, ] <- 0:(nperiod-1)
-    for(i in 2:nperiod) {
-      rhomat[i, ] <- c(rev (1:(i-1)), 0:(nperiod-i))
+    rhomat[1, ] <- 0:(nperiod - 1)
+    for (i in 2:nperiod) {
+      rhomat[i, ] <- c(rev(1:(i - 1)), 0:(nperiod - i))
     }
   }
 
-  period_cov <- period_var * (period_rho ^ rhomat)
+  period_cov <- period_var * (period_rho^rhomat)
 
   # Create covariance matrix for unit correlation
-  unit_cov <- unit_var * (unit_rho ^ rhomat)
+  unit_cov <- unit_var * (unit_rho^rhomat)
 
   # Construct panel covariance term
   # nunits is number of units in a panel
-  nunits <- apply (paneldsgn, 1, max)
-  if(npanel > 1) pan_cov <- kronecker (unit_cov, diag (ifelse (nunits >0, 1 / nunits, 0)))
-  else pan_cov <- unit_cov / nunits
+  nunits <- apply(paneldsgn, 1, max)
+  if (npanel > 1) {
+    pan_cov <- kronecker(unit_cov, diag(ifelse(nunits > 0, 1 / nunits, 0)))
+  } else {
+    pan_cov <- unit_cov / nunits
+  }
 
   # construct period covariance term
-  yr_cov <- kronecker(period_cov, matrix (1, nrow = npanel, ncol = npanel))
+  yr_cov <- kronecker(period_cov, matrix(1, nrow = npanel, ncol = npanel))
 
   # Construct unit by period covariance term
-  if (length (nunits) > 1)
-    sy_cov <- unitperiod_var * kronecker (diag(nperiod), diag(ifelse(nunits > 0, 1/nunits, 0)))
-  else sy_cov <- unitperiod_var * diag(nperiod) / nunits
+  if (length(nunits) > 1) {
+    sy_cov <- unitperiod_var * kronecker(diag(nperiod), diag(ifelse(nunits > 0, 1 / nunits, 0)))
+  } else {
+    sy_cov <- unitperiod_var * diag(nperiod) / nunits
+  }
 
   # Construct index covariance term
   # Create nrepeats revisit design if necessary
-  if(is.null(nrepeats)) {
+  if (is.null(nrepeats)) {
     nrepeats <- vector("list", length(paneldsgn))
-    for (i in names (paneldsgn)) {
+    for (i in names(paneldsgn)) {
       nrepeats[[i]] <- paneldsgn[[i]]
       nrepeats[[i]][nrepeats[[i]] > 0] <- 1
     }
   }
-  if(npanel > 1) {
-    index_cov <- index_var * kronecker(diag (nperiod),
-                                       diag (ifelse(nunits > 0, 1/(nunits * apply (nrepeats, 1, max)), 0)) )
+  if (npanel > 1) {
+    index_cov <- index_var * kronecker(
+      diag(nperiod),
+      diag(ifelse(nunits > 0, 1 / (nunits * apply(nrepeats, 1, max)), 0))
+    )
   }
-  else index_cov <- index_var * diag (nperiod) / nunits
+  else {
+    index_cov <- index_var * diag(nperiod) / nunits
+  }
 
   # overall covariance matrix
   phi <- pan_cov + yr_cov + sy_cov + index_cov
 
-  cov <- list(cov = phi, paneldsgn = paneldsgn, nrepeat_dsgn = nrepeats, call = sys.call() )
+  cov <- list(cov = phi, paneldsgn = paneldsgn, nrepeat_dsgn = nrepeats, call = sys.call())
   return(cov)
 }

@@ -26,43 +26,40 @@
 
 localmean_cov <- function(zmat, weight_1st) {
 
-# Calculate additional required values
+  # Calculate additional required values
 
-   temp <- dim(zmat)
-   m <- temp[2]
+  temp <- dim(zmat)
+  m <- temp[2]
 
-# Initialize the results matrix
+  # Initialize the results matrix
 
-   lmvar <- array(0, c(m, m))
+  lmvar <- array(0, c(m, m))
 
-# Begin loops for variance/covariance calculations
+  # Begin loops for variance/covariance calculations
 
-   for (k in 1:m) {
+  for (k in 1:m) {
+    for (l in k:m) {
+      z1 <- zmat[, k]
+      z2 <- zmat[, l]
 
-      for (l in k:m) {
+      # Calculate local means
 
-         z1 <- zmat[, k]
-         z2 <- zmat[, l]
+      zb1 <- sapply(split(z1[weight_1st$ij[, 2]] * weight_1st$gwt, weight_1st$ij[, 1]), sum)
+      zb2 <- sapply(split(z2[weight_1st$ij[, 2]] * weight_1st$gwt, weight_1st$ij[, 1]), sum)
 
-# Calculate local means
+      # Calculate the variance or covariance estimate
 
-         zb1 <- sapply(split(z1[weight_1st$ij[, 2]] * weight_1st$gwt, weight_1st$ij[, 1]), sum)
-         zb2 <- sapply(split(z2[weight_1st$ij[, 2]] * weight_1st$gwt, weight_1st$ij[, 1]), sum)
+      lmvar[k, l] <- sum(weight_1st$gwt * (z1[weight_1st$ij[, 2]] - zb1[weight_1st$ij[, 1]]) * (z2[weight_1st$ij[, 2]] - zb2[weight_1st$ij[, 1]]))
+    }
 
-# Calculate the variance or covariance estimate
+    # Assign estimates that already have been calculated
 
-         lmvar[k, l] <- sum(weight_1st$gwt * (z1[weight_1st$ij[, 2]] - zb1[weight_1st$ij[, 1]]) * (z2[weight_1st$ij[, 2]] - zb2[weight_1st$ij[, 1]]))
+    if (k > 1) {
+      lmvar[k, 1:(k - 1)] <- lmvar[1:(k - 1), k]
+    }
+  }
 
-      }
+  # Return the variance/covariance estimate
 
-# Assign estimates that already have been calculated
-
-      if (k > 1) {
-         lmvar[k, 1:(k-1)] <- lmvar[1:(k-1), k]
-      }
-   }
-
-# Return the variance/covariance estimate
-
-   lmvar
+  lmvar
 }

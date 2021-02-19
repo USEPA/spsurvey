@@ -23,19 +23,19 @@
 
 localmean_df <- function(weight_1st) {
 
-# Create the matrix of coefficients used in calculating the local mean variance
-# estimator
+  # Create the matrix of coefficients used in calculating the local mean variance
+  # estimator
 
-   n <- max(weight_1st$ij[,1])
-   df.mat <- array(0, c(n,n))
-   df.mat[weight_1st$ij] <- -weight_1st$gwt
-   diag(df.mat) <- 1 + diag(df.mat)
+  n <- max(weight_1st$ij[, 1])
+  df.mat <- array(0, c(n, n))
+  df.mat[weight_1st$ij] <- -weight_1st$gwt
+  diag(df.mat) <- 1 + diag(df.mat)
 
-# Calculate the degrees of freedom
+  # Calculate the degrees of freedom
 
-   df <- qr(df.mat)$rank
+  df <- qr(df.mat)$rank
 
-# Return the result
+  # Return the result
 
-   df
+  df
 }

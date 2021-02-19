@@ -3,14 +3,14 @@
 # Programmer:  Michael Dumelle and Tony Olsen
 # Date: December 23, 2020
 #
-#' @param over.near number of nearby sites to be used as potential replacement(s) 
+#' @param over.near number of nearby sites to be used as potential replacement(s)
 #'    if a site cannot be sampled for any reason. Must be integer from \code{1} to \code{10}.
-#'    Default is \code{NULL}. 
-#' 
+#'    Default is \code{NULL}.
+#'
 #' @param sites sf point object of selected sites that require replacement sites
-#' 
+#'
 #' @param sframe sf point object that was used as sample frame to select sites.
-#' 
+#'
 #' @author Michael Dumelle \email{Dumelle.Michael@@epa.gov} and Tony Olsen \email{Olsen.Tony@@epa.gov}
 #'
 #' @keywords survey design
@@ -18,15 +18,17 @@
 #' @export
 ###############################################################################
 replace_near <- function(over.near, sites, sframe) {
-  
+
   # calculate distance between points
   site_dist <- st_distance(sites, sframe)
-  
+
   # set  possible levels for siteuse
-  names.siteuse <- c("Near__1st", "Near__2nd", "Near__3rd", "Near__4th", "Near__5th", 
-                     "Near__6th", "Near__7th", "Near__8th", "Near__9th", "Near_10th")
-  
-  
+  names.siteuse <- c(
+    "Near__1st", "Near__2nd", "Near__3rd", "Near__4th", "Near__5th",
+    "Near__6th", "Near__7th", "Near__8th", "Near__9th", "Near_10th"
+  )
+
+
   # split
   site_dist_list <- split(site_dist, 1:nrow(site_dist))
   # apply
@@ -41,7 +43,7 @@ replace_near <- function(over.near, sites, sframe) {
   y = sites$idpts,
   SIMPLIFY = FALSE
   )
-  
+
   # combine
   sites.near <- do.call("rbind", sites.near)
 }
@@ -49,17 +51,17 @@ replace_near <- function(over.near, sites, sframe) {
 
 # old
 # replace_near <- function(over.near, sites, sframe) {
-# 
+#
 #   # calculate distance between points
 #   site_dist <- st_distance(sframe)
 #   class(site_dist) <- "numeric"
 #   nr <- nrow(sframe)
 #   ns <- nrow(sites)
-# 
+#
 #   # set  possible levels for siteuse
 #   names.siteuse <- c("Near__1st", "Near__2nd", "Near__3rd", "Near__4th", "Near__5th",
 #                      "Near__6th", "Near__7th", "Near__8th", "Near__9th", "Near_10th")
-# 
+#
 #   # assign over sample sites
 #   for (i in 1:ns) {
 #     # find frame id for site in sites.
@@ -81,6 +83,6 @@ replace_near <- function(over.near, sites, sframe) {
 #       sites.near <- rbind(sites.near, sites.tmp)
 #     }
 #   }
-# 
+#
 #   return(sites.near)
 # }

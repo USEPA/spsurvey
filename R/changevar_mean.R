@@ -114,23 +114,23 @@
 ################################################################################
 
 changevar_mean <- function(z1, z2, wgt, x, y, revisitwgt, mean1, mean2,
-  stratum_ind, stratum_level, cluster_ind, clusterID, wgt1, x1, y1,
-  pcfactor_ind, fpcsize, Ncluster, stage1size, vartype, warn_ind, warn_df,
-  warn_vec) {
+                           stratum_ind, stratum_level, cluster_ind, clusterID, wgt1, x1, y1,
+                           pcfactor_ind, fpcsize, Ncluster, stage1size, vartype, warn_ind, warn_df,
+                           warn_vec) {
 
-# Assign the function name
+  # Assign the function name
 
   fname <- "changevar_mean"
 
-#
-# Calculate covariance or correlation using the repeat visit sites
-#
+  #
+  # Calculate covariance or correlation using the repeat visit sites
+  #
 
-# Begin the section for a two-stage sample
+  # Begin the section for a two-stage sample
 
-  if(cluster_ind) {
+  if (cluster_ind) {
 
-# Calculate additional required values
+    # Calculate additional required values
 
     cluster <- factor(clusterID)
     cluster_levels <- levels(cluster)
@@ -139,268 +139,301 @@ changevar_mean <- function(z1, z2, wgt, x, y, revisitwgt, mean1, mean2,
     z2_1st <- split(z2, cluster)
     wgt2_1st <- split(wgt, cluster)
     wgt1_u <- as.vector(tapply(wgt1, cluster, unique))
-    tw2 <- (sum(wgt1*wgt))^2
-    if(vartype == "Local") {
+    tw2 <- (sum(wgt1 * wgt))^2
+    if (vartype == "Local") {
       x2_1st <- split(x, cluster)
       y2_1st <- split(y, cluster)
       x1_u <- as.vector(tapply(x1, cluster, unique))
       y1_u <- as.vector(tapply(y1, cluster, unique))
     }
-    if(pcfactor_ind) {
+    if (pcfactor_ind) {
       N_cluster <- unique(Ncluster)
       stage1size_u <- as.vector(tapply(stage1size, cluster, unique))
     }
     var_ind <- sapply(split(cluster, cluster), length) > 1
 
     # Determine whether the mean could be calculated for both surveys
-    if(is.na(mean1) | is.na(mean2)) {
+    if (is.na(mean1) | is.na(mean2)) {
       warn_ind <- TRUE
       act <- "Covariance among the repeat visit sites was not included in calculation of \nthe standard error estimate.\n"
-      if(stratum_ind) {
-        warn <- paste("The repeat visit sites mean in stratum \"", stratum_level, "\" \ncould not be calculated in one of the surveys.\n", sep="")
-        warn_df <- rbind(warn_df, data.frame(func=I(fname),
-          subpoptype=warn_vec[1], subpop=warn_vec[2],
-          indicator=warn_vec[3], stratum=I(stratum_level), warning=I(warn),
-          action=I(act)))
+      if (stratum_ind) {
+        warn <- paste("The repeat visit sites mean in stratum \"", stratum_level, "\" \ncould not be calculated in one of the surveys.\n", sep = "")
+        warn_df <- rbind(warn_df, data.frame(
+          func = I(fname),
+          subpoptype = warn_vec[1], subpop = warn_vec[2],
+          indicator = warn_vec[3], stratum = I(stratum_level), warning = I(warn),
+          action = I(act)
+        ))
       } else {
-        warn <- paste("The repeat visit sites mean could not be calculated in one of the surveys.\n", sep="")
-        warn_df <- rbind(warn_df, data.frame(func=I(fname),
-          subpoptype=warn_vec[1], subpop=warn_vec[2],
-          indicator=warn_vec[3], stratum=NA, warning=I(warn),
-          action=I(act)))
+        warn <- paste("The repeat visit sites mean could not be calculated in one of the surveys.\n", sep = "")
+        warn_df <- rbind(warn_df, data.frame(
+          func = I(fname),
+          subpoptype = warn_vec[1], subpop = warn_vec[2],
+          indicator = warn_vec[3], stratum = NA, warning = I(warn),
+          action = I(act)
+        ))
       }
       rslt <- NA
     } else {
 
-# Calculate estimates of the total of the stage two sampling unit residuals
-# and the variance/covariance of those totals for each stage one sampling unit
+      # Calculate estimates of the total of the stage two sampling unit residuals
+      # and the variance/covariance of those totals for each stage one sampling unit
 
       total2est <- matrix(0, ncluster, 2)
       var2est <- matrix(0, ncluster, 4)
       phat <- c(mean1, mean2)
-      for(i in 1:ncluster) {
+      for (i in 1:ncluster) {
 
-# Calculate the weighted residuals matrix
+        # Calculate the weighted residuals matrix
 
         n <- length(z1_1st[[i]])
         z1 <- z1_1st[[i]]
         z2 <- z2_1st[[i]]
-        rm <- (cbind(z1, z2) - matrix(rep(phat, n), nrow=n, byrow=TRUE)) *
-          matrix(rep(wgt2_1st[[i]], 2), nrow=n)
+        rm <- (cbind(z1, z2) - matrix(rep(phat, n), nrow = n, byrow = TRUE)) *
+          matrix(rep(wgt2_1st[[i]], 2), nrow = n)
 
         # Calculate total estimates for the stage one sampling unit
-        total2est[i,] <- apply(rm, 2, sum)
+        total2est[i, ] <- apply(rm, 2, sum)
 
         # Adjust the variance/covariance estimator for small sample size
         SRSind <- FALSE
-        if(vartype == "Local" && n < 4) {
+        if (vartype == "Local" && n < 4) {
           warn_ind <- TRUE
           act <- "The simple random sampling variance estimator was used.\n"
-          if(stratum_ind) {
-            warn <- paste("There are less than four response values for stage one sampling unit ", cluster_levels[i], "\nin stratum ", stratum_level, ", the simple random sampling variance estimator \nwas used to calculate covariance of the estimate.\n", sep="")
-            warn_df <- rbind(warn_df, data.frame(func=I(fname),
-              subpoptype=warn_vec[1], subpop=warn_vec[2],
-              indicator=warn_vec[3], stratum=I(stratum_level),
-              warning=I(warn), action=I(act)))
+          if (stratum_ind) {
+            warn <- paste("There are less than four response values for stage one sampling unit ", cluster_levels[i], "\nin stratum ", stratum_level, ", the simple random sampling variance estimator \nwas used to calculate covariance of the estimate.\n", sep = "")
+            warn_df <- rbind(warn_df, data.frame(
+              func = I(fname),
+              subpoptype = warn_vec[1], subpop = warn_vec[2],
+              indicator = warn_vec[3], stratum = I(stratum_level),
+              warning = I(warn), action = I(act)
+            ))
           } else {
-            warn <- paste("There are less than four response values for stage one sampling unit ", cluster_levels[i], ", \nthe simple random sampling variance estimator was used to calculate covariance of \nthe estimate.\n", sep="")
-            warn_df <- rbind(warn_df, data.frame(func=I(fname),
-              subpoptype=warn_vec[1], subpop=warn_vec[2],
-              indicator=warn_vec[3], stratum=NA, warning=I(warn),
-              action=I(act)))
+            warn <- paste("There are less than four response values for stage one sampling unit ", cluster_levels[i], ", \nthe simple random sampling variance estimator was used to calculate covariance of \nthe estimate.\n", sep = "")
+            warn_df <- rbind(warn_df, data.frame(
+              func = I(fname),
+              subpoptype = warn_vec[1], subpop = warn_vec[2],
+              indicator = warn_vec[3], stratum = NA, warning = I(warn),
+              action = I(act)
+            ))
           }
           vartype <- "SRS"
           SRSind <- TRUE
         }
 
-# Calculate the population correction factor for the stage two sample
+        # Calculate the population correction factor for the stage two sample
 
-        pcfactor <- ifelse(pcfactor_ind, (stage1size_u[i] - n)/stage1size_u[i],
-          1)
+        pcfactor <- ifelse(pcfactor_ind, (stage1size_u[i] - n) / stage1size_u[i],
+          1
+        )
 
-# Calculate variance/covariance estimates for the stage one sampling unit
+        # Calculate variance/covariance estimates for the stage one sampling unit
 
-        if(var_ind[i]) {
-          if(vartype == "Local") {
-            weight_1st <- localmean_weight(x2_1st[[i]], y2_1st[[i]],
-              1/wgt2_1st[[i]])
-            var2est[i,] <- as.vector(pcfactor*localmean_cov(rm, weight_1st))
+        if (var_ind[i]) {
+          if (vartype == "Local") {
+            weight_1st <- localmean_weight(
+              x2_1st[[i]], y2_1st[[i]],
+              1 / wgt2_1st[[i]]
+            )
+            var2est[i, ] <- as.vector(pcfactor * localmean_cov(rm, weight_1st))
           } else {
-            var2est[i,] <- as.vector(pcfactor*n*var(rm))
-            if(SRSind)
+            var2est[i, ] <- as.vector(pcfactor * n * var(rm))
+            if (SRSind) {
               vartype <- "Local"
+            }
           }
         }
       }
 
-# Adjust the variance estimator for small sample size
+      # Adjust the variance estimator for small sample size
 
-      if(vartype == "Local" && ncluster < 4) {
+      if (vartype == "Local" && ncluster < 4) {
         warn_ind <- TRUE
         act <- "The simple random sampling variance estimator was used.\n"
-        if(stratum_ind) {
-          warn <- paste("There are less than four stage one sampling units in stratum ", stratum_level, ", \nthe simple random sampling variance estimator was used to calculate covariance of \nthe estimate.\n", sep="")
-          warn_df <- rbind(warn_df, data.frame(func=I(fname),
-            subpoptype=warn_vec[1], subpop=warn_vec[2],
-            indicator=warn_vec[3], stratum=I(stratum_level), warning=I(warn),
-            action=I(act)))
+        if (stratum_ind) {
+          warn <- paste("There are less than four stage one sampling units in stratum ", stratum_level, ", \nthe simple random sampling variance estimator was used to calculate covariance of \nthe estimate.\n", sep = "")
+          warn_df <- rbind(warn_df, data.frame(
+            func = I(fname),
+            subpoptype = warn_vec[1], subpop = warn_vec[2],
+            indicator = warn_vec[3], stratum = I(stratum_level), warning = I(warn),
+            action = I(act)
+          ))
         } else {
-          warn <- paste("There are less than four stage one sampling units, the simple random sampling \nvariance estimator was used to calculate covariance of the estimate.\n", sep="")
-          warn_df <- rbind(warn_df, data.frame(func=I(fname),
-            subpoptype=warn_vec[1], subpop=warn_vec[2],
-            indicator=warn_vec[3], stratum=NA, warning=I(warn),
-            action=I(act)))
+          warn <- paste("There are less than four stage one sampling units, the simple random sampling \nvariance estimator was used to calculate covariance of the estimate.\n", sep = "")
+          warn_df <- rbind(warn_df, data.frame(
+            func = I(fname),
+            subpoptype = warn_vec[1], subpop = warn_vec[2],
+            indicator = warn_vec[3], stratum = NA, warning = I(warn),
+            action = I(act)
+          ))
         }
         vartype <- "SRS"
       }
 
-# Calculate the population correction factor for the stage one sample
+      # Calculate the population correction factor for the stage one sample
 
-      pcfactor <- ifelse(pcfactor_ind, (N_cluster - ncluster)/N_cluster, 1)
+      pcfactor <- ifelse(pcfactor_ind, (N_cluster - ncluster) / N_cluster, 1)
 
-# Calculate the covariance or correlation estimates
+      # Calculate the covariance or correlation estimates
 
-      if(vartype == "Local") {
-        weight_1st <- localmean_weight(x1_u, y1_u, 1/wgt1_u)
-        varest <- (pcfactor*localmean_cov(total2est * matrix(rep(wgt1_u, 2),
-          nrow = ncluster), weight_1st) + matrix(apply(var2est *
-              matrix(rep(wgt1_u, 4), nrow=ncluster), 2, sum), nrow=2)) / tw2
+      if (vartype == "Local") {
+        weight_1st <- localmean_weight(x1_u, y1_u, 1 / wgt1_u)
+        varest <- (pcfactor * localmean_cov(total2est * matrix(rep(wgt1_u, 2),
+          nrow = ncluster
+        ), weight_1st) + matrix(apply(var2est *
+          matrix(rep(wgt1_u, 4), nrow = ncluster), 2, sum), nrow = 2)) / tw2
       } else {
-        varest <- (pcfactor*ncluster*var(total2est * matrix(rep(wgt1_u, 2),
-          nrow=ncluster)) + matrix(apply(var2est * matrix(rep(wgt1_u, 4),
-            nrow=ncluster), 2, sum), nrow=2))/ tw2
+        varest <- (pcfactor * ncluster * var(total2est * matrix(rep(wgt1_u, 2),
+          nrow = ncluster
+        )) + matrix(apply(var2est * matrix(rep(wgt1_u, 4),
+          nrow = ncluster
+        ), 2, sum), nrow = 2)) / tw2
       }
-      if(revisitwgt) {
-        rslt <- varest[1,2]
+      if (revisitwgt) {
+        rslt <- varest[1, 2]
       } else {
-        if(varest[1,1] == 0 | varest[2,2] == 0 | any(is.na(varest))) {
+        if (varest[1, 1] == 0 | varest[2, 2] == 0 | any(is.na(varest))) {
           warn_ind <- TRUE
           act <- "Covariance among the repeat visit sites was not included in calculation of \nthe standard error estimate.\n"
-          if(stratum_ind) {
-            warn <- paste("The variance estimate for the repeat visit sites mean in stratum \"", stratum_level, "\" \nwas equal to zero for at least one of the surveys.\n", sep="")
-            warn_df <- rbind(warn_df, data.frame(func=I(fname),
-              subpoptype=warn_vec[1], subpop=warn_vec[2],
-              indicator=warn_vec[3], stratum=I(stratum_level),
-              warning=I(warn), action=I(act)))
+          if (stratum_ind) {
+            warn <- paste("The variance estimate for the repeat visit sites mean in stratum \"", stratum_level, "\" \nwas equal to zero for at least one of the surveys.\n", sep = "")
+            warn_df <- rbind(warn_df, data.frame(
+              func = I(fname),
+              subpoptype = warn_vec[1], subpop = warn_vec[2],
+              indicator = warn_vec[3], stratum = I(stratum_level),
+              warning = I(warn), action = I(act)
+            ))
           } else {
-            warn <- paste("The variance estimate for the repeat visit sites mean was equal to zero \nfor at least \none of the surveys.\n", sep="")
-            warn_df <- rbind(warn_df, data.frame(func=I(fname),
-              subpoptype=warn_vec[1], subpop=warn_vec[2],
-              indicator=warn_vec[3], stratum=NA, warning=I(warn),
-              action=I(act)))
+            warn <- paste("The variance estimate for the repeat visit sites mean was equal to zero \nfor at least \none of the surveys.\n", sep = "")
+            warn_df <- rbind(warn_df, data.frame(
+              func = I(fname),
+              subpoptype = warn_vec[1], subpop = warn_vec[2],
+              indicator = warn_vec[3], stratum = NA, warning = I(warn),
+              action = I(act)
+            ))
           }
           rslt <- NA
         } else {
-          rslt <- varest[1,2]/sqrt(varest[1,1]*varest[2,2])
+          rslt <- varest[1, 2] / sqrt(varest[1, 1] * varest[2, 2])
         }
       }
     }
 
-# End the section for a two-stage sample
-
+    # End the section for a two-stage sample
   } else {
 
-# Begin the section for a single-stage sample
+    # Begin the section for a single-stage sample
 
-# Calculate additional required values
+    # Calculate additional required values
 
     n <- length(z1)
     tw2 <- (sum(wgt))^2
-    if(pcfactor_ind) {
+    if (pcfactor_ind) {
       fpcsize_u <- unique(fpcsize)
     }
 
-# Determine whether the mean could be calculated for both surveys
+    # Determine whether the mean could be calculated for both surveys
 
-    if(is.na(mean1) | is.na(mean2)) {
+    if (is.na(mean1) | is.na(mean2)) {
       warn_ind <- TRUE
       act <- "Covariance among the repeat visit sites was not included in calculation of \nthe standard error estimate.\n"
-      if(stratum_ind) {
-        warn <- paste("The repeat visit sites mean in stratum \"", stratum_level, "\" \ncould not be calculated in one of the surveys.\n", sep="")
-        warn_df <- rbind(warn_df, data.frame(func=I(fname),
-          subpoptype=warn_vec[1], subpop=warn_vec[2],
-          indicator=warn_vec[3], stratum=I(stratum_level), warning=I(warn),
-          action=I(act)))
+      if (stratum_ind) {
+        warn <- paste("The repeat visit sites mean in stratum \"", stratum_level, "\" \ncould not be calculated in one of the surveys.\n", sep = "")
+        warn_df <- rbind(warn_df, data.frame(
+          func = I(fname),
+          subpoptype = warn_vec[1], subpop = warn_vec[2],
+          indicator = warn_vec[3], stratum = I(stratum_level), warning = I(warn),
+          action = I(act)
+        ))
       } else {
-        warn <- paste("The repeat visit sites mean could not be calculated in one of the surveys.\n", sep="")
-        warn_df <- rbind(warn_df, data.frame(func=I(fname),
-          subpoptype=warn_vec[1], subpop=warn_vec[2],
-          indicator=warn_vec[3], stratum=NA, warning=I(warn),
-          action=I(act)))
+        warn <- paste("The repeat visit sites mean could not be calculated in one of the surveys.\n", sep = "")
+        warn_df <- rbind(warn_df, data.frame(
+          func = I(fname),
+          subpoptype = warn_vec[1], subpop = warn_vec[2],
+          indicator = warn_vec[3], stratum = NA, warning = I(warn),
+          action = I(act)
+        ))
       }
       rslt <- NA
     } else {
 
-# Calculate the weighted residuals matrix
+      # Calculate the weighted residuals matrix
       phat <- c(mean1, mean2)
-      rm <- (cbind(z1, z2) - matrix(rep(phat, n), nrow=n, byrow=TRUE)) *
-        matrix(rep(wgt, 2), nrow=n)
+      rm <- (cbind(z1, z2) - matrix(rep(phat, n), nrow = n, byrow = TRUE)) *
+        matrix(rep(wgt, 2), nrow = n)
 
-# Adjust the variance estimator for small sample size
+      # Adjust the variance estimator for small sample size
 
-      if(vartype == "Local" && n < 4) {
+      if (vartype == "Local" && n < 4) {
         warn_ind <- TRUE
         act <- "The simple random sampling variance estimator was used.\n"
-        if(stratum_ind) {
-          warn <- paste("There are less than four response values in stratum ", stratum_level, ", \nthe simple random sampling variance estimator was used to calculate covariance of \nthe estimate.\n", sep="")
-          warn_df <- rbind(warn_df, data.frame(func=I(fname),
-            subpoptype=warn_vec[1], subpop=warn_vec[2],
-            indicator=warn_vec[3], stratum=I(stratum_level), warning=I(warn),
-            action=I(act)))
+        if (stratum_ind) {
+          warn <- paste("There are less than four response values in stratum ", stratum_level, ", \nthe simple random sampling variance estimator was used to calculate covariance of \nthe estimate.\n", sep = "")
+          warn_df <- rbind(warn_df, data.frame(
+            func = I(fname),
+            subpoptype = warn_vec[1], subpop = warn_vec[2],
+            indicator = warn_vec[3], stratum = I(stratum_level), warning = I(warn),
+            action = I(act)
+          ))
         } else {
           warn <- "\nThere are less than four response values, the simple random sampling variance \nestimator was used to calculate covariance of the estimate.\n"
-          warn_df <- rbind(warn_df, data.frame(func=I(fname),
-            subpoptype=warn_vec[1], subpop=warn_vec[2],
-            indicator=warn_vec[3], stratum=NA, warning=I(warn),
-            action=I(act)))
+          warn_df <- rbind(warn_df, data.frame(
+            func = I(fname),
+            subpoptype = warn_vec[1], subpop = warn_vec[2],
+            indicator = warn_vec[3], stratum = NA, warning = I(warn),
+            action = I(act)
+          ))
         }
         vartype <- "SRS"
       }
 
-# Calculate the population correction factor
+      # Calculate the population correction factor
 
-      pcfactor <- ifelse(pcfactor_ind, (fpcsize_u - n)/fpcsize_u, 1)
+      pcfactor <- ifelse(pcfactor_ind, (fpcsize_u - n) / fpcsize_u, 1)
 
-# Calculate covariance or correlation estimates
+      # Calculate covariance or correlation estimates
 
-      if(vartype == "Local") {
-        weight_1st <- localmean_weight(x, y, 1/wgt)
-        varest <- pcfactor*localmean_cov(rm, weight_1st) / tw2
+      if (vartype == "Local") {
+        weight_1st <- localmean_weight(x, y, 1 / wgt)
+        varest <- pcfactor * localmean_cov(rm, weight_1st) / tw2
       } else {
-        varest <- pcfactor*n*var(rm) / tw2
+        varest <- pcfactor * n * var(rm) / tw2
       }
-      if(revisitwgt) {
-        rslt <- varest[1,2]
+      if (revisitwgt) {
+        rslt <- varest[1, 2]
       } else {
-        if(varest[1,1] == 0 | varest[2,2] == 0 | any(is.na(varest))) {
+        if (varest[1, 1] == 0 | varest[2, 2] == 0 | any(is.na(varest))) {
           warn_ind <- TRUE
           act <- "Covariance among the repeat visit sites was not included in calculation of \nthe standard error estimate.\n"
-          if(stratum_ind) {
-            warn <- paste("The variance estimate for the repeat visit sites mean in stratum \"", stratum_level, "\" \nwas equal to zero for at least one of the surveys.\n", sep="")
-            warn_df <- rbind(warn_df, data.frame(func=I(fname),
-              subpoptype=warn_vec[1], subpop=warn_vec[2],
-              indicator=warn_vec[3], stratum=I(stratum_level),
-              warning=I(warn), action=I(act)))
+          if (stratum_ind) {
+            warn <- paste("The variance estimate for the repeat visit sites mean in stratum \"", stratum_level, "\" \nwas equal to zero for at least one of the surveys.\n", sep = "")
+            warn_df <- rbind(warn_df, data.frame(
+              func = I(fname),
+              subpoptype = warn_vec[1], subpop = warn_vec[2],
+              indicator = warn_vec[3], stratum = I(stratum_level),
+              warning = I(warn), action = I(act)
+            ))
           } else {
-            warn <- paste("The variance estimate for the repeat visit sites mean was equal to zero \nfor at least \none of the surveys.\n", sep="")
-            warn_df <- rbind(warn_df, data.frame(func=I(fname),
-              subpoptype=warn_vec[1], subpop=warn_vec[2],
-              indicator=warn_vec[3], stratum=NA, warning=I(warn),
-              action=I(act)))
+            warn <- paste("The variance estimate for the repeat visit sites mean was equal to zero \nfor at least \none of the surveys.\n", sep = "")
+            warn_df <- rbind(warn_df, data.frame(
+              func = I(fname),
+              subpoptype = warn_vec[1], subpop = warn_vec[2],
+              indicator = warn_vec[3], stratum = NA, warning = I(warn),
+              action = I(act)
+            ))
           }
           rslt <- NA
         } else {
-          rslt <- varest[1,2]/sqrt(varest[1,1]*varest[2,2])
+          rslt <- varest[1, 2] / sqrt(varest[1, 1] * varest[2, 2])
         }
       }
     }
 
-# End the section for a single-stage sample
-
+    # End the section for a single-stage sample
   }
 
-# Return the covariance or correlation estimate, the warning message indicator,
-# and the warn_df data frame
+  # Return the covariance or correlation estimate, the warning message indicator,
+  # and the warn_df data frame
 
-  list(rslt=rslt, warn_ind=warn_ind, warn_df=warn_df)
+  list(rslt = rslt, warn_ind = warn_ind, warn_df = warn_df)
 }

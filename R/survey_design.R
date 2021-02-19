@@ -99,211 +99,231 @@
 ###############################################################################
 
 survey_design <- function(dframe, siteID, weight, stratum_ind, stratumID,
-  cluster_ind, clusterID, weight1, sizeweight, sweight, sweight1, popcorrect,
-  fpcsize, Ncluster, stage1size, vartype, jointprob) {
-
-  if(vartype %in% c("Local", "SRS")) {
-    if(stratum_ind) {
-      if(cluster_ind) {
-        if(sizeweight) {
+                          cluster_ind, clusterID, weight1, sizeweight, sweight, sweight1, popcorrect,
+                          fpcsize, Ncluster, stage1size, vartype, jointprob) {
+  if (vartype %in% c("Local", "SRS")) {
+    if (stratum_ind) {
+      if (cluster_ind) {
+        if (sizeweight) {
           dframe$wgt1 <- dframe[, weight1] * dframe[, sweight1]
           dframe$wgt2 <- dframe[, weight] * dframe[, sweight]
-          if(popcorrect) {
+          if (popcorrect) {
             design <- svydesign(
-              ids = make.formula(paste(clusterID, siteID, sep=" + ")),
-              weights = ~wgt1 + wgt2,
+              ids = make.formula(paste(clusterID, siteID, sep = " + ")),
+              weights = ~ wgt1 + wgt2,
               strata = make.formula(stratumID),
               nest = TRUE,
-              fpc = make.formula(paste(Ncluster, stage1size, sep=" + ")),
-              data = dframe)
+              fpc = make.formula(paste(Ncluster, stage1size, sep = " + ")),
+              data = dframe
+            )
           } else {
             design <- svydesign(
-              ids = make.formula(paste(clusterID, siteID, sep=" + ")),
-              weights = ~wgt1 + wgt2,
+              ids = make.formula(paste(clusterID, siteID, sep = " + ")),
+              weights = ~ wgt1 + wgt2,
               strata = make.formula(stratumID),
               nest = TRUE,
-              data = dframe)
+              data = dframe
+            )
           }
         } else {
           dframe$wgt1 <- dframe[, weight1]
           dframe$wgt2 <- dframe[, weight]
-          if(popcorrect) {
+          if (popcorrect) {
             design <- svydesign(
-              ids = make.formula(paste(clusterID, siteID, sep=" + ")),
-              weights = ~wgt1 + wgt2,
+              ids = make.formula(paste(clusterID, siteID, sep = " + ")),
+              weights = ~ wgt1 + wgt2,
               strata = make.formula(stratumID),
               nest = TRUE,
-              fpc = make.formula(paste(Ncluster, stage1size, sep=" + ")),
-              data = dframe)
+              fpc = make.formula(paste(Ncluster, stage1size, sep = " + ")),
+              data = dframe
+            )
           } else {
             design <- svydesign(
-              ids = make.formula(paste(clusterID, siteID, sep=" + ")),
-              weights = ~wgt1 + wgt2,
+              ids = make.formula(paste(clusterID, siteID, sep = " + ")),
+              weights = ~ wgt1 + wgt2,
               strata = make.formula(stratumID),
               nest = TRUE,
-              data = dframe)
+              data = dframe
+            )
           }
         }
       } else {
-        if(sizeweight) {
+        if (sizeweight) {
           dframe$wgt <- dframe[, weight] * dframe[, sweight]
-          if(popcorrect) {
+          if (popcorrect) {
             design <- svydesign(
               ids = make.formula(siteID),
               weights = ~wgt,
               strata = make.formula(stratumID),
               fpc = make.formula(fpcsize),
-              data = dframe)
+              data = dframe
+            )
           } else {
             design <- svydesign(
               ids = make.formula(siteID),
               weights = ~wgt,
               strata = make.formula(stratumID),
-              data = dframe)
+              data = dframe
+            )
           }
         } else {
           dframe$wgt <- dframe[, weight]
-          if(popcorrect) {
+          if (popcorrect) {
             design <- svydesign(
               ids = make.formula(siteID),
               weights = ~wgt,
               strata = make.formula(stratumID),
               fpc = make.formula(fpcsize),
-              data = dframe)
+              data = dframe
+            )
           } else {
             design <- svydesign(
               ids = make.formula(siteID),
               weights = ~wgt,
               strata = make.formula(stratumID),
-              data = dframe)
+              data = dframe
+            )
           }
         }
       }
     } else {
-      if(cluster_ind) {
-        if(sizeweight) {
+      if (cluster_ind) {
+        if (sizeweight) {
           dframe$wgt1 <- dframe[, weight1] * dframe[, sweight1]
           dframe$wgt2 <- dframe[, weight] * dframe[, sweight]
-          if(popcorrect) {
+          if (popcorrect) {
             design <- svydesign(
-              ids = make.formula(paste(clusterID, siteID, sep=" + ")),
-              weights = ~wgt1 + wgt2,
-              fpc = make.formula(paste(Ncluster, stage1size, sep=" + ")),
-              data = dframe)
+              ids = make.formula(paste(clusterID, siteID, sep = " + ")),
+              weights = ~ wgt1 + wgt2,
+              fpc = make.formula(paste(Ncluster, stage1size, sep = " + ")),
+              data = dframe
+            )
           } else {
             design <- svydesign(
-              ids = make.formula(paste(clusterID, siteID, sep=" + ")),
-              weights = ~wgt1 + wgt2,
-              data = dframe)
+              ids = make.formula(paste(clusterID, siteID, sep = " + ")),
+              weights = ~ wgt1 + wgt2,
+              data = dframe
+            )
           }
         } else {
           dframe$wgt1 <- dframe[, weight1]
           dframe$wgt2 <- dframe[, weight]
-          if(popcorrect) {
+          if (popcorrect) {
             design <- svydesign(
-              ids = make.formula(paste(clusterID, siteID, sep=" + ")),
-              weights = ~wgt1 + wgt2,
-              fpc = make.formula(paste(Ncluster, stage1size, sep=" + ")),
-              data = dframe)
+              ids = make.formula(paste(clusterID, siteID, sep = " + ")),
+              weights = ~ wgt1 + wgt2,
+              fpc = make.formula(paste(Ncluster, stage1size, sep = " + ")),
+              data = dframe
+            )
           } else {
             design <- svydesign(
-              ids = make.formula(paste(clusterID, siteID, sep=" + ")),
-              weights = ~wgt1 + wgt2,
-              data = dframe)
+              ids = make.formula(paste(clusterID, siteID, sep = " + ")),
+              weights = ~ wgt1 + wgt2,
+              data = dframe
+            )
           }
         }
       } else {
-        if(sizeweight) {
+        if (sizeweight) {
           dframe$wgt <- dframe[, weight] * dframe[, sweight]
-          if(popcorrect) {
+          if (popcorrect) {
             design <- svydesign(
               ids = make.formula(siteID),
               weights = ~wgt,
               fpc = make.formula(fpcsize),
-              data = dframe)
+              data = dframe
+            )
           } else {
             design <- svydesign(
               ids = make.formula(siteID),
               weights = ~wgt,
-              data = dframe)
+              data = dframe
+            )
           }
         } else {
           dframe$wgt <- dframe[, weight]
-          if(popcorrect) {
+          if (popcorrect) {
             design <- svydesign(
               ids = make.formula(siteID),
               weights = ~wgt,
               fpc = make.formula(fpcsize),
-              data = dframe)
+              data = dframe
+            )
           } else {
             design <- svydesign(
               ids = make.formula(siteID),
               weights = ~wgt,
-              data = dframe)
+              data = dframe
+            )
           }
         }
       }
     }
   } else {
-    if(jointprob %in% c("overton", "hr")) {
-      if(stratum_ind) {
-        if(cluster_ind) {
-          if(sizeweight) {
+    if (jointprob %in% c("overton", "hr")) {
+      if (stratum_ind) {
+        if (cluster_ind) {
+          if (sizeweight) {
             dframe$prb1 <- 1 / (dframe[, weight1] * dframe[, sweight1])
             dframe$prb2 <- 1 / (dframe[, weight] * dframe[, sweight])
-            if(jointprob == "overton") {
+            if (jointprob == "overton") {
               design <- svydesign(
-                ids = make.formula(paste(clusterID, siteID, sep=" + ")),
-                probs = ~prb1 + prb2,
+                ids = make.formula(paste(clusterID, siteID, sep = " + ")),
+                probs = ~ prb1 + prb2,
                 strata = make.formula(stratumID),
                 nest = TRUE,
                 variance = vartype,
                 pps = jointprob,
-                data = dframe)
+                data = dframe
+              )
             } else {
               design <- svydesign(
-                ids = make.formula(paste(clusterID, siteID, sep=" + ")),
-                probs = ~prb1 + prb2,
+                ids = make.formula(paste(clusterID, siteID, sep = " + ")),
+                probs = ~ prb1 + prb2,
                 strata = make.formula(stratumID),
                 nest = TRUE,
                 variance = vartype,
                 pps = HR(),
-                data = dframe)
+                data = dframe
+              )
             }
           } else {
             dframe$prb1 <- 1 / dframe[, weight1]
             dframe$prb2 <- 1 / dframe[, weight]
-            if(jointprob == "overton") {
+            if (jointprob == "overton") {
               design <- svydesign(
-                ids = make.formula(paste(clusterID, siteID, sep=" + ")),
-                probs = ~prb1 + prb2,
+                ids = make.formula(paste(clusterID, siteID, sep = " + ")),
+                probs = ~ prb1 + prb2,
                 strata = make.formula(stratumID),
                 nest = TRUE,
                 variance = vartype,
                 pps = jointprob,
-                data = dframe)
+                data = dframe
+              )
             } else {
               design <- svydesign(
-                ids = make.formula(paste(clusterID, siteID, sep=" + ")),
-                probs = ~prb1 + prb2,
+                ids = make.formula(paste(clusterID, siteID, sep = " + ")),
+                probs = ~ prb1 + prb2,
                 strata = make.formula(stratumID),
                 nest = TRUE,
                 variance = vartype,
                 pps = HR(),
-                data = dframe)
+                data = dframe
+              )
             }
           }
         } else {
-          if(sizeweight) {
+          if (sizeweight) {
             dframe$prb <- 1 / (dframe[, weight] * dframe[, sweight])
-            if(jointprob == "overton") {
+            if (jointprob == "overton") {
               design <- svydesign(
                 ids = make.formula(siteID),
                 probs = ~prb,
                 strata = make.formula(stratumID),
                 variance = vartype,
                 pps = jointprob,
-                data = dframe)
+                data = dframe
+              )
             } else {
               design <- svydesign(
                 ids = make.formula(siteID),
@@ -311,18 +331,20 @@ survey_design <- function(dframe, siteID, weight, stratum_ind, stratumID,
                 strata = make.formula(stratumID),
                 variance = vartype,
                 pps = HR(),
-                data = dframe)
+                data = dframe
+              )
             }
           } else {
             dframe$prb <- 1 / dframe[, weight]
-            if(jointprob == "overton") {
+            if (jointprob == "overton") {
               design <- svydesign(
                 ids = make.formula(siteID),
                 probs = ~prb,
                 strata = make.formula(stratumID),
                 variance = vartype,
                 pps = jointprob,
-                data = dframe)
+                data = dframe
+              )
             } else {
               design <- svydesign(
                 ids = make.formula(siteID),
@@ -330,115 +352,126 @@ survey_design <- function(dframe, siteID, weight, stratum_ind, stratumID,
                 strata = make.formula(stratumID),
                 variance = vartype,
                 pps = HR(),
-                data = dframe)
+                data = dframe
+              )
             }
           }
         }
       } else {
-        if(cluster_ind) {
-          if(sizeweight) {
+        if (cluster_ind) {
+          if (sizeweight) {
             dframe$prb1 <- 1 / (dframe[, weight1] * dframe[, sweight1])
             dframe$prb2 <- 1 / (dframe[, weight] * dframe[, sweight])
-            if(jointprob == "overton") {
+            if (jointprob == "overton") {
               design <- svydesign(
-                ids = make.formula(paste(clusterID, siteID, sep=" + ")),
-                probs = ~prb1 + prb2,
+                ids = make.formula(paste(clusterID, siteID, sep = " + ")),
+                probs = ~ prb1 + prb2,
                 variance = vartype,
                 pps = jointprob,
-                data = dframe)
+                data = dframe
+              )
             } else {
               design <- svydesign(
-                ids = make.formula(paste(clusterID, siteID, sep=" + ")),
-                probs = ~prb1 + prb2,
+                ids = make.formula(paste(clusterID, siteID, sep = " + ")),
+                probs = ~ prb1 + prb2,
                 variance = vartype,
                 pps = HR(),
-                data = dframe)
+                data = dframe
+              )
             }
           } else {
             dframe$prb1 <- 1 / dframe[, weight1]
             dframe$prb2 <- 1 / dframe[, weight]
-            if(jointprob == "overton") {
+            if (jointprob == "overton") {
               design <- svydesign(
-                ids = make.formula(paste(clusterID, siteID, sep=" + ")),
-                probs = ~prb1 + prb2,
+                ids = make.formula(paste(clusterID, siteID, sep = " + ")),
+                probs = ~ prb1 + prb2,
                 variance = vartype,
                 pps = jointprob,
-                data = dframe)
+                data = dframe
+              )
             } else {
               design <- svydesign(
-                ids = make.formula(paste(clusterID, siteID, sep=" + ")),
-                probs = ~prb1 + prb2,
+                ids = make.formula(paste(clusterID, siteID, sep = " + ")),
+                probs = ~ prb1 + prb2,
                 variance = vartype,
                 pps = HR(),
-                data = dframe)
+                data = dframe
+              )
             }
           }
         } else {
-          if(sizeweight) {
+          if (sizeweight) {
             dframe$prb <- 1 / (dframe[, weight] * dframe[, sweight])
-            if(jointprob == "overton") {
+            if (jointprob == "overton") {
               design <- svydesign(
                 ids = make.formula(siteID),
                 probs = ~prb,
                 variance = vartype,
                 pps = jointprob,
-                data = dframe)
+                data = dframe
+              )
             } else {
               design <- svydesign(
                 ids = make.formula(siteID),
                 probs = ~prb,
                 variance = vartype,
                 pps = HR(),
-                data = dframe)
+                data = dframe
+              )
             }
           } else {
             dframe$prb <- 1 / dframe[, weight]
-            if(jointprob == "overton") {
+            if (jointprob == "overton") {
               design <- svydesign(
                 ids = make.formula(siteID),
                 probs = ~prb,
                 variance = vartype,
                 pps = jointprob,
-                data = dframe)
+                data = dframe
+              )
             } else {
               design <- svydesign(
                 ids = make.formula(siteID),
                 probs = ~prb,
                 variance = vartype,
                 pps = HR(),
-                data = dframe)
+                data = dframe
+              )
             }
           }
         }
       }
     } else {
-      if(stratum_ind) {
-        if(cluster_ind) {
-          if(sizeweight) {
+      if (stratum_ind) {
+        if (cluster_ind) {
+          if (sizeweight) {
             dframe$prb1 <- 1 / (dframe[, weight1] * dframe[, sweight1])
             dframe$prb2 <- 1 / (dframe[, weight] * dframe[, sweight])
             design <- svydesign(
-              ids = make.formula(paste(clusterID, siteID, sep=" + ")),
-              probs = ~prb1 + prb2,
+              ids = make.formula(paste(clusterID, siteID, sep = " + ")),
+              probs = ~ prb1 + prb2,
               strata = make.formula(stratumID),
               nest = TRUE,
               variance = vartype,
               pps = jointprob,
-              data = dframe)
+              data = dframe
+            )
           } else {
             dframe$prb1 <- 1 / dframe[, weight1]
             dframe$prb2 <- 1 / dframe[, weight]
             design <- svydesign(
-              ids = make.formula(paste(clusterID, siteID, sep=" + ")),
-              probs = ~prb1 + prb2,
+              ids = make.formula(paste(clusterID, siteID, sep = " + ")),
+              probs = ~ prb1 + prb2,
               strata = make.formula(stratumID),
               nest = TRUE,
               variance = vartype,
               pps = jointprob,
-              data = dframe)
+              data = dframe
+            )
           }
         } else {
-          if(sizeweight) {
+          if (sizeweight) {
             dframe$prb <- 1 / (dframe[, weight] * dframe[, sweight])
             design <- svydesign(
               ids = make.formula(siteID),
@@ -446,7 +479,8 @@ survey_design <- function(dframe, siteID, weight, stratum_ind, stratumID,
               strata = make.formula(stratumID),
               variance = vartype,
               pps = jointprob,
-              data = dframe)
+              data = dframe
+            )
           } else {
             dframe$prb <- 1 / dframe[, weight]
             design <- svydesign(
@@ -455,39 +489,43 @@ survey_design <- function(dframe, siteID, weight, stratum_ind, stratumID,
               strata = make.formula(stratumID),
               variance = vartype,
               pps = jointprob,
-              data = dframe)
+              data = dframe
+            )
           }
         }
       } else {
-        if(cluster_ind) {
-          if(sizeweight) {
+        if (cluster_ind) {
+          if (sizeweight) {
             dframe$prb1 <- 1 / (dframe[, weight1] * dframe[, sweight1])
             dframe$prb2 <- 1 / (dframe[, weight] * dframe[, sweight])
             design <- svydesign(
-              ids = make.formula(paste(clusterID, siteID, sep=" + ")),
-              probs = ~prb1 + prb2,
+              ids = make.formula(paste(clusterID, siteID, sep = " + ")),
+              probs = ~ prb1 + prb2,
               variance = vartype,
               pps = jointprob,
-              data = dframe)
+              data = dframe
+            )
           } else {
             dframe$prb1 <- 1 / dframe[, weight1]
             dframe$prb2 <- 1 / dframe[, weight]
             design <- svydesign(
-              ids = make.formula(paste(clusterID, siteID, sep=" + ")),
-              probs = ~prb1 + prb2,
+              ids = make.formula(paste(clusterID, siteID, sep = " + ")),
+              probs = ~ prb1 + prb2,
               variance = vartype,
               pps = jointprob,
-              data = dframe)
+              data = dframe
+            )
           }
         } else {
-          if(sizeweight) {
+          if (sizeweight) {
             dframe$prb <- 1 / (dframe[, weight] * dframe[, sweight])
             design <- svydesign(
               ids = make.formula(siteID),
               probs = ~prb,
               variance = vartype,
               pps = jointprob,
-              data = dframe)
+              data = dframe
+            )
           } else {
             dframe$prb <- 1 / dframe[, weight]
             design <- svydesign(
@@ -495,7 +533,8 @@ survey_design <- function(dframe, siteID, weight, stratum_ind, stratumID,
               probs = ~prb,
               variance = vartype,
               pps = jointprob,
-              data = dframe)
+              data = dframe
+            )
           }
         }
       }

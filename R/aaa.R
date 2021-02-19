@@ -5,7 +5,7 @@
 # Last Revised: February 25, 2004
 #
 #' Successful startup message
-#' 
+#'
 #' This is a function that displays a startup message.
 #'
 #' @param libname Data library name.

@@ -3,11 +3,11 @@
 # Programmers: Michael Dumelle
 # Date: January 22, 2021
 #' Calculate summaries of design objects
-#' 
-#' @description 
-#' \code{summary()} summarizes sample frames or design objects, depending on 
+#'
+#' @description
+#' \code{summary()} summarizes sample frames or design objects, depending on
 #' which is provided. For design objects, sites in the base sample and
-#' replacement sites (if they exist) are summarized. The right hand of the 
+#' replacement sites (if they exist) are summarized. The right hand of the
 #' formula specifies the categorical variables (or factors) you want to
 #' summarize by. If the left hand side of the formula is empty, the
 #' summary will be of the
@@ -26,34 +26,34 @@
 #' variable for which a summary is requested.
 #' @param ... Additional arguments to pass to \code{summary()}. If the left hand
 #' side of the formula is empty, the appropriate generic arguments are passed
-#' to \code{summary.data.frame}. If the left hand side of the formula is provided, 
+#' to \code{summary.data.frame}. If the left hand side of the formula is provided,
 #' the appropriate generic arguments are passed to \code{summary.default}.
 #'
-#' @return If the left hand side of the formula is empty, a named list 
+#' @return If the left hand side of the formula is empty, a named list
 #' containing summaries of the count distribution for each right hand side
 #' varaiable is returned. If the left hand side of the formula contains a
 #' variable, a named list contianing five number
 #' summaries (numeric left hand side) or tables (categorical or factor left
 #' hand side) is returned for each right hand side variable.
-#' 
+#'
 #' @name summary
-#' 
+#'
 #' @method summary sframe
-#' 
+#'
 #' @export
-#' 
+#'
 #' @author Michael Dumelle \email{Dumelle.Michael@@epa.gov}
 #'
 #' @examples
 #' \dontrun{
-#'    NE_lakes <- sframe(NE_lakes)
-#'    summary(NE_lakes, ELEVATION ~ 1)
-#'    summary(NE_lakes, ~ ELEVATION_CAT * AREA_HA_CAT)
-#'    sample <- grts(NE_lakes, 100)
-#'    summary(sample, ELEVATION ~ 1)
-#'    summary(sample, ~ ELEVATION_CAT * AREA_HA_CAT)
+#' NE_lakes <- sframe(NE_lakes)
+#' summary(NE_lakes, ELEVATION ~ 1)
+#' summary(NE_lakes, ~ ELEVATION_CAT * AREA_HA_CAT)
+#' sample <- grts(NE_lakes, 100)
+#' summary(sample, ELEVATION ~ 1)
+#' summary(sample, ~ ELEVATION_CAT * AREA_HA_CAT)
 #' }
-###############################################################################
+#' ###############################################################################
 summary.sframe <- function(object, formula, onlyshow = NULL, ...) {
   # making formlist (utils.R)
   formlist <- make_formlist(formula, onlyshow, object)
@@ -89,19 +89,18 @@ summary.dframe <- function(object, formula, onlyshow = NULL, ...) {
 #' @method summary design
 #' @export
 summary.design <- function(object, formula, onlyshow = NULL, ...) {
-  
+
   # keep the sites sf objects from class design
   sites <- object[names(object) %in% c("sites_base", "sites_over", "sites_near")]
-  
+
   # storing output if non-null
   output <- lapply(sites, function(x) {
-      if (is.null(x)) {
-        x  
-      } else {
-        summary.sframe(x, formula, onlyshow, ...)
-      }
+    if (is.null(x)) {
+      x
+    } else {
+      summary.sframe(x, formula, onlyshow, ...)
     }
-  )
+  })
   # returning non-null outuput
   output <- output[!vapply(output, is.null, logical(1))]
   output
@@ -119,7 +118,7 @@ cat_summary <- function(formlist, varsf, ...) {
   } else {
     varsf_nogeom <- varsf
   }
- 
+
   if (!is.null(formlist$onlyshow)) {
     indexcol <- formlist$varlabels[length(formlist$varlabels)]
     varsf_nogeom <- varsf_nogeom[varsf_nogeom[[indexcol]] == formlist$onlyshow, indexcol, drop = FALSE]
@@ -143,18 +142,19 @@ cont_summary <- function(formlist, varsf, ...) {
     varsf_nogeom[[formlist$varlabels]] <- factor(varsf_nogeom[[formlist$varlabels]], levels = formlist$onlyshow)
   }
   output <- lapply(formlist$varlabels, function(x) {
-    varlevels <- do.call("tapply",
-                         c(list(X = varsf_nogeom[[formlist$response]],
-                                INDEX = varsf_nogeom[[x]],
-                                FUN = summary.default),
-                           dotlist))
+    varlevels <- do.call(
+      "tapply",
+      c(
+        list(
+          X = varsf_nogeom[[formlist$response]],
+          INDEX = varsf_nogeom[[x]],
+          FUN = summary.default
+        ),
+        dotlist
+      )
+    )
     do.call("rbind", varlevels)
   })
   names(output) <- paste(formlist$response, "by", formlist$varlabels, sep = " ")
   output
 }
-
-
-
-
-

@@ -23,16 +23,16 @@
 
 cdf_nresp <- function(z, val) {
 
-# Calculate the number of response values for each CDF estimation value
+  # Calculate the number of response values for each CDF estimation value
 
-   z <- z[!is.na(z)]
-   m <- length(val)
-   nresp <- numeric(m)
-   for(i in 1:m) {
-      nresp[i] <- sum(ifelse(z <= val[i], 1, 0))
-   }
+  z <- z[!is.na(z)]
+  m <- length(val)
+  nresp <- numeric(m)
+  for (i in 1:m) {
+    nresp[i] <- sum(ifelse(z <= val[i], 1, 0))
+  }
 
-# Return the number of response values for each CDF estimation value
+  # Return the number of response values for each CDF estimation value
 
-   nresp
+  nresp
 }

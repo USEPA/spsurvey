@@ -7,13 +7,13 @@
 #' @description dframe gives data frames, \code{sp}, and \code{sf} objects class \code{dframe} to be used
 #' in \code{summary()} generics. \code{sp} objects are coerced to \code{sf}
 #' objects prior to giving class \code{dframe}.
-#' 
+#'
 #' @param object An \code{sp} or \code{sf} object
 #'
 #' @return An \code{dframe} object
-#' 
+#'
 #' @export
-#' 
+#'
 #' @author Michael Dumelle
 #'
 #' @examples
@@ -39,4 +39,3 @@ dframe <- function(object) {
     stop("Input must be an sf object, sp object, or data frame")
   }
 }
-  

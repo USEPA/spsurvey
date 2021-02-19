@@ -79,128 +79,140 @@
 ###############################################################################
 
 cat_localmean_total <- function(itype, lev_itype, nlev_itype, ivar, lev_ivar,
-  nlev_ivar, design, design_names, rslt_U, popcorrect, vartype, mult, warn_ind,
-  warn_df) {
+                                nlev_ivar, design, design_names, rslt_U, popcorrect, vartype, mult, warn_ind,
+                                warn_df) {
 
-# Assign a value to the function name variable
+  # Assign a value to the function name variable
 
   fname <- "cat_localmean_total"
 
-# For variables that exist in the design$variables data frame, assign survey
-# design variables
+  # For variables that exist in the design$variables data frame, assign survey
+  # design variables
 
   dframe <- design$variables
-  for(i in names(design_names)) {
-    if(is.null(design_names[[i]])) {
-      eval(parse(text=paste0(i, " <- NULL")))
+  for (i in names(design_names)) {
+    if (is.null(design_names[[i]])) {
+      eval(parse(text = paste0(i, " <- NULL")))
     } else {
-      eval(parse(text=paste0(i, " <- dframe[, \"", design_names[[i]], "\"]")))
+      eval(parse(text = paste0(i, " <- dframe[, \"", design_names[[i]], "\"]")))
     }
   }
 
-# Assign values to the categorical response variable vector, catvar
+  # Assign values to the categorical response variable vector, catvar
 
   catvar <- dframe[, ivar]
 
-# Assign a value to the indicator variable for a two-stage sample
+  # Assign a value to the indicator variable for a two-stage sample
 
   cluster_ind <- !is.null(clusterID)
 
-# Assign values to weight variables
+  # Assign values to weight variables
 
-  if(cluster_ind) {
+  if (cluster_ind) {
     wgt1 <- dframe$wgt1
     wgt2 <- dframe$wgt2
   } else {
     wgt <- dframe$wgt
   }
 
-# Create the output data frames for standard error estimates and confidence
-# bound estimates
+  # Create the output data frames for standard error estimates and confidence
+  # bound estimates
 
   stderr_U <- data.frame(array(0, c(nlev_itype, nlev_ivar + 1)))
   dimnames(stderr_U) <- list(lev_itype, c(lev_ivar, "Total"))
   temp <- nlev_ivar + 1
-  confval_U <- data.frame(array(0, c(nlev_itype * temp , 2)))
+  confval_U <- data.frame(array(0, c(nlev_itype * temp, 2)))
   dimnames(confval_U) <- list(
     paste(rep(lev_itype, rep(temp, nlev_itype)),
-          rep(c(lev_ivar, "Total"), nlev_itype), sep=":"),
-    c("LCB", "UCB"))
+      rep(c(lev_ivar, "Total"), nlev_itype),
+      sep = ":"
+    ),
+    c("LCB", "UCB")
+  )
 
-# Loop through all subpopulations
+  # Loop through all subpopulations
 
-  for(isubpop in 1:nlev_itype) {
-
+  for (isubpop in 1:nlev_itype) {
     tst <- !is.na(dframe[, ivar]) &
-           (dframe[, itype] %in% lev_itype[isubpop])
+      (dframe[, itype] %in% lev_itype[isubpop])
 
-# If post-stratification or calibration was applied to the design object, then
-# calculate the sum of weights for the subpopulation
+    # If post-stratification or calibration was applied to the design object, then
+    # calculate the sum of weights for the subpopulation
 
-   if("postStrata" %in% names(design)) {
-     totalwgt <- sum(weights(design)[tst])
-   }
+    if ("postStrata" %in% names(design)) {
+      totalwgt <- sum(weights(design)[tst])
+    }
 
-# Assign values to the vector of category size estimates, size
+    # Assign values to the vector of category size estimates, size
 
     size <- unlist(rslt_U[isubpop, 1:(nlev_ivar + 1)])
     size_names <- c(lev_ivar, "Total")
 
-# Assign values to the warn_vec vector
+    # Assign values to the warn_vec vector
 
     warn_vec <- c(itype, lev_itype[isubpop], ivar)
 
-# Assign a value to the indicator variable for a stratified sample
+    # Assign a value to the indicator variable for a stratified sample
 
     stratum_ind <- !is.null(stratumID)
 
-# For a stratified design, determine whether the subpopulation contains a single
-# stratum
+    # For a stratified design, determine whether the subpopulation contains a single
+    # stratum
 
-    if(stratum_ind) {
+    if (stratum_ind) {
       stratum <- factor(stratumID[tst])
       stratum_levels <- levels(stratum)
       nstrata <- length(stratum_levels)
-      if(nstrata == 1)
+      if (nstrata == 1) {
         stratum_ind <- FALSE
+      }
     }
 
-# Branch for a stratified sample
+    # Branch for a stratified sample
 
-    if(stratum_ind) {
+    if (stratum_ind) {
 
-# Begin the subsection for individual strata
+      # Begin the subsection for individual strata
 
-      for(i in 1:nstrata) {
+      for (i in 1:nstrata) {
 
-# Calculate variance estimates
+        # Calculate variance estimates
 
         stratum_i <- tst & stratumID == stratum_levels[i]
-        if(cluster_ind) {
-          temp <- catvar_total(factor(catvar[stratum_i]), wgt2[stratum_i],
+        if (cluster_ind) {
+          temp <- catvar_total(
+            factor(catvar[stratum_i]), wgt2[stratum_i],
             xcoord[stratum_i], ycoord[stratum_i], size_names, stratum_ind,
             stratum_levels[i], cluster_ind, clusterID[stratum_i],
             wgt1[stratum_i], xcoord1[stratum_i], ycoord1[stratum_i], popcorrect,
             NULL, Ncluster[stratum_i], stage1size[stratum_i], vartype, warn_ind,
-            warn_df, warn_vec)
+            warn_df, warn_vec
+          )
         } else {
           temp <- catvar_total(factor(catvar[stratum_i]), wgt[stratum_i],
             xcoord[stratum_i], ycoord[stratum_i], size_names, stratum_ind,
-            stratum_levels[i], cluster_ind, pcfactor_ind = popcorrect,
-            fpcsize=fpcsize[stratum_i], vartype = vartype, warn_ind = warn_ind,
-            warn_df = warn_df, warn_vec = warn_vec)
+            stratum_levels[i], cluster_ind,
+            pcfactor_ind = popcorrect,
+            fpcsize = fpcsize[stratum_i], vartype = vartype, warn_ind = warn_ind,
+            warn_df = warn_df, warn_vec = warn_vec
+          )
         }
-        if(temp$vartype == "SRS") {
-          if(nlev_ivar <= 1) {
-            rslt_svy <- svytotal(~zzz, design = subset(design, stratum_i),
-              na.rm = TRUE)
+        if (temp$vartype == "SRS") {
+          if (nlev_ivar <= 1) {
+            rslt_svy <- svytotal(~zzz,
+              design = subset(design, stratum_i),
+              na.rm = TRUE
+            )
             varest <- c(SE(rslt_svy)^2, SE(rslt_svy)^2)
             names(varest) <- size_names
           } else {
             rslt_svy <- svytotal(make.formula(ivar),
-              design = subset(design, stratum_i), na.rm = TRUE)
-            rslt_T <- svytotal(~zzz, design = subset(design, stratum_i),
-              na.rm = TRUE)
+              design = subset(design, stratum_i), na.rm = TRUE
+            )
+            rslt_T <- svytotal(~zzz,
+              design = subset(design, stratum_i),
+              na.rm = TRUE
+            )
             varest <- c(SE(rslt_svy)^2, SE(rslt_T)^2)
             names(varest) <- size_names
           }
@@ -210,68 +222,73 @@ cat_localmean_total <- function(itype, lev_itype, nlev_itype, ivar, lev_ivar,
         warn_ind <- temp$warn_ind
         warn_df <- temp$warn_df
 
-# Add estimates to the stderr_U data frame
+        # Add estimates to the stderr_U data frame
 
         ind <- size_names %in% names(varest)
         indx <- (1:(nlev_ivar + 1))[ind]
         stderr_U[isubpop, indx] <- stderr_U[isubpop, indx] + varest
 
-# End the subsection for individual strata
-
+        # End the subsection for individual strata
       }
 
-# Begin the subsection for all strata combined
+      # Begin the subsection for all strata combined
 
-# Add estimates to the data frames for results
+      # Add estimates to the data frames for results
 
       names_sdest <- names(stderr_U)[stderr_U[isubpop, ] > 0]
       ind <- size_names %in% names_sdest
       indx <- (1:(nlev_ivar + 1))[ind]
       stderr_U[isubpop, indx] <- sqrt(stderr_U[isubpop, indx])
-      if("postStrata" %in% names(design)) {
+      if ("postStrata" %in% names(design)) {
         temp <- names_sdest[size[ind] == totalwgt]
         stderr_U[isubpop, temp] <- 0
       }
       lbound <- unlist(pmax(size[ind] - mult * stderr_U[isubpop, indx], 0))
-      if("postStrata" %in% names(design)) {
-        ubound <- unlist(pmin(size[ind] + mult * stderr_U[isubpop, indx],
-          totalwgt))
+      if ("postStrata" %in% names(design)) {
+        ubound <- unlist(pmin(
+          size[ind] + mult * stderr_U[isubpop, indx],
+          totalwgt
+        ))
       } else {
         ubound <- unlist(size[ind] + mult * stderr_U[isubpop, indx])
       }
       temp <- paste(rep(lev_itype[isubpop], length(names_sdest)), names_sdest,
-        sep=":")
+        sep = ":"
+      )
       ind <- rownames(confval_U) %in% temp
       confval_U[ind, ] <- cbind(lbound, ubound)
 
-# End the subsection for all strata combined
+      # End the subsection for all strata combined
 
-# Branch for an unstratified sample
-
+      # Branch for an unstratified sample
     } else {
 
-# Calculate the standard error estimates
+      # Calculate the standard error estimates
 
-      if(cluster_ind) {
-        temp <- catvar_total(factor(catvar[tst]), wgt2[tst], xcoord[tst],
+      if (cluster_ind) {
+        temp <- catvar_total(
+          factor(catvar[tst]), wgt2[tst], xcoord[tst],
           ycoord[tst], size_names, stratum_ind, NULL, cluster_ind,
           clusterID[tst], wgt1[tst], xcoord1[tst], ycoord1[tst], popcorrect,
           NULL, Ncluster[tst], stage1size[tst], vartype, warn_ind, warn_df,
-          warn_vec)
+          warn_vec
+        )
       } else {
         temp <- catvar_total(factor(catvar[tst]), wgt[tst], xcoord[tst],
           ycoord[tst], size_names, stratum_ind, NULL, cluster_ind,
-          pcfactor_ind = popcorrect, fpcsize=fpcsize[tst], vartype = vartype,
-          warn_ind = warn_ind, warn_df = warn_df, warn_vec = warn_vec)
+          pcfactor_ind = popcorrect, fpcsize = fpcsize[tst], vartype = vartype,
+          warn_ind = warn_ind, warn_df = warn_df, warn_vec = warn_vec
+        )
       }
-      if(temp$vartype == "SRS") {
-        if(nlev_ivar <= 1) {
+      if (temp$vartype == "SRS") {
+        if (nlev_ivar <= 1) {
           rslt_svy <- svytotal(~zzz, design = subset(design, tst), na.rm = TRUE)
           sdest <- c(SE(rslt_svy), SE(rslt_svy))
           names(sdest) <- size_names
         } else {
           rslt_svy <- svytotal(make.formula(ivar),
-            design = subset(design, tst), na.rm = TRUE)
+            design = subset(design, tst), na.rm = TRUE
+          )
           rslt_T <- svytotal(~zzz, design = subset(design, tst), na.rm = TRUE)
           sdest <- c(SE(rslt_svy), SE(rslt_T))
           names(sdest) <- size_names
@@ -282,35 +299,36 @@ cat_localmean_total <- function(itype, lev_itype, nlev_itype, ivar, lev_ivar,
       warn_ind <- temp$warn_ind
       warn_df <- temp$warn_df
 
-# Add estimates to the data frames for results
+      # Add estimates to the data frames for results
 
       names_sdest <- names(sdest)
       ind <- size_names %in% names_sdest
       indx <- (1:(nlev_ivar + 1))[ind]
-      if("postStrata" %in% names(design)) {
+      if ("postStrata" %in% names(design)) {
         tst <- size[ind] == totalwgt
         sdest[tst] <- 0
       }
       stderr_U[isubpop, indx] <- sdest
       lbound <- pmax(size - mult * sdest, 0)
-      if("postStrata" %in% names(design)) {
+      if ("postStrata" %in% names(design)) {
         ubound <- pmin(size + mult * sdest, totalwgt)
       } else {
         ubound <- size + mult * sdest
       }
       temp <- paste(rep(lev_itype[isubpop], length(names_sdest)), names_sdest,
-        sep=":")
+        sep = ":"
+      )
       ind <- rownames(confval_U) %in% temp
       confval_U[ind, ] <- cbind(lbound, ubound)
-
     }
-
   }
 
-# Return results
+  # Return results
 
-  list(stderr_U = stderr_U,
-       confval_U = confval_U,
-       warn_ind = warn_ind,
-       warn_df = warn_df)
+  list(
+    stderr_U = stderr_U,
+    confval_U = confval_U,
+    warn_ind = warn_ind,
+    warn_df = warn_df
+  )
 }

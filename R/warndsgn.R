@@ -22,30 +22,34 @@
 #' @export
 ###############################################################################
 
-warndsgn <- function(warn_df=get("warn_df", envir = .GlobalEnv),
+warndsgn <- function(warn_df = get("warn_df", envir = .GlobalEnv),
                      m = 1:nrow(warn_df)) {
-
-  for(i in m) {
-    cat(paste("Message", i, ": Stratum:", warn_df$stratum[i],
-              "Function: ", warn_df$func[i], "\n"))
+  for (i in m) {
+    cat(paste(
+      "Message", i, ": Stratum:", warn_df$stratum[i],
+      "Function: ", warn_df$func[i], "\n"
+    ))
     cat(paste("     ", warn_df$warning[i], "\n"))
   }
 
-   for(i in m) {
-      cat(paste0("Warning Message ", i, ":\n"))
-      cat(paste("Function:", warn_df$func[i], "\n"))
-      if(!is.na(warn_df$subpoptype[i]))
-         cat(paste("Population Type:", warn_df$subpoptype[i], "\n"))
-      if(!is.na(warn_df$subpop[i]))
-         cat(paste("Subpopulation:", warn_df$subpop[i], "\n"))
-      if(!is.na(warn_df$indicator[i]))
-         cat(paste("Indicator:", warn_df$indicator[i], "\n"))
-      if(!is.na(warn_df$stratum[i]))
-         cat(paste("Stratum:", warn_df$stratum[i], "\n"))
-      cat(paste("Warning:", warn_df$warning[i]))
-      cat(paste("Action:", warn_df$action[i], "\n"))
-   }
+  for (i in m) {
+    cat(paste0("Warning Message ", i, ":\n"))
+    cat(paste("Function:", warn_df$func[i], "\n"))
+    if (!is.na(warn_df$subpoptype[i])) {
+      cat(paste("Population Type:", warn_df$subpoptype[i], "\n"))
+    }
+    if (!is.na(warn_df$subpop[i])) {
+      cat(paste("Subpopulation:", warn_df$subpop[i], "\n"))
+    }
+    if (!is.na(warn_df$indicator[i])) {
+      cat(paste("Indicator:", warn_df$indicator[i], "\n"))
+    }
+    if (!is.na(warn_df$stratum[i])) {
+      cat(paste("Stratum:", warn_df$stratum[i], "\n"))
+    }
+    cat(paste("Warning:", warn_df$warning[i]))
+    cat(paste("Action:", warn_df$action[i], "\n"))
+  }
 
-   invisible(NULL)
+  invisible(NULL)
 }
-

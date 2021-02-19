@@ -7,11 +7,11 @@
 #' @description sframe gives \code{sp} and \code{sf} objects class \code{"sframe"} to be used
 #' in \code{summary()} and \code{plot()} generics. \code{sp} objects are coerced to \code{sf}
 #' objects prior to giving class \code{sframe}.
-#' 
+#'
 #' @param object An \code{sp} or \code{sf} object
 #'
 #' @return An \code{sframe} object
-#' 
+#'
 #' @export
 #'
 #' @examples
@@ -19,7 +19,7 @@
 #' data("NE_lakes")
 #' NE_lakes <- sframe(NE_lakes)
 #' }
-###############################################################################
+#' ###############################################################################
 sframe <- function(object) {
   if ("sframe" %in% class(object)) {
     stop("object is already an sframe object")

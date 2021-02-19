@@ -44,13 +44,16 @@
 #' @examples
 #' tmp <- grtspts_ip(type = "equal", n_base = 10, Nstratum = 25)
 #' tmp
-#' tmp <- grtspts_ip(type = "unequal", n_base = c(small = 5, large = 5),
-#'           caty = c(rep("small", 15), rep("large", 10)))
+#' tmp <- grtspts_ip(
+#'   type = "unequal", n_base = c(small = 5, large = 5),
+#'   caty = c(rep("small", 15), rep("large", 10))
+#' )
 #' tmp
-#' tmp <- grtspts_ip(type = "proportional", n_base = 10,
-#'                   aux = c(rnorm(20, 3), -2, 30, 40, 0, 0))
+#' tmp <- grtspts_ip(
+#'   type = "proportional", n_base = 10,
+#'   aux = c(rnorm(20, 3), -2, 30, 40, 0, 0)
+#' )
 #' tmp
-#'
 #' @export
 ###############################################################################
 
@@ -58,29 +61,32 @@ grtspts_ip <- function(type = "equal", n_base, Nstratum = NULL, caty = NULL,
                        aux = NULL, warn_ind = NULL, warn_df = NULL) {
 
   # equal inclusion probabilities
-  if(type == "equal") {
-    ip <- rep(sum(n_base, na.rm = TRUE)/Nstratum, Nstratum)
+  if (type == "equal") {
+    ip <- rep(sum(n_base, na.rm = TRUE) / Nstratum, Nstratum)
   }
   # unequal inclusion probabilities
-  if(type == "unequal") {
+  if (type == "unequal") {
     gsum <- table(caty)
-    catmatch <- match(names(n_base),names(gsum),nomatch=0)
-    piden <- n_base/gsum[catmatch]
-    ip <- rep(NA,length(caty))
-    for(i in names(n_base))
+    catmatch <- match(names(n_base), names(gsum), nomatch = 0)
+    piden <- n_base / gsum[catmatch]
+    ip <- rep(NA, length(caty))
+    for (i in names(n_base)) {
       ip[caty == i] <- piden[i]
+    }
   }
   # proportional inclusion probabilities
-  if(type == "proportional") {
+  if (type == "proportional") {
     ip <- aux
     # check for "0" and negative values. if negative set to "0".
     nnull <- sum(aux == 0)
-    nneg = sum(aux < 0)
+    nneg <- sum(aux < 0)
     if (nnull > 0) {
-      warn <-  "Proportional vector has zero values and their inclusion probabilities are set to 0."
-      if(warn_ind){
-        warn_df <- rbind(warn_df, data.frame(stratum = NA, func = I("grtspts_ip"),
-                                             warning = warn))
+      warn <- "Proportional vector has zero values and their inclusion probabilities are set to 0."
+      if (warn_ind) {
+        warn_df <- rbind(warn_df, data.frame(
+          stratum = NA, func = I("grtspts_ip"),
+          warning = warn
+        ))
       } else {
         warn_df <- data.frame(stratum = NA, func = I("grtspts_ip"), warning = warn)
         warn_ind <- TRUE
@@ -91,11 +97,13 @@ grtspts_ip <- function(type = "equal", n_base, Nstratum = NULL, caty = NULL,
       ip[ip < 0] <- 0
       warn <- paste0("Proportional vector has ", nneg, " negative value(s) and
               their inclusion probabilities are set to 0.")
-      if(warn_ind){
+      if (warn_ind) {
         warn_df <- data.frame(stratum = NA, func = I("grtspts_ip"), warning = warn)
       } else {
-        warn_df <- rbind(warn_df, data.frame(stratum = NA, func = I("grtspts_ip"),
-                                             warning = warn))
+        warn_df <- rbind(warn_df, data.frame(
+          stratum = NA, func = I("grtspts_ip"),
+          warning = warn
+        ))
         warn_ind <- TRUE
       }
     }
@@ -111,11 +119,11 @@ grtspts_ip <- function(type = "equal", n_base, Nstratum = NULL, caty = NULL,
     # if ngt1 is greater than 0, then set them to 1 and adjust remaining elements
     # to have sample size n - ngt1. Adjustment may cause other elements to become
     # greater than 1 so repeat until all are less than or equal to 1.
-    if(ngt1 > 0) {
+    if (ngt1 > 0) {
       tst <- 0
-      while(ngt1 != tst) {
+      while (ngt1 != tst) {
         tmp <- ip_gt0[!element_gt1]
-        ip_gt0[!element_gt1] <- (n_base - ngt1) * tmp/sum(tmp)
+        ip_gt0[!element_gt1] <- (n_base - ngt1) * tmp / sum(tmp)
         ip_gt0[element_gt1] <- 1
         tst <- ngt1
         element_gt1 <- ip_gt0 >= 1
@@ -130,7 +138,5 @@ grtspts_ip <- function(type = "equal", n_base, Nstratum = NULL, caty = NULL,
   # return list with vector of inclusion probabilities and warning indicator and messages
   ip <- list(ip = ip, warn_ind = warn_ind, warn_df = warn_df)
 
-  invisible (ip)
+  invisible(ip)
 }
-
-

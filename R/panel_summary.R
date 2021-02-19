@@ -49,7 +49,7 @@
 #'
 #' @author Tony Olsen \email{Olsen.Tony@@epa.gov}
 #'
-#' @seealso 
+#' @seealso
 #'   \describe{
 #'     \item{\code{\link{revisit_dsgn}}}{create a panel revisit design}
 #'     \item{\code{\link{revisit_bibd}}}{create a balanced incomplete block
@@ -67,57 +67,59 @@
 #'
 #' @examples
 #' # Serially alternating panel revisit design summary
-#' sa_dsgn <- revisit_dsgn(20, panels=list(SA60N=list(n=60, pnl_dsgn = c(1, 4),
-#'                         pnl_n=NA, start_option="None")), begin=1 )
+#' sa_dsgn <- revisit_dsgn(20, panels = list(SA60N = list(
+#'   n = 60, pnl_dsgn = c(1, 4),
+#'   pnl_n = NA, start_option = "None"
+#' )), begin = 1)
 #' panel_summary(sa_dsgn)
 #'
 #' # Add visit design where first panel is sampled twice at every time period
 #' sa_visit <- sa_dsgn
 #' sa_visit [sa_visit > 0] <- 1
-#' sa_visit [1, sa_visit[1,] > 0] <- 2
+#' sa_visit [1, sa_visit[1, ] > 0] <- 2
 #' panel_summary(sa_dsgn, sa_visit)
-#'
 #' @export
 ###############################################################################
 
-panel_summary <- function (paneldsgn, visitdsgn = NULL) {
-
-  n_pan <- dim (paneldsgn)[1]
-  n_period <- dim (paneldsgn)[2]
+panel_summary <- function(paneldsgn, visitdsgn = NULL) {
+  n_pan <- dim(paneldsgn)[1]
+  n_period <- dim(paneldsgn)[2]
 
   # determine the cumulative number of unique sample units by sampling occasion
   used <- rep(FALSE, n_pan)
-  tot <- vector("numeric", length=n_period)
+  tot <- vector("numeric", length = n_period)
   for (i in 1:n_period) {
-    units <- paneldsgn[,i] > 0
+    units <- paneldsgn[, i] > 0
     new <- used + units
-    tot[i] <- sum(paneldsgn[new == 1,i])
+    tot[i] <- sum(paneldsgn[new == 1, i])
     used <- new
   }
-  n_unique_com <- cumsum (tot)
+  n_unique_com <- cumsum(tot)
   names(n_unique_com) <- dimnames(paneldsgn)[[2]]
 
   # summarize number of sample results by panel and by time period
   # incorporate multiple times unit is sampled if sample units for a time period are
   # sampled more than once.
-  ifelse (!is.null (visitdsgn), vis <- visitdsgn * paneldsgn, vis <- paneldsgn)
+  ifelse(!is.null(visitdsgn), vis <- visitdsgn * paneldsgn, vis <- paneldsgn)
   n_unitpnl <- apply(vis, 1, sum)
   n_unitperiod <- apply(vis, 2, sum)
   n_total <- sum(n_unitperiod)
   # number of times a sample unit is visited in each panel
   tmp <- array(0, c(n_pan, n_period))
   tmp[paneldsgn > 0] <- 1
-  ifelse (!is.null (visitdsgn), vis <- visitdsgn * tmp, vis <- tmp)
+  ifelse(!is.null(visitdsgn), vis <- visitdsgn * tmp, vis <- tmp)
   n_periodunit <- apply(vis, 1, sum)
-  names (n_periodunit) <- dimnames(paneldsgn)[[1]]
+  names(n_periodunit) <- dimnames(paneldsgn)[[1]]
 
   # create list of results
-  rslt <- list(n_panel = n_pan,
-               n_period = n_period,
-               n_total = n_total,
-               n_periodunit = n_periodunit,
-               n_unitpnl = n_unitpnl,
-               n_unitperiod = n_unitperiod,
-               ncum_unit = n_unique_com)
-  return (rslt)
+  rslt <- list(
+    n_panel = n_pan,
+    n_period = n_period,
+    n_total = n_total,
+    n_periodunit = n_periodunit,
+    n_unitpnl = n_unitpnl,
+    n_unitperiod = n_unitperiod,
+    ncum_unit = n_unique_com
+  )
+  return(rslt)
 }

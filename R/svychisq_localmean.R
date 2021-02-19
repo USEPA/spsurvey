@@ -106,28 +106,35 @@
 #' n <- 100
 #' resp <- rnorm(n, 10, 1)
 #' wgt <- runif(n, 10, 100)
-#' xcoord = runif(n)
-#' ycoord = runif(n)
-#' sample1 <- data.frame(samp = "sample1", z = resp, wgt = wgt, x = xcoord,
-#'   y = ycoord)
-#' sample2 <- data.frame(samp = "sample2", z = resp+0.5, wgt = wgt, x = xcoord,
-#'   y = ycoord)
-#' bounds <- sort(c(sample1$z, sample2$z))[floor(seq((2*n)/3, (2*n),
-#'   length=3))]
+#' xcoord <- runif(n)
+#' ycoord <- runif(n)
+#' sample1 <- data.frame(
+#'   samp = "sample1", z = resp, wgt = wgt, x = xcoord,
+#'   y = ycoord
+#' )
+#' sample2 <- data.frame(
+#'   samp = "sample2", z = resp + 0.5, wgt = wgt, x = xcoord,
+#'   y = ycoord
+#' )
+#' bounds <- sort(c(sample1$z, sample2$z))[floor(seq((2 * n) / 3, (2 * n),
+#'   length = 3
+#' ))]
 #' dframe <- rbind(sample1, sample2)
-#' dframe$id <- paste0("Site", 1:(2*n))
-#' dframe$catvar <- cut(dframe$z, c(-Inf,  bounds))
+#' dframe$id <- paste0("Site", 1:(2 * n))
+#' dframe$catvar <- cut(dframe$z, c(-Inf, bounds))
 #' design <- survey::svydesign(id = ~id, weights = ~wgt, data = dframe)
-#' svychisq_localmean(~samp+catvar, design, statistic = "adjWald",
-#'   vartype = "SRS")
-#'
+#' svychisq_localmean(~ samp + catvar, design,
+#'   statistic = "adjWald",
+#'   vartype = "SRS"
+#' )
 #' @export
 ###############################################################################
 
-svychisq_localmean <- function(formula, design, statistic = c("F", "Chisq",
-  "Wald","adjWald","lincom", "saddlepoint"), vartype = "Local",
-  var_totals = NULL, var_means = NULL) {
-
+svychisq_localmean <- function(formula, design, statistic = c(
+                                 "F", "Chisq",
+                                 "Wald", "adjWald", "lincom", "saddlepoint"
+                               ), vartype = "Local",
+                               var_totals = NULL, var_means = NULL) {
   statistic <- match.arg(statistic)
 
   rows <- formula[[2]][[2]]
@@ -140,51 +147,57 @@ svychisq_localmean <- function(formula, design, statistic = c("F", "Chisq",
   nc <- length(colvar)
   mf1 <- expand.grid(rows = 1:nr, cols = 1:nc)
 
-  fsat <- eval(bquote(~interaction(factor(.(rows)), factor(.(cols))) - 1))
+  fsat <- eval(bquote(~ interaction(factor(.(rows)), factor(.(cols))) - 1))
   mm <- model.matrix(fsat, model.frame(fsat, design$variables,
-    na.action = na.pass))
+    na.action = na.pass
+  ))
   N <- nrow(mm)
-  nu <- length(unique(design$cluster[,1])) - length(unique(design$strata[,1]))
+  nu <- length(unique(design$cluster[, 1])) - length(unique(design$strata[, 1]))
 
-  pearson <-  suppressWarnings(chisq.test(svytable(formula, design ,Ntotal = N),
-    correct = FALSE))
+  pearson <- suppressWarnings(chisq.test(svytable(formula, design, Ntotal = N),
+    correct = FALSE
+  ))
 
-  if(statistic %in% c("Wald", "adjWald")) {
-
-    frow <- eval(bquote(~factor(.(rows)) - 1))
-    fcol <- eval(bquote(~factor(.(cols)) - 1))
+  if (statistic %in% c("Wald", "adjWald")) {
+    frow <- eval(bquote(~ factor(.(rows)) - 1))
+    fcol <- eval(bquote(~ factor(.(cols)) - 1))
     mr <- model.matrix(frow, model.frame(frow, design$variables,
-      na.action = na.pass))
+      na.action = na.pass
+    ))
     mc <- model.matrix(fcol, model.frame(fcol, design$variables,
-      na.action = na.pass))
+      na.action = na.pass
+    ))
     one <- rep(1, NROW(mc))
-    cells <- svytotal(~mm+mr+mc+one, design, na.rm = TRUE)
+    cells <- svytotal(~ mm + mr + mc + one, design, na.rm = TRUE)
 
     Jcb <- cbind(
       diag(nr * nc),
-      -outer(mf1$rows, 1:nr, "==") * rep(cells[(nr*nc) + nr + 1:nc] /
-        cells[(nr*nc) + nr + nc + 1], each = nr),
-      -outer(mf1$cols, 1:nc,"==") * cells[(nr*nc) + 1:nr] /
-        cells[(nr*nc) + nr + nc + 1],
-      as.vector(outer(cells[(nr*nc) + 1:nr], cells[(nr*nc +nr) + 1:nc]) /
-        cells[(nr*nc) + nr + nc + 1]^2))
+      -outer(mf1$rows, 1:nr, "==") * rep(cells[(nr * nc) + nr + 1:nc] /
+        cells[(nr * nc) + nr + nc + 1], each = nr),
+      -outer(mf1$cols, 1:nc, "==") * cells[(nr * nc) + 1:nr] /
+        cells[(nr * nc) + nr + nc + 1],
+      as.vector(outer(cells[(nr * nc) + 1:nr], cells[(nr * nc + nr) + 1:nc]) /
+        cells[(nr * nc) + nr + nc + 1]^2)
+    )
 
-    Y <- cells[1:(nc*nr)] - as.vector(outer(cells[(nr*nc) + 1:nr],
-      cells[(nr*nc + nr) + 1:nc])) / cells[(nr*nc) + nr + nc + 1]
-    if(vartype == "Local") {
+    Y <- cells[1:(nc * nr)] - as.vector(outer(
+      cells[(nr * nc) + 1:nr],
+      cells[(nr * nc + nr) + 1:nc]
+    )) / cells[(nr * nc) + nr + nc + 1]
+    if (vartype == "Local") {
       V <- Jcb %*% var_totals %*% t(Jcb)
     } else {
-      V <- Jcb %*% attr(cells,"var") %*% t(Jcb)
+      V <- Jcb %*% attr(cells, "var") %*% t(Jcb)
     }
-    use <- as.vector(matrix(1:(nr*nc), nrow = nr, ncol = nc)[-1, -1])
-    waldstat <- Y[use] %*% solve(V[use,use], Y[use])
+    use <- as.vector(matrix(1:(nr * nc), nrow = nr, ncol = nc)[-1, -1])
+    waldstat <- Y[use] %*% solve(V[use, use], Y[use])
 
-    if (statistic=="Wald") {
-      waldstat <- waldstat/((nc-1)*(nr-1))
-      numdf <- (nc-1)*(nr-1)
+    if (statistic == "Wald") {
+      waldstat <- waldstat / ((nc - 1) * (nr - 1))
+      numdf <- (nc - 1) * (nr - 1)
       denomdf <- nu
     } else {
-      numdf <- (nr-1)*(nc-1)
+      numdf <- (nr - 1) * (nc - 1)
       denomdf <- (nu - numdf + 1)
       waldstat <- waldstat * denomdf / (numdf * nu)
     }
@@ -192,57 +205,58 @@ svychisq_localmean <- function(formula, design, statistic = c("F", "Chisq",
     pearson$statistic <- waldstat
     pearson$parameter <- c(ndf = numdf, ddf = denomdf)
     pearson$p.value <- pf(pearson$statistic, numdf, denomdf, lower.tail = FALSE)
-    attr(pearson$statistic,"names") <- "F"
+    attr(pearson$statistic, "names") <- "F"
     pearson$data.name <- deparse(sys.call(-1))
     pearson$method <- "Design-based Wald test of association"
-
   } else {
-
-    X1 <- model.matrix(~factor(rows)+factor(cols), mf1)
-    X12 <- model.matrix(~factor(rows)*factor(cols), mf1)
-    Cmat <- qr.resid(qr(X1),X12[,-(1:(nr+nc-1)),drop = FALSE])
+    X1 <- model.matrix(~ factor(rows) + factor(cols), mf1)
+    X12 <- model.matrix(~ factor(rows) * factor(cols), mf1)
+    Cmat <- qr.resid(qr(X1), X12[, -(1:(nr + nc - 1)), drop = FALSE])
     mean2 <- svymean(mm, design, na.rm = TRUE)
     Dmat <- diag(mean2)
-    iDmat <-  diag(ifelse(mean2 == 0, 0, 1/mean2))
-    Vsrs <- (Dmat - outer(mean2, mean2))/N
-    if(vartype == "Local") {
+    iDmat <- diag(ifelse(mean2 == 0, 0, 1 / mean2))
+    Vsrs <- (Dmat - outer(mean2, mean2)) / N
+    if (vartype == "Local") {
       V <- var_means
     } else {
       V <- attr(mean2, "var")
     }
-    denom <-  t(Cmat) %*% (iDmat/N) %*% Cmat
-    numr <- t(Cmat)%*% iDmat %*% V %*% iDmat %*% Cmat
-    Delta <- solve(denom,numr)
-    d0 <-  sum(diag(Delta))^2/(sum(diag(Delta %*% Delta)))
+    denom <- t(Cmat) %*% (iDmat / N) %*% Cmat
+    numr <- t(Cmat) %*% iDmat %*% V %*% iDmat %*% Cmat
+    Delta <- solve(denom, numr)
+    d0 <- sum(diag(Delta))^2 / (sum(diag(Delta %*% Delta)))
 
-    if (match.arg(statistic)=="F"){
-      pearson$statistic <- pearson$statistic/sum(diag(Delta))
-      pearson$p.value <- pf(pearson$statistic, d0, d0*nu, lower.tail = FALSE)
-      attr(pearson$statistic,"names") <- "F"
-      pearson$parameter <- c(ndf = d0,ddf = d0*nu)
+    if (match.arg(statistic) == "F") {
+      pearson$statistic <- pearson$statistic / sum(diag(Delta))
+      pearson$p.value <- pf(pearson$statistic, d0, d0 * nu, lower.tail = FALSE)
+      attr(pearson$statistic, "names") <- "F"
+      pearson$parameter <- c(ndf = d0, ddf = d0 * nu)
       pearson$method <- "Pearson's X^2: Rao & Scott adjustment"
-    }  else if (match.arg(statistic)=="lincom") {
+    } else if (match.arg(statistic) == "lincom") {
       pearson$p.value <- pFsum(pearson$statistic, rep(1, ncol(Delta)),
-        eigen(Delta,only.values = TRUE)$values, lower.tail = FALSE,
-        method = "integration",ddf = d0*nu)
+        eigen(Delta, only.values = TRUE)$values,
+        lower.tail = FALSE,
+        method = "integration", ddf = d0 * nu
+      )
       pearson$parameter <- NULL
       pearson$method <- "Pearson's X^2: asymptotic exact distribution"
-    } else if  (match.arg(statistic)=="saddlepoint") {
+    } else if (match.arg(statistic) == "saddlepoint") {
       pearson$p.value <- pFsum(pearson$statistic, rep(1, ncol(Delta)),
-        eigen(Delta,only.values = TRUE)$values, lower.tail = FALSE,
-        method = "saddlepoint",ddf = d0*nu)
+        eigen(Delta, only.values = TRUE)$values,
+        lower.tail = FALSE,
+        method = "saddlepoint", ddf = d0 * nu
+      )
       pearson$parameter <- NULL
       pearson$method <- "Pearson's X^2: saddlepoint approximation"
-    } else{
-      pearson$p.value <- pchisq(pearson$statistic/mean(diag(Delta)),
-        df=NCOL(Delta),lower.tail = FALSE)
-      pearson$parameter <- c(df=NCOL(Delta))
+    } else {
+      pearson$p.value <- pchisq(pearson$statistic / mean(diag(Delta)),
+        df = NCOL(Delta), lower.tail = FALSE
+      )
+      pearson$parameter <- c(df = NCOL(Delta))
       pearson$method <- "Pearson's X^2: Rao & Scott adjustment"
     }
     pearson$data.name <- deparse(sys.call(-1))
-
   }
 
   pearson
 }
-

@@ -73,83 +73,83 @@
 ###############################################################################
 
 mean_localmean <- function(itype, lev_itype, nlev_itype, levs, ivar, design,
-  design_names, meanest, popcorrect, vartype, mult, warn_ind, warn_df) {
+                           design_names, meanest, popcorrect, vartype, mult, warn_ind, warn_df) {
 
-# Assign a value to the function name variable
+  # Assign a value to the function name variable
 
   fname <- "mean_localmean"
 
-# For variables that exist in the design$variables data frame, assign survey
-# design variables
+  # For variables that exist in the design$variables data frame, assign survey
+  # design variables
 
   dframe <- design$variables
-  for(i in names(design_names)) {
-    if(is.null(design_names[[i]])) {
-      eval(parse(text=paste0(i, " <- NULL")))
+  for (i in names(design_names)) {
+    if (is.null(design_names[[i]])) {
+      eval(parse(text = paste0(i, " <- NULL")))
     } else {
-      eval(parse(text=paste0(i, " <- dframe[, \"", design_names[[i]], "\"]")))
+      eval(parse(text = paste0(i, " <- dframe[, \"", design_names[[i]], "\"]")))
     }
   }
 
-# Assign values to the continuous response variable vector, contvar
+  # Assign values to the continuous response variable vector, contvar
 
   contvar <- dframe[, ivar]
 
-# Assign a value to the indicator variable for a two-stage sample
+  # Assign a value to the indicator variable for a two-stage sample
 
   cluster_ind <- !is.null(clusterID)
 
-# Assign values to weight variables
+  # Assign values to weight variables
 
-  if(cluster_ind) {
+  if (cluster_ind) {
     wgt1 <- dframe$wgt1
     wgt2 <- dframe$wgt2
   } else {
     wgt <- dframe$wgt
   }
 
-# Create the output objects for standard error estimates and confidence bound
-# estimates
+  # Create the output objects for standard error estimates and confidence bound
+  # estimates
 
   nlevs <- length(levs)
   stderr <- numeric(nlev_itype)
   names(stderr) <- lev_itype
-  confval <- data.frame(array(0, c(nlev_itype , 2)))
+  confval <- data.frame(array(0, c(nlev_itype, 2)))
   dimnames(confval) <- list(lev_itype, c("LCB", "UCB"))
 
-# Loop through all subpopulations
+  # Loop through all subpopulations
 
-  for(isubpop in levs) {
-
+  for (isubpop in levs) {
     tst <- !is.na(dframe[, ivar]) &
-           (dframe[, itype] %in% lev_itype[isubpop])
+      (dframe[, itype] %in% lev_itype[isubpop])
 
-# Assign values to the warn_vec vector
+    # Assign values to the warn_vec vector
 
     warn_vec <- c(itype, lev_itype[isubpop], ivar)
 
-# Assign a value to the indicator variable for a stratified sample
+    # Assign a value to the indicator variable for a stratified sample
 
     stratum_ind <- !is.null(stratumID)
 
-# For a stratified design, determine whether the subpopulation contains a single
-# stratum
+    # For a stratified design, determine whether the subpopulation contains a single
+    # stratum
 
-    if(stratum_ind) {
+    if (stratum_ind) {
       stratum <- factor(stratumID[tst])
       stratum_levels <- levels(stratum)
       nstrata <- length(stratum_levels)
-      if(nstrata == 1)
+      if (nstrata == 1) {
         stratum_ind <- FALSE
+      }
     }
 
-# Branch for a stratified sample
+    # Branch for a stratified sample
 
-    if(stratum_ind) {
+    if (stratum_ind) {
 
-# Calculate values required for weighting strata
+      # Calculate values required for weighting strata
 
-      if(cluster_ind) {
+      if (cluster_ind) {
         popsize_hat <- tapply(wgt1[tst] * wgt2[tst], stratum, sum)
         sum_popsize_hat <- sum(wgt1[tst] * wgt2[tst])
       } else {
@@ -157,35 +157,43 @@ mean_localmean <- function(itype, lev_itype, nlev_itype, levs, ivar, design,
         sum_popsize_hat <- sum(wgt[tst])
       }
 
-# Begin the subsection for individual strata
+      # Begin the subsection for individual strata
 
-      for(i in 1:nstrata) {
+      for (i in 1:nstrata) {
 
-# Calculate mean estimates for the stratum
+        # Calculate mean estimates for the stratum
 
         stratum_i <- tst & stratumID == stratum_levels[i]
-        meanest_st <- svymean(make.formula(ivar), design = subset(design,
-          stratum_i))
+        meanest_st <- svymean(make.formula(ivar), design = subset(
+          design,
+          stratum_i
+        ))
 
-# Calculate variance estimates
+        # Calculate variance estimates
 
-        if(cluster_ind) {
-          temp <- mean_var(contvar[stratum_i], wgt2[stratum_i],
-            xcoord[stratum_i], ycoord[stratum_i],  meanest_st[1], stratum_ind,
+        if (cluster_ind) {
+          temp <- mean_var(
+            contvar[stratum_i], wgt2[stratum_i],
+            xcoord[stratum_i], ycoord[stratum_i], meanest_st[1], stratum_ind,
             stratum_levels[i], cluster_ind, clusterID[stratum_i],
             wgt1[stratum_i], xcoord1[stratum_i], ycoord1[stratum_i], popcorrect,
             NULL, Ncluster[stratum_i], stage1size[stratum_i], vartype, warn_ind,
-            warn_df, warn_vec)
+            warn_df, warn_vec
+          )
         } else {
           temp <- mean_var(contvar[stratum_i], wgt[stratum_i],
             xcoord[stratum_i], ycoord[stratum_i], meanest_st[1], stratum_ind,
-            stratum_levels[i], cluster_ind, pcfactor_ind = popcorrect,
-            fpcsize=fpcsize[stratum_i], vartype = vartype, warn_ind = warn_ind,
-            warn_df = warn_df, warn_vec = warn_vec)
+            stratum_levels[i], cluster_ind,
+            pcfactor_ind = popcorrect,
+            fpcsize = fpcsize[stratum_i], vartype = vartype, warn_ind = warn_ind,
+            warn_df = warn_df, warn_vec = warn_vec
+          )
         }
-        if(temp$vartype == "SRS") {
-          rslt_svy <- svymean(make.formula(ivar), design = subset(design, tst),
-            na.rm = TRUE)
+        if (temp$vartype == "SRS") {
+          rslt_svy <- svymean(make.formula(ivar),
+            design = subset(design, tst),
+            na.rm = TRUE
+          )
           varest <- SE(rslt_svy)^2
         } else {
           varest <- temp$varest
@@ -193,46 +201,49 @@ mean_localmean <- function(itype, lev_itype, nlev_itype, levs, ivar, design,
         warn_ind <- temp$warn_ind
         warn_df <- temp$warn_df
 
-# Add estimate to the stderr vector
+        # Add estimate to the stderr vector
 
         stderr[isubpop] <- stderr[isubpop] +
-          ((popsize_hat[i]/sum_popsize_hat)^2)*varest
+          ((popsize_hat[i] / sum_popsize_hat)^2) * varest
 
-# End the subsection for individual strata
-
+        # End the subsection for individual strata
       }
 
-# Begin the subsection for all strata combined
+      # Begin the subsection for all strata combined
 
-# Add estimates to the data frames for results
+      # Add estimates to the data frames for results
 
       stderr[isubpop] <- sqrt(stderr[isubpop])
-      lbound <- meanest[isubpop] - mult*stderr[isubpop]
-      ubound <- meanest[isubpop] + mult*stderr[isubpop]
+      lbound <- meanest[isubpop] - mult * stderr[isubpop]
+      ubound <- meanest[isubpop] + mult * stderr[isubpop]
       confval[isubpop, ] <- c(lbound, ubound)
 
-# End the subsection for all strata combined
+      # End the subsection for all strata combined
 
-# Branch for an unstratified sample
-
+      # Branch for an unstratified sample
     } else {
 
-# Calculate the standard error estimates
+      # Calculate the standard error estimates
 
-      if(cluster_ind) {
-        temp <- mean_var(contvar[tst], wgt2[tst], xcoord[tst], ycoord[tst],
+      if (cluster_ind) {
+        temp <- mean_var(
+          contvar[tst], wgt2[tst], xcoord[tst], ycoord[tst],
           meanest[isubpop], stratum_ind, NULL, cluster_ind, clusterID[tst],
           wgt1[tst], xcoord1[tst], ycoord1[tst], popcorrect, NULL,
-          Ncluster[tst], stage1size[tst], vartype, warn_ind, warn_df, warn_vec)
+          Ncluster[tst], stage1size[tst], vartype, warn_ind, warn_df, warn_vec
+        )
       } else {
         temp <- mean_var(contvar[tst], wgt[tst], xcoord[tst], ycoord[tst],
           meanest[isubpop], stratum_ind, NULL, cluster_ind,
           pcfactor_ind = popcorrect, fpcsize = fpcsize[tst], vartype = vartype,
-          warn_ind = warn_ind, warn_df = warn_df, warn_vec = warn_vec)
+          warn_ind = warn_ind, warn_df = warn_df, warn_vec = warn_vec
+        )
       }
-      if(temp$vartype == "SRS") {
-        rslt_svy <- svymean(make.formula(ivar), design = subset(design, tst),
-          na.rm = TRUE)
+      if (temp$vartype == "SRS") {
+        rslt_svy <- svymean(make.formula(ivar),
+          design = subset(design, tst),
+          na.rm = TRUE
+        )
         sdest <- SE(rslt_svy)
       } else {
         sdest <- sqrt(temp$varest)
@@ -240,24 +251,24 @@ mean_localmean <- function(itype, lev_itype, nlev_itype, levs, ivar, design,
       warn_ind <- temp$warn_ind
       warn_df <- temp$warn_df
 
-# Calculate confidence bounds
+      # Calculate confidence bounds
 
-      lbound <- meanest[isubpop] - mult*sdest
-      ubound <- meanest[isubpop] + mult*sdest
+      lbound <- meanest[isubpop] - mult * sdest
+      ubound <- meanest[isubpop] + mult * sdest
 
-# Add estimates to the output objects
+      # Add estimates to the output objects
 
       stderr[isubpop] <- sdest
       confval[isubpop, ] <- c(lbound, ubound)
-
     }
-
   }
 
-# Return results
+  # Return results
 
-  list(stderr = stderr,
-       confval = confval,
-       warn_ind = warn_ind,
-       warn_df = warn_df)
+  list(
+    stderr = stderr,
+    confval = confval,
+    warn_ind = warn_ind,
+    warn_df = warn_df
+  )
 }

@@ -16,24 +16,24 @@
 #'
 #' @return The local mean estimator of the variance.
 #'
-#'@author Tom Kincaid \email{Kincaid.Tom@epa.gov}
+#' @author Tom Kincaid \email{Kincaid.Tom@epa.gov}
 #'
-#'@keywords survey
+#' @keywords survey
 #'
-#'@export
+#' @export
 ###############################################################################
 
 localmean_var <- function(z, weight_1st) {
 
-# Calculate local means
+  # Calculate local means
 
-   zb <- sapply(split(z[weight_1st$ij[, 2]] * weight_1st$gwt, weight_1st$ij[, 1]), sum)
+  zb <- sapply(split(z[weight_1st$ij[, 2]] * weight_1st$gwt, weight_1st$ij[, 1]), sum)
 
-# Calculate the variance estimate
+  # Calculate the variance estimate
 
-   lmvar <- sum(weight_1st$gwt * (z[weight_1st$ij[, 2]] - zb[weight_1st$ij[, 1]])^2)
+  lmvar <- sum(weight_1st$gwt * (z[weight_1st$ij[, 2]] - zb[weight_1st$ij[, 1]])^2)
 
-# Return the variance estimate
+  # Return the variance estimate
 
-   lmvar
+  lmvar
 }

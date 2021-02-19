@@ -30,42 +30,39 @@
 #' temp <- c(1, 5, 21:25, 33:37)
 #' sites_str <- vecprint(sites[temp])
 #' warning(paste("\nThe following site ID values were removed from the
-#'   analysis:\n", sites_str, sep=""))
-#'
+#'   analysis:\n", sites_str, sep = ""))
 #' @export
 ###############################################################################
 
 vecprint <- function(x, n_char = 78) {
+  x <- as.character(x)
+  n <- length(x)
+  nc <- nchar(x)
 
-   x <- as.character(x)
-   n <- length(x)
-   nc <- nchar(x)
-
-   i <- 1
-   j <- 1
-   nc_sum <- 0
-   x_str <- character()
-   while(j <= n) {
-      if((nc_sum + nc[j]) <= n_char) {
-         nc_sum <- nc_sum + nc[j] + 2
-         j <- j+1
+  i <- 1
+  j <- 1
+  nc_sum <- 0
+  x_str <- character()
+  while (j <= n) {
+    if ((nc_sum + nc[j]) <= n_char) {
+      nc_sum <- nc_sum + nc[j] + 2
+      j <- j + 1
+    } else {
+      if (i == j) {
+        x_str <- paste(x_str, x[j], "\n")
       } else {
-         if(i == j) {
-            x_str <- paste(x_str, x[j], "\n")
-         } else {
-            j <- j-1
-            x_str <- paste(x_str, paste(x[i:j], collapse=", "), "\n")
-         }
-         j <- j+1
-         i <- j
-         nc_sum <- 0
+        j <- j - 1
+        x_str <- paste(x_str, paste(x[i:j], collapse = ", "), "\n")
       }
-   }
-   if(i < j) {
-      j <- j-1
-      x_str <- paste(x_str, paste(x[i:j], collapse=", "), "\n")
-   }
+      j <- j + 1
+      i <- j
+      nc_sum <- 0
+    }
+  }
+  if (i < j) {
+    j <- j - 1
+    x_str <- paste(x_str, paste(x[i:j], collapse = ", "), "\n")
+  }
 
-   x_str
+  x_str
 }
-
