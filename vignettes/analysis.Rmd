@@ -1,8 +1,8 @@
 ---
-title: "Analyzing Probability Samples Using spsurvey (this needs a bit of work still timestamped 2/10 at 17:00)"
+title: "Analyzing Probability Samples"
 author: "Michael Dumelle, Tony Olsen, Tom Kincaid, and Marc Weber"
 output: 
-  html_document:
+  rmarkdown::html_document:
     theme: flatly
     number_sections: true
     highlighted: default 
@@ -11,9 +11,14 @@ output:
       collapsed: no
       smooth_scroll: no
     toc_depth: 1
+vignette: >
+  %\VignetteIndexEntry{Analyzing Probability Samples}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
 ---
 
 ```{r, include = FALSE}
+# vignettes may need rmarkdown::html_vignette and no other output info
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>", 

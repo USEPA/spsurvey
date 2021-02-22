@@ -1,5 +1,5 @@
 ---
-title: "Selecting Spatially Balanced Samples from a Finite Population using spsurvey and the GRTS algorithm"
+title: "Selecting Spatially Balanced Samples from a Finite Population"
 author: "Michael Dumelle, Tony Olsen, Tom Kincaid, and Marc Weber"
 output: 
   html_document:
@@ -11,6 +11,10 @@ output:
       collapsed: no
       smooth_scroll: no
     toc_depth: 2
+vignette: >
+  %\VignetteIndexEntry{Selecting Spatially Balanced Samples from a Finite Population}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
 ---
 
 ```{r, include = FALSE}

@@ -11,6 +11,10 @@ output:
       collapsed: no
       smooth_scroll: no
     toc_depth: 2
+vignette: >
+  %\VignetteIndexEntry{Selecting Spatially Balanced Samples from an Linear Network}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
 ---
 
 ```{r, include = FALSE}
