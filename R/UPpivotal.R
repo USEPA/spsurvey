@@ -6,7 +6,9 @@
 #' This function is from the R package "sampling". It selects an unequal probability
 #' sample from a finite population.
 #'
-#' @param pik Vector of inclusion probabilities for the sample frame
+#' @param pik Vector of inclusion probabilities for the sample frame.
+#' 
+#' @eps Control value. The default is 1e-6.
 #'
 #' @return A vector of \code{0} and \code{1} that indicates if point in the sample frame is
 #'   in the sample.
@@ -17,8 +19,6 @@
 #'
 #' @export
 ###############################################################################
-
-
 UPpivotal <- function(pik, eps = 1e-06) {
   if (any(is.na(pik))) {
     stop("there are missing values in the pik vector")
