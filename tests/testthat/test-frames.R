@@ -1,6 +1,6 @@
 context("create_frame_objects")
 
-data("NE_lakes", "Great_Lakes", "Illinois_River", "NCCA_Gulf", "NLA_West", "NRSA_EPA7")
+data("NE_Lakes", "Great_Lakes", "Illinois_River", "NCCA_Gulf", "NLA_West", "NRSA_EPA7")
 
 test_that("finite test frame exists as sf object with correct geometry type", {
   expect_is(NE_Lakes, c("sf", "data.frame"))
