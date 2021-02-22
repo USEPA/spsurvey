@@ -51,7 +51,7 @@ test_that("test equal random selection using NHDPoint", {
 load(system.file("extdata", "ButteCreek.rda", package = "spsurvey"))
 
 testsample <- grts(
-  sframe = nhd, n_base = 10,
+  sframe = ButteCreek, n_base = 10,
   n_over = 0, seltype = "equal"
 )
 
