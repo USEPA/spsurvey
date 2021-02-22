@@ -48,7 +48,6 @@ Imports:
     deldir,
     graphics,
     grDevices,
-    Hmisc,
     MASS,
     stats,
     units
