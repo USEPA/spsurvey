@@ -61,11 +61,6 @@ tmp <- grtspts_ip(
   caty = c(rep("small", 15), rep("large", 10))
 )
 tmp
-tmp <- grtspts_ip(
-  type = "proportional", n_base = 10,
-  aux = c(rnorm(20, 3), -2, 30, 40, 0, 0)
-)
-tmp
 }
 \author{
 Tony Olsen \email{olsen.tony@epa.gov}

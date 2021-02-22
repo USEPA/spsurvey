@@ -49,14 +49,8 @@
 #'   caty = c(rep("small", 15), rep("large", 10))
 #' )
 #' tmp
-#' tmp <- grtspts_ip(
-#'   type = "proportional", n_base = 10,
-#'   aux = c(rnorm(20, 3), -2, 30, 40, 0, 0)
-#' )
-#' tmp
 #' @export
 ###############################################################################
-
 grtspts_ip <- function(type = "equal", n_base, Nstratum = NULL, caty = NULL,
                        aux = NULL, warn_ind = NULL, warn_df = NULL) {
 
