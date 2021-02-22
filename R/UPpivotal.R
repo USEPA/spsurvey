@@ -8,7 +8,7 @@
 #'
 #' @param pik Vector of inclusion probabilities for the sample frame.
 #' 
-#' @eps Control value. The default is 1e-6.
+#' @param eps Control value. The default is 1e-6.
 #'
 #' @return A vector of \code{0} and \code{1} that indicates if point in the sample frame is
 #'   in the sample.
@@ -16,7 +16,11 @@
 #' @author From R package sampling
 #'
 #' @keywords survey
-#'
+#' 
+#' @references 
+#' Tille, Y. and Matei, A. (2021). sampling: Survey Sampling. R package version 2.9.
+#'   \url{https://CRAN.R-project.org/package=sampling}
+#' 
 #' @export
 ###############################################################################
 UPpivotal <- function(pik, eps = 1e-06) {
