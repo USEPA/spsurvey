@@ -22,6 +22,37 @@ grts_stratum(
   warn_df = NULL
 )
 }
+\arguments{
+\item{stratum}{Character value for the stratum name.}
+
+\item{dsgn}{List of componenents that specify the survey design. Includes all strata.
+See irs for contents of dsgn.}
+
+\item{sframe}{Sample frame as an sf object. If the design is stratified,
+unequal probability, proportional probability or has legacy sites, then sample frame
+must include variables that identify the stratum; category, auxillary and legacy variables
+for unequal selection; or that identify elements that are legacy sites.
+The coordinate system for sframe must be one where distance for coordinates is meaningful.}
+
+\item{sf_type}{The sample frame geometry type: point, linear or area}
+
+\item{pt_density}{For linear and area sample frame, the point density for the systematic
+sample. Must be in units of the sframe sf.object. Default is NULL.}
+
+\item{legacy_option}{Logical variable that when TRUE legacy sites are to be included
+in the survey design. Default is FALSE}
+
+\item{legacy_sites}{An sf object of legacy sites to be included in the survey design.}
+
+\item{maxtry}{Number of maximum attempts to ensure minimum distance between sites.
+Default is 10.}
+
+\item{warn_ind}{A logical value where TRUE indicates a warning message.
+Used for internal collection of messages only.}
+
+\item{warn_df}{A data frame containing messages warning of potential issues.
+Used for internal collection of messages only.}
+}
 \value{
 rslts A list consisting of an \code{sf} object for base sites, an \code{sf} object of
   \code{n_over} sites (\code{NULL} if none) an \code{sf} object of \code{n_near} sites (\code{NULL} if none) where

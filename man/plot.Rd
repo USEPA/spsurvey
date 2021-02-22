@@ -69,6 +69,9 @@ possible given \code{x} and \code{y}.}
 
 \item{...}{Additional arguments to pass to \code{plot.sf()}.}
 
+\item{sites}{A character vector of sites to include in plotting. Defaults to
+all non-\code{NULL} elements in \code{x} and \code{y}.}
+
 \item{showlegacy}{Should legacy sites be plotted separately from \code{sites_base}?
 Defaults to \code{FALSE}.}
 }

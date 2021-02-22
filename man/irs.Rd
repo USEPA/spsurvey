@@ -17,7 +17,6 @@ irs(
   stratum_var = NULL,
   caty_var = NULL,
   aux_var = NULL,
-  legacy_option = FALSE,
   legacy_sites = NULL,
   legacy_var = NULL,
   mindis = NULL,
