@@ -24,7 +24,7 @@ jobs:
         config:
           - { os: windows-latest, r: '3.6', args: "--no-manual"}
           - { os: macOS-latest, r: '3.6', args: "--no-manual"}
-          - { os: ubuntu-latest, r: "devel" }
+          # - { os: ubuntu-latest, r: "devel" }
        
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
