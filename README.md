@@ -1,9 +1,9 @@
 <!-- badges: start -->
-[![](https://cranlogs.r-pkg.org/badges/grand-total/spsurvey)](https://cran.r-project.org/package=spsurvey)[![Travis build status](https://travis-ci.org/mhweber/spsurvey.svg?branch=master)](https://travis-ci.org/mhweber/spsurvey)[![License](http://img.shields.io/badge/license-GPL%20%28%3E=%202%29-brightgreen.svg?style=flat)](http://www.gnu.org/licenses/gpl-2.0.html)
+[![R-CMD-check](https://github.com/USEPA/spsurvey/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/USEPA/spsurvey/actions/workflows/R-CMD-check.yaml)
 [![CRAN](http://www.r-pkg.org/badges/version/spsurvey)](https://cran.r-project.org/package=spsurvey)
 [![cran checks](https://cranchecks.info/badges/worst/spsurvey)](https://cran.r-project.org/web/checks/check_results_spsurvey.html)
+[![Downloads](http://cranlogs.r-pkg.org/badges/spsurvey?color=brightgreen)](http://www.r-pkg.org/pkg/spsurvey)
 <!-- badges: end -->
-
 
 # spsurvey
 
