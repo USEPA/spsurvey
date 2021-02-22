@@ -146,7 +146,7 @@ grts <- function(sframe, n_base, stratum = NULL, seltype = "equal", wgt_units = 
     all(temp %in% c("LINESTRING", "MULTILINESTRING")) |
     all(temp %in% c("POLYGON", "MULTIPOLYGON"))
   if (!tst) {
-    stop(paste("\nThe geometry types for the survey frame object passed to function grts: \n\"", unique(st_geometry_type(sf.object)), "\" are not consistent.", sep = ""))
+    stop(paste("\nThe geometry types for the survey frame object passed to function grts: \n\"", unique(st_geometry_type(sframe)), "\" are not consistent.", sep = ""))
   }
 
   # Drop m and z values to ensure no issues with grts functionality with sf object
