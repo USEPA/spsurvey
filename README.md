@@ -2,7 +2,7 @@
 [![R-CMD-check](https://github.com/USEPA/spsurvey/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/USEPA/spsurvey/actions/workflows/R-CMD-check.yaml)
 [![CRAN](http://www.r-pkg.org/badges/version/spsurvey)](https://cran.r-project.org/package=spsurvey)
 [![cran checks](https://cranchecks.info/badges/worst/spsurvey)](https://cran.r-project.org/web/checks/check_results_spsurvey.html)
-[![Downloads](http://cranlogs.r-pkg.org/badges/spsurvey?color=brightgreen)](http://www.r-pkg.org/pkg/spsurvey)
+[![Downloads](https://cranlogs.r-pkg.org/badges/grand-total/spsurvey)](https://cran.r-project.org/package=spsurvey))
 <!-- badges: end -->
 
 # spsurvey
