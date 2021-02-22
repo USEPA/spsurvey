@@ -118,7 +118,7 @@
 #'
 #' @examples
 #' # Power for rotating panel with sample size 60
-#' power.dsgn("Variable_Name",
+#' power_dsgn("Variable_Name",
 #'   ind_values = 43, unit_var = 280, period_var = 4,
 #'   unitperiod_var = 40, index_var = 90, unit_rho = 1, period_rho = 0,
 #'   paneldsgn = list(NoR60 = revisit_dsgn(20,
@@ -131,8 +131,7 @@
 #' )
 #' @export
 ###############################################################################
-
-power.dsgn <- function(ind_names, ind_values, unit_var, period_var,
+power_dsgn <- function(ind_names, ind_values, unit_var, period_var,
                        unitperiod_var, index_var, unit_rho = 1, period_rho = 0, paneldsgn,
                        nrepeats = NULL, trend_type = "mean", ind_pct = NULL, ind_tail = NULL,
                        trend = 2, alpha = 0.05) {
