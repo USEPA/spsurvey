@@ -38,7 +38,7 @@
 
 irs <- function(sframe, n_base, stratum = NULL, seltype = "equal", wgt_units = NULL,
                 pt_density = NULL, caty_n = NULL, n_over = NULL, n_near = NULL,
-                stratum_var = NULL, caty_var = NULL, aux_var = NULL, legacy_option = FALSE,
+                stratum_var = NULL, caty_var = NULL, aux_var = NULL,
                 legacy_sites = NULL, legacy_var = NULL, mindis = NULL,
                 DesignID = "Site", SiteBegin = 1, maxtry = 10) {
 
@@ -57,6 +57,18 @@ irs <- function(sframe, n_base, stratum = NULL, seltype = "equal", wgt_units = N
   if (all(temp %in% c("LINESTRING", "MULTILINESTRING"))) sf_type <- "sf_linear"
   if (all(temp %in% c("POLYGON", "MULTIPOLYGON"))) sf_type <- "sf_area"
 
+  if (all(is.null(legacy_sites), is.null(legacy_var))) {
+    legacy_option <- FALSE
+  } else {
+    legacy_option <- TRUE
+  }
+  
+  if (is.null(stratum_var)) {
+    stratum <- NULL
+  } else {
+    stratum <- names(n_base)
+  }
+  
   # check input. If errors, dsgn_check will stop grtspts and report errors.
   dsgn_check(
     sframe, sf_type, legacy_sites, legacy_option, stratum, seltype, n_base, caty_n,
