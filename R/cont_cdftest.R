@@ -6,6 +6,8 @@
 #          Yates-Grundy variance estimators and to use a new function named
 #          survey_design to create the survey design object
 # Revised: January 28, 2021 to replace "warn.vec" with "warn_vec"
+# Revised: February 23, 2021 to correct errors in the code for creating the
+#          warnings data frame (warn_df)
 #'
 #' Cumulative Distribution Function Inference for a Probability Survey
 #'
@@ -593,10 +595,8 @@ cont_cdftest <- function(dframe, vars, subpops = NULL, surveyID = NULL,
       warn <- paste("Population type", itype, "contains a single subpopulation. \nNo CDF tests could be performed\n")
       act <- "None.\n"
       warn_df <- rbind(warn_df, data.frame(
-        func = I(fname),
-        subpoptype = I(itype), subpop = NA,
-        indicator = I(varnames[ivar]), stratum = NA, warning = I(warn),
-        action = I(act)
+        func = I(fname), subpoptype = I(itype), subpop = NA, indicator = NA,
+        stratum = NA, warning = I(warn), action = I(act)
       ))
       next
     }
@@ -627,13 +627,12 @@ cont_cdftest <- function(dframe, vars, subpops = NULL, surveyID = NULL,
 
         if (all(is.na(dframe[subpop1_ind, ivar]))) {
           warn_ind <- TRUE
-          warn <- paste("Subpopulation", lev_itype[isubpop1], "of population type", itype, "for indicator", varnames[ivar], "\ncontains no data.\n")
+          warn <- paste("Subpopulation", lev_itype[isubpop1], "of population type", itype, "for indicator", ivar, "\ncontains no data.\n")
           act <- "None.\n"
           warn_df <- rbind(warn_df, data.frame(
-            func = I(fname),
-            subpoptype = I(itype),
-            subpop = I(lev_itype[isubpop1]), indicator = I(varnames[ivar]),
-            stratum = NA, warning = I(warn), action = I(act)
+            func = I(fname), subpoptype = I(itype),
+            subpop = I(lev_itype[isubpop1]), indicator = ivar, stratum = NA,
+            warning = I(warn), action = I(act)
           ))
           next
         }
@@ -642,13 +641,12 @@ cont_cdftest <- function(dframe, vars, subpops = NULL, surveyID = NULL,
 
         if (sum(!is.na(dframe[subpop1_ind, ivar])) == 1) {
           warn_ind <- TRUE
-          warn <- paste("Subpopulation", lev_itype[isubpop1], "of population type", itype, "for indicator", varnames[ivar], "\ncontains a single value.  No analysis was performed.\n")
+          warn <- paste("Subpopulation", lev_itype[isubpop1], "of population type", itype, "for indicator", ivar, "\ncontains a single value.  No analysis was performed.\n")
           act <- "None.\n"
           warn_df <- rbind(warn_df, data.frame(
-            func = I(fname),
-            subpoptype = I(itype),
-            subpop = I(lev_itype[isubpop1]), indicator = I(varnames[ivar]),
-            stratum = NA, warning = I(warn), action = I(act)
+            func = I(fname), subpoptype = I(itype),
+            subpop = I(lev_itype[isubpop1]), indicator = ivar, stratum = NA,
+            warning = I(warn), action = I(act)
           ))
           next
         }
@@ -665,14 +663,12 @@ cont_cdftest <- function(dframe, vars, subpops = NULL, surveyID = NULL,
 
           if (all(is.na(dframe[subpop2_ind, ivar]))) {
             warn_ind <- TRUE
-            warn <- paste("Subpopulation", lev_itype[isubpop2], "of population type", itype, "for indicator", varnames[ivar], "\ncontains no data.\n")
+            warn <- paste("Subpopulation", lev_itype[isubpop2], "of population type", itype, "for indicator", ivar, "\ncontains no data.\n")
             act <- "None.\n"
             warn_df <- rbind(warn_df, data.frame(
-              func = I(fname),
-              subpoptype = I(itype),
-              subpop = I(lev_itype[isubpop2]),
-              indicator = I(varnames[ivar]), stratum = NA, warning = I(warn),
-              action = I(act)
+              func = I(fname), subpoptype = I(itype),
+              subpop = I(lev_itype[isubpop2]), indicator = ivar, stratum = NA,
+              warning = I(warn), action = I(act)
             ))
             next
           }
@@ -681,14 +677,12 @@ cont_cdftest <- function(dframe, vars, subpops = NULL, surveyID = NULL,
 
           if (sum(!is.na(dframe[subpop2_ind, ivar])) == 1) {
             warn_ind <- TRUE
-            warn <- paste("Subpopulation", lev_itype[isubpop2], "of population type", itype, "for indicator", varnames[ivar], "\ncontains a single value.  No analysis was performed.\n")
+            warn <- paste("Subpopulation", lev_itype[isubpop2], "of population type", itype, "for indicator", ivar, "\ncontains a single value.  No analysis was performed.\n")
             act <- "None.\n"
             warn_df <- rbind(warn_df, data.frame(
-              func = I(fname),
-              subpoptype = I(itype),
-              subpop = I(lev_itype[isubpop2]),
-              indicator = I(varnames[ivar]), stratum = NA, warning = I(warn),
-              action = I(act)
+              func = I(fname), subpoptype = I(itype),
+              subpop = I(lev_itype[isubpop2]), indicator = ivar, stratum = NA,
+              warning = I(warn), action = I(act)
             ))
             next
           }
