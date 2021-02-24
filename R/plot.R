@@ -25,12 +25,12 @@
 #' @param sites A character vector of sites to include in plotting. Defaults to
 #' all non-\code{NULL} elements in \code{x} and \code{y}.
 #'
-#' @param variable_args A named list. The name of each list corresponds to a
+#' @param var_args A named list. The name of each list corresponds to a
 #' right hand side variable in \code{formula}. Values in the list are composed of
 #' graphical arguments that are to be passed to \strong{every} level of the
 #' variable.
 #'
-#' @param level_args A named list. The name of each list corresponds to a
+#' @param varlevel_args A named list. The name of each list corresponds to a
 #' right hand side variable in \code{formula}. The first name of each sublist
 #' should be \code{"levels"} and contain all levels of the variable. Subsequent
 #' names correspond to graphical arguments that are to be passed to
@@ -70,7 +70,7 @@
 #' plot(sample, NE_Lakes)
 #' }
 #' ###############################################################################
-plot.sframe <- function(x, y, formula = ~ 1, variable_args = NULL, level_args = NULL,
+plot.sframe <- function(x, y, formula = ~ 1, var_args = NULL, varlevel_args = NULL,
                         geom = FALSE, onlyshow = NULL, fix_bbox = TRUE, ...) {
 
   # setting old graphical parameter value
@@ -106,11 +106,11 @@ plot.sframe <- function(x, y, formula = ~ 1, variable_args = NULL, level_args = 
     }
   } else {
     if (is.null(formlist$response)) {
-      # get level_args list
-      if (!is.null(level_args)) {
-        level_args_list <- make_level_args_list(varsf, level_args)
+      # get varlevel_args list
+      if (!is.null(varlevel_args)) {
+        varlevel_args_list <- make_varlevel_args_list(varsf, varlevel_args)
       } else {
-        level_args_list <- level_args
+        varlevel_args_list <- varlevel_args
       }
 
       if (is.null(onlyshow)) {
@@ -122,9 +122,9 @@ plot.sframe <- function(x, y, formula = ~ 1, variable_args = NULL, level_args = 
           sfplot <- lapply(formlist$varlabels, function(a) {
             varsf_split <- split(varsf[a], varsf[[a]])
             names_varsf_split <- names(varsf_split)
-            level_args_split <- split(as.data.frame(level_args_list[[a]], stringsAsFactors = FALSE), varsf[[a]])
+            varlevel_args_split <- split(as.data.frame(varlevel_args_list[[a]], stringsAsFactors = FALSE), varsf[[a]])
             lapply(names_varsf_split, function(b) {
-              list_args <- c(variable_args[[a]], level_args_split[[b]], dot_list)
+              list_args <- c(var_args[[a]], varlevel_args_split[[b]], dot_list)
               list_args$main <- paste(formlist$response, " ", expression("~"), " ", a, " (", b, ")", sep = "")
               if (any(is.na(unlist(list_args)))) {
                 list_args <- match_sf_defaults(varsf_split[[b]], list_args)
@@ -139,10 +139,10 @@ plot.sframe <- function(x, y, formula = ~ 1, variable_args = NULL, level_args = 
             par(ask = TRUE)
           }
           sfplot <- lapply(formlist$varlabels, function(a) {
-            if (!("main" %in% names(variable_args[[a]]))) {
-              variable_args[[a]]$main <- paste(" ", expression("~"), " ", a, sep = "")
+            if (!("main" %in% names(var_args[[a]]))) {
+              var_args[[a]]$main <- paste(" ", expression("~"), " ", a, sep = "")
             }
-            list_args <- c(variable_args[[a]], level_args_list[[a]], dot_list)
+            list_args <- c(var_args[[a]], varlevel_args_list[[a]], dot_list)
             if (any(is.na(unlist(list_args)))) {
               list_args <- match_sf_defaults(varsf[a], list_args)
             }
@@ -163,11 +163,11 @@ plot.sframe <- function(x, y, formula = ~ 1, variable_args = NULL, level_args = 
         }
       }
     } else {
-      # get level_args list
-      if (!is.null(level_args)) {
-        level_args_list <- make_level_args_list(varsf, level_args)
+      # get varlevel_args list
+      if (!is.null(varlevel_args)) {
+        varlevel_args_list <- make_varlevel_args_list(varsf, varlevel_args)
       } else {
-        level_args_list <- level_args
+        varlevel_args_list <- varlevel_args
       }
 
       if (is.null(onlyshow)) {
@@ -179,9 +179,9 @@ plot.sframe <- function(x, y, formula = ~ 1, variable_args = NULL, level_args = 
           sfplot <- lapply(formlist$varlabels, function(a) {
             varsf_split <- split(varsf[, c(formlist$response, a)], varsf[[a]])
             names_varsf_split <- names(varsf_split)
-            level_args_split <- split(as.data.frame(level_args_list[[a]], stringsAsFactors = FALSE), varsf[[a]])
+            varlevel_args_split <- split(as.data.frame(varlevel_args_list[[a]], stringsAsFactors = FALSE), varsf[[a]])
             lapply(names_varsf_split, function(b) {
-              list_args <- c(variable_args[[a]], level_args_split[[b]], dot_list)
+              list_args <- c(var_args[[a]], varlevel_args_split[[b]], dot_list)
               list_args$main <- paste(formlist$response, " ", expression("~"), " ", a, " (", b, ")", sep = "")
               if (any(is.na(unlist(list_args)))) {
                 list_args <- match_sf_defaults(varsf_split[[b]], list_args)
@@ -194,18 +194,18 @@ plot.sframe <- function(x, y, formula = ~ 1, variable_args = NULL, level_args = 
           })
           names(sfplot) <- formlist$varlabels
         } else {
-          if (!is.null(variable_args)) {
-            variable_args_list <- make_variable_args_list(varsf, variable_args)
+          if (!is.null(var_args)) {
+            var_args_list <- make_var_args_list(varsf, var_args)
           } else {
-            variable_args_list <- NULL
+            var_args_list <- NULL
           }
           sfplot <- lapply(formlist$varlabels, function(a) {
             varsf_split <- split(varsf[, c(formlist$response, a)], varsf[[a]])
             names_varsf_split <- names(varsf_split)
-            level_args_split <- split(as.data.frame(level_args_list[[a]], stringsAsFactors = FALSE), varsf[[a]])
-            variable_args_split <- split(as.data.frame(variable_args_list[[a]][[formlist$response]], stringsAsFactors = FALSE), varsf[[a]])
+            varlevel_args_split <- split(as.data.frame(varlevel_args_list[[a]], stringsAsFactors = FALSE), varsf[[a]])
+            var_args_split <- split(as.data.frame(var_args_list[[a]][[formlist$response]], stringsAsFactors = FALSE), varsf[[a]])
             lapply(names_varsf_split, function(b) {
-              list_args <- c(variable_args_split[[b]], level_args_split[[b]], dot_list)
+              list_args <- c(var_args_split[[b]], varlevel_args_split[[b]], dot_list)
               list_args$main <- paste(formlist$response, " ", expression("~"), " ", a, " (", b, ")", sep = "")
               if (any(is.na(unlist(list_args)))) {
                 list_args <- match_sf_defaults(varsf_split[[b]], list_args)
@@ -220,20 +220,20 @@ plot.sframe <- function(x, y, formula = ~ 1, variable_args = NULL, level_args = 
         }
       } else {
         varsf_sub <- varsf[varsf[[formlist$varlabels]] == formlist$onlyshow, ]
-        if (!is.null(variable_args)) {
-          variable_args_list <- make_variable_args_list(varsf, variable_args)
-          variable_args_split <- split(as.data.frame(variable_args_list[[formlist$varlabels]][[formlist$response]],
+        if (!is.null(var_args)) {
+          var_args_list <- make_var_args_list(varsf, var_args)
+          var_args_split <- split(as.data.frame(var_args_list[[formlist$varlabels]][[formlist$response]],
             stringsAsFactors = FALSE
           ), varsf[[formlist$varlabels]])
-          variable_args_split <- variable_args_split[[formlist$onlyshow]]
+          var_args_split <- var_args_split[[formlist$onlyshow]]
         } else {
-          variable_args_list <- NULL
-          variable_args_split <- NULL
+          var_args_list <- NULL
+          var_args_split <- NULL
         }
         if (!("main" %in% names(dot_list))) {
           dot_list$main <- paste(formlist$response, " ", expression("~"), " ", formlist$varlabels, " (", formlist$onlyshow, ")", sep = "")
         }
-        sfplot <- do.call("plot", c(list(varsf_sub[formlist$response]), variable_args_split, dot_list))
+        sfplot <- do.call("plot", c(list(varsf_sub[formlist$response]), var_args_split, dot_list))
       }
     }
   }
@@ -246,7 +246,7 @@ plot.sframe <- function(x, y, formula = ~ 1, variable_args = NULL, level_args = 
 #'
 #' @export
 plot.design <- function(x, y = NULL, formula = ~ sites, sites = NULL,
-                        variable_args = NULL, level_args = NULL, geom = FALSE, onlyshow = NULL,
+                        var_args = NULL, varlevel_args = NULL, geom = FALSE, onlyshow = NULL,
                         fix_bbox = TRUE, showlegacy = FALSE, ...) {
 
   # y is sframe
@@ -268,5 +268,5 @@ plot.design <- function(x, y = NULL, formula = ~ sites, sites = NULL,
   # make sframe
   varsfs <- lapply(x, function(a) make_varsf(a, formlist))
   x <- do.call("rbind", varsfs)
-  plot.sframe(x = x, formula = formula, variable_args = variable_args, level_args = level_args, geom = geom, onlyshow = onlyshow, fix_bbox = fix_bbox, ...)
+  plot.sframe(x = x, formula = formula, var_args = var_args, varlevel_args = varlevel_args, geom = geom, onlyshow = onlyshow, fix_bbox = fix_bbox, ...)
 }

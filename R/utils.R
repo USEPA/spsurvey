@@ -92,42 +92,42 @@ get_varlevels <- function(formlist, varsf) {
   levels <- sum(unlist(levels))
 }
 
-make_level_args_list <- function(varsf, level_args) {
-  level_args_list <- lapply(names(level_args), function(x) {
+make_varlevel_args_list <- function(varsf, varlevel_args) {
+  varlevel_args_list <- lapply(names(varlevel_args), function(x) {
     vardf <- st_drop_geometry(varsf[x])
     vardf[[x]] <- as.character(vardf[[x]])
     colnames(vardf) <- "levels"
     vardf$index <- 1:nrow(vardf)
-    level_args_df <- as.data.frame(level_args[[x]], stringsAsFactors = FALSE)
-    level_args_df <- merge(vardf, level_args_df)
-    level_args_df <- level_args_df[order(level_args_df$index), , drop = FALSE]
-    badcol <- which(colnames(level_args_df) %in% c("levels", "index"))
-    level_args_df <- level_args_df[, -badcol, drop = FALSE]
-    level_args_listval <- as.list(level_args_df)
+    varlevel_args_df <- as.data.frame(varlevel_args[[x]], stringsAsFactors = FALSE)
+    varlevel_args_df <- merge(vardf, varlevel_args_df)
+    varlevel_args_df <- varlevel_args_df[order(varlevel_args_df$index), , drop = FALSE]
+    badcol <- which(colnames(varlevel_args_df) %in% c("levels", "index"))
+    varlevel_args_df <- varlevel_args_df[, -badcol, drop = FALSE]
+    varlevel_args_listval <- as.list(varlevel_args_df)
   })
-  names(level_args_list) <- names(level_args)
-  level_args_list
+  names(varlevel_args_list) <- names(varlevel_args)
+  varlevel_args_list
 }
 
-make_variable_args_list <- function(varsf, variable_args) {
-  variable_args_list <- lapply(names(variable_args), function(x) {
-    variable_args_listsub <- lapply(names(variable_args[[x]]), function(y) {
+make_var_args_list <- function(varsf, var_args) {
+  var_args_list <- lapply(names(var_args), function(x) {
+    var_args_listsub <- lapply(names(var_args[[x]]), function(y) {
       vardf <- st_drop_geometry(varsf[y])
       vardf[[y]] <- as.character(vardf[[y]])
       colnames(vardf) <- "levels"
       vardf$index <- 1:nrow(vardf)
-      variable_args_df <- as.data.frame(variable_args[[x]][[y]], stringsAsFactors = FALSE)
-      variable_args_df <- merge(vardf, variable_args_df)
-      variable_args_df <- variable_args_df[order(variable_args_df$index), , drop = FALSE]
-      badcol <- which(colnames(variable_args_df) %in% c("levels", "index"))
-      variable_args_df <- variable_args_df[, -badcol, drop = FALSE]
-      variable_args_listsubval <- as.list(variable_args_df)
+      var_args_df <- as.data.frame(var_args[[x]][[y]], stringsAsFactors = FALSE)
+      var_args_df <- merge(vardf, var_args_df)
+      var_args_df <- var_args_df[order(var_args_df$index), , drop = FALSE]
+      badcol <- which(colnames(var_args_df) %in% c("levels", "index"))
+      var_args_df <- var_args_df[, -badcol, drop = FALSE]
+      var_args_listsubval <- as.list(var_args_df)
     })
-    names(variable_args_listsub) <- names(variable_args[[x]])
-    variable_args_listsub
+    names(var_args_listsub) <- names(var_args[[x]])
+    var_args_listsub
   })
-  names(variable_args_list) <- names(variable_args)
-  variable_args_list
+  names(var_args_list) <- names(var_args)
+  var_args_list
 }
 
 check_rhs_cat <- function(varsf, formlist) {
