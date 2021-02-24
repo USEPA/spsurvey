@@ -24,22 +24,43 @@ knitr::opts_chunk$set(
   warning = FALSE, 
   message = FALSE
 )
-library(devtools)
-load_all()
 ```
 
-This vignette covers plotting in `spsurvey` using the `NE_Lakes` data. Plotting in `spsurvey` largely builds on plotting functionality in `sf`, and any arguments you can normally specify in `sf` plotting system, you can specify in `spsurvey`'s. For more background, we recommend reading the `sf`'s [Plotting Simple Features](https://r-spatial.github.io/sf/articles/sf5.html) vignette and running `?plot.sf`.  This vignette is separated into two sections. The first covers plotting your sample frames and is most useful before selecting your probability sample. The second covers plotting your design object (sample frame and sampled sites) and should be used after a probability sample is selected.
+This vignette covers plotting in `spsurvey` using the `NE_Lakes` data. Plotting in `spsurvey` largely builds on plotting functionality in `sf`, and any arguments you can normally specify in `sf` plotting system, you can specify in `spsurvey`'s. For more background, we recommend reading the `sf`'s [Plotting Simple Features](https://r-spatial.github.io/sf/articles/sf5.html) vignette and running `?plot.sf`.  This vignette is separated into two sections. The first, [Plotting Sample Frames], covers plotting your sample frames and is most useful before selecting your probability sample. The second, [Plotting Design Object] covers plotting your design object (sample frame and sampled sites) and should be used after a probability sample is selected.
+
+If you have not yet done so, please stop and read the "Start Here" vignette, accessed by running `vignette("start_here", package = "spsurvey")`. 
 
 # Plotting Sample Frames
 
-It is often quite useful to visualize your sample frame before selecting a probability sample from it. Perhaps you want to want to select a stratified sample, an unequal probabiltiy sample, a proportional probability sample, or some combination of these, and you need a better understanding of the relationship among the variables for which you have access. Before illustrating the plotting tools in `spsurvey`, you need to first make sure your data is an `sp` or `sf` object. For information regarding how to turn your data into an `sf` object, see the [Start Here](dummy link) vignette. In this vignette, you will use the `NE_Lakes` data which contains lakes in the northeastern part of the United States of America. To load the `NE_Lakes` data, run
+Before anything else, you must load `spsurvey` by running
 ```{r}
-data(NE_Lakes)
+library(spsurvey)
 ```
 
-The `NE_Lakes` data has continuous values for lake area (`AREA_HA`) and elevation (`ELEVATION`). For each of these variables, we will add a new variable discretizing them into categories using the `cut` function in base R. 
+If you want to reproduce the results from code in this vignette, you must also set a seed by running
+```{r}
+set.seed(5.0)
+```
 
-We will later visualize use these discretized variables in addition to the raw variables. To make plots using `spsurvey`, you must store your data as an `sframe` (short for sample frame) object by running
+It is often quite useful to visualize your sample frame before selecting a probability sample. Perhaps you want to want to select a stratified sample, an unequal probabiltiy sample, a proportional probability sample, or some combination of these, and you need a better understanding of the relationship among the variables for which you have access. In this vignette, you will use the `NE_Lakes` data which contains information on 5328 lakes in the northeastern part of the United States of America. 
+```{r}
+data("NE_Lakes")
+```
+
+To view the first few rows, run
+```{r}
+head(NE_Lakes)
+```
+You will notice that along with attributes, spatial information has been returned for the data:
+
+* `geometry type`: This is a `POINT` geometry because each lake has a set of `x` and `y` coordinates.
+* `dimension`: There are two dimensions, `X` (east-west) and `Y` (north-south).
+* `bbox`: The bounding box of the spatial locations.
+* `projected CRS`: The coordinates in a USA Contiguous Albers Equal Area Conic Projection.
+
+The next few lines describe variables in `NE_Lakes`; for more regarding the `NE_Lakes` data and associated variables, run `?NE_Lakes`.
+
+Next we will visualize the `NE_Lakes` data. But before doing so, we need store the data as an `sframe` (short for "sample frame") object:
 ```{r}
 NE_Lakes <- sframe(NE_Lakes)
 ```
@@ -48,73 +69,77 @@ Now you are ready to use `spsurvey`'s plot commands.
 
 ## Categorical Variable Distributions
 
-When plotting categorical variables, the `object` and `formula` arguments must be specified. `object` simply refers to your `sframe` object, and `formula` lets you specify the variables you want plotted. For now, we use a one-sided formula (`~ variables`) to visualize categorical variables. These types of plots can be useful to determine the spatial layout of strata or uneuqal probability groups before selecting a sample.
+When plotting categorical variables, the `object` and `formula` arguments must be specified: `object` is your `sframe` object and `formula` provides the variables to be plotted. For now, we use a one-sided formula (`~ variables`) to visualize categorical variables. These types of plots can be useful to determine the spatial layout of strata or uneuqal probability groups before selecting a sample.
 
 To plot the `ELEVATION_CAT` variable, run
 ```{r}
 plot(NE_Lakes, formula = ~ ELEVATION_CAT, key.pos = 1)
 ```
 
-The `key.pos` argument to `sf` controls the placement of the legend (1 = bottom, 2 = left, 3 = top, 4 = right). The default in `sf` is `key.pos = 4`, but we will override this default and use `key.pos = 4` throughout the rest of the vignette.
+The `key.pos` argument to `sf` controls the placement of the legend (1 = bottom, 2 = left, 3 = top, 4 = right). The default in `sf` is `key.pos = 4`, but we will override this default and use `key.pos = 1` throughout the rest of the vignette.
 
 To change any graphical parameters, such as plotting symbol or size, simply pass those arguments to `plot()`. For example, if you want to plot `x`'s instead of open circles, run
 ```{r}
-plot(NE_Lakes, formula =~ ELEVATION_CAT, pch = 4, key.pos = 1)
+plot(NE_Lakes, formula = ~ ELEVATION_CAT, pch = 4, key.pos = 1)
 ```
 
-You will notice that this changes the symbol for **all points**. But what if you want to plot small, open circles for the low elevation group and large, `x`'s for the high elevation group? To do this, you must use the `level_args` argument (short for level arguments) to `plot()`. `level_args` is a named list containing the a sublist holding each levels of the variable with a name called `levels` followed by the respective graphical parameters that should be assigned to each level.
+You will notice that this changes the symbol for **all points**. But what if you want to plot small, open circles for the low elevation level and large, `x`'s for the high elevation level? To do this, you must use the `varlevel_args` argument (short for a variable's **level** arguments) in `plot()`. `varlevel_args` is a named list containing with sublists whose name equal of each variable to be adjusted and whose values indicate the levels of the categorical variable as well as the associated graphical parameters.
 ```{r}
-level_args <- list(
+varlevel_args <- list(
   ELEVATION_CAT = list(
     levels = c("low", "high"),
     pch = c(1, 4),
     cex = c(1, 2)
   )
 )
-plot(NE_Lakes, formula = ~ ELEVATION_CAT, level_args = level_args, key.pos = 1)
+plot(NE_Lakes, formula = ~ ELEVATION_CAT, varlevel_args = varlevel_args, key.pos = 1)
 ```
 
-If you specify a graphical parameter using in this way, values be provided **for all levels** of the variable. If you want to use `sf`'s default values for a graphical parameter, simply pass `NA` as an argument. For example, suppose you want to use `sf`'s default values for the graphical parameters of the `"low"` level of `ELEVATION_CAT`, but you want to change the graphical parameters for the `"high"` level of `ELEVATION_CAT`:
+If you specify a graphical parameter using in this way, values be provided **for all levels** of the variable. Later you will use the `var_args` argument to pass a single argument to all levels of a variable.
+
+If you want to use `sf`'s default values for a graphical parameter, simply pass `NA` as an argument. For example, suppose you want to use `sf`'s default values for the graphical parameters of the `"low"` level of `ELEVATION_CAT`, but you want to change the graphical parameters for the `"high"` level of `ELEVATION_CAT`:
 ```{r}
-level_args <- list(
+varlevel_args <- list(
   ELEVATION_CAT = list(
     levels = c("low", "high"),
     pch = c(NA, 2),
     cex = c(NA, 2)
   )
 )
-plot(NE_Lakes, formula = ~ ELEVATION_CAT, level_args = level_args, key.pos = 1)
+plot(NE_Lakes, formula = ~ ELEVATION_CAT, varlevel_args = varlevel_args, key.pos = 1)
 ```
 
-The graphical parameters that can be given `NA` values to match `sf` defaults must correspond to variables for which `sf` has relevant **pre-established defaults**: `pch`, `cex`, `col`, `bg`, `lwd`, `lty`, `typ`, `border`, and `rule`. You can run `plot.sf()` for more information about default graphical parameter values.
+The graphical parameters that can be given `NA` values to match `sf` defaults must correspond to variables for which `sf` has relevant **pre-established defaults**: `pch`, `cex`, `col`, `bg`, `lwd`, `lty`, `typ`, `border`, and `rule`. Run `plot.sf()` for more information about default graphical parameter values.
 
-To plot multiple categorical variables, simply add them to the formula using `+` signs between variables
+To plot multiple categorical variables, simply add them to the formula using `+` signs between variables:
 ```{r}
 plot(NE_Lakes, formula = ~ AREA_HA_CAT + ELEVATION_CAT, key.pos = 1)
 ```
 
-If you want to pass plotting arguments **to all levels of each variable**, use the `variable_args` argument (short for variable arguments). Suppose you want the `AREA_HA_CAT` plot to have open circles, the standard color palette, and a custom title. Also suppose you want the `ELEVATION_CAT` plot to have `x`'s, the rainbow color palette, and the deafult title. To specify this, run
+When plotting multiple variables, you will be asked to step through each plot by R (`Hit <Return> to see next plot:`).
+
+If you want to simultaneously pass plotting arguments **to all levels of each variable**, use the `var_args` argument (short for variable arguments). Suppose you want the `AREA_HA_CAT` plot to have open circles, the standard color palette, and a custom title. Also suppose you want the `ELEVATION_CAT` plot to have `x`'s, the rainbow color palette, and the deafult title. To specify this, run
 ```{r}
-variable_args <- list(
+var_args <- list(
   AREA_HA_CAT = list(pch = 1, main = "This is a fun custom title!"),
   ELEVATION_CAT = list(pch = 4, pal = rainbow)
 )
 plot(
   NE_Lakes,
   formula = ~ AREA_HA_CAT + ELEVATION_CAT,
-  variable_args = variable_args,
+  var_args = var_args,
   key.pos = 1
 )
 ```
 
-To plot combinations of categorical variables, separate the variables in the formula using `:`. This tells `spsurvey` to create a new variable containing four levels (the combination of the two levels for `AREA_HA_CAT` and `ELEVATION_CAT`) and plot them. These new variables are represented in the figure legend using `:`. For example, `small:low` is the sites in the small area category and the low elevation cateogory. To create this plot, run 
+To plot combinations of categorical variables, separate the variables in the formula using `:`. This tells `spsurvey` to create a new variable containing four levels (the combination of the two levels for `AREA_HA_CAT` and `ELEVATION_CAT`) and plot them. These new variables are represented in the figure legend using `:`. For example, `small:low` is the sites in the small area level and the low elevation level. To create this plot, run 
 ```{r}
 plot(NE_Lakes, formula = ~ AREA_HA_CAT:ELEVATION_CAT, key.pos = 1)
 ```
 
 To plot the previous three plots using a single command, leverage `R`'s formula structure and the `*` operator. The code `plot(NE_Lakes, AREA_HA_CAT * ELEVATION_CAT, key.pos = 1)` is equivalent to `plot(NE_Lakes, ~ AREA_HA_CAT + ELEVATION_CAT + AREA_HA_CAT:ELEVATION_CAT, key.pos = 1)`.
 
-You can plot a single level of a single variable using the `onlyshow` argument. If an interaction is specified, the levels in `onlyshow` must correspond to the levels in the formula:
+You can plot a single level of a single variable using the `onlyshow` argument. If an interaction is specified, the levels in `onlyshow` must correspond to the levels in the formula (in order):
 ```{r}
 plot(
   NE_Lakes,
@@ -127,12 +152,12 @@ plot(
 
 ## Plotting Geometries
 
-You will notice that previously, all observations are placed on the sample plot. Perhaps it is of interest to plot categorical variables **on separate plots**, and this is what we cover next. First, you can plot the geometry of all sites in `NE_Lakes` by running
+You will notice that previously, all observations are placed on the sample plot. Perhaps it is of interest to plot levels of categorical variables **on separate plots**, and this is what we cover next. First, you can plot the geometry of all sites in `NE_Lakes` by running
 ```{r}
 plot(NE_Lakes)
 ```
 
-To plot the geometry for each elevation category, you will use the `geom` argument, which tells `spsurvey` to plot the geometries -- one plot for each level of `ELEVATION_CAT`:
+To plot the geometry for each elevation level, you will use the `geom` argument, which tells `spsurvey` to plot the geometries -- one plot for each level of `ELEVATION_CAT`:
 ```{r}
 plot(NE_Lakes, formula = ~ ELEVATION_CAT, geom = TRUE)
 ```
@@ -142,34 +167,33 @@ Or you can plot a single level using the `onlyshow` argument:
 plot(NE_Lakes, formula = ~ ELEVATION_CAT, geom = TRUE, onlyshow = "high")
 ```
 
-Certianly additional arguments like `variable_args` or `level_args` can be specified. Geometries can only be plotted when the left hand side of the formula is empty.
+Certianly additional arguments like `var_args` or `varlevel_args` can be specified. Geometries can only be plotted when the left hand side of the formula is empty.
 
 ## Categorical Response by Categorical Variables
 
 It is also possible to plot a categorical response variable **for different levels** of other categorical variables. This can be done by placing a categorical response variable on the left hand side of the formula argument and the other categorical variables on the right hand side. For example, to plot `AREA_HA_CAT` (response variable) for each separate level of `ELEVATION_CAT` (other variable), run
 ```{r}
-plot(NE_Lakes, formula = AREA_HA_CAT ~ ELEVATION_CAT, key.pos = 1)
+plot(NE_Lakes, formula = ELEVATION_CAT ~ AREA_HA_CAT, key.pos = 1)
 ```
 
-Graphical arguments for different levels of the `AREA_HA_CAT` (response variable) must be provided in the `variable_args` argument and by consequence, must remain consistent for each of these levels of `ELEVATION_CAT` (other variable). Graphical arguments for `ELEVATION_CAT` (other variable) that do not depend on the levels of the `AREA_HA_CAT` (response variable), however, may vary by `ELEVATION_CAT` (other variable) levels.
+Graphical arguments for `ELEVATION_CAT` (response) can vary based on `AREA_HA_CAT` (other variable). Graphical arguments for different levels of the `ELEVATION_CAT` (response variable) must be provided in the `var_args` argument and by consequence, must remain consistent for each of these levels of `AREA_HAT_CAT` (other variable). Graphical arguments for `AREA_HA_CAT` (other variable) that do not depend on the levels of the `ELEVATION_CAT` (response variable), however, may vary by `AREA_HA_CAT` (other variable) levels.
 ```{r}
-variable_args <- list(
+var_args <- list(
   AREA_HA_CAT = list(
     ELEVATION_CAT = list(levels = c("low", "high"), pch = c(1, 4))
   )
 )
-level_args <- list(
+varlevel_args <- list(
   AREA_HA_CAT = list(levels = c("small", "large"), cex = c(1, 2))
 )
 plot(
   NE_Lakes,
   formula = ELEVATION_CAT ~ AREA_HA_CAT,
-  variable_args = variable_args,
-  level_args = level_args,
+  var_args = var_args,
+  varlevel_args = varlevel_args,
   key.pos = 1
 )
 ```
-
 
 ## Continuous Response by Categorical Variables
 
@@ -184,26 +208,26 @@ You can also plot a continuous variable **for different levels** of other catego
 plot(NE_Lakes, formula = ELEVATION ~ AREA_HA_CAT, key.pos = 1)
 ```
 
-You will notice that the color scales are not fixed for each level of `AREA_HA_CAT`. Fixing them can be achieved through the `variable_args` argument because you are passing a color scale to all levels of `AREA_HA_CAT`:
+One example of where these type of visualization could be useful is before proportional probability sampling: In this context, sampling proportionally to `AREA_HA`.
+
+You will notice that the color scales are not fixed for each level of `AREA_HA_CAT`. Fixing them can be achieved through the `var_args` argument by passing a color scale to all levels of `AREA_HA_CAT`:
 ```{r}
-variable_args <- list(
+var_args <- list(
   AREA_HA_CAT = list(breaks = seq(0, 600, by = 50))
 )
 plot(
   NE_Lakes,
   formula = ELEVATION ~ AREA_HA_CAT,
-  variable_args = variable_args,
+  var_args = var_args,
   key.pos = 1
 )
 ```
 
-Passing unique color scales to each level of `AREA_HA_CAT` requires the `level_args` argument.
-
-One example of where these type of visualization could be useful is before proportional probability sampling: In this context, sampling proportionally to `AREA_HA`.
+Passing unique color scales to each level of `AREA_HA_CAT` requires the `varlevel_args` argument.
 
 # Plotting Design Objects
 
-`spsurvey` also lets you visualize your probability samples. Suppose you select a GRTS sample of size 200 from `NE_Lakes`:
+`spsurvey` also lets you visualize your probability samples in combination with your sample frame. Suppose you select a GRTS sample of size 200 from `NE_Lakes`:
 ```{r}
 sample <- grts(NE_Lakes, n_base = 200)
 ```
@@ -220,12 +244,12 @@ To plot just the geometries, simply use the `geom` argument:
 plot(sample, NE_Lakes, geom = TRUE)
 ```
 
-To adjust graphical parameters, use `level_args` -- here we plot the sample frame sites with open cicles and the base sites with closed circles:
+To adjust graphical parameters, use `varlevel_args` -- here we plot the sample frame sites with open cicles and the base sites with closed circles:
 ```{r}
-level_args <- list(
+varlevel_args <- list(
   sites = list(levels = c("sframe", "sites_base"), pch = c(1, 19))
 )
-plot(sample, NE_Lakes, level_args = level_args, key.pos = 1)
+plot(sample, NE_Lakes, varlevel_args = varlevel_args, key.pos = 1)
 ```
 
 If you want to plot only the base sites, the sample frame need not be specified:
@@ -240,7 +264,7 @@ plot(sample, NE_Lakes, sites ~ ELEVATION_CAT, pch = 19, key.pos = 1)
 
 To plot closed circles for the base sites, run
 ```{r}
-variable_args <- list(
+var_args <- list(
   ELEVATION_CAT = list(
     sites = list(levels = c("sframe", "sites_base"), pch = c(1, 19))
   )
@@ -249,7 +273,7 @@ plot(
   sample,
   NE_Lakes,
   sites ~ ELEVATION_CAT,
-  variable_args = variable_args,
+  var_args = var_args,
   key.pos = 1
 )
 ```
@@ -266,16 +290,12 @@ sample2 <- grts(NE_Lakes, n_base = 200, n_over = 100)
 
 To visualize the sample frame (small, open circles), base sites (closed circles), and replacement sites (closed circles), run
 ```{r}
-level_args <- list(
+varlevel_args <- list(
   sites = list(
     levels = c("sframe", "sites_base", "sites_over"),
     pch = c(1, 19, 19),
     cex = c(0.5, 1, 1)
   )
 )
-plot(sample2, NE_Lakes, level_args = level_args, key.pos = 1)
+plot(sample2, NE_Lakes, varlevel_args = varlevel_args, key.pos = 1)
 ```
-
-
-
-

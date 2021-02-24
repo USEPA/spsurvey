@@ -1,5 +1,5 @@
 ---
-title: "Selecting Spatially Balanced Samples from a Finite Population"
+title: "Selecting Spatially Balanced Samples from a Point Network (Finite Population)"
 author: "Michael Dumelle, Tony Olsen, Tom Kincaid, and Marc Weber"
 output: 
   html_document:
@@ -12,7 +12,7 @@ output:
       smooth_scroll: no
     toc_depth: 2
 vignette: >
-  %\VignetteIndexEntry{Selecting Spatially Balanced Samples from a Finite Population}
+  %\VignetteIndexEntry{Selecting Spatially Balanced Samples from a Point Network (Finite Population)}
   %\VignetteEngine{knitr::rmarkdown}
   \usepackage[utf8]{inputenc}
 ---
@@ -25,9 +25,6 @@ knitr::opts_chunk$set(
   warning = FALSE, 
   message = FALSE
 )
-library(devtools)
-load_all()
-data("NE_Lakes")
 ```
 
 # Introduction
@@ -47,25 +44,27 @@ In this vignette, you will use `spsurvey` to select probability samples using th
     * [Replacement Sites]
 * [Calculating the Spatial Balance of a Sample]
 
-If you have not yet done so, please read the "Start Here" vignette, accessed [here](dummy link for now) or by running `vignette("start_here", package = "spsurvey")`. 
+If you have not yet done so, please stop and read the "Start Here" vignette, accessed by running `vignette("start_here", package = "spsurvey")`. 
 
 # The `NE_Lakes` Data
 
 Before anything else, you must load `spsurvey` by running
-```{r setup, eval = FALSE}
+```{r}
 library(spsurvey)
 ```
+
 If you want to reproduce the results from code in this vignette, you must also set a seed by running
 ```{r}
-set.seed(5)
+set.seed(5.0)
 ```
 
 Throughout this vignette, you will use select probability samples from the `NE_Lakes` dataset. The `NE_Lakes` dataset is composed of 5328 lakes in the Southern New England Region of the United States. To load the data into R, run
-```{r load data, eval = FALSE}
+```{r}
 data("NE_Lakes")
 ```
+
 To view the first few rows, run
-```{r view data}
+```{r}
 head(NE_Lakes)
 ```
 You will notice that along with attributes, spatial information has been returned for the data:
@@ -75,41 +74,41 @@ You will notice that along with attributes, spatial information has been returne
 * `bbox`: The bounding box of the spatial locations.
 * `projected CRS`: The coordinates in a USA Contiguous Albers Equal Area Conic Projection.
 
-The next few lines describe variables in `NE_Lakes` (THIS NEEDS UPDATING):
+The next few lines describe variables in `NE_Lakes`; for more regarding the `NE_Lakes` data and associated variables, run `?NE_Lakes`.
 
-* `LAT_DD_N83`: The latitute coordinate for each lake centroid using the NAD83 CRS (EPSG: 4269)
-* `LON_DD_N83`: The longitude coordinate for each lake centroid using the NAD83 CRS (EPSG: 4269)
-* `AREA_HA`: The area (in hectares) of each lake.
-* `ELEVATION`: The elevation (in meters) of each lake.
-* `geometry`: The coordinates for each lake centroid as an `sf` list-column.
-
-We'll sumamrize and visualize the `NE_Lakes` data. But before doing so, we need store the data as an `sframe` object:
+We'll later summarize and visualize the `NE_Lakes` data. But before doing so, we need store the data as an `sframe` (short for "sample frame") object:
 ```{r}
 NE_Lakes <- sframe(NE_Lakes)
 ```
 
+Next we give an overview of GRTS designs and visualize the `NE_Lakes` data.
+
 # GRTS Designs
 
-In this section, we'll demonstrate spatially balanced samples -- but what exactly is a "spatially balanced sample?" And why are they important? Stevens and Olsen (2004) defined a spatially balanced sample as a sample mirroring the density of the population -- this is often referred to as a sample that is a *miniature* of the population. This is different from spatial balance with respect to geography. To elucidate this distinction, consider the following plot of the `NE_Lakes` locations:
-```{r, fig.show = "hold", fig.align = "center", fig.cap = "Locations of lakes in the `NE_Lakes` dataset."}
+In this section, we'll demonstrate spatially balanced samples -- but what exactly is a "spatially balanced sample?" And why are they important? Stevens and Olsen (2004) defined a spatially balanced sample as a sample mirroring the density of the population -- this is often referred to as a sample that is a *miniature* of the population. This is different from spatial balance with respect to geography, in which samples may be evenly spread relative to the geography studied. To elucidate this distinction, consider the following plot of the `NE_Lakes` locations:
+```{r, fig.align = "center", fig.cap = "Locations of lakes in the `NE_Lakes` data."}
 plot(NE_Lakes)
 ```
-Notice that lake density is slightly higher to the NE than the NW. A spatially balanced sample with respect to the population mirrors the density in the population, and would select more samples in the northeast then the northwest, while a spatially balanced sample with respect to geography omits this density information but takes into account the absolute distances among neighboring sites. These two types of spatial balance are useful in different contexts, and neither is superior over the other. But it is important to be aware of this distinction and its implications. Henceforth, when we refer to "spatial balance," we mean spatial balance with respect to the population.
 
-Spatially balanced samples are important because they generally yield estimators of means and totals *having narrower confidence intervals* than samples lacking spatial balance. This means our estimators are more *precise*, which can lead to reduced resource costs and a *more accurate representation* of the true, unknown values of the quantities we are studying.
+Notice that lake density is slightly higher to the northeast than in the northwest. A spatially balanced sample with respect to the population mirrors the density in the population and would select more samples in the northeast then the northwest, while a spatially balanced sample with respect to geography omits this density information but takes into account absolute distances among neighboring sites. These two types of spatial balance are useful in different contexts, and neither is superior over the other. But it is important to be aware of this distinction and its implications. Henceforth, when we refer to **spatial balance**, we mean spatial balance with respect to the population.
+
+Spatially balanced samples are useful because they tend yield estimators of means and totals *having narrower confidence intervals* than samples lacking spatial balance. This means our estimators are more *precise*, which can lead to reduced resource costs and a *more accurate representation* of the true, unknown values of the quantities we are studying.
+
+We will use the `grts()` function in spsurvey to select our spatially balanced samples. For more detailed information than what you will learn in this vignette, run `?grts`.
 
 ## An Unstratified, Equal Probability GRTS Design
 
 To select an unstratified, equal proability GRTS sample, run
 ```{r}
-# equal probability design
+# selecting the equal probability design
 eqprob <- grts(sframe = NE_Lakes, seltype = "equal", n_base = 60)
 ```
 
-* `seltype` is `"equal"` for an equal probability design
-* `n_base` is 60, the desired sample size
+* `sframe` (sample frame) is the `NE_Lakes` data.
+* `seltype` is `"equal"` for equal selection probabilities.
+* `n_base` is 60, the desired sample size.
 
-`eqprob` contains an `sf` object, `eqprob$sites_base`, with the selected sites. To view the first few rows, run:
+`eqprob` contains an `sf` object, `eqprob$sites_base`, with the selected sites. To view the first few rows, run
 ```{r}
 head(eqprob$sites_base)
 ```
@@ -124,11 +123,11 @@ There are several variables contained in `eqprob$sites_base`:
 * Several other variables have `NA` values -- this just means they are not relevant to your design and can be ignored for now.
 
 To overlay the spatially balanced sample on the original population, run
-```{r, fig.align = "center", fig.cap = "Population (sframe) and sampled sites (sites_base) from an equal probability GRTS design."}
+```{r, fig.align = "center", fig.cap = "Population (`sframe`) and sampled sites (`sites_base`) from an equal probability GRTS design."}
 plot(eqprob, NE_Lakes, pch = 19, key.pos = 1)
 ```
 
-The `pch = 19` argument tells `spsurvey` to plot closed circles instead of open circles (the default), and the `key.pos = 1` argument tells `spsurvey` to put the legend at the bottom of the plot.
+The `pch = 19` argument tells `spsurvey` to plot closed circles instead of open circles (the default), and the `key.pos = 1` argument tells `spsurvey` to put the legend at the bottom of the plot (as opposed to the right side, the default).
 
 `grts` returns several design elements used by the function as a tool to both keep track of and to verify the specifications of your design. You can access this information by running `eqprob$dsgn`. A list is printed containing several pieces of information -- several of which may be `NULL`. These `NULL` values are expected and change based on the specifications of your design, similar to how the columns having only `NA` in `eqprob$sites_base` will eventually change; this will be made more clear later on. For now, you will focus on the relevant non-`NULL` information:
 ```{r, echo = FALSE}
@@ -139,7 +138,7 @@ for (s in names(eqprob$dsgn)) {
 eqprob$dsgn
 ```
 
-* The `Call` is the original function call you supplied to `grts()`, making explicit the names of the arguments you specified.
+* The `Call` is the original function call you supplied to `grts()`, making explicit the names of the arguments if specified via defaults.
 * The `stratum` variable (the `stratum_var` argument to `grts()`) in `eqprob$sites_base` is given the name `stratum`
 * All entries in `stratum` are given the same value: `"None"`
 * The selection type for the `"None"` stratum is "equal" probability
@@ -148,14 +147,15 @@ eqprob$dsgn
 
 ## An Unstratified, Unequal Probability GRTS Design
 
-Suppose we wish to sample the lakes in the highest elevation group with a higher probability than all other lakes. To better understand our data, you can first summarize lakes in each elevation category:
+Suppose we wish to sample the lakes in the highest elevation group with a higher probability than all other lakes. First it is helpful to summarize lakes in each elevation category:
 ```{r}
 summary(NE_Lakes, ~ ELEVATION_CAT)
 ```
-There are 5328 total  lakes, 3527 of which are in the low elevation category and 2071 of which are in the high elevation category.
+
+There are 5328 total  lakes, 3257 of which are in the low elevation category and 2071 of which are in the high elevation category.
 Next, you can plot the lakes in each elevation category:
-```{r, fig.align = "center", fig.cap = "Population sites by `ELEVATION_CAT` categories."}
-plot(NE_Lakes, ~ ELEVATION_CAT, key.pos = 1)
+```{r, fig.align = "center", fig.cap = "Population sites by `ELEVATION_CAT`."}
+plot(NE_Lakes, formula = ~ ELEVATION_CAT, key.pos = 1)
 ```
 
 To select an unequal probability GRTS sample by elevation group, run
@@ -172,14 +172,14 @@ uneqprob <- grts(
 )
 ```
 
-* `seltype` is "unequal" for an unequal probaility design
-* `n_base` is the desired **total** sample size, 60
-* `caty_var` matches the name of the variable in `NE_Lakes` with the unequal probability groups
-* `caty.n` is a vector with expected sample sizes for each group in `caty_var`
-    * The names of `caty.n` must match the names of each group in `caty_var`
-    * The sum of `caty.n` values must equal `n_base`
+* `seltype` is "unequal" for unequal selection probabilities.
+* `n_base` is the desired **total** sample size, 60.
+* `caty_var` matches the name of the variable in `NE_Lakes` with the unequal probability groups.
+* `caty_n` is a vector with expected sample sizes for each group in `caty_var`.
+    * The names of `caty_n` must match the names of each group in `caty_var`.
+    * The sum of `caty_n` values must equal `n_base`.
 
-Though the expected sample sizes for this design are specified by `caty.n`, there is no guarantee your within-group sample sizes will match these values **exactly**.
+Though the expected sample sizes for this design are specified by `caty_n`, there is no guarantee your within-group sample sizes will match these values **exactly**.
 
 The relevant non-NULL `dsgn` output is
 ```{r, echo = FALSE}
@@ -206,9 +206,9 @@ strat_eqprob <- grts(
 )
 ```
 
-* `seltype` is "equal" for equal probability of selection within strata
-* `stratum_var` matches the name of the variable in `NE_Lakes` with the strata
-* `n_base` is a names vector whose names identify strata and whose values inidicate the within-strata sample sizes
+* `seltype` is "equal" for equal selection probabilities within strata.
+* `stratum_var` matches the name of the variable in `NE_Lakes` containing the strata.
+* `n_base` is a names vector whose names identify strata and whose values inidicate the within-strata sample sizes.
 
 The relevant non-NULL `dsgn` output is
 ```{r, echo = FALSE}
@@ -219,8 +219,8 @@ for (s in names(strat_eqprob$dsgn)) {
 strat_eqprob$dsgn
 ```
 
-To visualize the strata and their samples, run
-```{r, fig.show = "hold", fig.align = "center", fig.cap = "Population (sframe) and sampled sites (sites_base) obtained for the two `ELEVATION` strata using a stratified GRTS design with equal selection probabilities within strata."}
+To visualize GRTS sample for each strata, run
+```{r, fig.align = "center", fig.cap = "Population (sframe) and sampled sites (sites_base) obtained for the two `ELEVATION` strata using a stratified GRTS design with equal selection probabilities within strata."}
 plot(
   strat_eqprob,
   NE_Lakes,
@@ -232,7 +232,7 @@ plot(
 
 ## A Stratified, Proportional Probability GRTS Design
 
-We can alter the previous design to accomodate proportional probability sampling within strata, where each strata's sample is proportional to lake area (in hectares; `AREA_HA`); larger lakes have a higher probability of being sampled.These types of designs are useful when the response variable you plan to collect is positively correlated with the auxiliary variable; in this case, the proportional probability design is **more efficient** than a design with equal selection probabilities within strata. Before implementing this design, we can summarize total `AREA_HA` and `AREA_HA` within each `ELEVATION_CAT` category:
+We can alter the previous design to accomodate proportional probability sampling within strata where each strata's sample is proportional to lake area (in hectares; `AREA_HA`); larger lakes have a higher probability of being sampled.These types of designs are useful when the response variable you plan to collect is positively correlated with the auxiliary variable; in this case, the proportional probability design is **more efficient** than a design with equal selection probabilities within strata. Before implementing this design, we can summarize total `AREA_HA` within each `ELEVATION_CAT` category:
 ```{r}
 summary(NE_Lakes, AREA_HA ~ ELEVATION_CAT)
 ```
@@ -251,10 +251,10 @@ strat_uneqprob <- grts(
 )
 ```
 
-* `stratum_var` matches the name of the variable in `NE_Lakes` with the strata
-* `n_base` is a names vector whose names identify strata and whose values inidicate the within-strata sample sizes
-* `seltype` is "proportional" for proportional probability of selection within strata
-* `aux_var` matches the name of the variable in `NE_Lakes` to sample proportionally by
+* `stratum_var` matches the name of the variable in `NE_Lakes` containing the strata.
+* `n_base` is a names vector whose names identify strata and whose values inidicate the within-strata sample sizes.
+* `seltype` is "proportional" for proportional selection probabilities within strata.
+* `aux_var` matches the name of the variable in `NE_Lakes` to sample proportionally by.
     * This variable must be *strictly positive* (all lakes have positive areas)
     
 The relevant non-NULL `dsgn` output is:
@@ -274,7 +274,7 @@ If you want to conduct an independent random sample (IRS) instead of a GRTS samp
 eqprob_irs <- irs(sframe = NE_Lakes, seltype = "equal", n_base = 60)
 ```
 
-The relevant non-NULL design output is
+The relevant non-`NULL` design output is
 ```{r, echo = FALSE}
 eqprob_irs$dsgn$legacy_option <- NULL
 for (s in names(eqprob_irs$dsgn)) {
@@ -284,7 +284,7 @@ eqprob_irs$dsgn
 ```
 
 To overlay the sample on the original population, run
-```{r, fig.show = "hold", fig.align = "center", fig.cap = "Population (sframe) and sampled sites (sites_base) obtained for an equal probability IRS design."}
+```{r, fig.align = "center", fig.cap = "Population (`sframe`) and sampled sites (`sites_base`) obtained for an equal probability IRS design."}
 plot(eqprob_irs, NE_Lakes, pch = 19, key.pos = 1)
 ```
 
@@ -355,9 +355,9 @@ eqprob_mindis <- grts(
 )
 ```
 
-* `seltype` is `"equal"` for an equal probability design
-* `n_base` is 60, the desired sample size
-* `mindis` is the minimum distance desired
+* `seltype` is `"equal"` for equal selection probabilities.
+* `n_base` is 60, the desired sample size.
+* `mindis` is the minimum distance desired between sites.
 
 The relevant non-`NULL` design output is
 ```{r, echo = FALSE}
@@ -368,25 +368,27 @@ for (s in names(eqprob_mindis$dsgn)) {
 eqprob_mindis$dsgn
 ```
 
-
 To plot the population sites next to the sampled sites, run
-```{r, fig.show = "hold", fig.align = "center", fig.cap = "Population (sframe) and sampled (sites_base) sites for an equal probability GRTS design having a minimum distance between sites of 5000 meters."}
+```{r, fig.align = "center", fig.cap = "Population (`sframe`) and sampled (`sites_base`) sites for an equal probability GRTS design having a minimum distance between sites of 5,000 meters."}
 plot(eqprob_mindis, NE_Lakes, pch = 19)
 ```
+
 It is possible that the GRTS algorithm will not be able to ensure the minimum distance is met for all sampled sites.  In this context, the algorithm will attempt to ensure the minimum distance is met for as many sites as possible and return a warning stating that the requirement was not met after several iterations of the algorithm.
 
 ## Replacement Sites
 
 It is often the case that a selected site is unable to be sampled. This can happen for a variety of reasons: landowner denial, lack of funding, or lack of resources, to name a few. If you expect there are sites you may not be able to sample, you can include potential replacement sites in your GRTS design. `spsurvey` gives you two methods to select these replacement sites: reverse heirarchical ordering and nearest neighbor.
 
-First, we discuss reverse heirarchical ordering replacement. In this context, the number desired sample size, $n$, and the number of replacement sites, $n_r$, must be specified before the design is selected. A standard GRTS algorithm is used to select a sample of size $n + n_r$. Then, these sites are placed into "reverse heirarchical order" and the $n$ base sites and $n_r$ replacement sites are classified. The $n$ base sites should be sampled first. If any of these $n$ sites are unable to be sampled, replacement sites should be used. For more details, see Stevens and Olsen (2004). To select a GRTS sample of size 60 with 60 reverse heirarchical ordering replacement sites, run
+### Reverse Heirarchical Ordering
+
+First, we discuss reverse heirarchical ordering replacement. In this context, the number desired sample size, $n$, and the number of replacement sites, $n_r$, must be specified before the design is selected. A standard GRTS algorithm is used to select a sample of size $n + n_r$. Then, these sites are placed into "reverse heirarchical order" and the $n$ base sites and $n_r$ replacement sites are classified. The $n$ base sites should be sampled first and if any are unable to be sampled, the replacement sites are to be used. For more details, see Stevens and Olsen (2004). To select a GRTS sample of size 60 with 10 reverse heirarchical ordering replacement sites, run
 ```{r}
-eqprob_rho <- grts(NE_Lakes, seltype = "equal", n_base = 60, n_over = 60)
+eqprob_rho <- grts(NE_Lakes, seltype = "equal", n_base = 60, n_over = 10)
 ```
 
-* `seltype` is `"equal"` for an equal probability design
-* `n_base` is 60, the desired sample size
-* `n_over` is the number of replacement sites using reverse heirarchical ordering
+* `seltype` is `"equal"` for equal selection probabilities.
+* `n_base` is 60, the desired sample size.
+* `n_over` is the number of desired reverse heirarchical ordering replacement sites.
 
 `eqprob_rho$sites_base` is the `sf` object containing the $n$ base sites, and `eqprob_reverse$sites_over` is the `sf` object containing the $n_r$ replacement sites. The relevant non-`NULL` design output is
 ```{r, echo = FALSE}
@@ -398,25 +400,27 @@ eqprob_rho$dsgn
 ```
 
 To plot the population sites next to the sampled sites and the replacement sites, run
-```{r, fig.show = "hold", fig.align = "center", fig.cap = "Population sites (sframe), sampled sites (sites_base), and replacement sites (sites_over) for an equal probability GRTS design using reverse heirarchical ordering for the replacement sites."}
+```{r, fig.show = "hold", fig.align = "center", fig.cap = "Population sites (`sframe`), sampled sites (`sites_base`), and replacement sites (`sites_over`) for an equal probability GRTS design using reverse heirarchical ordering for the replacement sites."}
 plot(eqprob_rho, NE_Lakes, pch = 19, key.pos = 1)
 ```
 
-The second method for selecting replacement sites is the nearest neighbor method. A base GRTS sample of size $n$ is first selected. If a site is then unable to be sampled, the nearest neighbor method provides $n_r$ (up to 10) replacement sites that are closest to the original, unsampled site. This implies that for each site in the GRTS sample, $n_r$ replacement sites are available. To select a GRTS sample of size 60 with a nearest neighbors for each site, run
+### Nearest Neighbor
+
+The second method for selecting replacement sites is the nearest neighbor method. A base GRTS sample of size $n$ is first selected. If a site is then unable to be sampled, the nearest neighbor method provides $n_r$ (up to 10) replacement sites that are closest to the original, unsampled site. This implies that for each site in the GRTS sample, $n_r$ replacement sites are available. To select a GRTS sample of size 60 with 2 nearest neighbors for each site, run
 ```{r}
 eqprob_nn <- grts(
   NE_Lakes,
   seltype = "equal",
   n_base = 60,
-  n_near = 1
+  n_near = 2
 )
 ```
 
-* `seltype` is `"equal"` for an equal probability design
-* `n_base` is 60, the desired sample size
-* `n_over` is the number of replacement sites using nearest neighbors
+* `seltype` is `"equal"` for equal selection probabilities.
+* `n_base` is 60, the desired sample size.
+* `n_over` is the number of nearest neighbor replacement sites desired for each base site.
 
-`eqprob_rho$sites_base` is the `sf` object containing the $n$ base sites, and `eqprob_reverse$sites_over` is the `sf` object containing the $n_r$ replacement sites. This nearest neighbor method is more computationally intensive than the reverse heirarchical ordering method, and the above code can take a almost a minute to run on your machine. The relevant non-`NULL` design output is
+`eqprob_rho$sites_base` is the `sf` object containing the $n$ base sites, and `eqprob_reverse$sites_over` is the `sf` object containing the $n_r$ replacement sites. The relevant non-`NULL` design output is
 ```{r, echo = FALSE}
 eqprob_nn$dsgn$legacy_option <- NULL
 for (s in names(eqprob_nn$dsgn)) {
@@ -426,13 +430,13 @@ eqprob_nn$dsgn
 ```
 
 To view the population sites, base sample sites, and each sampled site's nearest replacement site, run
-```{r, fig.show = "hold", fig.align = "center", fig.cap = "Population sites (sframe), sampled sites (sites_base), and replacement sites (sites_near) for an equal probability GRTS design using nearest neighbors for the replacement sites."}
+```{r, fig.show = "hold", fig.align = "center", fig.cap = "Population sites (`sframe`), sampled sites (`sites_base`), and replacement sites (`sites_near`) for an equal probability GRTS design using nearest neighbors for the replacement sites."}
 plot(eqprob_nn, NE_Lakes, pch = 19, key.pos = 1)
 ```
 You will notice that these replacement sites are very close to the originally sampled sites.
 
 To view the geometries of the sampled sites and replacement sites individually, run
-```{r, fig.show = "hold", fig.align = "center", fig.cap = "Geometries for the population sites (sframe) and sampled sites."}
+```{r, fig.show = "hold", fig.align = "center", fig.cap = "Geometries for the base sites (`sites_base`) and replacement sites (`sites_near`) for an equal probability GRTS design using nearest neighbors for the replacement sites."}
 plot(
   eqprob_nn,
   NE_Lakes,
@@ -456,6 +460,7 @@ pielou_grts
 pielou_irs <- spbalance(eqprob_irs, NE_Lakes)
 pielou_irs
 ```
+
 Unsurprisingly, the GRTS design has better spatial balance than the IRS design. By default, `spbalance()` computes only the Pielou's evenness index, but several other spatial balance metrics are available -- run `?spbalance` for more information.
 
 # References
