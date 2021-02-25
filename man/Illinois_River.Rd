@@ -5,18 +5,20 @@
 \alias{Illinois_River}
 \title{Illinois River}
 \format{
-A data frame with 9087 rows and 3 variables:
+An `sf` multilinestring object object with 9087 rows and 3
+variables:
 \describe{
-  \item{STATE_NAME}{.....}
-  \item{SO_ID}{.....}
-  \item{geometry}{.....}
+  \item{STATE_NAME}{State name.}
+  \item{SO_ID}{Strahler order identifier.}
+  \item{geometry}{Multilinestring geometry using a USA Contiguous Albers
+    Equal Area Conic projection.}
 }
 }
 \usage{
 Illinois_River
 }
 \description{
-A simple features (sf) multilinestring object of 9087 river segments created
-from document..... The variables are:
+A simple features (sf) multilinestring object of 9087 segments of the 
+Illinois River in Arkansas and Oklahoma.
 }
 \keyword{datasets}

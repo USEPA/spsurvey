@@ -1,128 +1,136 @@
 #' New England Lakes
 #'
-#' A simple features (sf) point object of 5328 lakes created from document.....
-#' The variables are:
+#' An `sf` point object of 5328 lakes in the Northeastern
+#' United States.
 #'
-#' @format A data frame with 5328 rows and 7 variables:
+#' @format An `sf` object with 5328 rows and 7 variables:
 #' \describe{
-#'   \item{AREA_HA}{.....}
-#'   \item{AREA_HA_CAT}{.....}
-#'   \item{ELEVATION}{.....}
-#'   \item{ELEVATION_CAT}{.....}
-#'   \item{LAT_DD_N83}{.....}
-#'   \item{LON_DD_N83}{.....}
-#'   \item{geometry}{.....}
+#'   \item{AREA_HA}{Lake area in hectares.}
+#'   \item{AREA_HA_CAT}{Lake area categories based on a hectare cutoff.}
+#'   \item{ELEVATION}{Elevation in meters.}
+#'   \item{ELEVATION_CAT}{Elevation categories based on a meter cutoff.}
+#'   \item{LAT_DD_N83}{Latitude coordinate in meters using the NAD83 Datum.}
+#'   \item{LON_DD_N83}{Longitude coordinate in meters using the NAD83 Datum.}
+#'   \item{geometry}{Point geometry using a USA Contiguous Albers Equal Area
+#'     Conic projection.}
 #' }
 "NE_Lakes"
 
 #' Illinois River
 #'
-#' A simple features (sf) multilinestring object of 9087 river segments created
-#' from document..... The variables are:
+#' A simple features (sf) multilinestring object of 9087 segments of the 
+#' Illinois River in Arkansas and Oklahoma.
 #'
-#' @format A data frame with 9087 rows and 3 variables:
+#' @format An `sf` multilinestring object object with 9087 rows and 3
+#' variables:
 #' \describe{
-#'   \item{STATE_NAME}{.....}
-#'   \item{SO_ID}{.....}
-#'   \item{geometry}{.....}
+#'   \item{STATE_NAME}{State name.}
+#'   \item{SO_ID}{Strahler order identifier.}
+#'   \item{geometry}{Multilinestring geometry using a USA Contiguous Albers
+#'     Equal Area Conic projection.}
 #' }
 "Illinois_River"
 
 #' Great Lakes
 #'
-#' A simple features (sf) multipolygon object of 4113 polygons created
-#' from document.....  The variables are:
-#'
+#' An `sf` multipolygon object of 4113 polygons consisting 
+#' of shoreline segments in the Great Lakes region of North America. 
+#' 
 #' @format A data frame with 4113 rows and 5 variables:
 #' \describe{
-#'   \item{COUNTRY}{.....}
-#'   \item{WTBDY_NM}{.....}
-#'   \item{RSRC_CLASS}{.....}
-#'   \item{PSTL_CODE}{.....}
-#'   \item{AREA_SQKM}{.....}
+#'   \item{COUNTRY}{Country.}
+#'   \item{WTBDY_NM}{Water body name.}
+#'   \item{RSRC_CLASS}{Bay class.}
+#'   \item{PSTL_CODE}{Postal code.}
+#'   \item{AREA_SQKM}{Area in square kilometers}
 #'   \item{geometry}{simple features geometry list-column}
 #' }
 "Great_Lakes"
 
 #' NLA West
 #'
-#' A data frame of lake information from a "National Lakes Assessment" in the 
-#' Western United States.
+#' A data frame consisting lake observations from a subset of the Environmental
+#' Protection Agency's "National Lakes Assessment" in the Western United 
+#' States duing the years 2012 and 2017.
 #'
 #' @format A data frame with 851 rows and 18 variables:
 #' \describe{
-#'   \item{UNIQUE_ID}{.....}
-#'   \item{SITE_ID}{.....}
-#'   \item{DSGN_CYCLE}{.....}
-#'   \item{LAT_DD83}{latitude NAD83.....} consider reloading
-#'   \item{LON_DD83}{.....}
-#'   \item{XCOORD}{transformed latitude coordinate}
-#'   \item{YCOORD}{transformed longitude coordinate}
-#'   \item{WGT_TP_EXTENT}{weight target pop extent}
-#'   \item{WGT_SP_CORE}{weight sampled population CORE means sampled}
-#'   \item{WGT_TP_CORE}{.....}
-#'   \item{EVAL_CAT}{.....}
-#'   \item{TNT_CAT}{.....}
-#'   \item{URBN_NLA17}{.....}
-#'   \item{STATE_NM}{.....}
-#'   \item{BENTHIC_MMI}{.....}
-#'   \item{BENTHIC_MMI_COND}{.....}
-#'   \item{PHOSPHORUS_COND}{.....}
-#'   \item{NITROGEN_COND}{.....}
+#'   \item{UNIQUE_ID}{A unique observation identifier.}
+#'   \item{SITE_ID}{A unique site identifier.}
+#'   \item{DSGN_CYCLE}{Year of design cycle.}
+#'   \item{LAT_DD_N83}{Latitude coordinate using the NAD83 Datum.}
+#'   \item{LON_DD_N83}{Longitude coordinate using the NAD83 Datum.}
+#'   \item{XCOORD}{Transformed latitude coordinate in meters.}
+#'   \item{YCOORD}{Transformed latitude coordinate in meters.}
+#'   \item{WGT_TP_EXTENT}{Target population weights for extent.}
+#'   \item{WGT_SP_CORE}{Sampled population weights for sampled sites.}
+#'   \item{WGT_TP_CORE}{Target population weights for sampled sites.}
+#'   \item{EVAL_CAT}{Lake evaluation category.}
+#'   \item{TNT_CAT}{Target vs Nontarget evaluation category.}
+#'   \item{URBN_NLA17}{Urban category.}
+#'   \item{STATE_NM}{State name.}
+#'   \item{BENTHIC_MMI}{Benthic MMI value.}
+#'   \item{BENTHIC_MMI_COND}{Benthic MMI categories.}
+#'   \item{PHOSPHORUS_COND}{Phosphorus condition categories.}
+#'   \item{NITROGEN_COND}{Nitrogen condition categories.}
 #' }
 "NLA_West"
 
 #' NRSA EPA7
 #'
-#' A data frame of stream information from a "National Rivers and Streams Assessment"..... The variables:
+#' A data frame consisting of stream observations from a subset of the Environmental
+#' Protection Agency's "National Rivers and Streams Assessment" in the Central
+#' United States duing the years 2008 and 2013.
 #'
 #' @format A data frame with 682 rows and 18 variables:
 #' \describe{
-#'   \item{UNIQUE_ID}{.....}
-#'   \item{SITE_ID}{.....}
-#'   \item{DSGN_CYCLE}{.....}
-#'   \item{LAT_DD83}{.....}
-#'   \item{LON_DD83}{.....}
-#'   \item{XCOORD}{.....}
-#'   \item{YCOORD}{.....}
-#'   \item{WGT_TP_EXTENT}{.....}
-#'   \item{WGT_SP_CORE}{.....}
-#'   \item{WGT_TP_CORE}{.....}
-#'   \item{EVAL_CAT}{.....}
-#'   \item{TNT_CAT}{.....}
-#'   \item{NA_LEVEL1_ECO_NM}{.....}
-#'   \item{STATE_NM}{.....}
-#'   \item{BENTHIC_MMI}{.....}
-#'   \item{BENTHIC_MMI_COND}{.....}
-#'   \item{PHOSPHORUS_COND}{.....}
-#'   \item{NITROGEN_COND}{.....}
+#'   \item{UNIQUE_ID}{A unique observation identifier.}
+#'   \item{SITE_ID}{A unique site identifier.}
+#'   \item{DSGN_CYCLE}{Year of design cycle.}
+#'   \item{LAT_DD_N83}{Latitude coordinate using the NAD83 Datum.}
+#'   \item{LON_DD_N83}{Longitude coordinate using the NAD83 Datum.}
+#'   \item{XCOORD}{Transformed latitude coordinate in meters.}
+#'   \item{YCOORD}{Transformed latitude coordinate in meters.}
+#'   \item{WGT_TP_EXTENT}{Target population weights for extent.}
+#'   \item{WGT_SP_CORE}{Sampled population weights for sampled sites.}
+#'   \item{WGT_TP_CORE}{Target population weights for sampled sites.}
+#'   \item{EVAL_CAT}{Lake evaluation category.}
+#'   \item{TNT_CAT}{Target vs Nontarget evaluation category.}
+#'   \item{NA_LEVEL1_ECO_NM}{Ecoregion.}
+#'   \item{STATE_NM}{State name.}
+#'   \item{BENTHIC_MMI}{Benthic MMI value.}
+#'   \item{BENTHIC_MMI_COND}{Benthic MMI categories.}
+#'   \item{PHOSPHORUS_COND}{Phosphorus condition categories.}
+#'   \item{NITROGEN_COND}{Nitrogen condition categories.}
 #' }
 "NRSA_EPA7"
 
 #' NCCA Gulf
 #'
-#' A data frame of gulf information from the "National Coastal Condition Assessment" ..... The variables:
+#' A data frame consisting of gulf observations from a subset of the
+#' Environmental Protection Agency's "National Coastal Condition
+#' Assessment" in the Southern United States duing the years 2010 and 2015.
 #'
-#' @format A data frame with 851 rows and 18 variables:
+#' @format A data frame with 851 rows and 19 variables:
 #' \describe{
-#'   \item{UNIQUE_ID}{.....}
-#'   \item{SITE_ID}{.....}
-#'   \item{REVISIT}{.....}
-#'   \item{DSGN_CYCLE}{.....}
-#'   \item{LAT_DD83}{.....}
-#'   \item{LON_DD83}{.....}
-#'   \item{XCOORD}{.....}
-#'   \item{YCOORD}{.....}
-#'   \item{WGT_TP_EXTENT}{.....}
-#'   \item{WGT_SP_CORE}{.....}
-#'   \item{WGT_TP_CORE}{.....}
-#'   \item{EVAL_CAT}{.....}
-#'   \item{TNT_CAT}{.....}
-#'   \item{SMALL_EST}{.....}
-#'   \item{STATE_NM}{.....}
-#'   \item{BENTHIC_MMI}{.....}
-#'   \item{BENTHIC_MMI_COND}{.....}
-#'   \item{FISH_TISSUE_COND}{.....}
-#'   \item{PHOSPHORUS_COND}{.....}
+#'   \item{UNIQUE_ID}{A unique observation identifier.}
+#'   \item{SITE_ID}{A unique site identifier.}
+#'   \item{DSGN_CYCLE}{Year of design cycle.}
+#'   \item{REVISIT}{Site revisit status.}
+#'   \item{LAT_DD_N83}{Latitude coordinate using the NAD83 Datum.}
+#'   \item{LON_DD_N83}{Longitude coordinate using the NAD83 Datum.}
+#'   \item{XCOORD}{Transformed latitude coordinate in meters.}
+#'   \item{YCOORD}{Transformed latitude coordinate in meters.}
+#'   \item{WGT_TP_EXTENT}{Target population weights for extent.}
+#'   \item{WGT_SP_CORE}{Sampled population weights for sampled sites.}
+#'   \item{WGT_TP_CORE}{Target population weights for sampled sites.}
+#'   \item{EVAL_CAT}{Lake evaluation category.}
+#'   \item{TNT_CAT}{Target vs Nontarget evaluation category.}
+#'   \item{SMALL_EST}{Size category.}
+#'   \item{STATE_NM}{State name.}
+#'   \item{BENTHIC_MMI}{Benthic MMI value.}
+#'   \item{BENTHIC_MMI_COND}{Benthic MMI categories.}
+#'   \item{PHOSPHORUS_COND}{Phosphorus condition categories.}
+#'   \item{NITROGEN_COND}{Nitrogen condition categories.}
 #' }
 "NCCA_Gulf"

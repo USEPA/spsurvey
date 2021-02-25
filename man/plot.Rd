@@ -10,8 +10,8 @@
   x,
   y,
   formula = ~1,
-  variable_args = NULL,
-  level_args = NULL,
+  var_args = NULL,
+  varlevel_args = NULL,
   geom = FALSE,
   onlyshow = NULL,
   fix_bbox = TRUE,
@@ -23,8 +23,8 @@
   y = NULL,
   formula = ~sites,
   sites = NULL,
-  variable_args = NULL,
-  level_args = NULL,
+  var_args = NULL,
+  varlevel_args = NULL,
   geom = FALSE,
   onlyshow = NULL,
   fix_bbox = TRUE,
@@ -44,12 +44,12 @@ categorical (or factor) and right hand side variables can be categorical
 a categorical (or factor) variable. If an intercept is included in the right
 hand side formula, the total will also be summarized.}
 
-\item{variable_args}{A named list. The name of each list corresponds to a
+\item{var_args}{A named list. The name of each list corresponds to a
 right hand side variable in \code{formula}. Values in the list are composed of
 graphical arguments that are to be passed to \strong{every} level of the
 variable.}
 
-\item{level_args}{A named list. The name of each list corresponds to a
+\item{varlevel_args}{A named list. The name of each list corresponds to a
 right hand side variable in \code{formula}. The first name of each sublist
 should be \code{"levels"} and contain all levels of the variable. Subsequent
 names correspond to graphical arguments that are to be passed to

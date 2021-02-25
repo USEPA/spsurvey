@@ -7,11 +7,11 @@
 \format{
 A data frame with 4113 rows and 5 variables:
 \describe{
-  \item{COUNTRY}{.....}
-  \item{WTBDY_NM}{.....}
-  \item{RSRC_CLASS}{.....}
-  \item{PSTL_CODE}{.....}
-  \item{AREA_SQKM}{.....}
+  \item{COUNTRY}{Country.}
+  \item{WTBDY_NM}{Water body name.}
+  \item{RSRC_CLASS}{Bay class.}
+  \item{PSTL_CODE}{Postal code.}
+  \item{AREA_SQKM}{Area in square kilometers}
   \item{geometry}{simple features geometry list-column}
 }
 }
@@ -19,7 +19,7 @@ A data frame with 4113 rows and 5 variables:
 Great_Lakes
 }
 \description{
-A simple features (sf) multipolygon object of 4113 polygons created
-from document.....  The variables are:
+An `sf` multipolygon object of 4113 polygons consisting 
+of shoreline segments in the Great Lakes region of North America.
 }
 \keyword{datasets}

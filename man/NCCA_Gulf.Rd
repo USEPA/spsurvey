@@ -5,33 +5,35 @@
 \alias{NCCA_Gulf}
 \title{NCCA Gulf}
 \format{
-A data frame with 851 rows and 18 variables:
+A data frame with 851 rows and 19 variables:
 \describe{
-  \item{UNIQUE_ID}{.....}
-  \item{SITE_ID}{.....}
-  \item{REVISIT}{.....}
-  \item{DSGN_CYCLE}{.....}
-  \item{LAT_DD83}{.....}
-  \item{LON_DD83}{.....}
-  \item{XCOORD}{.....}
-  \item{YCOORD}{.....}
-  \item{WGT_TP_EXTENT}{.....}
-  \item{WGT_SP_CORE}{.....}
-  \item{WGT_TP_CORE}{.....}
-  \item{EVAL_CAT}{.....}
-  \item{TNT_CAT}{.....}
-  \item{SMALL_EST}{.....}
-  \item{STATE_NM}{.....}
-  \item{BENTHIC_MMI}{.....}
-  \item{BENTHIC_MMI_COND}{.....}
-  \item{FISH_TISSUE_COND}{.....}
-  \item{PHOSPHORUS_COND}{.....}
+  \item{UNIQUE_ID}{A unique observation identifier.}
+  \item{SITE_ID}{A unique site identifier.}
+  \item{DSGN_CYCLE}{Year of design cycle.}
+  \item{REVISIT}{Site revisit status.}
+  \item{LAT_DD_N83}{Latitude coordinate using the NAD83 Datum.}
+  \item{LON_DD_N83}{Longitude coordinate using the NAD83 Datum.}
+  \item{XCOORD}{Transformed latitude coordinate in meters.}
+  \item{YCOORD}{Transformed latitude coordinate in meters.}
+  \item{WGT_TP_EXTENT}{Target population weights for extent.}
+  \item{WGT_SP_CORE}{Sampled population weights for sampled sites.}
+  \item{WGT_TP_CORE}{Target population weights for sampled sites.}
+  \item{EVAL_CAT}{Lake evaluation category.}
+  \item{TNT_CAT}{Target vs Nontarget evaluation category.}
+  \item{SMALL_EST}{Size category.}
+  \item{STATE_NM}{State name.}
+  \item{BENTHIC_MMI}{Benthic MMI value.}
+  \item{BENTHIC_MMI_COND}{Benthic MMI categories.}
+  \item{PHOSPHORUS_COND}{Phosphorus condition categories.}
+  \item{NITROGEN_COND}{Nitrogen condition categories.}
 }
 }
 \usage{
 NCCA_Gulf
 }
 \description{
-A data frame of gulf information from the "National Coastal Condition Assessment" ..... The variables:
+A data frame consisting of gulf observations from a subset of the
+Environmental Protection Agency's "National Coastal Condition
+Assessment" in the Southern United States duing the years 2010 and 2015.
 }
 \keyword{datasets}

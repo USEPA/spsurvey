@@ -5,22 +5,23 @@
 \alias{NE_Lakes}
 \title{New England Lakes}
 \format{
-A data frame with 5328 rows and 7 variables:
+An `sf` object with 5328 rows and 7 variables:
 \describe{
-  \item{AREA_HA}{.....}
-  \item{AREA_HA_CAT}{.....}
-  \item{ELEVATION}{.....}
-  \item{ELEVATION_CAT}{.....}
-  \item{LAT_DD_N83}{.....}
-  \item{LON_DD_N83}{.....}
-  \item{geometry}{.....}
+  \item{AREA_HA}{Lake area in hectares.}
+  \item{AREA_HA_CAT}{Lake area categories based on a hectare cutoff.}
+  \item{ELEVATION}{Elevation in meters.}
+  \item{ELEVATION_CAT}{Elevation categories based on a meter cutoff.}
+  \item{LAT_DD_N83}{Latitude coordinate in meters using the NAD83 Datum.}
+  \item{LON_DD_N83}{Longitude coordinate in meters using the NAD83 Datum.}
+  \item{geometry}{Point geometry using a USA Contiguous Albers Equal Area
+    Conic projection.}
 }
 }
 \usage{
 NE_Lakes
 }
 \description{
-A simple features (sf) point object of 5328 lakes created from document.....
-The variables are:
+An `sf` point object of 5328 lakes in the Northeastern
+United States.
 }
 \keyword{datasets}

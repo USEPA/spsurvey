@@ -7,31 +7,32 @@
 \format{
 A data frame with 851 rows and 18 variables:
 \describe{
-  \item{UNIQUE_ID}{.....}
-  \item{SITE_ID}{.....}
-  \item{DSGN_CYCLE}{.....}
-  \item{LAT_DD83}{latitude NAD83.....} consider reloading
-  \item{LON_DD83}{.....}
-  \item{XCOORD}{transformed latitude coordinate}
-  \item{YCOORD}{transformed longitude coordinate}
-  \item{WGT_TP_EXTENT}{weight target pop extent}
-  \item{WGT_SP_CORE}{weight sampled population CORE means sampled}
-  \item{WGT_TP_CORE}{.....}
-  \item{EVAL_CAT}{.....}
-  \item{TNT_CAT}{.....}
-  \item{URBN_NLA17}{.....}
-  \item{STATE_NM}{.....}
-  \item{BENTHIC_MMI}{.....}
-  \item{BENTHIC_MMI_COND}{.....}
-  \item{PHOSPHORUS_COND}{.....}
-  \item{NITROGEN_COND}{.....}
+  \item{UNIQUE_ID}{A unique observation identifier.}
+  \item{SITE_ID}{A unique site identifier.}
+  \item{DSGN_CYCLE}{Year of design cycle.}
+  \item{LAT_DD_N83}{Latitude coordinate using the NAD83 Datum.}
+  \item{LON_DD_N83}{Longitude coordinate using the NAD83 Datum.}
+  \item{XCOORD}{Transformed latitude coordinate in meters.}
+  \item{YCOORD}{Transformed latitude coordinate in meters.}
+  \item{WGT_TP_EXTENT}{Target population weights for extent.}
+  \item{WGT_SP_CORE}{Sampled population weights for sampled sites.}
+  \item{WGT_TP_CORE}{Target population weights for sampled sites.}
+  \item{EVAL_CAT}{Lake evaluation category.}
+  \item{TNT_CAT}{Target vs Nontarget evaluation category.}
+  \item{URBN_NLA17}{Urban category.}
+  \item{STATE_NM}{State name.}
+  \item{BENTHIC_MMI}{Benthic MMI value.}
+  \item{BENTHIC_MMI_COND}{Benthic MMI categories.}
+  \item{PHOSPHORUS_COND}{Phosphorus condition categories.}
+  \item{NITROGEN_COND}{Nitrogen condition categories.}
 }
 }
 \usage{
 NLA_West
 }
 \description{
-A data frame of lake information from a "National Lakes Assessment" in the 
-Western United States.
+A data frame consisting lake observations from a subset of the Environmental
+Protection Agency's "National Lakes Assessment" in the Western United 
+States duing the years 2012 and 2017.
 }
 \keyword{datasets}
