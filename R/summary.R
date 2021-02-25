@@ -17,13 +17,16 @@
 #'
 #' @param object A sample frame object having class \code{sframe} or a design object
 #'  output from \code{grts()} or \code{irs()} having class \code{design}.
+#'  
 #' @param formula A formula. Left hand side variables can be numeric or
 #' categorical (or factor) and right hand side variables can be categorical
 #' (or factor). Right hand side variables that are numeric will be coerced
 #' to a categorical (or factor) variable. If an intercept is included in the
 #' right hand side formula, the total will also be summarized.
+#' 
 #' @param onlyshow A string indicating the level of the single right hand side
 #' variable for which a summary is requested.
+#' 
 #' @param ... Additional arguments to pass to \code{summary()}. If the left hand
 #' side of the formula is empty, the appropriate generic arguments are passed
 #' to \code{summary.data.frame}. If the left hand side of the formula is provided,
@@ -111,7 +114,7 @@ summary.design <- function(object, formula, onlyshow = NULL, ...) {
 cat_summary <- function(formlist, varsf, ...) {
   dotlist <- list(...)
   if (!("maxsum" %in% names(dotlist))) {
-    dotlist$maxsum <- 1e10
+    dotlist$maxsum <- 10
   }
   if ("sf" %in% class(varsf)) {
     varsf_nogeom <- st_drop_geometry(varsf)
