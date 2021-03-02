@@ -35,16 +35,18 @@ attrisk_var(
 \item{stressor}{Vector of the categorical stressor variable.}
 
 \item{response_levels}{Vector of category values (levels) for the
-categorical response variable.  If response_levels equals NULL, then values
-"Poor" and "Good" are used for the first level and second level of the
-response variable, respectively.  The default is NULL.}
+categorical response variable.  If \code{response_levels} equals
+\code{NULL}, then values \code{"Poor"} and \code{"Good"} are used for the first level
+and second level of the response variable, respectively.  The default is
+\code{NULL}.}
 
 \item{stressor_levels}{Vector of category values (levels) for the
-categorical stressor variable.  If stressor_levels equals NULL, then values
-"Poor" and "Good" are used for the first level and second level of the
-stressor variable, respectively.  The default is NULL.}
+categorical stressor variable.  If \code{stressor_levels} equals
+\code{NULL}, then values \code{"Poor"} and \code{"Good"} are used for the first level
+and second level of the stressor variable, respectively.  The default is
+\code{NULL}.}
 
-\item{wgt}{Vector of the final adjusted weight (inverse of the sample
+\item{wgt}{Vector of the final adjusted weight (reciprocal of the sample
 inclusion probability) for each site, which is either the weight for a
 single-stage sample or the stage two weight for a two-stage sample.}
 
@@ -57,14 +59,14 @@ the y- coordinate for a single-stage sample or the stage two y-coordinate
 for a two-stage sample.}
 
 \item{stratum_ind}{Logical value that indicates whether the sample is
-stratified, where TRUE = a stratified sample and FALSE = not a stratified
-sample.}
+stratified, where \code{TRUE} = a stratified sample and \code{FALSE} =
+not a stratified  sample.}
 
 \item{stratum_level}{Vector of the stratum levels for the sites.}
 
 \item{cluster_ind}{Logical value that indicates whether the sample is a
-two- stage sample, where TRUE = a two-stage sample and FALSE = not a
-two-stage sample.}
+two-stage sample, where \code{TRUE} = a two-stage sample and \code{FALSE}
+= not a two-stage sample.}
 
 \item{cluster}{Vector of the stage one sampling unit (primary sampling unit
 or cluster) code for each site.}
@@ -76,12 +78,12 @@ or cluster) code for each site.}
 \item{y1}{Vector of the stage one y-coordinate for location for each site.}
 
 \item{pcfactor_ind}{Logical value that indicates whether the finite
-population correction factor is used during variance estimation, where TRUE
-= use the population correction factor and FALSE = do not use the factor.
-To employ the correction factor for a single-stage sample, a value must be
-supplied for argument fpcsize.  To employ the correction factor for a
-two-stage sample, values must be supplied for arguments Ncluster and
-stage1size.}
+population correction factor is used during variance estimation, where
+\code{TRUE} = use the population correction factor and \code{FALSE} = do
+not use the factor. To employ the correction factor for a single-stage
+sample, a value must be supplied for argument \code{fpcsize}.  To employ the
+correction factor for a two-stage sample, values must be supplied for
+arguments \code{Ncluster} and \code{stage1size}.}
 
 \item{fpcsize}{Size of the resource, which is required for calculation of the
 finite population correction factor for a single-stage sample.}
@@ -94,12 +96,12 @@ factor for a two-stage sample.}
 two-stage sample, which is required for calculation of the finite
 population correction factor for a two-stage sample.}
 
-\item{vartype}{The choice of variance estimator, where "Local" = local mean
-estimator and "SRS" = SRS estimator.}
+\item{vartype}{The choice of variance estimator, where \code{"Local"} = local mean
+estimator and \code{"SRS"} = SRS estimator.}
 
 \item{warn_ind}{Logical value that indicates whether warning messages were
-generated, where TRUE = warning messages were generated and FALSE = warning
-messages were not generated.}
+generated, where \code{TRUE} = warning messages were generated and
+\code{FALSE} = warning messages were not generated.}
 
 \item{warn_df}{A data frame for storing warning messages.}
 

@@ -1,5 +1,5 @@
-################################################################################
-# Function: cdf_prop
+###############################################################################
+# Function: cdf_prop (exported)
 # Programmer: Tom Kincaid
 # Date: March 3, 2020
 #
@@ -19,21 +19,21 @@
 #'
 #' @param z Vector of the response value for each site.
 #'
-#' @param wgt Vector of the final adjusted weight (inverse of the sample
+#' @param wgt Vector of the final adjusted weight (reciprocal of the sample
 #'   inclusion probability) for each site, which is either the weight for a
 #'   single- stage sample or the stage two weight for a two-stage sample.
 #'
 #' @param val Vector of the set of values at which the CDF is estimated.
 #'
 #' @param cluster_ind Logical value that indicates whether the sample is a
-#'   two-stage sample, where TRUE = a two-stage sample and FALSE = not a
+#'   two-stage sample, where \code{TRUE} = a two-stage sample and \code{FALSE} = not a
 #'   two-stage sample.
 #'
 #' @param cluster Vector of the stage one sampling unit (primary sampling unit
-#'   or cluster) code for each site.  The default value is NULL.
+#'   or cluster) code for each site.  The default value is \code{NULL}.
 #'
 #' @param wgt1 = Vector of the final adjusted stage one weight for each site.
-#'   The default value is NULL.
+#'   The default value is \code{NULL}.
 #'
 #' @return The CDF estimate.
 #'
@@ -42,44 +42,45 @@
 #' @keywords survey
 #'
 #' @export
-################################################################################
+###############################################################################
 
 cdf_prop <- function(z, wgt, val, cluster_ind, cluster = NULL, wgt1 = NULL) {
 
-# Calculate additional required values
+  # Calculate additional required values
 
-   m <- length(val)
-   if(cluster_ind) {
-      cluster <- factor(cluster)
-      ncluster <- length(levels(cluster))
-      z_1st <- split(z, cluster)
-      wgt2_1st <- split(wgt, cluster)
-      wgt1_u <- as.vector(tapply(wgt1, cluster, unique))
-   }
+  m <- length(val)
+  if (cluster_ind) {
+    cluster <- factor(cluster)
+    ncluster <- length(levels(cluster))
+    z_1st <- split(z, cluster)
+    wgt2_1st <- split(wgt, cluster)
+    wgt1_u <- as.vector(tapply(wgt1, cluster, unique))
+  }
 
-# Calculate the cdf estimate
+  # Calculate the cdf estimate
 
-   cdf <- numeric(m)
-   if(cluster_ind) {
-      for(i in 1:m) {
-         temp <- numeric(ncluster)
-         for(j in 1:ncluster) {
-            temp[j] <- sum(ifelse(z_1st[[j]] <= val[i], wgt2_1st[[j]], 0))
-         }
-         cdf[i] <- sum(wgt1_u*temp)
+  cdf <- numeric(m)
+  if (cluster_ind) {
+    for (i in 1:m) {
+      temp <- numeric(ncluster)
+      for (j in 1:ncluster) {
+        temp[j] <- sum(ifelse(z_1st[[j]] <= val[i], wgt2_1st[[j]], 0))
       }
-   } else {
-      for(i in 1:m) {
-         cdf[i] <- sum(ifelse(z <= val[i], wgt, 0))
-      }
-   }
+      cdf[i] <- sum(wgt1_u * temp)
+    }
+  } else {
+    for (i in 1:m) {
+      cdf[i] <- sum(ifelse(z <= val[i], wgt, 0))
+    }
+  }
 
-   if(cluster_ind)
-      cdf <- cdf/sum(wgt1*wgt)
-   else
-      cdf <- cdf/sum(wgt)
+  if (cluster_ind) {
+    cdf <- cdf / sum(wgt1 * wgt)
+  } else {
+    cdf <- cdf / sum(wgt)
+  }
 
-# Return the estimate
+  # Return the estimate
 
-   cdf
+  cdf
 }

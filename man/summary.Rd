@@ -14,8 +14,8 @@
 \method{summary}{design}(object, formula, onlyshow = NULL, ...)
 }
 \arguments{
-\item{object}{A sample frame object having class `sframe` or a design object
-output from `grts()` or `irs()` having class "design".}
+\item{object}{A sample frame object having class \code{sframe} or a design object
+output from \code{grts()} or \code{irs()} having class \code{design}.}
 
 \item{formula}{A formula. Left hand side variables can be numeric or
 categorical (or factor) and right hand side variables can be categorical
@@ -26,13 +26,13 @@ right hand side formula, the total will also be summarized.}
 \item{onlyshow}{A string indicating the level of the single right hand side
 variable for which a summary is requested.}
 
-\item{...}{Additional arguments to pass to `summary()`. If the left hand
+\item{...}{Additional arguments to pass to \code{summary()}. If the left hand
 side of the formula is empty, the appropriate generic arguments are passed
-to summary.data.frame. If the left hand side of the formula is provided, 
-the appropriate generic arguments are passed to summary.default}
+to \code{summary.data.frame}. If the left hand side of the formula is provided,
+the appropriate generic arguments are passed to \code{summary.default}.}
 }
 \value{
-If the left hand side of the formula is empty, a named list 
+If the left hand side of the formula is empty, a named list
 containing summaries of the count distribution for each right hand side
 varaiable is returned. If the left hand side of the formula contains a
 variable, a named list contianing five number
@@ -40,9 +40,9 @@ summaries (numeric left hand side) or tables (categorical or factor left
 hand side) is returned for each right hand side variable.
 }
 \description{
-`summary` summarizes sample frames or design objects, depending on 
-which is provided. For design objects,sites in the base sample and
-replacement sites (if they exist) are summarized. The right hand of the 
+\code{summary()} summarizes sample frames or design objects, depending on
+which is provided. For design objects, sites in the base sample and
+replacement sites (if they exist) are summarized. The right hand of the
 formula specifies the categorical variables (or factors) you want to
 summarize by. If the left hand side of the formula is empty, the
 summary will be of the
@@ -52,11 +52,15 @@ grouped by each of the right hand variables.
 }
 \examples{
 \dontrun{
-   NE_lakes <- sframe(NE_lakes)
-   summary(NE_lakes, ELEVATION ~ 1)
-   summary(NE_lakes, ~ ELEVATION_CAT * AREA_HA_CAT)
-   sample <- grts(NE_lakes, 100)
-   summary(sample, ELEVATION ~ 1)
-   summary(sample, ~ ELEVATION_CAT * AREA_HA_CAT)
+NE_lakes <- sframe(NE_lakes)
+summary(NE_lakes, ELEVATION ~ 1)
+summary(NE_lakes, ~ ELEVATION_CAT * AREA_HA_CAT)
+sample <- grts(NE_lakes, 100)
+summary(sample, ELEVATION ~ 1)
+summary(sample, ~ ELEVATION_CAT * AREA_HA_CAT)
 }
+###############################################################################
+}
+\author{
+Michael Dumelle \email{Dumelle.Michael@epa.gov}
 }

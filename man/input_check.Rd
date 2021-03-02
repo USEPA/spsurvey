@@ -31,25 +31,26 @@ input_check(
 variables, and subpopulation (domain) variables.}
 
 \item{design_names}{Vector composed of character values that identify the
-names of the following survey design variables in the dframe argument:
-siteID, weight, xcoord, ycoord, stratumID, clusterID, weight1, xcoord1,
-ycoord1, sweight, sweight1, fpcsize, Ncluster, stage1size.}
+names of the following survey design variables in the \code{dframe} data frame:
+\code{siteID}, \code{weight}, \code{xcoord}, \code{ycoord}, \code{stratumID},
+\code{clusterID}, \code{weight1}, \code{xcoord1},
+\code{ycoord1}, \code{sweight}, \code{sweight1}, \code{fpcsize}, \code{Ncluster}, \code{stage1size}.}
 
 \item{vars_cat}{Vector composed of character values that identify the
-names of categorical response variables in the dframe data frame.}
+names of categorical response variables in the \code{dframe} data frame.}
 
 \item{vars_cont}{Vector composed of character values that identify the
-names of continuous response variables in the dframe data frame.}
+names of continuous response variables in the \code{dframe} data frame.}
 
 \item{vars_stressor}{Vector composed of character values that identify the
-names of stressor variables in the dframe argument.}
+names of stressor variables in the \code{dframe} data frame.}
 
 \item{vars_nondetect}{Vector composed of character values that identify the
-names of logical variables in the dframe data frame specifying the presence
+names of logical variables in the \code{dframe} data frame specifying the presence
 of not detected (nondetect) values for response variables.}
 
 \item{subpops}{Vector composed of character values that identify the
-names of subpopulation variables in the dframe argument.}
+names of subpopulation variables in the \code{dframe} data frame.}
 
 \item{sizeweight}{Logical value that indicates whether size weights should be
 used during estimation.}
@@ -60,14 +61,14 @@ correction factor is used during variance estimation.}
 \item{popsize}{List providing known size of the resource.}
 
 \item{vartype}{Character value providing choice of the variance estimator,
-where "Local" = the local mean estimator, "SRS" = the simple random
-sampling estimator, "HT" = the Horvitz-Thompson estimator, and "YG" = the
+where \code{"Local"} = the local mean estimator, \code{"SRS"} = the simple random
+sampling estimator, \code{"HT"} = the Horvitz-Thompson estimator, and \code{"YG"} = the
 Yates-Grundy estimator.}
 
 \item{jointprob}{Character value providing choice of joint inclusion
 probability approximation for use with Horvitz-Thompson and Yates-Grundy
-variance estimators, where "overton" indicates the Overton approximation,
-"hr" indicates the Hartley_Rao approximation, and "brewer" equals the
+variance estimators, where \code{"overton"} indicates the Overton approximation,
+\code{"hr"} indicates the Hartley_Rao approximation, and \code{"brewer"} equals the
 Brewer approximation.}
 
 \item{conf}{Numeric value providing the confidence level.}
@@ -88,8 +89,8 @@ generated.}
 \item{error_vec}{Vector for storing error messages.}
 }
 \value{
-A list consisting of dframe, vars_cat, vars_cont, vars_stressor,
-  subpops, popsize, vartype, jointprob, error_ind, and error_vec.
+A list consisting of \code{dframe}, \code{vars_cat}, \code{vars_cont}, \code{vars_stressor},
+  \code{subpops}, \code{popsize}, \code{vartype}, \code{jointprob}, \code{error_ind}, and \code{error_vec}.
 }
 \description{
 This function checks input values for errors, consistency, and compatibility

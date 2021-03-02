@@ -48,13 +48,13 @@ make_varsf <- function(object, formlist) {
   # can possibly deprecate this in the future by making use of
   # model.frame and extracting the main effects and using them to make the interactions
   # only real advantage will be creating variables for use mid formula with numeric variables
-  
+
 
 
   if (formlist$intercept && is.null(formlist$response) && length(formlist$varlabels) == 0) {
     return(object)
   } else {
-    # store geometry 
+    # store geometry
     if ("sf" %in% class(object)) {
       object_geometry <- st_geometry(object)
       object_df <- st_drop_geometry(object)
@@ -75,7 +75,7 @@ make_varsf <- function(object, formlist) {
     # converted to synctactic name with .
     if ("sf" %in% class(object)) {
       varsf <- st_as_sf(varsf, geometry = object_geometry)
-    } 
+    }
     return(varsf)
   }
 }
@@ -92,42 +92,42 @@ get_varlevels <- function(formlist, varsf) {
   levels <- sum(unlist(levels))
 }
 
-make_level_args_list <- function(varsf, level_args) {
-  level_args_list <- lapply(names(level_args), function(x) {
+make_varlevel_args_list <- function(varsf, varlevel_args) {
+  varlevel_args_list <- lapply(names(varlevel_args), function(x) {
     vardf <- st_drop_geometry(varsf[x])
     vardf[[x]] <- as.character(vardf[[x]])
     colnames(vardf) <- "levels"
     vardf$index <- 1:nrow(vardf)
-    level_args_df <- as.data.frame(level_args[[x]], stringsAsFactors = FALSE)
-    level_args_df <- merge(vardf, level_args_df)
-    level_args_df <- level_args_df[order(level_args_df$index), , drop = FALSE]
-    badcol <- which(colnames(level_args_df) %in% c("levels", "index"))
-    level_args_df <- level_args_df[, -badcol, drop = FALSE]
-    level_args_listval <- as.list(level_args_df)
+    varlevel_args_df <- as.data.frame(varlevel_args[[x]], stringsAsFactors = FALSE)
+    varlevel_args_df <- merge(vardf, varlevel_args_df)
+    varlevel_args_df <- varlevel_args_df[order(varlevel_args_df$index), , drop = FALSE]
+    badcol <- which(colnames(varlevel_args_df) %in% c("levels", "index"))
+    varlevel_args_df <- varlevel_args_df[, -badcol, drop = FALSE]
+    varlevel_args_listval <- as.list(varlevel_args_df)
   })
-  names(level_args_list) <- names(level_args)
-  level_args_list
+  names(varlevel_args_list) <- names(varlevel_args)
+  varlevel_args_list
 }
 
-make_variable_args_list <- function(varsf, variable_args) {
-  variable_args_list <- lapply(names(variable_args), function(x) {
-    variable_args_listsub <- lapply(names(variable_args[[x]]), function(y) {
+make_var_args_list <- function(varsf, var_args) {
+  var_args_list <- lapply(names(var_args), function(x) {
+    var_args_listsub <- lapply(names(var_args[[x]]), function(y) {
       vardf <- st_drop_geometry(varsf[y])
       vardf[[y]] <- as.character(vardf[[y]])
       colnames(vardf) <- "levels"
       vardf$index <- 1:nrow(vardf)
-      variable_args_df <- as.data.frame(variable_args[[x]][[y]], stringsAsFactors = FALSE)
-      variable_args_df <- merge(vardf, variable_args_df)
-      variable_args_df <- variable_args_df[order(variable_args_df$index), , drop = FALSE]
-      badcol <- which(colnames(variable_args_df) %in% c("levels", "index"))
-      variable_args_df <- variable_args_df[, -badcol, drop = FALSE]
-      variable_args_listsubval <- as.list(variable_args_df)
+      var_args_df <- as.data.frame(var_args[[x]][[y]], stringsAsFactors = FALSE)
+      var_args_df <- merge(vardf, var_args_df)
+      var_args_df <- var_args_df[order(var_args_df$index), , drop = FALSE]
+      badcol <- which(colnames(var_args_df) %in% c("levels", "index"))
+      var_args_df <- var_args_df[, -badcol, drop = FALSE]
+      var_args_listsubval <- as.list(var_args_df)
     })
-    names(variable_args_listsub) <- names(variable_args[[x]])
-    variable_args_listsub
+    names(var_args_listsub) <- names(var_args[[x]])
+    var_args_listsub
   })
-  names(variable_args_list) <- names(variable_args)
-  variable_args_list
+  names(var_args_list) <- names(var_args)
+  var_args_list
 }
 
 check_rhs_cat <- function(varsf, formlist) {
@@ -138,7 +138,6 @@ check_rhs_cat <- function(varsf, formlist) {
 }
 
 match_sf_defaults <- function(varsf, list_args) {
-
   sf_default_df <- data.frame(
     geometry = c("POINT", "MULTIPOINT", "LINESTRING", "MULTILINESTRING", "POLYGON", "MULTIPOLYGON"),
     pch = c(1, 1, 1, 1, NA, NA),
@@ -159,13 +158,12 @@ match_sf_defaults <- function(varsf, list_args) {
 
   names_list_args <- names(list_args)
   list_args <- lapply(names_list_args, function(x) {
-      if (x %in% names(sf_defaults) && any(is.na(list_args[[x]]))) {
-        list_args[[x]] <- ifelse(is.na(list_args[[x]]), sf_defaults[[x]], list_args[[x]])
-      } else {
-        list_args[[x]] <- list_args[[x]]
-      }
+    if (x %in% names(sf_defaults) && any(is.na(list_args[[x]]))) {
+      list_args[[x]] <- ifelse(is.na(list_args[[x]]), sf_defaults[[x]], list_args[[x]])
+    } else {
+      list_args[[x]] <- list_args[[x]]
     }
-  )
+  })
   names(list_args) <- names_list_args
   list_args
 }

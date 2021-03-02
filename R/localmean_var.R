@@ -1,5 +1,5 @@
-################################################################################
-# Function: localmean_var
+###############################################################################
+# Function: localmean_var (exported)
 # Programmers: Don Stevens and Tom Kincaid
 # Date: October 17, 2000
 #
@@ -11,29 +11,29 @@
 #'  the sample points.
 #'
 #' @param weight_1st List from the local mean weight function containing two
-#'  elements: a matrix named ij composed of the index values of neighboring
-#'  points and a vector named gwt composed of weights.
+#'  elements: a matrix named \code{ij} composed of the index values of neighboring
+#'  points and a vector named \code{gwt} composed of weights.
 #'
 #' @return The local mean estimator of the variance.
 #'
-#'@author Tom Kincaid \email{Kincaid.Tom@epa.gov}
+#' @author Tom Kincaid \email{Kincaid.Tom@epa.gov}
 #'
-#'@keywords survey
+#' @keywords survey
 #'
-#'@export
-################################################################################
+#' @export
+###############################################################################
 
 localmean_var <- function(z, weight_1st) {
 
-# Calculate local means
+  # Calculate local means
 
-   zb <- sapply(split(z[weight_1st$ij[, 2]] * weight_1st$gwt, weight_1st$ij[, 1]), sum)
+  zb <- sapply(split(z[weight_1st$ij[, 2]] * weight_1st$gwt, weight_1st$ij[, 1]), sum)
 
-# Calculate the variance estimate
+  # Calculate the variance estimate
 
-   lmvar <- sum(weight_1st$gwt * (z[weight_1st$ij[, 2]] - zb[weight_1st$ij[, 1]])^2)
+  lmvar <- sum(weight_1st$gwt * (z[weight_1st$ij[, 2]] - zb[weight_1st$ij[, 1]])^2)
 
-# Return the variance estimate
+  # Return the variance estimate
 
-   lmvar
+  lmvar
 }

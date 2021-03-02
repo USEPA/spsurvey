@@ -34,12 +34,12 @@
 #' @importFrom deldir deldir tile.list
 #' @importFrom graphics axis box legend lines mtext par plot points text title
 #' @importFrom grDevices graphics.off pdf rainbow
-#' @importFrom Hmisc describe
 #' @importFrom MASS ginv
-#' @importFrom rgeos gIntersection
-#' @importFrom sp SpatialPoints SpatialPointsDataFrame
 #' @importFrom stats addmargins chisq.test confint dist dnorm ftable model.frame
-#'             model.matrix na.pass optimize pchisq pf pnorm qnorm rnorm runif
-#'             update var weights
+#'             model.matrix na.omit na.pass optimize pchisq pf pnorm qnorm rnorm runif
+#'             terms update var weights
+#' @importFrom units set_units
+#'             
+#'
 #'
 "_PACKAGE"

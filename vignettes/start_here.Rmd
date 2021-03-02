@@ -1,5 +1,5 @@
 ---
-title: "spsurvey - Start Here"
+title: "Start Here"
 author: "Michael Dumelle, Tony Olsen, Tom Kincaid, and Marc Weber"
 output: 
   html_document:
@@ -11,6 +11,10 @@ output:
       collapsed: no
       smooth_scroll: no
     toc_depth: 2
+vignette: >
+  %\VignetteIndexEntry{Start Here}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
 ---
 
 ```{r, include = FALSE}
@@ -20,46 +24,66 @@ knitr::opts_chunk$set(
   warning = FALSE, 
   message = FALSE
 )
-library(tidyverse)
-library(devtools)
-load_all()
 ```
 
-# Installing and Loading `spsurvey`
+# Installing and Loading spsurvey
 
-If this is your first time using the `spsurvey` package, you will need to run:
+If this is your first time using the spsurvey package, you will need to run:
 ```{r, eval = FALSE}
 install.packages("spsurvey")
 ```
 to install the package. You only need to run this code once per version of R.
 
-After the `spsurvey` package is installed, you must load it into R each time you start a new R session. To load the `spsurvey` package into your R session, run
-```{r setup, eval = FALSE}
+After the spsurvey package is installed, you must load it into R each time you start a new R session. To load the spsurvey package into your R session, run
+```{r setup}
 library(spsurvey)
 ```
 
 
 If you want to replicate the exact results in any of these vignettes at a later time, you will need to set a "seed" in your code just after the `library(spsurvey)` statement. To set the seed that matches the one we will use, run
 ```{r}
-set.seed(5)
+set.seed(5.0) # a nod to the current spsurvey version
 ```
 
 # `sf` Objects
 
-To obtain random samples using the algorithms in `spsurvey`, your data must be an `sf` object. An `sf` object, short for a "simple features" object, is an object with a unique structure used to conveniently store spatial data in R. `sf` objects are constructed using the `sf` package in R (Pebesma, 2018). The `sf` package is loaded and installed alongside the `spsurvey` package, so you do not need to run `install.packages("sf")` or `library(spsurvey)` to access the `sf` package if `spsurvey` is already installed and loaded. 
+To obtain random samples using the algorithms in spsurvey, your data must be an `sf` object. An `sf` object, short for a "simple features" object, is an object with a unique structure used to conveniently store spatial data in R. `sf` objects are constructed using the `sf` package in R (Pebesma, 2018). The sf package is loaded and installed alongside the spsurvey package, so you do not need to run `install.packages("sf")` or `library(spsurvey)` to access the sf package if spsurvey is already installed and loaded. 
 
-There are three ways we recommend constructing `sf` objects in R. The first is to read a shapefile directly into R using `st_read()` or `read_sf()`. The second is to use the `st_sf()` function or the `st_as_sf()` function to combine an appropriate R object (most commonly a data frame) and an appropriate geometry object into an `sf` object. The third only applies if your data is an `sp` object --  Use the `sframe()` function in `spsurvey` to convert your `sp` object to an `sf` object. For more information regarding `sf` objects, see Pebesma (2018) and Lovelace et al. (2019). 
+There are three ways we recommend constructing sf objects in R. The first is to read a shapefile directly into R using `st_read()` or `read_sf()`. The second is to use the `st_sf()` function or the `st_as_sf()` function to combine an appropriate R object (most commonly a data frame) and an appropriate geometry object into an `sf` object. The third only applies if your data is an `sp` object --  Use the `sframe()` function in spsurvey to convert your `sp` object to an `sf` object. For more information regarding `sf` objects, see Pebesma (2018) and Lovelace et al. (2019). 
 
 # Coordinate Reference Systems
 
-To work with spatial data and `sf` objects, it's importatnt to understand coordinate reference systems. A coordinate reference system (CRS) identifies a unique location on the Earth's surface, and a CRS is either geographic or projected. A geographic CRS uses longitude (east-west direction) and latitude (north-south direction) coordinates to represent location with respect to a specific ellipsoid or spheroid surface. Geographic CRSs are measured in degrees, *not units like meters or feet*. This has important consequences; for example, a one degree difference in latitude is different at different longitudes. Projected CRSs are measured in standard cartesian coordinates with respect to a flat surface. They have x and y locations, an origin, and a unit of measurement (like meters). 
+To work with spatial data and `sf` objects, it's important to understand coordinate reference systems. A coordinate reference system (CRS) identifies a unique location on the Earth's surface, and a CRS is either geographic or projected. A geographic CRS uses longitude (east-west direction) and latitude (north-south direction) coordinates to represent location with respect to a specific ellipsoid or spheroid surface. Geographic CRSs are measured in degrees, *not units like meters or feet*. This has important consequences; for example, a one degree difference in latitude is different at different longitudes. Projected CRSs are measured in standard Cartesian coordinates with respect to a flat surface. They have x and y locations, an origin, and a unit of measurement (like meters). 
 
 In R, CRS information has traditionally been stored using EPSG codes or proj4string values. This meant that in order to transform your coordinates from one CRS to another, you needed two EPSG codes or proj4strings: one for each CRS. With recent updates in R spatial that [follow GDAL and PROJ](https://www.r-spatial.org/r/2020/03/17/wkt.html), CRSs in `sf` are now stored in R as lists with two components, `input`, which contains information regarding the EPSG code and proj4string, and `wkt`, an open geospatial standard format. For more information on CRSs and EPSG codes, see https://r-spatial.github.io/sf/index.html, Pebesma (2018), and Lovelace et al. (2019). To search for various coordinate reference systems and EPSG codes, visit https://spatialreference.org or https://epsg.io/ .
 
 It is important that you use an appropriate CRS in your `sf` object. If your CRS is mis-specified, you may get misleading results. `spsurvey` will use the coordinates in the geometry list-column stored in your `sf` object, so it is your responsibility to make sure they have the correct CRS.
+
+# Useful spsurvey Functions
+
+There are two main classes of functions in spsurvey: design functions and analysis functions. Design functions are used to select probability samples, and analysis functions are used to analyze those probability samples. Next we mention the most commonly used design and analysis functions in spsurvey.
+
+## Design Functions
+
+The `grts()` function selects spatially probability samples using the Generalized Random Tesselation Stratified algorithm (Stevens and Olsen, 2004). The `irs()` function selects probability samples using independent random sampling. Both `grts()` and `irs()` have options for equal, unequal, and proportional sampling designs that can incorporate stratification, legacy (historical) sites, minimum distance between sites, and the selection of replacement sites (reverse hierarchical ordering and nearest neighbor). The `spbalance()` function calculates the spatial balance of a design.
+
+## Analysis Functions
+
+The `cat_analysis()` and `cont_analysis()` functions are used to analyze categorical and continuous response variables, respectively. The `attrisk_analysis()` and `relrisk_analysis()` functions are used to analyze attributable and relative risk of response variables, respectively. The `change_analysis()` function is used to analyze change among two probability probability surveys. The `cont_cdftest()` function is used to analyze the cumulative distribution function (CDF) of continuous response variables.
+
+# Vignettes in spsurvey
+
+The `plotting` vignette summarizes plotting in spsurvey. The `design_points`, `design_linear`, and `design_area` vignettes summarizes selecting probability samples for point (finite), linear (infinite), and areal (infinite) networks, respectively. The `analysis` vignette summarizes selecting probability samples for point (finite), linear (infinite), and areal (infinite) networks, respectively.
+
+# Installing a Previous Version of spsurvey
+
+Many significant changes were made to spsurvey in the recent update to version 5.0.  We recognize that some of your old code may not run properly while using the new version. Though we recommend adapting your code to the new version, you may also install a previous version of the package. For information regarding the installation of previous version of R packages, please visit this [RStudio Support Page](https://support.rstudio.com/hc/en-us/articles/219949047-Installing-older-versions-of-packages).
 
 # References
 
 Lovelace, R., Nowosad, J., & Muenchow, J. (2019). Geocomputation with R. CRC Press.
 
 Pebesma, E., (2018). Simple Features for R: Standardized Support for Spatial Vector Data. *The R Journal*, 10 (1):439-446. https://doi.org/10.32614/RJ-2018-009
+
+Stevens Jr, D. L. and Olsen, A. R. (2004). Spatially balanced sampling of natural resources.
+*Journal of the American Statistical Association*, 99(465):262-278.

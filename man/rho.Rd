@@ -15,10 +15,7 @@ sites Sample object returned in reverse hierarchical order
 \description{
 Place the sites selected by the UPpivotal method in reverse hierarchical order
 }
-\examples{
-
-}
 \author{
-Tony Olsen email{olsen.tony@epa.gov}
+Tony Olsen \email{olsen.tony@epa.gov}
 }
 \keyword{survey}

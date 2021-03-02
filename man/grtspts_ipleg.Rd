@@ -12,13 +12,13 @@ grtspts_ipleg(ip, legacy)
 sample frame must be included in the sample as legacy sites}
 
 \item{legacy}{A logical vector that identifies whether an element of the sample
-frame is a legacy site (TRUE) or not (FALSE) that must be included in the sample.}
+frame is a legacy site (\code{TRUE}) or not (\code{FALSE}) that must be included in the sample.}
 }
 \value{
 A numeric vector of inclusion probabilities with all values being greater
-  than 0 and less than or equal 1. Values equal to 1 will be selected with certainty.
-  Values equal to 0 will not be selected. Legacy sites will have an inclusion
-  probability equal to 1.
+  than \code{0} and less than or equal \code{1}. Values equal to \code{1} will be selected with certainty.
+  Values equal to \code{0} will not be selected. Legacy sites will have an inclusion
+  probability equal to \code{1}.
 }
 \description{
 Adjust the initial inclusion probabities for point sample to ensure inclusion of
@@ -26,13 +26,14 @@ legacy elements that must be in the sample.
 }
 \examples{
 a <- runif(30)
-tmp <- grtspts_ipleg(ip = 10 * a/sum(a), legacy = c(TRUE, rep(FALSE, 5), TRUE, TRUE,
-                 rep(FALSE, 22)) )
+tmp <- grtspts_ipleg(ip = 10 * a / sum(a), legacy = c(
+  TRUE, rep(FALSE, 5), TRUE, TRUE,
+  rep(FALSE, 22)
+))
 tmp
-
 }
 \author{
-Tony Olsen email{olsen.tony@epa.gov}
+Tony Olsen \email{olsen.tony@epa.gov}
 }
 \keyword{inclusion}
 \keyword{probability}

@@ -7,19 +7,22 @@
 dframe(object)
 }
 \arguments{
-\item{object}{An `sp` or `sf` object}
+\item{object}{An \code{sp} or \code{sf} object}
 }
 \value{
-An `dframe` object
+An \code{dframe} object
 }
 \description{
-dframe gives data frames, `sp`, and `sf` objects class `"dframe"` to be used
-in `summary()` generics. `sp` objects are coerced to `sf`
-objects prior to giving class `dframe`.
+dframe gives data frames, \code{sp}, and \code{sf} objects class \code{dframe} to be used
+in \code{summary()} generics. \code{sp} objects are coerced to \code{sf}
+objects prior to giving class \code{dframe}.
 }
 \examples{
 \dontrun{
 data("NE_lakes")
 NE_lakes <- dframe(NE_lakes)
 }
+}
+\author{
+Michael Dumelle
 }

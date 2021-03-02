@@ -34,10 +34,10 @@ size in BIBD terms)}
 period.}
 
 \item{skip}{Number of sampling occasions to skip between planned sampling
-periods, e.g., sampling will occur only every 5 periods if skip = 5.}
+periods, e.g., sampling will occur only every 5 periods if \code{skip = 5}.}
 
 \item{iter}{Maximum number of iterations in search for D-optimal
-Generallized Youden Design.}
+Generalized Youden Design.}
 }
 \value{
 A two-dimensional array of sample sizes to be sampled for each panel
@@ -52,7 +52,7 @@ design.  Based on algorithmic idea by Cook and Nachtsheim (1989) and
 implemented by Robert Wheeler.
 }
 \details{
-The function uses find.BIB function from crossdes package to
+The function uses \code{find.BIB} function from crossdes package to
 search for a D-optimal block design.  crossdes uses package AlgDesign
 to search balanced incomplete block designs.
 }
@@ -60,7 +60,6 @@ to search balanced incomplete block designs.
 # Balanced incomplete block design with 20 sample occasions, 20 panels,
 # 3 visits to each unit, and 20 units in each panel.
 revisit_bibd(n_period = 20, n_pnl = 20, n_visit = 3, nsamp = 20)
-
 }
 \references{
 Cook R. D.  and C. Nachtsheim. (1989). Computer-aided blocking of factorial

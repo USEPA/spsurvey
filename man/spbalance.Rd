@@ -13,29 +13,40 @@ spbalance(
 )
 }
 \arguments{
-\item{object}{A design object output from `grts()` or `irs()`
-having class "spsurvey"}
+\item{object}{A design object output from \code{grts()} or \code{irs()}
+having class \code{"design"}.}
 
-\item{sframe}{An `sframe or `sf` object}
+\item{sframe}{An \code{sframe} or \code{sf} object.}
 
 \item{sites}{The sites in object for which spatial balance metrics
-are desired. This argument must be "sites_base", "sites_over", or 
-"sites_near". Defaults to "sites_base"}
+are desired. This argument must be \code{"sites_base"}, \code{"sites_over"}, or
+\code{"sites_near"}. Defaults to \code{"sites_base"}.}
 
-\item{metrics}{A character vector of spatial balance metrics 
-(pielou, simpsons, chisquare, absolute error). Defaults to 
-"pielou".}
+\item{metrics}{A character vector of spatial balance metrics:
+\itemize{
+  \item{pielou - }{pielou evenness index (the default)}
+  \item{simpsons - }{simpsons evenness index}
+  \item{chisq - }{chi-squared loss}
+  \item{pielou - }{absolute error loss}
+ }}
 
 \item{extents}{Should the total extent within each dirichlet
 tesselation be returned? Defaults to FALSE.}
 }
 \value{
-A list having names equal to each strata
+A list having names equal to each strata.
 }
 \description{
-This function computes the spatial balance of a design with respect 
-to the sample frame (sframe) using Dirichlet Tesselations, measuring the
-extent to which a object is a miniature of sframe. This function is
+This function computes the spatial balance of a design with respect
+to the sample frame (\code{sframe}) using Dirichlet Tesselations, measuring the
+extent to which a object is a miniature of \code{sframe}. This function is
 applicable for unstratified or stratified designs with equal selection
 probabilities.
+}
+\examples{
+\dontrun{
+sample <- grts(NE_Lakes, 30)
+spbalance(sample, NE_Lakes)
+}
+###############################################################################
 }

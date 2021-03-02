@@ -7,37 +7,39 @@
 adjwgt(sites, wgt, wtcat, framesize)
 }
 \arguments{
-\item{sites}{Vector of the logical value for each site, where TRUE = include
-the site and FALSE = do not include the site.}
+\item{sites}{Vector indicating site use; \code{TRUE} indicates the site
+should be inlcuded in the weight adjustment and \code{FALSE} indicates
+the site should not be included in the weight adjustment.}
 
-\item{wgt}{Vector of the initial weight (inverse of the sample inclusion
-probability) for each site.}
+\item{wgt}{Vector of initial weights for each site. These equal
+the reciprocal of the sample inclusion probabilities.}
 
-\item{wtcat}{Vector of the weight adjustment category name for each site.}
+\item{wtcat}{Vector containing each site's weight adjustment
+category name.}
 
-\item{framesize}{Vector of the known size of the frame for each category
-name in wtcat, which must have the names attribute set to match the
-category names used in wtcat.}
+\item{framesize}{Vector containing the known size of the frame
+for each category name in wtcat. The names attribute much match the
+category names in \code{wtcat}.}
 }
 \value{
-Vector of adjusted weights, where the adjusted weight is set to zero
-  for sites that have the logical value in the sites argument set to FALSE.
+Vector of adjusted weights, where the adjusted weight is set
+  to \code{0} for sites whose value in the sites argument was set to
+  \code{FALSE}.
 }
 \description{
-Purpose of this function is to adjust initial survey design weights when
-  implementation results in use of oversample sites or when it is desired to
-  have final weights sum to known frame size.  Adjusted weights are equal to
-  initial weight * framesize/sum(initial weights).  The adjustment is done
-  separately for each category specified in wtcat.
+This function adjusts initial survey design weights when
+  implementation results in the use of oversample sites or if it is desired
+  to have final weights sum to the known frame size.  Adjusted weights are
+  equal to \code{initial_weight * framesize/sum(initial_weight)}.  The adjustment
+  is done separately for each category specified in \code{wtcat}.
 }
 \examples{
-sites <- as.logical(rep(rep(c("TRUE","FALSE"), c(9,1)), 5))
+sites <- as.logical(rep(rep(c("TRUE", "FALSE"), c(9, 1)), 5))
 wgt <- runif(50, 10, 100)
-wtcat <- rep(c("A","B"), c(30, 20))
+wtcat <- rep(c("A", "B"), c(30, 20))
 framesize <- c(15, 10)
-names(framesize) <- c("A","B")
+names(framesize) <- c("A", "B")
 adjwgt(sites, wgt, wtcat, framesize)
-
 }
 \author{
 Tony Olsen \email{olsen.tony@epa.gov}

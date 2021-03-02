@@ -1,11 +1,13 @@
-################################################################################
-# Function: cont_cdftest
+###############################################################################
+# Function: cont_cdftest (exported)
 # Programmer Tom Kincaid
 # Date: October 23, 2020
 # Revised: December 15, 2020 to allow use of the Horvitz-Thompson and
 #          Yates-Grundy variance estimators and to use a new function named
 #          survey_design to create the survey design object
 # Revised: January 28, 2021 to replace "warn.vec" with "warn_vec"
+# Revised: February 23, 2021 to correct errors in the code for creating the
+#          warnings data frame (warn_df)
 #'
 #' Cumulative Distribution Function Inference for a Probability Survey
 #'
@@ -32,111 +34,111 @@
 #'   variables, and subpopulation (domain) variables.
 #'
 #' @param vars Vector composed of character values that identify the
-#'   names of response variables in the dframe data frame.
+#'   names of response variables in the \code{dframe} data frame.
 #'
 #' @param subpops Vector composed of character values that identify the
 #'   names of subpopulation (domain) variables in the dframe data frame.  If a
-#'   value is not provided, the value "All_Sites" is assigned to the subpops
-#'   argument and a factor variable named "All_Sites" that takes the value
-#'   "All Sites" is added to the dframe data frame.  The default value is NULL.
+#'   value is not provided, the value \code{"All_Sites"} is assigned to the subpops
+#'   argument and a factor variable named \code{"All_Sites"} that takes the value
+#'   \code{"All Sites"} is added to the dframe data frame.  The default value is \code{NULL}.
 #'
 #' @param surveyID Character value providing name of the survey ID variable in
-#'   the dframe data frame.  If this argument equals NULL, then the dframe data
-#'   frame contains data for a single survey.  The default value is NULL.
+#'   the \code{dframe} data frame.  If this argument equals \code{NULL}, then the dframe data
+#'   frame contains data for a single survey.  The default value is \code{NULL}.
 #'
 #' @param siteID Character value providing name of the site ID variable in
-#'   the dframe data frame.  For a two-stage sample, the site ID variable
-#'   identifies stage two site IDs.  The default value is "siteID".
+#'   the \code{dframe} data frame.  For a two-stage sample, the site ID variable
+#'   identifies stage two site IDs.  The default value is \code{"siteID"}.
 #'
 #' @param weight Character value providing name of the survey design weight
-#'   variable in the dframe data frame.  For a two-stage sample, the weight
-#'   variable identifies stage two weights.  The default value is "weight".
+#'   variable in the \code{dframe} data frame.  For a two-stage sample, the weight
+#'   variable identifies stage two weights.  The default value is \code{"weight"}.
 #'
 #' @param xcoord Character value providing name of the x-coordinate variable in
-#'   the dframe data frame.  For a two-stage sample, the x-coordinate variable
+#'   the \code{dframe} data frame.  For a two-stage sample, the x-coordinate variable
 #'   identifies stage two x-coordinates.  Note that x-coordinates are required
 #'   for calculation of the local mean variance estimator.  The default value is
-#'   NULL.
+#'   \code{NULL}.
 #'
 #' @param ycoord Character value providing name of the y-coordinate variable in
-#'   the dframe data frame.  For a two-stage sample, the y-coordinate variable
+#'   the \code{dframe} data frame.  For a two-stage sample, the y-coordinate variable
 #'   identifies stage two y-coordinates.  Note that y-coordinates are required
 #'   for calculation of the local mean variance estimator.  The default value is
-#'   NULL.
+#'   \code{NULL}.
 #'
 #' @param stratumID Character value providing name of the stratum ID variable in
-#'   the dframe data frame.  The default value is NULL.
+#'   the \code{dframe} data frame.  The default value is \code{NULL}.
 #'
 #' @param clusterID Character value providing name of the cluster (stage one) ID
-#'   variable in the dframe data frame.  Note that cluster IDs are required for
-#'   a two-stage sample.  The default value is NULL.
+#'   variable in the \code{dframe} data frame.  Note that cluster IDs are required for
+#'   a two-stage sample.  The default value is \code{NULL}.
 #'
 #' @param weight1 Character value providing name of the stage one weight
-#'   variable in the dframe data frame.  The default value is NULL.
+#'   variable in the \code{dframe} data frame.  The default value is \code{NULL}.
 #'
 #' @param xcoord1 Character value providing name of the stage one x-coordinate
-#'   variable in the dframe data frame.  Note that x-coordinates are required
+#'   variable in the \code{dframe} data frame.  Note that x-coordinates are required
 #'   for calculation of the local mean variance estimator.  The default value is
-#'   NULL.
+#'   \code{NULL}.
 #'
 #' @param ycoord1 Character value providing name of the stage one y-coordinate
-#'   variable in the dframe data frame.  Note that y-coordinates are required
+#'   variable in the \code{dframe} data frame.  Note that y-coordinates are required
 #'   for calculation of the local mean variance estimator.  The default value is
-#'   NULL.
+#'   \code{NULL}.
 #'
 #' @param sizeweight Logical value that indicates whether size weights should be
-#'   used during estimation, where TRUE = use size weights and FALSE = do not
+#'   used during estimation, where \code{TRUE} = use size weights and \code{FALSE} = do not
 #'   use size weights. To employ size weights for a single-stage sample, a value
-#'   must be supplied for argument weight.  To employ size weights for a
-#'   two-stage sample, values must be supplied for arguments weight and weight1.
-#'   The default value is FALSE.
+#'   must be supplied for argument \code{weight}.  To employ size weights for a
+#'   two-stage sample, values must be supplied for arguments \code{weight} and \code{weight1}.
+#'   The default value is \code{FALSE}.
 #'
 #' @param sweight Character value providing name of the size weight variable in
-#'   the dframe data frame.  For a two-stage sample, the size weight variable
-#'   identifies stage two size weights.  The default value is NULL.
+#'   the \code{dframe} data frame.  For a two-stage sample, the size weight variable
+#'   identifies stage two size weights.  The default value is \code{NULL}.
 #'
 #' @param sweight1 Character value providing name of the stage one size weight
-#'   variable in the dframe data frame.  The default value is NULL.
+#'   variable in the \code{dframe} data frame.  The default value is \code{NULL}.
 #'
 #' @param popcorrect Logical value that indicates whether the finite population
 #'   correction factor is used during variance estimation. To employ the
 #'   correction factor for a single-stage sample, values must be supplied for
-#'   argument fpcsize.  To employ the correction factor for a two-stage sample,
-#'   values must be supplied for arguments Ncluster and stage1size.  The default
-#'   value is FALSE.
+#'   argument \code{fpcsize}.  To employ the correction factor for a two-stage sample,
+#'   values must be supplied for arguments \code{Ncluster} and \code{stage1size}.  The default
+#'   value is \code{FALSE}.
 #'
-#' @param fpcsize Character value providing name of the variable in the dframe
+#' @param fpcsize Character value providing name of the variable in the \code{dframe}
 #'   data frame that identifies size of the resource, which is required for
 #'   calculation of the finite population correction factor for a single-stage
-#'   sample.  The default value is NULL.
+#'   sample.  The default value is \code{NULL}.
 #'
-#' @param Ncluster Character value providing name of the variable in the dframe
+#' @param Ncluster Character value providing name of the variable in the \code{dframe}
 #'   data frame that identifies the number of clusters (stage one sampling
 #'   units) in the resource, which is required for calculation of the finite
 #'   population correction factor for a two-stage sample.  This argument is also
-#'   required for a two-stage sample when the popsize argument is not equal to
-#'   NULL and the vartype argument equals "Local".  The default value is NULL.
+#'   required for a two-stage sample when the \code{popsize} argument is not equal to
+#'   \code{NULL} and the vartype argument equals \code{"Local"}.  The default value is \code{NULL}.
 #'
 #' @param stage1size Character value providing name of the variable in the
-#'   dframe data frame that identifies cluster size, i.e. the number of the
+#'   \code{dframe} data frame that identifies cluster size, i.e. the number of the
 #'   stage two sampling units in the resource for a cluster.  Note that cluster
 #'   size is required for calculation of the finite population correction factor
-#'   for a two-stage sample. The default value is NULL.
+#'   for a two-stage sample. The default value is \code{NULL}.
 #'
 #' @param popsize Object that provides values for the population argument of the
-#'   calibrate or postStratify functions.  For the calibrate function, the object
-#'   is a named list, where the names identify factor variables in the dframe
+#'   \code{calibrate} or \code{postStratify} functions.  For the \code{calibrate} function, the object
+#'   is a named list, where the names identify factor variables in the \code{dframe}
 #'   data frame.  Each element of the list is a named vector containing the
 #'   population total for each level of the associated factor variable.  For the
-#'   postStratify function, the object is either a data frame, table, or xtabs
+#'   \code{postStratify} function, the object is either a data frame, table, or xtabs
 #'   object that provides the population total for all combinations of selected
-#'   factor variables in the dframe data frame.  If a data frame is used for
-#'   popsize, the variable containing population totals must be the last
-#'   variable in the data frame.  If a table is used for popsize, the table must
-#'   have named dimnames where the names identify factor variables in the dframe
-#'   data frame.  If the popsize argument is equal to NULL, then neither
+#'   factor variables in the \code{dframe} data frame.  If a data frame is used for
+#'   \code{popsize}, the variable containing population totals must be the last
+#'   variable in the data frame.  If a table is used for \code{popsize}, the table must
+#'   have named \code{dimname}s where the names identify factor variables in the \code{dframe}
+#'   data frame.  If the \code{popsize} argument is equal to \code{NULL}, then neither
 #'   calibration nor post-stratification is performed.  The default value is
-#'   NULL.\cr\cr
+#'   \code{NULL}.\cr\cr
 #'   Example popsize for calibration:\cr
 #'     popsize <- list(Ecoregion = c(East = 750,\cr
 #'                                   Central = 500,\cr
@@ -154,28 +156,28 @@
 #'     popsize <- xtabs(~Ecoregion + Type, data = MySurveyFrame)\cr
 #'
 #' @param vartype Character value providing choice of the variance estimator,
-#'   where "Local" = the local mean estimator, "SRS" = the simple random
-#'   sampling estimator, "HT" = the Horvitz-Thompson estimator, and "YG" = the
-#'   Yates-Grundy estimator.  The default value is "Local".
+#'   where \code{"Local"} = the local mean estimator, \code{"SRS"} = the simple random
+#'   sampling estimator, \code{"HT"} = the Horvitz-Thompson estimator, and \code{"YG"} = the
+#'   Yates-Grundy estimator.  The default value is \code{"Local"}.
 #'
 #' @param jointprob Character value providing choice of joint inclusion
 #'   probability approximation for use with Horvitz-Thompson and Yates-Grundy
-#'   variance estimators, where "overton" indicates the Overton approximation,
-#'   "hr" indicates the Hartley_Rao approximation, and "brewer" equals the
-#'   Brewer approximation.  The default value is "overton".
+#'   variance estimators, where \code{"overton"} indicates the Overton approximation,
+#'   \code{"hr"} indicates the Hartley_Rao approximation, and \code{"brewer"} equals the
+#'   Brewer approximation.  The default value is \code{"overton"}.
 #'
 #' @param testname Name of the test statistic to be reported in the output
-#'   data frame.  Choices for the name are: "Wald", "adjWald", "RaoScott_First",
-#'   and "RaoScott_Second", which correspond to the Wald statistic, adjusted
+#'   data frame.  Choices for the name are: \code{"Wald"}, \code{"adjWald"}, \code{"RaoScott_First"},
+#'   and \code{"RaoScott_Second"}, which correspond to the Wald statistic, adjusted
 #'   Wald statistic, Rao-Scott first-order corrected statistic, and Rao-Scott
-#'   second-order corrected statistic, respectively.  The default is "adjWald".
+#'   second-order corrected statistic, respectively.  The default is \code{"adjWald"}.
 #'
 #' @param nclass Number of classes into which the CDFs will be divided
-#'   (binned), which must equal at least two.  The default is 3.
+#'   (binned), which must equal at least \code{2}.  The default is \code{3}.
 #'
 #' @return Data frame of CDF test results for all pairs of subpopulations
-#'   within each population Type for every response variable.  The data frame
-#'   includes the test statistic specified by argument testname plus its degrees
+#'   within each population type for every response variable.  The data frame
+#'   includes the test statistic specified by argument \code{testname} plus its degrees
 #'   of freedom and p-value.
 #'
 #' @section Other Functions Required:
@@ -210,14 +212,15 @@
 #'
 #' @examples
 #' n <- 200
-#' mysiteID <- paste("Site", 1:n, sep="")
+#' mysiteID <- paste("Site", 1:n, sep = "")
 #' dframe <- data.frame(
 #'   siteID = mysiteID,
 #'   wgt = runif(n, 10, 100),
 #'   xcoord = runif(n),
 #'   ycoord = runif(n),
-#'   stratum = rep(c("Stratum1", "Stratum2"), n/2),
-#'   Resource_Class = sample(c("Agr", "Forest", "Urban"), n, replace=TRUE))
+#'   stratum = rep(c("Stratum1", "Stratum2"), n / 2),
+#'   Resource_Class = sample(c("Agr", "Forest", "Urban"), n, replace = TRUE)
+#' )
 #' ContVar <- numeric(n)
 #' tst <- dframe$Resource_Class == "Agr"
 #' ContVar[tst] <- rnorm(sum(tst), 10, 1)
@@ -231,79 +234,83 @@
 #' mypopsize <- data.frame(
 #'   Resource_Class = rep(c("Agr", "Forest", "Urban"), rep(2, 3)),
 #'   stratum = rep(c("Stratum1", "Stratum2"), 3),
-#'   Total = c(2500, 1500, 1000, 500, 600, 450))
-#' cont_cdftest(dframe, vars = myvars, subpops = mysubpops, siteID = "siteID",
+#'   Total = c(2500, 1500, 1000, 500, 600, 450)
+#' )
+#' cont_cdftest(dframe,
+#'   vars = myvars, subpops = mysubpops, siteID = "siteID",
 #'   weight = "wgt", xcoord = "xcoord", ycoord = "ycoord",
-#'   stratumID = "stratum", popsize = mypopsize, testname="RaoScott_First")
-#'
+#'   stratumID = "stratum", popsize = mypopsize, testname = "RaoScott_First"
+#' )
 #' @export
-################################################################################
+###############################################################################
 
 cont_cdftest <- function(dframe, vars, subpops = NULL, surveyID = NULL,
-  siteID = "siteID", weight = "weight", xcoord = NULL, ycoord = NULL,
-  stratumID = NULL, clusterID = NULL, weight1 = NULL, xcoord1 = NULL,
-  ycoord1 = NULL, sizeweight = FALSE, sweight = NULL, sweight1 = NULL,
-  popcorrect = FALSE, fpcsize = NULL, Ncluster = NULL, stage1size = NULL,
-  popsize = NULL, vartype = "Local", jointprob = "overton",
-  testname = "adjWald", nclass = 3) {
+                         siteID = "siteID", weight = "weight", xcoord = NULL, ycoord = NULL,
+                         stratumID = NULL, clusterID = NULL, weight1 = NULL, xcoord1 = NULL,
+                         ycoord1 = NULL, sizeweight = FALSE, sweight = NULL, sweight1 = NULL,
+                         popcorrect = FALSE, fpcsize = NULL, Ncluster = NULL, stage1size = NULL,
+                         popsize = NULL, vartype = "Local", jointprob = "overton",
+                         testname = "adjWald", nclass = 3) {
 
-# Create a vector for error messages
+  # Create a vector for error messages
 
   error_ind <- FALSE
   error_vec <- NULL
 
-# Create a data frame for warning messages
+  # Create a data frame for warning messages
 
   warn_ind <- FALSE
   warn_df <- NULL
   fname <- "cont_cdftest"
 
-# Check for a valid test statistic name
+  # Check for a valid test statistic name
 
-  temp <- match(testname, c("Wald", "adjWald", "RaoScott_First",
-    "RaoScott_Second"), nomatch=0)
-  if(temp == 0) {
+  temp <- match(testname, c(
+    "Wald", "adjWald", "RaoScott_First",
+    "RaoScott_Second"
+  ), nomatch = 0)
+  if (temp == 0) {
     error_ind <- TRUE
     msg <- paste0("\nThe value provided for argument testname, \"", testname, "\", is not a valid test statistic name.\n")
     error_vec <- c(error_vec, msg)
   }
 
-# As necessary, reassign the test statistic name to match the values required
-# by the svychisq_localmean function
+  # As necessary, reassign the test statistic name to match the values required
+  # by the svychisq_localmean function
 
-  if(testname == "RaoScott_First") {
+  if (testname == "RaoScott_First") {
     testname <- "Chisq"
-  } else if(testname == "RaoScott_Second") {
+  } else if (testname == "RaoScott_Second") {
     testname <- "F"
   }
 
-# Check for the minimum number of classes
+  # Check for the minimum number of classes
 
-  if(testname %in% c("Wald", "adjWald")) {
-    if(nclass < 2) {
+  if (testname %in% c("Wald", "adjWald")) {
+    if (nclass < 2) {
       error_ind <- TRUE
       msg <- paste("\nThe number of classes into which the CDFs will be divided (binned) must equal \nat least two.")
       error_vec <- c(error_vec, msg)
     }
   } else {
-    if(nclass < 3) {
+    if (nclass < 3) {
       error_ind <- TRUE
       msg <- paste("\nThe number of classes into which the CDFs will be divided (binned) must equal \nat least three")
       error_vec <- c(error_vec, msg)
     }
   }
 
-# Ensure that the dframe argument was provided
+  # Ensure that the dframe argument was provided
 
-  if(missing(dframe) | is.null(dframe)) {
+  if (missing(dframe) | is.null(dframe)) {
     stop("\nThe dframe argument must be provided.\n")
   }
 
-# If the dframe argument is an sf object, extract coordinates from the geometry
-# column, assign values "xcoord" and "ycoord" to arguments xcoord and ycoord,
-# respectively, and drop the geometry column from the object
+  # If the dframe argument is an sf object, extract coordinates from the geometry
+  # column, assign values "xcoord" and "ycoord" to arguments xcoord and ycoord,
+  # respectively, and drop the geometry column from the object
 
-  if("sf" %in% class(dframe)) {
+  if ("sf" %in% class(dframe)) {
     temp <- st_coordinates(dframe)
     xcoord <- "xcoord"
     dframe$xcoord <- temp[, "X"]
@@ -312,16 +319,16 @@ cont_cdftest <- function(dframe, vars, subpops = NULL, surveyID = NULL,
     dframe <- st_set_geometry(dframe, NULL)
   }
 
-# Ensure that unused levels are dropped from factor variables in the dframe data
-# frame
+  # Ensure that unused levels are dropped from factor variables in the dframe data
+  # frame
 
   dframe <- droplevels(dframe)
 
-# As necessary, ensure that the dframe data frame contains the survey ID
-# variable
+  # As necessary, ensure that the dframe data frame contains the survey ID
+  # variable
 
-  if(!is.null(surveyID)) {
-    if(!(surveyID %in% names(dframe))) {
+  if (!is.null(surveyID)) {
+    if (!(surveyID %in% names(dframe))) {
       ind1 <- FALSE
       error_ind <- TRUE
       msg <- paste0("The name provided for the surveyID argument, \"", surveyID, "\", does not occur among \nthe names for the dframe data frame.\n")
@@ -332,9 +339,9 @@ cont_cdftest <- function(dframe, vars, subpops = NULL, surveyID = NULL,
     }
   }
 
-# Ensure that the dframe data frame contains the site ID variable
+  # Ensure that the dframe data frame contains the site ID variable
 
-  if(!(siteID %in% names(dframe))) {
+  if (!(siteID %in% names(dframe))) {
     ind2 <- FALSE
     error_ind <- TRUE
     msg <- paste0("The name provided for the siteID argument, \"", siteID, "\", does not occur among \nthe names for the dframe data frame.\n")
@@ -343,64 +350,69 @@ cont_cdftest <- function(dframe, vars, subpops = NULL, surveyID = NULL,
     ind2 <- TRUE
   }
 
-# Check site IDs for repeat values and, as necessary, create unique site IDs and
-# output a warning message
+  # Check site IDs for repeat values and, as necessary, create unique site IDs and
+  # output a warning message
 
-  if(is.null(surveyID)) {
-    if(ind2) {
+  if (is.null(surveyID)) {
+    if (ind2) {
       dframe$siteID <- dframe[, siteID]
       temp <- with(dframe, sapply(split(siteID, siteID), length))
-      if(any(temp > 1)) {
+      if (any(temp > 1)) {
         warn_ind <- TRUE
         temp.str <- vecprint(names(temp)[temp > 1])
         warn <- paste("The following site ID values occur more than once among the values that were \ninput to the function:\n", temp.str)
         act <- "Unique site ID values were created.\n"
-        warn_df <- rbind(warn_df, data.frame(func=I(fname), subpoptype=NA,
-          subpop=NA, indicator=NA, stratum=NA, warning=I(warn), action=I(act)))
+        warn_df <- rbind(warn_df, data.frame(
+          func = I(fname), subpoptype = NA,
+          subpop = NA, indicator = NA, stratum = NA, warning = I(warn), action = I(act)
+        ))
         dframe$siteID <- uniqueID(dframe$siteID)
       }
     }
   } else {
-    if(ind1 & ind2) {
+    if (ind1 & ind2) {
       dframe$surveyID <- dframe[, surveyID]
       dframe$siteID <- dframe[, siteID]
-      for(i in survey_names) {
-        eval(parse(text=paste0("tst <- dframe$surveyID == \"", i, "\"")))
+      for (i in survey_names) {
+        eval(parse(text = paste0("tst <- dframe$surveyID == \"", i, "\"")))
         temp <- with(subset(dframe, tst), sapply(split(siteID, siteID), length))
-        if(any(temp > 1)) {
+        if (any(temp > 1)) {
           warn_ind <- TRUE
           temp.str <- vecprint(names(temp)[temp > 1])
           warn <- paste("The following site ID values occur more than once among survey", i, "values \nthat were input to the function:\n", temp.str)
           act <- "Unique site ID values were created.\n"
-          warn_df <- rbind(warn_df, data.frame(func=I(fname), subpoptype=NA,
-            subpop=NA, indicator=NA, stratum=NA, warning=I(warn), action=I(act)))
+          warn_df <- rbind(warn_df, data.frame(
+            func = I(fname), subpoptype = NA,
+            subpop = NA, indicator = NA, stratum = NA, warning = I(warn), action = I(act)
+          ))
           dframe$siteID[tst] <- uniqueID(dframe$siteID[tst])
         }
       }
     }
   }
 
-# Ensure that the dframe data frame contains the survey weight variable
+  # Ensure that the dframe data frame contains the survey weight variable
 
-  if(!(weight %in% names(dframe))) {
+  if (!(weight %in% names(dframe))) {
     error_ind <- TRUE
     msg <- paste0("The name provided for the weight argument, \"", weight, "\", does not occur among \nthe names for the dframe data frame.\n")
     error_vec <- c(error_vec, msg)
   }
 
-# As necessary, create a stratum variable that incorporates survey ID values
+  # As necessary, create a stratum variable that incorporates survey ID values
 
-  if(!is.null(surveyID)) {
-    if(!is.null(stratumID)) {
+  if (!is.null(surveyID)) {
+    if (!is.null(stratumID)) {
       dframe$stratumID <- paste(dframe[, surveyID], dframe[, stratumID],
-        sep=".")
+        sep = "."
+      )
       stratumID <- "stratumID"
     } else {
       stratumID <- surveyID
     }
   }
 
-# Create a list containing names of survey design variables
+  # Create a list containing names of survey design variables
 
   design_names <- list(
     siteID = siteID,
@@ -416,31 +428,34 @@ cont_cdftest <- function(dframe, vars, subpops = NULL, surveyID = NULL,
     sweight1 = sweight1,
     fpcsize = fpcsize,
     Ncluster = Ncluster,
-    stage1size = stage1size)
+    stage1size = stage1size
+  )
 
-# Ensure that a value was provided for the vars (response variable names)
-# argument
+  # Ensure that a value was provided for the vars (response variable names)
+  # argument
 
-  if(is.null(vars)) {
+  if (is.null(vars)) {
     error_ind <- TRUE
     msg <- "A value must be provided for the vars (response variable names) argument.\n"
     error_vec <- c(error_vec, msg)
   }
 
-# If a value was not provided for the subpops (subpopulation names) argument,
-# assign the value "All_Sites" to the subpops argument and create a factor
-# named "All_Sites" in the dframe data frame that takes the value "All Sites"
+  # If a value was not provided for the subpops (subpopulation names) argument,
+  # assign the value "All_Sites" to the subpops argument and create a factor
+  # named "All_Sites" in the dframe data frame that takes the value "All Sites"
 
-  if(is.null(subpops)) {
+  if (is.null(subpops)) {
     subpops <- "All_Sites"
     dframe$All_Sites <- "All Sites"
     dframe$All_Sites <- factor(dframe$All_Sites)
   }
 
-# Check input arguments
+  # Check input arguments
   temp <- input_check(dframe, design_names, NULL, vars, NULL, NULL, subpops,
-    sizeweight, popcorrect, popsize, vartype, jointprob, conf = 95,
-    error_ind = error_ind, error_vec = error_vec)
+    sizeweight, popcorrect, popsize, vartype, jointprob,
+    conf = 95,
+    error_ind = error_ind, error_vec = error_vec
+  )
   dframe <- temp$dframe
   vars <- temp$vars_cont
   vars_nondetect <- temp$vars_nondetect
@@ -451,20 +466,20 @@ cont_cdftest <- function(dframe, vars, subpops = NULL, surveyID = NULL,
   error_ind <- temp$error_ind
   error_vec <- temp$error_vec
 
-# As necessary, output a message indicating that error messages were generated
-# during execution of the program
+  # As necessary, output a message indicating that error messages were generated
+  # during execution of the program
 
-  if(error_ind) {
+  if (error_ind) {
     error_vec <<- error_vec
-    if(length(error_vec) == 1) {
+    if (length(error_vec) == 1) {
       cat("During execution of the program, an error message was generated.  The error \nmessage is stored in a vector named 'error_vec'.  Enter the following command \nto view the error message: errorprnt()\n")
     } else {
       cat(paste("During execution of the program,", length(error_vec), "error messages were generated.  The error \nmessages are stored in a vector named 'error_vec'.  Enter the following \ncommand to view the error messages: errorprnt()\n"))
     }
 
-    if(warn_ind) {
+    if (warn_ind) {
       warn_df <<- warn_df
-      if(nrow(warn_df) == 1) {
+      if (nrow(warn_df) == 1) {
         cat("During execution of the program, a warning message was generated.  The warning \nmessage is stored in a data frame named 'warn_df'.  Enter the following command \nto view the warning message: warnprnt()\n")
       } else {
         cat(paste("During execution of the program,", nrow(warn_df), "warning messages were generated.  The warning \nmessages are stored in a data frame named 'warn_df'.  Enter the following \ncommand to view the warning messages: warnprnt() \nTo view a subset of the warning messages (say, messages number 1, 3, and 5), \nenter the following command: warnprnt(m=c(1,3,5))\n"))
@@ -473,30 +488,32 @@ cont_cdftest <- function(dframe, vars, subpops = NULL, surveyID = NULL,
     stop("See the preceding message(s).")
   }
 
-# Assign a logical value to the indicator variable for a stratified sample
+  # Assign a logical value to the indicator variable for a stratified sample
 
   stratum_ind <- !is.null(stratumID)
 
-# For a stratified sample, remove strata that contain a single site
+  # For a stratified sample, remove strata that contain a single site
 
-  if(stratum_ind) {
+  if (stratum_ind) {
     dframe[, stratumID] <- factor(dframe[, stratumID])
     stratum_levels <- levels(dframe[, stratumID])
     nstrata <- length(stratum_levels)
     ind <- FALSE
-    for(i in 1:nstrata) {
+    for (i in 1:nstrata) {
       tst <- dframe[, stratumID] == stratum_levels[i]
-      if(sum(tst) == 1) {
+      if (sum(tst) == 1) {
         warn_ind <- TRUE
         warn <- paste0("The stratum named \"", stratum_levels[i], "\" contains a single value and was removed from the analysis.\n")
         act <- "Stratum was removed from the analysis.\n"
-        warn_df <- rbind(warn_df, data.frame(func=I(fname), subpoptype=NA,
-          subpop=NA, indicator=NA, stratum=NA, warning=I(warn), action=I(act)))
-        dframe <- dframe[!tst,]
+        warn_df <- rbind(warn_df, data.frame(
+          func = I(fname), subpoptype = NA,
+          subpop = NA, indicator = NA, stratum = NA, warning = I(warn), action = I(act)
+        ))
+        dframe <- dframe[!tst, ]
         ind <- TRUE
       }
     }
-    if(ind) {
+    if (ind) {
       dframe[, stratumID] <- factor(dframe[, stratumID])
       stratum_levels <- levels(dframe[, stratumID])
       nstrata <- length(stratum_levels)
@@ -504,22 +521,24 @@ cont_cdftest <- function(dframe, vars, subpops = NULL, surveyID = NULL,
     }
   }
 
-# Assign a logical value to the indicator variable for a two-stage sample
+  # Assign a logical value to the indicator variable for a two-stage sample
 
   cluster_ind <- !is.null(clusterID)
 
-# Create the survey design object
+  # Create the survey design object
 
-  design <- survey_design(dframe, siteID, weight, stratum_ind, stratumID,
+  design <- survey_design(
+    dframe, siteID, weight, stratum_ind, stratumID,
     cluster_ind, clusterID, weight1, sizeweight, sweight, sweight1, popcorrect,
-    fpcsize, Ncluster, stage1size, vartype, jointprob)
+    fpcsize, Ncluster, stage1size, vartype, jointprob
+  )
 
-# If popsize is not equal to NULL, then call either the postStratify or
-# calibrate function, as appropriate
+  # If popsize is not equal to NULL, then call either the postStratify or
+  # calibrate function, as appropriate
 
-  if(!is.null(popsize)) {
-    if(all(class(popsize) %in% c("data.frame", "table", "xtabs"))) {
-      if("data.frame" %in% class(popsize)) {
+  if (!is.null(popsize)) {
+    if (all(class(popsize) %in% c("data.frame", "table", "xtabs"))) {
+      if ("data.frame" %in% class(popsize)) {
         pnames <- names(popsize)[-ncol(popsize)]
       } else {
         pnames <- names(dimnames(popsize))
@@ -529,162 +548,170 @@ cont_cdftest <- function(dframe, vars, subpops = NULL, surveyID = NULL,
       cnames <- cal_names(make.formula(names(popsize)), design)
       pop_totals <- numeric(length(cnames))
       names(pop_totals) <- cnames
-      pop_totals[1] <-sum(popsize[[1]])
+      pop_totals[1] <- sum(popsize[[1]])
       k <- 2
-      for(i in names(popsize)) {
+      for (i in names(popsize)) {
         temp <- popsize[[i]]
-        for(j in 2:length(temp)) {
-          pop_totals[k] <-temp[j]
-          k <- k+1
+        for (j in 2:length(temp)) {
+          pop_totals[k] <- temp[j]
+          k <- k + 1
         }
       }
       design <- calibrate(design, make.formula(cnames), pop_totals)
     }
   }
 
-# If popsize is not equal to NULL and vartype equals "Local", then assign
-# adjusted weights to the appropriate weight variable(s) in the design$variables
-# data frame
+  # If popsize is not equal to NULL and vartype equals "Local", then assign
+  # adjusted weights to the appropriate weight variable(s) in the design$variables
+  # data frame
 
-  if(!is.null(popsize) && vartype == "Local") {
-    if(cluster_ind) {
+  if (!is.null(popsize) && vartype == "Local") {
+    if (cluster_ind) {
       ncluster <- length(unique(design$variables[, clusterID]))
       design$variables$wgt1 <- unique(design$variables[, Ncluster]) / ncluster
-      design$variables$wgt2 <- weights(design)/design$variables$wgt1
+      design$variables$wgt2 <- weights(design) / design$variables$wgt1
     } else {
       design$variables$wgt <- weights(design)
     }
   }
 
-# Create the contsum (results) data frame
+  # Create the contsum (results) data frame
 
   contsum <- NULL
 
-# Loop through all subpopulations (domains)
+  # Loop through all subpopulations (domains)
 
-  for(itype in subpops) {
+  for (itype in subpops) {
 
-# Identify levels of the subpopulation
+    # Identify levels of the subpopulation
 
     lev_itype <- levels(dframe[, itype])
     nlev_itype <- length(lev_itype)
 
-# Check whether the number of levels of the subpopulation is greater than one
+    # Check whether the number of levels of the subpopulation is greater than one
 
-    if(nlev_itype == 1) {
+    if (nlev_itype == 1) {
       warn_ind <- TRUE
       warn <- paste("Population type", itype, "contains a single subpopulation. \nNo CDF tests could be performed\n")
       act <- "None.\n"
-      warn_df <- rbind(warn_df, data.frame(func=I(fname),
-        subpoptype=I(itype), subpop=NA,
-        indicator=I(varnames[ivar]), stratum=NA, warning=I(warn),
-        action=I(act)))
+      warn_df <- rbind(warn_df, data.frame(
+        func = I(fname), subpoptype = I(itype), subpop = NA, indicator = NA,
+        stratum = NA, warning = I(warn), action = I(act)
+      ))
       next
     }
 
-# Loop through all response variables (vars)
+    # Loop through all response variables (vars)
 
-    for(ivar in vars) {
+    for (ivar in vars) {
 
-# Determine the set of upper bounds for the response variable
+      # Determine the set of upper bounds for the response variable
 
       temp <- dframe[!is.na(dframe[, ivar]), ivar]
-      bounds <- sort(temp)[floor(seq(length(temp)/nclass, length(temp),
-        length = nclass))]
-      design$variables$colvar <- cut(dframe[, ivar], c(-Inf,  bounds))
+      bounds <- sort(temp)[floor(seq(length(temp) / nclass, length(temp),
+        length = nclass
+      ))]
+      design$variables$colvar <- cut(dframe[, ivar], c(-Inf, bounds))
 
-# Loop through all combinations of levels of the subpopulation
+      # Loop through all combinations of levels of the subpopulation
 
-# Begin the loop for the the first level of the combination
+      # Begin the loop for the the first level of the combination
 
-      for(isubpop1 in 1:(nlev_itype - 1)) {
+      for (isubpop1 in 1:(nlev_itype - 1)) {
 
-# Select sites in the first level
+        # Select sites in the first level
 
         subpop1_ind <- dframe[, itype] == lev_itype[isubpop1]
 
-# Determine whether the level is empty
+        # Determine whether the level is empty
 
-        if(all(is.na(dframe[subpop1_ind, ivar]))) {
+        if (all(is.na(dframe[subpop1_ind, ivar]))) {
           warn_ind <- TRUE
-          warn <- paste("Subpopulation", lev_itype[isubpop1], "of population type", itype, "for indicator", varnames[ivar], "\ncontains no data.\n")
+          warn <- paste("Subpopulation", lev_itype[isubpop1], "of population type", itype, "for indicator", ivar, "\ncontains no data.\n")
           act <- "None.\n"
-          warn_df <- rbind(warn_df, data.frame(func=I(fname),
-            subpoptype=I(itype),
-            subpop=I(lev_itype[isubpop1]), indicator=I(varnames[ivar]),
-            stratum=NA,  warning=I(warn), action=I(act)))
+          warn_df <- rbind(warn_df, data.frame(
+            func = I(fname), subpoptype = I(itype),
+            subpop = I(lev_itype[isubpop1]), indicator = ivar, stratum = NA,
+            warning = I(warn), action = I(act)
+          ))
           next
         }
 
-# Determine whether the level contains a single value
+        # Determine whether the level contains a single value
 
-        if(sum(!is.na(dframe[subpop1_ind, ivar])) == 1) {
+        if (sum(!is.na(dframe[subpop1_ind, ivar])) == 1) {
           warn_ind <- TRUE
-          warn <- paste("Subpopulation", lev_itype[isubpop1], "of population type", itype, "for indicator", varnames[ivar], "\ncontains a single value.  No analysis was performed.\n")
+          warn <- paste("Subpopulation", lev_itype[isubpop1], "of population type", itype, "for indicator", ivar, "\ncontains a single value.  No analysis was performed.\n")
           act <- "None.\n"
-          warn_df <- rbind(warn_df, data.frame(func=I(fname),
-            subpoptype=I(itype),
-            subpop=I(lev_itype[isubpop1]), indicator=I(varnames[ivar]),
-            stratum=NA,  warning=I(warn), action=I(act)))
+          warn_df <- rbind(warn_df, data.frame(
+            func = I(fname), subpoptype = I(itype),
+            subpop = I(lev_itype[isubpop1]), indicator = ivar, stratum = NA,
+            warning = I(warn), action = I(act)
+          ))
           next
         }
 
-# Begin the loop for the second level of the combination
+        # Begin the loop for the second level of the combination
 
-        for(isubpop2 in (isubpop1 + 1):nlev_itype) {
+        for (isubpop2 in (isubpop1 + 1):nlev_itype) {
 
-# Select sites in the second level
+          # Select sites in the second level
 
           subpop2_ind <- dframe[, itype] == lev_itype[isubpop2]
 
-# Determine whether level is empty
+          # Determine whether level is empty
 
-          if(all(is.na(dframe[subpop2_ind, ivar]))) {
+          if (all(is.na(dframe[subpop2_ind, ivar]))) {
             warn_ind <- TRUE
-            warn <- paste("Subpopulation", lev_itype[isubpop2], "of population type", itype, "for indicator", varnames[ivar], "\ncontains no data.\n")
+            warn <- paste("Subpopulation", lev_itype[isubpop2], "of population type", itype, "for indicator", ivar, "\ncontains no data.\n")
             act <- "None.\n"
-            warn_df <- rbind(warn_df, data.frame(func=I(fname),
-              subpoptype=I(itype),
-              subpop=I(lev_itype[isubpop2]),
-              indicator=I(varnames[ivar]), stratum=NA,  warning=I(warn),
-              action=I(act)))
+            warn_df <- rbind(warn_df, data.frame(
+              func = I(fname), subpoptype = I(itype),
+              subpop = I(lev_itype[isubpop2]), indicator = ivar, stratum = NA,
+              warning = I(warn), action = I(act)
+            ))
             next
           }
 
-# Determine whether the level contains a single value
+          # Determine whether the level contains a single value
 
-          if(sum(!is.na(dframe[subpop2_ind, ivar])) == 1) {
+          if (sum(!is.na(dframe[subpop2_ind, ivar])) == 1) {
             warn_ind <- TRUE
-            warn <- paste("Subpopulation", lev_itype[isubpop2], "of population type", itype, "for indicator", varnames[ivar], "\ncontains a single value.  No analysis was performed.\n")
+            warn <- paste("Subpopulation", lev_itype[isubpop2], "of population type", itype, "for indicator", ivar, "\ncontains a single value.  No analysis was performed.\n")
             act <- "None.\n"
-            warn_df <- rbind(warn_df, data.frame(func=I(fname),
-              subpoptype=I(itype),
-              subpop=I(lev_itype[isubpop2]),
-              indicator=I(varnames[ivar]), stratum=NA,  warning=I(warn),
-              action=I(act)))
+            warn_df <- rbind(warn_df, data.frame(
+              func = I(fname), subpoptype = I(itype),
+              subpop = I(lev_itype[isubpop2]), indicator = ivar, stratum = NA,
+              warning = I(warn), action = I(act)
+            ))
             next
           }
 
-# Perform the CDF test for the response variable
+          # Perform the CDF test for the response variable
 
           rowvar <- rep(NA, nrow(dframe))
           rowvar[subpop1_ind] <- "Subpopulation 1"
           rowvar[subpop2_ind] <- "Subpopulation 2"
           design$variables$rowvar <- factor(rowvar,
-            levels = c("Subpopulation 1", "Subpopulation 2"))
+            levels = c("Subpopulation 1", "Subpopulation 2")
+          )
 
-          if(vartype == "Local") {
+          if (vartype == "Local") {
             warn_vec <- c(itype, lev_itype[isubpop1], lev_itype[isubpop2], ivar)
-            if(testname %in% c("Wald", "adjWald")) {
-              temp <- cdftest_localmean_total(design, design_names, popcorrect,
-                vartype, warn_ind, warn_df, warn_vec)
+            if (testname %in% c("Wald", "adjWald")) {
+              temp <- cdftest_localmean_total(
+                design, design_names, popcorrect,
+                vartype, warn_ind, warn_df, warn_vec
+              )
               var_totals <- temp$varest
               vartype <- temp$vartype
               warn_ind <- temp$warn_ind
               warn_df <- temp$warn_df
             } else {
-              temp <- cdftest_localmean_prop(design, design_names,  popcorrect,
-                vartype,  warn_ind, warn_df, warn_vec)
+              temp <- cdftest_localmean_prop(
+                design, design_names, popcorrect,
+                vartype, warn_ind, warn_df, warn_vec
+              )
               var_means <- temp$varest
               vartype <- temp$vartype
               warn_ind <- temp$warn_ind
@@ -695,10 +722,12 @@ cont_cdftest <- function(dframe, vars, subpops = NULL, surveyID = NULL,
             var_means <- NULL
           }
 
-          temp <- svychisq_localmean(~rowvar+colvar, design, testname,
-            vartype, var_totals, var_means)
+          temp <- svychisq_localmean(
+            ~ rowvar + colvar, design, testname,
+            vartype, var_totals, var_means
+          )
 
-# Assign estimates for the response variable to the contsum data frame
+          # Assign estimates for the response variable to the contsum data frame
 
           contsum <- rbind(
             contsum,
@@ -710,54 +739,54 @@ cont_cdftest <- function(dframe, vars, subpops = NULL, surveyID = NULL,
               statistic = temp$statistic,
               Degrees_of_Freedom_1 = temp$parameter[1],
               Degrees_of_Freedom_2 = temp$parameter[2],
-              p_Value = temp$p.value))
+              p_Value = temp$p.value
+            )
+          )
 
-# End of the loops for combinations of levels of the subpopulation
-
+          # End of the loops for combinations of levels of the subpopulation
         }
       }
 
-# End of the loop for response variables
-
+      # End of the loop for response variables
     }
 
-# End of the loop for subpopulations
-
+    # End of the loop for subpopulations
   }
 
-# Assign a value for the column in the output data frame that contains test
-# statistic values
+  # Assign a value for the column in the output data frame that contains test
+  # statistic values
 
-  if(testname == "Wald") {
+  if (testname == "Wald") {
     names(contsum)[5] <- "Wald Statistic"
-  } else if(testname == "adjWald") {
+  } else if (testname == "adjWald") {
     names(contsum)[5] <- "Adjusted Wald Statistic"
-  } else if(testname == "Chisq") {
+  } else if (testname == "Chisq") {
     names(contsum)[5] <- "Rao-Scott First Order Statistic"
   } else {
     names(contsum)[5] <- "Rao-Scott Second Order Statistic"
   }
 
-# As necessary, modify dimension names
+  # As necessary, modify dimension names
 
   row.names(contsum) <- 1:nrow(contsum)
-  if(testname == "Chisq") {
+  if (testname == "Chisq") {
     contsum <- contsum[, -7]
     names(contsum)[6] <- "Degrees_of_Freedom"
   }
 
-# As necessary, output a message indicating that warning messages were generated
-# during execution of the program
+  # As necessary, output a message indicating that warning messages were generated
+  # during execution of the program
 
-  if(warn_ind) {
+  if (warn_ind) {
     warn_df <<- warn_df
-    if(nrow(warn_df) == 1)
+    if (nrow(warn_df) == 1) {
       cat("During execution of the program, a warning message was generated.  The warning \nmessage is stored in a data frame named 'warn_df'.  Enter the following command \nto view the warning message: warnprnt()\n")
-    else
+    } else {
       cat(paste("During execution of the program,", nrow(warn_df), "warning messages were generated.  The warning \nmessages are stored in a data frame named 'warn_df'.  Enter the following \ncommand to view the warning messages: warnprnt() \nTo view a subset of the warning messages (say, messages number 1, 3, and 5), \nenter the following command: warnprnt(m=c(1,3,5))\n"))
+    }
   }
 
-# Return the data frame
+  # Return the data frame
 
   contsum
 }

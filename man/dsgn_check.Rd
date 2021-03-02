@@ -26,86 +26,86 @@ dsgn_check(
 )
 }
 \arguments{
-\item{sframe}{Sample frame as an sf object.}
+\item{sframe}{Sample frame as an \code{sf} object.}
 
 \item{sf_type}{Geometry type for sample frame: point, linear, or area.}
 
-\item{legacy_sites}{An sf object of any legacy sites to be included in the survey
+\item{legacy_sites}{An \code{sf} object of any legacy sites to be included in the survey
 design.}
 
-\item{legacy_option}{Logical variable where if equal to TRUE, legacy sites are
+\item{legacy_option}{Logical variable where if equal to \code{TRUE}, legacy sites are
 to be incorporated into survey design.}
 
 \item{stratum}{Single character value or character vector that identifies the strata for
-the design.  Default is NULL which means no stratification and all elements in the sample
+the design.  Default is \code{NULL} which means no stratification and all elements in the sample
 frame are assumed to be included.}
 
-\item{seltype}{Single character value or character vector that identifies the type of 
-random selection, which must be one of following: "equal" for equal probability selection, 
-"unequal" for unequal probability selection by the categories specified in caty_n or 
-"proportional" for unequal probability selection proportional to the auxiliary variable
-aux_var. If single character, then seltype applies to all strata. If vector, then each 
-stratum may have different selection type. Default is single character value of "equal".}
+\item{seltype}{Single character value or character vector that identifies the type of
+random selection, which must be one of following: \code{"equal"} for equal probability selection,
+\code{"unequal"} for unequal probability selection by the categories specified in \code{caty_n} or
+\code{"proportional"} for unequal probability selection proportional to the auxiliary variable
+\code{aux_var}. If single character, then seltype applies to all strata. If vector, then each
+stratum may have different selection type. Default is single character value of \code{"equal"}.}
 
 \item{n_base}{The sample size required. If single stratum, then single numeric value.
-If sample is stratified, then numeric vector with same length as "stratum" and sample sizes
-required in same order as strata in "stratum". Must be specified.}
+If sample is stratified, then numeric vector with same length as \code{"stratum"} and sample sizes
+required in same order as strata in \code{"stratum"}. Must be specified.}
 
-\item{caty_n}{If design is not stratified and seltype is "unequal", a named character vector
-with the expected sample size for each category specified in variable caty_var. If design
+\item{caty_n}{If design is not stratified and seltype is \code{"unequal"}, a named character vector
+with the expected sample size for each category specified in variable \code{caty_var}. If the design
 is stratified, then either a named character vector with the expected sample size for each
 category for all strata or if the expected sample size for each category may differ, then
 a list of named character vectors with the expected sample size for each category in the
-stratum. The list must be in same order as the "stratum" variable. For each stratum, 
-the sum of caty_n values must equal n_base for that stratum. Default is NULL.}
+stratum. The list must be in same order as the \code{"stratum"} variable. For each stratum,
+the sum of \code{caty_n} values must equal \code{n_base} for that stratum. Default is \code{NULL}.}
 
-\item{n_over}{If seltype is "equal" and is not stratified, a numeric value specifying the 
-over sample size requested. If seltype is "equal" and is stratified either a numeric value
+\item{n_over}{If seltype is \code{"equal"} and is not stratified, a numeric value specifying the
+over sample size requested. If seltype is \code{"equal"} and is stratified either a numeric value
 specifying the over sample size that will be applied to each stratum or a numeric vector
-specifying the over sample size for each stratum listed in same order as "strata".  
-If seltype is "unequal" and is not stratified, a named character vector with the over sample size 
-for each category where names are the same as "caty_n". If seltype is "unequal" and is 
+specifying the over sample size for each stratum listed in same order as \code{"strata"}.
+If seltype is \code{"unequal"} and is not stratified, a named character vector with the over sample size
+for each category where names are the same as \code{"caty_n"}. If seltype is \code{"unequal"} and is
 stratified,  either a numeric vector specifying the over sample size for each category in
-"caty_n" that will be applied to each stratum or a list of named numeric vectors with 
-the over sample size for each "caty_n" category for each stratum. List must be in same order
-as the "stratum" variable order. Default is NULL.}
+\code{"caty_n"} that will be applied to each stratum or a list of named numeric vectors with
+the over sample size for each \code{"caty_n"} category for each stratum. List must be in same order
+as the \code{"stratum"} variable order. Default is \code{NULL}.}
 
 \item{n_near}{Numeric value specifying the number of nearby points to select as
-possible replacement sites if a site cannot be sampled. Default is NULL. If specified,
-must be integer from 1 to 10.}
+possible replacement sites if a site cannot be sampled. Default is \code{NULL}. If specified,
+must be integer from \code{1} to \code{10}.}
 
 \item{stratum_var}{Character string containing the name of the column from
-sframe that identifies stratum membership for each element in the frame.
-If stratum equals NULL, the design is unstratified and all elements in sample frame
-are eligible to be selected in the sample. The default is NULL.}
+\code{sframe} that identifies stratum membership for each element in the frame.
+If stratum equals \code{NULL}, the design is unstratified and all elements in sample frame
+are eligible to be selected in the sample. The default is \code{NULL}.}
 
 \item{caty_var}{Character string containing the name of the column from
-sframe that identifies the unequal probability category for each element
-in the frame.  Default is NULL.}
+\code{sframe} that identifies the unequal probability category for each element
+in the frame.  Default is \code{NULL}.}
 
-\item{aux_var}{Character string that is the name of the column from sframe that
+\item{aux_var}{Character string that is the name of the column from \code{sframe} that
 identifies the auxiliary variable value for each element in the sample frame
 that will be used to calculate inclusion probabilities when the survey design
-specifies that the selection type (seltype) is "proportional". Default is NULL.}
+specifies that the selection type (seltype) is \code{"proportional"}. Default is \code{NULL}.}
 
 \item{legacy_var}{Character value for name of column for legacy site variable.
-Default is NULL.}
+Default is \code{NULL}.}
 
 \item{mindis}{Numeric value for the minimum distance required between elements
 in the sample. If design is stratified, then mindis applies only within each stratum.
-Units must be the same units as in sf geometry. Default is NULL.}
+Units must be the same units as in \code{sf} geometry. Default is \code{NULL}.}
 
 \item{DesignID}{Name for the design, which is used to create a site ID for
-each site.  Default is "Site".}
+each site.  Default is \code{"Site"}.}
 
-\item{SiteBegin}{Number to use for first site in the design.  Default is 1.}
+\item{SiteBegin}{Number to use for first site in the design.  Default is \code{1}.}
 
 \item{maxtry}{Number of maximum attempts to ensure minimum distance (mindis) between sites.
-Default is 10.}
+Default is \code{10}.}
 }
 \value{
 Nothing is returned. If errors are found they are collected and written out.
-  One or more errors will cause the call to grts to stop.
+  One or more errors will cause the call to \code{grts()} to stop.
 }
 \description{
 Check the input associated with the survey design list object and the sample frame

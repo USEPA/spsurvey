@@ -37,111 +37,111 @@ cont_cdftest(
 variables, and subpopulation (domain) variables.}
 
 \item{vars}{Vector composed of character values that identify the
-names of response variables in the dframe data frame.}
+names of response variables in the \code{dframe} data frame.}
 
 \item{subpops}{Vector composed of character values that identify the
 names of subpopulation (domain) variables in the dframe data frame.  If a
-value is not provided, the value "All_Sites" is assigned to the subpops
-argument and a factor variable named "All_Sites" that takes the value
-"All Sites" is added to the dframe data frame.  The default value is NULL.}
+value is not provided, the value \code{"All_Sites"} is assigned to the subpops
+argument and a factor variable named \code{"All_Sites"} that takes the value
+\code{"All Sites"} is added to the dframe data frame.  The default value is \code{NULL}.}
 
 \item{surveyID}{Character value providing name of the survey ID variable in
-the dframe data frame.  If this argument equals NULL, then the dframe data
-frame contains data for a single survey.  The default value is NULL.}
+the \code{dframe} data frame.  If this argument equals \code{NULL}, then the dframe data
+frame contains data for a single survey.  The default value is \code{NULL}.}
 
 \item{siteID}{Character value providing name of the site ID variable in
-the dframe data frame.  For a two-stage sample, the site ID variable
-identifies stage two site IDs.  The default value is "siteID".}
+the \code{dframe} data frame.  For a two-stage sample, the site ID variable
+identifies stage two site IDs.  The default value is \code{"siteID"}.}
 
 \item{weight}{Character value providing name of the survey design weight
-variable in the dframe data frame.  For a two-stage sample, the weight
-variable identifies stage two weights.  The default value is "weight".}
+variable in the \code{dframe} data frame.  For a two-stage sample, the weight
+variable identifies stage two weights.  The default value is \code{"weight"}.}
 
 \item{xcoord}{Character value providing name of the x-coordinate variable in
-the dframe data frame.  For a two-stage sample, the x-coordinate variable
+the \code{dframe} data frame.  For a two-stage sample, the x-coordinate variable
 identifies stage two x-coordinates.  Note that x-coordinates are required
 for calculation of the local mean variance estimator.  The default value is
-NULL.}
+\code{NULL}.}
 
 \item{ycoord}{Character value providing name of the y-coordinate variable in
-the dframe data frame.  For a two-stage sample, the y-coordinate variable
+the \code{dframe} data frame.  For a two-stage sample, the y-coordinate variable
 identifies stage two y-coordinates.  Note that y-coordinates are required
 for calculation of the local mean variance estimator.  The default value is
-NULL.}
+\code{NULL}.}
 
 \item{stratumID}{Character value providing name of the stratum ID variable in
-the dframe data frame.  The default value is NULL.}
+the \code{dframe} data frame.  The default value is \code{NULL}.}
 
 \item{clusterID}{Character value providing name of the cluster (stage one) ID
-variable in the dframe data frame.  Note that cluster IDs are required for
-a two-stage sample.  The default value is NULL.}
+variable in the \code{dframe} data frame.  Note that cluster IDs are required for
+a two-stage sample.  The default value is \code{NULL}.}
 
 \item{weight1}{Character value providing name of the stage one weight
-variable in the dframe data frame.  The default value is NULL.}
+variable in the \code{dframe} data frame.  The default value is \code{NULL}.}
 
 \item{xcoord1}{Character value providing name of the stage one x-coordinate
-variable in the dframe data frame.  Note that x-coordinates are required
+variable in the \code{dframe} data frame.  Note that x-coordinates are required
 for calculation of the local mean variance estimator.  The default value is
-NULL.}
+\code{NULL}.}
 
 \item{ycoord1}{Character value providing name of the stage one y-coordinate
-variable in the dframe data frame.  Note that y-coordinates are required
+variable in the \code{dframe} data frame.  Note that y-coordinates are required
 for calculation of the local mean variance estimator.  The default value is
-NULL.}
+\code{NULL}.}
 
 \item{sizeweight}{Logical value that indicates whether size weights should be
-used during estimation, where TRUE = use size weights and FALSE = do not
+used during estimation, where \code{TRUE} = use size weights and \code{FALSE} = do not
 use size weights. To employ size weights for a single-stage sample, a value
-must be supplied for argument weight.  To employ size weights for a
-two-stage sample, values must be supplied for arguments weight and weight1.
-The default value is FALSE.}
+must be supplied for argument \code{weight}.  To employ size weights for a
+two-stage sample, values must be supplied for arguments \code{weight} and \code{weight1}.
+The default value is \code{FALSE}.}
 
 \item{sweight}{Character value providing name of the size weight variable in
-the dframe data frame.  For a two-stage sample, the size weight variable
-identifies stage two size weights.  The default value is NULL.}
+the \code{dframe} data frame.  For a two-stage sample, the size weight variable
+identifies stage two size weights.  The default value is \code{NULL}.}
 
 \item{sweight1}{Character value providing name of the stage one size weight
-variable in the dframe data frame.  The default value is NULL.}
+variable in the \code{dframe} data frame.  The default value is \code{NULL}.}
 
 \item{popcorrect}{Logical value that indicates whether the finite population
 correction factor is used during variance estimation. To employ the
 correction factor for a single-stage sample, values must be supplied for
-argument fpcsize.  To employ the correction factor for a two-stage sample,
-values must be supplied for arguments Ncluster and stage1size.  The default
-value is FALSE.}
+argument \code{fpcsize}.  To employ the correction factor for a two-stage sample,
+values must be supplied for arguments \code{Ncluster} and \code{stage1size}.  The default
+value is \code{FALSE}.}
 
-\item{fpcsize}{Character value providing name of the variable in the dframe
+\item{fpcsize}{Character value providing name of the variable in the \code{dframe}
 data frame that identifies size of the resource, which is required for
 calculation of the finite population correction factor for a single-stage
-sample.  The default value is NULL.}
+sample.  The default value is \code{NULL}.}
 
-\item{Ncluster}{Character value providing name of the variable in the dframe
+\item{Ncluster}{Character value providing name of the variable in the \code{dframe}
 data frame that identifies the number of clusters (stage one sampling
 units) in the resource, which is required for calculation of the finite
 population correction factor for a two-stage sample.  This argument is also
-required for a two-stage sample when the popsize argument is not equal to
-NULL and the vartype argument equals "Local".  The default value is NULL.}
+required for a two-stage sample when the \code{popsize} argument is not equal to
+\code{NULL} and the vartype argument equals \code{"Local"}.  The default value is \code{NULL}.}
 
 \item{stage1size}{Character value providing name of the variable in the
-dframe data frame that identifies cluster size, i.e. the number of the
+\code{dframe} data frame that identifies cluster size, i.e. the number of the
 stage two sampling units in the resource for a cluster.  Note that cluster
 size is required for calculation of the finite population correction factor
-for a two-stage sample. The default value is NULL.}
+for a two-stage sample. The default value is \code{NULL}.}
 
 \item{popsize}{Object that provides values for the population argument of the
-calibrate or postStratify functions.  For the calibrate function, the object
-is a named list, where the names identify factor variables in the dframe
+\code{calibrate} or \code{postStratify} functions.  For the \code{calibrate} function, the object
+is a named list, where the names identify factor variables in the \code{dframe}
 data frame.  Each element of the list is a named vector containing the
 population total for each level of the associated factor variable.  For the
-postStratify function, the object is either a data frame, table, or xtabs
+\code{postStratify} function, the object is either a data frame, table, or xtabs
 object that provides the population total for all combinations of selected
-factor variables in the dframe data frame.  If a data frame is used for
-popsize, the variable containing population totals must be the last
-variable in the data frame.  If a table is used for popsize, the table must
-have named dimnames where the names identify factor variables in the dframe
-data frame.  If the popsize argument is equal to NULL, then neither
+factor variables in the \code{dframe} data frame.  If a data frame is used for
+\code{popsize}, the variable containing population totals must be the last
+variable in the data frame.  If a table is used for \code{popsize}, the table must
+have named \code{dimname}s where the names identify factor variables in the \code{dframe}
+data frame.  If the \code{popsize} argument is equal to \code{NULL}, then neither
 calibration nor post-stratification is performed.  The default value is
-NULL.\cr\cr
+\code{NULL}.\cr\cr
 Example popsize for calibration:\cr
   popsize <- list(Ecoregion = c(East = 750,\cr
                                 Central = 500,\cr
@@ -159,29 +159,29 @@ Example popsize for post-stratification using an xtabs object:\cr
   popsize <- xtabs(~Ecoregion + Type, data = MySurveyFrame)\cr}
 
 \item{vartype}{Character value providing choice of the variance estimator,
-where "Local" = the local mean estimator, "SRS" = the simple random
-sampling estimator, "HT" = the Horvitz-Thompson estimator, and "YG" = the
-Yates-Grundy estimator.  The default value is "Local".}
+where \code{"Local"} = the local mean estimator, \code{"SRS"} = the simple random
+sampling estimator, \code{"HT"} = the Horvitz-Thompson estimator, and \code{"YG"} = the
+Yates-Grundy estimator.  The default value is \code{"Local"}.}
 
 \item{jointprob}{Character value providing choice of joint inclusion
 probability approximation for use with Horvitz-Thompson and Yates-Grundy
-variance estimators, where "overton" indicates the Overton approximation,
-"hr" indicates the Hartley_Rao approximation, and "brewer" equals the
-Brewer approximation.  The default value is "overton".}
+variance estimators, where \code{"overton"} indicates the Overton approximation,
+\code{"hr"} indicates the Hartley_Rao approximation, and \code{"brewer"} equals the
+Brewer approximation.  The default value is \code{"overton"}.}
 
 \item{testname}{Name of the test statistic to be reported in the output
-data frame.  Choices for the name are: "Wald", "adjWald", "RaoScott_First",
-and "RaoScott_Second", which correspond to the Wald statistic, adjusted
+data frame.  Choices for the name are: \code{"Wald"}, \code{"adjWald"}, \code{"RaoScott_First"},
+and \code{"RaoScott_Second"}, which correspond to the Wald statistic, adjusted
 Wald statistic, Rao-Scott first-order corrected statistic, and Rao-Scott
-second-order corrected statistic, respectively.  The default is "adjWald".}
+second-order corrected statistic, respectively.  The default is \code{"adjWald"}.}
 
 \item{nclass}{Number of classes into which the CDFs will be divided
-(binned), which must equal at least two.  The default is 3.}
+(binned), which must equal at least \code{2}.  The default is \code{3}.}
 }
 \value{
 Data frame of CDF test results for all pairs of subpopulations
-  within each population Type for every response variable.  The data frame
-  includes the test statistic specified by argument testname plus its degrees
+  within each population type for every response variable.  The data frame
+  includes the test statistic specified by argument \code{testname} plus its degrees
   of freedom and p-value.
 }
 \description{
@@ -228,14 +228,15 @@ respectively, and the geometry column is dropped from the object.
 
 \examples{
 n <- 200
-mysiteID <- paste("Site", 1:n, sep="")
+mysiteID <- paste("Site", 1:n, sep = "")
 dframe <- data.frame(
   siteID = mysiteID,
   wgt = runif(n, 10, 100),
   xcoord = runif(n),
   ycoord = runif(n),
-  stratum = rep(c("Stratum1", "Stratum2"), n/2),
-  Resource_Class = sample(c("Agr", "Forest", "Urban"), n, replace=TRUE))
+  stratum = rep(c("Stratum1", "Stratum2"), n / 2),
+  Resource_Class = sample(c("Agr", "Forest", "Urban"), n, replace = TRUE)
+)
 ContVar <- numeric(n)
 tst <- dframe$Resource_Class == "Agr"
 ContVar[tst] <- rnorm(sum(tst), 10, 1)
@@ -249,11 +250,13 @@ mysubpops <- c("Resource_Class")
 mypopsize <- data.frame(
   Resource_Class = rep(c("Agr", "Forest", "Urban"), rep(2, 3)),
   stratum = rep(c("Stratum1", "Stratum2"), 3),
-  Total = c(2500, 1500, 1000, 500, 600, 450))
-cont_cdftest(dframe, vars = myvars, subpops = mysubpops, siteID = "siteID",
+  Total = c(2500, 1500, 1000, 500, 600, 450)
+)
+cont_cdftest(dframe,
+  vars = myvars, subpops = mysubpops, siteID = "siteID",
   weight = "wgt", xcoord = "xcoord", ycoord = "ycoord",
-  stratumID = "stratum", popsize = mypopsize, testname="RaoScott_First")
-
+  stratumID = "stratum", popsize = mypopsize, testname = "RaoScott_First"
+)
 }
 \seealso{
 \code{\link{calibrate}}

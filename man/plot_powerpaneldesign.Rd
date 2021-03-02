@@ -18,68 +18,68 @@ plot_powerpaneldesign(
 )
 }
 \arguments{
-\item{dsgnpower}{List object of class powerpaneldesign. Object provides
+\item{dsgnpower}{List object of class \code{powerpaneldesign}. Object provides
 power calculated for a set of panel designs, set of indicators, set of
 trend values, and set of alpha values. Expect input as list as output from
-function power_dsgn.}
+function \code{power_dsgn}.}
 
-\item{plot_type}{Default is "standard" which plots standard power curve. If
-equal to "relative", then plot power of one panel design compared to one or
+\item{plot_type}{Default is \code{"standard"} which plots standard power curve. If
+equal to \code{"relative"}, then plot power of one panel design compared to one or
 more other panel designs.}
 
-\item{trend_type}{Character value for trend in mean ("mean") or or percent
-change in proportion ("percent") of cumulative distribution function above
-or below a fixed cut point.  Default is "mean".}
+\item{trend_type}{Character value for trend in mean (\code{"mean"}) or or percent
+change in proportion (\code{"percent"}) of cumulative distribution function above
+or below a fixed cut point.  Default is \code{"mean"}.}
 
-\item{xaxis_type}{Character value equal to "period" or "change" which
+\item{xaxis_type}{Character value equal to \code{"period"} or \code{"change"} which
 designates the type of x-axis for power plot where power is plotted on
-y-axis.  For xaxis_type = "period", x-axis is periods in dsgnpower. If
-xaxis_type = "change", then x-axis is percent per period with secondary
+y-axis.  For \code{xaxis_type = "period"}, x-axis is periods in \code{dsgnpower}. If
+\code{xaxis_type = "change"}, then x-axis is percent per period with secondary
 x-axises for total percent per period and associated change in mean.
-Default is "period".  Note that xaxis_type controls how the input for
-"period" and "trend" paramenters is used.}
+Default is \code{"period"}.  Note that \code{xaxis_type} controls how the input for
+\code{"period"} and \code{"trend"} paramenters is used.}
 
-\item{comp_type}{Character value equal to "design" or "Indicator" which
+\item{comp_type}{Character value equal to \code{"design"} or \code{"Indicator"} which
 designates the type of power curve comparison that will occur on a single
-plot.  If comp_type = "design", then on a single plot of power curves all
-panel designs specified in "dsgns" are plotted for a single indicator,
-single trend value and single alpha.  If comp_type = "indicator", then on a
-single plot of power curves all indicators specified in "indicator" are
+plot.  If \code{comp_type = "design"}, then on a single plot of power curves all
+panel designs specified in \code{"dsgns"} are plotted for a single indicator,
+single trend value and single alpha.  If \code{comp_type = "indicator"}, then on a
+single plot of power curves all indicators specified in \code{"indicator"} are
 plotted for a single panel design, single trend value and single alpha.
-Default is "design".}
+Default is \code{"design"}.}
 
 \item{dsgns}{Vector of names of panel designs that are to be plotted.  Names
-must be all, or a subset of, names of designs in dsgnpower. Default is NULL
-which results in only the first panel design in dsgnpower being used.}
+must be all, or a subset of, names of designs in \code{dsgnpower}. Default is \code{NULL}
+which results in only the first panel design in \code{dsgnpower} being used.}
 
-\item{indicator}{Vector of indicator names contained in dsgnpower that are
+\item{indicator}{Vector of indicator names contained in \code{dsgnpower} that are
 to be plotted.  Indicator names must be all, or a subset of, indicator
-names in dsgnpower. Default is NULL which results in only the first
-indicator in dsgnpower being used.}
+names in \code{dsgnpower}. Default is \code{NULL} which results in only the first
+indicator in \code{dsgnpower} being used.}
 
-\item{trend}{NULL, a single value or vector of values contained in dsgnpower
+\item{trend}{\code{NULL}. A single value or vector of values contained in \code{dsgnpower}
 that will be plotted. Values must be all, or a subset of, trend values in
-dsgnpower. If xaxis_type is equal to "period", then NULL results in maximum
+\code{dsgnpower}. If \code{xaxis_type} is equal to \code{"period"}, then \code{NULL} results in maximum
 trend value being used and a single value or vector of values results in a
-separate plot for each value specified.  If xaxis_type is equal to
-"change", then NULL results in all trend values in dsgnpower being plotted
-on x-axis and a vector of values results in all trend values in dsgnpower
+separate plot for each value specified.  If \code{xaxis_type} is equal to
+\code{"change"}, then \code{NULL} results in all trend values in \code{dsgnpower} being plotted
+on x-axis and a vector of values results in all trend values in \code{dsgnpower}
 from minimum value to maximum value specified being plotted on x-axis.}
 
-\item{period}{NULL, a single value or vector of values contained in dsgnpower
+\item{period}{\code{NULL}, a single value or vector of values contained in \code{dsgnpower}
 that will be plotted. Values must be all, or a subset of, period values in
-dsgnpower. If xaxis_type is equal to "period", then NULL results in all
-time periods in dsgnpower being plotted on x-axis and a vector of values
-results in all period values in dsgnpower from minimum value to maximum
-value specified being plotted on x-axis. If xaxis_type is equal to
-"change", then NULL results in all time periods in dsgnpower being plotted
+\code{dsgnpower}. If \code{xaxis_type} is equal to \code{"period"}, then \code{NULL} results in all
+time periods in \code{dsgnpower} being plotted on x-axis and a vector of values
+results in all period values in \code{dsgnpower} from minimum value to maximum
+value specified being plotted on x-axis. If \code{xaxis_type} is equal to
+\code{"change"}, then \code{NULL} results in all time periods in \code{dsgnpower} being plotted
 in separate plots and a vector of values results in time periods specified
 being plotted in separate plots.}
 
 \item{alpha}{A single value or vector of significance levels (as proportion,
-e.g. 0.05) contained in dsgnpower to used for power plots. Specifying more
-than a single value results in multiple plots. Default is NULL which
-results in the minimum significance level in dsgnpower being used.}
+e.g. \code{0.05}) contained in \code{dsgnpower} to used for power plots. Specifying more
+than a single value results in multiple plots. Default is \code{NULL} which
+results in the minimum significance level in \code{dsgnpower} being used.}
 }
 \value{
 One or more power curve plots are created and plotted.  User must
@@ -98,48 +98,57 @@ powerpaneldesign and is normally the output of function power_dsgn.
 \details{
 By default the plot function produces a standard power curve at end
   of each time period on the x-axis with y-axis as power. When more than one
-  panel design is in dsgnpower, the first panel design is used When more than
-  one indicatoris in dsgnpower, the first indicator is used  When more than
-  one trend value is in dsgnpower, the maximum trend value is used. When more
-  than one significance level, alpha, is in dsgnpower, the minimum
+  panel design is in \code{dsgnpower}, the first panel design is used. When more than
+  one indicatoris in \code{dsgnpower}, the first indicator is used.  When more than
+  one trend value is in \code{dsgnpower}, the maximum trend value is used. When more
+  than one significance level, \code{alpha}, is in \code{dsgnpower}, the minimum
   significance level is used.
 
-  Control of the type of plot produced is governed by plot_type, trend_type,
-  xaxis_type and comp_type. The number of plots produced is governed by the
-  number of panel designs (dsgn) specified, the number of indicators
-  (indicator) specified, the number of time periods (period) specifice, the
+  Control of the type of plot produced is governed by \code{plot_type}, \code{trend_type},
+  \code{xaxis_type} and \code{comp_type}. The number of plots produced is governed by the
+  number of panel designs (\code{dsgn}) specified, the number of indicators
+  (\code{indicator}) specified, the number of time periods (\code{period}) specifice, the
   number of trend values (trend) specified and the number of significance
-  levels (alpha) specified.
+  levels (\code{alpha}) specified.
 
-  When the comparison type ("comp_type") is equal to "design", all power
-  curves specified by dsgn are plotted on the same plot.  When comp_type is
-  equal to "indicator", all power curves specified by "indicator" are plotted
+  When the comparison type (\code{"comp_type"}) is equal to \code{"design"}, all power
+  curves specified by dsgn are plotted on the same plot.  When \code{comp_type} is
+  equal to \code{"indicator"}, all power curves specified by \code{"indicator"} are plotted
   on the same plot.  Typically, no more than 4-5 power curves should be
   plotted on same plot.
 }
 \examples{
 # Construct a rotating panel design with sample size of 60
-R60N <- revisit_dsgn (20, panels=list(R60N=list(n=60, pnl_dsgn = c(1, NA),
-                      pnl_n=NA, start_option="None")), begin=1 )
+R60N <- revisit_dsgn(20, panels = list(R60N = list(
+  n = 60, pnl_dsgn = c(1, NA),
+  pnl_n = NA, start_option = "None"
+)), begin = 1)
 
 # Construct a fixed panel design with sample size of 60
-F60 <- revisit_dsgn (20, panels=list(F60=list(n=60, pnl_dsgn = c(1, 0),
-                     pnl_n=NA, start_option="None")), begin=1 )
+F60 <- revisit_dsgn(20, panels = list(F60 = list(
+  n = 60, pnl_dsgn = c(1, 0),
+  pnl_n = NA, start_option = "None"
+)), begin = 1)
 
 # Power for rotating panel with sample size 60
-Power_tst <- power_dsgn("Variable_Name", ind_values = 43, unit_var = 280,
-                        period_var = 4, unitperiod_var = 40, index_var = 90,
-                        unit_rho = 1, period_rho = 0, paneldsgn = list(
-                          R60N=R60N, F60=F60), nrepeats = NULL,
-                        trend_type = "mean", trend= c(1.0, 2.0), alpha=0.05 )
+Power_tst <- power_dsgn("Variable_Name",
+  ind_values = 43, unit_var = 280,
+  period_var = 4, unitperiod_var = 40, index_var = 90,
+  unit_rho = 1, period_rho = 0, paneldsgn = list(
+    R60N = R60N, F60 = F60
+  ), nrepeats = NULL,
+  trend_type = "mean", trend = c(1.0, 2.0), alpha = 0.05
+)
 plot_powerpaneldesign(Power_tst)
 plot_powerpaneldesign(Power_tst, dsgns = c("F60", "R60N"))
 plot_powerpaneldesign(Power_tst, dsgns = c("F60", "R60N"), trend = 1.0)
 \dontrun{
 pdf("Power_tst.pdf")
-plot_powerpaneldesign(Power_tst, plot_type = "relative", comp_type = "design",
-     trend_type = "mean", trend = c(1, 2), dsgns = c("R60N", "F60"),
-     indicator="Variable_Name")
+plot_powerpaneldesign(Power_tst,
+  plot_type = "relative", comp_type = "design",
+  trend_type = "mean", trend = c(1, 2), dsgns = c("R60N", "F60"),
+  indicator = "Variable_Name"
+)
 graphics.off()
 }
 

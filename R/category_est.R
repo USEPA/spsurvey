@@ -6,6 +6,8 @@
 #          "stderr_P".
 # Revised: February 16, 2021 to correctly handle the case where the response
 #          variable contains a single category. 
+# Revised: February 22, 2021 to fix incorrect coding of "rslt_T" as
+#          "rslt_U".
 #
 #' Category Proportion and Total Estimates for Probability Survey Data
 #'
@@ -236,9 +238,9 @@ category_est <- function(catsum, dframe, itype, lev_itype, nlev_itype, ivar,
     } else {
        rslt_svy <- svytotal(make.formula(ivar), design = subset(design, tst),
         na.rm = TRUE)
-      rslt_U <- svytotal(~zzz, design = subset(design, tst), na.rm = TRUE)
+      rslt_T <- svytotal(~zzz, design = subset(design, tst), na.rm = TRUE)
       rslt_U <- cbind(data.frame(t(as.data.frame(rslt_svy)[1])),
-        Total = rslt_U[1])
+        Total = rslt_T[1])
       dimnames(rslt_U)[1] <- lev_itype
       if(vartype == "Local") {
         temp <- cat_localmean_total(itype, lev_itype, nlev_itype, ivar,
@@ -249,9 +251,9 @@ category_est <- function(catsum, dframe, itype, lev_itype, nlev_itype, ivar,
         warn_ind <- temp$warn_ind
         warn_df <- temp$warn_df
       } else {
-        temp <- SE(rslt_U)
+        temp <- SE(rslt_T)
         stderr_U <- cbind(t(data.frame(SE(rslt_svy))), Total = as.vector(temp))
-        temp <- as.data.frame(confint(rslt_U, level = conf/100))
+        temp <- as.data.frame(confint(rslt_T, level = conf/100))
         confval_U <- rbind(confint(rslt_svy, level = conf/100), Total = temp)
       }
     }
@@ -278,10 +280,10 @@ category_est <- function(catsum, dframe, itype, lev_itype, nlev_itype, ivar,
     } else {
       rslt_svy <- svyby(make.formula(ivar), make.formula(itype),
         design = subset(design, tst), svytotal, na.rm = TRUE)
-      rslt_U <- svyby(~zzz, make.formula(itype), design = subset(design, tst),
+      rslt_T <- svyby(~zzz, make.formula(itype), design = subset(design, tst),
         svytotal, na.rm = TRUE)
       rslt_U <- rslt_svy[, 2:(nlev_ivar + 1)]
-      temp <- rslt_U[2]
+      temp <- rslt_T[2]
       names(temp) <- "Total"
       rslt_U <- cbind(rslt_U, Total = temp)
       if(vartype == "Local") {
@@ -293,9 +295,9 @@ category_est <- function(catsum, dframe, itype, lev_itype, nlev_itype, ivar,
         warn_ind <- temp$warn_ind
         warn_df <- temp$warn_df
       } else {
-        temp <- SE(rslt_U)
+        temp <- SE(rslt_T)
         stderr_U <- cbind(SE(rslt_svy), Total = temp)
-        temp <- as.data.frame(confint(rslt_U, level = conf/100))
+        temp <- as.data.frame(confint(rslt_T, level = conf/100))
         tempdf <- confint(rslt_svy, level = conf/100)
         confval_U <- NULL
         for(i in 1:nlev_itype) {

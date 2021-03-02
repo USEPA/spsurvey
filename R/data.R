@@ -1,16 +1,136 @@
 #' New England Lakes
 #'
-#' A simple features (sf) point data.frame of 6121 lakes that was created 
-#' from a shapefile of lakes in the southern New England region of the U.S. 
-#' containing the area category in hectares and coordinates. The variables are as follows:
+#' An `sf` point object of 5328 lakes in the Northeastern
+#' United States.
 #'
-#' @format A data frame with 6121 rows and 5 variables:
+#' @format An `sf` object with 5328 rows and 7 variables:
 #' \describe{
-#'   \item{xcoord}{x coordinate in meters in Albers (1832073 - 2136098)}
-#'   \item{ycoord}{y coordinate in meters in Albers (2218907 - 2474343)}
-#'   \item{State}{state lake point is in (CT, MA, RI)}
-#'   \item{Area_Cat}{lake surface area category in hectares ((0,1],(1,5],
-#'   (10,50],(5,10],(50,500], (500,1e+04])}
+#'   \item{AREA_HA}{Lake area in hectares.}
+#'   \item{AREA_HA_CAT}{Lake area categories based on a hectare cutoff.}
+#'   \item{ELEVATION}{Elevation in meters.}
+#'   \item{ELEVATION_CAT}{Elevation categories based on a meter cutoff.}
+#'   \item{LAT_DD_N83}{Latitude coordinate in meters using the NAD83 Datum.}
+#'   \item{LON_DD_N83}{Longitude coordinate in meters using the NAD83 Datum.}
+#'   \item{geometry}{Point geometry using a USA Contiguous Albers Equal Area
+#'     Conic projection.}
+#' }
+"NE_Lakes"
+
+#' Illinois River
+#'
+#' A simple features (sf) multilinestring object of 9087 segments of the 
+#' Illinois River in Arkansas and Oklahoma.
+#'
+#' @format An `sf` multilinestring object object with 9087 rows and 3
+#' variables:
+#' \describe{
+#'   \item{STATE_NAME}{State name.}
+#'   \item{SO_ID}{Strahler order identifier.}
+#'   \item{geometry}{Multilinestring geometry using a USA Contiguous Albers
+#'     Equal Area Conic projection.}
+#' }
+"Illinois_River"
+
+#' Great Lakes
+#'
+#' An `sf` multipolygon object of 4113 polygons consisting 
+#' of shoreline segments in the Great Lakes region of North America. 
+#' 
+#' @format A data frame with 4113 rows and 5 variables:
+#' \describe{
+#'   \item{COUNTRY}{Country.}
+#'   \item{WTBDY_NM}{Water body name.}
+#'   \item{RSRC_CLASS}{Bay class.}
+#'   \item{PSTL_CODE}{Postal code.}
+#'   \item{AREA_SQKM}{Area in square kilometers}
 #'   \item{geometry}{simple features geometry list-column}
 #' }
-"NE_lakes"
+"Great_Lakes"
+
+#' NLA West
+#'
+#' A data frame consisting lake observations from a subset of the Environmental
+#' Protection Agency's "National Lakes Assessment" in the Western United 
+#' States duing the years 2012 and 2017.
+#'
+#' @format A data frame with 851 rows and 18 variables:
+#' \describe{
+#'   \item{UNIQUE_ID}{A unique observation identifier.}
+#'   \item{SITE_ID}{A unique site identifier.}
+#'   \item{DSGN_CYCLE}{Year of design cycle.}
+#'   \item{LAT_DD_N83}{Latitude coordinate using the NAD83 Datum.}
+#'   \item{LON_DD_N83}{Longitude coordinate using the NAD83 Datum.}
+#'   \item{XCOORD}{Transformed latitude coordinate in meters.}
+#'   \item{YCOORD}{Transformed latitude coordinate in meters.}
+#'   \item{WGT_TP_EXTENT}{Target population weights for extent.}
+#'   \item{WGT_SP_CORE}{Sampled population weights for sampled sites.}
+#'   \item{WGT_TP_CORE}{Target population weights for sampled sites.}
+#'   \item{EVAL_CAT}{Lake evaluation category.}
+#'   \item{TNT_CAT}{Target vs Nontarget evaluation category.}
+#'   \item{URBN_NLA17}{Urban category.}
+#'   \item{STATE_NM}{State name.}
+#'   \item{BENTHIC_MMI}{Benthic MMI value.}
+#'   \item{BENTHIC_MMI_COND}{Benthic MMI categories.}
+#'   \item{PHOSPHORUS_COND}{Phosphorus condition categories.}
+#'   \item{NITROGEN_COND}{Nitrogen condition categories.}
+#' }
+"NLA_West"
+
+#' NRSA EPA7
+#'
+#' A data frame consisting of stream observations from a subset of the Environmental
+#' Protection Agency's "National Rivers and Streams Assessment" in the Central
+#' United States duing the years 2008 and 2013.
+#'
+#' @format A data frame with 682 rows and 18 variables:
+#' \describe{
+#'   \item{UNIQUE_ID}{A unique observation identifier.}
+#'   \item{SITE_ID}{A unique site identifier.}
+#'   \item{DSGN_CYCLE}{Year of design cycle.}
+#'   \item{LAT_DD_N83}{Latitude coordinate using the NAD83 Datum.}
+#'   \item{LON_DD_N83}{Longitude coordinate using the NAD83 Datum.}
+#'   \item{XCOORD}{Transformed latitude coordinate in meters.}
+#'   \item{YCOORD}{Transformed latitude coordinate in meters.}
+#'   \item{WGT_TP_EXTENT}{Target population weights for extent.}
+#'   \item{WGT_SP_CORE}{Sampled population weights for sampled sites.}
+#'   \item{WGT_TP_CORE}{Target population weights for sampled sites.}
+#'   \item{EVAL_CAT}{Lake evaluation category.}
+#'   \item{TNT_CAT}{Target vs Nontarget evaluation category.}
+#'   \item{NA_LEVEL1_ECO_NM}{Ecoregion.}
+#'   \item{STATE_NM}{State name.}
+#'   \item{BENTHIC_MMI}{Benthic MMI value.}
+#'   \item{BENTHIC_MMI_COND}{Benthic MMI categories.}
+#'   \item{PHOSPHORUS_COND}{Phosphorus condition categories.}
+#'   \item{NITROGEN_COND}{Nitrogen condition categories.}
+#' }
+"NRSA_EPA7"
+
+#' NCCA Gulf
+#'
+#' A data frame consisting of gulf observations from a subset of the
+#' Environmental Protection Agency's "National Coastal Condition
+#' Assessment" in the Southern United States duing the years 2010 and 2015.
+#'
+#' @format A data frame with 851 rows and 19 variables:
+#' \describe{
+#'   \item{UNIQUE_ID}{A unique observation identifier.}
+#'   \item{SITE_ID}{A unique site identifier.}
+#'   \item{DSGN_CYCLE}{Year of design cycle.}
+#'   \item{REVISIT}{Site revisit status.}
+#'   \item{LAT_DD_N83}{Latitude coordinate using the NAD83 Datum.}
+#'   \item{LON_DD_N83}{Longitude coordinate using the NAD83 Datum.}
+#'   \item{XCOORD}{Transformed latitude coordinate in meters.}
+#'   \item{YCOORD}{Transformed latitude coordinate in meters.}
+#'   \item{WGT_TP_EXTENT}{Target population weights for extent.}
+#'   \item{WGT_SP_CORE}{Sampled population weights for sampled sites.}
+#'   \item{WGT_TP_CORE}{Target population weights for sampled sites.}
+#'   \item{EVAL_CAT}{Lake evaluation category.}
+#'   \item{TNT_CAT}{Target vs Nontarget evaluation category.}
+#'   \item{SMALL_EST}{Size category.}
+#'   \item{STATE_NM}{State name.}
+#'   \item{BENTHIC_MMI}{Benthic MMI value.}
+#'   \item{BENTHIC_MMI_COND}{Benthic MMI categories.}
+#'   \item{PHOSPHORUS_COND}{Phosphorus condition categories.}
+#'   \item{NITROGEN_COND}{Nitrogen condition categories.}
+#' }
+"NCCA_Gulf"

@@ -23,15 +23,15 @@ BIBD terms)}
 
 \item{n_pnl}{Number of panels}
 
-\item{rand_control}{Character value must be "none", "panel", or "period".
+\item{rand_control}{Character value must be \code{"none"}, \code{"panel"}, or \code{"period"}.
 Specifies whether the number of sample events will be fixed for each panel
-("panel"), for each sample occasion ("occasion"), or for total panel-period
-combinations ("none").  Default is "panel".}
+(\code{"panel"}), for each sample occasion (\code{"occasion"}), or for total panel-period
+combinations (\code{"none"}).  Default is \code{"panel"}.}
 
-\item{n_visit}{If rand_control is "panel", this is the number of panels that
-will be sampled in each time period. If rand_control is "period", this is
-the number of time periods to be sampled in each panel. If rand_control is
-"none", this is the total number of panel-period combinations that will
+\item{n_visit}{If \code{rand_control} is \code{"panel"}, this is the number of panels that
+will be sampled in each time period. If rand_control is \code{"period"}, this is
+the number of time periods to be sampled in each panel. If \code{rand_control} is
+\code{"none"}, this is the total number of panel-period combinations that will
 have units sampled in the revisit design.}
 
 \item{nsamp}{Number of samples in each panel.}
@@ -41,7 +41,7 @@ have units sampled in the revisit design.}
 \item{begin}{Numeric name of first sampling occasion, e.g. a specific period.}
 
 \item{skip}{Number of sampling occasions to skip between planned sampling
-periods, e.g., sampling will occur only every 5 periods if skip = 5.}
+periods, e.g., sampling will occur only every 5 periods if \code{skip = 5}.}
 }
 \value{
 A two-dimensional array of sample sizes to be sampled for each panel
@@ -50,9 +50,9 @@ A two-dimensional array of sample sizes to be sampled for each panel
 \description{
 Create a revisit design for a survey that specifies the panels and time
 periods that will be sampled by random selection of panels and time periods.
-Three options for random assignments are "period" where the number of time
-periods to be sampled in a panel is fixed, "panel" where the number panels to
-be sampled in a time period is fixed, and "none" where the number of
+Three options for random assignments are \code{"period"} where the number of time
+periods to be sampled in a panel is fixed, \code{"panel"} where the number panels to
+be sampled in a time period is fixed, and \code{"none"} where the number of
 panel-period combinations is fixed.
 }
 \details{
@@ -61,13 +61,18 @@ The revisit design for a survey is created by random selection of
   occasions that will be visited by a panel is random.
 }
 \examples{
-revisit_rand(n_period = 20, n_pnl = 10, rand_control = "none", n_visit = 50,
-             nsamp = 20)
-revisit_rand(n_period = 20, n_pnl = 10, rand_control = "panel", n_visit = 5,
-             nsamp = 10)
-revisit_rand(n_period = 20, n_pnl = 10, rand_control = "period",
-              n_visit = 5, nsamp = 10)
-
+revisit_rand(
+  n_period = 20, n_pnl = 10, rand_control = "none", n_visit = 50,
+  nsamp = 20
+)
+revisit_rand(
+  n_period = 20, n_pnl = 10, rand_control = "panel", n_visit = 5,
+  nsamp = 10
+)
+revisit_rand(
+  n_period = 20, n_pnl = 10, rand_control = "period",
+  n_visit = 5, nsamp = 10
+)
 }
 \seealso{
 \describe{
