@@ -78,12 +78,17 @@ grtspts_ip <- function(type = "equal", n_base, Nstratum = NULL, caty = NULL,
     nneg = sum(aux < 0)
     if (nnull > 0) {
       warn <-  "Proportional vector has zero values and their inclusion probabilities are set to 0."
+      if(is.null(warn_ind)) {
+        warn_df <- data.frame(stratum = NA, func = I("grtspts_ip"), warning = warn)
+        warn_ind <- TRUE
+      } else {
       if(warn_ind){
         warn_df <- rbind(warn_df, data.frame(stratum = NA, func = I("grtspts_ip"),
                                              warning = warn))
-      } else {
-        warn_df <- data.frame(stratum = NA, func = I("grtspts_ip"), warning = warn)
-        warn_ind <- TRUE
+        } else {
+          warn_df <- data.frame(stratum = NA, func = I("grtspts_ip"), warning = warn)
+          warn_ind <- TRUE
+        }
       }
     }
 

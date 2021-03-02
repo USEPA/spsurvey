@@ -59,7 +59,7 @@ irspts_mindis <- function(mindis, sframe, samplesize, stratum, maxtry = 10,
     samp_id <- sample(sframe$idpts, samplesize, prob=sframe$ip)
   }
   # extract sites from sample frame
-  sites <- sftmp[sftmp$idpts %in% samp_id, ]
+  sites <- sframe[sframe$idpts %in% samp_id, ]
   
   # calculate distance between sites
   site_dist <- st_distance(sites_base)
@@ -93,7 +93,7 @@ irspts_mindis <- function(mindis, sframe, samplesize, stratum, maxtry = 10,
     # select new sites that include legacy sites
     samp_id <- sample(sframe$idpts, samplesize, prob=sframe$ip)
     # extract sites from sample frame
-    sites <- sftmp[sftmp$idpts %in% samp_id, ]
+    sites <- sframe[sframe$idpts %in% samp_id, ]
 
     # calculate distance between sites
     site_dist <- st_distance(sites_base)
