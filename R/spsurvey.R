@@ -30,14 +30,16 @@
 # Import all packages listed as Depends or Imports
 #' @import sf
 #' @import survey
+#' @importFrom boot boot
 #' @importFrom crossdes find.BIB
 #' @importFrom deldir deldir tile.list
 #' @importFrom graphics axis box legend lines mtext par plot points text title
 #' @importFrom grDevices graphics.off pdf rainbow
+#' @importFrom lme4 lmer VarCorr
 #' @importFrom MASS ginv
-#' @importFrom stats addmargins chisq.test confint dist dnorm ftable model.frame
-#'             model.matrix na.omit na.pass optimize pchisq pf pnorm qnorm rnorm runif
-#'             terms update var weights
+#' @importFrom stats addmargins chisq.test confint dist dnorm extractAIC ftable
+#'             lm model.frame model.matrix na.omit na.pass optimize pchisq pf
+#'             pnorm qnorm rnorm runif terms update var weights
 #' @importFrom units set_units
 #'             
 #'

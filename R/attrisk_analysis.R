@@ -8,6 +8,8 @@
 #          Yates-Grundy variance estimators and to use a new function named
 #          survey_design to create the survey design object
 # Revised: January 28, 2021 to replace "pcfactor.ind" with "pcfactor_ind"
+# Revised: March 2, 2021 to revise the process for creating unique site ID
+#          values
 #'
 #' Attributable Risk Analysis for Probability Survey Data
 #'
@@ -52,42 +54,42 @@
 #'   value \code{"All Sites"} is added to the \code{dframe} data frame.  The default
 #'   value is \code{NULL}.
 #'
-#' @param siteID Value providing the name of the site ID variable in
+#' @param siteID Character value providing the name of the site ID variable in
 #'   the \code{dframe} data frame.  For a two-stage sample, the site ID variable
 #'   identifies stage two site IDs.  The default value is \code{"siteID"}.
 #'
-#' @param weight Value providing the name of the survey design weight
+#' @param weight Character value providing the name of the survey design weight
 #'   variable in the \code{dframe} data frame.  For a two-stage sample, the weight
 #'   variable identifies stage two weights.  The default value is \code{"weight"}.
 #'
-#' @param xcoord Value providing the name of the x-coordinate variable in
+#' @param xcoord Character value providing the name of the x-coordinate variable in
 #'   the \code{dframe} data frame.  For a two-stage sample, the x-coordinate
 #'   variable identifies stage two x-coordinates.  Note that x-coordinates are
 #'   required for calculation of the local mean variance estimator.  The
 #'   default value is \code{NULL}.
 #'
-#' @param ycoord Value providing the name of the y-coordinate variable in
+#' @param ycoord Character value providing the name of the y-coordinate variable in
 #'   the \code{dframe} data frame.  For a two-stage sample, the y-coordinate
 #'   variable identifies stage two y-coordinates.  Note that y-coordinates are
 #'   required for calculation of the local mean variance estimator.  The
 #'   default value is \code{NULL}.
 #'
-#' @param stratumID Value providing the name of the stratum ID variable in
+#' @param stratumID Character value providing the name of the stratum ID variable in
 #'   the \code{dframe} data frame.  The default value is \code{NULL}.
 #'
-#' @param clusterIDValue providing the name of the cluster (stage one) ID
+#' @param clusterID Character value providing the name of the cluster (stage one) ID
 #'   variable in the \code{dframe} data frame.  Note that cluster IDs are
 #'   required for a two-stage sample.  The default value is \code{NULL}.
 #'
-#' @param weight1 Value providing the name of the stage one weight
+#' @param weight1 Character value providing the name of the stage one weight
 #'   variable in the \code{dframe} data frame.  The default value is \code{NULL}.
 #'
-#' @param xcoord1 Value providing the name of the stage one x-coordinate
+#' @param xcoord1 Character value providing the name of the stage one x-coordinate
 #'   variable in the \code{dframe} data frame.  Note that x-coordinates are
 #'   required for calculation of the local mean variance estimator.  The
 #'   default value is \code{NULL}.
 #'
-#' @param ycoord1 Value providing the name of the stage one y-coordinate
+#' @param ycoord1 Character value providing the name of the stage one y-coordinate
 #'   variable in the \code{dframe} data frame.  Note that y-coordinates are
 #'   required for calculation of the local mean variance estimator.  The
 #'   default value is \code{NULL}.
@@ -100,12 +102,12 @@
 #'   arguments \code{weight} and \code{weight1}. The default value is
 #'   \code{FALSE}.
 #'
-#' @param sweight Value providing the name of the size weight variable in
+#' @param sweight Character value providing the name of the size weight variable in
 #'   the \code{dframe} data frame.  For a two-stage sample, the size weight
 #'   variable identifies stage two size weights.  The default value is
 #'   \code{NULL}.
 #'
-#' @param sweight1 Value providing the name of the stage one size weight
+#' @param sweight1 Character value providing the name of the stage one size weight
 #'   variable in the \code{dframe} data frame.  The default value is \code{NULL}.
 #'
 #' @param popcorrect Logical value that indicates whether the finite population
@@ -115,12 +117,12 @@
 #'   sample, values must be supplied for arguments \code{Ncluster} and
 #'   \code{stage1size}. The default value is \code{FALSE}.
 #'
-#' @param fpcsize Value providing the name of the variable in the
+#' @param fpcsize Character value providing the name of the variable in the
 #'   \code{dframe} data frame that identifies size of the resource, which is
 #'   required for calculation of the finite population correction factor for a
 #'   single-stage sample.  The default value is \code{NULL}.
 #'
-#' @param Ncluster Value providing the name of the variable in the
+#' @param Ncluster Character value providing the name of the variable in the
 #'   \code{dframe} data frame that identifies the number of clusters (stage one
 #'   sampling units) in the resource, which is required for calculation of the
 #'   finite population correction factor for a two-stage sample.  This argument
@@ -128,7 +130,7 @@
 #'   equal to \code{NULL} and the vartype argument equals \code{"Local"}.  The default
 #'   value is \code{NULL}.
 #'
-#' @param stage1size Value providing the name of the variable in the
+#' @param stage1size Character value providing the name of the variable in the
 #'   \code{dframe} data frame that identifies cluster size, i.e. the number of
 #'   the stage two sampling units in the resource for a cluster.  Note that
 #'   cluster size is required for calculation of the finite population
@@ -166,12 +168,12 @@
 #'   Example popsize for post-stratification using an xtabs object:\cr
 #'     popsize <- xtabs(~Ecoregion + Type, data = MySurveyFrame)\cr
 #'
-#' @param vartype Value providing the choice of the variance estimator,
+#' @param vartype Character value providing the choice of the variance estimator,
 #'   where "Local" = the local mean estimator, \code{"SRS"} = the simple random
 #'   sampling estimator, \code{"HT"} = the Horvitz-Thompson estimator, and \code{"YG"} = the
 #'   Yates-Grundy estimator.  The default value is \code{"Local"}.
 #'
-#' @param jointprob Value providing the choice of joint inclusion
+#' @param jointprob Character value providing the choice of joint inclusion
 #'   probability approximation for use with Horvitz-Thompson and Yates-Grundy
 #'   variance estimators, where \code{"overton"} indicates the Overton approximation,
 #'   \code{"hr"} indicates the Hartley_Rao approximation, and \code{"brewer"} equals the
@@ -297,8 +299,8 @@ attrisk_analysis <- function(dframe, vars_response, vars_stressor,
   # output a warning message
 
   if (ind) {
-    dframe$siteID <- dframe[, siteID]
-    temp <- with(dframe, sapply(split(siteID, siteID), length))
+    IDs <- dframe[, siteID]
+    temp <- sapply(split(IDs, IDs), length)
     if (any(temp > 1)) {
       warn_ind <- TRUE
       temp_str <- vecprint(names(temp)[temp > 1])
@@ -308,7 +310,7 @@ attrisk_analysis <- function(dframe, vars_response, vars_stressor,
         func = I(fname), subpoptype = NA,
         subpop = NA, indicator = NA, stratum = NA, warning = I(warn), action = I(act)
       ))
-      dframe$siteID <- uniqueID(dframe$siteID)
+      dframe[, siteID] <- uniqueID(dframe[, siteID])
     }
   }
 

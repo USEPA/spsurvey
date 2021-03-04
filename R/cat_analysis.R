@@ -7,6 +7,8 @@
 # Revised: December 15, 2020 to allow use of the Horvitz-Thompson and
 #          Yates-Grundy variance estimators and to use a new function named
 #          survey_design to create the survey design object
+# Revised: March 2, 2021 to revise the process for creating unique site ID
+#          values
 #'
 #' Categorical Data Analysis for Probability Survey Data
 #'
@@ -252,32 +254,23 @@ cat_analysis <- function(dframe, vars, subpops = NULL, siteID = "siteID",
 
   dframe <- droplevels(dframe)
 
-  # Provide default site ID's if site ID is missing
+  # Ensure that the dframe data frame contains the site ID variable
 
-  if (missing(siteID)) {
-    siteID <- "siteID"
-    dframe$siteID <- paste0(siteID, 1:nrow(dframe))
-    ind <- TRUE
+  if (!(siteID %in% names(dframe))) {
+    ind <- FALSE
+    error_ind <- TRUE
+    msg <- paste0("The name provided for the siteID argument, \"", siteID, "\", does not occur among \nthe names for the dframe data frame.\n")
+    error_vec <- c(error_vec, msg)
   } else {
-
-    # If site ID is not missing, ensure that the dframe data frame contains the site ID variable
-
-    if (!(siteID %in% names(dframe))) {
-      ind <- FALSE
-      error_ind <- TRUE
-      msg <- paste0("The name provided for the siteID argument, \"", siteID, "\", does not occur among \nthe names for the dframe data frame.\n")
-      error_vec <- c(error_vec, msg)
-    } else {
-      ind <- TRUE
-    }
+    ind <- TRUE
   }
 
   # Check site IDs for repeat values and, as necessary, create unique site IDs and
   # output a warning message
 
   if (ind) {
-    dframe$siteID <- dframe[, siteID]
-    temp <- with(dframe, sapply(split(siteID, siteID), length))
+    IDs <- dframe[, siteID]
+    temp <- sapply(split(IDs, IDs), length)
     if (any(temp > 1)) {
       warn_ind <- TRUE
       temp_str <- vecprint(names(temp)[temp > 1])
@@ -287,7 +280,7 @@ cat_analysis <- function(dframe, vars, subpops = NULL, siteID = "siteID",
         func = I(fname), subpoptype = NA,
         subpop = NA, indicator = NA, stratum = NA, warning = I(warn), action = I(act)
       ))
-      dframe$siteID <- uniqueID(dframe$siteID)
+      dframe[, siteID] <- uniqueID(dframe[, siteID])
     }
   }
 

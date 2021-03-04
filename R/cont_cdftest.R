@@ -355,8 +355,8 @@ cont_cdftest <- function(dframe, vars, subpops = NULL, surveyID = NULL,
 
   if (is.null(surveyID)) {
     if (ind2) {
-      dframe$siteID <- dframe[, siteID]
-      temp <- with(dframe, sapply(split(siteID, siteID), length))
+      IDs <- dframe[, siteID]
+      temp <- sapply(split(IDs, IDs), length)
       if (any(temp > 1)) {
         warn_ind <- TRUE
         temp.str <- vecprint(names(temp)[temp > 1])
@@ -366,16 +366,15 @@ cont_cdftest <- function(dframe, vars, subpops = NULL, surveyID = NULL,
           func = I(fname), subpoptype = NA,
           subpop = NA, indicator = NA, stratum = NA, warning = I(warn), action = I(act)
         ))
-        dframe$siteID <- uniqueID(dframe$siteID)
+        dframe[, siteID] <- uniqueID(dframe[, siteID])
       }
     }
   } else {
     if (ind1 & ind2) {
-      dframe$surveyID <- dframe[, surveyID]
-      dframe$siteID <- dframe[, siteID]
+      IDs <- dframe[, siteID]
       for (i in survey_names) {
-        eval(parse(text = paste0("tst <- dframe$surveyID == \"", i, "\"")))
-        temp <- with(subset(dframe, tst), sapply(split(siteID, siteID), length))
+        eval(parse(text = paste0("tst <- dframe[, surveyID] == \"", i, "\"")))
+        temp <- sapply(split(IDs[tst], IDs[tst]), length)
         if (any(temp > 1)) {
           warn_ind <- TRUE
           temp.str <- vecprint(names(temp)[temp > 1])
@@ -385,7 +384,7 @@ cont_cdftest <- function(dframe, vars, subpops = NULL, surveyID = NULL,
             func = I(fname), subpoptype = NA,
             subpop = NA, indicator = NA, stratum = NA, warning = I(warn), action = I(act)
           ))
-          dframe$siteID[tst] <- uniqueID(dframe$siteID[tst])
+          dframe[, siteID][tst] <- uniqueID(dframe[, siteID][tst])
         }
       }
     }
