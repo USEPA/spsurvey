@@ -306,7 +306,7 @@ grts <- function(sframe, n_base, stratum = NULL, seltype = "equal", wgt_units = 
 
   ## select sites for each stratum
   rslts <- lapply(dsgn$stratum, grts_stratum,
-    dsgn = dsgn, sframe = sframe, sf_type = sf_type,
+    dsgn = dsgn, sframe = sframe, sf_type = sf_type, wgt_units = wgt_units,
     pt_density = pt_density, legacy_option = legacy_option,
     legacy_sites = legacy_sites, maxtry = maxtry, warn_ind, warn_df
   )
@@ -366,10 +366,10 @@ grts <- function(sframe, n_base, stratum = NULL, seltype = "equal", wgt_units = 
   # if n_near sample sites, assign base ids to the replacement sites. then add siteIDs
   if(!is.null(n_near)) {
     tst <- match(paste(sites_near$stratum, sites_near$replsite, sep = "_"),
-                 paste(sites_near$stratum, sites_base$idpts, sep = "_"), nomatch = 0)
+                 paste(sites_base$stratum, sites_base$idpts, sep = "_"), nomatch = 0)
     sites_near$replsite[tst > 0] <- sites_base$siteID[tst]
     tst <- match(paste(sites_near$stratum, sites_near$replsite, sep = "_"),
-                 paste(sites_near$stratum, sites_over$idpts, sep = "_"), nomatch = 0)
+                 paste(sites_over$stratum, sites_over$idpts, sep = "_"), nomatch = 0)
     sites_near$replsite[tst > 0] <- sites_over$siteID[tst]
     
     # sort by id so that sites_near in same order as sites in sites_base and sites_over
@@ -408,26 +408,6 @@ grts <- function(sframe, n_base, stratum = NULL, seltype = "equal", wgt_units = 
     add_names <- dsgn_names[dsgn_names %in% names(sites_near)]
     sites_near <- subset(sites_near, 
                          select = c(add_names, sframe_names))
-  }
-  
-  # Change weight and ip units to user specified if not NULL
-  if(!is.null(wgt_units)){
-    # change sites_legacy weights
-    sites_legacy$wgt <- set_units(sites_legacy$wgt, wgt_units, mode = "standard")
-    sites_legacy$ip <- 1/set_units(1/sites_legacy$ip, wgt_units, mode = "standard")
-    # change sites_base weights
-    sites_base$wgt <- set_units(sites_base$wgt, wgt_units, mode = "standard")
-    sites_base$ip <- 1/set_units(1/sites_base$ip, wgt_units, mode = "standard")
-    # change sites_over weights if sites_over present
-    if(!is.null(sites_over)) {
-      sites_over$wgt <- set_units(sites_over$wgt, wgt_units, mode = "standard")
-      sites_over$ip <- 1/set_units(1/sites_base$ip, wgt_units, mode = "standard")
-    }
-    # change sites_near weights if sites_near present
-    if(!is.null(sites_near)) {
-      sites_near$wgt <- set_units(sites_near$wgt, wgt_units, mode = "standard")
-      sites_near$ip <- 1/set_units(1/sites_base$ip, wgt_units, mode = "standard")
-    }
   }
 
   # add function call to dsgn list

@@ -39,14 +39,14 @@ replace_near <- function(n_near, sites, sframe) {
   # apply
   sites.near <- mapply(function(x, y) {
     sites.tmp_ind <- sframe$idpts[order(x)][2:(n_near + 1)] # 0 always gets carried along
-    sites.tmp <- sframe[sites.tmp_ind, , drop = FALSE]
+    sites.tmp <- sframe[sframe$idpts %in% sites.tmp_ind, , drop = FALSE]
     sites.tmp$siteuse <- names_siteuse[1:nrow(sites.tmp)] # covers cases where there are less than n_near sites available
     sites.tmp$replsite <- y
     sites.tmp
-  },
-  x = site_dist_list,
-  y = sites$idpts,
-  SIMPLIFY = FALSE
+    },
+    x = site_dist_list,
+    y = sites$idpts,
+    SIMPLIFY = FALSE
   )
 
   # combine

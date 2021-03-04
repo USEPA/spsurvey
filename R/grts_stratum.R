@@ -22,6 +22,9 @@
 #'   The coordinate system for sframe must be one where distance for coordinates is meaningful.
 #'
 #' @param sf_type The sample frame geometry type: point, linear or area
+#' 
+#' @param wgt_units The units for weights if different from units in the \code{sf} object. Default
+#'   is \code{NULL}. Unit conversion uses \code{set_unit}s in \code{sf} package.
 #'
 #' @param pt_density For linear and area sample frame, the point density for the systematic
 #'   sample. Must be in units of the sframe sf.object. Default is NULL.
@@ -69,7 +72,7 @@
 #' @export
 ###############################################################################
 
-grts_stratum <- function(stratum, dsgn, sframe, sf_type, pt_density = NULL, 
+grts_stratum <- function(stratum, dsgn, sframe, sf_type, wgt_units = NULL, pt_density = NULL, 
                          legacy_option = FALSE, legacy_sites = NULL, maxtry = 10,
                          warn_ind = FALSE, warn_df = NULL) {
 
@@ -101,6 +104,9 @@ grts_stratum <- function(stratum, dsgn, sframe, sf_type, pt_density = NULL,
   if (sf_type == "sf_linear") {
     # determine sample size from pt_density and total length of sample frame in stratum
     stratum_len <- sum(st_length(sftmp))
+    if(!is.null(wgt_units)){
+      stratum_len <- set_units(stratum_len, wgt_units, mode = "standard")
+    }
     # set default equal to 10 population sites per requested sample site
     if (is.null(pt_density)) {
       popmatch <- 10
@@ -128,6 +134,9 @@ grts_stratum <- function(stratum, dsgn, sframe, sf_type, pt_density = NULL,
   if (sf_type == "sf_area") {
     # determine sample size from pt_density and total area of sample frame in stratum
     stratum_area <- sum(st_area(sftmp))
+    if(!is.null(wgt_units)){
+      stratum_area <- set_units(stratum_area, wgt_units, mode = "standard")
+    }
     # set default equal to 10 population sites per requested sample site
     if (is.null(pt_density)) {
       popmatch <- 10
@@ -142,6 +151,7 @@ grts_stratum <- function(stratum, dsgn, sframe, sf_type, pt_density = NULL,
     sftmp <- st_join(sfpts, sftmp)
     sftmp$xcoord <- st_coordinates(sftmp)[,"X"]
     sftmp$ycoord <- st_coordinates(sftmp)[,"Y"]
+    sftmp$idpts <- 10000 + 1:nrow(sftmp)
     # calculate step 1 inclusion probability based on realized sample size
     ip_step1 <- nrow(sftmp) / stratum_area
   }
@@ -237,11 +247,10 @@ grts_stratum <- function(stratum, dsgn, sframe, sf_type, pt_density = NULL,
 
   # Select replacement sites if n_near not NULL and exclude legacy sites
   if(!is.null(dsgn[["n_near"]][[stratum]])) {
-    tst <- !(sftmp$idpts %in% sites[["sites"]]$idpts)
-    sfnear <- subset(sftmp, tst )
-    sites_use <- sites[["sites"]][sites[["sites"]]$legacy == FALSE,]
+    keep <- sites[["sites"]][sites[["sites"]]$legacy == FALSE, "idpts", drop = TRUE]
     sites_near <- replace_near(dsgn[["n_near"]][[stratum]], 
-                               sites_use, sframe = sfnear)
+                               sites = sites[["sites"]][sites[["sites"]]$legacy == FALSE,],
+                               sframe = subset(sftmp, !(idpts %in%  keep )))
   
     # Adjust inclusion probabilities for replacement sites if over sample sites present
     if(n_over != 0) {
