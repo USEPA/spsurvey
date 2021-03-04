@@ -7,6 +7,8 @@
 # Revised: December 15, 2020 to allow use of the Horvitz-Thompson and
 #          Yates-Grundy variance estimators and to use a new function named
 #          survey_design to create the survey design object
+# Revised: March 2, 2021 to revise the process for creating unique site ID
+#          values
 #'
 #' Relative Risk Analysis for Probability Survey Data
 #'
@@ -289,8 +291,8 @@ relrisk_analysis <- function(dframe, vars_response, vars_stressor,
   # output a warning message
 
   if (ind) {
-    dframe$siteID <- dframe[, siteID]
-    temp <- with(dframe, sapply(split(siteID, siteID), length))
+    IDs <- dframe[, siteID]
+    temp <- sapply(split(IDs, IDs), length)
     if (any(temp > 1)) {
       warn_ind <- TRUE
       temp.str <- vecprint(names(temp)[temp > 1])
@@ -300,7 +302,7 @@ relrisk_analysis <- function(dframe, vars_response, vars_stressor,
         func = I(fname), subpoptype = NA,
         subpop = NA, indicator = NA, stratum = NA, warning = I(warn), action = I(act)
       ))
-      dframe$siteID <- uniqueID(dframe$siteID)
+      dframe[, siteID] <- uniqueID(dframe[, siteID])
     }
   }
 

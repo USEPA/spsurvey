@@ -8,7 +8,9 @@
 #          Yates-Grundy variance estimators and to use a new function named
 #          survey_design to create the survey design object
 # Revised: January 28, 2021 to replace "warn.vec" with "warn_vec"
-#
+# Revised: March 2, 2021 to revise the process for creating unique site ID
+#          values
+#'
 #' Estimation of Change between Two Probability Surveys
 #'
 #' This function organizes input and output for estimation of change between two
@@ -371,10 +373,10 @@ change_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL,
   # unique site IDs and output a warning message
 
   if (ind1 & ind2) {
-    dframe$siteID <- dframe[, siteID]
+    IDs <- dframe[, siteID]
     for (i in 1:2) {
       eval(parse(text = paste0("tst <- survey_", i)))
-      temp <- with(subset(dframe, tst), sapply(split(siteID, siteID), length))
+      temp <- sapply(split(IDs[tst], IDs[tst]), length)
       if (any(temp > 1)) {
         warn_ind <- TRUE
         temp.str <- vecprint(names(temp)[temp > 1])
@@ -384,7 +386,7 @@ change_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL,
           func = I(fname), subpoptype = NA,
           subpop = NA, indicator = NA, stratum = NA, warning = I(warn), action = I(act)
         ))
-        dframe$siteID[tst] <- uniqueID(dframe$siteID[tst])
+        dframe[, siteID][tst] <- uniqueID(dframe[, siteID][tst])
       }
     }
   }
