@@ -2,6 +2,8 @@
 # Function: trend_analysis (exported)
 # Programmer: Tom Kincaid
 # Date: March 3, 2021
+# Revised March 5, 2021 to add argument jointprob that is required for
+#         additional variance estimators
 #
 #' Estimation of Trend across Time for a Series of Probability Surveys
 #'
@@ -15,130 +17,137 @@
 #'   variables, and subpopulation (domain) variables.
 #'
 #' @param vars_cat Vector composed of character values that identify the
-#'   names of categorical response variables in the dframe data frame.  The
-#'   default is NULL.
+#'   names of categorical response variables in the \code{dframe} data frame.
+#'   The default value is \code{NULL}.
 #'
 #' @param vars_cont Vector composed of character values that identify the
-#'   names of continuous response variables in the dframe data frame.  The
-#'   default is NULL.
+#'   names of continuous response variables in the \code{dframe} data frame.
+#'   The default value is \code{NULL}.
 #'
 #' @param subpops Vector composed of character values that identify the
-#'   names of subpopulation (domain) variables in the dframe data frame.  If a
-#'   value is not provided, the value "All_Sites" is assigned to the subpops
-#'   argument and a factor variable named "All_Sites" that takes the value
-#'   "All Sites" is added to the dframe data frame.  The default value is NULL.
+#'   names of subpopulation (domain) variables in the \code{dframe} data frame.
+#'   If a value is not provided, the value \code{"All_Sites"} is assigned to the
+#'   subpops argument and a factor variable named \code{"All_Sites"} that takes
+#'   the value \code{"All Sites"} is added to the \code{dframe} data frame.  The
+#'   default value is \code{NULL}.
 #'
 #' @param model_cat Character value identifying the analytical procedure used
-#' for trend estimation for categorical variables.  The choices are: "SLR"
-#' (simple linear regression) and "WLR" (weighted linear regression).  The
-#' default value is "SLR".
+#' for trend estimation for categorical variables.  The choices are:
+#' \code{"SLR"} (simple linear regression) and \code{"WLR"} (weighted linear
+#' regression).  The default value is \code{"SLR"}.
 #'
 #' @param model_cont Character value identifying the analytical procedure used
-#' for trend estimation for continuous variables.  The choices are: "SLR"
-#' (simple linear regression), "WLR" (weighted linear regression), and "PO"
-#' (the regression model of Piepho and Ogutu (2002)).  The default value is
-#' "PO".
+#' for trend estimation for continuous variables.  The choices are: \code{"SLR"}
+#' (simple linear regression), \code{"WLR"} (weighted linear regression), and
+#' \code{"PO"} (the regression model of Piepho and Ogutu (2002)).  The default
+#' value is \code{"PO"}.
 #'
 #' @param siteID Character value providing name of the site ID variable in
-#'   the dframe data frame.  If repeat visit sites are present, the site ID
-#'   value for each revisit site will be the same for both surveys.  For a
+#'   the \code{dframe} data frame.  If repeat visit sites are present, the site
+#'   ID value for each revisit site will be the same for each survey.  For a
 #'   two-stage sample, the site ID variable identifies stage two site IDs.  The
-#'   default value is "siteID".
+#'   default value is \code{"siteID"}.
 #'
 #' @param yearID Character value providing name of the time period variable in
-#'   the dframe data frame, which must be numeric and will be forced to numeric
-#'   if it is not.  The default assumption is that the time period variable is
-#'   years.  The default value is "year"
+#'   the \code{dframe} data frame, which must be numeric and will be forced to
+#'   numeric if it is not.  The default assumption is that the time period
+#'   variable is years.  The default value is \code{"year"}.
 #'
 #' @param weight Character value providing name of the survey design weight
-#'   variable in the dframe data frame.  For a two-stage sample, the weight
-#'   variable identifies stage two weights.  The default value is "weight".
+#'   variable in the \code{dframe} data frame.  For a two-stage sample, the
+#'   weight variable identifies stage two weights.  The default value is
+#'   \code{"weight"}.
 #'
 #' @param xcoord Character value providing name of the x-coordinate variable in
-#'   the dframe data frame.  For a two-stage sample, the x-coordinate variable
-#'   identifies stage two x-coordinates.  Note that x-coordinates are required
-#'   for calculation of the local mean variance estimator.  The default value is
-#'   NULL.
+#'   the \code{dframe} data frame.  For a two-stage sample, the x-coordinate
+#'   variable identifies stage two x-coordinates.  Note that x-coordinates are
+#'   required  for calculation of the local mean variance estimator.  The
+#'   default value is \code{NULL}.
 #'
 #' @param ycoord Character value providing name of the y-coordinate variable in
-#'   the dframe data frame.  For a two-stage sample, the y-coordinate variable
-#'   identifies stage two y-coordinates.  Note that y-coordinates are required
-#'   for calculation of the local mean variance estimator.  The default value is
-#'   NULL.
+#'   the \code{dframe} data frame.  For a two-stage sample, the y-coordinate
+#'   variable identifies stage two y-coordinates.  Note that y-coordinates are
+#'   required for calculation of the local mean variance estimator.  The default
+#'   value is \code{NULL}.
 #'
 #' @param stratumID Character value providing name of the stratum ID variable in
-#'   the dframe data frame.  The default value is NULL.
+#'   the \code{dframe} data frame.  The default value is \code{NULL}.
 #'
 #' @param clusterID Character value providing name of the cluster (stage one) ID
-#'   variable in the dframe data frame.  Note that cluster IDs are required for
-#'   a two-stage sample.  The default value is NULL.
+#'   variable in the \code{dframe} data frame.  Note that cluster IDs are
+#'   required for a two-stage sample.  The default value is \code{NULL}.
 #'
 #' @param weight1 Character value providing name of the stage one weight
-#'   variable in the dframe data frame.  The default value is NULL.
+#'   variable in the \code{dframe} data frame.  The default value is \code{NULL}.
 #'
 #' @param xcoord1 Character value providing name of the stage one x-coordinate
-#'   variable in the dframe data frame.  Note that x-coordinates are required
-#'   for calculation of the local mean variance estimator.  The default value is
-#'   NULL.
+#'   variable in the \code{dframe} data frame.  Note that x-coordinates are
+#'   required for calculation of the local mean variance estimator.  The default
+#'   value is \code{NULL}.
 #'
 #' @param ycoord1 Character value providing name of the stage one y-coordinate
-#'   variable in the dframe data frame.  Note that y-coordinates are required
-#'   for calculation of the local mean variance estimator.  The default value is
-#'   NULL.
+#'   variable in the \code{dframe} data frame.  Note that y-coordinates are
+#'   required for calculation of the local mean variance estimator.  The default
+#'   value is \code{NULL}.
 #'
 #' @param sizeweight Logical value that indicates whether size weights should be
-#'   used during estimation, where TRUE = use size weights and FALSE = do not
-#'   use size weights. To employ size weights for a single-stage sample, a value
-#'   must be supplied for argument weight.  To employ size weights for a
-#'   two-stage sample, values must be supplied for arguments weight and weight1.
-#'   The default value is FALSE.
+#'   used during estimation, where \code{TRUE} = use size weights and
+#'   \code{FALSE} = do not use size weights. To employ size weights for a
+#'   single-stage sample, a value must be supplied for argument weight.  To
+#'   employ size weights for a two-stage sample, values must be supplied for
+#'   arguments \code{weight} and \code{weight1}. The default value is
+#'   \code{FALSE}.
 #'
 #' @param sweight Character value providing name of the size weight variable in
-#'   the dframe data frame.  For a two-stage sample, the size weight variable
-#'   identifies stage two size weights.  The default value is NULL.
+#'   the \code{dframe} data frame.  For a two-stage sample, the size weight
+#'   variable identifies stage two size weights.  The default value is
+#'   \code{NULL}.
 #'
 #' @param sweight1 Character value providing name of the stage one size weight
-#'   variable in the dframe data frame.  The default value is NULL.
+#'   variable in the \code{dframe} data frame.  The default value is
+#'   \code{NULL}.
 #'
 #' @param popcorrect Logical value that indicates whether the finite population
 #'   correction factor is used during variance estimation. To employ the
 #'   correction factor for a single-stage sample, values must be supplied for
-#'   argument fpcsize.  To employ the correction factor for a two-stage sample,
-#'   values must be supplied for arguments Ncluster and stage1size.  The default
-#'   value is FALSE.
+#'   argument \code{fpcsize}.  To employ the correction factor for a two-stage
+#'   sample, values must be supplied for arguments \code{Ncluster} and
+#'   \code{stage1size}.  The default value is \code{FALSE}.
 #'
-#' @param fpcsize Character value providing name of the variable in the dframe
-#'   data frame that identifies size of the resource, which is required for
-#'   calculation of the finite population correction factor for a single-stage
-#'   sample.  The default value is NULL.
+#' @param fpcsize Character value providing name of the variable in the
+#'   \code{dframe} data frame that identifies size of the resource, which is
+#'   required for calculation of the finite population correction factor for a
+#'   single-stage sample.  The default value is \code{NULL}.
 #'
-#' @param Ncluster Character value providing name of the variable in the dframe
-#'   data frame that identifies the number of clusters (stage one sampling
-#'   units) in the resource, which is required for calculation of the finite
-#'   population correction factor for a two-stage sample.  This argument is also
-#'   required for a two-stage sample when the popsize argument is not equal to
-#'   NULL and the vartype argument equals "Local".  The default value is NULL.
+#' @param Ncluster Character value providing name of the variable in the
+#'   \code{dframe} data frame that identifies the number of clusters (stage one
+#'   sampling units) in the resource, which is required for calculation of the
+#'   finite population correction factor for a two-stage sample.  This argument
+#'   is also required for a two-stage sample when the popsize argument is not
+#'   equal to \code{NULL} and the vartype argument equals \code{"Local"}.  The
+#'   default value is \code{NULL}.
 #'
 #' @param stage1size Character value providing name of the variable in the
-#'   dframe data frame that identifies cluster size, i.e. the number of the
-#'   stage two sampling units in the resource for a cluster.  Note that cluster
-#'   size is required for calculation of the finite population correction factor
-#'   for a two-stage sample. The default value is NULL.
+#'   \code{dframe} data frame that identifies cluster size, i.e. the number of
+#'   the stage two sampling units in the resource for a cluster.  Note that
+#'   cluster size is required for calculation of the finite population
+#'   correction factor for a two-stage sample. The default value is \code{NULL}.
 #'
 #' @param popsize Object that provides values for the population argument of the
-#'   calibrate or postStratify functions.  For the calibrate function, the object
-#'   is a named list, where the names identify factor variables in the dframe
-#'   data frame.  Each element of the list is a named vector containing the
-#'   population total for each level of the associated factor variable.  For the
-#'   postStratify function, the object is either a data frame, table, or xtabs
-#'   object that provides the population total for all combinations of selected
-#'   factor varaibles in the dframe data frame.  If a data frame is used for
-#'   popsize, the variable containing population totals must be the last
-#'   variable in the data frame.  If a table is used for popsize, the table must
-#'   have named dimnames where the names identify factor variables in the dframe
-#'   data frame.  If the popsize argument is equal to NULL, then neither
-#'   calibration nor post-stratification is performed.  The default value is
-#'   NULL.\cr\cr
+#'   \code{calibrate} or \code{postStratify} functions.  For the
+#'   \code{calibrate} function, the object is a named list, where the names
+#'   identify factor variables in the \code{dframe} data frame.  Each element of
+#'   the list is a named vector containing the population total for each level
+#'   of the associated factor variable.  For the \code{postStratify} function,
+#'   the object is either a data frame, table, or xtabs object that provides the
+#'   population total for all combinations of selected  factor varaibles in the
+#'   \code{dframe} data frame.  If a data frame is used for \code{popsize}, the
+#'   variable containing population totals must be the last variable in the data
+#'   frame.  If a table is used for \code{popsize}, the table must have named
+#'   dimnames where the names identify factor variables in the \code{dframe}
+#'   data frame.  If the \code{popsize} argument is equal to \code{NULL}, then
+#'   neither calibration nor post-stratification is performed.  The default
+#'   value is \code{NULL}.\cr\cr
 #'   Example popsize for calibration:\cr
 #'     popsize <- list(Ecoregion = c(East = 750,\cr
 #'                                   Central = 500,\cr
@@ -160,16 +169,26 @@
 #'   bootstrap procedure is only available for the PO model for continuous
 #'   variables.  Inverse probability references the survey design weights, which
 #'   are the inverse of the sample inclusion probabilities.  The default value
-#'   is TRUE.
+#'   is \code{TRUE}.
 #'
 #' @param nboot Numeric value for the number of bootstrap iterations.  The
-#'   default is 1,000.
+#'   default is \code{1000}.
 #'
-#' @param vartype The choice of variance estimator, where "Local" = local mean
-#'   estimator and "SRS" = SRS estimator.  When the model_cont argument equals
-#'   "PO", the vartype argument is not utilized.  The default is "Local".
+#' @param vartype Character value providing choice of the variance estimator,
+#'   where \code{"Local"} = the local mean estimator, \code{"SRS"} = the simple
+#'   random sampling estimator, \code{"HT"} = the Horvitz-Thompson estimator,
+#'   and \code{"YG"} = the Yates-Grundy estimator.  The default value is
+#'   \code{"Local"}.
 #'
-#' @param conf Numeric value for the confidence level.  The default is 95.
+#' @param jointprob Character value providing choice of joint inclusion
+#'   probability approximation for use with Horvitz-Thompson and Yates-Grundy
+#'   variance estimators, where \code{"overton"} indicates the Overton
+#'   approximation, \code{"hr"} indicates the Hartley_Rao approximation, and
+#'   \code{"brewer"} equals the Brewer approximation.  The default value is
+#'   \code{"overton"}.
+#'
+#' @param conf Numeric value for the confidence level.  The default is
+#'   \code{95}.
 #'
 #' @section Details:
 #' For the simple linear regression (SLR) model, a design-based estimate of the
@@ -212,6 +231,7 @@
 #'     \item{\code{contsum}}{data frame containing trend estimates for continuous
 #'       variables}
 #'   }
+#'
 #'   For the SLR and WLR models, the data frame contains the following
 #'   variables:
 #'   \describe{
@@ -220,19 +240,20 @@
 #'     \item{Indicator}{response variable}
 #'     \item{Trend_Estimate}{trend estimate}
 #'     \item{Trend_Std_Error}{trend standard error}
-#'     \item{"Trend_LCBxxPct"}{trend xx% (default 95%) lower confidence bound}
-#'     \item{Trend_UCBxxPct}{trend xx% (default 95%) upper confidence bound}
+#'     \item{"Trend_LCBxxPct"}{trend xx\% (default 95\%) lower confidence bound}
+#'     \item{Trend_UCBxxPct}{trend xx\% (default 95\%) upper confidence bound}
 #'     \item{Trend_p_Value}{trend p-value}
 #'     \item{Intercept_Estimate}{intercept estimate}
 #'     \item{Intercept_Std_Error}{intercept standard error}
-#'     \item{Intercept_LCBxxPct}{intercept xx% (default 95%) lower confidence
+#'     \item{Intercept_LCBxxPct}{intercept xx\% (default 95\%) lower confidence
 #'       bound}
-#'     \item{Intercept_UCBxxPct}{intercept xx% (default 95%) upper confidence
+#'     \item{Intercept_UCBxxPct}{intercept xx\% (default 95\%) upper confidence
 #'       bound}
 #'     \item{Intercept_p_Value}{intercept p-value}
 #'     \item{R_Squared}{R-squared value}
 #'     \item{Adj_R_Squared}{adjusted R-squared value}
 #'   }
+#'
 #'   For the PO model, the data frame contains the following variables:
 #'   \describe{
 #'     \item{Type}{subpopulation (domain) name}
@@ -240,14 +261,14 @@
 #'     \item{Indicator}{response variable}
 #'     \item{Trend_Estimate}{trend estimate}
 #'     \item{Trend_Std_Error}{trend standard error}
-#'     \item{"Trend_LCBxxPct"}{trend xx% (default 95%) lower confidence bound}
-#'     \item{Trend_UCBxxPct}{trend xx% (default 95%) upper confidence bound}
+#'     \item{"Trend_LCBxxPct"}{trend xx\% (default 95\%) lower confidence bound}
+#'     \item{Trend_UCBxxPct}{trend xx\% (default 95\%) upper confidence bound}
 #'     \item{Trend_p_Value}{trend p-value}
 #'     \item{Intercept_Estimate}{intercept estimate}
 #'     \item{Intercept_Std_Error}{intercept standard error}
-#'     \item{Intercept_LCBxxPct}{intercept xx% (default 95%) lower confidence
+#'     \item{Intercept_LCBxxPct}{intercept xx\% (default 95\%) lower confidence
 #'       bound}
-#'     \item{Intercept_UCBxxPct}{intercept xx% (default 95%) upper confidence
+#'     \item{Intercept_UCBxxPct}{intercept xx\% (default 95\%) upper confidence
 #'       bound}
 #'     \item{Intercept_p_Value}{intercept p-value}
 #'     \item{Var_SiteInt}{variance of the site intercepts}
@@ -332,7 +353,7 @@ trend_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL,
   ycoord1 = NULL, sizeweight = FALSE, sweight = NULL, sweight1 = NULL,
   popcorrect = FALSE, fpcsize = NULL, Ncluster = NULL, stage1size = NULL,
   popsize = NULL, invprboot = TRUE, nboot = 1000, vartype = "Local",
-  conf = 95) {
+  jointprob = "overton", conf = 95) {
 
 # Create a vector for error messages
 
@@ -474,13 +495,14 @@ trend_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL,
 
 # Check input arguments
   temp <- input_check(dframe, design_names, vars_cat, vars_cont, NULL, NULL,
-    subpops, sizeweight, popcorrect, popsize, vartype, NULL, conf,
+    subpops, sizeweight, popcorrect, popsize, vartype, jointprob, conf,
     error_ind = error_ind, error_vec = error_vec)
   dframe <- temp$dframe
   vars <- temp$vars_cat
   subpops <- temp$subpops
   popsize <- temp$popsize
   vartype <- temp$vartype
+  jointprob <- temp$jointprob
   error_ind <- temp$error_ind
   error_vec <- temp$error_vec
 
