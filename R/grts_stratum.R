@@ -87,8 +87,8 @@ grts_stratum <- function(stratum, dsgn, sframe, sf_type, wgt_units = NULL, pt_de
   # subset sframe to stratum
   sftmp <- sframe[sframe$stratum == stratum, , drop = FALSE]
  
-  # subset legacy_sites to stratum if present
-  if(legacy_option == TRUE) {
+  # subset legacy_sites to stratum if present for linear and area option
+  if(legacy_option == TRUE & sf_type != "sf_point") {
     legtmp <- legacy_sites[legacy_sites$stratum == stratum, , drop = FALSE]
   }
   
@@ -172,7 +172,9 @@ grts_stratum <- function(stratum, dsgn, sframe, sf_type, wgt_units = NULL, pt_de
   }
 
   # set legacy that is NA to FALSE
-  sftmp$legacy[is.na(sftmp$legacy)] <- FALSE
+  if(legacy_option == TRUE & sf_type == "sf_point") {
+    sftmp$legacy[is.na(sftmp$legacy)] <- FALSE
+  }
   
   # Step 2 site selection if linear or area; otherwise Step 1 for points.
   # detemine overall sample size required from dsgn for stratum

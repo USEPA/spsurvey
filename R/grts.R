@@ -382,9 +382,29 @@ grts <- function(sframe, n_base, stratum = NULL, seltype = "equal", wgt_units = 
                               paste0(DesignID,"-", format(nlast + 1:nrow(sites_near), sep="")))
   }
   
+  # Add lat/lon in WGS84
+  if(!is.null(sites_legacy)) {
+    sites_legacy$lon_WGS84 <- st_coordinates(st_transform(sites_legacy, crs=4326))[,"X"]
+    sites_legacy$lat_WGS84 <- st_coordinates(st_transform(sites_legacy, crs=4326))[,"Y"]
+  }
+  if(!is.null(sites_base)) {
+    sites_base$lon_WGS84 <- st_coordinates(st_transform(sites_base, crs=4326))[,"X"]
+    sites_base$lat_WGS84 <- st_coordinates(st_transform(sites_base, crs=4326))[,"Y"]
+  }
+  if(!is.null(sites_over)) {
+    sites_over$lon_WGS84 <- st_coordinates(st_transform(sites_over, crs=4326))[,"X"]
+    sites_over$lat_WGS84 <- st_coordinates(st_transform(sites_over, crs=4326))[,"Y"]
+  }
+  if(!is.null(sites_near)) {
+    sites_near$lon_WGS84 <- st_coordinates(st_transform(sites_near, crs=4326))[,"X"]
+    sites_near$lat_WGS84 <- st_coordinates(st_transform(sites_near, crs=4326))[,"Y"]
+  }
+  
+  
   # reorder sf object variables by first specifying design names excluding unique 
   # feature ID id and idpts as they are internal
-  dsgn_names <- c("siteID", "siteuse", "replsite", "stratum", "wgt", "ip", "caty", "aux")
+  dsgn_names <- c("siteID", "siteuse", "replsite", "lon_WGS84", "lat_WGS84",
+                  "stratum", "wgt", "ip", "caty", "aux")
   # sites_legacy
   if(!is.null(sites_legacy)) {
     add_names <- dsgn_names[dsgn_names %in% names(sites_legacy)]
