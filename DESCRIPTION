@@ -44,7 +44,7 @@ Description: These functions provide procedures for selecting sites for spatial
     <Online ISBN:9781139022422>).
 License: GPL (>= 3)
 Imports:
-    boot
+    boot,
     crossdes,
     deldir,
     graphics,
