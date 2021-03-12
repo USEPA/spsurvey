@@ -4,6 +4,8 @@
 # Date: March 3, 2021
 # Revised March 5, 2021 to add argument jointprob that is required for
 #         additional variance estimators
+# Revised: March 10, 2021 to assign zero to missing year estimates when fitting
+#          the SLR and WLR models for categorical variables
 #
 #' Estimation of Trend across Time for a Series of Probability Surveys
 #'
@@ -193,33 +195,43 @@
 #' @section Details:
 #' For the simple linear regression (SLR) model, a design-based estimate of the
 #' category proportion (categorical variables) or the mean (continuous
-#' variables) is calculated for each time period (year).  The lm function in the
-#' stats package is used to fit a linear model using a formula argument that
-#' specifies the proportion or mean estimates as the response variable and years
-#' as the regressor variable.  Parameter estimates are extracted from the object
-#' returned by the lm function.  For the weighted linear regression model (WLR),
-#' the process is the same as the SLR model except that the inverse of the
-#' variances of the proportion or mean estimates are used as the weights
-#' argument in the call to the lm function.  For the Piepho and Ogutu (PO)
-#' model, the lmer function in the lme4 package is used to fit a linear
-#' mixed-effects model for trend across years.  For use in the model, the year
-#' variable from the dframe argument is modified by subtracting the minimum
-#' value of year from all va trend (slope) and random effects for intercept and
-#' trend for sites, where the siteID variable from the dframe argument
-#' identifies sites.  Correlation between the random effects for site intercepts
-#' and site trends is included in the model.  Finally, the PO model contains
-#' random effects for year variance and residual variance. If argument
-#' invprboot is FALSE, parameter estimates are extracted from the object
-#' returned by the lmer function.  If argument invprboot is TRUE, the boot
-#' function in the boot package is used to generate bootstrap replicates using a
-#' function named bootfcn as the statistic argument passed to the boot function.
-#' For each bootstrap replicate, bootfcn calls the lmer function using the PO
-#' model.  Survey design weights identified by the weight argument for the
-#' trend_analysis function are passed as the weights argument for the boot
-#' function, which specifies importance weights.  Using the survey design
-#' weights as the weights argument ensures that bootstrap replicates are
-#' representative of the survey population.  Parameter estimates are calculated
-#' using the object returned by the boot function.
+#' variables) is calculated for each time period (year).  Four choices of
+#' variance estimator are available for calculating variance of the design-based
+#' estimates: (1) the local mean estimator, (2) the simple random sampling
+#' estimator, (3) the Horvitz-Thompson estimator, and (4) the Yates-Grundy
+#' estimator.  For the Horvitz-Thompson and Yates-Grundy estimators, there are
+#' three choices for calculating joint inclusion probabilities: (1) the Overton
+#' approximation, (2) the Hartley-Rao approximation, and (3) the Brewer
+#' approximation.  The \code{lm} function in the stats package is used to fit a
+#' linear model using a \code{formula} argument that specifies the proportion or
+#' mean estimates as the response variable and years as the regressor variable.
+#' For fitting the model, the \code{yearID} variable from the \code{dframe}
+#' argument is modified by subtracting the minimum value of years from all
+#' values of the variable.  Parameter estimates are extracted from the object
+#' returned by the \code{lm} function.  For the weighted linear regression (WLR)
+#' model, the process is the same as the SLR model except that the inverse of
+#' the variances of the proportion or mean estimates is used as the
+#' \code{weights} argument in the call to the \code{lm} function.  For the
+#' Piepho and Ogutu (PO) model, the \code{lmer} function in the lme4 package is
+#' used to fit a linear mixed-effects model for trend across years.  The model
+#' includes fixed effects for intercept and trend (slope) and random effects for
+#' intercept and trend for individual sites, where the \code{siteID} variable
+#' from the \code{dframe} argument identifies sites.  Correlation between the
+#' random effects for site intercepts and site trends is included in the model.
+#' Finally, the PO model contains random effects for year variance and residual
+#' variance. If argument \code{invprboot} is \code{FALSE}, parameter estimates
+#' are extracted from the object returned by the \code{lmer} function.  If
+#' argument \code{invprboot} is \code{TRUE}, the \code{boot} function in the
+#' boot package is used to generate bootstrap replicates using a function named
+#' \code{bootfcn} as the \code{statistic} argument passed to the \code{boot}
+#' function.  For each bootstrap replicate, \code{bootfcn} calls the \code{lmer}
+#' function using the PO model.  Survey design weights identified by the
+#' \code{weight} argument for the \code{trend_analysis} function are passed as
+#' the \code{weights} argument for the \code{boot} function, which specifies
+#' importance weights.  Using the survey design weights as the \code{weights}
+#' argument ensures that bootstrap replicates are representative of the survey
+#' population.  Parameter estimates are calculated using the object returned by
+#' the \code{boot} function.
 #'
 #' @return List composed of two data frames containing trend estimates for all
 #'   combinations of population Types, subpopulations within Types, and response
@@ -660,11 +672,11 @@ trend_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL,
 
           subpop_ind <- dframe[, itype] %in% isubpop
           years <- sort(unique(dframe[subpop_ind, Wyear]))
+          nyears <- length(years)
 
 # Create matrices to contain category estimates and variance estimates for each
 # time period
 
-          nyears <- length(years)
           catest <- matrix(NA, nlev_ivar, nyears)
           varest <- matrix(NA, nlev_ivar, nyears)
 
@@ -721,6 +733,9 @@ trend_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL,
                 tst <- temp.cat$Category == lev_ivar[icat]
                 catest[icat, iyear] <- temp.cat$Estimate.P[tst]
                 varest[icat, iyear] <- (temp.cat$StdError.P[tst])^2
+              } else {
+                catest[icat, iyear] <- 0
+                varest[icat, iyear] <- 0
               }
             }
 
@@ -807,21 +822,21 @@ trend_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL,
 
         for(isubpop in lev_itype) {
 
-# Determine the set of years for this subpopulation
-
-          subpop_ind <- dframe[, itype] %in% isubpop
-          years <- sort(unique(dframe[subpop_ind, Wyear]))
-
 # Section for the simple linear regression and weighted linear regression models
 
           if(model_cont %in% c("SLR", "WLR")) {
 
+# Determine the set of years for this subpopulation
+
+            subpop_ind <- dframe[, itype] %in% isubpop
+            years <- sort(unique(dframe[subpop_ind, Wyear]))
+            nyears <- length(years)
+
 # Create vectors to contain mean estimates and variance estimates for each time
 # period
 
-            nyears <- length(years)
-            contest <- vector("numeric", nyears)
-            varest <- vector("numeric", nyears)
+            contest <- rep(NA, nyears)
+            varest <- rep(NA, nyears)
 
 # Loop through all time periods for this subpopulation
 
