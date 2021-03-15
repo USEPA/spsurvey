@@ -247,16 +247,32 @@ grts_stratum <- function(stratum, dsgn, sframe, sf_type, wgt_units = NULL, pt_de
   # adjust inclusion probabilities when over sample sites present
   sites[["sites"]]$ip_init <- sites[["sites"]]$ip_init * n_base / n_total
 
-  # Select replacement sites if n_near not NULL and exclude legacy sites
-  if(!is.null(dsgn[["n_near"]][[stratum]])) {
-    keep <- sites[["sites"]][sites[["sites"]]$legacy == FALSE, "idpts", drop = TRUE]
-    sites_near <- replace_near(dsgn[["n_near"]][[stratum]], 
+  # Select replacement sites if n_near not NULL when do not have legacy sites
+  if(legacy_option == FALSE) {
+    if(!is.null(dsgn[["n_near"]][[stratum]])) {
+      sites_near <- replace_near(dsgn[["n_near"]][[stratum]], 
+                               sites = sites[["sites"]],
+                               sframe = sftmp)
+    
+      # Adjust inclusion probabilities for replacement sites if over sample sites present
+      if(n_over != 0) {
+        sites_near$ip_init <- sites_near$ip_init * n_base / n_total
+      }
+    }
+  }
+  
+  # Select replacement sites if n_near not NULL when have legacy sites
+  if(legacy_option == TRUE) {
+    if(!is.null(dsgn[["n_near"]][[stratum]])) {
+      keep <- sites[["sites"]][sites[["sites"]]$legacy == FALSE, "idpts", drop = TRUE]
+      sites_near <- replace_near(dsgn[["n_near"]][[stratum]], 
                                sites = sites[["sites"]][sites[["sites"]]$legacy == FALSE,],
                                sframe = subset(sftmp, !(idpts %in%  keep )))
   
-    # Adjust inclusion probabilities for replacement sites if over sample sites present
-    if(n_over != 0) {
-      sites_near$ip_init <- sites_near$ip_init * n_base / n_total
+      # Adjust inclusion probabilities for replacement sites if over sample sites present
+      if(n_over != 0) {
+        sites_near$ip_init <- sites_near$ip_init * n_base / n_total
+      }
     }
   }
   
@@ -280,8 +296,11 @@ grts_stratum <- function(stratum, dsgn, sframe, sf_type, wgt_units = NULL, pt_de
   
   # Split sites to have separate sites_base, sites_legacy and sites_over
   # save legacy sites if any and reduce sites_base to non legacy sites
-  sites_legacy <- sites[["sites"]][sites[["sites"]]$legacy == TRUE,]
-  sites[["sites"]] <- sites[["sites"]][sites[["sites"]]$legacy == FALSE,]
+  sites_legacy <- NULL
+  if(legacy_option == TRUE) {
+    sites_legacy <- sites[["sites"]][sites[["sites"]]$legacy == TRUE,]
+    sites[["sites"]] <- sites[["sites"]][sites[["sites"]]$legacy == FALSE,]
+  }
  
   # save base sites
   n.base <- min(nrow(sites[["sites"]]), n_base)
@@ -289,7 +308,7 @@ grts_stratum <- function(stratum, dsgn, sframe, sf_type, wgt_units = NULL, pt_de
   
   # save n_over sample sites if any
   sites_over <- NULL
-  if(n_over != 0 & n.base > nrow(sites[["sites"]])) {
+  if(n_over != 0 & n.base <= nrow(sites[["sites"]])) {
     sites_over <- sites[["sites"]][(n.base + 1):min(nrow(sites[["sites"]]),
                                                          n_total),]
     sites_over$siteuse <- "Over"

@@ -52,7 +52,7 @@
 #' @param n_over If \code{seltype} is \code{"equal"} and is not stratified, a numeric value specifying the
 #'   over sample size requested. If \code{seltype} is \code{"equal"} and is stratified either a numeric value
 #'   specifying the over sample size that will be applied to each stratum or a numeric vector
-#'   specifying the over sample size for each stratum listed in same order as \code{"strata"}.
+#'   specifying the over sample size for each stratum listed in same order as \code{"stratum"}.
 #'   If seltype is \code{"unequal"} and is not stratified, a named character vector with the over sample size
 #'   for each category where names are the same as \code{"caty_n"}. If seltype is \code{"unequal"} and is
 #'   stratified, either a numeric vector specifying the over sample size for each category in
@@ -175,9 +175,7 @@ grts <- function(sframe, n_base, stratum = NULL, seltype = "equal", wgt_units = 
 
   if (is.null(stratum_var)) {
     stratum <- NULL
-  } else {
-    stratum <- names(n_base)
-  }
+  } 
 
 
   # check input. If errors, dsgn_check will stop grtspts and report errors.
@@ -314,15 +312,15 @@ grts <- function(sframe, n_base, stratum = NULL, seltype = "equal", wgt_units = 
 
 
   # combine across strata
-  sites_base <- NULL
   sites_legacy <- NULL
+  sites_base <- NULL
   sites_over <- NULL
   sites_near <- NULL
   warn_ind <- FALSE
   warn_df <- NULL
   for (i in 1:length(rslts)) {
-    sites_base <- rbind(sites_base, rslts[[i]]$sites_base)
     sites_legacy <- rbind(sites_legacy, rslts[[i]]$sites_legacy)
+    sites_base <- rbind(sites_base, rslts[[i]]$sites_base)
     sites_over <- rbind(sites_over, rslts[[i]]$sites_over)
     sites_near <- rbind(sites_near, rslts[[i]]$sites_near)
     if (rslts[[i]]$warn_ind) {
@@ -331,40 +329,42 @@ grts <- function(sframe, n_base, stratum = NULL, seltype = "equal", wgt_units = 
     }
   }
   
+  # Create a siteID for all sites
+  ntot <- NROW(sites_legacy) + NROW(sites_base) + NROW(sites_over) + NROW(sites_near)
+  siteID <- gsub(" ","0",paste0(DesignID,"-", format(SiteBegin - 1 + 1:ntot, sep="")))
+  nlast <- 0
+  
   # Create siteID for legacy sites if present using DesignID and SiteBegin
   if(!is.null(sites_legacy)){
-    sites_legacy$siteID <- gsub(" ","0",
-                                paste0(DesignID,"-",
-                                       format(SiteBegin - 1 + 1:nrow(sites_legacy), sep="")))
-    jnk <- max(nchar(sites_legacy$siteID))
-    nlast <- max(as.numeric(substr(sites_legacy$siteID, nchar(DesignID)+2, jnk)))
-    SiteBegin <- nlast + 1
+    row.names(sites_legacy) <- 1:nrow(sites_legacy)
+    sites_legacy$siteID <- siteID[1:nrow(sites_legacy)]
+    nlast <- nrow(sites_legacy)
     # set siteuse and replsite
     sites_legacy$siteuse <- "Legacy"
     sites_legacy$replsite <- "None"
   }
   
   # Create siteID for base sites using DesignID and SiteBegin
-  sites_base$siteID <- gsub(" ","0", paste0(DesignID,"-",
-                                            format(SiteBegin - 1 + 1:nrow(sites_base), sep="")))
-  
+  row.names(sites_base) <- 1:nrow(sites_base)
+  sites_base$siteID <- siteID[(nlast + 1):(nlast + nrow(sites_base))]
+  nlast <- nlast + nrow(sites_base)
   # set siteuse and replsite for base sites
   sites_base$siteuse <- "Base"
   sites_base$replsite <- "None"
   
   # create siteID for n_over sites if any
   if(!is.null(n_over)) {
-    jnk <- max(nchar(sites_base$siteID))
-    nlast <- max(as.numeric(substr(sites_base$siteID, nchar(DesignID)+2, jnk)))
-    sites_over$siteID <- gsub(" ","0", 
-                              paste0(DesignID,"-", format(nlast + 1:nrow(sites_over), sep="")))
-    # set siteuse and replsite for base sites
+    row.names(sites_over) <- 1:nrow(sites_over)
+    sites_over$siteID <- siteID[(nlast + 1):(nlast + nrow(sites_over))]
+    nlast <- nlast + nrow(sites_over)
+    # set siteuse and replsite for n_over sites
     sites_over$siteuse <- "Over"
     sites_over$replsite <- "Next"
   }
   
   # if n_near sample sites, assign base ids to the replacement sites. then add siteIDs
   if(!is.null(n_near)) {
+    
     tst <- match(paste(sites_near$stratum, sites_near$replsite, sep = "_"),
                  paste(sites_base$stratum, sites_base$idpts, sep = "_"), nomatch = 0)
     sites_near$replsite[tst > 0] <- sites_base$siteID[tst]
@@ -374,12 +374,9 @@ grts <- function(sframe, n_base, stratum = NULL, seltype = "equal", wgt_units = 
     
     # sort by id so that sites_near in same order as sites in sites_base and sites_over
     sites_near <- sites_near[order(sites_near$replsite, sites_near$siteuse),]
+    row.names(sites_near) <- 1:nrow(sites_near)
     # assign siteIDs
-    jnk <- max(nchar(sites_base$siteID), nchar(sites_over$siteID), na.rm = TRUE)
-    nlast <- max(as.numeric(substr(sites_base$siteID, nchar(DesignID)+2, jnk)),
-                 as.numeric(substr(sites_over$siteID, nchar(DesignID)+2, jnk)))
-    sites_near$siteID <- gsub(" ","0", 
-                              paste0(DesignID,"-", format(nlast + 1:nrow(sites_near), sep="")))
+    sites_near$siteID <- siteID[(nlast + 1):(nlast + nrow(sites_near))]
   }
   
   # Add lat/lon in WGS84
