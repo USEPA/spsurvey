@@ -27,6 +27,10 @@
 #' @param onlyshow A string indicating the level of the single right hand side
 #' variable for which a summary is requested.
 #' 
+#' @param sites A character vector indicating the \code{design} sites
+#' for which summaries are requested in \code{object}. Defaults to computing summaries for 
+#' each non-\code{NULL} \code{site_*} list in \code{object}.
+#' 
 #' @param ... Additional arguments to pass to \code{summary()}. If the left hand
 #' side of the formula is empty, the appropriate generic arguments are passed
 #' to \code{summary.data.frame}. If the left hand side of the formula is provided,
@@ -91,13 +95,16 @@ summary.dframe <- function(object, formula, onlyshow = NULL, ...) {
 #' @name summary
 #' @method summary design
 #' @export
-summary.design <- function(object, formula, onlyshow = NULL, ...) {
+summary.design <- function(object, formula, onlyshow = NULL, sites = NULL, ...) {
 
+  if (is.null(sites)) {
+    sites <- c("sites_legacy", "sites_base", "sites_over", "sites_near")
+  }
   # keep the sites sf objects from class design
-  sites <- object[names(object) %in% c("sites_base", "sites_over", "sites_near")]
+  sites_keep <- object[names(object) %in% sites]
 
   # storing output if non-null
-  output <- lapply(sites, function(x) {
+  output <- lapply(sites_keep, function(x) {
     if (is.null(x)) {
       x
     } else {
