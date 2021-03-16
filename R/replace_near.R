@@ -27,22 +27,25 @@
 ################################################################################
 replace_near <- function(n_near, sites, sframe) {
   
+  # remove sampled sites from sframe
+  sframe <- sframe[!(sframe$idpts %in% sites$idpts), , drop = FALSE]
+  
   # calculate distance between points
   site_dist <- st_distance(sites, sframe)
 
   # set  possible levels for siteuse
-  names_siteuse <- c("Near__1st", "Near__2nd", "Near__3rd", "Near__4th", "Near__5th", 
-                     "Near__6th", "Near__7th", "Near__8th", "Near__9th", "Near_10th")
+  names_siteuse <- c("Near-1st", "Near-2nd", "Near-3rd", "Near-4th", "Near-5th", 
+                     "Near-6th", "Near-7th", "Near-8th", "Near-9th", "Near-10th")
 
   # split
   site_dist_list <- split(site_dist, 1:nrow(site_dist))
   # apply
-  sites.near <- mapply(function(x, y) {
-    sites.tmp_ind <- sframe$idpts[order(x)][2:(n_near + 1)] # 0 always gets carried along
-    sites.tmp <- sframe[sframe$idpts %in% sites.tmp_ind, , drop = FALSE]
-    sites.tmp$siteuse <- names_siteuse[1:nrow(sites.tmp)] # covers cases where there are less than n_near sites available
-    sites.tmp$replsite <- y
-    sites.tmp
+  sites_near <- mapply(function(x, y) {
+    sites_tmp_ind <- sframe$idpts[order(x)][seq_len(n_near)]
+    sites_tmp <- sframe[sframe$idpts %in% sites_tmp_ind, , drop = FALSE]
+    sites_tmp$siteuse <- names_siteuse[seq_len(nrow(sites_tmp))] # covers cases where there are less than n_near sites available
+    sites_tmp$replsite <- y
+    sites_tmp
     },
     x = site_dist_list,
     y = sites$idpts,
@@ -50,6 +53,6 @@ replace_near <- function(n_near, sites, sframe) {
   )
 
   # combine
-  sites.near <- do.call("rbind", sites.near)
+  sites_near <- do.call("rbind", sites_near)
 }
 
