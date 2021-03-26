@@ -209,7 +209,7 @@ grts <- function(sframe, n_base, stratum = NULL, seltype = "equal", wgt_units = 
 
   # set stratum, caty, aux and legacy variables in legacy_sites if needed
   # add idpts to legacy_sites
-  if(legacy_option == TRUE) {
+  if(legacy_option == TRUE & sf_type != "sf_point") {
     legacy_names <- names(legacy_sites)
     legacy_sites$idpts <- 1:nrow(legacy_sites)
     if (stratum[1] == "None") {
