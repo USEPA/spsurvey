@@ -404,8 +404,14 @@ grts <- function(sframe, n_base, stratum = NULL, seltype = "equal", wgt_units = 
                   "stratum", "wgt", "ip", "caty", "aux")
   # sites_legacy
   if(!is.null(sites_legacy)) {
-    add_names <- dsgn_names[dsgn_names %in% names(sites_legacy)]
-    sites_legacy <- subset(sites_legacy, select = c(add_names, legacy_names))
+    if(sf_type != "sf_point") {
+      add_names <- dsgn_names[dsgn_names %in% names(sites_legacy)]
+      sites_legacy <- subset(sites_legacy, select = c(add_names, legacy_names))
+    }
+    if(sf_type == "sf_point") {
+      add_names <- dsgn_names[dsgn_names %in% names(sites_legacy)]
+      sites_legacy <- subset(sites_legacy, select = c(add_names, sframe_names))
+    }
   }
   
   # sites_base
