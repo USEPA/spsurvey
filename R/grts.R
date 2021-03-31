@@ -133,7 +133,7 @@
 #' @export
 ###############################################################################
 
-grts <- function(sframe, n_base, stratum = NULL, seltype = "equal", wgt_units = NULL,
+grts <- function(sframe, n_base, seltype = "equal", wgt_units = NULL,
                  pt_density = NULL, caty_n = NULL, n_over = NULL, n_near = NULL,
                  stratum_var = NULL, caty_var = NULL, aux_var = NULL,
                  legacy_sites = NULL, legacy_stratum_var = NULL, legacy_var = NULL, 
@@ -175,7 +175,9 @@ grts <- function(sframe, n_base, stratum = NULL, seltype = "equal", wgt_units = 
 
   if (is.null(stratum_var)) {
     stratum <- NULL
-  } 
+  } else {
+    stratum <- names(n_base)
+  }
 
 
   # check input. If errors, dsgn_check will stop grtspts and report errors.
