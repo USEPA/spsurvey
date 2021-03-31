@@ -46,10 +46,7 @@
 #'
 #' @param fix_bbox Should the geometry bounding box be fixed across plots?
 #' Defaults to \code{TRUE}. If \code{TRUE}, the bounding box will be the largest
-#' possible given \code{x} and \code{y}.
-#'
-#' @param showlegacy Should legacy sites be plotted separately from \code{sites_base}?
-#' Defaults to \code{FALSE}.
+#' possible given \code{x} and \code{y}.#'
 #'
 #' @param ... Additional arguments to pass to \code{plot.sf()}.
 #'
@@ -247,7 +244,7 @@ plot.sframe <- function(x, y, formula = ~ 1, var_args = NULL, varlevel_args = NU
 #' @export
 plot.design <- function(x, y = NULL, formula = ~ sites, sites = NULL,
                         var_args = NULL, varlevel_args = NULL, geom = FALSE, onlyshow = NULL,
-                        fix_bbox = TRUE, showlegacy = FALSE, ...) {
+                        fix_bbox = TRUE, ...) {
 
   # y is sframe
   x <- c(list(sframe = y), x)
@@ -259,10 +256,6 @@ plot.design <- function(x, y = NULL, formula = ~ sites, sites = NULL,
   x_names <- names(x)
   x <- lapply(x_names, function(a) merge(x[[a]], data.frame(sites = a)))
   names(x) <- x_names
-  if (showlegacy && "sites_base" %in% x_names) {
-    levels(x$sites_base$sites) <- c("sites_base", "legacy")
-    x$sites_base$sites[!is.na(x$sites_base$legacy)] <- "legacy"
-  }
   # make formlists
   formlist <- make_formlist(formula, onlyshow, x$sframe)
   # make sframe
