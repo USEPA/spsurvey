@@ -20,13 +20,9 @@
 #'   are included in a finite sample frame, then a legacy variable must be provided to
 #'   identify elements that are legacy sites.
 #'
-#' @param n_base The sample size required. If single stratum, then single numeric value.
-#'   If sample is stratified, then numeric vector with same length as \code{"stratum"} and sample sizes
-#'   required in same order as strata in \code{"stratum"}. Must be specified.
-#'
-#' @param stratum Single character value or character vector that identifies the strata for
-#'   the design.  Default is \code{NULL} which means no stratification and all elements in the sample
-#'   frame are assumed to be included.
+#' @param n_base The sample size required. If the design is unstratified, this is a single numeric value.
+#'   If design is stratified, this is a numeric vector whose names equal the relevant strata in \code{stratum_var} 
+#'   and whose entries equal the sample size for each strata.#'
 #'
 #' @param seltype Single character value or character vector that identifies the type of
 #'   random selection, which must be one of following: \code{"equal"} for equal probability selection,
