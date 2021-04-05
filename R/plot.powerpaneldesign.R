@@ -1,5 +1,5 @@
 ###############################################################################
-# Function: plot_powerpaneldesign (exported)
+# Function: plot.powerpaneldesign (exported)
 # Programmer: Tony Olsen
 # Date: March 14, 2019
 #
@@ -13,10 +13,12 @@
 #' period/change and design/indicator.  Input must be be of class
 #' powerpaneldesign and is normally the output of function power_dsgn.
 #'
-#' @param dsgnpower  List object of class \code{powerpaneldesign}. Object provides
+#' @param x  List object of class \code{powerpaneldesign}. Object provides
 #'   power calculated for a set of panel designs, set of indicators, set of
 #'   trend values, and set of alpha values. Expect input as list as output from
 #'   function \code{power_dsgn}.
+#'   
+#' @param y \code{NULL} argument.
 #'
 #' @param plot_type   Default is \code{"standard"} which plots standard power curve. If
 #'   equal to \code{"relative"}, then plot power of one panel design compared to one or
@@ -141,12 +143,12 @@
 #'   ), nrepeats = NULL,
 #'   trend_type = "mean", trend = c(1.0, 2.0), alpha = 0.05
 #' )
-#' plot_powerpaneldesign(Power_tst)
-#' plot_powerpaneldesign(Power_tst, dsgns = c("F60", "R60N"))
-#' plot_powerpaneldesign(Power_tst, dsgns = c("F60", "R60N"), trend = 1.0)
+#' plot(Power_tst)
+#' plot(Power_tst, dsgns = c("F60", "R60N"))
+#' plot(Power_tst, dsgns = c("F60", "R60N"), trend = 1.0)
 #' \dontrun{
 #' pdf("Power_tst.pdf")
-#' plot_powerpaneldesign(Power_tst,
+#' plot(Power_tst,
 #'   plot_type = "relative", comp_type = "design",
 #'   trend_type = "mean", trend = c(1, 2), dsgns = c("R60N", "F60"),
 #'   indicator = "Variable_Name"
@@ -156,45 +158,45 @@
 #'
 #' @export
 ###############################################################################
-plot_powerpaneldesign <- function(dsgnpower, plot_type = "standard",
+plot.powerpaneldesign <- function(x, y = NULL, plot_type = "standard",
                                   trend_type = "mean", xaxis_type = "period", comp_type = "design",
                                   dsgns = NULL, indicator = NULL, trend = NULL, period = NULL, alpha = NULL) {
-
+  dsgnpower <- x
   # preserve current plot parameters
   oldpar <- par(mar = c(5.1, 4.1, 0.1, 0.1), oma = c(0, 0.1, 2.1, 0.1), xpd = TRUE)
-
+  
   # extract names from dsgnpower
   dsgn_names <- dimnames(dsgnpower$dsgn_power)[[1]]
   period_names <- dimnames(dsgnpower$dsgn_power)[[2]]
   ind_names <- dimnames(dsgnpower$dsgn_power)[[3]]
   trend_names <- dimnames(dsgnpower$dsgn_power)[[4]]
   alpha_names <- dimnames(dsgnpower$dsgn_power)[[5]]
-
+  
   # extract periods covered by panel designs
   period_values <- dsgnpower$period
   period_min <- min(period_values)
   period_max <- max(period_values)
-
+  
   # check on plot_type to use
   if (!(plot_type %in% c("standard", "relative"))) {
     stop("\nplot_type is not standard or relative")
   }
-
+  
   # check on trend_type
   if (!(trend_type %in% c("mean", "percent"))) {
     stop("\ntrend_type is not mean or percent")
   }
-
+  
   # check on xaxis type
   if (!(xaxis_type %in% c("period", "change"))) {
     stop("\nType plot comparison must be period or change")
   }
-
+  
   # check on comparison type for plot
   if (!(comp_type %in% c("design", "indicator"))) {
     stop("\nType plot comparison must be design or indicator.")
   }
-
+  
   # check on designs to use
   if (!is.null(dsgns)) {
     if (any(!(dsgns %in% dsgn_names))) {
@@ -205,7 +207,7 @@ plot_powerpaneldesign <- function(dsgnpower, plot_type = "standard",
   else {
     dsgn_plot <- dsgn_names[1]
   }
-
+  
   # check on indicators to use
   if (!is.null(indicator)) {
     if (any(!(indicator %in% ind_names))) {
@@ -216,7 +218,7 @@ plot_powerpaneldesign <- function(dsgnpower, plot_type = "standard",
   else {
     ind_plot <- ind_names[1]
   }
-
+  
   # check on trend values to use
   if (!is.null(trend)) {
     # check to see that values are in dsgnpower
@@ -229,7 +231,7 @@ plot_powerpaneldesign <- function(dsgnpower, plot_type = "standard",
     if (xaxis_type == "change") {
       trend_value <- dsgnpower$trend[
         dsgnpower$trend >= min(trend) & dsgnpower$trend <= max(trend)
-      ]
+        ]
     }
   }
   else {
@@ -238,7 +240,7 @@ plot_powerpaneldesign <- function(dsgnpower, plot_type = "standard",
   }
   trend_plot <- paste("Trend_", round(trend_value, 1), "%", sep = "")
   trend_names <- trend_plot
-
+  
   # check on time periods to plot
   if (!is.null(period)) {
     if (any(!(period %in% period_values))) {
@@ -247,7 +249,7 @@ plot_powerpaneldesign <- function(dsgnpower, plot_type = "standard",
     if (xaxis_type == "period") {
       period_values <- dsgnpower$period[
         dsgnpower$period >= min(period) & dsgnpower$period <= max(period)
-      ]
+        ]
       period_plot <- period_values
       if (length(period) == 1) {
         period_values <- dsgnpower$period
@@ -266,7 +268,7 @@ plot_powerpaneldesign <- function(dsgnpower, plot_type = "standard",
     period_max <- max(period_values)
     period_plot <- period_max
   }
-
+  
   # check on alphas to use
   if (!is.null(alpha)) {
     if (any(!(alpha %in% dsgnpower$alpha))) {
@@ -280,17 +282,17 @@ plot_powerpaneldesign <- function(dsgnpower, plot_type = "standard",
     alpha_value <- min(dsgnpower$alpha)
     alpha_plot <- paste("alpha_", min(dsgnpower$alpha), sep = "")
   }
-
+  
   n_dsgn <- length(dsgn_plot)
   n_period <- length(period_plot)
   n_ind <- length(ind_plot)
   n_trend <- length(trend_plot)
   n_alpha <- length(alpha_plot)
-
+  
   ################################################################
   # Standard power plot section
   if (plot_type == "standard") {
-
+    
     #########################
     # type of plot: type.comp: design
     if (comp_type == "design") {
@@ -300,11 +302,11 @@ plot_powerpaneldesign <- function(dsgnpower, plot_type = "standard",
             for (i in 1:n_trend) {
               # set xaxis values for period
               xset <- seq(period_min, by = 1, to = period_max)
-
+              
               # set up initial plot area,  xaxis and yaxis
               plot(xset, seq(0, 1, length = length(xset)),
-                ylim = c(0, 1), xlim = c(period_min, period_max),
-                ylab = "", xlab = "", type = "n", axes = F
+                   ylim = c(0, 1), xlim = c(period_min, period_max),
+                   ylab = "", xlab = "", type = "n", axes = F
               )
               axis(side = 1, line = -0.75, at = xset, labels = xset, adj = 0.5, font = 3, cex = 1)
               axis(
@@ -314,7 +316,7 @@ plot_powerpaneldesign <- function(dsgnpower, plot_type = "standard",
               )
               mtext(outer = F, side = 1, line = 1.8, text = "End Period", cex = 1.5, font = 3)
               mtext(outer = F, side = 2, line = 2.5, text = "Power for Trend", cex = 1.5, font = 3)
-
+              
               # legend for panel design power plotted
               # text identifying indicator, trend and alpha used for power
               text(period_min, 0.98, font = 3, cex = .8, adj = 0, paste0("Trend Type = ", trend_type))
@@ -322,14 +324,14 @@ plot_powerpaneldesign <- function(dsgnpower, plot_type = "standard",
               text(period_min, 0.90, font = 3, cex = .8, adj = 0, paste0("alpha =", alpha_value[j]))
               text(period_min, 0.86, font = 3, cex = .8, adj = 0, paste0("Indicator = ", ind_plot[k]))
               legend(period_min, 0.82, dsgn_plot, lty = 1:n_dsgn, lwd = 2, seg.len = 4, bty = "n")
-
+              
               # plot power curve for mth panel design
               ltype <- 1
               for (m in dsgn_plot[1:n_dsgn]) {
                 pow <- dsgnpower$dsgn_power[
                   m, as.character(period_values),
                   ind_plot[k], trend_plot[i], alpha_plot[j]
-                ]
+                  ]
                 keep <- !is.na(pow)
                 pow <- pow[keep]
                 lines(period_values[keep], pow, lty = ltype, lwd = 2)
@@ -349,12 +351,12 @@ plot_powerpaneldesign <- function(dsgnpower, plot_type = "standard",
               xset_mean <- dsgnpower$trend.change[
                 paste("Trend_", round(x, 1), "%", sep = ""),
                 as.character(period_plot[i]), ind_plot[k]
-              ]
+                ]
               xlabel <- paste("Trend: %/period; Total % and Mean at Period ", period_plot[i], sep = "")
               # set up initial plot area,  xaxis and yaxis
               plot(xset, seq(0, 1, length = length(xset)),
-                ylim = c(0, 1), xlim = c(xmin, xmax),
-                ylab = "", xlab = "", type = "n", axes = F
+                   ylim = c(0, 1), xlim = c(xmin, xmax),
+                   ylab = "", xlab = "", type = "n", axes = F
               )
               axis(side = 1, line = -1, at = xset, labels = round(xset, 2), adj = 0.5, font = 3, cex = 1)
               axis(
@@ -375,7 +377,7 @@ plot_powerpaneldesign <- function(dsgnpower, plot_type = "standard",
                 outer = F, side = 2, line = 2.5, text = "Power for Trend",
                 cex = 1.5, font = 3, col = "Black", adj = 0.5
               )
-
+              
               # text identifying indicator, trend and alpha used for power
               text(xmin, 0.98, font = 3, cex = .8, adj = 0, paste("Trend Type = ", trend_type, sep = ""))
               text(xmin, 0.94, font = 3, cex = .8, adj = 0, paste("End Period = ", period_plot[i], sep = ""))
@@ -383,14 +385,14 @@ plot_powerpaneldesign <- function(dsgnpower, plot_type = "standard",
               text(xmin, 0.86, font = 3, cex = .8, adj = 0, paste("Indicator = ", ind_plot[k]))
               # legend for panel design power plotted
               legend(xmin, 0.82, dsgn_plot, lty = 1:n_dsgn, lwd = 2, seg.len = 4, bty = "n")
-
+              
               # plot power curve for mth panel design
               ltype <- 1
               for (m in dsgn_plot[1:n_dsgn]) {
                 pow <- dsgnpower$dsgn_power[
                   m, as.character(period_plot[i]),
                   ind_plot[k], trend_names, alpha_plot
-                ]
+                  ]
                 keep <- !is.na(pow)
                 pow <- pow[keep]
                 lines(x[keep], pow, lty = ltype, lwd = 2)
@@ -402,7 +404,7 @@ plot_powerpaneldesign <- function(dsgnpower, plot_type = "standard",
       }
     }
     ####### end type.comp: design
-
+    
     #######################################
     # type of plot: type.comp: indicator
     if (comp_type == "indicator") {
@@ -412,11 +414,11 @@ plot_powerpaneldesign <- function(dsgnpower, plot_type = "standard",
             for (i in 1:n_trend) {
               # set xaxis values for period
               xset <- seq(period_min, by = 1, to = period_max)
-
+              
               # set up initial plot area,  xaxis and yaxis
               plot(xset, seq(0, 1, length = length(xset)),
-                ylim = c(0, 1), xlim = c(period_min, period_max),
-                ylab = "", xlab = "", type = "n", axes = F
+                   ylim = c(0, 1), xlim = c(period_min, period_max),
+                   ylab = "", xlab = "", type = "n", axes = F
               )
               axis(side = 1, line = -0.75, at = xset, labels = xset, adj = 0.5, font = 3, cex = 1)
               axis(
@@ -426,7 +428,7 @@ plot_powerpaneldesign <- function(dsgnpower, plot_type = "standard",
               )
               mtext(outer = F, side = 1, line = 1.8, text = "End period", cex = 1.5, font = 3)
               mtext(outer = F, side = 2, line = 2.5, text = "Power for Trend", cex = 1.5, font = 3)
-
+              
               # legend for panel design power plotted
               # text identifying indicator, trend and alpha used for power
               text(period_min, 0.98, font = 3, cex = .8, adj = 0, paste("Trend Type = ", trend_type, sep = ""))
@@ -434,14 +436,14 @@ plot_powerpaneldesign <- function(dsgnpower, plot_type = "standard",
               text(period_min, 0.92, font = 3, cex = .8, adj = 0, paste("Alpha = ", alpha_value[j], sep = ""))
               text(period_min, 0.88, font = 3, cex = .8, adj = 0, paste("Design = ", dsgn_plot[k], sep = ""))
               legend(period_min, 0.85, ind_plot, lty = 1:n_ind, lwd = 2, seg.len = 4, bty = "n")
-
+              
               # plot power curve for mth indicator
               ltype <- 1
               for (m in ind_plot[1:n_ind]) {
                 pow <- dsgnpower$dsgn_power[
                   dsgn_plot[k], as.character(period_values),
                   m, trend_plot[i], alpha_plot[j]
-                ]
+                  ]
                 keep <- !is.na(pow)
                 pow <- pow[keep]
                 lines(period_values[keep], pow, lty = ltype, lwd = 2)
@@ -462,7 +464,7 @@ plot_powerpaneldesign <- function(dsgnpower, plot_type = "standard",
                 xset_mean <- dsgnpower$trend.change[
                   paste("Trend_", x, "%", sep = ""),
                   as.character(period_plot[i]), ind_plot[k]
-                ]
+                  ]
                 xlabel <- paste("Trend: %/period; Total % and Mean at Period ", period_plot[i], sep = "")
               }
               else {
@@ -470,8 +472,8 @@ plot_powerpaneldesign <- function(dsgnpower, plot_type = "standard",
               }
               # set up initial plot area,  xaxis and yaxis
               plot(xset, seq(0, 1, length = length(xset)),
-                ylim = c(0, 1), xlim = c(xmin, xmax),
-                ylab = "", xlab = "", type = "n", axes = F
+                   ylim = c(0, 1), xlim = c(xmin, xmax),
+                   ylab = "", xlab = "", type = "n", axes = F
               )
               axis(side = 1, line = -1, at = xset, labels = round(xset, 2), adj = 0.5, font = 3, cex = 1)
               axis(
@@ -494,7 +496,7 @@ plot_powerpaneldesign <- function(dsgnpower, plot_type = "standard",
                 outer = FALSE, side = 2, line = 2.5, text = "Power for Trend",
                 cex = 1.5, font = 3, col = c("Black"), adj = c(0.5)
               )
-
+              
               # text identifying indicator, trend and alpha used for power
               text(xmin, 0.98, font = 3, cex = .8, adj = 0, paste("Trend Type = ", trend_type, sep = ""))
               text(xmin, 0.94, font = 3, cex = .8, adj = 0, paste("End Period = ", period_plot[i], sep = ""))
@@ -502,14 +504,14 @@ plot_powerpaneldesign <- function(dsgnpower, plot_type = "standard",
               text(xmin, 0.86, font = 3, cex = .8, adj = 0, paste("Panel Design = ", dsgn_plot[k]))
               # legend for indicator power plotted
               legend(xmin, 0.82, ind_plot, lty = 1:n_ind, lwd = 2, seg.len = 4, bty = "n")
-
+              
               # plot power curve for mth indicator
               ltype <- 1
               for (m in ind_plot[1:n_ind]) {
                 pow <- dsgnpower$dsgn_power[
                   dsgn_plot[k], as.character(period_plot[i]),
                   m, trend_names, alpha_plot[j]
-                ]
+                  ]
                 keep <- !is.na(pow)
                 pow <- pow[keep]
                 lines(x[keep], pow, lty = ltype, lwd = 2)
@@ -522,7 +524,7 @@ plot_powerpaneldesign <- function(dsgnpower, plot_type = "standard",
     }
     ####### end comp_type: indicator
   }
-
+  
   ##################################################
   # Relative power plot section
   if (plot_type == "relative") {
@@ -538,12 +540,12 @@ plot_powerpaneldesign <- function(dsgnpower, plot_type = "standard",
               base_pow <- dsgnpower$dsgn_power[
                 dsgn_plot[1], as.character(period_values),
                 ind_plot[k], trend_plot[i], alpha_plot[j]
-              ]
+                ]
               for (m in dsgn_plot) {
                 pow <- dsgnpower$dsgn_power[
                   m, as.character(period_values), ind_plot[k],
                   trend_plot[i], alpha_plot[j]
-                ]
+                  ]
                 ymin <- min(ymin, pow - base_pow, na.rm = TRUE)
               }
               ylow <- ceiling(-ymin * 10)
@@ -552,8 +554,8 @@ plot_powerpaneldesign <- function(dsgnpower, plot_type = "standard",
               xset <- seq(period_min, by = 1, to = period_max)
               # set up initial plot area,  xaxis and yaxis
               plot(xset, seq(0, 1, length = length(xset)),
-                ylim = c(ylow, 1), xlim = c(period_min, period_max),
-                ylab = "", xlab = "", type = "n", axes = F
+                   ylim = c(ylow, 1), xlim = c(period_min, period_max),
+                   ylab = "", xlab = "", type = "n", axes = F
               )
               axis(side = 1, line = -0.75, at = xset, labels = xset, adj = 0.5, font = 3, cex = 1)
               axis(
@@ -565,7 +567,7 @@ plot_powerpaneldesign <- function(dsgnpower, plot_type = "standard",
                 outer = F, side = 2, line = 2.5, text = c("Relative Power", "Power for Trend"),
                 cex = 1.5, font = 3, col = c("Black", "Blue"), adj = c(0.1, 0.8)
               )
-
+              
               # text identifying indicator, trend and alpha used for power
               text(period_min, 0.98, font = 3, cex = .8, adj = 0, paste0("Trend Type = ", trend_type))
               text(period_min, 0.94, font = 3, cex = .8, adj = 0, paste0("Trend = ", trend_value[i]))
@@ -573,25 +575,25 @@ plot_powerpaneldesign <- function(dsgnpower, plot_type = "standard",
               text(period_min, 0.86, font = 3, cex = .8, adj = 0, paste0("Indicator = ", ind_plot[k]))
               # legend for panel design power plotted
               legend(period_min, 0.82, c(dsgn_plot[1], dsgn_plot),
-                lty = c(1, 1:n_dsgn),
-                col = c("blue", rep("black", length(dsgn_plot))), lwd = 2, seg.len = 5, bty = "n"
+                     lty = c(1, 1:n_dsgn),
+                     col = c("blue", rep("black", length(dsgn_plot))), lwd = 2, seg.len = 5, bty = "n"
               )
-
+              
               # find panel_base power and plot power curve
               base_pow <- dsgnpower$dsgn_power[
                 dsgn_plot[1], as.character(period_values),
                 ind_plot[k], trend_plot[i], alpha_plot[j]
-              ]
+                ]
               keep <- !is.na(base_pow)
               lines(period_values[keep], base_pow[keep], lty = 1, col = "blue", lwd = 2)
-
+              
               ltype <- 1
               # plot relative power
               for (m in dsgn_plot) {
                 pow <- dsgnpower$dsgn_power[
                   m, as.character(period_values), ind_plot[k],
                   trend_plot[i], alpha_plot[j]
-                ]
+                  ]
                 pow_diff <- pow - base_pow
                 keep <- !is.na(pow_diff)
                 lines(period_values[keep], pow_diff[keep], lty = ltype, lwd = 2)
@@ -608,12 +610,12 @@ plot_powerpaneldesign <- function(dsgnpower, plot_type = "standard",
               base_pow <- dsgnpower$dsgn_power[
                 dsgn_plot[1], as.character(period_plot[i]),
                 ind_plot[k], trend_names, alpha_plot[j]
-              ]
+                ]
               for (m in dsgn_plot) {
                 pow <- dsgnpower$dsgn_power[
                   m, as.character(period_plot[i]),
                   ind_plot[k], trend_names, alpha_plot[j]
-                ]
+                  ]
                 ymin <- min(ymin, pow - base_pow, na.rm = TRUE)
               }
               ylow <- ceiling(-ymin * 10)
@@ -628,8 +630,8 @@ plot_powerpaneldesign <- function(dsgnpower, plot_type = "standard",
               xlabel <- paste("Trend: %/Period; Total % and Mean at Period ", period_plot[i], sep = "")
               # set up initial plot area,  xaxis and yaxis
               plot(xset, seq(0, 1, length = length(xset)),
-                ylim = c(ylow, 1), xlim = c(xmin, xmax),
-                ylab = "", xlab = "", type = "n", axes = F
+                   ylim = c(ylow, 1), xlim = c(xmin, xmax),
+                   ylab = "", xlab = "", type = "n", axes = F
               )
               axis(side = 1, line = -1, at = xset, labels = round(xset, 2), adj = 0.5, font = 3, cex = 1)
               axis(
@@ -649,7 +651,7 @@ plot_powerpaneldesign <- function(dsgnpower, plot_type = "standard",
                 outer = F, side = 2, line = 2.5, text = c("Relative Power", "Power for Trend"),
                 cex = 1.5, font = 3, col = c("Black", "Blue"), adj = c(0.1, 0.8)
               )
-
+              
               # text identifying indicator, trend and alpha used for power
               text(xmin, 0.98, font = 3, cex = .8, adj = 0, paste0("Trend Type = ", trend_type))
               text(xmin, 0.94, font = 3, cex = .8, adj = 0, paste0("End  Period = ", period_plot[i]))
@@ -657,15 +659,15 @@ plot_powerpaneldesign <- function(dsgnpower, plot_type = "standard",
               text(xmin, 0.86, font = 3, cex = .8, adj = 0, paste0("Indicator = ", ind_plot[k]))
               # legend for panel design power plotted
               legend(xmin, 0.82, c(dsgn_plot[1], dsgn_plot),
-                lty = c(1, 1:n_dsgn),
-                col = c("blue", rep("black", length(dsgn_plot))), lwd = 2, seg.len = 5, bty = "n"
+                     lty = c(1, 1:n_dsgn),
+                     col = c("blue", rep("black", length(dsgn_plot))), lwd = 2, seg.len = 5, bty = "n"
               )
-
+              
               # find panel_base power and plot power curve
               base_pow <- dsgnpower$dsgn_power[
                 dsgn_plot[1], as.character(period_plot[i]),
                 ind_plot[k], trend_names, alpha_plot[j]
-              ]
+                ]
               lines(x[!is.na(base_pow)], base_pow[!is.na(base_pow)], lty = 1, col = "blue", lwd = 2)
               # plot relative power
               ltype <- 1
@@ -673,7 +675,7 @@ plot_powerpaneldesign <- function(dsgnpower, plot_type = "standard",
                 pow <- dsgnpower$dsgn_power[
                   m, as.character(period_plot[i]),
                   ind_plot[k], trend_names, alpha_plot[j]
-                ]
+                  ]
                 pow_diff <- pow - base_pow
                 lines(x[!is.na(pow_diff)], pow_diff[!is.na(pow_diff)], lty = ltype, lwd = 2)
                 ltype <- ltype + 1
@@ -684,7 +686,7 @@ plot_powerpaneldesign <- function(dsgnpower, plot_type = "standard",
       }
     }
     ####### end comp_type: dsgn
-
+    
     #######################################
     # type of plot: type.comp: indicator
     if (comp_type == "indicator") {
@@ -698,12 +700,12 @@ plot_powerpaneldesign <- function(dsgnpower, plot_type = "standard",
               base_pow <- dsgnpower$dsgn_power[
                 dsgn_plot[k], as.character(period_values),
                 ind_plot[1], trend_plot[i], alpha_plot[j]
-              ]
+                ]
               for (m in ind_plot) {
                 pow <- dsgnpower$dsgn_power[
                   dsgn_plot[k], as.character(period_values),
                   m, trend_plot[i], alpha_plot[j]
-                ]
+                  ]
                 ymin <- min(ymin, pow - base_pow, na.rm = TRUE)
               }
               ylow <- ceiling(-ymin * 10)
@@ -712,8 +714,8 @@ plot_powerpaneldesign <- function(dsgnpower, plot_type = "standard",
               xset <- seq(period_min, by = 1, to = period_max)
               # set up initial plot area,  xaxis and yaxis
               plot(xset, seq(0, 1, length = length(xset)),
-                ylim = c(ylow, 1), xlim = c(period_min, period_max),
-                ylab = "", xlab = "", type = "n", axes = F
+                   ylim = c(ylow, 1), xlim = c(period_min, period_max),
+                   ylab = "", xlab = "", type = "n", axes = F
               )
               axis(side = 1, line = -0.75, at = xset, labels = xset, adj = 0.5, font = 3, cex = 1)
               axis(
@@ -725,7 +727,7 @@ plot_powerpaneldesign <- function(dsgnpower, plot_type = "standard",
                 outer = F, side = 2, line = 2.5, text = c("Relative Power", "Power for Trend"),
                 cex = 1.5, font = 3, col = c("Black", "Blue"), adj = c(0.1, 0.8)
               )
-
+              
               # text identifying indicator, trend and alpha used for power
               text(period_min, 0.98, font = 3, cex = .8, adj = 0, paste0("Trend Type = ", trend_type))
               text(period_min, 0.94, font = 3, cex = .8, adj = 0, paste0("Trend = ", round(trend_value[i], 1), "%"))
@@ -733,25 +735,25 @@ plot_powerpaneldesign <- function(dsgnpower, plot_type = "standard",
               text(period_min, 0.86, font = 3, cex = .8, adj = 0, paste0("Panel Design = ", dsgn_plot[k]))
               # legend for panel design power plotted
               legend(period_min, 0.82, c(ind_plot[1], ind_plot),
-                lty = c(1, 1:n_ind),
-                col = c("blue", rep("black", length(ind_plot))), lwd = 2, seg.len = 5, bty = "n"
+                     lty = c(1, 1:n_ind),
+                     col = c("blue", rep("black", length(ind_plot))), lwd = 2, seg.len = 5, bty = "n"
               )
-
+              
               # find panel_base power and plot power curve
               base_pow <- dsgnpower$dsgn_power[
                 dsgn_plot[k], as.character(period_values),
                 ind_plot[1], trend_plot[i], alpha_plot[j]
-              ]
+                ]
               keep <- !is.na(base_pow)
               lines(period_values[keep], base_pow[keep], lty = 1, col = "blue", lwd = 2)
-
+              
               ltype <- 1
               # plot relative power
               for (m in ind_plot) {
                 pow <- dsgnpower$dsgn_power[
                   dsgn_plot[k], as.character(period_values),
                   m, trend_plot[i], alpha_plot[j]
-                ]
+                  ]
                 pow_diff <- pow - base_pow
                 keep <- !is.na(pow_diff)
                 lines(period_values[keep], pow_diff[keep], lty = ltype, lwd = 2)
@@ -768,12 +770,12 @@ plot_powerpaneldesign <- function(dsgnpower, plot_type = "standard",
               base_pow <- dsgnpower$dsgn_power[
                 dsgn_plot[k], as.character(period_plot[i]),
                 ind_plot[1], trend_names, alpha_plot[j]
-              ]
+                ]
               for (m in ind_plot) {
                 pow <- dsgnpower$dsgn_power[
                   dsgn_plot[k], as.character(period_plot[i]),
                   m, trend_names, alpha_plot[j]
-                ]
+                  ]
                 ymin <- min(ymin, pow - base_pow, na.rm = TRUE)
               }
               ylow <- ceiling(-ymin * 10)
@@ -787,8 +789,8 @@ plot_powerpaneldesign <- function(dsgnpower, plot_type = "standard",
               xlabel <- paste("Trend: %/Period; Total % at Period ", period_plot[i], sep = "")
               # set up initial plot area,  xaxis and yaxis
               plot(xset, seq(0, 1, length = length(xset)),
-                ylim = c(ylow, 1), xlim = c(xmin, xmax),
-                ylab = "", xlab = "", type = "n", axes = F
+                   ylim = c(ylow, 1), xlim = c(xmin, xmax),
+                   ylab = "", xlab = "", type = "n", axes = F
               )
               axis(side = 1, line = -1, at = xset, labels = round(xset, 2), adj = 0.5, font = 3, cex = 1)
               axis(
@@ -804,7 +806,7 @@ plot_powerpaneldesign <- function(dsgnpower, plot_type = "standard",
                 outer = F, side = 2, line = 2.5, text = c("Relative Power", "Power for Trend"),
                 cex = 1.5, font = 3, col = c("Black", "Blue"), adj = c(0.1, 0.8)
               )
-
+              
               # text identifying indicator, trend and alpha used for power
               text(xmin, 0.98, font = 3, cex = .8, adj = 0, paste0("Trend Type = ", trend_type))
               text(xmin, 0.94, font = 3, cex = .8, adj = 0, paste0("End Period = ", period_plot[i]))
@@ -812,15 +814,15 @@ plot_powerpaneldesign <- function(dsgnpower, plot_type = "standard",
               text(xmin, 0.86, font = 3, cex = .8, adj = 0, paste0("Panel Design = ", dsgn_plot[k]))
               # legend for indicator power plotted
               legend(xmin, 0.82, c(ind_plot[1], ind_plot),
-                lty = c(1, 1:n_ind),
-                col = c("blue", rep("black", length(ind_plot))), lwd = 2, seg.len = 5, bty = "n"
+                     lty = c(1, 1:n_ind),
+                     col = c("blue", rep("black", length(ind_plot))), lwd = 2, seg.len = 5, bty = "n"
               )
-
+              
               # find panel_base power and plot power curve
               base_pow <- dsgnpower$dsgn_power[
                 dsgn_plot[k], as.character(period_plot[i]),
                 ind_plot[1], trend_names, alpha_plot[j]
-              ]
+                ]
               lines(x[!is.na(base_pow)], base_pow[!is.na(base_pow)], lty = 1, col = "blue", lwd = 2)
               # plot relative power
               ltype <- 1
@@ -828,7 +830,7 @@ plot_powerpaneldesign <- function(dsgnpower, plot_type = "standard",
                 pow <- dsgnpower$dsgn_power[
                   dsgn_plot[k], as.character(period_plot[i]),
                   m, trend_names, alpha_plot[j]
-                ]
+                  ]
                 pow_diff <- pow - base_pow
                 lines(x[!is.na(pow_diff)], pow_diff[!is.na(pow_diff)], lty = ltype, lwd = 2)
                 ltype <- ltype + 1
@@ -840,9 +842,9 @@ plot_powerpaneldesign <- function(dsgnpower, plot_type = "standard",
     }
     ####### end comp_type: indicator
   }
-
+  
   # end of relative power plot section
-
+  
   # reset plot parameters
   par(oldpar)
 }
