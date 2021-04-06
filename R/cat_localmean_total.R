@@ -3,6 +3,8 @@
 # Programmer: Tom Kincaid
 # Date: July 23, 2020
 # Revised: January 28, 2021 to replace "pcfactor.ind" with "pcfactor_ind"
+# Revised: April 1, 2021 to ensure that confidence bounds for an unstratified
+#          sample are correctly assigned to the return object
 #'
 #' Local Mean Variance Estimates of Estimated Totals for Categorical Data
 #'
@@ -309,11 +311,11 @@ cat_localmean_total <- function(itype, lev_itype, nlev_itype, ivar, lev_ivar,
         sdest[tst] <- 0
       }
       stderr_U[isubpop, indx] <- sdest
-      lbound <- pmax(size - mult * sdest, 0)
+      lbound <- pmax(size[ind] - mult * sdest, 0)
       if ("postStrata" %in% names(design)) {
-        ubound <- pmin(size + mult * sdest, totalwgt)
+        ubound <- pmin(size[ind] + mult * sdest, totalwgt)
       } else {
-        ubound <- size + mult * sdest
+        ubound <- size[ind] + mult * sdest
       }
       temp <- paste(rep(lev_itype[isubpop], length(names_sdest)), names_sdest,
         sep = ":"
