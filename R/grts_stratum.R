@@ -182,8 +182,11 @@ grts_stratum <- function(stratum, dsgn, sframe, sf_type, wgt_units = NULL, pt_de
   if(dsgn[["seltype"]][[stratum]] == "equal" | dsgn[["seltype"]][[stratum]] == "proportional") {
     n_caty <- n_total
   } else {
-    ifelse(n_over = 0, n_caty <- dsgn[["caty_n"]][[stratum]],
-           n_caty <- dsgn[["caty_n"]][[stratum]] + dsgn[["n_over"]][[stratum]])
+    if (n_over == 0) {
+      n_caty <- dsgn[["caty_n"]][[stratum]]
+    } else {
+      n_caty <- dsgn[["caty_n"]][[stratum]] + dsgn[["n_over"]][[stratum]]
+    }
   }
 
   # If seltype is "equal" or "proportional", set caty to same as stratum
