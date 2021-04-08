@@ -8,6 +8,8 @@
 # Revised: January 28, 2021 to replace "warn.vec" with "warn_vec"
 # Revised: February 23, 2021 to correct errors in the code for creating the
 #          warnings data frame (warn_df)
+# Revised: April 7, 2021 to ensure that the dframe argument does not contain
+#          zero rows
 #'
 #' Cumulative Distribution Function Inference for a Probability Survey
 #'
@@ -304,6 +306,12 @@ cont_cdftest <- function(dframe, vars, subpops = NULL, surveyID = NULL,
 
   if (missing(dframe) | is.null(dframe)) {
     stop("\nThe dframe argument must be provided.\n")
+  }
+
+  # Ensure that the dframe argument does not contain zero rows
+
+  if (nrow(dframe) == 0) {
+    stop("\nThe dframe argument contains zero rows.\n")
   }
 
   # If the dframe argument is an sf object, extract coordinates from the geometry

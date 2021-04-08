@@ -9,6 +9,8 @@
 #          survey_design to create the survey design object
 # Revised: March 2, 2021 to revise the process for creating unique site ID
 #          values
+# Revised: April 7, 2021 to ensure that the dframe argument does not contain
+#          zero rows
 #'
 #' Relative Risk Analysis for Probability Survey Data
 #'
@@ -256,6 +258,12 @@ relrisk_analysis <- function(dframe, vars_response, vars_stressor,
 
   if (missing(dframe) | is.null(dframe)) {
     stop("\nThe dframe argument must be provided.\n")
+  }
+
+  # Ensure that the dframe argument does not contain zero rows
+
+  if (nrow(dframe) == 0) {
+    stop("\nThe dframe argument contains zero rows.\n")
   }
 
   # If the dframe argument is an sf object, extract coordinates from the geometry
