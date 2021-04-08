@@ -7,7 +7,6 @@
 irs(
   sframe,
   n_base,
-  stratum = NULL,
   seltype = "equal",
   wgt_units = NULL,
   pt_density = NULL,
@@ -33,13 +32,9 @@ system for sframe must be one where distance for coordinates is meaningful. If l
 are included in a finite sample frame, then a legacy variable must be provided to
 identify elements that are legacy sites.}
 
-\item{n_base}{The sample size required. If single stratum, then single numeric value.
-If sample is stratified, then numeric vector with same length as \code{"stratum"} and sample sizes
-required in same order as strata in \code{"stratum"}. Must be specified.}
-
-\item{stratum}{Single character value or character vector that identifies the strata for
-the design.  Default is \code{NULL} which means no stratification and all elements in the sample
-frame are assumed to be included.}
+\item{n_base}{The sample size required. If the design is unstratified, this is a single numeric value.
+If design is stratified, this is a numeric vector whose names equal the relevant strata in \code{stratum_var}
+and whose entries equal the sample size for each strata.#'}
 
 \item{seltype}{Single character value or character vector that identifies the type of
 random selection, which must be one of following: \code{"equal"} for equal probability selection,
@@ -65,7 +60,7 @@ the sum of \code{caty_n} values must equal \code{n_base} for that stratum. Defau
 \item{n_over}{If \code{seltype} is \code{"equal"} and is not stratified, a numeric value specifying the
 over sample size requested. If \code{seltype} is \code{"equal"} and is stratified either a numeric value
 specifying the over sample size that will be applied to each stratum or a numeric vector
-specifying the over sample size for each stratum listed in same order as \code{"strata"}.
+specifying the over sample size for each stratum listed in same order as \code{"stratum"}.
 If seltype is \code{"unequal"} and is not stratified, a named character vector with the over sample size
 for each category where names are the same as \code{"caty_n"}. If seltype is \code{"unequal"} and is
 stratified, either a numeric vector specifying the over sample size for each category in

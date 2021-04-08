@@ -36,7 +36,7 @@
 #' @export
 ###############################################################################
 
-irs <- function(sframe, n_base, stratum = NULL, seltype = "equal", wgt_units = NULL,
+irs <- function(sframe, n_base, seltype = "equal", wgt_units = NULL,
                 pt_density = NULL, caty_n = NULL, n_over = NULL, n_near = NULL,
                 stratum_var = NULL, caty_var = NULL, aux_var = NULL,
                 legacy_sites = NULL, legacy_var = NULL, mindis = NULL,

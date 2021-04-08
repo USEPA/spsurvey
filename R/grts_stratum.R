@@ -277,7 +277,7 @@ grts_stratum <- function(stratum, dsgn, sframe, sf_type, wgt_units = NULL, pt_de
       keep <- sites[["sites"]][sites[["sites"]]$legacy == FALSE, "idpts", drop = TRUE]
       sites_near <- replace_near(dsgn[["n_near"]][[stratum]],
         sites = sites[["sites"]][sites[["sites"]]$legacy == FALSE, ],
-        sframe = subset(sftmp, !(idpts %in% keep))
+        sframe = subset(sftmp, !(sftmp$idpts %in% keep))
       )
 
       # Adjust inclusion probabilities for replacement sites if over sample sites present

@@ -79,12 +79,12 @@ revisit_rand(
     \item{\code{\link{revisit_dsgn}}}{create a panel revisit design}
     \item{\code{\link{revisit_bibd}}}{create a balanced incomplete block
       panel revisit design}
-    \item{\code{\link{panel_summary}}}{summarize characteristics of a revisit
+    \item{\code{\link{summary.paneldesign}}}{summarize characteristics of a revisit
       panel design}
     \item{\code{\link{power_dsgn}}}{power calculation for multiple panel
       designs}
     \item{\code{\link{cov_panel_dsgn}}}{covariance matrix for a panel design}
-    \item{\code{\link{plot_powerpaneldesign}}}{plot power curves for panel
+    \item{\code{\link{plot.powerpaneldesign}}}{plot power curves for panel
       designs}
   }
 }

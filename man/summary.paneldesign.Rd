@@ -4,7 +4,7 @@
 \alias{summary.paneldesign}
 \title{Summary Characteristics of a Revisit Panel Design}
 \usage{
-\method{summary}{paneldesign}(object, visitdsgn = NULL)
+\method{summary}{paneldesign}(object, visitdsgn = NULL, ...)
 }
 \arguments{
 \item{object}{Two-dimensional array with class \code{panel_design} and dimnames specifying revisit
@@ -15,6 +15,8 @@ panel design. Typically, array is output from \code{revisit_dsgn}, \code{revisit
 specifying the number of times a sample unit is sampled at each time
 period. Default is \code{visitdsgn=NULL}, where default assumes that a sample unit
 will be sampled only once at each time period.}
+
+\item{...}{Additional arguments (S3 consistency)}
 }
 \value{
 List of six elements.
@@ -76,7 +78,7 @@ summary(sa_dsgn, sa_visit)
     \item{\code{\link{power_dsgn}}}{power calculation for multiple panel
       designs}
     \item{\code{\link{cov_panel_dsgn}}}{covariance matrix for a panel design}
-    \item{\code{\link{plot_powerpaneldesign}}}{plot power curves for panel
+    \item{\code{\link{plot.powerpaneldesign}}}{plot power curves for panel
       designs}
   }
 }

@@ -19,7 +19,7 @@ A data frame with 4113 rows and 5 variables:
 Great_Lakes
 }
 \description{
-An `sf` multipolygon object of 4113 polygons consisting 
+An `sf` multipolygon object of 4113 polygons consisting
 of shoreline segments in the Great Lakes region of North America.
 }
 \keyword{datasets}

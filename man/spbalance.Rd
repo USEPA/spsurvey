@@ -7,27 +7,36 @@
 spbalance(
   object,
   sframe,
-  sites = "sites_base",
+  stratum_var = NULL,
+  ip = NULL,
   metrics = "pielou",
   extents = FALSE
 )
 }
 \arguments{
-\item{object}{A design object output from \code{grts()} or \code{irs()}
-having class \code{"design"}.}
+\item{object}{An \code{sf} object containig the sampled sites.}
 
-\item{sframe}{An \code{sframe} or \code{sf} object.}
+\item{sframe}{An \code{sframe} or \code{sf} object containing the sample frame.}
 
-\item{sites}{The sites in object for which spatial balance metrics
-are desired. This argument must be \code{"sites_base"}, \code{"sites_over"}, or
-\code{"sites_near"}. Defaults to \code{"sites_base"}.}
+\item{stratum_var}{The name of the stratum variable in \code{object}
+and \code{sframe}. If \code{NULL} (the default), no strata is assumed.
+If a single character vector is provided, it is assumed this is the
+name of the stratum variable in \code{object} and \code{sframe}. If
+a two-dimensional character vector is provided, one element must be
+named "object" and corresponds to the name of the stratum variable
+in \code{object}, while the other element must be named "sframe" and
+correponds to the name of the stratum variable in \code{sframe}.}
+
+\item{ip}{Inclusion probabilities associated with each row of \code{sframe}.
+If these are not provided, an equal probability design is assumed (within
+strata).}
 
 \item{metrics}{A character vector of spatial balance metrics:
 \itemize{
   \item{pielou - }{pielou evenness index (the default)}
   \item{simpsons - }{simpsons evenness index}
   \item{chisq - }{chi-squared loss}
-  \item{pielou - }{absolute error loss}
+  \item{abserr - }{absolute error loss}
  }}
 
 \item{extents}{Should the total extent within each dirichlet

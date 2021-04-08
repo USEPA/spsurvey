@@ -80,6 +80,9 @@
 #'   the survey design.  The \code{legacy_var} is required and the contents of the variable must
 #'   either be a legacy \code{siteID} if the sample frame element is a legacy site or must
 #'   be equal to \code{NA} otherwise.
+#'   
+#' @param legacy_stratum_var The name of the variable in \code{legacy_sites} that contains the 
+#'   stratum information.
 #'
 #' @param legacy_var For finite sample frames when legacy sites are to be included in the
 #'   survey design, a character string that is the name of the character variable in \code{sframe} that

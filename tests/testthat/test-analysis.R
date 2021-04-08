@@ -1040,8 +1040,6 @@ test_that("Change: with finite population correction factor", {
 
 #
 # Section for the CDF inference function
-#
-library(svyanalysis)
 
 # Assign response variable names to the vars vector
 vars <- c("ContVar")

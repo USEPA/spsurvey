@@ -3,10 +3,10 @@ citHeader("To cite the spsurvey package in publications use:")
 citEntry(
    entry="Manual",
    title="spsurvey: Spatial Survey Design and Analysis",
-   author="Thomas M. Kincaid, Anthony R. Olsen, and Marc H. Weber",
+   author="Thomas M. Kincaid, Anthony R. Olsen, Marc H. Weber, and Michael Dumelle",
    year=2019,
-   note="R package version 4.1.0",
-   textVersion=paste("Kincaid, T. M., Olsen, A. R., and Weber, M. H. (2019).",
+   note="R package version 5.0.0",
+   textVersion=paste("Kincaid, T. M., Olsen, A. R., Weber, M. H., Dumelle, Michael. (2021).",
                      "spsurvey: Spatial Survey Design and Analysis.",
-                     "R package version 4.1.0.")
+                     "R package version 5.0.0.")
 )

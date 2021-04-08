@@ -58,8 +58,8 @@
 #'   \item{UNIQUE_ID}{A unique observation identifier.}
 #'   \item{SITE_ID}{A unique site identifier.}
 #'   \item{DSGN_CYCLE}{Year of design cycle.}
-#'   \item{LAT_DD_N83}{Latitude coordinate using the NAD83 Datum.}
-#'   \item{LON_DD_N83}{Longitude coordinate using the NAD83 Datum.}
+#'   \item{LAT_DD83}{Latitude coordinate using the NAD83 Datum.}
+#'   \item{LON_DD83}{Longitude coordinate using the NAD83 Datum.}
 #'   \item{XCOORD}{Transformed latitude coordinate in meters.}
 #'   \item{YCOORD}{Transformed latitude coordinate in meters.}
 #'   \item{WGT_TP_EXTENT}{Target population weights for extent.}
@@ -87,8 +87,8 @@
 #'   \item{UNIQUE_ID}{A unique observation identifier.}
 #'   \item{SITE_ID}{A unique site identifier.}
 #'   \item{DSGN_CYCLE}{Year of design cycle.}
-#'   \item{LAT_DD_N83}{Latitude coordinate using the NAD83 Datum.}
-#'   \item{LON_DD_N83}{Longitude coordinate using the NAD83 Datum.}
+#'   \item{LAT_DD83}{Latitude coordinate using the NAD83 Datum.}
+#'   \item{LON_DD83}{Longitude coordinate using the NAD83 Datum.}
 #'   \item{XCOORD}{Transformed latitude coordinate in meters.}
 #'   \item{YCOORD}{Transformed latitude coordinate in meters.}
 #'   \item{WGT_TP_EXTENT}{Target population weights for extent.}
@@ -117,8 +117,8 @@
 #'   \item{SITE_ID}{A unique site identifier.}
 #'   \item{DSGN_CYCLE}{Year of design cycle.}
 #'   \item{REVISIT}{Site revisit status.}
-#'   \item{LAT_DD_N83}{Latitude coordinate using the NAD83 Datum.}
-#'   \item{LON_DD_N83}{Longitude coordinate using the NAD83 Datum.}
+#'   \item{LAT_DD83}{Latitude coordinate using the NAD83 Datum.}
+#'   \item{LON_DD83}{Longitude coordinate using the NAD83 Datum.}
 #'   \item{XCOORD}{Transformed latitude coordinate in meters.}
 #'   \item{YCOORD}{Transformed latitude coordinate in meters.}
 #'   \item{WGT_TP_EXTENT}{Target population weights for extent.}
@@ -130,7 +130,7 @@
 #'   \item{STATE_NM}{State name.}
 #'   \item{BENTHIC_MMI}{Benthic MMI value.}
 #'   \item{BENTHIC_MMI_COND}{Benthic MMI categories.}
+#'   \item{FISH_TISSUE_COND}{Fish tissue condition categories.}
 #'   \item{PHOSPHORUS_COND}{Phosphorus condition categories.}
-#'   \item{NITROGEN_COND}{Nitrogen condition categories.}
 #' }
 "NCCA_Gulf"

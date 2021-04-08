@@ -20,6 +20,8 @@
 #'   period. Default is \code{visitdsgn=NULL}, where default assumes that a sample unit
 #'   will be sampled only once at each time period.
 #'
+#' @param ... Additional arguments (S3 consistency)
+#'
 #' @details The revisit panel design and the visit design (if present) are
 #'   summarized. Summaries can be useful to know the effort required to complete
 #'   the survey design. See the values returned for the summaries that are
@@ -59,7 +61,7 @@
 #'     \item{\code{\link{power_dsgn}}}{power calculation for multiple panel
 #'       designs}
 #'     \item{\code{\link{cov_panel_dsgn}}}{covariance matrix for a panel design}
-#'     \item{\code{\link{plot_powerpaneldesign}}}{plot power curves for panel
+#'     \item{\code{\link{plot.powerpaneldesign}}}{plot power curves for panel
 #'       designs}
 #'   }
 #'
@@ -80,7 +82,7 @@
 #' summary(sa_dsgn, sa_visit)
 #' @export
 ###############################################################################
-summary.paneldesign <- function(object, visitdsgn = NULL) {
+summary.paneldesign <- function(object, visitdsgn = NULL, ...) {
   paneldsgn <- object
   n_pan <- dim(paneldsgn)[1]
   n_period <- dim(paneldsgn)[2]

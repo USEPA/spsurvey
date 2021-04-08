@@ -2,12 +2,12 @@
 % Please edit documentation in R/replace_near.R
 \name{replace_near}
 \alias{replace_near}
-\title{Replacement sites generated via nearest neighbors}
+\title{Find Nearest Neighbor Replacement Sites}
 \usage{
-replace_near(over.near, sites, sframe)
+replace_near(n_near, sites, sframe)
 }
 \arguments{
-\item{over.near}{number of nearby sites to be used as potential replacement(s)
+\item{n_near}{number of nearby sites to be used as potential replacement(s)
 if a site cannot be sampled for any reason. Must be integer from \code{1} to \code{10}.
 Default is \code{NULL}.}
 
@@ -16,8 +16,7 @@ Default is \code{NULL}.}
 \item{sframe}{sf point object that was used as sample frame to select sites.}
 }
 \description{
-Returns 1 to 10 nearest neighbor replacement sites for each site in the 
-  base sample
+Find Nearest Neighbor Replacement Sites
 }
 \author{
 Michael Dumelle \email{Dumelle.Michael@epa.gov} and Tony Olsen \email{Olsen.Tony@epa.gov}

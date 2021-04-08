@@ -11,7 +11,7 @@
 
 \method{summary}{dframe}(object, formula, onlyshow = NULL, ...)
 
-\method{summary}{design}(object, formula, onlyshow = NULL, ...)
+\method{summary}{design}(object, formula, onlyshow = NULL, sites = NULL, ...)
 }
 \arguments{
 \item{object}{A sample frame object having class \code{sframe} or a design object
@@ -30,6 +30,10 @@ variable for which a summary is requested.}
 side of the formula is empty, the appropriate generic arguments are passed
 to \code{summary.data.frame}. If the left hand side of the formula is provided,
 the appropriate generic arguments are passed to \code{summary.default}.}
+
+\item{sites}{A character vector indicating the \code{design} sites
+for which summaries are requested in \code{object}. Defaults to computing summaries for
+each non-\code{NULL} \code{site_*} list in \code{object}.}
 }
 \value{
 If the left hand side of the formula is empty, a named list

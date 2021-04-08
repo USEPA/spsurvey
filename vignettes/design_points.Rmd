@@ -454,10 +454,10 @@ To measure the spatial balance of a design, Stevens and Olsen (2004) proposed us
 Let $p_i$ be the proportion of population sites in Voroni polygon $i$. The Pielou's evenness index is often used as a measure of spatial balance and can be defined as $1 + \frac{1}{n}\sum_{i = 1}^n p_i log(p_i)$. One attractive feature of Pielou's evenness index is that it is unitless; a value of 0 indicates perfect spatial balance, and a value of 1 indicates no spatial balance. To compute the Pielou's evenness index of the equal probabily GRTS and IRS designs, run
 ```{r}
 # compute for grts
-pielou_grts <- spbalance(eqprob, NE_Lakes)
+pielou_grts <- spbalance(eqprob$sites_base, NE_Lakes)
 pielou_grts
 # compute for irs
-pielou_irs <- spbalance(eqprob_irs, NE_Lakes)
+pielou_irs <- spbalance(eqprob_irs$sites_base, NE_Lakes)
 pielou_irs
 ```
 

@@ -224,14 +224,14 @@ and the geometry column is dropped from the object.
 
 \examples{
 dframe <- data.frame(
-  siteID = paste0("Site", 1:100),
-  wgt = runif(100, 10, 100),
-  xcoord = runif(100),
-  ycoord = runif(100),
-  stratum = rep(c("Stratum1", "Stratum2"), 50),
-  ContVar = rnorm(100, 10, 1),
-  All_Sites = rep("All Sites", 100),
-  Resource_Class = rep(c("Good", "Poor"), c(55, 45))
+  siteID = paste0("Site", 1:40),
+  wgt = runif(40, 10, 100),
+  xcoord = runif(40),
+  ycoord = runif(40),
+  stratum = rep(c("Stratum1", "Stratum2"), 20),
+  ContVar = rnorm(40, 10, 1),
+  All_Sites = rep("All Sites", 40),
+  Resource_Class = rep(c("Good", "Poor"), c(25, 15))
 )
 myvars <- c("ContVar")
 mysubpops <- c("All_Sites", "Resource_Class")

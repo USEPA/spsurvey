@@ -14,8 +14,9 @@ grts_stratum(
   dsgn,
   sframe,
   sf_type,
+  wgt_units = NULL,
   pt_density = NULL,
-  legacy_option = NULL,
+  legacy_option = FALSE,
   legacy_sites = NULL,
   maxtry = 10,
   warn_ind = FALSE,
@@ -35,6 +36,9 @@ for unequal selection; or that identify elements that are legacy sites.
 The coordinate system for sframe must be one where distance for coordinates is meaningful.}
 
 \item{sf_type}{The sample frame geometry type: point, linear or area}
+
+\item{wgt_units}{The units for weights if different from units in the \code{sf} object. Default
+is \code{NULL}. Unit conversion uses \code{set_unit}s in \code{sf} package.}
 
 \item{pt_density}{For linear and area sample frame, the point density for the systematic
 sample. Must be in units of the sframe sf.object. Default is NULL.}

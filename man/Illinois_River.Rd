@@ -18,7 +18,7 @@ variables:
 Illinois_River
 }
 \description{
-A simple features (sf) multilinestring object of 9087 segments of the 
+A simple features (sf) multilinestring object of 9087 segments of the
 Illinois River in Arkansas and Oklahoma.
 }
 \keyword{datasets}
