@@ -13,7 +13,7 @@
 #' @return An \code{dframe} object
 #'
 #' @export
-#' 
+#'
 #' @author Michael Dumelle
 #'
 #' @examples

@@ -37,7 +37,7 @@ irspts_mindis <- function(mindis, sframe, samplesize, stratum, maxtry = 10,
   }
   # extract sites from sample frame
   sites <- sframe[sframe$idpts %in% samp_id, ]
-  
+
   # calculate distance between sites
   site_dist <- st_distance(sites_base)
   class(site_dist) <- "numeric"

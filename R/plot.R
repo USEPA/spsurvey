@@ -21,7 +21,7 @@
 #' (or factor). Right hand side variables that are numeric will be coerced to
 #' a categorical (or factor) variable. If an intercept is included in the right
 #' hand side formula, the total will also be summarized.
-#' 
+#'
 #' @param sites A character vector of sites to include in plotting. Defaults to
 #' all non-\code{NULL} elements in \code{x} and \code{y}.
 #'
@@ -67,7 +67,7 @@
 #' plot(sample, NE_Lakes)
 #' }
 #' ###############################################################################
-plot.sframe <- function(x, y, formula = ~ 1, var_args = NULL, varlevel_args = NULL,
+plot.sframe <- function(x, y, formula = ~1, var_args = NULL, varlevel_args = NULL,
                         geom = FALSE, onlyshow = NULL, fix_bbox = TRUE, ...) {
 
   # setting old graphical parameter value
@@ -250,7 +250,7 @@ plot.sframe <- function(x, y, formula = ~ 1, var_args = NULL, varlevel_args = NU
 #' @method plot design
 #'
 #' @export
-plot.design <- function(x, y = NULL, formula = ~ sites, sites = NULL,
+plot.design <- function(x, y = NULL, formula = ~sites, sites = NULL,
                         var_args = NULL, varlevel_args = NULL, geom = FALSE, onlyshow = NULL,
                         fix_bbox = TRUE, ...) {
 

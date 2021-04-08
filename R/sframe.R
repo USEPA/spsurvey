@@ -11,7 +11,7 @@
 #' @param object An \code{sp} or \code{sf} object
 #'
 #' @return An \code{sframe} object
-#' 
+#'
 #'
 #' @export
 #'

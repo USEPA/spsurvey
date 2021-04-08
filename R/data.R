@@ -18,7 +18,7 @@
 
 #' Illinois River
 #'
-#' A simple features (sf) multilinestring object of 9087 segments of the 
+#' A simple features (sf) multilinestring object of 9087 segments of the
 #' Illinois River in Arkansas and Oklahoma.
 #'
 #' @format An `sf` multilinestring object object with 9087 rows and 3
@@ -33,9 +33,9 @@
 
 #' Great Lakes
 #'
-#' An `sf` multipolygon object of 4113 polygons consisting 
-#' of shoreline segments in the Great Lakes region of North America. 
-#' 
+#' An `sf` multipolygon object of 4113 polygons consisting
+#' of shoreline segments in the Great Lakes region of North America.
+#'
 #' @format A data frame with 4113 rows and 5 variables:
 #' \describe{
 #'   \item{COUNTRY}{Country.}
@@ -50,7 +50,7 @@
 #' NLA West
 #'
 #' A data frame consisting lake observations from a subset of the Environmental
-#' Protection Agency's "National Lakes Assessment" in the Western United 
+#' Protection Agency's "National Lakes Assessment" in the Western United
 #' States duing the years 2012 and 2017.
 #'
 #' @format A data frame with 851 rows and 18 variables:

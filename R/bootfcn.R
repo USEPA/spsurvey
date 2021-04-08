@@ -28,9 +28,11 @@
 
 bootfcn <- function(dframe, indices, ivar, siteID, yearID) {
   dframe <- dframe[indices, ]
-  eval(parse(text = paste0("regest <- lmer(", ivar, " ~ Wyear + (1 + Wyear|",
+  eval(parse(text = paste0(
+    "regest <- lmer(", ivar, " ~ Wyear + (1 + Wyear|",
     siteID, ") + (1|", yearID, "), data = dframe,
-    control = lmerControl(check.nobs.vs.nRE = 'warning'))")))
+    control = lmerControl(check.nobs.vs.nRE = 'warning'))"
+  )))
   coeff <- summary(regest)$coefficients
   vcor <- as.data.frame(VarCorr(regest))
   rslt <- c(

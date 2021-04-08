@@ -84,7 +84,7 @@ summary.paneldesign <- function(object, visitdsgn = NULL) {
   paneldsgn <- object
   n_pan <- dim(paneldsgn)[1]
   n_period <- dim(paneldsgn)[2]
-  
+
   # determine the cumulative number of unique sample units by sampling occasion
   used <- rep(FALSE, n_pan)
   tot <- vector("numeric", length = n_period)
@@ -96,7 +96,7 @@ summary.paneldesign <- function(object, visitdsgn = NULL) {
   }
   n_unique_com <- cumsum(tot)
   names(n_unique_com) <- dimnames(paneldsgn)[[2]]
-  
+
   # summarize number of sample results by panel and by time period
   # incorporate multiple times unit is sampled if sample units for a time period are
   # sampled more than once.
@@ -110,7 +110,7 @@ summary.paneldesign <- function(object, visitdsgn = NULL) {
   ifelse(!is.null(visitdsgn), vis <- visitdsgn * tmp, vis <- tmp)
   n_periodunit <- apply(vis, 1, sum)
   names(n_periodunit) <- dimnames(paneldsgn)[[1]]
-  
+
   # create list of results
   rslt <- list(
     n_panel = n_pan,
@@ -123,4 +123,3 @@ summary.paneldesign <- function(object, visitdsgn = NULL) {
   )
   return(rslt)
 }
-

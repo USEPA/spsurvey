@@ -62,13 +62,13 @@ irs <- function(sframe, n_base, stratum = NULL, seltype = "equal", wgt_units = N
   } else {
     legacy_option <- TRUE
   }
-  
+
   if (is.null(stratum_var)) {
     stratum <- NULL
   } else {
     stratum <- names(n_base)
   }
-  
+
   # check input. If errors, dsgn_check will stop grtspts and report errors.
   dsgn_check(
     sframe, sf_type, legacy_sites, legacy_option, stratum, seltype, n_base, caty_n,

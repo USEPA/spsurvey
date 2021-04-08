@@ -17,20 +17,20 @@
 #'
 #' @param object A sample frame object having class \code{sframe} or a design object
 #'  output from \code{grts()} or \code{irs()} having class \code{design}.
-#'  
+#'
 #' @param formula A formula. Left hand side variables can be numeric or
 #' categorical (or factor) and right hand side variables can be categorical
 #' (or factor). Right hand side variables that are numeric will be coerced
 #' to a categorical (or factor) variable. If an intercept is included in the
 #' right hand side formula, the total will also be summarized.
-#' 
+#'
 #' @param onlyshow A string indicating the level of the single right hand side
 #' variable for which a summary is requested.
-#' 
+#'
 #' @param sites A character vector indicating the \code{design} sites
-#' for which summaries are requested in \code{object}. Defaults to computing summaries for 
+#' for which summaries are requested in \code{object}. Defaults to computing summaries for
 #' each non-\code{NULL} \code{site_*} list in \code{object}.
-#' 
+#'
 #' @param ... Additional arguments to pass to \code{summary()}. If the left hand
 #' side of the formula is empty, the appropriate generic arguments are passed
 #' to \code{summary.data.frame}. If the left hand side of the formula is provided,
@@ -96,7 +96,6 @@ summary.dframe <- function(object, formula, onlyshow = NULL, ...) {
 #' @method summary design
 #' @export
 summary.design <- function(object, formula, onlyshow = NULL, sites = NULL, ...) {
-
   if (is.null(sites)) {
     sites <- c("sites_legacy", "sites_base", "sites_over", "sites_near")
   }
