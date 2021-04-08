@@ -10,6 +10,8 @@
 # Revised: January 28, 2021 to replace "warn.vec" with "warn_vec"
 # Revised: March 2, 2021 to revise the process for creating unique site ID
 #          values
+# Revised: April 7, 2021 to ensure that the dframe argument does not contain
+#          zero rows
 #'
 #' Estimation of Change between Two Probability Surveys
 #'
@@ -277,6 +279,12 @@ change_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL,
 
   if (missing(dframe) | is.null(dframe)) {
     stop("\nThe dframe argument must be provided.\n")
+  }
+
+  # Ensure that the dframe argument does not contain zero rows
+
+  if (nrow(dframe) == 0) {
+    stop("\nThe dframe argument contains zero rows.\n")
   }
 
   # If the dframe argument is an sf object, extract coordinates from the geometry
