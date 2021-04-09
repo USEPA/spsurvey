@@ -1,5 +1,5 @@
 ###############################################################################
-# Function: survey_design (exported)
+# Function: survey_design (not exported)
 # Programmer: Tom Kincaid
 # Date: December 16, 2020
 #
@@ -95,7 +95,7 @@
 #'
 #' @keywords survey
 #'
-#' @export
+#' @noRd
 ###############################################################################
 
 survey_design <- function(dframe, siteID, weight, stratum_ind, stratumID,

@@ -1,5 +1,5 @@
 ###############################################################################
-# Function: grtspts_mindis (exported)
+# Function: grtspts_mindis (not exported)
 # Programmer:  Tony Olsen
 # Date: September 28, 2020
 #
@@ -44,7 +44,7 @@
 #'
 #' @keywords survey
 #'
-#' @export
+#' @noRd
 ###############################################################################
 
 grtspts_mindis <- function(mindis, sframe, samplesize, stratum, maxtry = 10,

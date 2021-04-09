@@ -203,25 +203,6 @@ coordinates are extracted from the geometry column in the object, arguments
 \code{xcoord} and \code{ycoord} are assigned values \code{"xcoord"} and \code{"ycoord"}, respectively,
 and the geometry column is dropped from the object.
 }
-\section{Other Functions Required}{
-
-  \describe{
-    \item{\code{\link{calibrate}}}{conduct calibration for survey data}
-    \item{\code{\link{cdf_est}}}{calculates an estimate of the cumulative
-      distribution function}
-    \item{\code{\link{input_check}}}{check input values for errors,
-      consistency, and compatibility with analytical functions}
-    \item{\code{\link{percentile_est}}}{calculates percentile estimates}
-    \item{\code{\link{postStratify}}}{conduct post-stratification for survey
-      data}
-    \item{\code{\link{survey_design}}}{creates a survey design object}
-    \item{\code{\link{uniqueID}}}{creates unique site IDs by appending a
-      unique number to each occurrence of a site ID}
-    \item{\code{\link{vecprint}}}{takes an input vector and outputs a
-      character string with line breaks inserted}
-  }
-}
-
 \examples{
 dframe <- data.frame(
   siteID = paste0("Site", 1:40),
@@ -244,13 +225,6 @@ cont_analysis(dframe,
   weight = "wgt", xcoord = "xcoord", ycoord = "ycoord",
   stratumID = "stratum", popsize = mypopsize
 )
-}
-\seealso{
-\code{\link{calibrate}}
-  \code{\link{cdf_est}}
-  \code{\link{percentile_est}}
-  \code{\link{postStratify}}
-  \code{\link{survey_design}}
 }
 \author{
 Tom Kincaid \email{Kincaid.Tom@epa.gov}

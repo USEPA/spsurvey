@@ -1,5 +1,5 @@
 ################################################################################
-# Function: bootfcn (exported)
+# Function: bootfcn (not exported)
 # Programmer: Tom Kincaid
 # Date: February 23, 2021
 #
@@ -23,7 +23,7 @@
 #'
 #' @author Tom Kincaid \email{Kincaid.Tom@epa.gov}
 #'
-#' @export
+#' @noRd
 ################################################################################
 
 bootfcn <- function(dframe, indices, ivar, siteID, yearID) {

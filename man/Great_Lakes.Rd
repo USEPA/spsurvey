@@ -5,7 +5,7 @@
 \alias{Great_Lakes}
 \title{Great Lakes}
 \format{
-A data frame with 4113 rows and 5 variables:
+An \code{sf} multipolygon object with 4113 rows and 5 variables:
 \describe{
   \item{COUNTRY}{Country.}
   \item{WTBDY_NM}{Water body name.}
@@ -19,7 +19,7 @@ A data frame with 4113 rows and 5 variables:
 Great_Lakes
 }
 \description{
-An `sf` multipolygon object of 4113 polygons consisting
+An \code{sf} multipolygon object of 4113 polygons consisting
 of shoreline segments in the Great Lakes region of North America.
 }
 \keyword{datasets}

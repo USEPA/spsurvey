@@ -125,14 +125,6 @@ proportional to an auxillary variable. Additional options include selecting addi
 sites as an "over" sample, selecting nearby replacement sites, including legacy sites,
 and requiring minimum distance between sites.
 }
-\section{Other functions required}{
-
-  \describe{
-    \item{\code{\link{grts_stratum}}}{Selects sample for a stratum}
-    \item{\code{\link{dsgn_check}}}{Checks input}
-    }
-}
-
 \examples{
 \dontrun{
 test.sample <- grts(sframe = "test_sf", n_base = 100)

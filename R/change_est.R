@@ -1,5 +1,5 @@
 ###############################################################################
-# Function: change_est (exported)
+# Function: change_est (not exported)
 # Programmer: Tom Kincaid
 # Date: July 29, 2020
 #'
@@ -181,7 +181,7 @@
 #'
 #' @keywords survey
 #'
-#' @export
+#' @noRd
 ###############################################################################
 
 change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,

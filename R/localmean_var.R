@@ -1,5 +1,5 @@
 ###############################################################################
-# Function: localmean_var (exported)
+# Function: localmean_var (not exported)
 # Programmers: Don Stevens and Tom Kincaid
 # Date: October 17, 2000
 #
@@ -20,7 +20,7 @@
 #'
 #' @keywords survey
 #'
-#' @export
+#' @noRd
 ###############################################################################
 
 localmean_var <- function(z, weight_1st) {

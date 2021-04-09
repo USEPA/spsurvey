@@ -1,5 +1,5 @@
 ###############################################################################
-# Function: vecprint (exported)
+# Function: vecprint (not exported)
 # Programmer: Tom Kincaid
 # Date: February 6, 2004
 # Last Revised:  May 3, 2004
@@ -20,7 +20,7 @@
 #' @return  Character string that is suitable for printing by the functions:
 #'   \code{stop}, \code{warning}, or \code{cat}.
 #'
-#' @author Tom Kincaid \email{Kincaid.Tom@@epa.gov}
+#' @author Tom Kincaid \email{Kincaid.Tom\@epa.gov}
 #'
 #' @examples
 #' sites <- paste("Site Number", 1:50)
@@ -31,7 +31,7 @@
 #' sites_str <- vecprint(sites[temp])
 #' warning(paste("\nThe following site ID values were removed from the
 #'   analysis:\n", sites_str, sep = ""))
-#' @export
+#' @noRd
 ###############################################################################
 
 vecprint <- function(x, n_char = 78) {

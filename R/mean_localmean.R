@@ -1,5 +1,5 @@
 ###############################################################################
-# Function: mean_localmean (exported)
+# Function: mean_localmean (not exported)
 # Programmer: Tom Kincaid
 # Date: July 9, 2020
 #'
@@ -69,7 +69,7 @@
 #'
 #' @keywords survey
 #'
-#' @export
+#' @noRd
 ###############################################################################
 
 mean_localmean <- function(itype, lev_itype, nlev_itype, levs, ivar, design,

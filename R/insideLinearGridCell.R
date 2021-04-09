@@ -1,5 +1,5 @@
 ###############################################################################
-# Function: insideLinearGridCell (exported)
+# Function: insideLinearGridCell (not exported)
 # Programmer: Tom Kincaid
 # Date: July 8, 2019
 #
@@ -17,7 +17,7 @@
 #'
 #' @keywords survey
 #'
-#' @export
+#' @noRd
 ###############################################################################
 
 insideLinearGridCell <- function(sfobject, rdx.u, xc, yc, dx, dy) {

@@ -1,5 +1,5 @@
 ###############################################################################
-# Function: cdftest_localmean_total (exported)
+# Function: cdftest_localmean_total (not exported)
 # Programmer: Tom Kincaid
 # Date: October 23, 2020
 # Revised: November 2, 2020 to correctly process the column variable when it
@@ -48,7 +48,7 @@
 #'
 #' @keywords survey
 #'
-#' @export
+#' @noRd
 ###############################################################################
 
 cdftest_localmean_total <- function(design, design_names, popcorrect, vartype,

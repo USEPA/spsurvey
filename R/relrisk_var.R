@@ -1,5 +1,5 @@
 ###############################################################################
-# Function: relrisk_var (exported)
+# Function: relrisk_var (not exported)
 # Programmer: Tom Kincaid
 # Date: June 24, 2020
 #
@@ -113,7 +113,7 @@
 #'
 #' @keywords survey
 #'
-#' @export
+#' @noRd
 ###############################################################################
 
 relrisk_var <- function(response, stressor, response_levels, stressor_levels,

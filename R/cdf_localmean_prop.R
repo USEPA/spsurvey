@@ -1,5 +1,5 @@
 ###############################################################################
-# Function: cdf_localmean_prop (exported)
+# Function: cdf_localmean_prop (not exported)
 # Programmer: Tom Kincaid
 # Date: July 9, 2020
 #'
@@ -73,7 +73,7 @@
 #'
 #' @keywords survey
 #'
-#' @export
+#' @noRd
 ###############################################################################
 
 cdf_localmean_prop <- function(itype, lev_itype, nlev_itype, ivar, design,

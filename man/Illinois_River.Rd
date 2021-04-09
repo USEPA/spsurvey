@@ -5,7 +5,7 @@
 \alias{Illinois_River}
 \title{Illinois River}
 \format{
-An `sf` multilinestring object object with 9087 rows and 3
+An \code{sf} multilinestring object object with 9087 rows and 3
 variables:
 \describe{
   \item{STATE_NAME}{State name.}
@@ -18,7 +18,7 @@ variables:
 Illinois_River
 }
 \description{
-A simple features (sf) multilinestring object of 9087 segments of the
+A simple features (\code{sf}) multilinestring object of 9087 segments of the
 Illinois River in Arkansas and Oklahoma.
 }
 \keyword{datasets}

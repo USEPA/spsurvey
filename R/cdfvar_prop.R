@@ -1,5 +1,5 @@
 ###############################################################################
-# Function: cdfvar_prop (exported)
+# Function: cdfvar_prop (not exported)
 # Programmer: Tom Kincaid
 # Date: April 21, 2020
 #
@@ -99,7 +99,7 @@
 #'
 #' @keywords survey
 #'
-#' @export
+#' @noRd
 ###############################################################################
 
 cdfvar_prop <- function(z, wgt, x, y, val, cdfest, stratum_ind, stratum_level,

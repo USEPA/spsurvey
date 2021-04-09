@@ -184,34 +184,16 @@ coordinates are extracted from the geometry column in the object, arguments
 \code{xcoord} and \code{ycoord} are assigned values \code{"xcoord"} and \code{"ycoord"},
 respectively, and the geometry column is dropped from the object.
 }
-\section{Other Functions Required}{
-
-  \describe{
-    \item{\code{\link{calibrate}}}{conduct calibration for survey data}
-    \item{\code{\link{category_est}}}{calculate category proportion and total
-      estimates}
-    \item{\code{\link{input_check}}}{check input values for errors,
-      consistency, and compatibility with analytical functions}
-    \item{\code{\link{postStratify}}}{conduct post-stratification for survey
-      data}
-    \item{\code{\link{survey_design}}}{creates a survey design object}
-    \item{\code{\link{uniqueID}}}{creates unique site IDs by appending a
-      unique number to each occurrence of a site ID}
-    \item{\code{\link{vecprint}}}{takes an input vector and outputs a
-      character string with line breaks inserted}
-  }
-}
-
 \examples{
 dframe <- data.frame(
-  siteID = paste0("Site", 1:100),
-  wgt = runif(100, 10, 100),
-  xcoord = runif(100),
-  ycoord = runif(100),
-  stratum = rep(c("Stratum1", "Stratum2"), 50),
-  CatVar = rep(c("north", "south", "east", "west"), 25),
-  All_Sites = rep("All Sites", 100),
-  Resource_Class = rep(c("Good", "Poor"), c(55, 45))
+  siteID = paste0("Site", 1:40),
+  wgt = runif(40, 10, 100),
+  xcoord = runif(40),
+  ycoord = runif(40),
+  stratum = rep(c("Stratum1", "Stratum2"), 20),
+  CatVar = rep(c("north", "south", "east", "west"), 10),
+  All_Sites = rep("All Sites", 40),
+  Resource_Class = rep(c("Good", "Poor"), c(25, 15))
 )
 myvars <- c("CatVar")
 mysubpops <- c("All_Sites", "Resource_Class")
@@ -224,12 +206,6 @@ cat_analysis(dframe,
   weight = "wgt", xcoord = "xcoord", ycoord = "ycoord",
   stratumID = "stratum", popsize = mypopsize
 )
-}
-\seealso{
-\code{\link{calibrate}}
-  \code{\link{category_est}}
-  \code{\link{postStratify}}
-  \code{\link{survey_design}}
 }
 \author{
 Tom Kincaid \email{Kincaid.Tom@epa.gov}

@@ -1,5 +1,5 @@
 ###############################################################################
-# Function: localmean_cov (exported)
+# Function: localmean_cov (not exported)
 # Programmer: Tom Kincaid
 # Date: March 10, 2020
 #
@@ -21,7 +21,7 @@
 #'
 #' @keywords survey
 #'
-#' @export
+#' @noRd
 ###############################################################################
 
 localmean_cov <- function(zmat, weight_1st) {

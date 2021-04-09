@@ -1,3 +1,10 @@
+###############################################################################
+# Function: globalVariables (exported)
+# Programmers: Tom Kincaid
+# Date: January 22, 2021
+#' Define Global Variables
+#'
+#' @noRd
 if (getRversion() >= "2.15.1") {
   utils::globalVariables(c(
     "siteID", "weight", "xcoord", "ycoord", "stratumID",

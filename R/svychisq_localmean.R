@@ -1,5 +1,5 @@
 ###############################################################################
-# Function: svychisq_localmean (exported)
+# Function: svychisq_localmean (not exported)
 # Programmers: Thomas Lumley
 #              Tom Kincaid
 # Date: January 7, 2014
@@ -127,7 +127,7 @@
 #'   statistic = "adjWald",
 #'   vartype = "SRS"
 #' )
-#' @export
+#' @noRd
 ###############################################################################
 
 svychisq_localmean <- function(formula, design, statistic = c(

@@ -204,30 +204,8 @@ used, coordinates are extracted from the geometry column in the object,
 arguments xcoord and ycoord are assigned values "xcoord" and "ycoord",
 respectively, and the geometry column is dropped from the object.
 }
-\section{Other Functions Required}{
-
-  \describe{
-    \item{\code{\link{calibrate}}}{conduct calibration for survey data}
-    \item{\code{\link{cdftest_localmean_prop}}}{calculates local mean
-      variance/covarince estimates of estimated population proportions}
-    \item{\code{\link{cdftest_localmean_total}}}{calculates local mean
-      variance/covarince estimates of estimated population totals}
-    \item{\code{\link{input_check}}}{check input values for errors,
-      consistency, and compatibility with analytical functions}
-    \item{\code{\link{postStratify}}}{conduct post-stratification for survey
-      data}
-    \item{\code{\link{svychisq_localmean}}}{performs design-based contingency
-      table tests}
-    \item{\code{\link{survey_design}}}{creates a survey design object}
-    \item{\code{\link{uniqueID}}}{creates unique site IDs by appending a
-      unique number to each occurrence of a site ID}
-    \item{\code{\link{vecprint}}}{takes an input vector and outputs a
-      character string with line breaks inserted}
-  }
-}
-
 \examples{
-n <- 200
+n <- 80
 mysiteID <- paste("Site", 1:n, sep = "")
 dframe <- data.frame(
   siteID = mysiteID,
@@ -257,12 +235,6 @@ cont_cdftest(dframe,
   weight = "wgt", xcoord = "xcoord", ycoord = "ycoord",
   stratumID = "stratum", popsize = mypopsize, testname = "RaoScott_First"
 )
-}
-\seealso{
-\code{\link{calibrate}}
-  \code{\link{postStratify}}
-  \code{\link{svychisq_localmean}}
-  \code{\link{survey_design}}
 }
 \author{
 Tom Kincaid \email{Kincaid.Tom@epa.gov}

@@ -1,5 +1,5 @@
 ###############################################################################
-# Function: cdf_localmean_total (exported)
+# Function: cdf_localmean_total (not exported)
 # Programmer: Tom Kincaid
 # Date: July 9, 2020
 #'
@@ -73,7 +73,7 @@
 #'
 #' @keywords survey
 #'
-#' @export
+#' @noRd
 ###############################################################################
 
 cdf_localmean_total <- function(itype, lev_itype, nlev_itype, ivar, design,

@@ -1,5 +1,5 @@
 ###############################################################################
-# Function: cdf_prop (exported)
+# Function: cdf_prop (not exported)
 # Programmer: Tom Kincaid
 # Date: March 3, 2020
 #
@@ -41,7 +41,7 @@
 #'
 #' @keywords survey
 #'
-#' @export
+#' @noRd
 ###############################################################################
 
 cdf_prop <- function(z, wgt, val, cluster_ind, cluster = NULL, wgt1 = NULL) {

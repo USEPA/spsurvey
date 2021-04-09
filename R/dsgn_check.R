@@ -1,5 +1,5 @@
 ###############################################################################
-# Function: dsgn_check (exported)
+# Function: dsgn_check (not exported)
 # Programmer: Tony Olsen
 # Date: January 22, 2021
 #'
@@ -89,7 +89,7 @@
 #'
 #' @author Tony Olsen email{olsen.tony@epa.gov}
 #'
-#' @export
+#' @noRd
 ###############################################################################
 
 dsgn_check <- function(sframe, sf_type, legacy_sites, legacy_option, stratum, seltype, n_base, caty_n,

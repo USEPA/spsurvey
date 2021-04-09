@@ -1,5 +1,5 @@
 ###############################################################################
-# Function: catvar_prop (exported)
+# Function: catvar_prop (not exported)
 # Programmer: Tom Kincaid
 # Date: May 7, 2020
 #
@@ -100,7 +100,7 @@
 #'
 #' @keywords survey
 #'
-#' @export
+#' @noRd
 ###############################################################################
 
 catvar_prop <- function(z, wgt, x, y, prop, prop_names, stratum_ind,

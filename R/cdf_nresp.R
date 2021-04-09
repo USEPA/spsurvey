@@ -1,5 +1,5 @@
 ###############################################################################
-# Function: cdf_nresp (exported)
+# Function: cdf_nresp (not exported)
 # Programmer: Tom Kincaid
 # Date: June 16, 2020
 #'
@@ -18,7 +18,7 @@
 #'
 #' @author Tom Kincaid \email{Kincaid.Tom@epa.gov}
 #'
-#' @export
+#' @noRd
 ###############################################################################
 
 cdf_nresp <- function(z, val) {

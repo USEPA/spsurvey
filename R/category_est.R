@@ -1,5 +1,5 @@
 ################################################################################
-# Function: category_est
+# Function: category_est (not exported)
 # Programmer: Tom Kincaid
 # Date: July 23, 2020
 # Revised: February 9, 2021 to fix incorrect coding of "confval_P" as
@@ -115,7 +115,7 @@
 #'
 #' @keywords survey univar
 #'
-#' @export
+#' @noRd
 ################################################################################
 
 category_est <- function(catsum, dframe, itype, lev_itype, nlev_itype, ivar,

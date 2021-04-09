@@ -1,5 +1,5 @@
 ###############################################################################
-# Function: attrisk_var (exported)
+# Function: attrisk_var (not exported)
 # Programmer: Tom Kincaid
 # Date: June 24, 2020
 #
@@ -111,7 +111,7 @@
 #'
 #' @keywords survey
 #'
-#' @export
+#' @noRd
 attrisk_var <- function(response, stressor, response_levels, stressor_levels,
                         wgt, x, y, stratum_ind, stratum_level, cluster_ind, cluster, wgt1, x1, y1,
                         pcfactor_ind, fpcsize, Ncluster, stage1size, vartype, warn_ind,

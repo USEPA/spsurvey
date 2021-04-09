@@ -1,5 +1,5 @@
 ###############################################################################
-# Function: UPpivotal (exported)
+# Function: UPpivotal (not exported)
 # Adapted by: Tony Olsen
 # Date: September 9, 2020
 #
@@ -21,7 +21,7 @@
 #' Tille, Y. and Matei, A. (2021). sampling: Survey Sampling. R package version 2.9.
 #'   \url{https://CRAN.R-project.org/package=sampling}
 #'
-#' @export
+#' @noRd
 ###############################################################################
 UPpivotal <- function(pik, eps = 1e-06) {
   if (any(is.na(pik))) {

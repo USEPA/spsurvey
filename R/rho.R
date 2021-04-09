@@ -1,5 +1,5 @@
 ###############################################################################
-# Function: rho (exported)
+# Function: rho (not exported)
 # Programmers: Tony Olsen
 # Date: September 9, 2020
 #'
@@ -14,7 +14,7 @@
 #' @keywords survey
 #'
 #'
-#' @export
+#' @noRd
 ###############################################################################
 
 rho <- function(sites) {

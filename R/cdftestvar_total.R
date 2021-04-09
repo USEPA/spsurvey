@@ -1,5 +1,5 @@
 ###############################################################################
-# Function: cdftestvar_total (exported)
+# Function: cdftestvar_total (not exported)
 # Programmer: Tom Kincaid
 # Date: October 23, 2020
 # Revised: November 2, 2020 to correctly process the column variable when it
@@ -97,7 +97,7 @@
 #'
 #' @keywords survey
 #'
-#' @export
+#' @noRd
 ###############################################################################
 
 cdftestvar_total <- function(design, wgt, x, y, stratum_ind,

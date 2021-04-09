@@ -1,5 +1,5 @@
 ###############################################################################
-# Function: localmean_weight2 (exported)
+# Function: localmean_weight2 (not exported)
 # Programmers: Don Stevens and Tom Kincaid
 # Date: October 30, 2019
 #'
@@ -24,7 +24,7 @@
 #'
 #' @author Don Stevens  Tom Kincaid \email{Kincaid.Tom@epa.gov}
 #'
-#' @export
+#' @noRd
 ###############################################################################
 
 localmean_weight2 <- function(x, y, prb, nbh) {

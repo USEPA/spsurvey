@@ -1,5 +1,5 @@
 ###############################################################################
-# Function: grtspts_ip (exported)
+# Function: grtspts_ip (not exported)
 # Programmers: Tony Olsen, Tom Kincaid
 # Date: January 22, 2021
 #'
@@ -49,7 +49,7 @@
 #'   caty = c(rep("small", 15), rep("large", 10))
 #' )
 #' tmp
-#' @export
+#' @noRd
 ###############################################################################
 grtspts_ip <- function(type = "equal", n_base, Nstratum = NULL, caty = NULL,
                        aux = NULL, warn_ind = NULL, warn_df = NULL) {

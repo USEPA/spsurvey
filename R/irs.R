@@ -18,11 +18,6 @@
 #'   that meet the survey design requirementse plus a design list object that documents
 #'   the survey design used.
 #'
-#' @section Other functions required:
-#'   \describe{
-#'     \item{\code{\link{grts_stratum}}}{Selects sample for a stratum}
-#'     \item{\code{\link{dsgn_check}}}{Checks input}
-#'     }
 #'
 #' @author Tony Olsen email{olsen.tony@epa.gov}
 #'

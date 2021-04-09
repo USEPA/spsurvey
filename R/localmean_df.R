@@ -1,5 +1,5 @@
 ##############################################################################
-# Function: localmean_df (exported)
+# Function: localmean_df (not exported)
 # Programmer: Tom Kincaid
 # Date: April 8, 2003
 #
@@ -18,7 +18,7 @@
 #'
 #' @author Tom Kincaid \email{Kincaid.Tom@epa.gov}
 #'
-#' @export
+#' @noRd
 ###############################################################################
 
 localmean_df <- function(weight_1st) {

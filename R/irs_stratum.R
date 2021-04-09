@@ -1,5 +1,5 @@
 ###############################################################################
-# Function: irs_stratum (exported)
+# Function: irs_stratum (not exported)
 # Programmers: Tony Olsen
 # Date: January 22, 2021
 #'
@@ -35,7 +35,7 @@
 #' test.sample <- irs(stratum, dsgn = test_design, sframe = "test_sf", sf_type = "point")
 #' }
 #'
-#' @export
+#' @noRd
 ###############################################################################
 
 irs_stratum <- function(stratum, dsgn, sframe, sf_type, pt_density = NULL,

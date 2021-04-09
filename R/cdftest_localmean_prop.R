@@ -1,5 +1,5 @@
 ###############################################################################
-# Function: cdftest_localmean_prop (exported)
+# Function: cdftest_localmean_prop (not exported)
 # Programmer: Tom Kincaid
 # Date: October 22, 2020
 # Revised: November 2, 2020 to correctly process the column variable when it
@@ -48,7 +48,7 @@
 #'
 #' @keywords survey
 #'
-#' @export
+#' @noRd
 ###############################################################################
 
 cdftest_localmean_prop <- function(design, design_names, popcorrect, vartype,

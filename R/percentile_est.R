@@ -1,5 +1,5 @@
 ###############################################################################
-# Function: percentile_est
+# Function: percentile_est (not exported)
 # Programmer: Tom Kincaid
 # Date: July 23, 2020
 #
@@ -94,7 +94,7 @@
 #'
 #' @keywords survey univar
 #'
-#' @export
+#' @noRd
 ###############################################################################
 
 percentile_est <- function(pctsum, dframe, itype, lev_itype, nlev_itype, ivar,

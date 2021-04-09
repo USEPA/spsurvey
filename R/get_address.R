@@ -1,5 +1,5 @@
 ###############################################################################
-# Function: get.address (exported)
+# Function: get.address (not exported)
 # Programmer: Guillaume Chauvet
 # Adapted by: Marc Weber
 # Date: September 2, 2020
@@ -31,7 +31,7 @@
 #'
 #' @keywords survey
 #'
-#' @export
+#' @noRd
 ###############################################################################
 
 

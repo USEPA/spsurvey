@@ -1,5 +1,5 @@
 ###############################################################################
-# Function: cdf_est (exported)
+# Function: cdf_est (not exported)
 # Programmer: Tom Kincaid
 # Date: July 23, 2020
 #
@@ -114,7 +114,7 @@
 #'
 #' @keywords survey univar
 #'
-#' @export
+#' @noRd
 ###############################################################################
 
 cdf_est <- function(cdfsum, dframe, itype, lev_itype, nlev_itype, ivar, design,

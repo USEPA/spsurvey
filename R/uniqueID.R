@@ -1,5 +1,5 @@
 ###############################################################################
-# Function: uniqueID (exported)
+# Function: uniqueID (not exported)
 # Programmer: Tom Kincaid
 # Date: February 23, 2004
 # Last Revised: June 27, 2005
@@ -16,7 +16,7 @@
 #'
 #' @author Tom Kincaid \email{Kincaid.Tom@epa.gov}
 #'
-#' @export
+#' @noRd
 ###############################################################################
 
 uniqueID <- function(siteID) {

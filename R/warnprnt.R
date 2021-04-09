@@ -17,7 +17,7 @@
 #'
 #' @return Invisible return.  Prints warnings.
 #'
-#' @author Tom Kincaid \email{Kincaid.Tom@epa.gov}
+#' @author Tom Kincaid \email{Kincaid.Tom@@epa.gov}
 #'
 #' @export
 ###############################################################################

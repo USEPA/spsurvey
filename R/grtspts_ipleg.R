@@ -1,5 +1,5 @@
 ###############################################################################
-# Function: grtspts_ipleg (exported)
+# Function: grtspts_ipleg (not exported)
 # Programmers: Tony Olsen
 # Date: January 22, 2021
 #'
@@ -28,7 +28,7 @@
 #'   rep(FALSE, 22)
 #' ))
 #' tmp
-#' @export
+#' @noRd
 ###############################################################################
 grtspts_ipleg <- function(ip, legacy) {
   # determine sample size

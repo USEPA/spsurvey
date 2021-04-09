@@ -1,5 +1,5 @@
 ###############################################################################
-# Function: localmean_weight (exported)
+# Function: localmean_weight (not exported)
 # Programmers: Don Stevens and Tom Kincaid
 # Date: February 6, 2020
 #
@@ -26,7 +26,7 @@
 #'
 #' @seealso \code{\link{localmean_weight2}}
 #'
-#' @export
+#' @noRd
 ###############################################################################
 
 localmean_weight <- function(x, y, prb, nbh = 4, vincr = 0.00001 * abs(mean(y))) {

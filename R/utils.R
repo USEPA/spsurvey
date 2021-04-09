@@ -1,4 +1,4 @@
-# Helpers -----------------------------------------------------------------
+# Helpers ---------------------------------------------------------------------
 
 make_formlist <- function(formula, onlyshow, object) {
   # find all terms from the formula

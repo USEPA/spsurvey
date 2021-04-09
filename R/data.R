@@ -1,9 +1,9 @@
 #' New England Lakes
 #'
-#' An `sf` point object of 5328 lakes in the Northeastern
+#' An \code{sf} point object of 5328 lakes in the Northeastern
 #' United States.
 #'
-#' @format An `sf` object with 5328 rows and 7 variables:
+#' @format An \code{sf} object with 5328 rows and 7 variables:
 #' \describe{
 #'   \item{AREA_HA}{Lake area in hectares.}
 #'   \item{AREA_HA_CAT}{Lake area categories based on a hectare cutoff.}
@@ -18,10 +18,10 @@
 
 #' Illinois River
 #'
-#' A simple features (sf) multilinestring object of 9087 segments of the
+#' A simple features (\code{sf}) multilinestring object of 9087 segments of the
 #' Illinois River in Arkansas and Oklahoma.
 #'
-#' @format An `sf` multilinestring object object with 9087 rows and 3
+#' @format An \code{sf} multilinestring object object with 9087 rows and 3
 #' variables:
 #' \describe{
 #'   \item{STATE_NAME}{State name.}
@@ -33,10 +33,10 @@
 
 #' Great Lakes
 #'
-#' An `sf` multipolygon object of 4113 polygons consisting
+#' An \code{sf} multipolygon object of 4113 polygons consisting
 #' of shoreline segments in the Great Lakes region of North America.
 #'
-#' @format A data frame with 4113 rows and 5 variables:
+#' @format An \code{sf} multipolygon object with 4113 rows and 5 variables:
 #' \describe{
 #'   \item{COUNTRY}{Country.}
 #'   \item{WTBDY_NM}{Water body name.}

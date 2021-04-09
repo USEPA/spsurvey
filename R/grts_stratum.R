@@ -1,5 +1,5 @@
 ###############################################################################
-# Function: grts_stratum (exported)
+# Function: grts_stratum (not exported)
 # Programmers: Tony Olsen
 # Date: January 22, 2021
 #'
@@ -69,7 +69,7 @@
 #' test_sample <- grts(stratum, dsgn = test_design, sframe = "test_sf", sf_type = "point")
 #' }
 #'
-#' @export
+#' @noRd
 ###############################################################################
 
 grts_stratum <- function(stratum, dsgn, sframe, sf_type, wgt_units = NULL, pt_density = NULL,

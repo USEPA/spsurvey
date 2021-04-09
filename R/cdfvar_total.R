@@ -1,5 +1,5 @@
 ###############################################################################
-# Function: cdfvar_total (exported)
+# Function: cdfvar_total (not exported)
 # Programmer: Tom Kincaid
 # Date: July 2, 2020
 #
@@ -96,7 +96,7 @@
 #'
 #' @keywords survey
 #'
-#' @export
+#' @noRd
 ###############################################################################
 
 cdfvar_total <- function(z, wgt, x, y, val, stratum_ind, stratum_level,

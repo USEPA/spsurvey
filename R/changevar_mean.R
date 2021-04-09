@@ -1,5 +1,5 @@
 ################################################################################
-# Function: changevar_mean
+# Function: changevar_mean (not exported)
 # Programmer: Tom Kincaid
 # Date: July 22, 2020
 #'
@@ -110,7 +110,7 @@
 #'
 #' @keywords survey
 #'
-#' @export
+#' @noRd
 ################################################################################
 
 changevar_mean <- function(z1, z2, wgt, x, y, revisitwgt, mean1, mean2,

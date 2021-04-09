@@ -1,5 +1,5 @@
 ###############################################################################
-# Function: cat_localmean_total (exported)
+# Function: cat_localmean_total (not exported)
 # Programmer: Tom Kincaid
 # Date: July 23, 2020
 # Revised: January 28, 2021 to replace "pcfactor.ind" with "pcfactor_ind"
@@ -77,7 +77,7 @@
 #'
 #' @keywords survey
 #'
-#' @export
+#' @noRd
 ###############################################################################
 
 cat_localmean_total <- function(itype, lev_itype, nlev_itype, ivar, lev_ivar,

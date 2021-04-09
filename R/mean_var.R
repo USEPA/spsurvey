@@ -1,5 +1,5 @@
 ###############################################################################
-# Function: mean_var
+# Function: mean_var (not exported)
 # Programmer: Tom Kincaid
 # Date: June 24, 2010
 #
@@ -101,7 +101,7 @@
 #'
 #' @keywords survey
 #'
-#' @export
+#' @noRd
 ###############################################################################
 
 mean_var <- function(z, wgt, x, y, mean_est, stratum_ind, stratum_level,

@@ -1,5 +1,5 @@
 ###############################################################################
-# Function: input_check (exported)
+# Function: input_check (not exported)
 # Programmer: Tom Kincaid
 # Date: October 9, 2020
 # Revised: November 5, 2020 to correct an error when checking size-weights for
@@ -84,7 +84,7 @@
 #'
 #' @author Tom Kincaid \email{Kincaid.Tom@epa.gov}
 #'
-#' @export
+#' @noRd
 ###############################################################################
 
 input_check <- function(dframe, design_names, vars_cat, vars_cont,

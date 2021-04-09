@@ -1,5 +1,5 @@
 ###############################################################################
-# Function: changevar_total (exported)
+# Function: changevar_total (not exported)
 # Programmer: Tom Kincaid
 # Date: July 22, 2020
 #'
@@ -118,7 +118,7 @@
 #'
 #' @keywords survey
 #'
-#' @export
+#' @noRd
 ###############################################################################
 
 changevar_total <- function(catvar_levels, catvar1, catvar2, wgt, x, y,

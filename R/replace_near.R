@@ -1,5 +1,5 @@
 ###############################################################################
-# Function: replace_near.R (exported)
+# Function: replace_near.R (not exported)
 # Programmer:  Michael Dumelle and Tony Olsen
 # Date: March 2, 2021
 #
@@ -25,7 +25,7 @@
 #'
 #' @keywords survey design
 #'
-#' @export
+#' @noRd
 ################################################################################
 replace_near <- function(n_near, sites, sframe) {
 

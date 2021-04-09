@@ -1,5 +1,5 @@
 ###############################################################################
-# Function: insideAreaGridCell (exported)
+# Function: insideAreaGridCell (not exported)
 # Programmer: Tom Kincaid
 # Date: July 8, 2019
 #
@@ -27,7 +27,7 @@
 #'
 #' @keywords survey
 #'
-#' @export
+#' @noRd
 ###############################################################################
 
 insideAreaGridCell <- function(sfobject, rdx.u, xc, yc, dx, dy) {

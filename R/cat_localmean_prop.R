@@ -1,5 +1,5 @@
 ###############################################################################
-# Function: cat_localmean_prop (exported)
+# Function: cat_localmean_prop (not exported)
 # Programmer: Tom Kincaid
 # Date: July 23, 2020
 # Revised: October 23, 2020 to correct a coding error when calculating
@@ -77,7 +77,7 @@
 #'
 #' @keywords survey
 #'
-#' @export
+#' @noRd
 ###############################################################################
 
 cat_localmean_prop <- function(itype, lev_itype, nlev_itype, ivar, lev_ivar,

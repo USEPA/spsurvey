@@ -1,5 +1,5 @@
 ###############################################################################
-# Function: catvar_total (exported)
+# Function: catvar_total (not exported)
 # Programmer: Tom Kincaid
 # Date: April 21, 2020
 # Revised: February 10, 2021 to properly handle the case where categories
@@ -101,7 +101,7 @@
 #'
 #' @keywords survey
 #'
-#' @export
+#' @noRd
 ###############################################################################
 
 catvar_total <- function(z, wgt, x, y, size_names, stratum_ind, stratum_level,

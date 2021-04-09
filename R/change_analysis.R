@@ -207,43 +207,23 @@
 #'   continuous variables using the median).  Change estimates are provided plus
 #'   standard error estimates and confidence interval estimates.
 #'
-#' @section Other Functions Required:
-#'   \describe{
-#'     \item{\code{\link{calibrate}}}{conduct calibration for survey data}
-#'     \item{\code{\link{change_est}}}{estimate change between two surveys}
-#'     \item{\code{\link{input_check}}}{check input values for errors,
-#'       consistency, and compatibility with analytical functions}
-#'     \item{\code{\link{postStratify}}}{conduct post-stratification for survey
-#'       data}
-#'     \item{\code{\link{survey_design}}}{creates a survey design object}
-#'     \item{\code{\link{uniqueID}}}{creates unique site IDs by appending a
-#'       unique number to each occurrence of a site ID}
-#'     \item{\code{\link{vecprint}}}{takes an input vector and outputs a
-#'       character string with line breaks inserted}
-#'   }
 #'
 #' @author Tom Kincaid \email{Kincaid.Tom@epa.gov}
-#'
-#' @seealso
-#'   \code{\link{calibrate}}
-#'   \code{\link{change_est}}
-#'   \code{\link{postStratify}}
-#'   \code{\link{survey_design}}
 #'
 #' @keywords survey
 #'
 #' @examples
 #' # Categorical variable example for three resource classes
 #' dframe <- data.frame(
-#'   surveyID = rep(c("Survey 1", "Survey 2"), c(100, 100)),
-#'   siteID = paste0("Site", 1:200),
-#'   wgt = runif(200, 10, 100),
-#'   xcoord = runif(200),
-#'   ycoord = runif(200),
-#'   stratum = rep(rep(c("Stratum 1", "Stratum 2"), c(2, 2)), 50),
-#'   CatVar = rep(c("North", "South"), 100),
-#'   All_Sites = rep("All Sites", 200),
-#'   Resource_Class = sample(c("Good", "Fair", "Poor"), 200, replace = TRUE)
+#'   surveyID = rep(c("Survey 1", "Survey 2"), c(40, 40)),
+#'   siteID = paste0("Site", 1:80),
+#'   wgt = runif(80, 10, 100),
+#'   xcoord = runif(80),
+#'   ycoord = runif(80),
+#'   stratum = rep(rep(c("Stratum 1", "Stratum 2"), c(2, 2)), 20),
+#'   CatVar = rep(c("North", "South"), 40),
+#'   All_Sites = rep("All Sites", 80),
+#'   Resource_Class = sample(c("Good", "Fair", "Poor"), 80, replace = TRUE)
 #' )
 #' myvars <- c("CatVar")
 #' mysubpops <- c("All_Sites", "Resource_Class")
