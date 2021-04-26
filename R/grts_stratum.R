@@ -4,7 +4,7 @@
 # Date: January 22, 2021
 #'
 #' For a single stratum, select a spatially balanced sample using generalized random
-#' tessalation stratified algorithm. For a point sample frame, the selection is a one-step
+#' tessellation stratified algorithm. For a point sample frame, the selection is a one-step
 #' process. For linear and area sample frames, a two-step process is used. First a systematic
 #' point sample is selected from either linear or area sample frame to create a dense point
 #' sample. Then the grts algorithm is applied to the systematic point sample. The selection
@@ -12,12 +12,12 @@
 #'
 #' @param stratum Character value for the stratum name.
 #'
-#' @param dsgn List of componenents that specify the survey design. Includes all strata.
-#'   See irs for contents of dsgn.
+#' @param dsgn List of components that specify the survey design. Includes all strata.
+#'   See grts for contents of dsgn.
 #'
 #' @param sframe Sample frame as an sf object. If the design is stratified,
 #'   unequal probability, proportional probability or has legacy sites, then sample frame
-#'   must include variables that identify the stratum; category, auxillary and legacy variables
+#'   must include variables that identify the stratum; category, auxiliary and legacy variables
 #'   for unequal selection; or that identify elements that are legacy sites.
 #'   The coordinate system for sframe must be one where distance for coordinates is meaningful.
 #'
@@ -245,6 +245,7 @@ grts_stratum <- function(stratum, dsgn, sframe, sf_type, wgt_units = NULL, pt_de
       legacy_var = dsgn[["legacy_var"]],
       warn_ind = warn_ind, warn_df = warn_df
     )
+    sites <- list(sites = sites, warn_ind = warn_ind, warn_df = warn_df)
   }
   # check for warning messages
   warn_ind <- sites$warn_ind
