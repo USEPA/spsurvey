@@ -4,11 +4,11 @@
 # Date: January 22, 2021
 #'
 #' For a single stratum, select an independent random sample. For a point sample frame,
-#' the selection is a one-step
-#' process. For linear and area sample frames, a two-step process is used. First a systematic
-#' point sample is selected from either linear or area sample frame to create a dense point
-#' sample. Then the grts algorithm is applied to the systematic point sample. The selection
-#' in all cases is based on the survey design specification for the stratum.
+#' the selection is a one-step process. For linear and area sample frames, a two-step 
+#' process is used. First a systematic point sample is selected from either linear
+#' or area sample frame to create a dense point sample. Then the irs algorithm is 
+#' applied to the systematic point sample. The selection in all cases is based on 
+#' the survey design specification for the stratum.
 #'
 #' @inheritParams grts_stratum
 #'
@@ -38,37 +38,49 @@
 #' @noRd
 ###############################################################################
 
-irs_stratum <- function(stratum, dsgn, sframe, sf_type, pt_density = NULL,
-                        legacy_option = NULL, legacy_sites = NULL, maxtry = 10,
-                        warn_ind = FALSE, warn_df = NULL) {
+irs_stratum <-function(stratum, dsgn, sframe, sf_type, wgt_units = NULL, pt_density = NULL,
+                       legacy_option = FALSE, legacy_sites = NULL, maxtry = 10,
+                       warn_ind = FALSE, warn_df = NULL) {
 
-  # subset sframe to s stratum
-  sftmp <- sframe[sframe$stratum == stratum, ]
+  # Sample sizes required
+  n_base <- dsgn[["n_base"]][[stratum]]
+  n_over <- sum(dsgn[["n_over"]][[stratum]], na.rm = TRUE)
+  if (is.null(n_over)) {
+    n_over <- 0
+  }
+  n_near <- dsgn[["n_near"]][[stratum]]
+  if (is.null(n_near)) {
+    n_near <- 0
+  }
+  n_total <- n_base + n_over
+  
+  # subset sframe to stratum
+  sftmp <- sframe[sframe$stratum == stratum, , drop = FALSE]
+  
+  # subset legacy_sites to stratum if present for linear and area option
+  if (legacy_option == TRUE & sf_type != "sf_point") {
+    legtmp <- legacy_sites[legacy_sites$stratum == stratum, , drop = FALSE]
+  }
+  
 
   # sf_type equals point
   if (sf_type == "sf_point") {
     ip_step1 <- 1
     sftmp$xcoord <- st_coordinates(sftmp)[, "X"]
     sftmp$ycoord <- st_coordinates(sftmp)[, "Y"]
-    sftmp$idpts <- 1:nrow(sftmp)
+    sftmp$idpts <- 10000 + 1:nrow(sftmp)
   }
 
   # sf_type equals linear
   if (sf_type == "sf_linear") {
     # determine sample size from pt_density and total length of sample frame in stratum
     stratum_len <- sum(st_length(sftmp))
+    if (!is.null(wgt_units)) {
+      stratum_len <- set_units(stratum_len, wgt_units, mode = "standard")
+    }
     # set default equal to 10 population sites per requested sample site
     if (is.null(pt_density)) {
       popmatch <- 10
-      n_base <- dsgn[["n_base"]][[stratum]]
-      n_over <- dsgn[["n_over"]][[stratum]]
-      if (is.null(n_over)) {
-        n_over <- 0
-      }
-      n_near <- dsgn[["n_near"]][[stratum]]
-      if (is.null(n_near)) {
-        n_near <- 0
-      }
       pt_density <- ((n_base + n_over + n_near) * popmatch) / stratum_len
     }
     n_size <- as.integer(pt_density * stratum_len)
@@ -78,10 +90,12 @@ irs_stratum <- function(stratum, dsgn, sframe, sf_type, pt_density = NULL,
     # drop features with no points
     sfpts <- sfpts[!st_is_empty(sfpts), ]
     # join sites with linear features
+    sfpts <- st_cast(sfpts, to = "POINT")
     sftmp <- st_join(sfpts, sftmp, join = st_nearest_feature)
+    names(sftmp)[names(sftmp) == "sfpts"] <- "geometry"
     sftmp$xcoord <- st_coordinates(sftmp)[, "X"]
     sftmp$ycoord <- st_coordinates(sftmp)[, "Y"]
-    sftmp$idpts <- 1:nrow(sftmp)
+    sftmp$idpts <- 10000 + 1:nrow(sftmp)
     # calculate step 1 inclusion probability based on realized sample size
     ip_step1 <- nrow(sftmp) / stratum_len
   }
@@ -91,18 +105,12 @@ irs_stratum <- function(stratum, dsgn, sframe, sf_type, pt_density = NULL,
   if (sf_type == "sf_area") {
     # determine sample size from pt_density and total area of sample frame in stratum
     stratum_area <- sum(st_area(sftmp))
+    if (!is.null(wgt_units)) {
+      stratum_area <- set_units(stratum_area, wgt_units, mode = "standard")
+    }
     # set default equal to 10 population sites per requested sample site
     if (is.null(pt_density)) {
       popmatch <- 10
-      n_base <- dsgn[["n_base"]][[stratum]]
-      n_over <- dsgn[["n_over"]][[stratum]]
-      if (is.null(n_over)) {
-        n_over <- 0
-      }
-      n_near <- dsgn[["n_near"]][[stratum]]
-      if (is.null(n_near)) {
-        n_near <- 0
-      }
       pt_density <- ((n_base + n_over + n_near) * popmatch) / stratum_area
     }
     n_size <- as.integer(pt_density * stratum_area)
@@ -112,42 +120,47 @@ irs_stratum <- function(stratum, dsgn, sframe, sf_type, pt_density = NULL,
     # drop features with no points
     sfpts <- sfpts[!st_is_empty(sfpts), ]
     sftmp <- st_join(sfpts, sftmp)
-    names(sftmp)[names(sftmp) == "sfpts"] <- "geometry"
     sftmp$xcoord <- st_coordinates(sftmp)[, "X"]
     sftmp$ycoord <- st_coordinates(sftmp)[, "Y"]
-    sftmp$idpts <- 1:nrow(sftmp)
+    sftmp$idpts <- 10000 + 1:nrow(sftmp)
     # calculate step 1 inclusion probability based on realized sample size
     ip_step1 <- nrow(sftmp) / stratum_area
   }
+  
 
   # Determine number of elements in stratum
   Nstratum <- nrow(sftmp)
 
   # Determine if legacy sites are to be included for stratum design
   if (legacy_option == TRUE & sf_type != "sf_point") {
-    tmp <- legacy_sites
+    tmp <- legtmp
     addtmp <- setdiff(names(tmp), names(sftmp))
     addleg <- setdiff(names(sftmp), names(tmp))
     sftmp[, addtmp] <- NA
     tmp[, addleg] <- NA
     sftmp <- rbind(tmp, sftmp)
-    sftmp <- sftmp[sftmp$stratum == stratum, ]
     # Determine number of elements in stratum
     Nstratum <- nrow(sftmp)
+  }
+  
+  # set legacy that is NA to FALSE
+  if (legacy_option == TRUE & sf_type == "sf_point") {
+    sftmp$legacy[is.na(sftmp$legacy)] <- FALSE
   }
 
   # Step 2 site selection if linear or area; otherwise Step 1 for points.
   # detemine overall sample size required from dsgn for stratum
   # account for n_over sample option if present
-  n_total <- dsgn[["n_base"]][[stratum]] + sum(dsgn[["n_over"]][[stratum]], na.rm = TRUE)
   if (dsgn[["seltype"]][[stratum]] == "equal" | dsgn[["seltype"]][[stratum]] == "proportional") {
-    n.caty <- n_total
+    n_caty <- n_total
   } else {
-    ifelse(is.null(dsgn[["n_over"]][[stratum]]), n.caty <- dsgn[["caty_n"]][[stratum]],
-      n.caty <- dsgn[["caty_n"]][[stratum]] + dsgn[["n_over"]][[stratum]]
-    )
+    if (n_over == 0) {
+      n_caty <- dsgn[["caty_n"]][[stratum]]
+    } else {
+      n_caty <- dsgn[["caty_n"]][[stratum]] + dsgn[["n_over"]][[stratum]]
+    }
   }
-
+  
   # If seltype is "equal" or "proportional", set caty to same as stratum
   if (dsgn[["seltype"]][[stratum]] == "equal" | dsgn[["seltype"]][[stratum]] == "proportional") {
     sftmp$caty <- sftmp$stratum
@@ -155,10 +168,11 @@ irs_stratum <- function(stratum, dsgn, sframe, sf_type, pt_density = NULL,
 
   # compute inclusion probabilities
   ip <- grtspts_ip(
-    type = dsgn[["seltype"]][stratum], n_base = n.caty,
+    type = dsgn[["seltype"]][stratum], n_base = n_caty,
     Nstratum = Nstratum, caty = sftmp$caty, aux = sftmp$aux,
     warn_ind = warn_ind, warn_df = warn_df
   )
+  
   # save initial inclusion probabilities
   sftmp$ip_init <- ip$ip
   sftmp$ip <- ip$ip
@@ -172,7 +186,7 @@ irs_stratum <- function(stratum, dsgn, sframe, sf_type, pt_density = NULL,
   # If legacy sites, adjust inclusion probabilities to use
   # legacy inclusion probabilities
   if (legacy_option == TRUE) {
-    sftmp$ip <- grtspts_ipleg(sftmp$ip_init, !is.na(sftmp$legacy))
+    sftmp$ip <- grtspts_ipleg(sftmp$ip_init, sftmp$legacy == TRUE)
     # accumulate warning messages if any
     if (ip$warn_ind) {
       warn_ind <- ip$warn_ind
@@ -192,7 +206,7 @@ irs_stratum <- function(stratum, dsgn, sframe, sf_type, pt_density = NULL,
     sites <- sftmp[sftmp$idpts %in% samp.id, ]
     sites$siteuse <- NA
     sites$replsite <- NA
-    sites <- list(sites_base = sites, warn_ind = warn_ind, warn_df = warn_df)
+    sites <- list(sites = sites, warn_ind = warn_ind, warn_df = warn_df)
   }
   # If minimum distance between sites, select sites
   if (!is.null(dsgn[["mindis"]])) {
@@ -209,38 +223,50 @@ irs_stratum <- function(stratum, dsgn, sframe, sf_type, pt_density = NULL,
   if (warn_ind) {
     warn_df$stratum <- ifelse(is.na(warn_df$stratum), stratum, warn_df$stratum)
   }
-
-  # Select replacement sites if n_near not NULL
-  if (!is.null(dsgn[["n_near"]])) {
-    sites_near <- replace_near(dsgn[["n_near"]], sites$sites_base, sframe = sftmp)
-  }
-
+  
   # adjust inclusion probabilities when over sample sites present
-  n.base <- dsgn[["n_base"]][[stratum]]
-  sites[["sites_base"]]$ip <- sites[["sites_base"]]$ip * n_total / n.base
-  # save base sites
-  sites_base <- sites$sites_base[1:n.base, ]
-  # save n_over sample sites
-  sites_over <- NULL
-  if (!is.null(dsgn[["n_over"]][[stratum]])) {
-    sites_over <- sites$sites_base[(n.base + 1):n_total, ]
-    sites_over$siteuse <- "Over"
+  sites[["sites"]]$ip_init <- sites[["sites"]]$ip_init * n_base / n_total
+
+  # Select replacement sites if n_near not NULL when do not have legacy sites
+  if (legacy_option == FALSE) {
+    if (!is.null(dsgn[["n_near"]][[stratum]])) {
+      sites_near <- replace_near(dsgn[["n_near"]][[stratum]],
+                                 sites = sites[["sites"]],
+                                 sframe = sftmp
+      )
+      
+      # Adjust inclusion probabilities for replacement sites if over sample sites present
+      if (n_over != 0) {
+        sites_near$ip_init <- sites_near$ip_init * n_base / n_total
+      }
+    }
   }
+  
+  # Select replacement sites if n_near not NULL when have legacy sites
+  if (legacy_option == TRUE) {
+    if (!is.null(dsgn[["n_near"]][[stratum]])) {
+      keep <- sites[["sites"]][sites[["sites"]]$legacy == FALSE, "idpts", drop = TRUE]
+      sites_near <- replace_near(dsgn[["n_near"]][[stratum]],
+                                 sites = sites[["sites"]][sites[["sites"]]$legacy == FALSE, ],
+                                 sframe = subset(sftmp, !(sftmp$idpts %in% keep))
+      )
+      
+      # Adjust inclusion probabilities for replacement sites if over sample sites present
+      if (n_over != 0) {
+        sites_near$ip_init <- sites_near$ip_init * n_base / n_total
+      }
+    }
+  }
+  
 
   # Assign original inclusion probabilites to sites, create weights and drop legacy ip variable
-  sites_base$ip <- sites_base$ip_init * ip_step1
-  sites_base$wgt <- 1 / sites_base$ip
-  tmp <- names(sites_base)
-  sites_base <- subset(sites_base, select = tmp[!(tmp %in% c("ip_init", "geometry"))])
-
-  # Do same for sites_over if any
-  if (!is.null(dsgn[["n_over"]][[stratum]])) {
-    sites_over$ip <- sites_over$ip_init * ip_step1
-    sites_over$wgt <- 1 / sites_over$ip
-    tmp <- names(sites_over)
-    sites_over <- subset(sites_over, select = tmp[!(tmp %in% c("ip_init", "geometry"))])
-  }
-
+  sites[["sites"]]$ip <- sites[["sites"]]$ip_init * ip_step1
+  sites[["sites"]]$wgt <- 1 / sites[["sites"]]$ip
+  tmp <- names(sites[["sites"]])
+  sites[["sites"]] <- subset(sites[["sites"]],
+                             select = tmp[!(tmp %in% c("ip_init", "geometry"))]
+  )
+  
   # Do same for sites_near if any
   if (is.null(dsgn[["n_near"]][[stratum]])) {
     sites_near <- NULL
@@ -251,10 +277,33 @@ irs_stratum <- function(stratum, dsgn, sframe, sf_type, pt_density = NULL,
     tmp <- names(sites_near)
     sites_near <- subset(sites_near, select = tmp[!(tmp %in% c("ip_init", "geometry"))])
   }
+  
+  # Split sites to have separate sites_base, sites_legacy and sites_over
+  # save legacy sites if any and reduce sites_base to non legacy sites
+  sites_legacy <- NULL
+  if (legacy_option == TRUE) {
+    sites_legacy <- sites[["sites"]][sites[["sites"]]$legacy == TRUE, ]
+    sites[["sites"]] <- sites[["sites"]][sites[["sites"]]$legacy == FALSE, ]
+  }
+  
+  # save base sites
+  n.base <- min(nrow(sites[["sites"]]), n_base)
+  sites_base <- sites[["sites"]][1:n.base, ]
+  
+  # save n_over sample sites if any
+  sites_over <- NULL
+  if (n_over != 0 & n.base <= nrow(sites[["sites"]])) {
+    sites_over <- sites[["sites"]][(n.base + 1):min(
+      nrow(sites[["sites"]]),
+      n_total
+    ), ]
+    sites_over$siteuse <- "Over"
+  }
 
   # create list for output and return result
   rslts <- list(
-    sites_base = sites_base, sites_over = sites_over, sites_near = sites_near,
+    sites_base = sites_base, sites_legacy = sites_legacy,
+    sites_over = sites_over, sites_near = sites_near,
     warn_ind = warn_ind, warn_df = warn_df
   )
 

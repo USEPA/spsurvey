@@ -117,7 +117,7 @@ irspts_mindis <- function(mindis, sframe, samplesize, stratum, maxtry = 10,
   sites_base$replsite <- NA
 
   sites <- list(
-    sites_base = sites_base,
+    sites = sites_base,
     warn_ind = warn_ind, warn_df = warn_df
   )
 

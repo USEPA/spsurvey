@@ -245,7 +245,6 @@ grts_stratum <- function(stratum, dsgn, sframe, sf_type, wgt_units = NULL, pt_de
       legacy_var = dsgn[["legacy_var"]],
       warn_ind = warn_ind, warn_df = warn_df
     )
-    sites <- list(sites = sites, warn_ind = warn_ind, warn_df = warn_df)
   }
   # check for warning messages
   warn_ind <- sites$warn_ind

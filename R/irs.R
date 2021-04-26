@@ -34,19 +34,33 @@
 irs <- function(sframe, n_base, seltype = "equal", wgt_units = NULL,
                 pt_density = NULL, caty_n = NULL, n_over = NULL, n_near = NULL,
                 stratum_var = NULL, caty_var = NULL, aux_var = NULL,
-                legacy_sites = NULL, legacy_var = NULL, mindis = NULL,
-                DesignID = "Site", SiteBegin = 1, maxtry = 10) {
+                legacy_sites = NULL, legacy_stratum_var = NULL, legacy_var = NULL, 
+                mindis = NULL, DesignID = "Site", SiteBegin = 1, maxtry = 10) {
 
+  # Create warning indicator and data frame to collect all potential issues during
+  # sample selection
+  warn_ind <- FALSE
+  warn_df <- data.frame(stratum = "Stratum", func = "Calling Function", warn = "Message")
+  
   # Ensure that the geometry types for sframe are consistent
-
   temp <- st_geometry_type(sframe)
   tst <- all(temp %in% c("POINT", "MULTIPOINT")) |
     all(temp %in% c("LINESTRING", "MULTILINESTRING")) |
     all(temp %in% c("POLYGON", "MULTIPOLYGON"))
   if (!tst) {
-    stop(paste("\nThe geometry types for the survey frame object passed to function grts: \n\"", unique(st_geometry_type(sframe)), "\" are not consistent.", sep = ""))
+    stop(paste("\nThe geometry types for the survey frame object passed to function irs: \n\"",
+               unique(st_geometry_type(sframe)), "\" are not consistent.",
+               sep = ""
+    ))
   }
 
+  # Drop m and z values to ensure no issues with grts functionality with sf object
+  if (!is.null(st_m_range(sframe)) & !is.null(st_z_range(sframe))) {
+    warn_ind <- TRUE
+    warn_df$warn <- "\nThe survey frame object passed to function grts contains m or z values - they are being dropped to ensure functionality in grts."
+    sframe <- st_zm(sframe)
+  }
+  
   # Determine type of sample frame: point, line, polygon
   if (all(temp %in% c("POINT", "MULTIPOINT"))) sf_type <- "sf_point"
   if (all(temp %in% c("LINESTRING", "MULTILINESTRING"))) sf_type <- "sf_linear"
@@ -71,18 +85,13 @@ irs <- function(sframe, n_base, seltype = "equal", wgt_units = NULL,
     DesignID, SiteBegin, maxtry
   )
 
-  # Create warning indicator and data frame to collect all potential issues during
-  # sample selection
-  warn_ind <- FALSE
-  warn_df <- data.frame(stratum = "Stratum", func = "Calling Function", warn = "Message")
-
   # preserve original sframe names
   sframe_names <- names(sframe)
 
   ## Create variables in sample frame if needed.
   # Create unique sample frame ID values
   sframe$id <- 1:nrow(sframe)
-
+  
   # Assign stratum variable or create it if design not stratified and variable not provided.
   if (is.null(stratum_var)) {
     stratum_var <- "stratum"
@@ -92,18 +101,25 @@ irs <- function(sframe, n_base, seltype = "equal", wgt_units = NULL,
     # ensure class for stratum variable is character and assign to stratum
     sframe$stratum <- as.character(sframe[[stratum_var]])
   }
-
-  # set caty, aux and legacy variables in sample frame if needed
-  if (!is.null(caty_var)) sframe$caty <- as.character(sframe[[caty_var]])
-  if (!is.null(aux_var)) sframe$aux <- sframe[[aux_var]]
-  if (!is.null(legacy_var)) sframe$legacy <- sframe[[legacy_var]]
-
+  
   # set stratum, caty, aux and legacy variables in legacy_sites if needed
-  if (legacy_option == TRUE) {
-    if (!is.null(stratum_var)) legacy_sites$stratum <- as.character(legacy_sites[[stratum_var]])
+  # add idpts to legacy_sites
+  if (legacy_option == TRUE & sf_type != "sf_point") {
+    legacy_names <- names(legacy_sites)
+    legacy_sites$idpts <- 1:nrow(legacy_sites)
+    if (stratum[1] == "None") {
+      legacy_sites$stratum <- "None"
+    } else {
+      legacy_sites$stratum <- as.character(legacy_sites[[legacy_stratum_var]])
+    }
     if (!is.null(caty_var)) legacy_sites$caty <- as.character(legacy_sites[[caty_var]])
     if (!is.null(aux_var)) legacy_sites$aux <- legacy_sites[[aux_var]]
-    if (!is.null(legacy_var)) legacy_sites$legacy <- legacy_sites[[legacy_var]]
+    if (is.null(legacy_var)) {
+      legacy_sites$legacy <- TRUE
+      legacy_var <- "legacy"
+    } else {
+      legacy_sites$legacy <- legacy_sites[[legacy_var]]
+    }
   }
 
   ## Create a dsgn list object
@@ -111,10 +127,10 @@ irs <- function(sframe, n_base, seltype = "equal", wgt_units = NULL,
   dsgn <- list(
     stratum_var = stratum_var, caty_var = caty_var, aux_var = aux_var,
     legacy_option = legacy_option, legacy_var = legacy_var, stratum = stratum,
-    wgt_units = wgt_units, seltype = NULL, n_base = NULL, caty_n = NULL, n_over = NULL,
-    n_near = NULL, mindis = mindis
+    wgt_units = wgt_units, seltype = NULL, n_base = NULL, caty_n = NULL,
+    n_over = NULL, n_near = NULL, mindis = mindis
   )
-
+  
   # seltype
   if (length(seltype) == length(stratum)) {
     dsgn$seltype <- seltype
@@ -126,7 +142,7 @@ irs <- function(sframe, n_base, seltype = "equal", wgt_units = NULL,
     names(tmp) <- stratum
     dsgn$seltype <- tmp
   }
-
+  
   # n_base
   if (length(n_base) == length(stratum)) {
     dsgn$n_base <- n_base
@@ -138,7 +154,7 @@ irs <- function(sframe, n_base, seltype = "equal", wgt_units = NULL,
     names(tmp) <- stratum
     dsgn$n_base <- tmp
   }
-
+  
   # caty_n
   if (is.list(caty_n)) {
     dsgn$caty_n <- caty_n
@@ -162,7 +178,7 @@ irs <- function(sframe, n_base, seltype = "equal", wgt_units = NULL,
       dsgn$n_over <- tmp
     }
   }
-
+  
   # n_near
   if (!is.null(n_near)) {
     tmp <- sapply(stratum, function(x, n_near) {
@@ -171,7 +187,7 @@ irs <- function(sframe, n_base, seltype = "equal", wgt_units = NULL,
     names(tmp) <- stratum
     dsgn$n_near <- tmp
   }
-
+  
   # legacy_option
   if (legacy_option == TRUE) {
     tmp <- sapply(stratum, function(x, legacy_option) {
@@ -183,20 +199,22 @@ irs <- function(sframe, n_base, seltype = "equal", wgt_units = NULL,
 
   ## select sites for each stratum
   rslts <- lapply(dsgn$stratum, irs_stratum,
-    dsgn = dsgn, sframe = sframe, sf_type = sf_type,
-    pt_density = pt_density, legacy_option = legacy_option,
-    legacy_sites = legacy_sites, maxtry = maxtry, warn_ind, warn_df
+                  dsgn = dsgn, sframe = sframe, sf_type = sf_type, wgt_units = wgt_units,
+                  pt_density = pt_density, legacy_option = legacy_option,
+                  legacy_sites = legacy_sites, maxtry = maxtry, warn_ind, warn_df
   )
   names(rslts) <- stratum
 
 
   # combine across strata
+  sites_legacy <- NULL
   sites_base <- NULL
   sites_over <- NULL
   sites_near <- NULL
   warn_ind <- FALSE
   warn_df <- NULL
   for (i in 1:length(rslts)) {
+    sites_legacy <- rbind(sites_legacy, rslts[[i]]$sites_legacy)
     sites_base <- rbind(sites_base, rslts[[i]]$sites_base)
     sites_over <- rbind(sites_over, rslts[[i]]$sites_over)
     sites_near <- rbind(sites_near, rslts[[i]]$sites_near)
@@ -206,91 +224,115 @@ irs <- function(sframe, n_base, seltype = "equal", wgt_units = NULL,
     }
   }
 
+  # Create a siteID for all sites
+  ntot <- NROW(sites_legacy) + NROW(sites_base) + NROW(sites_over) + NROW(sites_near)
+  siteID <- gsub(" ", "0", paste0(DesignID, "-", format(SiteBegin - 1 + 1:ntot, sep = "")))
+  nlast <- 0
+  
+  # Create siteID for legacy sites if present using DesignID and SiteBegin
+  if (!is.null(sites_legacy)) {
+    row.names(sites_legacy) <- 1:nrow(sites_legacy)
+    sites_legacy$siteID <- siteID[1:nrow(sites_legacy)]
+    nlast <- nrow(sites_legacy)
+    # set siteuse and replsite
+    sites_legacy$siteuse <- "Legacy"
+    sites_legacy$replsite <- "None"
+  }
+  
   # Create siteID for base sites using DesignID and SiteBegin
-  sites_base$siteID <- gsub(" ", "0", paste0(
-    DesignID, "-",
-    format(SiteBegin - 1 + 1:nrow(sites_base), sep = "")
-  ))
+  row.names(sites_base) <- 1:nrow(sites_base)
+  sites_base$siteID <- siteID[(nlast + 1):(nlast + nrow(sites_base))]
+  nlast <- nlast + nrow(sites_base)
+  # set siteuse and replsite for base sites
+  sites_base$siteuse <- "Base"
+  sites_base$replsite <- "None"
+  
   # create siteID for n_over sites if any
   if (!is.null(n_over)) {
-    jnk <- max(nchar(sites_base$siteID))
-    nlast <- max(as.numeric(substr(sites_base$siteID, nchar(DesignID) + 2, jnk)))
-    sites_over$siteID <- gsub(
-      " ", "0",
-      paste0(DesignID, "-", format(nlast + 1:nrow(sites_over), sep = ""))
-    )
+    row.names(sites_over) <- 1:nrow(sites_over)
+    sites_over$siteID <- siteID[(nlast + 1):(nlast + nrow(sites_over))]
+    nlast <- nlast + nrow(sites_over)
+    # set siteuse and replsite for n_over sites
+    sites_over$siteuse <- "Over"
+    sites_over$replsite <- "Next"
   }
-
+  
   # if n_near sample sites, assign base ids to the replacement sites. then add siteIDs
   if (!is.null(n_near)) {
-    tst <- match(sites_near$replsite, sites_base$id, nomatch = 0)
+    tst <- match(paste(sites_near$stratum, sites_near$replsite, sep = "_"),
+                 paste(sites_base$stratum, sites_base$idpts, sep = "_"),
+                 nomatch = 0
+    )
     sites_near$replsite[tst > 0] <- sites_base$siteID[tst]
-    tst <- match(sites_near$replsite, sites_over$id, nomatch = 0)
+    tst <- match(paste(sites_near$stratum, sites_near$replsite, sep = "_"),
+                 paste(sites_over$stratum, sites_over$idpts, sep = "_"),
+                 nomatch = 0
+    )
     sites_near$replsite[tst > 0] <- sites_over$siteID[tst]
-
+    
     # sort by id so that sites_near in same order as sites in sites_base and sites_over
     sites_near <- sites_near[order(sites_near$replsite, sites_near$siteuse), ]
+    row.names(sites_near) <- 1:nrow(sites_near)
     # assign siteIDs
-    jnk <- max(nchar(sites_base$siteID), nchar(sites_over$siteID), na.rm = TRUE)
-    nlast <- max(
-      as.numeric(substr(sites_base$siteID, nchar(DesignID) + 2, jnk)),
-      as.numeric(substr(sites_over$siteID, nchar(DesignID) + 2, jnk))
-    )
-    sites_near$siteID <- gsub(
-      " ", "0",
-      paste0(DesignID, "-", format(nlast + 1:nrow(sites_near), sep = ""))
-    )
+    sites_near$siteID <- siteID[(nlast + 1):(nlast + nrow(sites_near))]
   }
-
+  
+  # Add lat/lon in WGS84
+  if (!is.null(sites_legacy)) {
+    sites_legacy$lon_WGS84 <- st_coordinates(st_transform(sites_legacy, crs = 4326))[, "X"]
+    sites_legacy$lat_WGS84 <- st_coordinates(st_transform(sites_legacy, crs = 4326))[, "Y"]
+  }
+  if (!is.null(sites_base)) {
+    sites_base$lon_WGS84 <- st_coordinates(st_transform(sites_base, crs = 4326))[, "X"]
+    sites_base$lat_WGS84 <- st_coordinates(st_transform(sites_base, crs = 4326))[, "Y"]
+  }
+  if (!is.null(sites_over)) {
+    sites_over$lon_WGS84 <- st_coordinates(st_transform(sites_over, crs = 4326))[, "X"]
+    sites_over$lat_WGS84 <- st_coordinates(st_transform(sites_over, crs = 4326))[, "Y"]
+  }
+  if (!is.null(sites_near)) {
+    sites_near$lon_WGS84 <- st_coordinates(st_transform(sites_near, crs = 4326))[, "X"]
+    sites_near$lat_WGS84 <- st_coordinates(st_transform(sites_near, crs = 4326))[, "Y"]
+  }
+  
+  
   # reorder sf object variables by first specifying design names excluding unique
   # feature ID id and idpts as they are internal
   dsgn_names <- c(
-    "siteID", "replsite", "siteuse", "stratum", "wgt", "ip", "caty", "aux",
-    "legacy"
+    "siteID", "siteuse", "replsite", "lon_WGS84", "lat_WGS84",
+    "stratum", "wgt", "ip", "caty", "aux"
   )
-  # check what design variables are present in sf objects and add if missing
-  tmp_names <- names(sites_base)
-  add_names <- dsgn_names[!(dsgn_names %in% tmp_names)]
-  if (!is.null(add_names)) {
-    tmp <- matrix(NA,
-      nrow = nrow(sites_base), ncol = length(add_names),
-      dimnames = list(NULL, add_names)
-    )
-    sites_base <- cbind(sites_base, tmp)
-    if (!is.null(sites_over)) {
-      tmp <- matrix(NA,
-        nrow = nrow(sites_over), ncol = length(add_names),
-        dimnames = list(NULL, add_names)
-      )
-      sites_over <- cbind(sites_over, tmp)
+  # sites_legacy
+  if (!is.null(sites_legacy)) {
+    if (sf_type != "sf_point") {
+      add_names <- dsgn_names[dsgn_names %in% names(sites_legacy)]
+      sites_legacy <- subset(sites_legacy, select = c(add_names, legacy_names))
     }
-    if (!is.null(sites_near)) {
-      tmp <- matrix(NA,
-        nrow = nrow(sites_near), ncol = length(add_names),
-        dimnames = list(NULL, add_names)
-      )
-      sites_near <- cbind(sites_near, tmp)
+    if (sf_type == "sf_point") {
+      add_names <- dsgn_names[dsgn_names %in% names(sites_legacy)]
+      sites_legacy <- subset(sites_legacy, select = c(add_names, sframe_names))
     }
   }
-  # check if any dsgn_names occur in sframe names and drop in sframe names if duplicated
-  sframe_names <- sframe_names[!(sframe_names %in% dsgn_names)]
-  # use subset to reorder variables and drop internal variables and duplicated variables
-  sites_base <- subset(sites_base, select = c(dsgn_names, sframe_names))
-  if (!is.null(sites_over)) sites_over <- subset(sites_over, select = c(dsgn_names, sframe_names))
-  if (!is.null(sites_near)) sites_near <- subset(sites_near, select = c(dsgn_names, sframe_names))
-
-  # Change weight units to user specified if not NULL
-  if (!is.null(wgt_units)) {
-    # change sites_base weights
-    sites_base$wgt <- set_units(sites_base$wgt, wgt_units)
-    # change sites_over weights if sites_over present
-    if (!is.null(sites_over)) {
-      sites_over$wgt <- set_units(sites_over$wgt, wgt_units)
-    }
-    # change sites_near weights if sites_near present
-    if (!is.null(sites_near)) {
-      sites_near$wgt <- set_units(sites_near$wgt, wgt_units)
-    }
+  
+  # sites_base
+  # check what design variables are present in sf objects and add if missing
+  add_names <- dsgn_names[dsgn_names %in% names(sites_base)]
+  sites_base <- subset(sites_base, select = c(add_names, sframe_names))
+  
+  # sites_over
+  if (!is.null(sites_over)) {
+    add_names <- dsgn_names[dsgn_names %in% names(sites_over)]
+    sites_over <- subset(sites_over,
+                         select = c(add_names, sframe_names)
+    )
+  }
+  
+  # sites_near
+  if (!is.null(sites_near)) {
+    add_names <- dsgn_names[dsgn_names %in% names(sites_near)]
+    sites_near <- subset(sites_near,
+                         select = c(add_names, sframe_names)
+    )
   }
 
   # add function call to dsgn list
