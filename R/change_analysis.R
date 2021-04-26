@@ -12,6 +12,9 @@
 #          values
 # Revised: April 7, 2021 to ensure that the dframe argument does not contain
 #          zero rows
+# Revised: April 19, 2021 to ensure that categorical variables, continuous
+#          variables, and subpopulation variables do not contain only missing
+#          values for either of the surveys
 #'
 #' Estimation of Change between Two Probability Surveys
 #'
@@ -207,7 +210,6 @@
 #'   continuous variables using the median).  Change estimates are provided plus
 #'   standard error estimates and confidence interval estimates.
 #'
-#'
 #' @author Tom Kincaid \email{Kincaid.Tom@epa.gov}
 #'
 #' @keywords survey
@@ -215,15 +217,15 @@
 #' @examples
 #' # Categorical variable example for three resource classes
 #' dframe <- data.frame(
-#'   surveyID = rep(c("Survey 1", "Survey 2"), c(40, 40)),
-#'   siteID = paste0("Site", 1:80),
-#'   wgt = runif(80, 10, 100),
-#'   xcoord = runif(80),
-#'   ycoord = runif(80),
-#'   stratum = rep(rep(c("Stratum 1", "Stratum 2"), c(2, 2)), 20),
-#'   CatVar = rep(c("North", "South"), 40),
-#'   All_Sites = rep("All Sites", 80),
-#'   Resource_Class = sample(c("Good", "Fair", "Poor"), 80, replace = TRUE)
+#'   surveyID = rep(c("Survey 1", "Survey 2"), c(100, 100)),
+#'   siteID = paste0("Site", 1:200),
+#'   wgt = runif(200, 10, 100),
+#'   xcoord = runif(200),
+#'   ycoord = runif(200),
+#'   stratum = rep(rep(c("Stratum 1", "Stratum 2"), c(2, 2)), 50),
+#'   CatVar = rep(c("North", "South"), 100),
+#'   All_Sites = rep("All Sites", 200),
+#'   Resource_Class = sample(c("Good", "Fair", "Poor"), 200, replace = TRUE)
 #' )
 #' myvars <- c("CatVar")
 #' mysubpops <- c("All_Sites", "Resource_Class")
@@ -442,6 +444,42 @@ change_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL,
     error_vec <- c(error_vec, msg)
   }
 
+  # For each categorical variable, check whether all values for either survey
+  # are missing
+
+  if (!is.null(vars_cat) && ind1 && ind2) {
+    temp <- NULL
+    for(v in vars_cat) {
+      if (all(is.na(dframe[survey_1, v])) | all(is.na(dframe[survey_2, v]))) {
+        temp <- c(temp, v)
+      }
+    }
+    if (!is.null(temp)) {
+      error_ind <- TRUE
+      temp.str <- vecprint(temp)
+      msg <- paste("For the following categorical variables, at least one of the surveys contains only \nmissing values:\n", temp.str)
+      error_vec <- c(error_vec, msg)
+    }
+  }
+
+  # For each continuous variable, check whether all values for either survey
+  # are missing
+
+  if (!is.null(vars_cont) && ind1 && ind2) {
+    temp <- NULL
+    for(v in vars_cont) {
+      if (all(is.na(dframe[survey_1, v])) | all(is.na(dframe[survey_2, v]))) {
+        temp <- c(temp, v)
+      }
+    }
+    if (!is.null(temp)) {
+      error_ind <- TRUE
+      temp.str <- vecprint(temp)
+      msg <- paste("For the following continuous variables, at least one of the surveys contains only \nmissing values:\n", temp.str)
+      error_vec <- c(error_vec, msg)
+    }
+  }
+
   # If a value was not provided for the subpops (subpopulation names) argument,
   # assign the value "All_Sites" to the subpops argument and create a factor
   # named "All_Sites" in the dframe data frame that takes the value "All Sites"
@@ -450,6 +488,24 @@ change_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL,
     subpops <- "All_Sites"
     dframe$All_Sites <- "All Sites"
     dframe$All_Sites <- factor(dframe$All_Sites)
+  }
+
+  # For each subpopulation variable, check whether all values for either survey
+  # are missing
+
+  if (ind1 && ind2) {
+    temp <- NULL
+    for(v in subpops) {
+      if (all(is.na(dframe[survey_1, v])) | all(is.na(dframe[survey_2, v]))) {
+        temp <- c(temp, v)
+      }
+    }
+    if (!is.null(temp)) {
+      error_ind <- TRUE
+      temp.str <- vecprint(temp)
+      msg <- paste("For the following subpopulation variables, at least one of the surveys contains only \nmissing values:\n", temp.str)
+      error_vec <- c(error_vec, msg)
+    }
   }
 
   # Check input arguments
