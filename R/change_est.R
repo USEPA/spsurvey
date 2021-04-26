@@ -2,6 +2,8 @@
 # Function: change_est (not exported)
 # Programmer: Tom Kincaid
 # Date: July 29, 2020
+# Revised: April 19, 2021 to ensure that repeated visit sites are correctly
+#          determined for a subpopulation
 #'
 #' Estimate Change between Two Surveys
 #'
@@ -219,14 +221,12 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
   repeat_1 <- repeat_1[subpop_1]
   repeat_2 <- repeat_2[subpop_2]
   if (sum(repeat_1) != sum(repeat_2)) {
-    ind_1 <- !(dframe_1[repeat_1, siteID] %in%
-      dframe_2[repeat_2, siteID])
-    ind_2 <- !(dframe_2[repeat_2, siteID] %in%
-      dframe_1[repeat_1, siteID])
+    ind_1 <- repeat_1 & !(dframe_1[, siteID] %in% dframe_2[, siteID])
+    ind_2 <- repeat_2 & !(dframe_2[, siteID] %in% dframe_1[, siteID])
     if (sum(ind_1) > 0) {
       repeat_1[ind_1] <- FALSE
       warn_ind <- TRUE
-      temp_str <- vecprint(dframe[repeat_1, siteID][ind_1])
+      temp_str <- vecprint(dframe_1[ind_1, siteID])
       warn <- paste("The following repeat visit site IDs for subpopulation ", isubpop, "\nof population type ", itype, " for indicator ", ivar, "\nin survey one did not have analogous site IDs present in survey two:\n", temp_str, sep = "")
       act <- "The listed repeated visit sites were not used for covariance estimation.\n"
       warn_df <- rbind(warn_df, data.frame(
@@ -238,8 +238,8 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
     if (sum(ind_2) > 0) {
       repeat_2[ind_2] <- FALSE
       warn_ind <- TRUE
-      temp_str <- vecprint(dframe[repeat_2, siteID][ind_2])
-      warn <- paste("The following repeated visit site IDs for subpopulation ", isubpop[isubpop], "\nof population type ", itype, " for indicator ", ivar, "\nin survey two did not have analogous site IDs present in survey one:\n", temp_str, sep = "")
+      temp_str <- vecprint(dframe_2[ind_2, siteID])
+      warn <- paste("The following repeated visit site IDs for subpopulation ", isubpop, "\nof population type ", itype, " for indicator ", ivar, "\nin survey two did not have analogous site IDs present in survey one:\n", temp_str, sep = "")
       act <- "The listed repeated visit sites were not used for covariance estimation.\n"
       warn_df <- rbind(warn_df, data.frame(
         func = I(fname), subpoptype = I(itype),
