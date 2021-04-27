@@ -4,6 +4,8 @@
 # Date: July 29, 2020
 # Revised: April 19, 2021 to ensure that repeated visit sites are correctly
 #          determined for a subpopulation
+# Revised: April 27, 2021 to ensure that the warnings indicator (warn_ind) and
+#          the warnings data frame (warn_df) are reassigned after function calls
 #'
 #' Estimate Change between Two Surveys
 #'
@@ -812,6 +814,8 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
             lev_ivar, nlev_ivar, design_1, design_names, popcorrect, vartype,
             conf, mult, warn_ind, warn_df
           )
+          warn_ind <- temp$warn_ind
+          warn_df <- temp$warn_df
           temp$results <- droplevels(subset(temp$catsum, Category != "Total"))
           ind <- match(temp$results$Category, catvar_levels, nomatch = 0)
           se_1_p[ind] <- temp$results$StdError.P / 100
@@ -823,6 +827,8 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
             lev_ivar, nlev_ivar, design_2, design_names, popcorrect, vartype,
             conf, mult, warn_ind, warn_df
           )
+          warn_ind <- temp$warn_ind
+          warn_df <- temp$warn_df
           temp$results <- droplevels(subset(temp$catsum, Category != "Total"))
           ind <- match(temp$results$Category, catvar_levels, nomatch = 0)
           se_2_p[ind] <- temp$results$StdError.P / 100
@@ -904,6 +910,8 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
       design_1, design_names, var_nondetect, popcorrect, vartype, conf, mult,
       pctval = c(50), warn_ind, warn_df
     )
+    warn_ind <- pctest_1$warn_ind
+    warn_df <- pctest_1$warn_df
 
     # Calculate estimate for all sites from survey two
 
@@ -911,6 +919,8 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
       design_2, design_names, var_nondetect, popcorrect, vartype, conf, mult,
       pctval = c(50), warn_ind, warn_df
     )
+    warn_ind <- pctest_2$warn_ind
+    warn_df <- pctest_2$warn_df
 
     #
     # Begin the section for a continuous variable using the mean
@@ -931,15 +941,11 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
       # Using the pctest_1 data frame, extract the mean estimate for survey one
 
       temp_cont_1 <- subset(pctest_1$pctsum, Statistic == "Mean")
-      warn_ind <- pctest_1$warn_ind
-      warn_df <- pctest_1$warn_df
       tw_1 <- sum(weights(design_1))
 
       # Using the pctest_2 data frame, extract the mean estimate for survey two
 
       temp_cont_2 <- subset(pctest_2$pctsum, Statistic == "Mean")
-      warn_ind <- pctest_2$warn_ind
-      warn_df <- pctest_2$warn_df
       tw_2 <- sum(weights(design_2))
 
       # Merge results for the two surveys
@@ -1360,12 +1366,16 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
               mult,
               pctval = c(50), warn_ind, warn_df
             )
+            warn_ind <- temp$warn_ind
+            warn_df <- temp$warn_df
             se_1 <- subset(temp$pctsum, Statistic == "Mean")$StdError
             temp <- percentile_est(NULL, dframe_2, itype, isubpop, 1, ivar,
               design_2, design_names, var_nondetect, popcorrect, vartype, conf,
               mult,
               pctval = c(50), warn_ind, warn_df
             )
+            warn_ind <- temp$warn_ind
+            warn_df <- temp$warn_df
             se_2 <- subset(temp$pctsum, Statistic == "Mean")$StdError
             covest <- rslt * se_1 * se_2
             temp <- results$StdError_1^2 + results$StdError_2^2 -
@@ -1422,9 +1432,7 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
 
       # Using the pctest_1 data frame, extract the median estimate for survey one
 
-      temp_cont_1 <- pctest_1$pctsum[pctest_1$pctsum$Statistic == "50Pct", ]
-      warn_ind <- pctest_1$warn_ind
-      warn_df <- pctest_1$warn_df
+      temp_cont_1 <- subset(pctest_1$pctsum, Statistic == "50Pct")
 
       # Create the categorical response variables
 
@@ -2007,6 +2015,8 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
               lev_ivar, nlev_ivar, design_1, design_names, popcorrect, vartype,
               conf, mult, warn_ind, warn_df
             )
+            warn_ind <- temp$warn_ind
+            warn_df <- temp$warn_df
             temp$results <- droplevels(subset(temp$catsum, Category != "Total"))
             ind <- match(temp$results$Category, catvar_levels, nomatch = 0)
             se_1_p[ind] <- temp$results$StdError.P / 100
@@ -2018,6 +2028,8 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
               lev_ivar, nlev_ivar, design_2, design_names, popcorrect, vartype,
               conf, mult, warn_ind, warn_df
             )
+            warn_ind <- temp$warn_ind
+            warn_df <- temp$warn_df
             temp$results <- droplevels(subset(temp$catsum, Category != "Total"))
             ind <- match(temp$results$Category, catvar_levels, nomatch = 0)
             se_2_p[ind] <- temp$results$StdError.P / 100
