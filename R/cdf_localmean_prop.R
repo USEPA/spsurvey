@@ -2,6 +2,9 @@
 # Function: cdf_localmean_prop (not exported)
 # Programmer: Tom Kincaid
 # Date: July 9, 2020
+# Revised: April 27, 2021 to check whether the local mean variance estimator
+#          produced negative estimates and to use the SRS variance estimator
+#          when that situation occurs
 #'
 #' Local Mean Variance Estimates of the Estimated CDF using the Proportion Scale
 #'
@@ -210,6 +213,20 @@ cdf_localmean_prop <- function(itype, lev_itype, nlev_itype, ivar, design,
             warn_vec = warn_vec
           )
         }
+        warn_ind <- temp$warn_ind
+        warn_df <- temp$warn_df
+        if(any(temp$varest < 0)) {
+          temp$vartype <- "SRS"
+          warn_ind <- TRUE
+          act <- "The simple random sampling variance estimator was used.\n"
+          warn <- paste0("The local mean variance estimator produced one or more  negative varaince estimates in \nstratum \"", stratum_levels[i], "\", the simple random sampling variance estimator was used to calculate \nvariance of the CDF proportion estimates.\n")
+          warn_df <- rbind(warn_df, data.frame(
+            func = I(fname),
+            subpoptype = warn_vec[1], subpop = warn_vec[2],
+            indicator = warn_vec[3], stratum = I(stratum_levels[i]),
+            warning = I(warn), action = I(act)
+          ))
+        }
         if (temp$vartype == "SRS") {
           rslt_svy <- lapply(cdfval, function(x) {
             svymean(make.formula(paste0("I(", ivar, " <= ", x, ")")),
@@ -220,8 +237,6 @@ cdf_localmean_prop <- function(itype, lev_itype, nlev_itype, ivar, design,
         } else {
           varest <- temp$varest
         }
-        warn_ind <- temp$warn_ind
-        warn_df <- temp$warn_df
 
         # Add estimates to the stderr_P data frame
 
@@ -263,6 +278,20 @@ cdf_localmean_prop <- function(itype, lev_itype, nlev_itype, ivar, design,
           warn_ind = warn_ind, warn_df = warn_df, warn_vec = warn_vec
         )
       }
+      warn_ind <- temp$warn_ind
+      warn_df <- temp$warn_df
+      if(any(temp$varest < 0)) {
+        temp$vartype <- "SRS"
+        warn_ind <- TRUE
+        act <- "The simple random sampling variance estimator was used.\n"
+        warn <- paste0("The local mean variance estimator produced one or more  negative varaince estimates, the \nsimple random sampling variance estimator was used to calculate variance of the CDF \nproportion estimates.\n")
+        warn_df <- rbind(warn_df, data.frame(
+          func = I(fname),
+          subpoptype = warn_vec[1], subpop = warn_vec[2],
+          indicator = warn_vec[3], stratum = NA,
+          warning = I(warn), action = I(act)
+        ))
+      }
       if (temp$vartype == "SRS") {
         rslt_svy <- lapply(cdfval, function(x) {
           svymean(make.formula(paste0("I(", ivar, " <= ", x, ")")),
@@ -273,8 +302,6 @@ cdf_localmean_prop <- function(itype, lev_itype, nlev_itype, ivar, design,
       } else {
         sdest <- sqrt(temp$varest)
       }
-      warn_ind <- temp$warn_ind
-      warn_df <- temp$warn_df
 
       # Calculate confidence bounds
 

@@ -5,6 +5,9 @@
 # Revised: January 28, 2021 to replace "pcfactor.ind" with "pcfactor_ind"
 # Revised: April 1, 2021 to ensure that confidence bounds for an unstratified
 #          sample are correctly assigned to the return object
+# Revised: April 27, 2021 to check whether the local mean variance estimator
+#          produced negative estimates and to use the SRS variance estimator
+#          when that situation occurs
 #'
 #' Local Mean Variance Estimates of Estimated Totals for Categorical Data
 #'
@@ -199,6 +202,20 @@ cat_localmean_total <- function(itype, lev_itype, nlev_itype, ivar, lev_ivar,
             warn_df = warn_df, warn_vec = warn_vec
           )
         }
+        warn_ind <- temp$warn_ind
+        warn_df <- temp$warn_df
+        if(any(temp$varest < 0)) {
+          temp$vartype <- "SRS"
+          warn_ind <- TRUE
+          act <- "The simple random sampling variance estimator was used.\n"
+          warn <- paste0("The local mean variance estimator produced one or more  negative varaince estimates in \nstratum \"", stratum_levels[i], "\", the simple random sampling variance estimator was used to calculate \nvariance of the category total estimates.\n")
+          warn_df <- rbind(warn_df, data.frame(
+            func = I(fname),
+            subpoptype = warn_vec[1], subpop = warn_vec[2],
+            indicator = warn_vec[3], stratum = I(stratum_levels[i]),
+            warning = I(warn), action = I(act)
+          ))
+        }
         if (temp$vartype == "SRS") {
           if (nlev_ivar <= 1) {
             rslt_svy <- svytotal(~zzz,
@@ -221,8 +238,6 @@ cat_localmean_total <- function(itype, lev_itype, nlev_itype, ivar, lev_ivar,
         } else {
           varest <- temp$varest
         }
-        warn_ind <- temp$warn_ind
-        warn_df <- temp$warn_df
 
         # Add estimates to the stderr_U data frame
 
@@ -282,6 +297,20 @@ cat_localmean_total <- function(itype, lev_itype, nlev_itype, ivar, lev_ivar,
           warn_ind = warn_ind, warn_df = warn_df, warn_vec = warn_vec
         )
       }
+      warn_ind <- temp$warn_ind
+      warn_df <- temp$warn_df
+      if(any(temp$varest < 0)) {
+        temp$vartype <- "SRS"
+        warn_ind <- TRUE
+        act <- "The simple random sampling variance estimator was used.\n"
+        warn <- paste0("The local mean variance estimator produced one or more  negative varaince estimates, the \nsimple random sampling variance estimator was used to calculate variance of the category \ntotal estimates.\n")
+        warn_df <- rbind(warn_df, data.frame(
+          func = I(fname),
+          subpoptype = warn_vec[1], subpop = warn_vec[2],
+          indicator = warn_vec[3], stratum = NA,
+          warning = I(warn), action = I(act)
+        ))
+      }
       if (temp$vartype == "SRS") {
         if (nlev_ivar <= 1) {
           rslt_svy <- svytotal(~zzz, design = subset(design, tst), na.rm = TRUE)
@@ -298,8 +327,6 @@ cat_localmean_total <- function(itype, lev_itype, nlev_itype, ivar, lev_ivar,
       } else {
         sdest <- sqrt(temp$varest)
       }
-      warn_ind <- temp$warn_ind
-      warn_df <- temp$warn_df
 
       # Add estimates to the data frames for results
 
