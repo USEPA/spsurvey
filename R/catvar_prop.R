@@ -2,6 +2,8 @@
 # Function: catvar_prop (not exported)
 # Programmer: Tom Kincaid
 # Date: May 7, 2020
+# Revised: April 28, 2021 to use the SRS estimator when the local mean estimator
+#          fails to produce a valid estimate
 #
 #' Variance Estimates of Estimated Proportions for Categorical Data
 #'
@@ -29,14 +31,14 @@
 #'   \code{"Total"}.
 #'
 #' @param stratum_ind Logical value that indicates whether the sample is
-#'   stratified, where \code{TRUE} = a stratified sample and \code{FALSE} = not a stratified
-#'   sample.
+#'   stratified, where \code{TRUE} = a stratified sample and \code{FALSE} = not
+#'   a stratified sample.
 #'
 #' @param stratum_level The stratum level.
 #'
 #' @param cluster_ind Logical value that indicates whether the sample is a
-#'   two-stage sample, where \code{TRUE} = a two-stage sample and \code{FALSE} = not a
-#'   two-stage sample.
+#'   two-stage sample, where \code{TRUE} = a two-stage sample and \code{FALSE} =
+#'   not a two-stage sample.
 #'
 #' @param clusterID Vector of the stage one sampling unit (primary sampling unit
 #'   or cluster) code for each site.
@@ -48,12 +50,12 @@
 #' @param y1 Vector of the stage one y-coordinate for location for each site.
 #'
 #' @param pcfactor_ind Logical value that indicates whether the finite
-#'   population correction factor is used during variance estimation, where \code{TRUE}
-#'   = use the population correction factor and \code{FALSE} = do not use the factor.
-#'   To employ the correction factor for a single-stage sample, a value must be
-#'   supplied for argument \code{fpcsize}.  To employ the correction factor for a
-#'   two-stage sample, values must be supplied for arguments \code{Ncluster} and
-#'   \code{stage1size}.
+#'   population correction factor is used during variance estimation, where
+#'   \code{TRUE} = use the population correction factor and \code{FALSE} = do
+#'   not use the factor.  To employ the correction factor for a single-stage
+#'   sample, a value must be supplied for argument \code{fpcsize}.  To employ
+#'   the correction factor for a two-stage sample, values must be supplied for
+#'   arguments \code{Ncluster} and \code{stage1size}.
 #'
 #' @param fpcsize Size of the resource, which is required for calculation of the
 #'   finite population correction factor for a single-stage sample.
@@ -66,12 +68,12 @@
 #'   two-stage sample, which is required for calculation of the finite
 #'   population correction factor for a two-stage sample.
 #'
-#' @param vartype The choice of variance estimator, where \code{"Local"} = local mean
-#'   estimator and \code{"SRS"} = SRS estimator.
+#' @param vartype The choice of variance estimator, where \code{"Local"} = local
+#'   mean estimator and \code{"SRS"} = SRS estimator.
 #'
 #' @param warn_ind Logical value that indicates whether warning messages were
-#'   generated, where \code{TRUE} = warning messages were generated and \code{FALSE} = warning
-#'   messages were not generated.
+#'   generated, where \code{TRUE} = warning messages were generated and
+#'   \code{FALSE} = warning messages were not generated.
 #'
 #' @param warn_df Data frame for storing warning messages.
 #'
@@ -130,12 +132,12 @@ catvar_prop <- function(z, wgt, x, y, prop, prop_names, stratum_ind,
     ncluster <- length(cluster_levels)
     z.lst <- split(z, cluster)
     if (vartype == "Local") {
-      x2_1st <- split(x, cluster)
-      y2_1st <- split(y, cluster)
+      x2_lst <- split(x, cluster)
+      y2_lst <- split(y, cluster)
       x1_u <- as.vector(tapply(x1, cluster, unique))
       y1_u <- as.vector(tapply(y1, cluster, unique))
     }
-    wgt2_1st <- split(wgt, cluster)
+    wgt2_lst <- split(wgt, cluster)
     wgt1_u <- as.vector(tapply(wgt1, cluster, unique))
     tw2 <- (sum(wgt1 * wgt))^2
     if (pcfactor_ind) {
@@ -154,12 +156,12 @@ catvar_prop <- function(z, wgt, x, y, prop, prop_names, stratum_ind,
       # Calculate the weighted residuals matrix
 
       n <- length(z.lst[[i]])
-      im <- tapply(wgt2_1st[[i]], z.lst[[i]]) == matrix(rep(1:m, n),
+      im <- tapply(wgt2_lst[[i]], z.lst[[i]]) == matrix(rep(1:m, n),
         nrow = n,
         byrow = TRUE
       )
       rm <- (im - matrix(rep(prop, n), nrow = n, byrow = TRUE)) *
-        matrix(rep(wgt2_1st[[i]], m), nrow = n)
+        matrix(rep(wgt2_lst[[i]], m), nrow = n)
 
       # Calculate total estimates for the stage one sampling unit
 
@@ -200,8 +202,21 @@ catvar_prop <- function(z, wgt, x, y, prop, prop_names, stratum_ind,
 
       if (var_ind[i]) {
         if (vartype == "Local") {
-          weight_1st <- localmean_weight(x2_1st[[i]], y2_1st[[i]], 1 / wgt2_1st[[i]])
-          var2est[i, ] <- pcfactor * apply(rm, 2, localmean_var, weight_1st)
+          weight_lst <- localmean_weight(x2_lst[[i]], y2_lst[[i]], 1 / wgt2_lst[[i]])
+          if(is.null(weight_lst)) {
+            warn_ind <- TRUE
+            act <- "The simple random sampling variance estimator was used.\n"
+            warn <- paste0("The local mean variance estimator cannot calculate valid estimates for stage one \nsampling unit \"", cluster_levels[i], "\", the simple random sampling variance estimator was used to \ncalculate variance of the category proportion estimates.\n")
+            warn_df <- rbind(warn_df, data.frame(
+              func = I(fname),
+              subpoptype = warn_vec[1], subpop = warn_vec[2],
+              indicator = warn_vec[3], stratum = stratum_level,
+              warning = I(warn), action = I(act)
+            ))
+            var2est[i, ] <- pcfactor * n * apply(rm, 2, var)
+          } else {
+            var2est[i, ] <- pcfactor * apply(rm, 2, localmean_var, weight_lst)
+          }
         } else {
           var2est[i, ] <- pcfactor * n * apply(rm, 2, var)
           if (SRSind) {
@@ -243,16 +258,31 @@ catvar_prop <- function(z, wgt, x, y, prop, prop_names, stratum_ind,
     # Calculate the variance estimate
 
     if (vartype == "Local") {
-      weight_1st <- localmean_weight(x1_u, y1_u, 1 / wgt1_u)
-      varest <- (pcfactor * apply(total2est * matrix(rep(wgt1_u, m),
-        nrow = ncluster
-      ), 2, localmean_var, weight_1st) +
-        apply(var2est * matrix(rep(wgt1_u, m), nrow = ncluster), 2, sum)) / tw2
+      weight_lst <- localmean_weight(x1_u, y1_u, 1 / wgt1_u)
+      if(is.null(weight_lst)) {
+        warn_ind <- TRUE
+        act <- "The simple random sampling variance estimator was used.\n"
+        warn <- paste0("The local mean variance estimator cannot calculate valid estimates, the simple random \nsampling variance estimator was used to calculate variance of the category proportion \nestimates.\n")
+        warn_df <- rbind(warn_df, data.frame(
+          func = I(fname),
+          subpoptype = warn_vec[1], subpop = warn_vec[2],
+          indicator = warn_vec[3], stratum = stratum_level,
+          warning = I(warn), action = I(act)
+        ))
+        varest <- (pcfactor*ncluster*apply(total2est * matrix(rep(wgt1_u, m), nrow = ncluster), 2, var) + apply(var2est * matrix(rep(wgt1_u, m), nrow = ncluster), 2, sum))/ tw2
+      } else {
+        varest <- (pcfactor * apply(total2est * matrix(rep(wgt1_u, m),
+          nrow = ncluster
+        ), 2, localmean_var, weight_lst) +
+            apply(var2est * matrix(rep(wgt1_u, m), nrow = ncluster), 2, sum)) /
+          tw2
+      }
     } else {
-      varest <- NULL
+      varest <- (pcfactor*ncluster*apply(total2est * matrix(rep(wgt1_u, m), nrow = ncluster), 2, var) + apply(var2est * matrix(rep(wgt1_u, m), nrow = ncluster), 2, sum))/ tw2
     }
 
     # End of section for a two-stage sample
+
   } else {
 
     # Begin the section for a single-stage sample
@@ -302,10 +332,23 @@ catvar_prop <- function(z, wgt, x, y, prop, prop_names, stratum_ind,
     # Calculate the variance estimate
 
     if (vartype == "Local") {
-      weight_1st <- localmean_weight(x, y, 1 / wgt)
-      varest <- pcfactor * apply(rm, 2, localmean_var, weight_1st) / tw2
+      weight_lst <- localmean_weight(x, y, 1 / wgt)
+      if(is.null(weight_lst)) {
+        warn_ind <- TRUE
+        act <- "The simple random sampling variance estimator was used.\n"
+        warn <- paste0("The local mean variance estimator cannot calculate valid estimates, the simple random \nsampling variance estimator was used to calculate variance of the category proportion \nestimates.\n")
+        warn_df <- rbind(warn_df, data.frame(
+          func = I(fname),
+          subpoptype = warn_vec[1], subpop = warn_vec[2],
+          indicator = warn_vec[3], stratum = stratum_level,
+          warning = I(warn), action = I(act)
+        ))
+        varest <- pcfactor * n * apply(rm, 2, var) / tw2
+      } else {
+        varest <- pcfactor * apply(rm, 2, localmean_var, weight_lst) / tw2
+      }
     } else {
-      varest <- NULL
+      varest <- pcfactor * n * apply(rm, 2, var) / tw2
     }
 
     # End section for a single-stage sample

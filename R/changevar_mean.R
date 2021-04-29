@@ -2,6 +2,8 @@
 # Function: changevar_mean (not exported)
 # Programmer: Tom Kincaid
 # Date: July 22, 2020
+# Revised: April 28, 2021 to use the SRS estimator when the local mean estimator
+#          fails to produce a valid estimate
 #'
 #' Covariance or Correlation Matrix Estimate of Change in Means between Two
 #' Surveys
@@ -33,25 +35,25 @@
 #'   for a two-stage sample.
 #'
 #' @param revisitwgt Logical value that indicates whether each repeat visit site
-#'   has the same survey design weight in the two surveys, where \code{TRUE} = the
-#'   weight for each repeat visit site is the same and \code{FALSE} = the weight for
-#'   each repeat visit site is not the same.  When this argument is \code{FALSE}, all
-#'   of the repeat visit sites are assigned equal weights when calculating the
-#'   covariance component of the change estimate standard error.
+#'   has the same survey design weight in the two surveys, where \code{TRUE} =
+#'   the weight for each repeat visit site is the same and \code{FALSE} = the
+#'   weight for each repeat visit site is not the same.  When this argument is
+#'   \code{FALSE}, all of the repeat visit sites are assigned equal weights when
+#'   calculating the covariance component of the change estimate standard error.
 #'
 #' @param mean1 The estimated mean for survey one.
 #'
 #' @param mean2 The estimated mean for survey two.
 #'
 #' @param stratum_ind Logical value that indicates whether the sample is
-#'   stratified, where \code{TRUE} = a stratified sample and \code{FALSE} = not a stratified
-#'   sample.
+#'   stratified, where \code{TRUE} = a stratified sample and \code{FALSE} = not
+#'   a stratified sample.
 #'
 #' @param stratum_level The stratum level.
 #'
 #' @param cluster_ind Logical value that indicates whether the sample is a
-#'   two- stage sample, where \code{TRUE} = a two-stage sample and \code{FALSE} = not a
-#'   two-stage sample.
+#'   two- stage sample, where \code{TRUE} = a two-stage sample and \code{FALSE}
+#'   = not a two-stage sample.
 #'
 #' @param clusterID Vector of the stage one sampling unit (primary sampling unit
 #'  or cluster) code for each site.
@@ -63,30 +65,30 @@
 #' @param y1 Vector of the stage one y-coordinate for location for each site.
 #'
 #' @param pcfactor_ind Logical value that indicates whether the finite
-#'  population correction factor is used during variance estimation, where \code{TRUE}
-#'  = use the population correction factor and \code{FALSE} = do not use the factor.
-#'  To employ the correction factor for a single-stage sample, a value must be
-#'  supplied for argument \code{fpcsize}.  To employ the correction factor for a
-#'  two-stage sample, values must be supplied for arguments \code{Ncluster} and
-#'  \code{stage1size}.
+#'   population correction factor is used during variance estimation, where
+#'   \code{TRUE} = use the population correction factor and \code{FALSE} = do
+#'   not use the factor.  To employ the correction factor for a single-stage
+#'   sample, a value must be supplied for argument \code{fpcsize}.  To employ
+#'   the correction factor for a two-stage sample, values must be supplied for
+#'   arguments \code{Ncluster} and \code{stage1size}.
 #'
 #' @param fpcsize Size of the resource, which is required for calculation of the
-#'  finite population correction factor for a single-stage sample.
+#'   finite population correction factor for a single-stage sample.
 #'
 #' @param Ncluster The number of stage one sampling units in the resource,
-#'  which is required for calculation of the finite population correction
-#'  factor for a two-stage sample.
+#'   which is required for calculation of the finite population correction
+#'   factor for a two-stage sample.
 #'
 #' @param stage1size Vector of the size of the stage one sampling units of a
-#'  two-stage sample, which is required for calculation of the finite
-#'  population correction factor for a two-stage sample.
+#'   two-stage sample, which is required for calculation of the finite
+#'   population correction factor for a two-stage sample.
 #'
-#' @param vartype The choice of variance estimator, where \code{"Local"} = local mean
-#'   estimator and \code{"SRS"} = SRS estimator.
+#' @param vartype The choice of variance estimator, where \code{"Local"} = local
+#'   mean estimator and \code{"SRS"} = SRS estimator.
 #'
 #' @param warn_ind  Logical value that indicates whether warning messages were
-#'   generated, where \code{TRUE} = warning messages were generated and \code{FALSE} = warning
-#'   messages were not generated.
+#'   generated, where \code{TRUE} = warning messages were generated and
+#'   \code{FALSE} = warning messages were not generated.
 #'
 #' @param warn_df Data frame for storing warning messages.
 #'
@@ -95,8 +97,8 @@
 #'
 #' @return An object in list format composed of a vector named \code{rslt}, which
 #'   contains the covariance or correlation estimate, a logical variable named
-#'   \code{warn_ind}, which is the indicator for warning messges, and a data frame
-#'   named \code{warn_df}, which contains warning messages.
+#'   \code{warn_ind}, which is the indicator for warning messges, and a data
+#'   frame named \code{warn_df}, which contains warning messages.
 #'
 #' @section Other Functions Required:
 #'   \describe{
@@ -135,14 +137,14 @@ changevar_mean <- function(z1, z2, wgt, x, y, revisitwgt, mean1, mean2,
     cluster <- factor(clusterID)
     cluster_levels <- levels(cluster)
     ncluster <- length(cluster_levels)
-    z1_1st <- split(z1, cluster)
-    z2_1st <- split(z2, cluster)
-    wgt2_1st <- split(wgt, cluster)
+    z1_lst <- split(z1, cluster)
+    z2_lst <- split(z2, cluster)
+    wgt2_lst <- split(wgt, cluster)
     wgt1_u <- as.vector(tapply(wgt1, cluster, unique))
     tw2 <- (sum(wgt1 * wgt))^2
     if (vartype == "Local") {
-      x2_1st <- split(x, cluster)
-      y2_1st <- split(y, cluster)
+      x2_lst <- split(x, cluster)
+      y2_lst <- split(y, cluster)
       x1_u <- as.vector(tapply(x1, cluster, unique))
       y1_u <- as.vector(tapply(y1, cluster, unique))
     }
@@ -186,11 +188,11 @@ changevar_mean <- function(z1, z2, wgt, x, y, revisitwgt, mean1, mean2,
 
         # Calculate the weighted residuals matrix
 
-        n <- length(z1_1st[[i]])
-        z1 <- z1_1st[[i]]
-        z2 <- z2_1st[[i]]
+        n <- length(z1_lst[[i]])
+        z1 <- z1_lst[[i]]
+        z2 <- z2_lst[[i]]
         rm <- (cbind(z1, z2) - matrix(rep(phat, n), nrow = n, byrow = TRUE)) *
-          matrix(rep(wgt2_1st[[i]], 2), nrow = n)
+          matrix(rep(wgt2_lst[[i]], 2), nrow = n)
 
         # Calculate total estimates for the stage one sampling unit
         total2est[i, ] <- apply(rm, 2, sum)
@@ -231,11 +233,24 @@ changevar_mean <- function(z1, z2, wgt, x, y, revisitwgt, mean1, mean2,
 
         if (var_ind[i]) {
           if (vartype == "Local") {
-            weight_1st <- localmean_weight(
-              x2_1st[[i]], y2_1st[[i]],
-              1 / wgt2_1st[[i]]
+            weight_lst <- localmean_weight(
+              x2_lst[[i]], y2_lst[[i]],
+              1 / wgt2_lst[[i]]
             )
-            var2est[i, ] <- as.vector(pcfactor * localmean_cov(rm, weight_1st))
+            if(is.null(weight_lst)) {
+              warn_ind <- TRUE
+              act <- "The simple random sampling variance estimator was used.\n"
+              warn <- paste0("The local mean variance estimator cannot calculate valid estimates for stage one \nsampling unit \"", cluster_levels[i], "\", the simple random sampling variance estimator was used to \ncalculate covariance of the estimate.\n")
+              warn_df <- rbind(warn_df, data.frame(
+                func = I(fname),
+                subpoptype = warn_vec[1], subpop = warn_vec[2],
+                indicator = warn_vec[3], stratum = stratum_level,
+                warning = I(warn), action = I(act)
+              ))
+              var2est[i, ] <- as.vector(pcfactor * n * var(rm))
+            } else {
+              var2est[i, ] <- as.vector(pcfactor * localmean_cov(rm, weight_lst))
+            }
           } else {
             var2est[i, ] <- as.vector(pcfactor * n * var(rm))
             if (SRSind) {
@@ -277,11 +292,28 @@ changevar_mean <- function(z1, z2, wgt, x, y, revisitwgt, mean1, mean2,
       # Calculate the covariance or correlation estimates
 
       if (vartype == "Local") {
-        weight_1st <- localmean_weight(x1_u, y1_u, 1 / wgt1_u)
-        varest <- (pcfactor * localmean_cov(total2est * matrix(rep(wgt1_u, 2),
-          nrow = ncluster
-        ), weight_1st) + matrix(apply(var2est *
-          matrix(rep(wgt1_u, 4), nrow = ncluster), 2, sum), nrow = 2)) / tw2
+        weight_lst <- localmean_weight(x1_u, y1_u, 1 / wgt1_u)
+        if(is.null(weight_lst)) {
+          warn_ind <- TRUE
+          act <- "The simple random sampling variance estimator was used.\n"
+          warn <- paste0("The local mean variance estimator cannot calculate valid estimates, the simple random \nsampling variance estimator was used to calculate covariance of the estimate.\n")
+          warn_df <- rbind(warn_df, data.frame(
+            func = I(fname),
+            subpoptype = warn_vec[1], subpop = warn_vec[2],
+            indicator = warn_vec[3], stratum = stratum_level,
+            warning = I(warn), action = I(act)
+          ))
+          varest <- (pcfactor * ncluster * var(total2est * matrix(rep(wgt1_u, 2),
+            nrow = ncluster
+          )) + matrix(apply(var2est * matrix(rep(wgt1_u, 4),
+            nrow = ncluster
+          ), 2, sum), nrow = 2)) / tw2
+        } else {
+          varest <- (pcfactor * localmean_cov(total2est * matrix(rep(wgt1_u, 2),
+            nrow = ncluster
+          ), weight_lst) + matrix(apply(var2est *
+              matrix(rep(wgt1_u, 4), nrow = ncluster), 2, sum), nrow = 2)) / tw2
+        }
       } else {
         varest <- (pcfactor * ncluster * var(total2est * matrix(rep(wgt1_u, 2),
           nrow = ncluster
@@ -394,8 +426,21 @@ changevar_mean <- function(z1, z2, wgt, x, y, revisitwgt, mean1, mean2,
       # Calculate covariance or correlation estimates
 
       if (vartype == "Local") {
-        weight_1st <- localmean_weight(x, y, 1 / wgt)
-        varest <- pcfactor * localmean_cov(rm, weight_1st) / tw2
+        weight_lst <- localmean_weight(x, y, 1 / wgt)
+        if(is.null(weight_lst)) {
+          warn_ind <- TRUE
+          act <- "The simple random sampling variance estimator was used.\n"
+          warn <- paste0("The local mean variance estimator cannot calculate valid estimates, the simple random \nsampling variance estimator was used to calculate covariance of the estimate.\n")
+          warn_df <- rbind(warn_df, data.frame(
+            func = I(fname),
+            subpoptype = warn_vec[1], subpop = warn_vec[2],
+            indicator = warn_vec[3], stratum = stratum_level,
+            warning = I(warn), action = I(act)
+          ))
+          varest <- pcfactor * n * var(rm) / tw2
+        } else {
+          varest <- pcfactor * localmean_cov(rm, weight_lst) / tw2
+        }
       } else {
         varest <- pcfactor * n * var(rm) / tw2
       }
