@@ -2,6 +2,9 @@
 # Function: localmean_weight (not exported)
 # Programmers: Don Stevens and Tom Kincaid
 # Date: February 6, 2020
+# Revised: April 28, 2021 to use the modified object returned by the
+#          localmean_weight2 function and to return a NULL object when the ginv
+#          function fails to return valid output
 #
 #' Internal Function: Local Mean Variance Neighbors and Weights
 #'
@@ -16,13 +19,15 @@
 #'
 #' @param nbh Number of neighboring points to use in the calculations.
 #'
-#' @param vincr The variance increment for correcting an \code{La.svd} error.  The
-#'   default is \code{0.00001*abs(mean(y))}.
+#' @param vincr The variance increment for correcting an \code{La.svd} error.
+#'   The default is \code{0.00001*abs(mean(y))}.
 #'
-#' @return List containing two elements: a matrix named \code{ij} composed of the index
-#'   values of neighboring points and a vector named \code{gwt} composed of weights.
+#' @return If ginv fails to return valid output, a NULL object.  Otherwise, a
+#'   list containing two elements: a matrix named \code{ij} composed of the
+#'   index values of neighboring points and a vector named \code{gwt}
+#'   composed of weights.
 #'
-#' @author  Don Stevens \email{Kincaid.Tom@@epa.gov}
+#' @author  Don Stevens \email{Kincaid.Tom@epa.gov}
 #'
 #' @seealso \code{\link{localmean_weight2}}
 #'
@@ -30,6 +35,9 @@
 ###############################################################################
 
 localmean_weight <- function(x, y, prb, nbh = 4, vincr = 0.00001 * abs(mean(y))) {
+
+  # Assign tne number of points
+
   n <- length(x)
 
   # Calculate indices of nearest neighbors
@@ -71,12 +79,18 @@ localmean_weight <- function(x, y, prb, nbh = 4, vincr = 0.00001 * abs(mean(y)))
     v <- v + vincr
     xt <- x + rnorm(n, 0, v)
     yt <- y + rnorm(n, 0, v)
-    a22 <- localmean_weight2(xt, yt, prb, nbh)
+    temp <- localmean_weight2(xt, yt, prb, nbh)
+    ij <- temp$ij
+    gct <- temp$gct
+    gwt <- temp$gwt
+    smwt <- temp$smwt
+    hij <- temp$hij
+    a22 <- temp$a22
     ind <- "try-error" %in% class(a22)
     iter <- iter + 1
   }
   if (ind) {
-    stop("\nThe La.svd function terminated with an error.  Add random noise to the \nx-coordinates and y-coordinates.")
+    return(NULL)
   }
   a21 <- -diag(2 / gct) %*% hij %*% a22
   lm <- a21 %*% (1 - smwt)
