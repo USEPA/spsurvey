@@ -5,6 +5,8 @@
 # Revised: April 27, 2021 to check whether the local mean variance estimator
 #          produced negative estimates and to use the SRS variance estimator
 #          when that situation occurs
+# Revised: April 28, 2021 to ensure that the na.rm argument is set to TRUE when
+#          calling the svymean function
 #'
 #' Local Mean Variance Estimates of the Estimated Mean
 #'
@@ -167,10 +169,10 @@ mean_localmean <- function(itype, lev_itype, nlev_itype, levs, ivar, design,
         # Calculate mean estimates for the stratum
 
         stratum_i <- tst & stratumID == stratum_levels[i]
-        meanest_st <- svymean(make.formula(ivar), design = subset(
-          design,
-          stratum_i
-        ))
+        meanest_st <- svymean(make.formula(ivar),
+          design = subset(design, stratum_i),
+          na.rm = TRUE
+        )
 
         # Calculate variance estimates
 
@@ -236,6 +238,7 @@ mean_localmean <- function(itype, lev_itype, nlev_itype, levs, ivar, design,
       # End the subsection for all strata combined
 
       # Branch for an unstratified sample
+
     } else {
 
       # Calculate the standard error estimates
