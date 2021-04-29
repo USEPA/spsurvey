@@ -1,4 +1,4 @@
-###############################################################################
+################################################################################
 # Function: change_analysis (exported)
 # Programmer: Tom Kincaid
 # Date: July 29, 2020
@@ -12,9 +12,11 @@
 #          values
 # Revised: April 7, 2021 to ensure that the dframe argument does not contain
 #          zero rows
-# Revised: April 19, 2021 to ensure that categorical variables, continuous
+# Revised: April 19, 2021 to ensure that categorical variables, continuopus
 #          variables, and subpopulation variables do not contain only missing
 #          values for either of the surveys
+# Revised: April 29, 2021 to ensure that the dframe argument only belongs to
+#          class "data.frame"
 #'
 #' Estimation of Change between Two Probability Surveys
 #'
@@ -210,7 +212,28 @@
 #'   continuous variables using the median).  Change estimates are provided plus
 #'   standard error estimates and confidence interval estimates.
 #'
+#' @section Other Functions Required:
+#'   \describe{
+#'     \item{\code{\link{calibrate}}}{conduct calibration for survey data}
+#'     \item{\code{\link{change_est}}}{estimate change between two surveys}
+#'     \item{\code{\link{input_check}}}{check input values for errors,
+#'       consistency, and compatibility with analytical functions}
+#'     \item{\code{\link{postStratify}}}{conduct post-stratification for survey
+#'       data}
+#'     \item{\code{\link{survey_design}}}{creates a survey design object}
+#'     \item{\code{\link{uniqueID}}}{creates unique site IDs by appending a
+#'       unique number to each occurrence of a site ID}
+#'     \item{\code{\link{vecprint}}}{takes an input vector and outputs a
+#'       character string with line breaks inserted}
+#'   }
+#'
 #' @author Tom Kincaid \email{Kincaid.Tom@epa.gov}
+#'
+#' @seealso
+#'   \code{\link{calibrate}}
+#'   \code{\link{change_est}}
+#'   \code{\link{postStratify}}
+#'   \code{\link{survey_design}}
 #'
 #' @keywords survey
 #'
@@ -234,8 +257,9 @@
 #'   surveyID = "surveyID", siteID = "siteID", weight = "wgt",
 #'   xcoord = "xcoord", ycoord = "ycoord", stratumID = "stratum"
 #' )
+#'
 #' @export
-###############################################################################
+################################################################################
 
 change_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL,
                             vars_nondetect = NULL, test = "mean", subpops = NULL, surveyID = "surveyID",
@@ -261,6 +285,13 @@ change_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL,
 
   if (missing(dframe) | is.null(dframe)) {
     stop("\nThe dframe argument must be provided.\n")
+  }
+
+  # If the dframe argument is a tibble or does not belong to class
+  # "data.frame", coerce the argument to class "data.frame"
+
+  if ("tbl_df" %in% class(dframe) | !("data.frame" %in% class(dframe))) {
+    dframe <- as.data.frame(dframe)
   }
 
   # Ensure that the dframe argument does not contain zero rows

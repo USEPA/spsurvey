@@ -8,7 +8,9 @@
 #          the SLR and WLR models for categorical variables
 # Revised: April 7, 2021 to ensure that the dframe argument does not contain
 #          zero rows
-#
+# Revised: April 29, 2021 to ensure that the dframe argument only belongs to
+#          class "data.frame"
+#'
 #' Estimation of Trend across Time for a Series of Probability Surveys
 #'
 #' This function organizes input and output for estimation of trend across time
@@ -297,29 +299,58 @@
 #'     \item{AIC}{generalized Akaike Information Criterion}
 #'   }
 #'
+#' @section Other Functions Required:
+#'   \describe{
+#'     \item{\code{\link{boot}}}{conduct bootstrap resampling}
+#'     \item{\code{\link{bootfcn}}}{calculates trend parameter estimates using
+#'       bootstrap replicates and the lmer function}
+#'     \item{\code{\link{calibrate}}}{conduct calibration for survey data}
+#'     \item{\code{\link{category_est}}}{calculate category proportion and total
+#'       estimates}
+#'     \item{\code{\link{input_check}}}{check input values for errors,
+#'       consistency, and compatibility with analytical functions}
+#'     \item{\code{\link{lm}}}{fits a linear model}
+#'     \item{\code{\link{lmer}}}{fits a linear mixed-effects model}
+#'     \item{\code{\link{percentile_est}}}{calculates percentile estimates}
+#'     \item{\code{\link{postStratify}}}{conduct post-stratification for survey
+#'       data}
+#'     \item{\code{\link{survey_design}}}{creates a survey design object}
+#'     \item{\code{\link{uniqueID}}}{creates unique site IDs by appending a
+#'       unique number to each occurrence of a site ID}
+#'     \item{\code{\link{vecprint}}}{takes an input vector and outputs a
+#'       character string with line breaks inserted}
+#'   }
 #'
-#' @author Tom Kincaid \email{Kincaid.Tom@@epa.gov}
+#' @author Tom Kincaid \email{Kincaid.Tom@epa.gov}
+#'
+#' @seealso
+#'   \code{\link{boot}}
+#'   \code{\link{calibrate}}
+#'   \code{\link{category_est}}
+#'   \code{\link{percentile_est}}
+#'   \code{\link{postStratify}}
+#'   \code{\link{survey_design}}
 #'
 #' @keywords survey
 #'
 #' @examples
 #' # Categorical variable example for three resource classes
-#' dframe <- data.frame(
-#'   siteID = rep(paste0("Site", 1:20), rep(5, 20)),
-#'   yearID = rep(seq(2000, 2020, by = 5), 20),
-#'   wgt = rep(runif(20, 10, 100), rep(5, 20)),
-#'   xcoord = rep(runif(20), rep(5, 20)),
-#'   ycoord = rep(runif(20), rep(5, 20)),
-#'   All_Sites = rep("All Sites", 100),
-#'   Region = sample(c("North", "South"), 100, replace = TRUE),
+#' mydframe <- data.frame(
+#'   siteID = rep(paste0("Site", 1:40), rep(5, 40)),
+#'   yearID = rep(seq(2000, 2020, by = 5), 40),
+#'   wgt = rep(runif(40, 10, 100), rep(5, 40)),
+#'   xcoord = rep(runif(40), rep(5, 40)),
+#'   ycoord = rep(runif(40), rep(5, 40)),
+#'   All_Sites = rep("All Sites", 200),
+#'   Region = sample(c("North", "South"), 200, replace = TRUE),
 #'   Resource_Class = sample(c("Good", "Fair", "Poor"), 200, replace = TRUE),
-#'   ContVar = rnorm(100, 10, 1)
+#'   ContVar = rnorm(200, 10, 1)
 #' )
 #' myvars_cat <- c("Resource_Class")
 #' myvars_cont <- c("ContVar")
 #' mysubpops <- c("All_Sites", "Region")
 #' trend_analysis(
-#'   dframe = dframe,
+#'   dframe = mydframe,
 #'   vars_cat = myvars_cat,
 #'   vars_cont = myvars_cont,
 #'   subpops = mysubpops,
@@ -359,6 +390,13 @@ trend_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL,
 
   if(missing(dframe)) {
     stop("\nThe dframe argument must be provided.\n")
+  }
+
+  # If the dframe argument is a tibble or does not belong to class
+  # "data.frame", coerce the argument to class "data.frame"
+
+  if ("tbl_df" %in% class(dframe) | !("data.frame" %in% class(dframe))) {
+    dframe <- as.data.frame(dframe)
   }
 
   # Ensure that the dframe argument does not contain zero rows

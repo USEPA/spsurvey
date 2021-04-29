@@ -1,4 +1,4 @@
-###############################################################################
+################################################################################
 # Function: cont_cdftest (exported)
 # Programmer Tom Kincaid
 # Date: October 23, 2020
@@ -10,6 +10,8 @@
 #          warnings data frame (warn_df)
 # Revised: April 7, 2021 to ensure that the dframe argument does not contain
 #          zero rows
+# Revised: April 29, 2021 to ensure that the dframe argument only belongs to
+#          class "data.frame"
 #'
 #' Cumulative Distribution Function Inference for a Probability Survey
 #'
@@ -182,13 +184,38 @@
 #'   includes the test statistic specified by argument \code{testname} plus its degrees
 #'   of freedom and p-value.
 #'
+#' @section Other Functions Required:
+#'   \describe{
+#'     \item{\code{\link{calibrate}}}{conduct calibration for survey data}
+#'     \item{\code{\link{cdftest_localmean_prop}}}{calculates local mean
+#'       variance/covarince estimates of estimated population proportions}
+#'     \item{\code{\link{cdftest_localmean_total}}}{calculates local mean
+#'       variance/covarince estimates of estimated population totals}
+#'     \item{\code{\link{input_check}}}{check input values for errors,
+#'       consistency, and compatibility with analytical functions}
+#'     \item{\code{\link{postStratify}}}{conduct post-stratification for survey
+#'       data}
+#'     \item{\code{\link{svychisq_localmean}}}{performs design-based contingency
+#'       table tests}
+#'     \item{\code{\link{survey_design}}}{creates a survey design object}
+#'     \item{\code{\link{uniqueID}}}{creates unique site IDs by appending a
+#'       unique number to each occurrence of a site ID}
+#'     \item{\code{\link{vecprint}}}{takes an input vector and outputs a
+#'       character string with line breaks inserted}
+#'   }
 #'
 #' @author Tom Kincaid \email{Kincaid.Tom@epa.gov}
+#'
+#' @seealso
+#'   \code{\link{calibrate}}
+#'   \code{\link{postStratify}}
+#'   \code{\link{svychisq_localmean}}
+#'   \code{\link{survey_design}}
 #'
 #' @keywords survey
 #'
 #' @examples
-#' n <- 80
+#' n <- 200
 #' mysiteID <- paste("Site", 1:n, sep = "")
 #' dframe <- data.frame(
 #'   siteID = mysiteID,
@@ -218,8 +245,9 @@
 #'   weight = "wgt", xcoord = "xcoord", ycoord = "ycoord",
 #'   stratumID = "stratum", popsize = mypopsize, testname = "RaoScott_First"
 #' )
+#'
 #' @export
-###############################################################################
+################################################################################
 
 cont_cdftest <- function(dframe, vars, subpops = NULL, surveyID = NULL,
                          siteID = "siteID", weight = "weight", xcoord = NULL, ycoord = NULL,
@@ -281,6 +309,13 @@ cont_cdftest <- function(dframe, vars, subpops = NULL, surveyID = NULL,
 
   if (missing(dframe) | is.null(dframe)) {
     stop("\nThe dframe argument must be provided.\n")
+  }
+
+  # If the dframe argument is a tibble or does not belong to class
+  # "data.frame", coerce the argument to class "data.frame"
+
+  if ("tbl_df" %in% class(dframe) | !("data.frame" %in% class(dframe))) {
+    dframe <- as.data.frame(dframe)
   }
 
   # Ensure that the dframe argument does not contain zero rows
