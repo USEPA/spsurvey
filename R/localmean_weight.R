@@ -1,10 +1,13 @@
-###############################################################################
+################################################################################
 # Function: localmean_weight (not exported)
 # Programmers: Don Stevens and Tom Kincaid
 # Date: February 6, 2020
 # Revised: April 28, 2021 to use the modified object returned by the
 #          localmean_weight2 function and to return a NULL object when the ginv
 #          function fails to return valid output
+# Revised: April 29, 2021 to eliminate use of the while loop to achieve valid
+#          output from the ginv function, which means that the vincr argument
+#          and the localmean_weight2 function are no longer needed
 #
 #' Internal Function: Local Mean Variance Neighbors and Weights
 #'
@@ -19,22 +22,17 @@
 #'
 #' @param nbh Number of neighboring points to use in the calculations.
 #'
-#' @param vincr The variance increment for correcting an \code{La.svd} error.
-#'   The default is \code{0.00001*abs(mean(y))}.
-#'
 #' @return If ginv fails to return valid output, a NULL object.  Otherwise, a
 #'   list containing two elements: a matrix named \code{ij} composed of the
 #'   index values of neighboring points and a vector named \code{gwt}
 #'   composed of weights.
 #'
-#' @author  Don Stevens \email{Kincaid.Tom@epa.gov}
-#'
-#' @seealso \code{\link{localmean_weight2}}
+#' @author  Tom Kincaid \email{Kincaid.Tom@epa.gov}
 #'
 #' @noRd
-###############################################################################
+################################################################################
 
-localmean_weight <- function(x, y, prb, nbh = 4, vincr = 0.00001 * abs(mean(y))) {
+localmean_weight <- function(x, y, prb, nbh = 4) {
 
   # Assign tne number of points
 
@@ -72,24 +70,7 @@ localmean_weight <- function(x, y, prb, nbh = 4, vincr = 0.00001 * abs(mean(y)))
   hij <- matrix(0, n, n)
   hij[ij] <- 0.5
   a22 <- try(ginv(diag(gct / 2) - hij %*% diag(2 / gct) %*% hij), TRUE)
-  ind <- "try-error" %in% class(a22)
-  iter <- 1
-  v <- 0
-  while (ind & iter < 11) {
-    v <- v + vincr
-    xt <- x + rnorm(n, 0, v)
-    yt <- y + rnorm(n, 0, v)
-    temp <- localmean_weight2(xt, yt, prb, nbh)
-    ij <- temp$ij
-    gct <- temp$gct
-    gwt <- temp$gwt
-    smwt <- temp$smwt
-    hij <- temp$hij
-    a22 <- temp$a22
-    ind <- "try-error" %in% class(a22)
-    iter <- iter + 1
-  }
-  if (ind) {
+  if("try-error" %in% class(a22)) {
     return(NULL)
   }
   a21 <- -diag(2 / gct) %*% hij %*% a22
