@@ -2,7 +2,7 @@
 # Function: grts (exported)
 # Programmers: Tony Olsen, Tom Kincaid
 # Date: January 22, 2021
-#' Select a Generalized Random Tesselation Stratified (GRTS) sample
+#' Select a Generalized Random Tesselation Stratified (GRTS) Sample
 #'
 #' Select a spatially balanced sample from a finite, linear or area population using
 #' generalized random tessalation stratified algorithm  from a sample frame based on
