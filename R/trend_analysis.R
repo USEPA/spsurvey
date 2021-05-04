@@ -10,7 +10,9 @@
 #          zero rows
 # Revised: April 29, 2021 to ensure that the dframe argument only belongs to
 #          class "data.frame"
-#'
+# Revised: May 4 2021 to avoid warning messages being generated during creation
+#          of help files
+#
 #' Estimation of Trend across Time for a Series of Probability Surveys
 #'
 #' This function organizes input and output for estimation of trend across time
@@ -302,22 +304,22 @@
 #' @section Other Functions Required:
 #'   \describe{
 #'     \item{\code{\link{boot}}}{conduct bootstrap resampling}
-#'     \item{\code{\link{bootfcn}}}{calculates trend parameter estimates using
+#'     \item{\code{bootfcn}}{calculates trend parameter estimates using
 #'       bootstrap replicates and the lmer function}
 #'     \item{\code{\link{calibrate}}}{conduct calibration for survey data}
-#'     \item{\code{\link{category_est}}}{calculate category proportion and total
+#'     \item{\code{category_est}}{calculate category proportion and total
 #'       estimates}
-#'     \item{\code{\link{input_check}}}{check input values for errors,
+#'     \item{\code{input_check}}{check input values for errors,
 #'       consistency, and compatibility with analytical functions}
 #'     \item{\code{\link{lm}}}{fits a linear model}
 #'     \item{\code{\link{lmer}}}{fits a linear mixed-effects model}
-#'     \item{\code{\link{percentile_est}}}{calculates percentile estimates}
+#'     \item{\code{percentile_est}}{calculates percentile estimates}
 #'     \item{\code{\link{postStratify}}}{conduct post-stratification for survey
 #'       data}
-#'     \item{\code{\link{survey_design}}}{creates a survey design object}
-#'     \item{\code{\link{uniqueID}}}{creates unique site IDs by appending a
+#'     \item{\code{survey_design}}{creates a survey design object}
+#'     \item{\code{uniqueID}}{creates unique site IDs by appending a
 #'       unique number to each occurrence of a site ID}
-#'     \item{\code{\link{vecprint}}}{takes an input vector and outputs a
+#'     \item{\code{vecprint}}{takes an input vector and outputs a
 #'       character string with line breaks inserted}
 #'   }
 #'
@@ -326,10 +328,7 @@
 #' @seealso
 #'   \code{\link{boot}}
 #'   \code{\link{calibrate}}
-#'   \code{\link{category_est}}
-#'   \code{\link{percentile_est}}
 #'   \code{\link{postStratify}}
-#'   \code{\link{survey_design}}
 #'
 #' @keywords survey
 #'
@@ -366,14 +365,14 @@
 #' @export
 ################################################################################
 
-trend_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL,
-  subpops = NULL, model_cat = "SLR", model_cont = "PO", siteID = "siteID",
-  yearID = "year", weight = "weight", xcoord = NULL, ycoord = NULL,
-  stratumID = NULL, clusterID = NULL, weight1 = NULL, xcoord1 = NULL,
-  ycoord1 = NULL, sizeweight = FALSE, sweight = NULL, sweight1 = NULL,
-  popcorrect = FALSE, fpcsize = NULL, Ncluster = NULL, stage1size = NULL,
-  popsize = NULL, invprboot = TRUE, nboot = 1000, vartype = "Local",
-  jointprob = "overton", conf = 95) {
+trend_analysis <- function(
+  dframe, vars_cat = NULL, vars_cont = NULL, subpops = NULL, model_cat = "SLR",
+  model_cont = "PO", siteID = "siteID", yearID = "year", weight = "weight",
+  xcoord = NULL, ycoord = NULL, stratumID = NULL, clusterID = NULL,
+  weight1 = NULL, xcoord1 = NULL, ycoord1 = NULL, sizeweight = FALSE,
+  sweight = NULL, sweight1 = NULL, popcorrect = FALSE, fpcsize = NULL,
+  Ncluster = NULL, stage1size = NULL, popsize = NULL, invprboot = TRUE,
+  nboot = 1000, vartype = "Local", jointprob = "overton", conf = 95) {
 
 # Create a vector for error messages
 

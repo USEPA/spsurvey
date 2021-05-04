@@ -17,15 +17,17 @@
 #          values for either of the surveys
 # Revised: April 29, 2021 to ensure that the dframe argument only belongs to
 #          class "data.frame"
-#'
+# Revised: May 4 2021 to avoid warning messages being generated during creation
+#          of help files
+#
 #' Estimation of Change between Two Probability Surveys
 #'
 #' This function organizes input and output for estimation of change between two
 #' probability surveys.  The input data argument can be either a data frame or a
 #' simple features (sf) object.  If an sf object is used, coordinates are
-#' extracted from the geometry column in the object, arguments \code{xcoord} and \code{ycoord}
-#' are assigned values \code{"xcoord"} and \code{"ycoord"}, respectively, and the geometry
-#' column is dropped from the object.
+#' extracted from the geometry column in the object, arguments \code{xcoord} and
+#' \code{ycoord} are assigned values \code{"xcoord"} and \code{"ycoord"},
+#' respectively, and the geometry column is dropped from the object.
 #'
 #' @param dframe Data frame containing survey design variables, response
 #'   variables, and subpopulation (domain) variables.
@@ -39,96 +41,99 @@
 #'   default is \code{NULL}.
 #'
 #' @param vars_nondetect Vector composed of character values that identify the
-#'   names of logical variables in the \code{dframe} data frame specifying the presence
-#'   of not detected (nondetect) values for response variables.  The order of
-#'   the values for this argument must match the order of the values for the
-#'   \code{vars} argument. Each logical variable specifies the detection status for the
-#'   corresponding values of a response variable, where \code{TRUE} equals not
-#'   detected, and \code{FALSE} equals detected.  If a response variable does not
-#'   include any notdetect values, then the name for the corresponding logical
-#'   variable may be set equal to \code{NULL}.  If this argument equals \code{NULL}, then none
-#'   of the response variables contain nondetect values.  The default is \code{NULL}.
+#'   names of logical variables in the \code{dframe} data frame specifying the
+#'   presence of not detected (nondetect) values for response variables.  The
+#'   order of the values for this argument must match the order of the values
+#'   for the \code{vars} argument. Each logical variable specifies the detection
+#'   status for the corresponding values of a response variable, where
+#'   \code{TRUE} equals not detected, and \code{FALSE} equals detected.  If a
+#'   response variable does not include any notdetect values, then the name for
+#'   the corresponding logical variable may be set equal to \code{NULL}.  If
+#'   this argument equals \code{NULL}, then none of the response variables
+#'   contain nondetect values.  The default is \code{NULL}.
 #'
 #' @param test Character string or character vector providing the location
 #'   measure(s) to use for change estimation for continuous variables.  The
-#'   choices are \code{"mean"}, \code{"median"}, or \code{c("mean", "median")}.  The default is
-#'   \code{"mean"}.
+#'   choices are \code{"mean"}, \code{"median"}, or \code{c("mean", "median")}.
+#'   The default is \code{"mean"}.
 #'
 #' @param subpops Vector composed of character values that identify the
-#'   names of subpopulation (domain) variables in the \code{dframe} data frame.  If a
-#'   value is not provided, the value \code{"All_Sites"} is assigned to the \code{subpops}
-#'   argument and a factor variable named \code{"All_Sites"} that takes the value
-#'   \code{"All Sites"} is added to the \code{dframe} data frame.  The default value is \code{NULL}.
+#'   names of subpopulation (domain) variables in the \code{dframe} data frame.
+#'   If a value is not provided, the value \code{"All_Sites"} is assigned to the
+#'   subpops argument and a factor variable named \code{"All_Sites"} that takes
+#'   the value \code{"All Sites"} is added to the \code{dframe} data frame.  The
+#'   default value is \code{NULL}.
 #'
 #' @param surveyID Character value providing name of the survey ID variable in
 #'   the \code{dframe} data frame.  The default value is \code{"surveyID"}.
 #'
 #' @param survey_names Character vector of length two that provides the survey
-#'   names contained in the \code{surveyID} variable in the \code{dframe} data frame.  The
-#'   two values in the vector identify the first survey and second survey,
-#'   respectively.  If a value is not provided, unique values of the \code{surveyID}
-#'   variable are assigned to the \code{survey_names} argument.  The default is \code{NULL}.
+#'   names contained in the \code{surveyID} variable in the \code{dframe} data
+#'   frame.  The two values in the vector identify the first survey and second
+#'   survey, respectively.  If a value is not provided, unique values of the
+#'   \code{surveyID} variable are assigned to the \code{survey_names} argument.
+#'   The default is \code{NULL}.
 #'
 #' @param siteID Character value providing name of the site ID variable in
-#'   the \code{dframe} data frame.  If repeat visit sites are present, the \code{siteID}
-#'   value for each revisit site will be the same for both surveys.  For a
-#'   two-stage sample, the \code{siteID} variable identifies stage two site IDs.  The
-#'   default value is \code{"siteID"}.
+#'   the \code{dframe} data frame.  For a two-stage sample, the site ID variable
+#'   identifies stage two site IDs.  The default value is \code{"siteID"}.
 #'
 #' @param weight Character value providing name of the survey design weight
-#'   variable in the \code{dframe} data frame.  For a two-stage sample, the weight
-#'   variable identifies stage two weights.  The default value is \code{"weight"}.
+#'   variable in the \code{dframe} data frame.  For a two-stage sample, the
+#'   weight variable identifies stage two weights.  The default value is
+#'   \code{"weight"}.
 #'
 #' @param revisitwgt Logical value that indicates whether each repeat visit
-#'   site has the same survey design weight in the two surveys, where \code{TRUE} = the
-#'   weight for each repeat visit site is the same and \code{FALSE} = the weight for
-#'   each repeat visit site is not the same.  When this argument is \code{FALSE}, all
-#'   of the repeat visit sites are assigned equal weights when calculating the
-#'   covariance component of the change estimate standard error.  The default is
-#'   \code{FALSE}.
+#'   site has the same survey design weight in the two surveys, where
+#'   \code{TRUE} = the weight for each repeat visit site is the same and
+#'   \code{FALSE} = the weight for each repeat visit site is not the same.  When
+#'   this argument is \code{FALSE}, all of the repeat visit sites are assigned
+#'   equal weights when calculating the covariance component of the change
+#'   estimate standard error.  The default is \code{FALSE}.
 #'
 #' @param xcoord Character value providing name of the x-coordinate variable in
-#'   the \code{dframe} data frame.  For a two-stage sample, the x-coordinate variable
-#'   identifies stage two x-coordinates.  Note that x-coordinates are required
-#'   for calculation of the local mean variance estimator.  The default value is
-#'   \code{NULL}.
+#'   the \code{dframe} data frame.  For a two-stage sample, the x-coordinate
+#'   variable identifies stage two x-coordinates.  Note that x-coordinates are
+#'   required for calculation of the local mean variance estimator.  The default
+#'   value is \code{NULL}.
 #'
 #' @param ycoord Character value providing name of the y-coordinate variable in
-#'   the \code{dframe} data frame.  For a two-stage sample, the y-coordinate variable
-#'   identifies stage two y-coordinates.  Note that y-coordinates are required
-#'   for calculation of the local mean variance estimator.  The default value is
-#'   \code{NULL}.
+#'   the \code{dframe} data frame.  For a two-stage sample, the y-coordinate
+#'   variable identifies stage two y-coordinates.  Note that y-coordinates are
+#'   required for calculation of the local mean variance estimator.  The default
+#'   value is \code{NULL}.
 #'
 #' @param stratumID Character value providing name of the stratum ID variable in
 #'   the \code{dframe} data frame.  The default value is \code{NULL}.
 #'
-#' @param clusterID Character value providing name of the cluster (stage one) ID
-#'   variable in the \code{dframe} data frame.  Note that cluster IDs are required for
-#'   a two-stage sample.  The default value is \code{NULL}.
+#' @param clusterID Character value providing the name of the cluster
+#'   (stage one) ID variable in the \code{dframe} data frame.  Note that cluster
+#'   IDs are required for a two-stage sample.  The default value is \code{NULL}.
 #'
 #' @param weight1 Character value providing name of the stage one weight
 #'   variable in the \code{dframe} data frame.  The default value is \code{NULL}.
 #'
-#' @param xcoord1 Character value providing name of the stage one x-coordinate
-#'   variable in the \code{dframe} data frame.  Note that x-coordinates are required
-#'   for calculation of the local mean variance estimator.  The default value is
-#'   \code{NULL}.
+#' @param xcoord1 Character value providing the name of the stage one
+#'   x-coordinate variable in the \code{dframe} data frame.  Note that x
+#'   coordinates are required for calculation of the local mean variance
+#'   estimator.  The default value is \code{NULL}.
 #'
-#' @param ycoord1 Character value providing name of the stage one y-coordinate
-#'   variable in the \code{dframe} data frame.  Note that y-coordinates are required
-#'   for calculation of the local mean variance estimator.  The default value is
-#'   \code{NULL}.
+#' @param ycoord1 Character value providing the name of the stage one
+#'   y-coordinate variable in the \code{dframe} data frame.  Note that
+#'   y-coordinates are required for calculation of the local mean variance
+#'   estimator.  The default value is \code{NULL}.
 #'
 #' @param sizeweight Logical value that indicates whether size weights should be
-#'   used during estimation, where \code{TRUE} = use size weights and \code{FALSE} = do not
-#'   use size weights. To employ size weights for a single-stage sample, a value
-#'   must be supplied for argument \code{weight}.  To employ size weights for a
-#'   two-stage sample, values must be supplied for arguments \code{weight} and \code{weight1}.
-#'   The default value is \code{FALSE}.
+#'   used during estimation, where \code{TRUE} = use size weights and
+#'   \code{FALSE} = do not use size weights. To employ size weights for a
+#'   single-stage sample, a value must be supplied for argument weight.  To
+#'   employ size weights for a two-stage sample, values must be supplied for
+#'   arguments \code{weight} and \code{weight1}. The default value is \code{FALSE}.
 #'
-#' @param sweight Character value providing name of the size weight variable in
-#'   the \code{dframe} data frame.  For a two-stage sample, the size weight variable
-#'   identifies stage two size weights.  The default value is \code{NULL}.
+#' @param sweight Character value providing the name of the size weight variable
+#'   in the \code{dframe} data frame.  For a two-stage sample, the size weight
+#'   variable identifies stage two size weights.  The default value is
+#'   \code{NULL}.
 #'
 #' @param sweight1 Character value providing name of the stage one size weight
 #'   variable in the \code{dframe} data frame.  The default value is \code{NULL}.
@@ -136,41 +141,44 @@
 #' @param popcorrect Logical value that indicates whether the finite population
 #'   correction factor is used during variance estimation. To employ the
 #'   correction factor for a single-stage sample, values must be supplied for
-#'   argument \code{fpcsize}.  To employ the correction factor for a two-stage sample,
-#'   values must be supplied for arguments \code{Ncluster} and \code{stage1size}.  The default
-#'   value is \code{FALSE}.
+#'   argument \code{fpcsize}.  To employ the correction factor for a two-stage
+#'   sample, values must be supplied for arguments \code{Ncluster} and
+#'   \code{stage1size}. The default value is \code{FALSE}.
 #'
-#' @param fpcsize Character value providing name of the variable in the \code{dframe}
-#'   data frame that identifies size of the resource, which is required for
-#'   calculation of the finite population correction factor for a single-stage
-#'   sample.  The default value is \code{NULL}.
+#' @param fpcsize Character value providing the name of the variable in the
+#'   \code{dframe} data frame that identifies size of the resource, which is
+#'   required for calculation of the finite population correction factor for a
+#'   single-stage sample.  The default value is \code{NULL}.
 #'
-#' @param Ncluster Character value providing name of the variable in the \code{dframe}
-#'   data frame that identifies the number of clusters (stage one sampling
-#'   units) in the resource, which is required for calculation of the finite
-#'   population correction factor for a two-stage sample.  This argument is also
-#'   required for a two-stage sample when the \code{popsize} argument is not equal to
-#'   \code{NULL} and the vartype argument equals \code{"Local"}.  The default value is \code{NULL}.
+#' @param Ncluster Character value providing the name of the variable in the
+#'   \code{dframe} data frame that identifies the number of clusters (stage one
+#'   sampling units) in the resource, which is required for calculation of the
+#'   finite population correction factor for a two-stage sample.  This argument
+#'   is also required for a two-stage sample when the popsize argument is not
+#'   equal to \code{NULL} and the vartype argument equals \code{"Local"}.  The
+#'   default value is \code{NULL}.
 #'
-#' @param stage1size Character value providing name of the variable in the
-#'   \code{dframe} data frame that identifies cluster size, i.e. the number of the
-#'   stage two sampling units in the resource for a cluster.  Note that cluster
-#'   size is required for calculation of the finite population correction factor
-#'   for a two-stage sample. The default value is \code{NULL}.
+#' @param stage1size Character value providing the name of the variable in the
+#'   \code{dframe} data frame that identifies cluster size, i.e. the number of
+#'   the stage two sampling units in the resource for a cluster.  Note that
+#'   cluster size is required for calculation of the finite population
+#'   correction factor for a two-stage sample. The default value is \code{NULL}.
 #'
-#' @param popsize Object that provides values for the population argument of the
-#'   \code{calibrate} or \code{postStratify} functions.  For the \code{calibrate} function, the object
-#'   is a named list, where the names identify factor variables in the \code{dframe}
-#'   data frame.  Each element of the list is a named vector containing the
-#'   population total for each level of the associated factor variable.  For the
-#'   \code{postStratify} function, the object is either a data frame, table, or xtabs
+#' @param popsize Object that provides values for the population argument of
+#'   the \code{calibrate} or \code{postStratify} functions.  For the
+#'   \code{calibrate} function, the object is a named list, where the names
+#'   identify factor variables in the \code{dframe} data frame.  Each element
+#'   of the list is a named vector containing the population total for each
+#'   level of the associated factor variable.  For the \code{postStratify}
+#'   function, the object is either a data frame, table, or xtabs
 #'   object that provides the population total for all combinations of selected
-#'   factor variables in the \code{dframe} data frame.  If a data frame is used for
-#'   \code{popsize}, the variable containing population totals must be the last
-#'   variable in the data frame.  If a table is used for \code{popsize}, the table must
-#'   have named \code{dimnames} where the names identify factor variables in the \code{dframe}
-#'   data frame.  If the \code{popsize} argument is equal to \code{NULL}, then neither
-#'   calibration nor post-stratification is performed.  The default value is
+#'   factor varaibles in the \code{dframe} data frame.  If a data frame is used
+#'   for \code{popsize}, the variable containing population totals must be the
+#'   last variable in the data frame.  If a table is used for \code{popsize},
+#'   the table must have named \code{dimnames} where the names identify factor
+#'   variables in the \code{dframe} data frame.  If the popsize argument is
+#'   equal to \code{NULL}, then neither calibration nor post-stratification is
+#'   performed.  The default value is
 #'   \code{NULL}.\cr\cr
 #'   Example popsize for calibration:\cr
 #'     popsize <- list(Ecoregion = c(East = 750,\cr
@@ -188,42 +196,46 @@
 #'   Example popsize for post-stratification using an xtabs object:\cr
 #'     popsize <- xtabs(~Ecoregion + Type, data = MySurveyFrame)\cr
 #'
-#' @param vartype Character value providing choice of the variance estimator,
-#'   where \code{"Local"} = the local mean estimator, \code{"SRS"} = the simple random
-#'   sampling estimator, \code{"HT"} = the Horvitz-Thompson estimator, and \code{"YG"} = the
-#'   Yates-Grundy estimator.  The default value is \code{"Local"}.
+#' @param vartype Character value providing the choice of the variance
+#'   estimator, where "Local" = the local mean estimator, \code{"SRS"} = the
+#'   simple random sampling estimator, \code{"HT"} = the Horvitz-Thompson
+#'   estimator, and \code{"YG"} = the Yates-Grundy estimator.  The default value
+#'   is \code{"Local"}.
 #'
-#' @param jointprob Character value providing choice of joint inclusion
+#' @param jointprob Character value providing the choice of joint inclusion
 #'   probability approximation for use with Horvitz-Thompson and Yates-Grundy
-#'   variance estimators, where \code{"overton"} indicates the Overton approximation,
-#'   \code{"hr"} indicates the Hartley_Rao approximation, and \code{"brewer"} equals the
-#'   Brewer approximation.  The default value is \code{"overton"}.
+#'   variance estimators, where \code{"overton"} indicates the Overton
+#'   approximation, \code{"hr"} indicates the Hartley_Rao approximation, and
+#'   \code{"brewer"} equals the Brewer approximation.  The default value is
+#'   \code{"overton"}.
 #'
-#' @param conf Numeric value for the confidence level.  The default is \code{95}.
+#' @param conf Numeric value providing the confidence level.  The default value
+#'   is \code{95}.
 #'
-#' @return List of change estimates composed of three items: (1) \code{catsum}
-#'   contains change estimates for categorical variables, (2) \code{contsum_mean}
-#'   contains estimates for continuous variables using the mean, and (3)
-#'   \code{contsum_median} contains estimates for continuous variables using the
-#'   median.  The items in the list will contain \code{NULL} for estimates that were
-#'   not calculated.  Each data frame includes estimates for all combinations of
-#'   population Types, subpopulations within types, response variables, and
-#'   categories within each response variable (for categorical variables and
-#'   continuous variables using the median).  Change estimates are provided plus
-#'   standard error estimates and confidence interval estimates.
+#' @return List of change estimates composed of three items:
+#'   (1) \code{catsum} contains change estimates for categorical variables,
+#'   (2) \code{contsum_mean} contains estimates for continuous variables using
+#'   the mean, and (3) \code{contsum_median} contains estimates for continuous
+#'   variables using the median.  The items in the list will contain \code{NULL}
+#'   for estimates that were not calculated.  Each data frame includes estimates
+#'   for all combinations of population Types, subpopulations within types,
+#'   response variables, and categories within each response variable (for
+#'   categorical variables and continuous variables using the median).  Change
+#'   estimates are provided plus standard error estimates and confidence
+#'   interval estimates.
 #'
 #' @section Other Functions Required:
 #'   \describe{
 #'     \item{\code{\link{calibrate}}}{conduct calibration for survey data}
-#'     \item{\code{\link{change_est}}}{estimate change between two surveys}
-#'     \item{\code{\link{input_check}}}{check input values for errors,
+#'     \item{\code{change_est}}{estimate change between two surveys}
+#'     \item{\code{input_check}}{check input values for errors,
 #'       consistency, and compatibility with analytical functions}
 #'     \item{\code{\link{postStratify}}}{conduct post-stratification for survey
 #'       data}
-#'     \item{\code{\link{survey_design}}}{creates a survey design object}
-#'     \item{\code{\link{uniqueID}}}{creates unique site IDs by appending a
+#'     \item{\code{survey_design}}{creates a survey design object}
+#'     \item{\code{uniqueID}}{creates unique site IDs by appending a
 #'       unique number to each occurrence of a site ID}
-#'     \item{\code{\link{vecprint}}}{takes an input vector and outputs a
+#'     \item{\code{vecprint}}{takes an input vector and outputs a
 #'       character string with line breaks inserted}
 #'   }
 #'
@@ -231,9 +243,7 @@
 #'
 #' @seealso
 #'   \code{\link{calibrate}}
-#'   \code{\link{change_est}}
 #'   \code{\link{postStratify}}
-#'   \code{\link{survey_design}}
 #'
 #' @keywords survey
 #'
@@ -261,14 +271,15 @@
 #' @export
 ################################################################################
 
-change_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL,
-                            vars_nondetect = NULL, test = "mean", subpops = NULL, surveyID = "surveyID",
-                            survey_names = NULL, siteID = "siteID", weight = "weight", revisitwgt = FALSE,
-                            xcoord = NULL, ycoord = NULL, stratumID = NULL, clusterID = NULL,
-                            weight1 = NULL, xcoord1 = NULL, ycoord1 = NULL, sizeweight = FALSE,
-                            sweight = NULL, sweight1 = NULL, popcorrect = FALSE, fpcsize = NULL,
-                            Ncluster = NULL, stage1size = NULL, popsize = NULL, vartype = "Local",
-                            jointprob = "overton", conf = 95) {
+change_analysis <- function(
+  dframe, vars_cat = NULL, vars_cont = NULL, vars_nondetect = NULL,
+  test = "mean", subpops = NULL, surveyID = "surveyID", survey_names = NULL,
+  siteID = "siteID", weight = "weight", revisitwgt = FALSE, xcoord = NULL,
+  ycoord = NULL, stratumID = NULL, clusterID = NULL, weight1 = NULL,
+  xcoord1 = NULL, ycoord1 = NULL, sizeweight = FALSE, sweight = NULL,
+  sweight1 = NULL, popcorrect = FALSE, fpcsize = NULL, Ncluster = NULL,
+  stage1size = NULL, popsize = NULL, vartype = "Local", jointprob = "overton",
+  conf = 95) {
 
   # Create a vector for error messages
 

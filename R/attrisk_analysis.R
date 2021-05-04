@@ -14,7 +14,9 @@
 #          zero rows
 # Revised: April 29, 2021 to ensure that the dframe argument only belongs to
 #          class "data.frame"
-#'
+# Revised: May 4 2021 to avoid warning messages being generated during creation
+#          of help files
+#
 #' Attributable Risk Analysis for Probability Survey Data
 #'
 #' This function organizes input and output for attributable risk analysis of
@@ -38,65 +40,68 @@
 #'   must be the same length as argument \code{vars_response}.  The first level
 #'   for each element in the list is used for calculating the numerator and the
 #'   denominator of the relative risk estimate.  The default is a list
-#'   containing the values \code{"Poor"} and \code{"Good"} for the first and second levels,
-#'   respectively, of each element in the vars_response argument.
+#'   containing the values \code{"Poor"} and \code{"Good"} for the first and
+#'   second levels, respectively, of each element in the vars_response argument.
 #'
 #' @param stressor_levels List providing the category values (levels) for each
-#'   element in the \code{vars_stressor} argument.  This argument should be named
-#'   and must be the same length as argument vars_response.  The first level for
-#'   each element in the list is used for calculating the numerator of the
-#'   relative risk estimate, and the second level for each element in the list
-#'   is used for calculating the denominator of the estimate.  The default is a
-#'   list containing the values \code{"Poor"} and \code{"Good"} for the first and second
-#'   levels, respectively, of each element in the \code{vars_stressor}
-#'   argument.
+#'   element in the \code{vars_stressor} argument.  This argument should be
+#'   named and must be the same length as argument vars_response.  The first
+#'   level for each element in the list is used for calculating the numerator of
+#'   the relative risk estimate, and the second level for each element in the
+#'   list is used for calculating the denominator of the estimate.  The default
+#'   is a list containing the values \code{"Poor"} and \code{"Good"} for the
+#'   first and second levels, respectively, of each element in the
+#'   \code{vars_stressor} argument.
 #'
 #' @param subpops Vector composed of character values that identify the
 #'   names of subpopulation (domain) variables in the \code{dframe} data frame.
 #'   If a value is not provided, the value \code{"All_Sites"} is assigned to the
-#'   subpops argument and a factor variable named \code{"All_Sites"} that takes the
-#'   value \code{"All Sites"} is added to the \code{dframe} data frame.  The default
-#'   value is \code{NULL}.
+#'   subpops argument and a factor variable named \code{"All_Sites"} that takes
+#'   the value \code{"All Sites"} is added to the \code{dframe} data frame.  The
+#'   default value is \code{NULL}.
 #'
 #' @param siteID Character value providing the name of the site ID variable in
 #'   the \code{dframe} data frame.  For a two-stage sample, the site ID variable
 #'   identifies stage two site IDs.  The default value is \code{"siteID"}.
 #'
 #' @param weight Character value providing the name of the survey design weight
-#'   variable in the \code{dframe} data frame.  For a two-stage sample, the weight
-#'   variable identifies stage two weights.  The default value is \code{"weight"}.
+#'   variable in the \code{dframe} data frame.  For a two-stage sample, the
+#'   weight variable identifies stage two weights.  The default value is
+#'   \code{"weight"}.
 #'
-#' @param xcoord Character value providing the name of the x-coordinate variable in
+#' @param xcoord Character value providing name of the x-coordinate variable in
 #'   the \code{dframe} data frame.  For a two-stage sample, the x-coordinate
 #'   variable identifies stage two x-coordinates.  Note that x-coordinates are
-#'   required for calculation of the local mean variance estimator.  The
-#'   default value is \code{NULL}.
+#'   required for calculation of the local mean variance estimator.  The default
+#'   value is \code{NULL}.
 #'
-#' @param ycoord Character value providing the name of the y-coordinate variable in
+#' @param ycoord Character value providing name of the y-coordinate variable in
 #'   the \code{dframe} data frame.  For a two-stage sample, the y-coordinate
 #'   variable identifies stage two y-coordinates.  Note that y-coordinates are
-#'   required for calculation of the local mean variance estimator.  The
-#'   default value is \code{NULL}.
+#'   required for calculation of the local mean variance estimator.  The default
+#'   value is \code{NULL}.
 #'
-#' @param stratumID Character value providing the name of the stratum ID variable in
-#'   the \code{dframe} data frame.  The default value is \code{NULL}.
+#' @param stratumID Character value providing the name of the stratum ID
+#'   variable in the \code{dframe} data frame.  The default value is
+#'   \code{NULL}.
 #'
-#' @param clusterID Character value providing the name of the cluster (stage one) ID
-#'   variable in the \code{dframe} data frame.  Note that cluster IDs are
-#'   required for a two-stage sample.  The default value is \code{NULL}.
+#' @param clusterID Character value providing the name of the cluster
+#'   (stage one) ID variable in the \code{dframe} data frame.  Note that cluster
+#'   IDs are required for a two-stage sample.  The default value is \code{NULL}.
 #'
 #' @param weight1 Character value providing the name of the stage one weight
-#'   variable in the \code{dframe} data frame.  The default value is \code{NULL}.
+#'   variable in the \code{dframe} data frame.  The default value is
+#'   \code{NULL}.
 #'
-#' @param xcoord1 Character value providing the name of the stage one x-coordinate
-#'   variable in the \code{dframe} data frame.  Note that x-coordinates are
-#'   required for calculation of the local mean variance estimator.  The
-#'   default value is \code{NULL}.
+#' @param xcoord1 Character value providing the name of the stage one
+#'   x-coordinate variable in the \code{dframe} data frame.  Note that x
+#'   coordinates are required for calculation of the local mean variance
+#'   estimator.  The default value is \code{NULL}.
 #'
-#' @param ycoord1 Character value providing the name of the stage one y-coordinate
-#'   variable in the \code{dframe} data frame.  Note that y-coordinates are
-#'   required for calculation of the local mean variance estimator.  The
-#'   default value is \code{NULL}.
+#' @param ycoord1 Character value providing the name of the stage one
+#'   y-coordinate variable in the \code{dframe} data frame.  Note that
+#'   y-coordinates are required for calculation of the local mean variance
+#'   estimator.  The default value is \code{NULL}.
 #'
 #' @param sizeweight Logical value that indicates whether size weights should be
 #'   used during estimation, where \code{TRUE} = use size weights and
@@ -106,13 +111,14 @@
 #'   arguments \code{weight} and \code{weight1}. The default value is
 #'   \code{FALSE}.
 #'
-#' @param sweight Character value providing the name of the size weight variable in
-#'   the \code{dframe} data frame.  For a two-stage sample, the size weight
+#' @param sweight Character value providing the name of the size weight variable
+#'   in the \code{dframe} data frame.  For a two-stage sample, the size weight
 #'   variable identifies stage two size weights.  The default value is
 #'   \code{NULL}.
 #'
-#' @param sweight1 Character value providing the name of the stage one size weight
-#'   variable in the \code{dframe} data frame.  The default value is \code{NULL}.
+#' @param sweight1 Character value providing the name of the stage one size
+#' weight variable in the \code{dframe} data frame.  The default value is
+#' \code{NULL}.
 #'
 #' @param popcorrect Logical value that indicates whether the finite population
 #'   correction factor is used during variance estimation. To employ the
@@ -131,8 +137,8 @@
 #'   sampling units) in the resource, which is required for calculation of the
 #'   finite population correction factor for a two-stage sample.  This argument
 #'   is also required for a two-stage sample when the popsize argument is not
-#'   equal to \code{NULL} and the vartype argument equals \code{"Local"}.  The default
-#'   value is \code{NULL}.
+#'   equal to \code{NULL} and the vartype argument equals \code{"Local"}.  The
+#'   default value is \code{NULL}.
 #'
 #' @param stage1size Character value providing the name of the variable in the
 #'   \code{dframe} data frame that identifies cluster size, i.e. the number of
@@ -172,16 +178,18 @@
 #'   Example popsize for post-stratification using an xtabs object:\cr
 #'     popsize <- xtabs(~Ecoregion + Type, data = MySurveyFrame)\cr
 #'
-#' @param vartype Character value providing the choice of the variance estimator,
-#'   where "Local" = the local mean estimator, \code{"SRS"} = the simple random
-#'   sampling estimator, \code{"HT"} = the Horvitz-Thompson estimator, and \code{"YG"} = the
-#'   Yates-Grundy estimator.  The default value is \code{"Local"}.
+#' @param vartype Character value providing the choice of the variance
+#'   estimator, where "Local" = the local mean estimator, \code{"SRS"} = the
+#'   simple random sampling estimator, \code{"HT"} = the Horvitz-Thompson
+#'   estimator, and \code{"YG"} = the Yates-Grundy estimator.  The default value
+#'   is \code{"Local"}.
 #'
 #' @param jointprob Character value providing the choice of joint inclusion
 #'   probability approximation for use with Horvitz-Thompson and Yates-Grundy
-#'   variance estimators, where \code{"overton"} indicates the Overton approximation,
-#'   \code{"hr"} indicates the Hartley_Rao approximation, and \code{"brewer"} equals the
-#'   Brewer approximation.  The default value is \code{"overton"}.
+#'   variance estimators, where \code{"overton"} indicates the Overton
+#'   approximation, \code{"hr"} indicates the Hartley_Rao approximation, and
+#'   \code{"brewer"} equals the Brewer approximation.  The default value is
+#'   \code{"overton"}.
 #'
 #' @param conf Numeric value providing the confidence level.  The default value
 #'   is \code{95}.
@@ -194,29 +202,25 @@
 #'
 #' @section Other Functions Required:
 #'   \describe{
-#'     \item{\code{\link{attrisk_var}}}{calculate values required for estimating
+#'     \item{\code{attrisk_var}}{calculate values required for estimating
 #'       variance of the attributable risk estimate}
 #'     \item{\code{\link{calibrate}}}{conduct calibration for survey data}
-#'     \item{\code{\link{input_check}}}{check input values for errors,
+#'     \item{\code{input_check}}{check input values for errors,
 #'       consistency, and compatibility with analytical functions}
 #'     \item{\code{\link{postStratify}}}{conduct post-stratification for survey
 #'       data}
-#'     \item{\code{\link{attrisk_var}}}{calculate values required for estimating
-#'       variance of the attributable risk estimate}
-#'     \item{\code{\link{survey_design}}}{creates a survey design object}
-#'     \item{\code{\link{uniqueID}}}{creates unique site IDs by appending a
+#'     \item{\code{survey_design}}{creates a survey design object}
+#'     \item{\code{uniqueID}}{creates unique site IDs by appending a
 #'       unique number to each occurrence of a site ID}
-#'     \item{\code{\link{vecprint}}}{takes an input vector and outputs a
+#'     \item{\code{vecprint}}{takes an input vector and outputs a
 #'       character string with line breaks inserted}
 #'   }
 #'
 #' @author Tom Kincaid \email{Kincaid.Tom@epa.gov}
 #'
 #' @seealso
-#'   \code{\link{attrisk_var}}
 #'   \code{\link{calibrate}}
 #'   \code{\link{postStratify}}
-#'   \code{\link{survey_design}}
 #'
 #' @keywords survey univar
 #'
@@ -246,15 +250,16 @@
 #' @export
 ################################################################################
 
-attrisk_analysis <- function(dframe, vars_response, vars_stressor,
-                             response_levels = rep(list(c("Poor", "Good")), length(vars_response)),
-                             stressor_levels = rep(list(c("Poor", "Good")), length(vars_stressor)),
-                             subpops = NULL, siteID = "siteID", weight = "weight", xcoord = NULL,
-                             ycoord = NULL, stratumID = NULL, clusterID = NULL, weight1 = NULL,
-                             xcoord1 = NULL, ycoord1 = NULL, sizeweight = FALSE, sweight = NULL,
-                             sweight1 = NULL, popcorrect = FALSE, fpcsize = NULL, Ncluster = NULL,
-                             stage1size = NULL, popsize = NULL, vartype = "Local", jointprob = "overton",
-                             conf = 95) {
+attrisk_analysis <- function(
+  dframe, vars_response, vars_stressor,
+  response_levels = rep(list(c("Poor", "Good")), length(vars_response)),
+  stressor_levels = rep(list(c("Poor", "Good")), length(vars_stressor)),
+  subpops = NULL, siteID = "siteID", weight = "weight", xcoord = NULL,
+  ycoord = NULL, stratumID = NULL, clusterID = NULL, weight1 = NULL,
+  xcoord1 = NULL, ycoord1 = NULL, sizeweight = FALSE, sweight = NULL,
+  sweight1 = NULL, popcorrect = FALSE, fpcsize = NULL, Ncluster = NULL,
+  stage1size = NULL, popsize = NULL, vartype = "Local", jointprob = "overton",
+  conf = 95) {
 
   # Create a vector for error messages
 
