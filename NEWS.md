@@ -2,7 +2,23 @@
 
 ## Major Updates
 
-* 
+* Syntax for the `grts()` (Generalized Random Tessellation Stratified Designs) and the `irs()` (Independent Random Samling Designs) functions has been significantly simplified. These functions now require the sample frame be an `sf` object.  
+
+* The `grts()` and `irs()` functions now accomodate legacy (or historical) sites sites, a minimum distance between sites, and two approaches for selecting replacement sites (reverse heirarchical ordering and nearest neighbor).
+
+* Syntax for the analysis functions (`*_analysis()`) has been significantly simplified. 
+
+* Trend analysis is now available using the `trend_analysis()` function.
+
+* `plot()` functions have been added to visualize sample frames and design objects.
+
+* `summary()` functions have been added to summarize sample frames, design objects, and design frames.
+
+* The `spbalance()` function used to calculate the spatial balance of a design is now available for unequal probability and proportional probability designs.
+
+## Breaking Changes
+
+* Several functions have changed and version 5.0.0 is not backwards compatible with previous versions. Though we recommend users upgrade existing code to work with the current version's simpler implementations, backwards compatibility can be achieved by downloading previous versions.
 
 # spsurvey 4.1.2 (2020-03-31)
 
