@@ -23,7 +23,8 @@
 #' }
 dframe <- function(object) {
   if ("dframe" %in% class(object)) {
-    stop("object is already an dframe object")
+    dframe <- structure(object, class = c("dframe", class(object)[-which(class(object) == "dframe")]))
+    return(dframe)
   }
   if ("sf" %in% class(object)) {
     dframe <- structure(object, class = c("dframe", class(object)))
