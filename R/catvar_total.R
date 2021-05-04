@@ -1,4 +1,4 @@
-###############################################################################
+################################################################################
 # Function: catvar_total (not exported)
 # Programmer: Tom Kincaid
 # Date: April 21, 2020
@@ -7,6 +7,8 @@
 #          the response varible.
 # Revised: April 28, 2021 to use the SRS estimator when the local mean estimator
 #          fails to produce a valid estimate
+# Revised: May 3 2021 to correct an error that occurs when warning messages for
+#          unstratified samples are added to the warn_df data frame
 #
 #' Variance Estimates of the Estimated Size for Categorical Data
 #'
@@ -104,17 +106,20 @@
 #' @keywords survey
 #'
 #' @noRd
-###############################################################################
+################################################################################
 
 catvar_total <- function(z, wgt, x, y, size_names, stratum_ind, stratum_level,
-                         cluster_ind, clusterID, wgt1, x1, y1, pcfactor_ind, fpcsize, Ncluster,
-                         stage1size, vartype, warn_ind, warn_df, warn_vec) {
+                         cluster_ind, clusterID, wgt1, x1, y1, pcfactor_ind,
+                         fpcsize, Ncluster, stage1size, vartype, warn_ind,
+                         warn_df, warn_vec) {
 
   # Assign the function name
 
   fname <- "catvar_total"
 
+  #
   # Branch to handle two-stage and single-stage samples
+  #
 
   if (cluster_ind) {
 
@@ -169,18 +174,18 @@ catvar_total <- function(z, wgt, x, y, size_names, stratum_ind, stratum_level,
         warn_ind <- TRUE
         act <- "The simple random sampling variance estimator was used.\n"
         if (stratum_ind) {
-          warn <- paste("There are less than four response values for stage one sampling unit ", cluster_levels[i], "\nin stratum ", stratum_level, ", the simple random sampling variance estimator \nwas used to calculate variance of the category size estimates.\n", sep = "")
+          warn <- paste0("There are less than four response values for stage one sampling unit \"", cluster_levels[i], "\"\nin stratum \"", stratum_level, "\", the simple random sampling variance estimator was used \nto calculate variance of the category total estimates.\n")
           warn_df <- rbind(warn_df, data.frame(
-            func = I(fname),
-            subpoptype = warn_vec[1], subpop = warn_vec[2], indicator = warn_vec[3],
-            stratum = I(stratum_level), warning = I(warn), action = I(act)
+            func = I(fname), subpoptype = warn_vec[1], subpop = warn_vec[2],
+            indicator = warn_vec[3], stratum = stratum_level, warning = I(warn),
+            action = I(act)
           ))
         } else {
-          warn <- paste("There are less than four response values for stage one sampling unit ", cluster_levels[i], ", \nthe simple random sampling variance estimator was used to calculate variance of \nthe category size estimates.\n", sep = "")
+          warn <- paste0("There are less than four response values for stage one sampling unit \"", cluster_levels[i], "\", \nthe simple random sampling variance estimator was used to calculate variance of the \ncategory total estimates.\n")
           warn_df <- rbind(warn_df, data.frame(
-            func = I(fname),
-            subpoptype = warn_vec[1], subpop = warn_vec[2], indicator = warn_vec[3],
-            stratum = NA, warning = I(warn), action = I(act)
+            func = I(fname), subpoptype = warn_vec[1], subpop = warn_vec[2],
+            indicator = warn_vec[3], stratum = NA, warning = I(warn),
+            action = I(act)
           ))
         }
         vartype <- "SRS"
@@ -200,15 +205,25 @@ catvar_total <- function(z, wgt, x, y, size_names, stratum_ind, stratum_level,
             1 / wgt2_lst[[i]]
           )
           if(is.null(weight_lst)) {
-            warn_ind <- TRUE
-            act <- "The simple random sampling variance estimator was used.\n"
-            warn <- paste0("The local mean variance estimator cannot calculate valid estimates for stage one \nsampling unit \"", cluster_levels[i], "\", the simple random sampling variance estimator was used to \ncalculate variance of the category size estimates.\n")
-            warn_df <- rbind(warn_df, data.frame(
-              func = I(fname),
-              subpoptype = warn_vec[1], subpop = warn_vec[2],
-              indicator = warn_vec[3], stratum = stratum_level,
-              warning = I(warn), action = I(act)
-            ))
+            if (stratum_ind) {
+              warn_ind <- TRUE
+              act <- "The simple random sampling variance estimator was used.\n"
+              warn <- paste0("The local mean variance estimator cannot calculate valid estimates for stage one \nsampling unit \"", cluster_levels[i], "\" in stratum \"", stratum_level, "\", the simple random sampling \nvariance estimator was used to calculate variance of the category total estimates.\n")
+              warn_df <- rbind(warn_df, data.frame(
+                func = I(fname), subpoptype = warn_vec[1], subpop = warn_vec[2],
+                indicator = warn_vec[3], stratum = stratum_level,
+                warning = I(warn), action = I(act)
+              ))
+            } else {
+              warn_ind <- TRUE
+              act <- "The simple random sampling variance estimator was used.\n"
+              warn <- paste0("The local mean variance estimator cannot calculate valid estimates for stage one \nsampling unit \"", cluster_levels[i], "\", the simple random sampling variance estimator was used \nto calculate variance of the category total estimates.\n")
+              warn_df <- rbind(warn_df, data.frame(
+                func = I(fname), subpoptype = warn_vec[1], subpop = warn_vec[2],
+                indicator = warn_vec[3], stratum = NA, warning = I(warn),
+                action = I(act)
+              ))
+            }
             var2est[i, ] <- pcfactor * n * apply(im, 2, var)
           } else {
             var2est[i, ] <- pcfactor * apply(im, 2, localmean_var, weight_lst)
@@ -228,14 +243,14 @@ catvar_total <- function(z, wgt, x, y, size_names, stratum_ind, stratum_level,
       warn_ind <- TRUE
       act <- "The simple random sampling variance estimator was used.\n"
       if (stratum_ind) {
-        warn <- paste("There are less than four stage one sampling units in stratum ", stratum_level, ", \nthe simple random sampling variance estimator was used to calculate variance of \nthe category size estimates.\n", sep = "")
+        warn <- paste("There are less than four stage one sampling units in stratum ", stratum_level, ", \nthe simple random sampling variance estimator was used to calculate variance of \nthe category total estimates.\n", sep = "")
         warn_df <- rbind(warn_df, data.frame(
           func = I(fname),
           subpoptype = warn_vec[1], subpop = warn_vec[2], indicator = warn_vec[3],
           stratum = I(stratum_level), warning = I(warn), action = I(act)
         ))
       } else {
-        warn <- paste("There are less than four stage one sampling units, the simple random sampling \nvariance estimator was used to calculate variance of the category size \nestimates.\n", sep = "")
+        warn <- paste("There are less than four stage one sampling units, the simple random sampling \nvariance estimator was used to calculate variance of the category total \nestimates.\n", sep = "")
         warn_df <- rbind(warn_df, data.frame(
           func = I(fname),
           subpoptype = warn_vec[1], subpop = warn_vec[2], indicator = warn_vec[3],
@@ -254,15 +269,25 @@ catvar_total <- function(z, wgt, x, y, size_names, stratum_ind, stratum_level,
     if (vartype == "Local") {
       weight_lst <- localmean_weight(x1_u, y1_u, 1 / wgt1_u)
       if(is.null(weight_lst)) {
-        warn_ind <- TRUE
-        act <- "The simple random sampling variance estimator was used.\n"
-        warn <- paste0("The local mean variance estimator cannot calculate valid estimates, the simple random \nsampling variance estimator was used to calculate variance of the category size \nestimates.\n")
-        warn_df <- rbind(warn_df, data.frame(
-          func = I(fname),
-          subpoptype = warn_vec[1], subpop = warn_vec[2],
-          indicator = warn_vec[3], stratum = stratum_level,
-          warning = I(warn), action = I(act)
-        ))
+        if (stratum_ind) {
+          warn_ind <- TRUE
+          act <- "The simple random sampling variance estimator was used.\n"
+          warn <- paste0("The local mean variance estimator cannot calculate valid estimates for stratum \n\"", stratum_level, "\", the simple random sampling variance estimator was used to calculate \nvariance of the category total estimates.\n")
+          warn_df <- rbind(warn_df, data.frame(
+            func = I(fname), subpoptype = warn_vec[1], subpop = warn_vec[2],
+            indicator = warn_vec[3], stratum = stratum_level, warning = I(warn),
+            action = I(act)
+          ))
+        } else {
+          warn_ind <- TRUE
+          act <- "The simple random sampling variance estimator was used.\n"
+          warn <- paste0("The local mean variance estimator cannot calculate valid estimates, the simple random \nsampling variance estimator was used to calculate variance of the category total \nestimates.\n")
+          warn_df <- rbind(warn_df, data.frame(
+            func = I(fname), subpoptype = warn_vec[1], subpop = warn_vec[2],
+            indicator = warn_vec[3], stratum = NA,
+            warning = I(warn), action = I(act)
+          ))
+        }
         varest <- pcfactor*ncluster*apply(total2est * matrix(rep(wgt1_u, m), nrow = ncluster), 2, var) + apply(var2est * matrix(rep(wgt1_u, m), nrow = ncluster), 2, sum)
       } else {
         varest <- pcfactor * apply(total2est * matrix(rep(wgt1_u, m),
@@ -302,18 +327,18 @@ catvar_total <- function(z, wgt, x, y, size_names, stratum_ind, stratum_level,
       warn_ind <- TRUE
       act <- "The simple random sampling variance estimator was used.\n"
       if (stratum_ind) {
-        warn <- paste("There are less than four response values in stratum ", stratum_level, ", \nthe simple random sampling variance estimator was used to calculate variance of \nthe category size estimates.\n", sep = "")
+        warn <- paste0("There are less than four response values in stratum \"", stratum_level, "\", the simple random \nsampling variance estimator was used to calculate variance of the category total \nestimates.\n")
         warn_df <- rbind(warn_df, data.frame(
-          func = I(fname),
-          subpoptype = warn_vec[1], subpop = warn_vec[2], indicator = warn_vec[3],
-          stratum = I(stratum_level), warning = I(warn), action = I(act)
+          func = I(fname), subpoptype = warn_vec[1], subpop = warn_vec[2],
+          indicator = warn_vec[3], stratum = stratum_level, warning = I(warn),
+          action = I(act)
         ))
       } else {
-        warn <- "\nThere are less than four response values, the simple random sampling variance \nestimator was used to calculate variance of the category size estimates.\n"
+        warn <- paste0("\nThere are less than four response values, the simple random sampling variance estimator \nwas used to calculate variance of the category total estimates.\n")
         warn_df <- rbind(warn_df, data.frame(
-          func = I(fname),
-          subpoptype = warn_vec[1], subpop = warn_vec[2], indicator = warn_vec[3],
-          stratum = NA, warning = I(warn), action = I(act)
+          func = I(fname), subpoptype = warn_vec[1], subpop = warn_vec[2],
+          indicator = warn_vec[3], stratum = NA, warning = I(warn),
+          action = I(act)
         ))
       }
       vartype <- "SRS"
@@ -328,15 +353,25 @@ catvar_total <- function(z, wgt, x, y, size_names, stratum_ind, stratum_level,
     if (vartype == "Local") {
       weight_lst <- localmean_weight(x, y, 1 / wgt)
       if(is.null(weight_lst)) {
-        warn_ind <- TRUE
-        act <- "The simple random sampling variance estimator was used.\n"
-        warn <- paste0("The local mean variance estimator cannot calculate valid estimates, the simple random \nsampling variance estimator was used to calculate variance of the category size \nestimates.\n")
-        warn_df <- rbind(warn_df, data.frame(
-          func = I(fname),
-          subpoptype = warn_vec[1], subpop = warn_vec[2],
-          indicator = warn_vec[3], stratum = stratum_level,
-          warning = I(warn), action = I(act)
-        ))
+        if (stratum_ind) {
+          warn_ind <- TRUE
+          act <- "The simple random sampling variance estimator was used.\n"
+          warn <- paste0("The local mean variance estimator cannot calculate valid estimates for stratum \n\"", stratum_level, "\", the simple random sampling variance estimator was used to calculate \nvariance of the category total estimates.\n")
+          warn_df <- rbind(warn_df, data.frame(
+            func = I(fname), subpoptype = warn_vec[1], subpop = warn_vec[2],
+            indicator = warn_vec[3], stratum = stratum_level, warning = I(warn),
+            action = I(act)
+          ))
+        } else {
+          warn_ind <- TRUE
+          act <- "The simple random sampling variance estimator was used.\n"
+          warn <- paste0("The local mean variance estimator cannot calculate valid estimates, the simple random \nsampling variance estimator was used to calculate variance of the category total \nestimates.\n")
+          warn_df <- rbind(warn_df, data.frame(
+            func = I(fname), subpoptype = warn_vec[1], subpop = warn_vec[2],
+            indicator = warn_vec[3], stratum = NA, warning = I(warn),
+            action = I(act)
+          ))
+        }
         varest <- pcfactor * n * apply(im, 2, var)
       } else {
         varest <- pcfactor * apply(im, 2, localmean_var, weight_lst)
@@ -345,7 +380,7 @@ catvar_total <- function(z, wgt, x, y, size_names, stratum_ind, stratum_level,
       varest <- pcfactor * n * apply(im, 2, var)
     }
 
-    # End section for a single-stage sample
+    # End of section for a single-stage sample
 
   }
   if (!is.null(varest)) {
@@ -355,5 +390,6 @@ catvar_total <- function(z, wgt, x, y, size_names, stratum_ind, stratum_level,
   # Return the indicator for type of variance estimator, the variance estimate,
   # the warning message indicator, and the warn_df data frame
 
-  list(vartype = vartype, varest = varest, warn_ind = warn_ind, warn_df = warn_df)
+  list(vartype = vartype, varest = varest, warn_ind = warn_ind,
+    warn_df = warn_df)
 }
