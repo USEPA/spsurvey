@@ -23,16 +23,16 @@
 #' ###############################################################################
 sframe <- function(object) {
   if ("sframe" %in% class(object)) {
-    sframe <- structure(object, class = c("sframe", class(object)[-which(class(object) == "sframe")]))
-    return(sframe)
+    new_sframe <- structure(object, class = c("sframe", class(object)[-which(class(object) == "sframe")]))
+    return(new_sframe)
   }
   if ("sf" %in% class(object)) {
-    sframe <- structure(object, class = c("sframe", class(object)))
-    return(sframe)
+    new_sframe <- structure(object, class = c("sframe", class(object)))
+    return(new_sframe)
   } else if (!is.null(attr(class(object), "package")) && "sp" %in% attr(class(object), "package")) {
-    sframe <- st_as_sf(object)
-    sframe <- structure(sframe, class = c("sframe", class(sframe)))
-    return(sframe)
+    object_sf <- st_as_sf(object)
+    new_sframe <- structure(st_as_sf(object), class = c("sframe", class(object_sf)))
+    return(new_sframe)
   } else {
     stop("Input must be an sf object or an sp object")
   }

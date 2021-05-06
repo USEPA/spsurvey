@@ -23,19 +23,19 @@
 #' }
 dframe <- function(object) {
   if ("dframe" %in% class(object)) {
-    dframe <- structure(object, class = c("dframe", class(object)[-which(class(object) == "dframe")]))
-    return(dframe)
+    new_dframe <- structure(object, class = c("dframe", class(object)[-which(class(object) == "dframe")]))
+    return(new_dframe)
   }
   if ("sf" %in% class(object)) {
-    dframe <- structure(object, class = c("dframe", class(object)))
-    return(dframe)
+    new_dframe <- structure(object, class = c("dframe", class(object)))
+    return(new_dframe)
   } else if (!is.null(attr(class(object), "package")) && "sp" %in% attr(class(object), "package")) {
-    dframe <- st_as_sf(object)
-    dframe <- structure(dframe, class = c("dframe", class(dframe)))
-    return(dframe)
+    object_sf <- st_as_sf(object)
+    new_dframe <- structure(dframe, class = c("dframe", class(object_sf)))
+    return(new_dframe)
   } else if ("data.frame" %in% class(object)) {
-    dframe <- structure(object, class = c("dframe", class(object)))
-    return(dframe)
+    new_dframe <- structure(object, class = c("dframe", class(object)))
+    return(new_dframe)
   } else {
     stop("Input must be an sf object, sp object, or data frame")
   }
