@@ -16,6 +16,7 @@
 #          class "data.frame"
 # Revised: May 4 2021 to avoid warning messages being generated during creation
 #          of help files
+# Revised: May 6 2021 to ensure that sf objects do not belong to class tbl_df
 #
 #' Attributable Risk Analysis for Probability Survey Data
 #'
@@ -278,19 +279,6 @@ attrisk_analysis <- function(
     stop("\nThe dframe argument must be provided.\n")
   }
 
-  # If the dframe argument is a tibble or does not belong to class
-  # "data.frame", coerce the argument to class "data.frame"
-
-  if ("tbl_df" %in% class(dframe) | !("data.frame" %in% class(dframe))) {
-    dframe <- as.data.frame(dframe)
-  }
-
-  # Ensure that the dframe argument does not contain zero rows
-
-  if (nrow(dframe) == 0) {
-    stop("\nThe dframe argument contains zero rows.\n")
-  }
-
   # If the dframe argument is an sf object, extract coordinates from the
   # geometry column, assign values "xcoord" and "ycoord" to arguments xcoord
   # and ycoord, respectively, and drop the geometry column from the object
@@ -304,8 +292,21 @@ attrisk_analysis <- function(
     dframe <- st_set_geometry(dframe, NULL)
   }
 
-  # Ensure that unused levels are dropped from factor variables in the dframe data
-  # frame
+  # If the dframe argument is a tibble or does not belong to class
+  # "data.frame", coerce the argument to class "data.frame"
+
+  if ("tbl_df" %in% class(dframe) | !("data.frame" %in% class(dframe))) {
+    dframe <- as.data.frame(dframe)
+  }
+
+  # Ensure that the dframe argument does not contain zero rows
+
+  if (nrow(dframe) == 0) {
+    stop("\nThe dframe argument contains zero rows.\n")
+  }
+
+  # Ensure that unused levels are dropped from factor variables in the dframe
+  # data frame
 
   dframe <- droplevels(dframe)
 

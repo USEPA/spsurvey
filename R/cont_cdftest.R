@@ -14,6 +14,7 @@
 #          class "data.frame"
 # Revised: May 4 2021 to avoid warning messages being generated during creation
 #          of help files
+# Revised: May 6 2021 to ensure that sf objects do not belong to class tbl_df
 #
 #' Cumulative Distribution Function Inference for a Probability Survey
 #'
@@ -324,6 +325,19 @@ cont_cdftest <- function(
     stop("\nThe dframe argument must be provided.\n")
   }
 
+  # If the dframe argument is an sf object, extract coordinates from the
+  # geometry column, assign values "xcoord" and "ycoord" to arguments xcoord and
+  # ycoord, respectively, and drop the geometry column from the object
+
+  if ("sf" %in% class(dframe)) {
+    temp <- st_coordinates(dframe)
+    xcoord <- "xcoord"
+    dframe$xcoord <- temp[, "X"]
+    ycoord <- "ycoord"
+    dframe$ycoord <- temp[, "Y"]
+    dframe <- st_set_geometry(dframe, NULL)
+  }
+
   # If the dframe argument is a tibble or does not belong to class
   # "data.frame", coerce the argument to class "data.frame"
 
@@ -337,21 +351,8 @@ cont_cdftest <- function(
     stop("\nThe dframe argument contains zero rows.\n")
   }
 
-  # If the dframe argument is an sf object, extract coordinates from the geometry
-  # column, assign values "xcoord" and "ycoord" to arguments xcoord and ycoord,
-  # respectively, and drop the geometry column from the object
-
-  if ("sf" %in% class(dframe)) {
-    temp <- st_coordinates(dframe)
-    xcoord <- "xcoord"
-    dframe$xcoord <- temp[, "X"]
-    ycoord <- "ycoord"
-    dframe$ycoord <- temp[, "Y"]
-    dframe <- st_set_geometry(dframe, NULL)
-  }
-
-  # Ensure that unused levels are dropped from factor variables in the dframe data
-  # frame
+  # Ensure that unused levels are dropped from factor variables in the dframe
+  # data frame
 
   dframe <- droplevels(dframe)
 

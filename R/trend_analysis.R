@@ -12,6 +12,7 @@
 #          class "data.frame"
 # Revised: May 4 2021 to avoid warning messages being generated during creation
 #          of help files
+# Revised: May 6 2021 to ensure that sf objects do not belong to class tbl_df
 #
 #' Estimation of Trend across Time for a Series of Probability Surveys
 #'
@@ -374,34 +375,21 @@ trend_analysis <- function(
   Ncluster = NULL, stage1size = NULL, popsize = NULL, invprboot = TRUE,
   nboot = 1000, vartype = "Local", jointprob = "overton", conf = 95) {
 
-# Create a vector for error messages
+  # Create a vector for error messages
 
   error_ind <- FALSE
   error_vec <- NULL
 
-# Create a data frame for warning messages
+  # Create a data frame for warning messages
 
   warn_ind <- FALSE
   warn_df <- NULL
   fname <- "trend_analysis"
 
-# Ensure that the dframe argument was provided
+  # Ensure that the dframe argument was provided
 
   if(missing(dframe)) {
     stop("\nThe dframe argument must be provided.\n")
-  }
-
-  # If the dframe argument is a tibble or does not belong to class
-  # "data.frame", coerce the argument to class "data.frame"
-
-  if ("tbl_df" %in% class(dframe) | !("data.frame" %in% class(dframe))) {
-    dframe <- as.data.frame(dframe)
-  }
-
-  # Ensure that the dframe argument does not contain zero rows
-
-  if (nrow(dframe) == 0) {
-    stop("\nThe dframe argument contains zero rows.\n")
   }
 
   # If the dframe argument is an sf object, extract coordinates from the geometry
@@ -417,12 +405,25 @@ trend_analysis <- function(
     dframe <- st_set_geometry(dframe, NULL)
   }
 
-# Ensure that unused levels are dropped from factor variables in the dframe data
-# frame
+  # If the dframe argument is a tibble or does not belong to class
+  # "data.frame", coerce the argument to class "data.frame"
+
+  if ("tbl_df" %in% class(dframe) | !("data.frame" %in% class(dframe))) {
+    dframe <- as.data.frame(dframe)
+  }
+
+  # Ensure that the dframe argument does not contain zero rows
+
+  if (nrow(dframe) == 0) {
+    stop("\nThe dframe argument contains zero rows.\n")
+  }
+
+  # Ensure that unused levels are dropped from factor variables in the dframe data
+  # frame
 
   dframe <- droplevels(dframe)
 
-# Ensure that the dframe data frame contains the site ID variable
+  # Ensure that the dframe data frame contains the site ID variable
 
   if (!(siteID %in% names(dframe))) {
     ind <- FALSE
@@ -433,7 +434,7 @@ trend_analysis <- function(
     ind <- TRUE
   }
 
-# Check site IDs for repeat values and, as necessary, create unique site IDs
+  # Check site IDs for repeat values and, as necessary, create unique site IDs
 
   if (ind) {
     dframe$siteID_org <- dframe[, siteID]
@@ -444,8 +445,8 @@ trend_analysis <- function(
     }
   }
 
-# Ensure that the dframe data frame contains the time period identifier variable
-# and ensure that the variable is numeric
+  # Ensure that the dframe data frame contains the time period identifier
+  # variable and ensure that the variable is numeric
 
   if(!(yearID %in% names(dframe))) {
     error_ind <- TRUE
@@ -462,7 +463,7 @@ trend_analysis <- function(
     }
   }
 
-# Ensure that the dframe data frame contains the survey weight variable
+  # Ensure that the dframe data frame contains the survey weight variable
 
   if(!(weight %in% names(dframe))) {
     error_ind <- TRUE
@@ -470,7 +471,7 @@ trend_analysis <- function(
     error_vec <- c(error_vec, msg)
   }
 
-# Create a list containing names of survey design variables
+  # Create a list containing names of survey design variables
 
   design_names <- list(
     siteID = siteID,
@@ -488,9 +489,9 @@ trend_analysis <- function(
     Ncluster = Ncluster,
     stage1size = stage1size)
 
-# Ensure that a value was provided for at least one of the vars_cat
-# (categoroical response variable names) or vars_cont (continuous response
-# variable names) arguments
+  # Ensure that a value was provided for at least one of the vars_cat
+  # (categoroical response variable names) or vars_cont (continuous response
+  # variable names) arguments
 
   if(missing(vars_cat) & missing(vars_cont)) {
     error_ind <- TRUE
@@ -498,9 +499,9 @@ trend_analysis <- function(
     error_vec <- c(error_vec, msg)
   }
 
-# If a value was not provided for the subpops (subpopulation names) argument,
-# assign the value "All_Sites" to the subpops argument and create a factor
-# named "All_Sites" in the dframe data frame that takes the value "All Sites"
+  # If a value was not provided for the subpops (subpopulation names) argument,
+  # assign the value "All_Sites" to the subpops argument and create a factor
+  # named "All_Sites" in the dframe data frame that takes the value "All Sites"
 
   if(is.null(subpops)) {
     subpops <- "All_Sites"
@@ -508,7 +509,7 @@ trend_analysis <- function(
     dframe$All_Sites <- factor(dframe$All_Sites)
   }
 
-# Ensure that arguments model_cat and model_cont contain valid values
+  # Ensure that arguments model_cat and model_cont contain valid values
 
   if(!(model_cat %in% c("SLR", "WLR"))) {
     error_ind <- TRUE
@@ -522,13 +523,13 @@ trend_analysis <- function(
     error_vec <- c(error_vec, msg)
   }
 
-# As necessary, ensure that vartype does not equal "Local"
+  # As necessary, ensure that vartype does not equal "Local"
 
   if(is.null(vars_cat) & model_cont == "PO") {
     vartype <- "SRS"
   }
 
-# Check input arguments
+  # Check input arguments
   temp <- input_check(dframe, design_names, vars_cat, vars_cont, NULL, NULL,
     subpops, sizeweight, popcorrect, popsize, vartype, jointprob, conf,
     error_ind = error_ind, error_vec = error_vec)
@@ -541,8 +542,8 @@ trend_analysis <- function(
   error_ind <- temp$error_ind
   error_vec <- temp$error_vec
 
-# As necessary, output a message indicating that error messages were generated
-# during execution of the program
+  # As necessary, output a message indicating that error messages were generated
+  # during execution of the program
 
   if(error_ind) {
     error_vec <<- error_vec
@@ -563,11 +564,11 @@ trend_analysis <- function(
     stop("See the preceding message(s).")
   }
 
-# Assign a logical value to the indicator variable for a stratified sample
+  # Assign a logical value to the indicator variable for a stratified sample
 
   stratum_ind <- !is.null(stratumID)
 
-# For a stratified sample, remove strata that contain a single site
+  # For a stratified sample, remove strata that contain a single site
 
   if(stratum_ind) {
     dframe[, stratumID] <- factor(dframe[, stratumID])
@@ -593,18 +594,18 @@ trend_analysis <- function(
     }
   }
 
-# Assign a logical value to the indicator variable for a two-stage sample
+  # Assign a logical value to the indicator variable for a two-stage sample
 
   cluster_ind <- !is.null(clusterID)
 
-# Create the survey design object
+  # Create the survey design object
 
   design <- survey_design(dframe, siteID, weight, stratum_ind, stratumID,
     cluster_ind, clusterID, weight1, sizeweight, sweight, sweight1, popcorrect,
     fpcsize, Ncluster, stage1size, vartype, jointprob)
 
-# If popsize is not equal to NULL, then call either the postStratify or
-# calibrate function, as appropriate
+  # If popsize is not equal to NULL, then call either the postStratify or
+  # calibrate function, as appropriate
 
   if(!is.null(popsize)) {
     if(all(class(popsize) %in% c("data.frame", "table", "xtabs"))) {
@@ -631,9 +632,9 @@ trend_analysis <- function(
     }
   }
 
-# If popsize is not equal to NULL and vartype equals "Local", then assign
-# adjusted weights to the appropriate weight variable(s) in the design$variables
-# data frame
+  # If popsize is not equal to NULL and vartype equals "Local", then assign
+  # adjusted weights to the appropriate weight variable(s) in the
+  # design$variables data frame
 
   if(!is.null(popsize) && vartype == "Local") {
     if(cluster_ind) {
@@ -645,7 +646,7 @@ trend_analysis <- function(
     }
   }
 
-# If invprboot equals TRUE, then assign the bootstrap weights
+  # If invprboot equals TRUE, then assign the bootstrap weights
 
   if(cluster_ind) {
     bootwgt <- dframe$wgt1 * dframe$wgt2
@@ -653,66 +654,66 @@ trend_analysis <- function(
     bootwgt <- dframe$wgt
   }
 
-# Create a year variable for use in modelling
+  # Create a year variable for use in modelling
 
   Wyear <- "Wyear"
   dframe$Wyear <- dframe[, yearID]
   dframe$Wyear <- dframe$Wyear - min(dframe$Wyear)
 
-# Assign the confidence bound multiplier
+  # Assign the confidence bound multiplier
 
   mult  <- qnorm(0.5 + (conf/100)/2)
 
-# Create the output object
+  # Create the output object
 
   trendsum <- list(catsum = NULL, contsum = NULL)
 
-#
-# Begin the section for categorical response variables
-#
+  #
+  # Begin the section for categorical response variables
+  #
 
   if(!is.null(vars_cat)) {
 
-# Loop through all subpopulations (domains)
+    # Loop through all subpopulations (domains)
 
     for(itype in subpops) {
 
       lev_itype <- levels(dframe[, itype])
       nlev_itype <- length(lev_itype)
 
-# Loop through all  response variables
+      # Loop through all  response variables
 
       for(ivar in vars_cat) {
 
         lev_ivar <- levels(dframe[, ivar])
         nlev_ivar <- length(lev_ivar)
 
-# Loop through all levels of a subpopulation
+        # Loop through all levels of a subpopulation
 
         for(isubpop in lev_itype) {
 
-# Determine the set of years for this subpopulation
+          # Determine the set of years for this subpopulation
 
           subpop_ind <- dframe[, itype] %in% isubpop
           years <- sort(unique(dframe[subpop_ind, Wyear]))
           nyears <- length(years)
 
-# Create matrices to contain category estimates and variance estimates for each
-# time period
+          # Create matrices to contain category estimates and variance estimates
+          # for each time period
 
           catest <- matrix(NA, nlev_ivar, nyears)
           varest <- matrix(NA, nlev_ivar, nyears)
 
-# Loop through all time periods for this subpopulation
+          # Loop through all time periods for this subpopulation
 
           for(iyear in 1:nyears) {
 
-# Select sites in a year for this subpopulation
+            # Select sites in a year for this subpopulation
 
             subpop_ind <- dframe[, itype] %in% isubpop &
               dframe$Wyear %in% years[iyear]
 
-# Determine whether the time period for this subpopulation is empty
+            # Determine whether the time period for this subpopulation is empty
 
             if(all(is.na(dframe[subpop_ind, ivar]))) {
               warn_ind <- TRUE
@@ -725,7 +726,7 @@ trend_analysis <- function(
               next
             }
 
-# Determine whether the subpopulation contains a single value
+            # Determine whether the subpopulation contains a single value
 
             tst <- !is.na(dframe[subpop_ind, ivar])
             if(sum(tst) == 1) {
@@ -739,7 +740,7 @@ trend_analysis <- function(
               next
             }
 
-# Estimate category proportions for the response variable
+            # Estimate category proportions for the response variable
 
             temp <- category_est(NULL, droplevels(subset(dframe, subpop_ind)),
               itype, isubpop, 1, ivar, lev_ivar, nlev_ivar,
@@ -749,7 +750,8 @@ trend_analysis <- function(
             warn_ind <- temp$warn_ind
             warn_df <- temp$warn_df
 
-# Assign the category estimate and variance estimate for each trend category
+            # Assign the category estimate and variance estimate for each trend
+            # category
 
             for(icat in 1:nlev_ivar) {
               if(lev_ivar[icat] %in% temp.cat$Category) {
@@ -762,11 +764,11 @@ trend_analysis <- function(
               }
             }
 
-# End of the loop for years
+            # End of the loop for years
 
           }
 
-# Perform linear regression and assign results
+          # Perform linear regression and assign results
 
           for(icat in 1:nlev_ivar) {
             tst <- !is.na(catest[icat,])
@@ -801,76 +803,78 @@ trend_analysis <- function(
             rsq <- summary(regest)$r.squared
             adjrsq <- summary(regest)$adj.r.squared
 
-# Assign the trend estimates for the response variable to a data frame
+            # Assign the trend estimates for the response variable to a data
+            # frame
 
             trendsum$catsum <- rbind(trendsum$catsum, data.frame(itype, isubpop,
               ivar, lev_ivar[icat], trend, t_stderror, t_lcb, t_ucb, t_pval,
               intercept, i_stderror, i_lcb, i_ucb, i_pval, rsq, adjrsq))
           }
 
-# End of the loop for levels of a subpopulation
+          # End of the loop for levels of a subpopulation
 
         }
 
-# End of the loop for response variables
+        # End of the loop for response variables
 
       }
 
-# End of the loop for subpopulations
+      # End of the loop for subpopulations
 
     }
 
-# End of the section for categorical response variables
+    # End of the section for categorical response variables
 
   }
 
-#
-# Begin the section for continuous response variables
-#
+  #
+  # Begin the section for continuous response variables
+  #
 
   if(!is.null(vars_cont)) {
 
-# Loop through all subpopulations (domains)
+    # Loop through all subpopulations (domains)
 
     for(itype in subpops) {
 
       lev_itype <- levels(dframe[, itype])
       nlev_itype <- length(lev_itype)
 
-# Loop through all  response variables
+      # Loop through all  response variables
 
       for(ivar in vars_cont) {
 
-# Loop through all levels of a subpopulation
+        # Loop through all levels of a subpopulation
 
         for(isubpop in lev_itype) {
 
-# Section for the simple linear regression and weighted linear regression models
+          # Section for the simple linear regression and weighted linear
+          # regression models
 
           if(model_cont %in% c("SLR", "WLR")) {
 
-# Determine the set of years for this subpopulation
+            # Determine the set of years for this subpopulation
 
             subpop_ind <- dframe[, itype] %in% isubpop
             years <- sort(unique(dframe[subpop_ind, Wyear]))
             nyears <- length(years)
 
-# Create vectors to contain mean estimates and variance estimates for each time
-# period
+            # Create vectors to contain mean estimates and variance estimates
+            # for each time period
 
             contest <- rep(NA, nyears)
             varest <- rep(NA, nyears)
 
-# Loop through all time periods for this subpopulation
+            # Loop through all time periods for this subpopulation
 
             for(iyear in 1:nyears) {
 
-# Select sites in a year for this subpopulation
+              # Select sites in a year for this subpopulation
 
               subpop_ind <- dframe[, itype] %in% isubpop &
                 dframe$Wyear %in% years[iyear]
 
-# Determine whether the time period for this subpopulation is empty
+              # Determine whether the time period for this subpopulation is empty
 
               if(all(is.na(dframe[subpop_ind, ivar]))) {
                 warn_ind <- TRUE
@@ -883,7 +887,7 @@ trend_analysis <- function(
                 next
               }
 
-# Determine whether the subpopulation contains a single value
+              # Determine whether the subpopulation contains a single value
 
               tst <- !is.na(dframe[subpop_ind, ivar])
               if(sum(tst) == 1) {
@@ -897,7 +901,7 @@ trend_analysis <- function(
                 next
               }
 
-# Estimate the mean for the response variable
+              # Estimate the mean for the response variable
 
               temp <- percentile_est(NULL, droplevels(subset(dframe, subpop_ind)),
                 itype, isubpop, 1, ivar, subset(design, subpop_ind), design_names,
@@ -906,17 +910,17 @@ trend_analysis <- function(
               warn_ind <- temp$warn_ind
               warn_df <- temp$warn_df
 
-# Assign the mean estimate and variance estimate
+              # Assign the mean estimate and variance estimate
 
               tst <- temp.cont$Statistic == "Mean"
               contest[iyear] <- temp.cont$Estimate[tst]
               varest[iyear] <- (temp.cont$StdError[tst])^2
 
-# End of the loop for years
+              # End of the loop for years
 
             }
 
-# Perform linear regression and assign results
+            # Perform linear regression and assign results
 
             if(model_cont == "SLR" ) {
               regest <- lm(contest ~ years)
@@ -938,17 +942,17 @@ trend_analysis <- function(
             rsq <- summary(regest)$r.squared
             adjrsq <- summary(regest)$adj.r.squared
 
-# Assign estimates for the response variable to a data frame
+            # Assign estimates for the response variable to a data frame
 
             trendsum$contsum <- rbind(trendsum$contsum,
               data.frame(itype, isubpop, ivar, trend, t_stderror, t_lcb, t_ucb,
-              t_pval, intercept, i_stderror, i_lcb, i_ucb, i_pval, rsq, adjrsq))
+                t_pval, intercept, i_stderror, i_lcb, i_ucb, i_pval, rsq, adjrsq))
 
-# Section for the Piepho and Ogutu model
+            # Section for the Piepho and Ogutu model
 
           } else if(invprboot == TRUE) {
 
-# Fit the model
+            # Fit the model
 
             if(stratum_ind) {
               eval(parse(text = paste0("regest <- lmer(", ivar, " ~ Wyear + ",
@@ -957,7 +961,7 @@ trend_analysis <- function(
               eval(parse(text = paste0("regest <- lmer(", ivar, " ~ Wyear + (1 + Wyear | siteID_org) + (1 | ", yearID, "), data = dframe, control = lmerControl(check.nobs.vs.nRE = 'warning'))")))
             }
 
-# Call the bootstrap function
+            # Call the bootstrap function
 
             if(stratum_ind) {
               bootest <- boot(dframe, bootfcn, nboot,
@@ -968,7 +972,7 @@ trend_analysis <- function(
                 ivar = ivar, siteID = "siteID_org", yearID = yearID)
             }
 
-# Assign results
+            # Assign results
 
             rslt <- apply(bootest$t, 2, mean)
             trend <- rslt[3]
@@ -992,16 +996,16 @@ trend_analysis <- function(
             var_resid <- rslt[9]
             AIC <- rslt[10]
 
-# Assign estimates for the response variable to a data frame
+            # Assign estimates for the response variable to a data frame
 
             trendsum$contsum <- rbind(trendsum$contsum,
               data.frame(itype, isubpop, ivar, trend, t_stderror, t_lcb, t_ucb,
-              t_pval, intercept, i_stderror, i_lcb, i_ucb, i_pval, var_siteint,
-              var_sitetrend, corr_site, var_year, var_resid, AIC))
+                t_pval, intercept, i_stderror, i_lcb, i_ucb, i_pval, var_siteint,
+                var_sitetrend, corr_site, var_year, var_resid, AIC))
 
           } else {
 
-# Fit the model and assign results
+            # Fit the model and assign results
 
             if(stratum_ind) {
               eval(parse(text = paste0("regest <- lmer(", ivar, " ~ Wyear + ",
@@ -1032,7 +1036,7 @@ trend_analysis <- function(
             var_resid <- vcor[5, 4]
             AIC <- extractAIC(regest)[2]
 
-# Assign estimates for the response variable to a data frame
+            # Assign estimates for the response variable to a data frame
 
             trendsum$contsum <- rbind(trendsum$catsum, data.frame(itype, isubpop,
               ivar, trend, t_stderror, t_lcb, t_ucb, t_pval, intercept,
@@ -1041,23 +1045,23 @@ trend_analysis <- function(
 
           }
 
-# End of the loop for levels of a subpopulation
+          # End of the loop for levels of a subpopulation
 
         }
 
-# End of the loop for response variables
+        # End of the loop for response variables
 
       }
 
-# End of the loop for subpopulations
+      # End of the loop for subpopulations
 
     }
 
-# End of the section for continuous response variables
+    # End of the section for continuous response variables
 
   }
 
-# Assign row names and column names to the output data frames
+  # Assign row names and column names to the output data frames
 
   if(!is.null(trendsum$catsum)) {
     nrows <- nrow(trendsum$catsum)
@@ -1074,25 +1078,25 @@ trend_analysis <- function(
     if(model_cont %in% c("SLR", "WLR")) {
       dimnames(trendsum$contsum) <- list(1:nrows, c("Type", "Subpopulation",
         "Indicator", "Trend_Estimate", "Trend_Std_Error", paste0("Trend_LCB",
-        conf, "Pct"), paste0("Trend_UCB", conf, "Pct"), "Trend_p_Value",
+          conf, "Pct"), paste0("Trend_UCB", conf, "Pct"), "Trend_p_Value",
         "Intercept_Estimate", "Intercept_Std_Error", paste0("Intercept_LCB",
-        conf, "Pct"), paste0("Intercept_UCB", conf, "Pct"),
+          conf, "Pct"), paste0("Intercept_UCB", conf, "Pct"),
         "Intercept_p_Value", "R_Squared", "Adj_R_Squared"))
     } else {
       dimnames(trendsum$contsum) <- list(1:nrows, c("Type", "Subpopulation",
         "Indicator", "Trend_Estimate", "Trend_Std_Error", paste0("Trend_LCB",
-        conf, "Pct"), paste0("Trend_UCB", conf, "Pct"), "Trend_p_Value",
+          conf, "Pct"), paste0("Trend_UCB", conf, "Pct"), "Trend_p_Value",
         "Intercept_Estimate", "Intercept_Std_Error", paste0("Intercept_LCB",
-        conf, "Pct"), paste0("Intercept_UCB", conf, "Pct"),
+          conf, "Pct"), paste0("Intercept_UCB", conf, "Pct"),
         "Intercept_p_Value", "Var_SiteInt", "Var_SiteTrend",
         "Corr_SiteIntSlope", "Var_Year", "Var_Residual", "AIC"))
     }
   }
 
-# As necessary, output a message indicating that warning messages were generated
-# during execution of the program
+  # As necessary, output a message indicating that warning messages were
+  # generated during execution of the program
 
-if(is.null(warn_df)) warn_ind <- FALSE
+  if(is.null(warn_df)) warn_ind <- FALSE
   if(warn_ind) {
     warn_df <<- warn_df
     if(nrow(warn_df) == 1)
@@ -1101,7 +1105,7 @@ if(is.null(warn_df)) warn_ind <- FALSE
       cat(paste("During execution of the program,", nrow(warn_df), "warning messages were generated.  The warning \nmessages are stored in a data frame named 'warn_df'.  Enter the following \ncommand to view the warning messages: warnprnt() \nTo view a subset of the warning messages (say, messages number 1, 3, and 5), \nenter the following command: warnprnt(m=c(1,3,5))\n"))
   }
 
-# Return the output object
+  # Return the output object
 
   trendsum
 }
