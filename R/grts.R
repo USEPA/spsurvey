@@ -80,8 +80,8 @@
 #'   the survey design.  The \code{legacy_var} is required and the contents of the variable must
 #'   either be a legacy \code{siteID} if the sample frame element is a legacy site or must
 #'   be equal to \code{NA} otherwise.
-#'   
-#' @param legacy_stratum_var The name of the variable in \code{legacy_sites} that contains the 
+#'
+#' @param legacy_stratum_var The name of the variable in \code{legacy_sites} that contains the
 #'   stratum information.
 #'
 #' @param legacy_var For finite sample frames when legacy sites are to be included in the
@@ -132,6 +132,13 @@ grts <- function(sframe, n_base, seltype = "equal", wgt_units = NULL,
                  stratum_var = NULL, caty_var = NULL, aux_var = NULL,
                  legacy_sites = NULL, legacy_stratum_var = NULL, legacy_var = NULL,
                  mindis = NULL, DesignID = "Site", SiteBegin = 1, maxtry = 10) {
+
+  # remove tibble class if it exists (for rownames warning)
+  tibble_classes <- c("tbl_df", "tbl")
+  if (any(class(sframe) %in% tibble_classes)) {
+    tibble_indices <- which(class(sframe) %in% tibble_classes)
+    class(sframe) <- class(sframe)[-tibble_indices]
+  }
 
   # Create warning indicator and data frame to collect all potential issues during
   # sample selection
