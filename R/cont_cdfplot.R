@@ -2,7 +2,9 @@
 # Function: cont_cdfplot (exported)
 # Programmer Tom Kincaid
 # Date: May 5, 2021
-#'
+# Revised: May 6, 2021 to correct an error when specifying argument type_cdf for
+#          function cdf_plot
+#
 #' Plot Cumulative Distribution Functions
 #'
 #' This function creates a pdf file containing CDF plots.  Input data for the
@@ -155,7 +157,7 @@ for(itype in 1:length(typenames)) {
       temp <- match(unique(cdfest$Indicator[tstsub]), indnames)
       for(kin in temp) {
 	    tstind <- tstsub & cdfest$Indicator == indnames[kin]
-         cdf_plot(cdfest[tstind,], units_cdf=units_cdf, type.cdf=ind_type[kin],
+         cdf_plot(cdfest[tstind,], units_cdf=units_cdf, type_cdf=ind_type[kin],
             logx=logx[kin], xlbl=xlbl[indnames[kin]], ylbl=ylbl, ylbl_r=ylbl_r,
             figlab=paste(typenames[itype], " - ", subnames[jsub], ": ",
             indnames[kin], sep=""), legloc=legloc, confcut=confcut,
