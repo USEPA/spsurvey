@@ -10,6 +10,8 @@
 #'
 #' @param object An \code{sp} or \code{sf} object
 #'
+#' @param ... Additional arguments to \code{st_as_sf()} if converting an sp object to an sf and sframe object
+#'
 #' @return An \code{dframe} object
 #'
 #' @export
@@ -21,22 +23,18 @@
 #' data("NE_lakes")
 #' NE_lakes <- dframe(NE_lakes)
 #' }
-dframe <- function(object) {
-  if ("dframe" %in% class(object)) {
-    new_dframe <- structure(object, class = c("dframe", class(object)[-which(class(object) == "dframe")]))
-    return(new_dframe)
-  }
-  if ("sf" %in% class(object)) {
+dframe <- function(object, ...) {
+  if (inherits(object, "dframe")) {
+    new_dframe <- structure(object, class = c("dframe", setdiff(object, "dframe")))
+  } else if (inherits(object, "sf")) {
     new_dframe <- structure(object, class = c("dframe", class(object)))
-    return(new_dframe)
-  } else if (!is.null(attr(class(object), "package")) && "sp" %in% attr(class(object), "package")) {
-    object_sf <- st_as_sf(object)
-    new_dframe <- structure(dframe, class = c("dframe", class(object_sf)))
-    return(new_dframe)
-  } else if ("data.frame" %in% class(object)) {
+  } else if ("sp" %in% attr(class(object), "package")) {
+    object_sf <- st_as_sf(object, ...)
+    new_dframe <- structure(object_sf, class = c("dframe", class(object_sf)))
+  } else if (inherits(object, "data.frame")) {
     new_dframe <- structure(object, class = c("dframe", class(object)))
-    return(new_dframe)
   } else {
-    stop("Input must be an sf object, sp object, or data frame")
+    stop("Input must be an sf object or an sp object")
   }
+  new_dframe
 }

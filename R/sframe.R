@@ -10,6 +10,8 @@
 #'
 #' @param object An \code{sp} or \code{sf} object
 #'
+#' @param ... Additional arguments to \code{st_as_sf()} if converting an sp object to an sf and sframe object
+#'
 #' @return An \code{sframe} object
 #'
 #'
@@ -21,19 +23,16 @@
 #' NE_lakes <- sframe(NE_lakes)
 #' }
 #' ###############################################################################
-sframe <- function(object) {
-  if ("sframe" %in% class(object)) {
-    new_sframe <- structure(object, class = c("sframe", class(object)[-which(class(object) == "sframe")]))
-    return(new_sframe)
-  }
-  if ("sf" %in% class(object)) {
+sframe <- function(object, ...) {
+  if (inherits(object, "sframe")) {
+    new_sframe <- structure(object, class = c("sframe", setdiff(object, "sframe")))
+  } else if (inherits(object, "sf")) {
     new_sframe <- structure(object, class = c("sframe", class(object)))
-    return(new_sframe)
-  } else if (!is.null(attr(class(object), "package")) && "sp" %in% attr(class(object), "package")) {
-    object_sf <- st_as_sf(object)
-    new_sframe <- structure(st_as_sf(object), class = c("sframe", class(object_sf)))
-    return(new_sframe)
+  } else if ("sp" %in% attr(class(object), "package")) {
+    object_sf <- st_as_sf(object, ...)
+    new_sframe <- structure(object_sf, class = c("sframe", class(object_sf)))
   } else {
     stop("Input must be an sf object or an sp object")
   }
+  new_sframe
 }

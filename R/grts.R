@@ -133,11 +133,10 @@ grts <- function(sframe, n_base, seltype = "equal", wgt_units = NULL,
                  legacy_sites = NULL, legacy_stratum_var = NULL, legacy_var = NULL,
                  mindis = NULL, DesignID = "Site", SiteBegin = 1, maxtry = 10) {
 
-  # remove tibble class if it exists (for rownames warning)
-  tibble_classes <- c("tbl_df", "tbl")
-  if (any(class(sframe) %in% tibble_classes)) {
-    tibble_indices <- which(class(sframe) %in% tibble_classes)
-    class(sframe) <- class(sframe)[-tibble_indices]
+
+  if (inherits(sframe, c("tbl_df", "tbl"))) { # identify if tibble class elements are present
+    class(sframe) <- setdiff(class(sframe), c("tbl_df", "tbl"))
+    # remove tibble class for rownames warning
   }
 
   # Create warning indicator and data frame to collect all potential issues during
