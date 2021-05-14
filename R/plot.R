@@ -1,5 +1,5 @@
 ###############################################################################
-# Function: plot.sframe and plot.design (exported)
+# Function: plot (exported)
 # Programmers: Michael Dumelle
 # Date: January 22, 2021
 #' Plot sample frame and design objects
@@ -11,10 +11,10 @@
 #' \code{vignette(plotting, package = "spsurvey"}. For more information on
 #' plotting in \code{sf}, run \code{?plot.sf()}.
 #'
-#' @param x object of class \code{sframe} or \code{design}.
+#' @param x object of class \code{sframe}, \code{spdesign}, or \code{dframe}.
 #'
-#' @param y ignored if \code{x} has class \code{sframe}; an object of class \code{sframe}
-#' if \code{x} has class \code{design}.
+#' @param y ignored if \code{x} has class \code{sframe} or \code{dframe}; an object of class \code{sframe}
+#' if \code{x} has class \code{spdesign}.
 #'
 #' @param formula A formula. Left hand side variables can be numeric or
 #' categorical (or factor) and right hand side variables can be categorical
@@ -47,6 +47,15 @@
 #' @param fix_bbox Should the geometry bounding box be fixed across plots?
 #' Defaults to \code{TRUE}. If \code{TRUE}, the bounding box will be the largest
 #' possible given \code{x} and \code{y}.#'
+#'
+#' @param xcoord Name of x (east-west)-coordinate in \code{x} (only required if
+#' \code{x} is not an sf object)
+#'
+#' @param ycoord Name of y (north-south)-coordinate in \code{x} (only required if
+#' \code{x} is not an sf object)
+#'
+#' @param crs Projection code for \code{xcoord} and \code{ycoord} (only
+#' required if \code{x} is not an sf object)
 #'
 #' @param ... Additional arguments to pass to \code{plot.sf()}.
 #'
@@ -276,6 +285,11 @@ plot.spdesign <- function(x, y = NULL, formula = ~sites, sites = NULL,
   plot.sframe(x = x, formula = formula, var_args = var_args, varlevel_args = varlevel_args, geom = geom, onlyshow = onlyshow, fix_bbox = fix_bbox, ...)
 }
 
+#' @name plot
+#'
+#' @method plot dframe
+#'
+#' @export
 plot.dframe <- function(x, y = NULL, formula = ~1, var_args = NULL, varlevel_args = NULL,
                         geom = FALSE, onlyshow = NULL, fix_bbox = TRUE, xcoord, ycoord, crs, ...) {
   # coerce to sf
