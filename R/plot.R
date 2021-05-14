@@ -247,10 +247,10 @@ plot.sframe <- function(x, y, formula = ~1, var_args = NULL, varlevel_args = NUL
 
 #' @name plot
 #'
-#' @method plot design
+#' @method plot spdesign
 #'
 #' @export
-plot.design <- function(x, y = NULL, formula = ~sites, sites = NULL,
+plot.spdesign <- function(x, y = NULL, formula = ~sites, sites = NULL,
                         var_args = NULL, varlevel_args = NULL, geom = FALSE, onlyshow = NULL,
                         fix_bbox = TRUE, ...) {
 
@@ -259,7 +259,7 @@ plot.design <- function(x, y = NULL, formula = ~sites, sites = NULL,
   if (is.null(sites)) {
     sites <- names(x[!vapply(x, is.null, logical(1))])
   }
-  sites <- sites[sites != "dsgn"] # remove dsgn if somehow provided
+  sites <- sites[sites != "design"] # remove design if somehow provided
   x <- x[sites]
   x_names <- names(x)
   x <- lapply(x_names, function(a) merge(x[[a]], data.frame(sites = a)))

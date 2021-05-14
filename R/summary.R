@@ -93,9 +93,9 @@ summary.dframe <- function(object, formula, onlyshow = NULL, ...) {
 }
 
 #' @name summary
-#' @method summary design
+#' @method summary spdesign
 #' @export
-summary.design <- function(object, formula, onlyshow = NULL, sites = NULL, ...) {
+summary.spdesign <- function(object, formula, onlyshow = NULL, sites = NULL, ...) {
   if (is.null(sites)) {
     sites <- c("sites_legacy", "sites_base", "sites_over", "sites_near")
   }

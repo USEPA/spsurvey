@@ -451,7 +451,7 @@ grts <- function(sframe, n_base, seltype = "equal", wgt_units = NULL,
   sites <- list(
     sites_legacy = sites_legacy, sites_base = sites_base,
     sites_over = sites_over, sites_near = sites_near,
-    dsgn = dsgn
+    design = dsgn
   )
 
   # As necessary, output a message indicating that warning messages were generated
@@ -467,7 +467,7 @@ grts <- function(sframe, n_base, seltype = "equal", wgt_units = NULL,
   }
 
   # constructor for design class
-  sites <- structure(sites, class = "design")
+  sites <- structure(sites, class = "spdesign")
 
   # return the survey design sf object
   invisible(sites)
