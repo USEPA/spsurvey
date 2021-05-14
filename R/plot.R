@@ -275,3 +275,12 @@ plot.spdesign <- function(x, y = NULL, formula = ~sites, sites = NULL,
   }
   plot.sframe(x = x, formula = formula, var_args = var_args, varlevel_args = varlevel_args, geom = geom, onlyshow = onlyshow, fix_bbox = fix_bbox, ...)
 }
+
+plot.dframe <- function(x, y = NULL, formula = ~1, var_args = NULL, varlevel_args = NULL,
+                        geom = FALSE, onlyshow = NULL, fix_bbox = TRUE, xcoord, ycoord, crs, ...) {
+  # coerce to sf
+  if (!inherits(x, "sf")) {
+    x <- st_as_sf(x, coords = c(xcoord, ycoord), crs = crs)
+  }
+  plot.sframe(x = x, formula = formula, var_args = var_args, varlevel_args = varlevel_args, geom = geom, onlyshow = onlyshow, fix_bbox = fix_bbox, ...)
+}
