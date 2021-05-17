@@ -2,7 +2,7 @@
 % Please edit documentation in R/grts.R
 \name{grts}
 \alias{grts}
-\title{Select a Generalized Random Tesselation Stratified (GRTS) sample}
+\title{Select a Generalized Random Tesselation Stratified (GRTS) Sample}
 \usage{
 grts(
   sframe,
@@ -94,7 +94,7 @@ the survey design.  The \code{legacy_var} is required and the contents of the va
 either be a legacy \code{siteID} if the sample frame element is a legacy site or must
 be equal to \code{NA} otherwise.}
 
-\item{legacy_stratum_var}{The name of the variable in \code{legacy_sites} that contains the 
+\item{legacy_stratum_var}{The name of the variable in \code{legacy_sites} that contains the
 stratum information.}
 
 \item{legacy_var}{For finite sample frames when legacy sites are to be included in the

@@ -3,7 +3,8 @@
 \name{plot}
 \alias{plot}
 \alias{plot.sframe}
-\alias{plot.design}
+\alias{plot.spdesign}
+\alias{plot.dframe}
 \title{Plot sample frame and design objects}
 \usage{
 \method{plot}{sframe}(
@@ -18,7 +19,7 @@
   ...
 )
 
-\method{plot}{design}(
+\method{plot}{spdesign}(
   x,
   y = NULL,
   formula = ~sites,
@@ -30,12 +31,27 @@
   fix_bbox = TRUE,
   ...
 )
+
+\method{plot}{dframe}(
+  x,
+  y = NULL,
+  formula = ~1,
+  var_args = NULL,
+  varlevel_args = NULL,
+  geom = FALSE,
+  onlyshow = NULL,
+  fix_bbox = TRUE,
+  xcoord,
+  ycoord,
+  crs,
+  ...
+)
 }
 \arguments{
-\item{x}{object of class \code{sframe} or \code{design}.}
+\item{x}{object of class \code{sframe}, \code{spdesign}, or \code{dframe}.}
 
-\item{y}{ignored if \code{x} has class \code{sframe}; an object of class \code{sframe}
-if \code{x} has class \code{design}.}
+\item{y}{ignored if \code{x} has class \code{sframe} or \code{dframe}; an object of class \code{sframe}
+if \code{x} has class \code{spdesign}.}
 
 \item{formula}{A formula. Left hand side variables can be numeric or
 categorical (or factor) and right hand side variables can be categorical
@@ -70,6 +86,15 @@ possible given \code{x} and \code{y}.#'}
 
 \item{sites}{A character vector of sites to include in plotting. Defaults to
 all non-\code{NULL} elements in \code{x} and \code{y}.}
+
+\item{xcoord}{Name of x (east-west)-coordinate in \code{x} (only required if
+\code{x} is not an sf object)}
+
+\item{ycoord}{Name of y (north-south)-coordinate in \code{x} (only required if
+\code{x} is not an sf object)}
+
+\item{crs}{Projection code for \code{xcoord} and \code{ycoord} (only
+required if \code{x} is not an sf object)}
 }
 \description{
 Plot sample frames and design objects.
