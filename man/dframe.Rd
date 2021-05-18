@@ -4,10 +4,12 @@
 \alias{dframe}
 \title{Create an dframe object}
 \usage{
-dframe(object)
+dframe(object, ...)
 }
 \arguments{
 \item{object}{An \code{sp} or \code{sf} object}
+
+\item{...}{Additional arguments to \code{st_as_sf()} if converting an sp object to an sf and sframe object}
 }
 \value{
 An \code{dframe} object

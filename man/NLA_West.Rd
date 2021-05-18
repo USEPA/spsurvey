@@ -7,18 +7,8 @@
 \format{
 A data frame with 851 rows and 18 variables:
 \describe{
-  \item{UNIQUE_ID}{A unique observation identifier.}
   \item{SITE_ID}{A unique site identifier.}
-  \item{DSGN_CYCLE}{Year of design cycle.}
-  \item{LAT_DD83}{Latitude coordinate using the NAD83 Datum.}
-  \item{LON_DD83}{Longitude coordinate using the NAD83 Datum.}
-  \item{XCOORD}{Transformed latitude coordinate in meters.}
-  \item{YCOORD}{Transformed latitude coordinate in meters.}
-  \item{WGT_TP_EXTENT}{Target population weights for extent.}
-  \item{WGT_SP_CORE}{Sampled population weights for sampled sites.}
-  \item{WGT_TP_CORE}{Target population weights for sampled sites.}
-  \item{EVAL_CAT}{Lake evaluation category.}
-  \item{TNT_CAT}{Target vs Nontarget evaluation category.}
+  \item{WEIGHT}{The survey design weight.}
   \item{URBN_NLA17}{Urban category.}
   \item{STATE_NM}{State name.}
   \item{BENTHIC_MMI}{Benthic MMI value.}
@@ -33,6 +23,6 @@ NLA_West
 \description{
 A data frame consisting lake observations from a subset of the Environmental
 Protection Agency's "National Lakes Assessment" in the Western United
-States duing the years 2012 and 2017.
+States duing the year 2017.
 }
 \keyword{datasets}

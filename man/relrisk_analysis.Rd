@@ -44,120 +44,130 @@ names of response variables in the \code{dframe} data frame.}
 names of stressor variables in the \code{dframe} data frame.}
 
 \item{response_levels}{List providing the category values (levels) for each
-element in the \code{vars_response} argument.  This argument should be named and
-must be the same length as argument \code{vars_response}.  The first level for
-each element in the list is used for calculating the numerator and the
+element in the vars_response argument.  This argument should be named and
+must be the same length as argument \code{vars_response}.  The first level
+for each element in the list is used for calculating the numerator and the
 denominator of the relative risk estimate.  The default is a list
-containing the values \code{"Poor"} and \code{"Good"} for the first and second levels,
-respectively, of each element in the \code{vars_response} argument.}
+containing the values \code{"Poor"} and \code{"Good"} for the first and
+second levels, respectively, of each element in the vars_response argument.}
 
 \item{stressor_levels}{List providing the category values (levels) for each
-element in the \code{vars_stressor} argument.  This argument should be named and
-must be the same length as argument \code{vars_response}.  The first level for
-each element in the list is used for calculating the numerator of the
-relative risk estimate, and the second level for each element in the list
-is used for calculating the denominator of the estimate.  The default is a
-list containing the values \code{"Poor"} and \code{"Good"} for the first and second
-levels, respectively, of each element in the \code{vars_stressor} argument.}
+element in the \code{vars_stressor} argument.  This argument should be
+named and must be the same length as argument vars_response.  The first
+level for each element in the list is used for calculating the numerator of
+the relative risk estimate, and the second level for each element in the
+list is used for calculating the denominator of the estimate.  The default
+is a list containing the values \code{"Poor"} and \code{"Good"} for the
+first and second levels, respectively, of each element in the
+\code{vars_stressor} argument.}
 
 \item{subpops}{Vector composed of character values that identify the
-names of subpopulation (domain) variables in the \code{dframe} data frame.  If a
-value is not provided, the value \code{"All_Sites"} is assigned to the subpops
-argument and a factor variable named \code{"All_Sites"} that takes the value
-\code{"All Sites"} is added to the \code{dframe} data frame.  The default value is \code{NULL}.}
+names of subpopulation (domain) variables in the \code{dframe} data frame.
+If a value is not provided, the value \code{"All_Sites"} is assigned to the
+subpops argument and a factor variable named \code{"All_Sites"} that takes
+the value \code{"All Sites"} is added to the \code{dframe} data frame.  The
+default value is \code{NULL}.}
 
 \item{siteID}{Character value providing name of the site ID variable in
 the \code{dframe} data frame.  For a two-stage sample, the site ID variable
 identifies stage two site IDs.  The default value is \code{"siteID"}.}
 
-\item{weight}{Character value providing name of the survey design weight
-variable in the \code{dframe} data frame.  For a two-stage sample, the weight
-variable identifies stage two weights.  The default value is \code{"weight"}.}
+\item{weight}{Character value providing the name of the survey design weight
+variable in the \code{dframe} data frame.  For a two-stage sample, the
+weight variable identifies stage two weights.  The default value is
+\code{"weight"}.}
 
 \item{xcoord}{Character value providing name of the x-coordinate variable in
-the \code{dframe} data frame.  For a two-stage sample, the x-coordinate variable
-identifies stage two x-coordinates.  Note that x-coordinates are required
-for calculation of the local mean variance estimator.  The default value is
-\code{NULL}.}
+the \code{dframe} data frame.  For a two-stage sample, the x-coordinate
+variable identifies stage two x-coordinates.  Note that x-coordinates are
+required for calculation of the local mean variance estimator.  The default
+value is \code{NULL}.}
 
 \item{ycoord}{Character value providing name of the y-coordinate variable in
-the \code{dframe} data frame.  For a two-stage sample, the y-coordinate variable
-identifies stage two y-coordinates.  Note that y-coordinates are required
-for calculation of the local mean variance estimator.  The default value is
-\code{NULL}.}
+the \code{dframe} data frame.  For a two-stage sample, the y-coordinate
+variable identifies stage two y-coordinates.  Note that y-coordinates are
+required for calculation of the local mean variance estimator.  The default
+value is \code{NULL}.}
 
 \item{stratumID}{Character value providing name of the stratum ID variable in
 the \code{dframe} data frame.  The default value is \code{NULL}.}
 
-\item{clusterID}{Character value providing name of the cluster (stage one) ID
-variable in the \code{dframe} data frame.  Note that cluster IDs are required for
-a two-stage sample.  The default value is \code{NULL}.}
+\item{clusterID}{Character value providing the name of the cluster
+(stage one) ID variable in the \code{dframe} data frame.  Note that cluster
+IDs are required for a two-stage sample.  The default value is \code{NULL}.}
 
-\item{weight1}{Character value providing name of the stage one weight
-variable in the \code{dframe} data frame.  The default value is \code{NULL}.}
-
-\item{xcoord1}{Character value providing name of the stage one x-coordinate
-variable in the \code{dframe} data frame.  Note that x-coordinates are required
-for calculation of the local mean variance estimator.  The default value is
+\item{weight1}{Character value providing the name of the stage one weight
+variable in the \code{dframe} data frame.  The default value is
 \code{NULL}.}
 
-\item{ycoord1}{Character value providing name of the stage one y-coordinate
-variable in the \code{dframe} data frame.  Note that y-coordinates are required
-for calculation of the local mean variance estimator.  The default value is
-\code{NULL}.}
+\item{xcoord1}{Character value providing the name of the stage one
+x-coordinate variable in the \code{dframe} data frame.  Note that x
+coordinates are required for calculation of the local mean variance
+estimator.  The default value is \code{NULL}.}
+
+\item{ycoord1}{Character value providing the name of the stage one
+y-coordinate variable in the \code{dframe} data frame.  Note that
+y-coordinates are required for calculation of the local mean variance
+estimator.  The default value is \code{NULL}.}
 
 \item{sizeweight}{Logical value that indicates whether size weights should be
-used during estimation, where \code{TRUE} = use size weights and \code{FALSE} = do not
-use size weights. To employ size weights for a single-stage sample, a value
-must be supplied for argument \code{weight}.  To employ size weights for a
-two-stage sample, values must be supplied for arguments \code{weight} and \code{weight1}.
-The default value is \code{FALSE}.}
+used during estimation, where \code{TRUE} = use size weights and
+\code{FALSE} = do not use size weights. To employ size weights for a
+single-stage sample, a value must be supplied for argument weight.  To
+employ size weights for a two-stage sample, values must be supplied for
+arguments \code{weight} and \code{weight1}. The default value is
+\code{FALSE}.}
 
-\item{sweight}{Character value providing name of the size weight variable in
-the \code{dframe} data frame.  For a two-stage sample, the size weight variable
-identifies stage two size weights.  The default value is \code{NULL}.}
+\item{sweight}{Character value providing the name of the size weight variable
+in the \code{dframe} data frame.  For a two-stage sample, the size weight
+variable identifies stage two size weights.  The default value is
+\code{NULL}.}
 
-\item{sweight1}{Character value providing name of the stage one size weight
-variable in the \code{dframe} data frame.  The default value is \code{NULL}.}
+\item{sweight1}{Character value providing the name of the stage one size
+weight variable in the \code{dframe} data frame.  The default value is
+\code{NULL}.}
 
 \item{popcorrect}{Logical value that indicates whether the finite population
 correction factor is used during variance estimation. To employ the
 correction factor for a single-stage sample, values must be supplied for
-argument \code{fpcsize}.  To employ the correction factor for a two-stage sample,
-values must be supplied for arguments \code{Ncluster} and \code{stage1size}.  The default
-value is \code{FALSE}.}
+argument \code{fpcsize}.  To employ the correction factor for a two-stage
+sample, values must be supplied for arguments \code{Ncluster} and
+\code{stage1size}. The default value is \code{FALSE}.}
 
-\item{fpcsize}{Character value providing name of the variable in the \code{dframe}
-data frame that identifies size of the resource, which is required for
-calculation of the finite population correction factor for a single-stage
-sample.  The default value is \code{NULL}.}
+\item{fpcsize}{Character value providing the name of the variable in the
+\code{dframe} data frame that identifies size of the resource, which is
+required for calculation of the finite population correction factor for a
+single-stage sample.  The default value is \code{NULL}.}
 
-\item{Ncluster}{Character value providing name of the variable in the \code{dframe}
-data frame that identifies the number of clusters (stage one sampling
-units) in the resource, which is required for calculation of the finite
-population correction factor for a two-stage sample.  This argument is also
-required for a two-stage sample when the \code{popsize} argument is not equal to
-\code{NULL} and the vartype argument equals \code{"Local"}.  The default value is \code{NULL}.}
+\item{Ncluster}{Character value providing the name of the variable in the
+\code{dframe} data frame that identifies the number of clusters (stage one
+sampling units) in the resource, which is required for calculation of the
+finite population correction factor for a two-stage sample.  This argument
+is also required for a two-stage sample when the popsize argument is not
+equal to \code{NULL} and the vartype argument equals \code{"Local"}.  The
+default value is \code{NULL}.}
 
-\item{stage1size}{Character value providing name of the variable in the
-\code{dframe} data frame that identifies cluster size, i.e. the number of the
-stage two sampling units in the resource for a cluster.  Note that cluster
-size is required for calculation of the finite population correction factor
-for a two-stage sample. The default value is \code{NULL}.}
+\item{stage1size}{Character value providing the name of the variable in the
+\code{dframe} data frame that identifies cluster size, i.e. the number of
+the stage two sampling units in the resource for a cluster.  Note that
+cluster size is required for calculation of the finite population
+correction factor for a two-stage sample. The default value is \code{NULL}.}
 
-\item{popsize}{Object that provides values for the population argument of the
-\code{calibrate} or \code{postStratify} functions.  For the \code{calibrate} function, the object
-is a named list, where the names identify factor variables in the \code{dframe}
-data frame.  Each element of the list is a named vector containing the
-population total for each level of the associated factor variable.  For the
-\code{postStratify} function, the object is either a data frame, table, or xtabs
+\item{popsize}{Object that provides values for the population argument of
+the \code{calibrate} or \code{postStratify} functions.  For the
+\code{calibrate} function, the object is a named list, where the names
+identify factor variables in the \code{dframe} data frame.  Each element
+of the list is a named vector containing the population total for each
+level of the associated factor variable.  For the \code{postStratify}
+function, the object is either a data frame, table, or xtabs
 object that provides the population total for all combinations of selected
-factor varaibles in the \code{dframe} data frame.  If a data frame is used for
-\code{popsize}, the variable containing population totals must be the last
-variable in the data frame.  If a table is used for \code{popsize}, the table must
-have named \code{dimnames} where the names identify factor variables in the \code{dframe}
-data frame.  If the \code{popsize} argument is equal to \code{NULL}, then neither
-calibration nor post-stratification is performed.  The default value is
+factor varaibles in the \code{dframe} data frame.  If a data frame is used
+for \code{popsize}, the variable containing population totals must be the
+last variable in the data frame.  If a table is used for \code{popsize},
+the table must have named \code{dimnames} where the names identify factor
+variables in the \code{dframe} data frame.  If the popsize argument is
+equal to \code{NULL}, then neither calibration nor post-stratification is
+performed.  The default value is
 \code{NULL}.\cr\cr
 Example popsize for calibration:\cr
   popsize <- list(Ecoregion = c(East = 750,\cr
@@ -175,16 +185,18 @@ Example popsize for post-stratification using a table:\cr575
 Example popsize for post-stratification using an xtabs object:\cr
   popsize <- xtabs(~Ecoregion + Type, data = MySurveyFrame)\cr}
 
-\item{vartype}{Character value providing choice of the variance estimator,
-where \code{"Local"} = the local mean estimator, \code{"SRS"} = the simple random
-sampling estimator, \code{"HT"} = the Horvitz-Thompson estimator, and \code{"YG"} = the
-Yates-Grundy estimator.  The default value is \code{"Local"}.}
+\item{vartype}{Character value providing the choice of the variance
+estimator, where "Local" = the local mean estimator, \code{"SRS"} = the
+simple random sampling estimator, \code{"HT"} = the Horvitz-Thompson
+estimator, and \code{"YG"} = the Yates-Grundy estimator.  The default value
+is \code{"Local"}.}
 
-\item{jointprob}{Character value providing choice of joint inclusion
+\item{jointprob}{Character value providing the choice of joint inclusion
 probability approximation for use with Horvitz-Thompson and Yates-Grundy
-variance estimators, where \code{"overton"} indicates the Overton approximation,
-\code{"hr"} indicates the Hartley_Rao approximation, and \code{"brewer"} equals the
-Brewer approximation.  The default value is \code{"overton"}.}
+variance estimators, where \code{"overton"} indicates the Overton
+approximation, \code{"hr"} indicates the Hartley_Rao approximation, and
+\code{"brewer"} equals the Brewer approximation.  The default value is
+\code{"overton"}.}
 
 \item{conf}{Numeric value providing the confidence level.  The default value
 is \code{95}.}
@@ -204,18 +216,36 @@ is used, coordinates are extracted from the geometry column in the object,
 arguments xcoord and ycoord are assigned values "xcoord" and "ycoord",
 respectively, and the geometry column is dropped from the object.
 }
+\section{Other Functions Required}{
+
+  \describe{
+    \item{\code{\link{calibrate}}}{conduct calibration for survey data}
+    \item{\code{input_check}}{check input values for errors,
+      consistency, and compatibility with analytical functions}
+    \item{\code{\link{postStratify}}}{conduct post-stratification for survey
+      data}
+    \item{\code{relrisk_var}}{calculate values required for estimating
+      variance of the relative risk estimate}
+    \item{\code{survey_design}}{creates a survey design object}
+    \item{\code{uniqueID}}{creates unique site IDs by appending a
+      unique number to each occurrence of a site ID}
+    \item{\code{vecprint}}{takes an input vector and outputs a
+      character string with line breaks inserted}
+  }
+}
+
 \examples{
 dframe <- data.frame(
-  siteID = paste0("Site", 1:40),
-  wgt = runif(40, 10, 100),
-  xcoord = runif(40),
-  ycoord = runif(40),
-  stratum = rep(c("Stratum1", "Stratum2"), 20),
-  RespVar1 = sample(c("Poor", "Good"), 40, replace = TRUE),
-  RespVar2 = sample(c("Poor", "Good"), 40, replace = TRUE),
-  StressVar = sample(c("Poor", "Good"), 40, replace = TRUE),
-  All_Sites = rep("All Sites", 40),
-  Resource_Class = rep(c("Agr", "Forest"), c(25, 15))
+  siteID = paste0("Site", 1:100),
+  wgt = runif(100, 10, 100),
+  xcoord = runif(100),
+  ycoord = runif(100),
+  stratum = rep(c("Stratum1", "Stratum2"), 50),
+  RespVar1 = sample(c("Poor", "Good"), 100, replace = TRUE),
+  RespVar2 = sample(c("Poor", "Good"), 100, replace = TRUE),
+  StressVar = sample(c("Poor", "Good"), 100, replace = TRUE),
+  All_Sites = rep("All Sites", 100),
+  Resource_Class = rep(c("Agr", "Forest"), c(55, 45))
 )
 myresponse <- c("RespVar1", "RespVar2")
 mystressor <- c("StressVar")
@@ -226,6 +256,11 @@ relrisk_analysis(dframe,
   weight = "wgt", xcoord = "xcoord", ycoord = "ycoord",
   stratumID = "stratum"
 )
+
+}
+\seealso{
+\code{\link{calibrate}}
+  \code{\link{postStratify}}
 }
 \author{
 Tom Kincaid \email{Kincaid.Tom@epa.gov}

@@ -4,14 +4,14 @@
 \alias{summary}
 \alias{summary.sframe}
 \alias{summary.dframe}
-\alias{summary.design}
+\alias{summary.spdesign}
 \title{Calculate summaries of design objects}
 \usage{
 \method{summary}{sframe}(object, formula, onlyshow = NULL, ...)
 
 \method{summary}{dframe}(object, formula, onlyshow = NULL, ...)
 
-\method{summary}{design}(object, formula, onlyshow = NULL, sites = NULL, ...)
+\method{summary}{spdesign}(object, formula, onlyshow = NULL, sites = NULL, ...)
 }
 \arguments{
 \item{object}{A sample frame object having class \code{sframe} or a design object

@@ -11,7 +11,7 @@
 #' each time period and cumulative number of unique units sampled by time
 #' periods.
 #'
-#' @param  object Two-dimensional array with class \code{panel_design} and dimnames specifying revisit
+#' @param  object Two-dimensional array from \code{panel_design} and dimnames specifying revisit
 #'   panel design. Typically, array is output from \code{revisit_dsgn}, \code{revisit_bibd} or
 #'   \code{revisit_rand} functions.
 #'
@@ -82,7 +82,7 @@
 #' summary(sa_dsgn, sa_visit)
 #' @export
 ###############################################################################
-summary.paneldesign <- function(object, visitdsgn = NULL, ...) {
+summary.powerpaneldesign <- function(object, visitdsgn = NULL, ...) {
   paneldsgn <- object
   n_pan <- dim(paneldsgn)[1]
   n_period <- dim(paneldsgn)[2]
