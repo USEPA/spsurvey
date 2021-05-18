@@ -14,7 +14,7 @@ testsample <- grts(
 
 test_that("test finite design equal random selection", {
   expect_true(exists("testsample"))
-  expect_equal(names(testsample)[5], "dsgn")
+  expect_equal(names(testsample)[5], "design")
   expect_equal(nrow(testsample$sites_base), 10)
 })
 
@@ -29,7 +29,7 @@ testsample <- grts(
 
 test_that("test unequal random selection", {
   expect_true(exists("testsample"))
-  expect_equal(names(testsample)[5], "dsgn")
+  expect_equal(names(testsample)[5], "design")
   expect_equal(nrow(testsample$sites_base), 20)
 })
 
@@ -43,7 +43,7 @@ testsample <- grts(
 
 test_that("test equal random selection using NHDPoint", {
   expect_true(exists("testsample"))
-  expect_equal(names(testsample)[5], "dsgn")
+  expect_equal(names(testsample)[5], "design")
   expect_equal(nrow(testsample$sites_base), 10)
 })
 
@@ -57,7 +57,7 @@ testsample <- grts(
 
 test_that("test equal random selection using linear sample frame", {
   expect_true(exists("testsample"))
-  expect_equal(names(testsample)[5], "dsgn")
+  expect_equal(names(testsample)[5], "design")
   expect_equal(nrow(testsample$sites_base), 10)
 })
 
@@ -71,6 +71,6 @@ testsample <- grts(
 
 test_that("test equal random selection using area sample frame", {
   expect_true(exists("testsample"))
-  expect_equal(names(testsample)[5], "dsgn")
+  expect_equal(names(testsample)[5], "design")
   expect_equal(nrow(testsample$sites_base), 10)
 })
