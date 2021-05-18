@@ -177,7 +177,7 @@ grts_stratum <- function(stratum, dsgn, sframe, sf_type, wgt_units = NULL, pt_de
 
   # set legacy that is NA to FALSE
   if (legacy_option == TRUE & sf_type == "sf_point") {
-    sftmp$legacy[is.na(sftmp$legacy)] <- FALSE
+    sftmp$legacy <- ifelse(is.na(sftmp$legacy), FALSE, TRUE)
   }
 
   # Step 2 site selection if linear or area; otherwise Step 1 for points.
