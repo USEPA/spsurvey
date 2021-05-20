@@ -6,8 +6,9 @@
 #'
 #' @description \code{dframe_to_sf()} transforms an sframe object into an sf object,
 #' which may be useful when calling generic functions with sf class (e.g. mapview).
-#' \code{dframe_to_df()} transforms an sframe object into an data frame object,
-#' while retaining the remaining structure of dframe (e.g. tibble).
+#' \code{dframe_to_df()} transforms a dframe object into an data frame object,
+#' while retaining the remaining structure of dframe (e.g. if dframe is also a tibble,
+#' it will remain a tibble after \code{dframe_to_df}).
 #'
 #' @param object A \code{dframe} object.
 #'
