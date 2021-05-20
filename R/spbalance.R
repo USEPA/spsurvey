@@ -105,6 +105,8 @@ calculate_spbalance <- function(object_split, sframe_split, ip, metrics, extents
 
   if (is.null(ip)) {
     sframe_split$ip <- nrow(object_split) * (sframe_split$dens / sum(sframe_split$dens))
+  } else {
+    sframe_split$ip <- sframe_split[[ip]]
   }
 
   # finding the sframe bounding box, this needs to be reordered to
