@@ -25,7 +25,7 @@
 #' }
 dframe <- function(object, ...) {
   if (inherits(object, "dframe")) {
-    new_dframe <- structure(object, class = c("dframe", setdiff(object, "dframe")))
+    new_dframe <- structure(object, class = c("dframe", setdiff(class(object), "dframe")))
   } else if (inherits(object, "sf")) {
     new_dframe <- structure(object, class = c("dframe", class(object)))
   } else if ("sp" %in% attr(class(object), "package")) {

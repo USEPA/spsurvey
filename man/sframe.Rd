@@ -7,22 +7,27 @@
 sframe(object, ...)
 }
 \arguments{
-\item{object}{An \code{sp} or \code{sf} object}
+\item{object}{For \code{sframe}, an \code{sp} or \code{sf} object. For \code{unsframe()}, an
+\code{sframe} object.}
 
-\item{...}{Additional arguments to \code{st_as_sf()} if converting an sp object to an sf and sframe object}
+\item{...}{Additional arguments to \code{st_as_sf()} when using \code{sframe()}
+to convert an sp object to an sf and sframe object}
 }
 \value{
-An \code{sframe} object
+For \code{sframe()}, an \code{sframe} object. For \code{unsframe()}, an \code{sf} object.
 }
 \description{
-sframe gives \code{sp} and \code{sf} objects class \code{"sframe"} to be used
-in \code{summary()} and \code{plot()} generics. \code{sp} objects are coerced to \code{sf}
-objects prior to giving class \code{sframe}.
+\code{sframe()} gives \code{sp} and \code{sf} objects class \code{"sframe"} to be used
+in spsurvey's \code{summary()} and \code{plot()} generics. \code{sp} objects are coerced to \code{sf}
+objects prior to giving class \code{sframe}. \code{unsframe()} removes class \code{"sframe"},
+which may be useful when calling sf generic functions.
 }
 \examples{
 \dontrun{
 data("NE_lakes")
 NE_lakes <- sframe(NE_lakes)
 }
-###############################################################################
+}
+\seealso{
+sframe_to_sf
 }
