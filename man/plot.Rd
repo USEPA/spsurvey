@@ -80,12 +80,9 @@ variable for which a summary is requested.}
 
 \item{fix_bbox}{Should the geometry bounding box be fixed across plots?
 Defaults to \code{TRUE}. If \code{TRUE}, the bounding box will be the largest
-possible given \code{x} and \code{y}.#'}
+possible given \code{x} and \code{y}.}
 
 \item{...}{Additional arguments to pass to \code{plot.sf()}.}
-
-\item{sites}{A character vector of sites to include in plotting. Defaults to
-all non-\code{NULL} elements in \code{x} and \code{y}.}
 
 \item{xcoord}{Name of x (east-west)-coordinate in \code{x} (only required if
 \code{x} is not an sf object)}
@@ -95,6 +92,16 @@ all non-\code{NULL} elements in \code{x} and \code{y}.}
 
 \item{crs}{Projection code for \code{xcoord} and \code{ycoord} (only
 required if \code{x} is not an sf object)}
+
+\item{siteuse}{A character vector of site types to include when plotting a
+design object. Can only take on values \code{"sframe"} (sample frame),
+\code{"Legacy"} (for legacy sites), \code{"Base"} (for base sites),
+\code{"Over"} (for \code{n_over} replacement sites), and \code{"Near"}
+(for \code{n_near} replacement sites). The order of sites represents the
+layering in the plot (e.g. \code{siteuse = c("Base", "Legacy")} will plot
+legacy sites on top of base sites. Defaults to all non-\code{NULL} elements
+in \code{x} and \code{y} with plot order \code{"sframe"}, \code{"Near"},
+\code{"Over"}, \code{"Base"}, \code{"Legacy"}.}
 }
 \description{
 Plot sample frames and design objects.

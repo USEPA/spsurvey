@@ -22,8 +22,15 @@
 #' a categorical (or factor) variable. If an intercept is included in the right
 #' hand side formula, the total will also be summarized.
 #'
-#' @param sites A character vector of sites to include in plotting. Defaults to
-#' all non-\code{NULL} elements in \code{x} and \code{y}.
+#' @param siteuse A character vector of site types to include when plotting a
+#' design object. Can only take on values \code{"sframe"} (sample frame),
+#' \code{"Legacy"} (for legacy sites), \code{"Base"} (for base sites),
+#' \code{"Over"} (for \code{n_over} replacement sites), and \code{"Near"}
+#' (for \code{n_near} replacement sites). The order of sites represents the
+#' layering in the plot (e.g. \code{siteuse = c("Base", "Legacy")} will plot
+#' legacy sites on top of base sites. Defaults to all non-\code{NULL} elements
+#' in \code{x} and \code{y} with plot order \code{"sframe"}, \code{"Near"},
+#' \code{"Over"}, \code{"Base"}, \code{"Legacy"}.
 #'
 #' @param var_args A named list. The name of each list corresponds to a
 #' right hand side variable in \code{formula}. Values in the list are composed of
@@ -46,7 +53,7 @@
 #'
 #' @param fix_bbox Should the geometry bounding box be fixed across plots?
 #' Defaults to \code{TRUE}. If \code{TRUE}, the bounding box will be the largest
-#' possible given \code{x} and \code{y}.#'
+#' possible given \code{x} and \code{y}.
 #'
 #' @param xcoord Name of x (east-west)-coordinate in \code{x} (only required if
 #' \code{x} is not an sf object)
