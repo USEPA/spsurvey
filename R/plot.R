@@ -263,26 +263,41 @@ plot.spdesign <- function(x, y = NULL, formula = ~sites, sites = NULL,
                         var_args = NULL, varlevel_args = NULL, geom = FALSE, onlyshow = NULL,
                         fix_bbox = TRUE, ...) {
 
-  # y is sframe
-  x <- c(list(sframe = y), x)
-  if (is.null(sites)) {
-    sites <- names(x[!vapply(x, is.null, logical(1))])
+  if ((is.null(siteuse) & (!is.null(x$sites_near))) | "Near" %in% siteuse) {
+    x$sites_near$siteuse <- "Near"
   }
-  sites <- sites[sites != "design"] # remove design if somehow provided
-  x <- x[sites]
-  x_names <- names(x)
-  x <- lapply(x_names, function(a) merge(x[[a]], data.frame(sites = a)))
-  names(x) <- x_names
+  # bind
+  x <- sprbind(x)
   # make formlists
-  formlist <- make_formlist(formula, onlyshow, x$sframe)
+  formlist_x <- make_formlist(formula, onlyshow, x)
   # make sframe
-  varsfs <- lapply(x, function(a) make_varsf(a, formlist))
-  x <- do.call("rbind", varsfs)
-  # set consistent bounding box with sframe
+  varsf_x <- make_varsf(x, formlist_x)
+
   if (!is.null(y)) {
-    attr(st_geometry(x), "bbox") <- st_bbox(y)
+    y$siteuse <- "sframe"
+    # make formlists
+    formlist_y <- make_formlist(formula, onlyshow, y)
+    # make sframe
+    varsf_y <- make_varsf(y, formlist_y)
+  } else {
+    varsf_y <- NULL
   }
-  plot.sframe(x = x, formula = formula, var_args = var_args, varlevel_args = varlevel_args, geom = geom, onlyshow = onlyshow, fix_bbox = fix_bbox, ...)
+
+  new_varsf <- rbind(varsf_x, varsf_y)
+
+  if (is.null(siteuse)) {
+    fac_levels <- c("sframe", "Near", "Over", "Base", "Legacy")
+    fac_levels_used <- fac_levels[fac_levels %in% unique(new_varsf$siteuse)]
+    new_varsf$siteuse <- factor(new_varsf$siteuse, levels = fac_levels_used)
+  } else {
+    new_varsf$siteuse <- factor(new_varsf$siteuse, levels = siteuse)
+  }
+
+  # arrange by factor level
+  ordered_varsf <- with(new_varsf, new_varsf[order(new_varsf$siteuse), , drop = FALSE])
+
+  # make the plot
+  plot.sframe(x = ordered_varsf, formula = formula, var_args = var_args, varlevel_args = varlevel_args, geom = geom, onlyshow = onlyshow, fix_bbox = fix_bbox, ...)
 }
 
 #' @name plot
