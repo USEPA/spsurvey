@@ -11,6 +11,9 @@ dframe_to_df(object)
 }
 \arguments{
 \item{object}{A \code{dframe} object.}
+
+\item{...}{Additional arguments to \code{st_as_sf()} if spatial information is not already
+present in \code{dframe}}
 }
 \value{
 An \code{sf} object (\code{dframe_to_sf()}) or a data frame object (\code{dframe_to_df()}).
@@ -18,8 +21,9 @@ An \code{sf} object (\code{dframe_to_sf()}) or a data frame object (\code{dframe
 \description{
 \code{dframe_to_sf()} transforms an sframe object into an sf object,
 which may be useful when calling generic functions with sf class (e.g. mapview).
-\code{dframe_to_df()} transforms an sframe object into an data frame object,
-while retaining the remaining structure of dframe (e.g. tibble).
+\code{dframe_to_df()} transforms a dframe object into an data frame object,
+while retaining the remaining structure of dframe (e.g. if dframe is also a tibble,
+it will remain a tibble after \code{dframe_to_df}).
 }
 \section{Functions}{
 \itemize{
