@@ -200,7 +200,7 @@ irs_stratum <-function(stratum, dsgn, sframe, sf_type, wgt_units = NULL, pt_dens
     if (nrow(sftmp) <= n_total) {
       samp.id <- sftmp$idpts
     } else {
-      samp.id <- sample(sftmp$idpts, n_total, prob = sftmp$ip)
+      samp.id <- sftmp$idpts[UPpivotal(sftmp$ip) != 0]
     }
     # extract sites from sample frame
     sites <- sftmp[sftmp$idpts %in% samp.id, ]
@@ -280,29 +280,28 @@ irs_stratum <-function(stratum, dsgn, sframe, sf_type, wgt_units = NULL, pt_dens
 
   # Split sites to have separate sites_base, sites_legacy and sites_over
   # save legacy sites if any and reduce sites_base to non legacy sites
+  n_legacy <- 0
   sites_legacy <- NULL
   if (legacy_option == TRUE) {
     sites_legacy <- sites[["sites"]][sites[["sites"]]$legacy == TRUE, ]
     sites[["sites"]] <- sites[["sites"]][sites[["sites"]]$legacy == FALSE, ]
+    n_legacy <- nrow(sites_legacy)
   }
-
+  
   # save base sites
-  n.base <- min(nrow(sites[["sites"]]), n_base)
+  n.base <- n_base - n_legacy
   sites_base <- sites[["sites"]][1:n.base, ]
-
+  
   # save n_over sample sites if any
   sites_over <- NULL
-  if (n_over != 0 & n.base <= nrow(sites[["sites"]])) {
-    sites_over <- sites[["sites"]][(n.base + 1):min(
-      nrow(sites[["sites"]]),
-      n_total
-    ), ]
+  if (n_over != 0) {
+    sites_over <- sites[["sites"]][(n.base + 1):(n_total - n_legacy), ]
     sites_over$siteuse <- "Over"
   }
 
   # create list for output and return result
   rslts <- list(
-    sites_base = sites_base, sites_legacy = sites_legacy,
+    sites_legacy = sites_legacy, sites_base = sites_base, 
     sites_over = sites_over, sites_near = sites_near,
     warn_ind = warn_ind, warn_df = warn_df
   )

@@ -317,12 +317,13 @@ grts_stratum <- function(stratum, dsgn, sframe, sf_type, wgt_units = NULL, pt_de
   }
 
   # save base sites
-  sites_base <- sites[["sites"]][(n_legacy + 1):n_base, ]
+  n.base <- n_base - n_legacy
+  sites_base <- sites[["sites"]][1:n.base, ]
 
   # save n_over sample sites if any
   sites_over <- NULL
   if (n_over != 0) {
-    sites_over <- sites[["sites"]][(n_base + 1):n_total, ]
+    sites_over <- sites[["sites"]][(n.base + 1):(n_total - n_legacy), ]
     sites_over$siteuse <- "Over"
   }
 

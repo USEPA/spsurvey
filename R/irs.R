@@ -106,6 +106,11 @@ irs <- function(sframe, n_base, seltype = "equal", wgt_units = NULL,
     # ensure class for stratum variable is character and assign to stratum
     sframe$stratum <- as.character(sframe[[stratum_var]])
   }
+  
+  # set caty, aux and legacy variables in sample frame if needed
+  if (!is.null(caty_var)) sframe$caty <- as.character(sframe[[caty_var]])
+  if (!is.null(aux_var)) sframe$aux <- sframe[[aux_var]]
+  if (!is.null(legacy_var)) sframe$legacy <- sframe[[legacy_var]]
 
   # set stratum, caty, aux and legacy variables in legacy_sites if needed
   # add idpts to legacy_sites
@@ -345,7 +350,8 @@ irs <- function(sframe, n_base, seltype = "equal", wgt_units = NULL,
 
   # create output list
   sites <- list(
-    sites_base = sites_base, sites_over = sites_over, sites_near = sites_near,
+    sites_legacy = sites_legacy, sites_base = sites_base, 
+    sites_over = sites_over, sites_near = sites_near,
     design = dsgn
   )
 
