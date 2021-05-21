@@ -287,7 +287,7 @@ grts_stratum <- function(stratum, dsgn, sframe, sf_type, wgt_units = NULL, pt_de
     }
   }
 
-  # Assign original inclusion probabilites to sites, create weights and drop legacy ip variable
+  # Assign original inclusion probabilities to sites, create weights and drop legacy ip variable
   sites[["sites"]]$ip <- sites[["sites"]]$ip_init * ip_step1
   sites[["sites"]]$wgt <- 1 / sites[["sites"]]$ip
   tmp <- names(sites[["sites"]])
@@ -308,23 +308,21 @@ grts_stratum <- function(stratum, dsgn, sframe, sf_type, wgt_units = NULL, pt_de
 
   # Split sites to have separate sites_base, sites_legacy and sites_over
   # save legacy sites if any and reduce sites_base to non legacy sites
+  n_legacy <- 0
   sites_legacy <- NULL
   if (legacy_option == TRUE) {
     sites_legacy <- sites[["sites"]][sites[["sites"]]$legacy == TRUE, ]
     sites[["sites"]] <- sites[["sites"]][sites[["sites"]]$legacy == FALSE, ]
+    n_legacy <- nrow(sites_legacy)
   }
 
   # save base sites
-  n.base <- min(nrow(sites[["sites"]]), n_base)
-  sites_base <- sites[["sites"]][1:n.base, ]
+  sites_base <- sites[["sites"]][(n_legacy + 1):n_base, ]
 
   # save n_over sample sites if any
   sites_over <- NULL
-  if (n_over != 0 & n.base <= nrow(sites[["sites"]])) {
-    sites_over <- sites[["sites"]][(n.base + 1):min(
-      nrow(sites[["sites"]]),
-      n_total
-    ), ]
+  if (n_over != 0) {
+    sites_over <- sites[["sites"]][(n_base + 1):n_total, ]
     sites_over$siteuse <- "Over"
   }
 
