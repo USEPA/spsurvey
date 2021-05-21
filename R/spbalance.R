@@ -95,6 +95,7 @@ spbalance <- function(object, sframe, stratum_var = NULL, ip = NULL, metrics = "
 }
 
 calculate_spbalance <- function(object_split, sframe_split, ip, metrics, extents) {
+  # need to calculate the density of each row in sframe_split
   if (all(st_geometry_type(sframe_split) %in% c("POINT", "MULTIPOINT"))) {
     sframe_split$dens <- 1
   } else if (all(st_geometry_type(sframe_split) %in% c("LINESTRING", "MULTILINESTRING"))) {
@@ -103,17 +104,20 @@ calculate_spbalance <- function(object_split, sframe_split, ip, metrics, extents
     sframe_split$dens <- as.numeric(st_area(sframe_split))
   }
 
+  # these inclusion probabilities must be provided for the entire sample frame
   if (is.null(ip)) {
     sframe_split$ip <- nrow(object_split) * (sframe_split$dens / sum(sframe_split$dens))
+  } else {
+    sframe_split$ip <- sframe_split[[ip]]
   }
 
   # finding the sframe bounding box, this needs to be reordered to
   # use in the Dirichlet Tesselation
   pop_bbox <- st_bbox(sframe_split)[c("xmin", "xmax", "ymin", "ymax")]
 
-  # working with the objectd sites
+  # working with the object sites
 
-  ## take the objectd sites coordinates
+  ## take the object sites coordinates
   samp_coords <- st_coordinates(object_split)
   ## name them X and Y
   colnames(samp_coords) <- c("X", "Y")
@@ -124,14 +128,7 @@ calculate_spbalance <- function(object_split, sframe_split, ip, metrics, extents
   ## recover the object size
   n <- nrow(object_split)
 
-  # and the sframe sites
-
-
-  ## recover the sframe size
-  # N <- nrow(sframe_split)
-
   # spatial balance with respect to the sframe
-
   tiles <- tile.list(deldir(x = samp_xcoord, y = samp_ycoord, rw = pop_bbox))
 
   ## using lapply instead of a loop
@@ -141,6 +138,11 @@ calculate_spbalance <- function(object_split, sframe_split, ip, metrics, extents
   sftess <- suppressWarnings(st_intersection(st_make_valid(sframe_split), sftess))
 
 
+  # scaling the inclusion probabilities by the amount of the geometry
+  # in the respective tesselation -- polydens can be at most one -- if the
+  # row of sframe is contained fully in the respective row of sframe
+  # polydens can be less than one -- when the row of sframe is not contained
+  # fully in the respective row of sframe
   # for points, sframe geometry must be point or multipoint
   if (all(st_geometry_type(sframe_split) %in% c("POINT", "MULTIPOINT"))) {
     ## storing a dummy variable to index counts by
