@@ -65,15 +65,15 @@ There are two main classes of functions in spsurvey: design functions and analys
 
 ## Design Functions
 
-The `grts()` function selects spatially probability samples using the Generalized Random Tesselation Stratified algorithm (Stevens and Olsen, 2004). The `irs()` function selects probability samples using independent random sampling. Both `grts()` and `irs()` have options for equal, unequal, and proportional sampling designs that can incorporate stratification, legacy (historical) sites, minimum distance between sites, and the selection of replacement sites (reverse hierarchical ordering and nearest neighbor). The `spbalance()` function calculates the spatial balance of a design.
+The `grts()` function selects spatially probability samples using the Generalized Random Tessellation Stratified algorithm (Stevens and Olsen, 2004). The `irs()` function selects probability samples using independent random sampling. Both `grts()` and `irs()` have options for equal, unequal, and proportional sampling designs that can incorporate stratification, legacy (historical) sites, minimum distance between sites, and the selection of replacement sites (reverse hierarchical ordering and nearest neighbor). The `spbalance()` function calculates the spatial balance of a design.
 
 ## Analysis Functions
 
-The `cat_analysis()` and `cont_analysis()` functions are used to analyze categorical and continuous response variables, respectively. The `attrisk_analysis()` and `relrisk_analysis()` functions are used to analyze attributable and relative risk of response variables, respectively. The `change_analysis()` function is used to analyze change among two probability probability surveys. The `cont_cdftest()` function is used to analyze the cumulative distribution function (CDF) of continuous response variables.
+The `cat_analysis()` and `cont_analysis()` functions are used to analyze categorical and continuous response variables, respectively. The `attrisk_analysis()` and `relrisk_analysis()` functions are used to analyze attributable and relative risk of response variables, respectively. The `change_analysis()` function is used to analyze change among two probability probability surveys. The `cont_cdftest()` function is used to analyze the cumulative distribution function (CDF) of continuous response variables. The `trend_analysis` function is used to estimate linear trends across multiple time periods. 
 
 # Vignettes in spsurvey
 
-The `plotting` vignette summarizes plotting in spsurvey. The `design_points`, `design_linear`, and `design_area` vignettes summarizes selecting probability samples for point (finite), linear (infinite), and areal (infinite) networks, respectively. The `analysis` vignette summarizes selecting probability samples for point (finite), linear (infinite), and areal (infinite) networks, respectively.
+The `plotting` vignette provides examples of plotting in spsurvey. The `design_points`, `design_linear`, and `design_area` vignettes provides examples of selecting probability samples for point (finite), linear networks (infinite), and areal regions (infinite), respectively. The `analysis` vignette provides examples of statistical analyses of probability samples for point (finite), linear networks (infinite), and areal regions (infinite), respectively.
 
 # Installing a Previous Version of spsurvey
 
@@ -85,5 +85,4 @@ Lovelace, R., Nowosad, J., & Muenchow, J. (2019). Geocomputation with R. CRC Pre
 
 Pebesma, E., (2018). Simple Features for R: Standardized Support for Spatial Vector Data. *The R Journal*, 10 (1):439-446. https://doi.org/10.32614/RJ-2018-009
 
-Stevens Jr, D. L. and Olsen, A. R. (2004). Spatially balanced sampling of natural resources.
-*Journal of the American Statistical Association*, 99(465):262-278.
+Stevens Jr, D. L. and Olsen, A. R. (2004). Spatially balanced sampling of natural resources. *Journal of the American Statistical Association*, 99(465):262-278.
