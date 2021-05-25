@@ -5,10 +5,10 @@
 #'
 #' @format An \code{sf} object with 5328 rows and 7 variables:
 #' \describe{
-#'   \item{AREA_HA}{Lake area in hectares.}
-#'   \item{AREA_HA_CAT}{Lake area categories based on a hectare cutoff.}
-#'   \item{ELEVATION}{Elevation in meters.}
-#'   \item{ELEVATION_CAT}{Elevation categories based on a meter cutoff.}
+#'   \item{AREA}{Lake area in hectares.}
+#'   \item{AREA_CAT}{Lake area categories based on a hectare cutoff.}
+#'   \item{ELEV}{Elevation in meters.}
+#'   \item{ELEV_CAT}{Elevation categories based on a meter cutoff.}
 #'   \item{LEGACY}{Legacy site indicator.}
 #'   \item{geometry}{Point geometry using a USA Contiguous Albers Equal Area
 #'     Conic projection.}
