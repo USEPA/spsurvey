@@ -102,7 +102,7 @@ plot.sframe <- function(x, y, formula = ~1, var_args = NULL, varlevel_args = NUL
   # making variable list
   formlist <- make_formlist(formula, onlyshow, x)
   varsf <- make_varsf(x, formlist)
-  varsf <- na.omit(varsf)
+  # varsf <- na.omit(varsf)
 
   # plot geometry or response for ~ 1
   if (length(formlist$varlabels) == 0 && formlist$intercept) {
