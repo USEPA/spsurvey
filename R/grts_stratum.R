@@ -176,7 +176,7 @@ grts_stratum <- function(stratum, dsgn, sframe, sf_type, wgt_units = NULL, pt_de
   }
 
   # set legacy that is NA to FALSE
-  if (legacy_option == TRUE & sf_type == "sf_point") {
+  if (legacy_option == TRUE) {
     sftmp$legacy <- ifelse(is.na(sftmp$legacy), FALSE, TRUE)
   }
 
