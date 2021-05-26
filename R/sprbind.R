@@ -25,6 +25,7 @@ sprbind <- function(object, siteuse = NULL) {
     if (is.null(siteuse)) {
       siteuse <- c("Legacy", "Base", "Over", "Near")
     }
+
     # legacy
     if ("Legacy" %in% siteuse) {
       new_legacy <- object$sites_legacy
@@ -49,6 +50,15 @@ sprbind <- function(object, siteuse = NULL) {
     } else {
       new_near <- NULL
     }
-    rbind(new_legacy, new_base, new_over, new_near)
+
+    nonlegacy <- rbind(new_base, new_over, new_near)
+
+    if (is.null(new_legacy)) {
+      return (rbind_nonlegacy)
+    } else {
+      new_legacy[setdiff(names(nonlegacy), names(new_legacy))] <- NA
+      nonlegacy[setdiff(names(new_legacy), names(nonlegacy))] <- NA
+      return(rbind(new_legacy, nonlegacy))
+    }
   }
 }
