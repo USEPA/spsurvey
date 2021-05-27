@@ -266,7 +266,7 @@ plot.sframe <- function(x, y, formula = ~1, var_args = NULL, varlevel_args = NUL
 #' @method plot spdesign
 #'
 #' @export
-plot.spdesign <- function(x, y = NULL, formula = ~sites, sites = NULL,
+plot.spdesign <- function(x, y = NULL, formula = ~siteuse, sites = NULL,
                         var_args = NULL, varlevel_args = NULL, geom = FALSE, onlyshow = NULL,
                         fix_bbox = TRUE, ...) {
 
