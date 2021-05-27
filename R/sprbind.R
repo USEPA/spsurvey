@@ -51,14 +51,14 @@ sprbind <- function(object, siteuse = NULL) {
       new_near <- NULL
     }
 
-    non_legacy <- rbind(new_base, new_over, new_near)
+    new_non_legacy <- rbind(new_base, new_over, new_near)
 
     if (is.null(new_legacy)) {
-      return (non_legacy)
+      return (new_non_legacy)
     } else {
-      new_legacy[setdiff(names(non_legacy), names(new_legacy))] <- NA
-      non_legacy[setdiff(names(new_legacy), names(non_legacy))] <- NA
-      return(rbind(new_legacy, non_legacy))
+      new_legacy[setdiff(names(new_non_legacy), names(new_legacy))] <- NA
+      new_non_legacy[setdiff(names(new_legacy), names(new_non_legacy))] <- NA
+      return(rbind(new_legacy, new_non_legacy))
     }
   }
 }
