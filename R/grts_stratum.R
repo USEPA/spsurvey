@@ -87,6 +87,9 @@ grts_stratum <- function(stratum, dsgn, sframe, sf_type, wgt_units = NULL, pt_de
     n_near <- 0
   }
   n_total <- n_base + n_over
+  
+  # set number of legacy sites to 0
+  n_legacy <- 0
 
   # subset sframe to stratum
   sftmp <- sframe[sframe$stratum == stratum, , drop = FALSE]
@@ -94,6 +97,7 @@ grts_stratum <- function(stratum, dsgn, sframe, sf_type, wgt_units = NULL, pt_de
   # subset legacy_sites to stratum if present for linear and area option
   if (legacy_option == TRUE & sf_type != "sf_point") {
     legtmp <- legacy_sites[legacy_sites$stratum == stratum, , drop = FALSE]
+    n_legacy <- nrow(legtmp)
   }
 
   # sf_type equals point
@@ -178,6 +182,8 @@ grts_stratum <- function(stratum, dsgn, sframe, sf_type, wgt_units = NULL, pt_de
   # set legacy that is NA to FALSE
   if (legacy_option == TRUE) {
     sftmp$legacy <- ifelse(is.na(sftmp$legacy), FALSE, TRUE)
+    tmp <- subset(sftmp, legacy == TRUE)
+    n_legacy <- nrow(tmp)
   }
 
   # Step 2 site selection if linear or area; otherwise Step 1 for points.
@@ -308,22 +314,32 @@ grts_stratum <- function(stratum, dsgn, sframe, sf_type, wgt_units = NULL, pt_de
 
   # Split sites to have separate sites_base, sites_legacy and sites_over
   # save legacy sites if any and reduce sites_base to non legacy sites
-  n_legacy <- 0
   sites_legacy <- NULL
   if (legacy_option == TRUE) {
     sites_legacy <- sites[["sites"]][sites[["sites"]]$legacy == TRUE, ]
     sites[["sites"]] <- sites[["sites"]][sites[["sites"]]$legacy == FALSE, ]
     n_legacy <- nrow(sites_legacy)
   }
+  
+  # warning if n_base <= n_legacy
+  if (n_base <= n_legacy) {
+    warn_ind <- TRUE
+    warn <- paste0("Number of base sites ", n_base, " is less than or equal to ",
+                   n_legacy, " the number of legacy sites for stratum ", stratum)
+    warn_df <- rbind(warn_df, data.frame(stratum = stratum, func = I("grts_stratum"),
+                                         warning = warn))
+  }
 
   # save base sites
-  n.base <- n_base - n_legacy
-  sites_base <- sites[["sites"]][1:n.base, ]
+  sites_base <- NULL
+  if (n_base > n_legacy) {
+    sites_base <- sites[["sites"]][1:(n_base - n_legacy), ]
+  }
 
   # save n_over sample sites if any
   sites_over <- NULL
   if (n_over != 0) {
-    sites_over <- sites[["sites"]][(n.base + 1):(n_total - n_legacy), ]
+    sites_over <- sites[["sites"]][(n_base - n_legacy + 1):(n_total - n_legacy), ]
     sites_over$siteuse <- "Over"
   }
 

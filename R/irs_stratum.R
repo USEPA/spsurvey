@@ -288,14 +288,25 @@ irs_stratum <-function(stratum, dsgn, sframe, sf_type, wgt_units = NULL, pt_dens
     n_legacy <- nrow(sites_legacy)
   }
   
+  # warning if n_base <= n_legacy
+  if (n_base <= n_legacy) {
+    warn_ind <- TRUE
+    warn <- paste0("Number of base sites ", n_base, " is less than or equal to ",
+                   n_legacy, " the number of legacy sites for stratum ", stratum)
+    warn_df <- rbind(warn_df, data.frame(stratum = stratum, func = I("grts_stratum"),
+                                         warning = warn))
+  }
+  
   # save base sites
-  n.base <- n_base - n_legacy
-  sites_base <- sites[["sites"]][1:n.base, ]
+  sites_base <- NULL
+  if (n_base > n_legacy) {
+    sites_base <- sites[["sites"]][1:(n_base - n_legacy), ]
+  }
   
   # save n_over sample sites if any
   sites_over <- NULL
   if (n_over != 0) {
-    sites_over <- sites[["sites"]][(n.base + 1):(n_total - n_legacy), ]
+    sites_over <- sites[["sites"]][(n_base > n_legacy + 1):(n_total - n_legacy), ]
     sites_over$siteuse <- "Over"
   }
 
