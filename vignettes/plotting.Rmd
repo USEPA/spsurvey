@@ -247,7 +247,7 @@ plot(sample, NE_Lakes, geom = TRUE)
 To adjust graphical parameters, use `varlevel_args` -- here we plot the sample frame sites with open circles and the base sites with closed circles:
 ```{r}
 varlevel_args <- list(
-  sites = list(levels = c("sframe", "sites_base"), pch = c(1, 19))
+  siteuse = list(levels = c("sframe", "sites_base"), pch = c(1, 19))
 )
 plot(sample, NE_Lakes, varlevel_args = varlevel_args, key.pos = 1)
 ```
@@ -259,20 +259,20 @@ plot(sample, key.pos = 1)
 
 If you want to plot each level of the `sites` argument by a categorical variable, similar to plots from [Categorical Response by Categorical Variables], run
 ```{r}
-plot(sample, NE_Lakes, sites ~ ELEVATION_CAT, pch = 19, key.pos = 1)
+plot(sample, NE_Lakes,  ~ ELEV_CAT, pch = 19, key.pos = 1)
 ```
 
 To plot closed circles for the base sites, run
 ```{r}
 var_args <- list(
-  ELEVATION_CAT = list(
-    sites = list(levels = c("sframe", "sites_base"), pch = c(1, 19))
+  ELEV_CAT = list(
+    siteuse = list(levels = c("sframe", "Base"), pch = c(1, 19))
   )
 )
 plot(
   sample,
   NE_Lakes,
-  sites ~ ELEVATION_CAT,
+  siteuse ~ ELEV_CAT,
   var_args = var_args,
   key.pos = 1
 )
