@@ -190,6 +190,8 @@ get_sftess <- function(tile) {
 
 calculate_metric <- function(metric, proportions, expected_proportions) {
   switch(metric,
+    rmse = calculate_rmse(proportions, expected_proportions),
+    mse = calculate_mse(proportions, expected_proportions),
     pielou = calculate_pielou(proportions, expected_proportions),
     chisq = calculate_chisq(proportions, expected_proportions),
     abserr = calculate_abserr(proportions, expected_proportions),
@@ -198,26 +200,41 @@ calculate_metric <- function(metric, proportions, expected_proportions) {
   )
 }
 
+calculate_rmse <- function(proportions, expected_proportions) {
+  sqr_dev <- (proportions - expected_proportions)^2
+  mse <- sum(sqr_dev) / length(sqr_dev)
+  rmse <- sqrt(mse)
+  names(rmse) <- "rmse"
+  rmse
+}
+
+calculate_mse <- function(proportions, expected_proportions) {
+  sqr_dev <- (proportions - expected_proportions)^2
+  mse <- sum(sqr_dev) / length(sqr_dev)
+  names(mse) <- "mse"
+  mse
+}
+
 calculate_pielou <- function(proportions, expected_proportions) {
   pielou <- 1 + sum(proportions * log(proportions)) / log(1 / expected_proportions) # 1/E(p) = n$
   names(pielou) <- "pielou"
-  return(pielou)
+  pielou
 }
 
 calculate_chisq <- function(proportions, expected_proportions) {
   chisq <- sum((proportions - expected_proportions)^2 / expected_proportions)
   names(chisq) <- "chisq"
-  return(chisq)
+  chisq
 }
 
 calculate_abserr <- function(proportions, expected_proportions) {
   abserr <- sum(abs(proportions - expected_proportions) / expected_proportions)
   names(abserr) <- "abserr"
-  return(abserr)
+  abserr
 }
 
 calculate_simpsons <- function(proportions, expected_proportions) {
   simpsons <- sum(proportions^2) - expected_proportions
   names(simpsons) <- "simpsons"
-  return(simpsons)
+  simpsons
 }
