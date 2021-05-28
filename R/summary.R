@@ -95,15 +95,28 @@ summary.dframe <- function(object, formula, onlyshow = NULL, ...) {
 #' @name summary
 #' @method summary spdesign
 #' @export
-summary.spdesign <- function(object, formula, onlyshow = NULL, sites = NULL, ...) {
-  if (is.null(sites)) {
-    sites <- c("sites_legacy", "sites_base", "sites_over", "sites_near")
+summary.spdesign <- function(object, formula, onlyshow = NULL, siteuse = NULL, ...) {
+
+  if ((is.null(siteuse) & (!is.null(object$sites_near))) | "Near" %in% siteuse) {
+    object$sites_near$siteuse <- "Near"
   }
+
+  # bind
+  object <- sprbind(object, siteuse)
+
+  if (is.null(siteuse)) {
+    fac_levels <- c("Legacy", "Base", "Near", "Over")
+    fac_levels_used <- fac_levels[fac_levels %in% unique(object$siteuse)]
+    object$siteuse <- factor(object$siteuse, levels = fac_levels_used)
+  } else {
+    object$siteuse <- factor(object$siteuse, levels = siteuse)
+  }
+
   # keep the sites sf objects from class design
-  sites_keep <- object[names(object) %in% sites]
+  object_split <- split(object, object$siteuse)
 
   # storing output if non-null
-  output <- lapply(sites_keep, function(x) {
+  output <- lapply(object_split, function(x) {
     if (is.null(x)) {
       x
     } else {
