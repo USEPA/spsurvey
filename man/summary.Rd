@@ -11,7 +11,7 @@
 
 \method{summary}{dframe}(object, formula, onlyshow = NULL, ...)
 
-\method{summary}{spdesign}(object, formula, onlyshow = NULL, sites = NULL, ...)
+\method{summary}{spdesign}(object, formula, onlyshow = NULL, siteuse = NULL, ...)
 }
 \arguments{
 \item{object}{A sample frame object having class \code{sframe} or a design object
