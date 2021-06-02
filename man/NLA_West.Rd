@@ -5,16 +5,16 @@
 \alias{NLA_West}
 \title{NLA West}
 \format{
-A data frame with 851 rows and 18 variables:
+An \code{sf} point object with 851 rows and 18 variables:
 \describe{
-  \item{SITE_ID}{A unique site identifier.}
-  \item{WEIGHT}{The survey design weight.}
-  \item{URBN_NLA17}{Urban category.}
-  \item{STATE_NM}{State name.}
-  \item{BENTHIC_MMI}{Benthic MMI value.}
-  \item{BENTHIC_MMI_COND}{Benthic MMI categories.}
-  \item{PHOSPHORUS_COND}{Phosphorus condition categories.}
-  \item{NITROGEN_COND}{Nitrogen condition categories.}
+  \item{SITE_ID}{A unique lake identifier.}
+  \item{WEIGHT}{The sampling design weight.}
+  \item{URBAN}{Urban category.}
+  \item{STATE}{State name.}
+  \item{BMMI}{Benthic MMI value.}
+  \item{BMMI_COND}{Benthic MMI condition categories.}
+  \item{PHOS_COND}{Phosphorus condition categories.}
+  \item{NITR_COND}{Nitrogen condition categories.}
 }
 }
 \usage{
@@ -23,6 +23,6 @@ NLA_West
 \description{
 A data frame consisting lake observations from a subset of the Environmental
 Protection Agency's "National Lakes Assessment" in the Western United
-States duing the year 2017.
+States during the year 2017.
 }
 \keyword{datasets}
