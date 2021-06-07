@@ -22,8 +22,8 @@
 \method{plot}{spdesign}(
   x,
   y = NULL,
-  formula = ~sites,
-  sites = NULL,
+  formula = ~siteuse,
+  siteuse = NULL,
   var_args = NULL,
   varlevel_args = NULL,
   geom = FALSE,
@@ -84,15 +84,6 @@ possible given \code{x} and \code{y}.}
 
 \item{...}{Additional arguments to pass to \code{plot.sf()}.}
 
-\item{xcoord}{Name of x (east-west)-coordinate in \code{x} (only required if
-\code{x} is not an sf object)}
-
-\item{ycoord}{Name of y (north-south)-coordinate in \code{x} (only required if
-\code{x} is not an sf object)}
-
-\item{crs}{Projection code for \code{xcoord} and \code{ycoord} (only
-required if \code{x} is not an sf object)}
-
 \item{siteuse}{A character vector of site types to include when plotting a
 design object. Can only take on values \code{"sframe"} (sample frame),
 \code{"Legacy"} (for legacy sites), \code{"Base"} (for base sites),
@@ -102,6 +93,15 @@ layering in the plot (e.g. \code{siteuse = c("Base", "Legacy")} will plot
 legacy sites on top of base sites. Defaults to all non-\code{NULL} elements
 in \code{x} and \code{y} with plot order \code{"sframe"}, \code{"Near"},
 \code{"Over"}, \code{"Base"}, \code{"Legacy"}.}
+
+\item{xcoord}{Name of x (east-west)-coordinate in \code{x} (only required if
+\code{x} is not an sf object)}
+
+\item{ycoord}{Name of y (north-south)-coordinate in \code{x} (only required if
+\code{x} is not an sf object)}
+
+\item{crs}{Projection code for \code{xcoord} and \code{ycoord} (only
+required if \code{x} is not an sf object)}
 }
 \description{
 Plot sample frames and design objects.
