@@ -327,7 +327,7 @@ grts_stratum <- function(stratum, dsgn, sframe, sf_type, wgt_units = NULL, pt_de
     warn <- paste0("Number of base sites ", n_base, " is less than or equal to ",
                    n_legacy, " the number of legacy sites for stratum ", stratum)
     warn_df <- rbind(warn_df, data.frame(stratum = stratum, func = I("grts_stratum"),
-                                         warning = warn))
+                                         warn = warn))
   }
 
   # save base sites
