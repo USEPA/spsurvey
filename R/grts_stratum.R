@@ -185,6 +185,16 @@ grts_stratum <- function(stratum, dsgn, sframe, sf_type, wgt_units = NULL, pt_de
     tmp <- subset(sftmp, legacy == TRUE)
     n_legacy <- nrow(tmp)
   }
+  
+  # check that number of legacy sites is less than or equal number of base sites
+  # stop if not
+  if (n_legacy > n_base) {
+    cat("Number of legacy sites is greater than number of base sites in at least one\n")
+    cat("stratum. Please check that all strata have fewer legacy sites than base sites.\n")
+    opt <- options(show.error.messages = FALSE)
+    on.exit(options(opt))
+    stop()
+  }
 
   # Step 2 site selection if linear or area; otherwise Step 1 for points.
   # determine overall sample size required from dsgn for stratum
@@ -321,15 +331,6 @@ grts_stratum <- function(stratum, dsgn, sframe, sf_type, wgt_units = NULL, pt_de
     n_legacy <- nrow(sites_legacy)
   }
   
-  # warning if n_base <= n_legacy
-  if (n_base <= n_legacy) {
-    warn_ind <- TRUE
-    warn <- paste0("Number of base sites ", n_base, " is less than or equal to ",
-                   n_legacy, " the number of legacy sites for stratum ", stratum)
-    warn_df <- rbind(warn_df, data.frame(stratum = stratum, func = I("grts_stratum"),
-                                         warn = warn))
-  }
-
   # save base sites
   sites_base <- NULL
   if (n_base > n_legacy) {

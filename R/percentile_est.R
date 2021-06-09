@@ -1,7 +1,9 @@
-###############################################################################
+################################################################################
 # Function: percentile_est (not exported)
 # Programmer: Tom Kincaid
 # Date: July 23, 2020
+# Revised: May 20 2021 to eliminate use of the finite population correction
+#          factor with the local mean variance estimator
 #
 #' Percentile Estimates for Probability Survey Data
 #'
@@ -26,21 +28,22 @@
 #'
 #' @param ivar Character value that identifies the response variable.
 #'
-#' @param design Object of class \code{survey.design} that specifies a complex survey
-#'   design.
+#' @param design Object of class \code{survey.design} that specifies a complex
+#'   survey design.
 #'
 #' @param design_names Character vector that provides names of survey design
 #'   variables in the \code{design} argument.
 #'
 #' @param var_nondetect Character value that identifies the name of a logical
-#'   variable in the \code{dframe} data frame specifying the presence of not detected
-#'   (nondetect) values for the response variable.
+#'   variable in the \code{dframe} data frame specifying the presence of not
+#'   detected (nondetect) values for the response variable.
 #'
-#' @param popcorrect Logical value that indicates whether the finite population
-#'   correction factor should be employed during variance estimation.
+#' @param vartype Character value providing the choice of the variance
+#'   estimator, where "Local" = the local mean estimator, \code{"SRS"} = the
+#'   simple random sampling estimator, \code{"HT"} = the Horvitz-Thompson
+#'   estimator, and \code{"YG"} = the Yates-Grundy estimator.  The default value
+#'   is \code{"Local"}.
 #'
-#' @param vartype The choice of variance estimator, where \code{"Local"} = local mean
-#'   estimator and \code{"SRS"} = SRS estimator.
 #'
 #' @param conf Numeric value for the confidence level.
 #'
@@ -65,13 +68,13 @@
 #'
 #' @section Other Functions Required:
 #'   \describe{
-#'     \item{\code{\link{cdf_nresp}}}{calculates number of response values less
+#'     \item{\code{cdf_nresp}}{calculates number of response values less
 #'       than a set of values}
 #'     \item{\code{\link{SE}}}{extracts standard errors from a survey design
 #'       object}
 #'     \item{\code{\link{confint}}}{computes confidence intervals for a survey
 #'       design object}
-#'     \item{\code{\link{mean_localmean}}}{organizes input and output for
+#'     \item{\code{mean_localmean}}{organizes input and output for
 #'       calculation of the local mean variance estimator for the estimated
 #'       mean}
 #'     \item{\code{\link{svyby}}}{Compute survey statistics on subsets of a
@@ -86,7 +89,6 @@
 #'
 #' @seealso
 #'   \code{\link{confint}}
-#'   \code{\link{mean_localmean}}
 #'   \code{\link{SE}}
 #'   \code{\link{svyby}}
 #'   \code{\link{svymean}}
@@ -95,11 +97,11 @@
 #' @keywords survey univar
 #'
 #' @noRd
-###############################################################################
+################################################################################
 
 percentile_est <- function(pctsum, dframe, itype, lev_itype, nlev_itype, ivar,
-                           design, design_names, var_nondetect, popcorrect, vartype, conf, mult, pctval,
-                           warn_ind, warn_df) {
+                           design, design_names, var_nondetect, vartype, conf,
+                           mult, pctval, warn_ind, warn_df) {
 
   # Assign a value to the function name variable
 
@@ -115,9 +117,9 @@ percentile_est <- function(pctsum, dframe, itype, lev_itype, nlev_itype, ivar,
 
   if (is.null(var_nondetect)) {
 
-    # Calculate percentile estimates, standard error estimates, and confidence bound
-    # estimates for each combination of subpopulation and response variable for the
-    # case where nondetects are not present
+    # Calculate percentile estimates, standard error estimates, and confidence
+    # bound estimates for each combination of subpopulation and response
+    # variable for the case where nondetects are not present
 
     tst <- !is.na(dframe[, itype])
     if (nlev_itype == 1) {
@@ -163,9 +165,8 @@ percentile_est <- function(pctsum, dframe, itype, lev_itype, nlev_itype, ivar,
         nresp_mean <- sum(!is.na(dframe[, ivar]))
         if (vartype == "Local") {
           temp <- mean_localmean(
-            itype, lev_itype, nlev_itype, c(1), ivar,
-            design, design_names, meanest[1], popcorrect, vartype, mult,
-            warn_ind, warn_df
+            itype, lev_itype, nlev_itype, c(1), ivar, design, design_names,
+            meanest[1], mult, warn_ind, warn_df
           )
           stderr_mean <- temp$stderr
           lbound_mean <- unlist(temp$confval[1])
@@ -259,9 +260,8 @@ percentile_est <- function(pctsum, dframe, itype, lev_itype, nlev_itype, ivar,
         nresp_mean[levs] <- temp[levs]
         if (vartype == "Local") {
           temp <- mean_localmean(
-            itype, lev_itype, nlev_itype, levs, ivar,
-            design, design_names, meanest, popcorrect, vartype, mult,
-            warn_ind, warn_df
+            itype, lev_itype, nlev_itype, levs, ivar, design, design_names,
+            meanest, mult, warn_ind, warn_df
           )
           stderr_mean[levs] <- temp$stderr[levs]
           lbound_mean[levs] <- unlist(temp$confval[levs, 1])

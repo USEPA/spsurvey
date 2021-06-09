@@ -4,18 +4,21 @@
 # Date: July 16, 2020
 # Revised: August 14, 2020 to allow use of an sf object as the input data
 #          argument (dframe)
-# Revised: December 15, 2020 to allow use of the Horvitz-Thompson and
-#          Yates-Grundy variance estimators and to use a new function named
-#          survey_design to create the survey design object
+# Revised: December 15, 2020 to use a new function named survey_design to
+#          create the survey design object
 # Revised: March 2, 2021 to revise the process for creating unique site ID
 #          values
 # Revised: April 7, 2021 to ensure that the dframe argument does not contain
 #          zero rows
 # Revised: April 29, 2021 to ensure that the dframe argument only belongs to
 #          class "data.frame"
-# Revised: May 4 2021 to avoid warning messages being generated during creation
+# Revised: May 4, 2021 to avoid warning messages being generated during creation
 #          of help files
-# Revised: May 6 2021 to ensure that sf objects do not belong to class tbl_df
+# Revised: May 6, 2021 to ensure that sf objects do not belong to class tbl_df
+# Revised: June 8, 2021 to simplify specification of the values required for
+#          calculation of the finite population correction factor and to
+#          eliminate use of the finite population correction factor with the
+#          local mean variance estimator
 #
 #' Relative Risk Analysis for Probability Survey Data
 #'
@@ -119,31 +122,55 @@
 #' weight variable in the \code{dframe} data frame.  The default value is
 #' \code{NULL}.
 #'
-#' @param popcorrect Logical value that indicates whether the finite population
-#'   correction factor is used during variance estimation. To employ the
-#'   correction factor for a single-stage sample, values must be supplied for
-#'   argument \code{fpcsize}.  To employ the correction factor for a two-stage
-#'   sample, values must be supplied for arguments \code{Ncluster} and
-#'   \code{stage1size}. The default value is \code{FALSE}.
-#'
-#' @param fpcsize Character value providing the name of the variable in the
-#'   \code{dframe} data frame that identifies size of the resource, which is
-#'   required for calculation of the finite population correction factor for a
-#'   single-stage sample.  The default value is \code{NULL}.
-#'
-#' @param Ncluster Character value providing the name of the variable in the
-#'   \code{dframe} data frame that identifies the number of clusters (stage one
-#'   sampling units) in the resource, which is required for calculation of the
-#'   finite population correction factor for a two-stage sample.  This argument
-#'   is also required for a two-stage sample when the popsize argument is not
-#'   equal to \code{NULL} and the vartype argument equals \code{"Local"}.  The
-#'   default value is \code{NULL}.
-#'
-#' @param stage1size Character value providing the name of the variable in the
-#'   \code{dframe} data frame that identifies cluster size, i.e. the number of
-#'   the stage two sampling units in the resource for a cluster.  Note that
-#'   cluster size is required for calculation of the finite population
-#'   correction factor for a two-stage sample. The default value is \code{NULL}.
+#' @param fpc Object that specifies values required for calculation of the
+#'   finite population correction factor used during variance estimation. The
+#'   object must match the survey design in terms of stratification and whether
+#'   the design is single-stage or two-stage.  For an unstratified design, the
+#'   object is a vector.  The vector is composed of a single numeric value for a
+#'   single-stage design.  For a two-stage unstratified design, the object is a
+#'   named vector containing one more than the number of clusters in the sample,
+#'   where the first item in the vector specifies the number of clusters in the
+#'   population and each subsequent item specifies the number of stage two units
+#'   for the cluster.  The name for the first item in the vector is arbitrry.
+#'   Subsequent names in the vector identify clusters and must match the cluster
+#'   IDs.  For a stratified design, the object is a named list of vectors, where
+#'   names must match the strata IDs.  For each stratum, the format of the
+#'   vector is identical to the format described for unstratified single-stage
+#'   and two-stage designs.  Note that the finite population correction factor
+#'   is not used with the local mean variance estimator.\cr\cr
+#'   Example fpc for a single-stage unstratified survey design:\cr
+#'   \verb{fpc <- 15000}\cr\cr
+#'   Example fpc for a single-stage stratified survey design:\cr
+#'   \verb{fpc <- list(
+#'     Stratum_1 = 9000,
+#'     Stratum_2 = 6000)
+#'    }\cr
+#'   Example fpc for a two-stage unstratified survey design:\cr
+#'   \verb{fpc <- c(
+#'     Ncluster = 150,
+#'     Cluster_1 = 150,
+#'     Cluster_2 = 75,
+#'     Cluster_3 = 75,
+#'     Cluster_4 = 125,
+#'     Cluster_5 = 75)
+#'   }\cr
+#'   Example fpc for a two-stage stratified survey design:\cr
+#'   \verb{fpc <- list(
+#'     Stratum_1 = c(
+#'       Ncluster_1 = 100,
+#'       Cluster_1 = 125,
+#'       Cluster_2 = 100,
+#'       Cluster_3 = 100,
+#'       Cluster_4 = 125,
+#'       Cluster_5 = 50),
+#'     Stratum_2 = c(
+#'       Ncluster_2 = 50,
+#'       Cluster_1 = 75,
+#'       Cluster_2 = 150,
+#'       Cluster_3 = 75,
+#'       Cluster_4 = 75,
+#'       Cluster_5 = 125))
+#'   }
 #'
 #' @param popsize Object that provides values for the population argument of
 #'   the \code{calibrate} or \code{postStratify} functions.  For the
@@ -162,33 +189,32 @@
 #'   performed.  The default value is
 #'   \code{NULL}.\cr\cr
 #'   Example popsize for calibration:\cr
-#'     popsize <- list(Ecoregion = c(East = 750,\cr
-#'                                   Central = 500,\cr
-#'                                   West = 250),\cr
-#'                     Type = c(Streams = 1150,\cr
-#'                              Rivers = 350))\cr
+#'   \verb{popsize <- list(
+#'     Ecoregion = c(
+#'       East = 750,
+#'       Central = 500,
+#'       West = 250),
+#'     Type = c(
+#'       Streams = 1150,
+#'       Rivers = 350))
+#'   }\cr
 #'   Example popsize for post-stratification using a data frame:\cr
-#'     popsize <- data.frame(
-#'       Ecoregion = rep(c("East", "Central", "West"), rep(2, 3)),\cr
-#'       Type = rep(c("Streams", "Rivers"), 3),\cr
-#'       Total = c(575, 175, 400, 100, 175, 75))\cr
-#'   Example popsize for post-stratification using a table:\cr575
-#'     popsize <- with(MySurveyFrame, table(Ecoregion, Type))\cr
+#'   \verb{popsize <- data.frame(
+#'     Ecoregion = rep(c("East", "Central", "West"),
+#'       rep(2, 3)),
+#'     Type = rep(c("Streams", "Rivers"), 3),
+#'     Total = c(575, 175, 400, 100, 175, 75))
+#'   }\cr
+#'   Example popsize for post-stratification using a table:\cr
+#'   \verb{popsize <- with(MySurveyFrame,
+#'     table(Ecoregion, Type))}\cr\cr
 #'   Example popsize for post-stratification using an xtabs object:\cr
-#'     popsize <- xtabs(~Ecoregion + Type, data = MySurveyFrame)\cr
+#'   \verb{popsize <- xtabs(~Ecoregion + Type,
+#'     data = MySurveyFrame)}
 #'
 #' @param vartype Character value providing the choice of the variance
-#'   estimator, where "Local" = the local mean estimator, \code{"SRS"} = the
-#'   simple random sampling estimator, \code{"HT"} = the Horvitz-Thompson
-#'   estimator, and \code{"YG"} = the Yates-Grundy estimator.  The default value
-#'   is \code{"Local"}.
-#'
-#' @param jointprob Character value providing the choice of joint inclusion
-#'   probability approximation for use with Horvitz-Thompson and Yates-Grundy
-#'   variance estimators, where \code{"overton"} indicates the Overton
-#'   approximation, \code{"hr"} indicates the Hartley_Rao approximation, and
-#'   \code{"brewer"} equals the Brewer approximation.  The default value is
-#'   \code{"overton"}.
+#'   estimator, where "Local" = the local mean estimator and \code{"SRS"} = the
+#'   simple random sampling estimator.  The default value is \code{"Local"}.
 #'
 #' @param conf Numeric value providing the confidence level.  The default value
 #'   is \code{95}.
@@ -256,8 +282,7 @@ relrisk_analysis <- function(
   subpops = NULL, siteID = "siteID", weight = "weight", xcoord = NULL,
   ycoord = NULL, stratumID = NULL, clusterID = NULL, weight1 = NULL,
   xcoord1 = NULL, ycoord1 = NULL, sizeweight = FALSE, sweight = NULL,
-  sweight1 = NULL, popcorrect = FALSE, fpcsize = NULL, Ncluster = NULL,
-  stage1size = NULL, popsize = NULL, vartype = "Local", jointprob = "overton",
+  sweight1 = NULL, fpc = NULL, popsize = NULL, vartype = "Local",
   conf = 95) {
 
   # Create a vector for error messages
@@ -346,6 +371,27 @@ relrisk_analysis <- function(
     error_vec <- c(error_vec, msg)
   }
 
+  # Assign names to the variables required for calculation of the finite
+  # population correction factor
+
+  if (is.null(fpc)) {
+    fpcfactor_ind <- FALSE
+    fpcsize <- NULL
+    Ncluster <- NULL
+    stage1size <- NULL
+  } else {
+    fpcfactor_ind <- TRUE
+    if (is.null(clusterID)) {
+      fpcsize = "fpcsize"
+      Ncluster <- NULL
+      stage1size <- NULL
+    } else {
+      fpcsize <- NULL
+      Ncluster <- "Ncluster"
+      stage1size <- "stage1size"
+    }
+  }
+
   # Create a list containing names of survey design variables
 
   design_names <- list(
@@ -396,7 +442,7 @@ relrisk_analysis <- function(
   # Check input arguments
 
   temp <- input_check(dframe, design_names, vars_response, NULL, vars_stressor,
-    NULL, subpops, sizeweight, popcorrect, popsize, vartype, jointprob, conf,
+    NULL, subpops, sizeweight, fpc, popsize, vartype, NULL, conf,
     error_ind = error_ind, error_vec = error_vec
   )
   dframe <- temp$dframe
@@ -405,7 +451,6 @@ relrisk_analysis <- function(
   subpops <- temp$subpops
   popsize <- temp$popsize
   vartype <- temp$vartype
-  jointprob <- temp$jointprob
   error_ind <- temp$error_ind
   error_vec <- temp$error_vec
 
@@ -580,9 +625,9 @@ relrisk_analysis <- function(
   # Create the survey design object
 
   design <- survey_design(
-    dframe, siteID, weight, stratum_ind, stratumID,
-    cluster_ind, clusterID, weight1, sizeweight, sweight, sweight1, popcorrect,
-    fpcsize, Ncluster, stage1size, vartype, jointprob
+    dframe, siteID, weight, stratum_ind, stratumID, cluster_ind, clusterID,
+    weight1, sizeweight, sweight, sweight1, fpcfactor_ind, fpcsize, Ncluster,
+    stage1size, vartype, NULL
   )
 
   # If popsize is not equal to NULL, then call either the postStratify or
@@ -614,13 +659,11 @@ relrisk_analysis <- function(
   }
 
   # If popsize is not equal to NULL and vartype equals "Local", then assign
-  # adjusted weights to the appropriate weight variable(s) in the design$variables
-  # data frame
+  # adjusted weights to the appropriate weight variable(s) in the
+  # design$variables data frame
 
   if (!is.null(popsize) && vartype == "Local") {
     if (cluster_ind) {
-      ncluster <- length(unique(design$variables[, clusterID]))
-      design$variables$wgt1 <- unique(design$variables[, Ncluster]) / ncluster
       design$variables$wgt2 <- weights(design) / design$variables$wgt1
     } else {
       design$variables$wgt <- weights(design)
@@ -737,15 +780,13 @@ relrisk_analysis <- function(
                   wgt2[stratum_i], xcoord[stratum_i], ycoord[stratum_i],
                   stratum_ind, stratum_levels[i], cluster_ind,
                   clusterID[stratum_i], wgt1[stratum_i], xcoord1[stratum_i],
-                  ycoord1[stratum_i], popcorrect, NULL, Ncluster[stratum_i],
-                  stage1size[stratum_i], vartype, warn_ind, warn_df, warn_vec
+                  ycoord1[stratum_i], vartype, warn_ind, warn_df, warn_vec
                 )
               } else {
                 temp <- relrisk_var(response[stratum_i], stressor[stratum_i],
                   response_levels[[ivar_r]], stressor_levels[[ivar_s]],
                   wgt[stratum_i], xcoord[stratum_i], ycoord[stratum_i],
                   stratum_ind, stratum_levels[i], cluster_ind,
-                  pcfactor_ind = popcorrect, fpcsize = fpcsize[stratum_i],
                   vartype = vartype, warn_ind = warn_ind, warn_df = warn_df,
                   warn_vec = warn_vec
                 )
@@ -965,25 +1006,22 @@ relrisk_analysis <- function(
                   response_levels[[ivar_r]], stressor_levels[[ivar_s]],
                   wgt2[tst], xcoord[tst], ycoord[tst], stratum_ind, NULL,
                   cluster_ind, clusterID[tst], wgt1[tst], xcoord1[tst],
-                  ycoord1[tst], popcorrect, NULL, Ncluster[tst],
-                  stage1size[tst], vartype, warn_ind, warn_df, warn_vec
+                  ycoord1[tst], vartype, warn_ind, warn_df, warn_vec
                 )
               } else {
                 temp <- relrisk_var(response[tst], stressor[tst],
                   response_levels[[ivar_r]], stressor_levels[[ivar_s]],
                   wgt[tst], xcoord[tst], ycoord[tst], stratum_ind, NULL,
-                  cluster_ind,
-                  pcfactor_ind = popcorrect,
-                  fpcsize = fpcsize[tst], vartype = vartype,
-                  warn_ind = warn_ind, warn_df = warn_df,
-                  warn_vec = warn_vec
+                  cluster_ind,vartype = vartype, warn_ind = warn_ind,
+                  warn_df = warn_df, warn_vec = warn_vec
                 )
               }
               varest <- temp$varest
               warn_ind <- temp$warn_ind
               warn_df <- temp$warn_df
 
-              # Calculate the standard error estimate of the log of relative risk
+              # Calculate the standard error estimate of the log of relative
+              # risk
 
               pder <- 1 / c(total1, -total2, -total3, total4)
               rrlog_se <- sqrt(t(pder) %*% varest %*% pder)

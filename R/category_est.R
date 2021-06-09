@@ -8,6 +8,8 @@
 #          variable contains a single category.
 # Revised: February 22, 2021 to fix incorrect coding of "rslt_T" as
 #          "rslt_U".
+# Revised: May 20 2021 to eliminate use of the finite population correction
+#          factor with the local mean variance estimator
 #
 #' Category Proportion and Total Estimates for Probability Survey Data
 #'
@@ -58,11 +60,11 @@
 #' @param design_names Character vector that provides names of survey design
 #'   variables in the design argument.
 #'
-#' @param popcorrect Logical value that indicates whether the finite population
-#'   correction factor should be employed during variance estimation.
-#'
-#' @param vartype The choice of variance estimator, where "Local" = local mean
-#'   estimator and "SRS" = SRS estimator.
+#' @param vartype Character value providing the choice of the variance
+#'   estimator, where "Local" = the local mean estimator, \code{"SRS"} = the
+#'   simple random sampling estimator, \code{"HT"} = the Horvitz-Thompson
+#'   estimator, and \code{"YG"} = the Yates-Grundy estimator.  The default value
+#'   is \code{"Local"}.
 #'
 #' @param conf Numeric value for the confidence level.
 #'
@@ -84,10 +86,10 @@
 #'
 #' @section Other Functions Required:
 #'   \describe{
-#'     \item{\code{\link{cat_localmean_prop}}}{organizes input and output for
+#'     \item{\code{cat_localmean_prop}}{organizes input and output for
 #'       calculation of the local mean variance estimator for estimated
 #'       proportions for categorical data}
-#'     \item{\code{\link{cat_localmean_total}}}{organizes input and output for
+#'     \item{\code{cat_localmean_total}}{organizes input and output for
 #'       calculation of the local mean variance estimator for estimated sizes
 #'       (totals) for categorical data}
 #'     \item{\code{\link{SE}}}{extracts standard errors from a survey design
@@ -105,8 +107,6 @@
 #' @author Tom Kincaid \email{Kincaid.Tom@epa.gov}
 #'
 #' @seealso
-#'   \code{\link{cat_localmean_prop}}
-#'   \code{\link{cat_localmean_total}}
 #'   \code{\link{confint}}
 #'   \code{\link{SE}}
 #'   \code{\link{svyby}}
@@ -119,8 +119,8 @@
 ################################################################################
 
 category_est <- function(catsum, dframe, itype, lev_itype, nlev_itype, ivar,
-                         lev_ivar, nlev_ivar, design, design_names, popcorrect, vartype, conf, mult,
-                         warn_ind, warn_df) {
+                         lev_ivar, nlev_ivar, design, design_names,
+                         vartype, conf, mult, warn_ind, warn_df) {
 
   # Assign a value to the function name variable
 
@@ -150,9 +150,8 @@ category_est <- function(catsum, dframe, itype, lev_itype, nlev_itype, ivar,
       dimnames(rslt_P)[1] <- lev_itype
       if (vartype == "Local") {
         temp <- cat_localmean_prop(
-          itype, lev_itype, nlev_itype, ivar, lev_ivar,
-          nlev_ivar, design, design_names, rslt_P, popcorrect, vartype, mult,
-          warn_ind, warn_df
+          itype, lev_itype, nlev_itype, ivar, lev_ivar, nlev_ivar, design,
+          design_names, rslt_P, mult, warn_ind, warn_df
         )
         stderr_P <- temp$stderr_P
         confval_P <- temp$confval_P
@@ -197,9 +196,8 @@ category_est <- function(catsum, dframe, itype, lev_itype, nlev_itype, ivar,
       rslt_P <- cbind(rslt_P, Total = rep(1, nlev_itype))
       if (vartype == "Local") {
         temp <- cat_localmean_prop(
-          itype, lev_itype, nlev_itype, ivar, lev_ivar,
-          nlev_ivar, design, design_names, rslt_P, popcorrect, vartype, mult,
-          warn_ind, warn_df
+          itype, lev_itype, nlev_itype, ivar, lev_ivar, nlev_ivar, design,
+          design_names, rslt_P, mult, warn_ind, warn_df
         )
         stderr_P <- temp$stderr_P
         confval_P <- temp$confval_P
@@ -239,9 +237,8 @@ category_est <- function(catsum, dframe, itype, lev_itype, nlev_itype, ivar,
       dimnames(rslt_U)[1] <- lev_itype
       if (vartype == "Local") {
         temp <- cat_localmean_total(
-          itype, lev_itype, nlev_itype, ivar,
-          lev_ivar, nlev_ivar, design, design_names, rslt_U, popcorrect,
-          vartype, mult, warn_ind, warn_df
+          itype, lev_itype, nlev_itype, ivar, lev_ivar, nlev_ivar, design,
+          design_names, rslt_U, mult, warn_ind, warn_df
         )
         stderr_U <- temp$stderr_U
         confval_U <- temp$confval_U
@@ -265,9 +262,8 @@ category_est <- function(catsum, dframe, itype, lev_itype, nlev_itype, ivar,
       dimnames(rslt_U)[1] <- lev_itype
       if (vartype == "Local") {
         temp <- cat_localmean_total(
-          itype, lev_itype, nlev_itype, ivar,
-          lev_ivar, nlev_ivar, design, design_names, rslt_U, popcorrect,
-          vartype, mult, warn_ind, warn_df
+          itype, lev_itype, nlev_itype, ivar, lev_ivar, nlev_ivar, design,
+          design_names, rslt_U, mult, warn_ind, warn_df
         )
         stderr_U <- temp$stderr_U
         confval_U <- temp$confval_U
@@ -290,9 +286,8 @@ category_est <- function(catsum, dframe, itype, lev_itype, nlev_itype, ivar,
       dimnames(rslt_U)[[1]] <- lev_itype
       if (vartype == "Local") {
         temp <- cat_localmean_total(
-          itype, lev_itype, nlev_itype, ivar,
-          lev_ivar, nlev_ivar, design, design_names, rslt_U, popcorrect,
-          vartype, mult, warn_ind, warn_df
+          itype, lev_itype, nlev_itype, ivar, lev_ivar, nlev_ivar, design,
+          design_names, rslt_U, mult, warn_ind, warn_df
         )
         stderr_U <- temp$stderr_U
         confval_U <- temp$confval_U
@@ -318,9 +313,8 @@ category_est <- function(catsum, dframe, itype, lev_itype, nlev_itype, ivar,
       rslt_U <- cbind(rslt_U, Total = temp)
       if (vartype == "Local") {
         temp <- cat_localmean_total(
-          itype, lev_itype, nlev_itype, ivar,
-          lev_ivar, nlev_ivar, design, design_names, rslt_U, popcorrect,
-          vartype, mult, warn_ind, warn_df
+          itype, lev_itype, nlev_itype, ivar, lev_ivar, nlev_ivar, design,
+          design_names, rslt_U, mult, warn_ind, warn_df
         )
         stderr_U <- temp$stderr_U
         confval_U <- temp$confval_U

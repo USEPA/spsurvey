@@ -1,11 +1,13 @@
-###############################################################################
+################################################################################
 # Function: cdf_localmean_prop (not exported)
 # Programmer: Tom Kincaid
 # Date: July 9, 2020
 # Revised: April 27, 2021 to check whether the local mean variance estimator
 #          produced negative estimates and to use the SRS variance estimator
 #          when that situation occurs
-#'
+# Revised: June 8, 2021 to eliminate use of the finite population correction
+#          factor with the local mean variance estimator
+#
 #' Local Mean Variance Estimates of the Estimated CDF using the Proportion Scale
 #'
 #' This function organizes input and output for calculation of the local mean
@@ -23,8 +25,8 @@
 #' @param ivar Character value that identifies a factor variable in the design
 #'   argument containing categorical response values.
 #'
-#' @param design Object of class \code{survey.design} that specifies a complex survey
-#'   design.
+#' @param design Object of class \code{survey.design} that specifies a complex
+#'   survey design.
 #'
 #' @param design_names Character vector that provides names of survey design
 #'   variables in the design argument.
@@ -36,12 +38,6 @@
 #'
 #' @param cdfest_P Object that provides CDF estimates on the proportion scale
 #'   for the continuous response variable.
-#'
-#' @param popcorrect Logical value that indicates whether the finite population
-#'   correction factor should be employed during variance estimation.
-#'
-#' @param vartype The choice of variance estimator, where \code{"Local"} = local mean
-#'   estimator and \code{"SRS"} = SRS estimator.
 #'
 #' @param mult Numeric value that provides the Normal distribution confidence
 #'   bound multiplier.
@@ -62,7 +58,7 @@
 #'
 #' @section Other Functions Required:
 #'   \describe{
-#'     \item{\code{\link{cdfvar_prop}}}{calculates variance estimates of the
+#'     \item{\code{cdfvar_prop}}{calculates variance estimates of the
 #'       estimated CDF using the proportion scale}
 #'     \item{\code{\link{svymean}}}{calculates the mean for a complex survey
 #'       design}
@@ -71,17 +67,16 @@
 #' @author Tom Kincaid \email{Kincaid.Tom@epa.gov}
 #'
 #' @seealso
-#'   \code{\link{cdf_localmean_total}}
 #'   \code{\link{svymean}}
 #'
 #' @keywords survey
 #'
 #' @noRd
-###############################################################################
+################################################################################
 
 cdf_localmean_prop <- function(itype, lev_itype, nlev_itype, ivar, design,
-                               design_names, cdfval, ncdfval, cdfest_P, popcorrect, vartype, mult, warn_ind,
-                               warn_df) {
+                               design_names, cdfval, ncdfval, cdfest_P,  mult,
+                               warn_ind, warn_df) {
 
   # Assign a value to the function name variable
 
@@ -200,17 +195,14 @@ cdf_localmean_prop <- function(itype, lev_itype, nlev_itype, ivar, design,
             contvar[stratum_i], wgt2[stratum_i],
             xcoord[stratum_i], ycoord[stratum_i], cdfval, cdfest_st,
             stratum_ind, stratum_levels[i], cluster_ind, clusterID[stratum_i],
-            wgt1[stratum_i], xcoord1[stratum_i], ycoord1[stratum_i], popcorrect,
-            NULL, Ncluster[stratum_i], stage1size[stratum_i], vartype, warn_ind,
+            wgt1[stratum_i], xcoord1[stratum_i], ycoord1[stratum_i], warn_ind,
             warn_df, warn_vec
           )
         } else {
           temp <- cdfvar_prop(contvar[stratum_i], wgt[stratum_i],
             xcoord[stratum_i], ycoord[stratum_i], cdfval, cdfest_st,
-            stratum_ind, stratum_levels[i], cluster_ind,
-            pcfactor_ind = popcorrect, fpcsize = fpcsize[stratum_i],
-            vartype = vartype, warn_ind = warn_ind, warn_df = warn_df,
-            warn_vec = warn_vec
+            stratum_ind, stratum_levels[i], cluster_ind, warn_ind = warn_ind,
+            warn_df = warn_df, warn_vec = warn_vec
           )
         }
         warn_ind <- temp$warn_ind
@@ -218,8 +210,8 @@ cdf_localmean_prop <- function(itype, lev_itype, nlev_itype, ivar, design,
         if(any(temp$varest < 0)) {
           temp$vartype <- "SRS"
           warn_ind <- TRUE
-          act <- "The simple random sampling variance estimator was used.\n"
-          warn <- paste0("The local mean variance estimator produced one or more  negative varaince estimates in \nstratum \"", stratum_levels[i], "\", the simple random sampling variance estimator was used to calculate \nvariance of the CDF proportion estimates.\n")
+          act <- "The simple random sampling variance estimator for an infinite population was used.\n"
+          warn <- paste0("The local mean variance estimator produced one or more  negative variance estimates in \nstratum \"", stratum_levels[i], "\", the simple random sampling variance estimator for an infinite \npopulation was used to calculate variance of the CDF proportion estimates.\n")
           warn_df <- rbind(warn_df, data.frame(
             func = I(fname),
             subpoptype = warn_vec[1], subpop = warn_vec[2],
@@ -268,14 +260,12 @@ cdf_localmean_prop <- function(itype, lev_itype, nlev_itype, ivar, design,
         temp <- cdfvar_prop(
           contvar[tst], wgt2[tst], xcoord[tst], ycoord[tst],
           cdfval, prop, stratum_ind, NULL, cluster_ind, clusterID[tst],
-          wgt1[tst], xcoord1[tst], ycoord1[tst], popcorrect, NULL,
-          Ncluster[tst], stage1size[tst], vartype, warn_ind, warn_df, warn_vec
+          wgt1[tst], xcoord1[tst], ycoord1[tst], warn_ind, warn_df, warn_vec
         )
       } else {
         temp <- cdfvar_prop(contvar[tst], wgt[tst], xcoord[tst], ycoord[tst],
-          cdfval, prop, stratum_ind, NULL, cluster_ind,
-          pcfactor_ind = popcorrect, fpcsize = fpcsize[tst], vartype = vartype,
-          warn_ind = warn_ind, warn_df = warn_df, warn_vec = warn_vec
+          cdfval, prop, stratum_ind, NULL, cluster_ind, warn_ind = warn_ind,
+          warn_df = warn_df, warn_vec = warn_vec
         )
       }
       warn_ind <- temp$warn_ind
@@ -283,8 +273,8 @@ cdf_localmean_prop <- function(itype, lev_itype, nlev_itype, ivar, design,
       if(any(temp$varest < 0)) {
         temp$vartype <- "SRS"
         warn_ind <- TRUE
-        act <- "The simple random sampling variance estimator was used.\n"
-        warn <- paste0("The local mean variance estimator produced one or more  negative varaince estimates, the \nsimple random sampling variance estimator was used to calculate variance of the CDF \nproportion estimates.\n")
+        act <- "The simple random sampling variance estimator for an infinite population was used.\n"
+        warn <- paste0("The local mean variance estimator produced one or more  negative variance estimates, the \nsimple random sampling variance estimator for an infinite population was used to \ncalculate variance of the CDF proportion estimates.\n")
         warn_df <- rbind(warn_df, data.frame(
           func = I(fname),
           subpoptype = warn_vec[1], subpop = warn_vec[2],

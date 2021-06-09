@@ -1,7 +1,9 @@
-###############################################################################
+################################################################################
 # Function: cdf_est (not exported)
 # Programmer: Tom Kincaid
 # Date: July 23, 2020
+# Revised: May 25 2021 to eliminate use of the finite population correction
+#          factor with the local mean variance estimator
 #
 #' Cumulative Distribution Function Estimate for Probability Survey Data
 #'
@@ -45,21 +47,21 @@
 #' @param ivar Character value that identifies a factor variable in the design
 #'   argument containing categorical response values.
 #'
-#' @param design Object of class \code{survey.design} that specifies a complex survey
-#'   design.
+#' @param design Object of class \code{survey.design} that specifies a complex
+#'   survey design.
 #'
 #' @param design_names Character vector that provides names of survey design
 #'   variables in the design argument.
 #'
 #' @param var_nondetect Character value that identifies the name of a logical
-#'   variable in the \code{dframe} data frame specifying the presence of not detected
-#'   (nondetect) values for the response variable.
+#'   variable in the \code{dframe} data frame specifying the presence of not
+#'   detected (nondetect) values for the response variable.
 #'
-#' @param popcorrect Logical value that indicates whether the finite population
-#'   correction factor should be employed during variance estimation.
-#'
-#' @param vartype The choice of variance estimator, where \code{"Local"} = local mean
-#'   estimator and \code{"SRS"} = SRS estimator.
+#' @param vartype Character value providing the choice of the variance
+#'   estimator, where "Local" = the local mean estimator, \code{"SRS"} = the
+#'   simple random sampling estimator, \code{"HT"} = the Horvitz-Thompson
+#'   estimator, and \code{"YG"} = the Yates-Grundy estimator.  The default value
+#'   is \code{"Local"}.
 #'
 #' @param conf Numeric value for the confidence level.
 #'
@@ -81,13 +83,13 @@
 #'
 #' @section Other Functions Required:
 #'   \describe{
-#'     \item{\code{\link{cdf_localmean_prop}}}{organizes input and output for
+#'     \item{\code{cdf_localmean_prop}}{organizes input and output for
 #'       calculation of the local mean variance estimator for the estimated CDF
 #'       using the proportion scale}
-#'     \item{\code{\link{cdf_localmean_total}}}{organizes input and output for
+#'     \item{\code{cdf_localmean_total}}{organizes input and output for
 #'       calculation of the local mean variance estimator for the estimated CDF
 #'       using the total scale}
-#'     \item{\code{\link{cdf_nresp}}}{calculates number of response values less
+#'     \item{\code{cdf_nresp}}{calculates number of response values less
 #'       than a set of values}
 #'     \item{\code{\link{SE}}}{extracts standard errors from a survey design
 #'       object}
@@ -104,8 +106,6 @@
 #' @author Tom Kincaid \email{Kincaid.Tom@epa.gov}
 #'
 #' @seealso
-#'   \code{\link{cdf_localmean_prop}}
-#'   \code{\link{cdf_localmean_total}}
 #'   \code{\link{confint}}
 #'   \code{\link{SE}}
 #'   \code{\link{svyby}}
@@ -115,10 +115,10 @@
 #' @keywords survey univar
 #'
 #' @noRd
-###############################################################################
+################################################################################
 
 cdf_est <- function(cdfsum, dframe, itype, lev_itype, nlev_itype, ivar, design,
-                    design_names, var_nondetect, popcorrect, vartype, conf, mult, warn_ind,
+                    design_names, var_nondetect, vartype, conf, mult, warn_ind,
                     warn_df) {
 
   # Assign a value to the function name variable
@@ -131,9 +131,10 @@ cdf_est <- function(cdfsum, dframe, itype, lev_itype, nlev_itype, ivar, design,
 
   if (is.null(var_nondetect)) {
 
-    # Using the proportion scale, calculate CDF estimates, standard error estimates,
-    # and confidence bound estimates for each combination of subpopulation and
-    # response variable for the case where nondetects are not present
+    # Using the proportion scale, calculate CDF estimates, standard error
+    # estimates, and confidence bound estimates for each combination of
+    # subpopulation and response variable for the case where nondetects are not
+    # present
 
     tst <- !is.na(dframe[, itype])
     cdfval <- sort(unique(dframe[!is.na(dframe[, ivar]), ivar]))
@@ -149,9 +150,8 @@ cdf_est <- function(cdfsum, dframe, itype, lev_itype, nlev_itype, ivar, design,
       nresp <- list(cdf_nresp(dframe[, ivar], cdfval))
       if (vartype == "Local") {
         temp <- cdf_localmean_prop(
-          itype, lev_itype, nlev_itype, ivar,
-          design, design_names, cdfval, ncdfval, cdfest_P, popcorrect, vartype,
-          mult, warn_ind, warn_df
+          itype, lev_itype, nlev_itype, ivar, design, design_names, cdfval,
+          ncdfval, cdfest_P, mult, warn_ind, warn_df
         )
         stderr_P <- temp$stderr_P
         confval_P <- temp$confval_P
@@ -176,9 +176,8 @@ cdf_est <- function(cdfsum, dframe, itype, lev_itype, nlev_itype, ivar, design,
       nresp <- tapply(dframe[, ivar], dframe[, itype], cdf_nresp, cdfval)
       if (vartype == "Local") {
         temp <- cdf_localmean_prop(
-          itype, lev_itype, nlev_itype, ivar,
-          design, design_names, cdfval, ncdfval, cdfest_P, popcorrect, vartype,
-          mult, warn_ind, warn_df
+          itype, lev_itype, nlev_itype, ivar, design, design_names, cdfval,
+          ncdfval, cdfest_P, mult, warn_ind, warn_df
         )
         stderr_P <- temp$stderr_P
         confval_P <- temp$confval_P
@@ -213,9 +212,8 @@ cdf_est <- function(cdfsum, dframe, itype, lev_itype, nlev_itype, ivar, design,
       confest_U <- as.data.frame(t(confest_U))
       if (vartype == "Local") {
         temp <- cdf_localmean_total(
-          itype, lev_itype, nlev_itype, ivar,
-          design, design_names, cdfval, ncdfval, confest_U, popcorrect, vartype,
-          mult, warn_ind, warn_df
+          itype, lev_itype, nlev_itype, ivar, design, design_names, cdfval,
+          ncdfval, confest_U, mult, warn_ind, warn_df
         )
         stderr_U <- temp$stderr_U
         confval_U <- temp$confval_U
@@ -239,9 +237,8 @@ cdf_est <- function(cdfsum, dframe, itype, lev_itype, nlev_itype, ivar, design,
       rownames(confest_U) <- lev_itype
       if (vartype == "Local") {
         temp <- cdf_localmean_total(
-          itype, lev_itype, nlev_itype, ivar,
-          design, design_names, cdfval, ncdfval, confest_U, popcorrect, vartype,
-          mult, warn_ind, warn_df
+          itype, lev_itype, nlev_itype, ivar, design, design_names, cdfval,
+          ncdfval, confest_U, mult, warn_ind, warn_df
         )
         stderr_U <- temp$stderr_U
         confval_U <- temp$confval_U
@@ -264,8 +261,8 @@ cdf_est <- function(cdfsum, dframe, itype, lev_itype, nlev_itype, ivar, design,
   } else {
 
     # Calculate CDF estimates, standard error estimates, and confidence bound
-    # estimates for each combination of subpopulation and response variable for the
-    # case where nondetects are present
+    # estimates for each combination of subpopulation and response variable for
+    # the case where nondetects are present
 
     maxval <- max(dframe[, ivar], na.rm = TRUE)
     flip <- maxval - dframe[, ivar]
