@@ -6,6 +6,8 @@
 #          fails to produce a valid estimate
 # Revised: May 3 2021 to correct an error that occurs when warning messages for
 #          unstratified samples are added to the warn_df data frame
+# Revised: June 8 2021 to eliminate use of the finite population correction
+#          factor with the local mean variance estimator
 #
 #' Compute the Variance/Covariance Estimate for Attributable Risk
 #'
@@ -22,16 +24,10 @@
 #' @param stressor Vector of the categorical stressor variable.
 #'
 #' @param response_levels Vector of category values (levels) for the
-#'   categorical response variable.  If \code{response_levels} equals
-#'   \code{NULL}, then values \code{"Poor"} and \code{"Good"} are used for the
-#'   first level and second level of the response variable, respectively.  The
-#'   default is \code{NULL}.
+#'   categorical response variable.
 #'
 #' @param stressor_levels Vector of category values (levels) for the
-#'   categorical stressor variable.  If \code{stressor_levels} equals
-#'   \code{NULL}, then values \code{"Poor"} and \code{"Good"} are used for the
-#'   first level and second level of the stressor variable, respectively.  The
-#'   default is \code{NULL}.
+#'   categorical stressor variable.
 #'
 #' @param wgt Vector of the final adjusted weight (reciprocal of the sample
 #'   inclusion probability) for each site, which is either the weight for a
@@ -64,25 +60,6 @@
 #'
 #' @param y1 Vector of the stage one y-coordinate for location for each site.
 #'
-#' @param pcfactor_ind Logical value that indicates whether the finite
-#'   population correction factor is used during variance estimation, where
-#'   \code{TRUE} = use the population correction factor and \code{FALSE} = do
-#'   not use the factor. To employ the correction factor for a single-stage
-#'   sample, a value must be supplied for argument \code{fpcsize}.  To employ the
-#'   correction factor for a two-stage sample, values must be supplied for
-#'   arguments \code{Ncluster} and \code{stage1size}.
-#'
-#' @param fpcsize Size of the resource, which is required for calculation of the
-#'   finite population correction factor for a single-stage sample.
-#'
-#' @param Ncluster The number of stage one sampling units in the resource,
-#'   which is required for calculation of the finite population correction
-#'   factor for a two-stage sample.
-#'
-#' @param stage1size Vector of the size of the stage one sampling units of a
-#'   two-stage sample, which is required for calculation of the finite
-#'   population correction factor for a two-stage sample.
-#'
 #' @param vartype The choice of variance estimator, where \code{"Local"} = local
 #'   mean estimator and \code{"SRS"} = SRS estimator.
 #'
@@ -105,9 +82,9 @@
 #'
 #' @section Other Functions Required:
 #'   \describe{
-#'     \item{\code{\link{localmean_cov}}}{calculate the variance/covariance
+#'     \item{\code{localmean_cov}}{calculate the variance/covariance
 #'       matrix using the local mean estimator}
-#'     \item{\code{\link{localmean_weight}}}{calculate the weighting matrix for
+#'     \item{\code{localmean_weight}}{calculate the weighting matrix for
 #'        the local mean variance estimator}
 #'   }
 #'
@@ -120,8 +97,8 @@
 
 attrisk_var <- function(response, stressor, response_levels, stressor_levels,
                         wgt, x, y, stratum_ind, stratum_level, cluster_ind,
-                        cluster, wgt1, x1, y1, pcfactor_ind, fpcsize, Ncluster,
-                        stage1size, vartype, warn_ind, warn_df, warn_vec) {
+                        cluster, wgt1, x1, y1, vartype, warn_ind, warn_df,
+                        warn_vec) {
 
   # Assign the function name
   fname <- "attrisk_var"
@@ -149,15 +126,11 @@ attrisk_var <- function(response, stressor, response_levels, stressor_levels,
     }
     wgt2_lst <- split(wgt, cluster)
     wgt1_u <- as.vector(tapply(wgt1, cluster, unique))
-    if (pcfactor_ind) {
-      N.cluster <- unique(Ncluster)
-      stage1size_u <- as.vector(tapply(stage1size, cluster, unique))
-    }
     var_ind <- sapply(split(cluster, cluster), length) > 1
 
-    # Calculate estimates of the total of the stage two sampling unit response
-    # values or residuals and the variance of those totals for each stage one
-    # sampling unit
+    # For each stage one sampling unit and each contingency table cell,
+    # calculate an estimate of the total of the stage two indicator variables
+    # and the variance of the total
 
     total2est <- matrix(0, ncluster, 4)
     var2est <- matrix(0, ncluster, 16)
@@ -167,7 +140,7 @@ attrisk_var <- function(response, stressor, response_levels, stressor_levels,
 
       nresp <- length(response_lst[[i]])
 
-      # Create indicator variables for required cells and margins
+      # Create indicator variables for contingency table cells
 
       Ind1 <- (response_lst[[i]] == response_levels[1]) * (stressor_lst[[i]] ==
           stressor_levels[1])
@@ -182,7 +155,7 @@ attrisk_var <- function(response, stressor, response_levels, stressor_levels,
 
       rm <- cbind(Ind1, Ind2, Ind3, Ind4) * wgt2_lst[[i]]
 
-      # Calculate total estimates for the stage one sampling unit
+      # Calculate the total estimate for each indicator variable
 
       total2est[i, ] <- apply(rm, 2, sum)
 
@@ -191,16 +164,16 @@ attrisk_var <- function(response, stressor, response_levels, stressor_levels,
       SRSind <- FALSE
       if (vartype == "Local" && nresp < 4) {
         warn_ind <- TRUE
-        act <- "The simple random sampling variance estimator was used.\n"
+        act <- "The simple random sampling covariance estimator for an infinite population was used.\n"
         if (stratum_ind) {
-          warn <- paste0("There are less than four response values for stage one sampling unit \"", cluster_levels[i], "\"\nin stratum \"", stratum_level, "\", the simple random sampling variance estimator was used \nto calculate variance of the category proportion estimates.\n")
+          warn <- paste0("There are less than four response values for stage one sampling unit \"", cluster_levels[i], "\"\nin stratum \"", stratum_level, "\", the simple random sampling covariance estimator for an infinite \npopulation was used to calculate covariance of the total of the indicator variables.\n")
           warn_df <- rbind(warn_df, data.frame(
             func = I(fname), subpoptype = warn_vec[1], subpop = warn_vec[2],
             indicator = warn_vec[3], stratum = stratum_level, warning = I(warn),
             action = I(act)
           ))
         } else {
-          warn <- paste0("There are less than four response values for stage one sampling unit \"", cluster_levels[i], "\", \nthe simple random sampling variance estimator was used to calculate variance of the \ncategory proportion estimates.\n")
+          warn <- paste0("There are less than four response values for stage one sampling unit \"", cluster_levels[i], "\", \nthe simple random sampling covariance estimator for an infinite population was used \nto calculate covariance of the total of the indicator variables.\n")
           warn_df <- rbind(warn_df, data.frame(
             func = I(fname), subpoptype = warn_vec[1], subpop = warn_vec[2],
             indicator = warn_vec[3], stratum = NA, warning = I(warn),
@@ -211,12 +184,8 @@ attrisk_var <- function(response, stressor, response_levels, stressor_levels,
         SRSind <- TRUE
       }
 
-      # Calculate the population correction factor for the stage two sample
-
-      pcfactor <- ifelse(pcfactor_ind, (stage1size_u[i] - nresp) /
-          stage1size_u[i], 1)
-
-      # Calculate the variance/covariance estimate for the stage one sampling unit
+      # Calculate the variance/covariance estimate for the weighted indicator
+      # variables
 
       if (var_ind[i]) {
         if (vartype == "Local") {
@@ -227,8 +196,8 @@ attrisk_var <- function(response, stressor, response_levels, stressor_levels,
           if(is.null(weight_lst)) {
             if (stratum_ind) {
               warn_ind <- TRUE
-              act <- "The simple random sampling variance estimator was used.\n"
-              warn <- paste0("The local mean variance estimator cannot calculate valid estimates for stage one \nsampling unit \"", cluster_levels[i], "\" in stratum \"", stratum_level, "\", the simple random sampling \nvariance estimator was used to calculate variance of the category proportion estimates.\n")
+              act <- "The simple random sampling covariance estimator for an infinite population was used.\n"
+              warn <- paste0("The local mean covariance estimator cannot calculate valid estimates for stage one \nsampling unit \"", cluster_levels[i], "\" in stratum \"", stratum_level, "\", the simple random sampling \ncovariance estimator for an infinite population was used to calculate covariance of the \ntotal of the indicator variables.\n")
               warn_df <- rbind(warn_df, data.frame(
                 func = I(fname), subpoptype = warn_vec[1], subpop = warn_vec[2],
                 indicator = warn_vec[3], stratum = stratum_level,
@@ -236,20 +205,41 @@ attrisk_var <- function(response, stressor, response_levels, stressor_levels,
               ))
             } else {
               warn_ind <- TRUE
-              act <- "The simple random sampling variance estimator was used.\n"
-              warn <- paste0("The local mean variance estimator cannot calculate valid estimates for stage one \nsampling unit \"", cluster_levels[i], "\", the simple random sampling variance estimator was used \nto calculate variance of the category proportion estimates.\n")
+              act <- "The simple random sampling covariance estimator was used.\n"
+              warn <- paste0("The local mean variance estimator cannot calculate valid estimates for stage one \nsampling unit \"", cluster_levels[i], "\", the simple random sampling covariance estimator for an \ninfinite population was used to calculate covariance of the total of the indicator variables.\n")
               warn_df <- rbind(warn_df, data.frame(
                 func = I(fname), subpoptype = warn_vec[1], subpop = warn_vec[2],
                 indicator = warn_vec[3], stratum = NA, warning = I(warn),
                 action = I(act)
               ))
             }
-            var2est[i, ] <- as.vector(pcfactor * nresp * var(rm))
+            var2est[i, ] <- as.vector(nresp * var(rm))
           } else {
-            var2est[i, ] <- as.vector(pcfactor * localmean_cov(rm, weight_lst))
+            temp <- localmean_cov(rm, weight_lst)
+            var2est[i, ] <- as.vector(temp)
+            if(any(diag(temp) < 0)) {
+              warn_ind <- TRUE
+              act <- "The simple random sampling covariance estimator for an infinite population was used.\n"
+              if (stratum_ind) {
+                warn <- paste0("The local mean covariance estimator produced one or more negative variance estimates for \nstage one sampling unit \"", cluster_levels[i], "\" in stratum \"", stratum_level, "\", the simple random \nsampling covariance estimator for an infinite population was used to calculate \ncovariance of the total of the indicator variables.\n")
+                warn_df <- rbind(warn_df, data.frame(
+                  func = I(fname), subpoptype = warn_vec[1],
+                  subpop = warn_vec[2], indicator = warn_vec[3],
+                  stratum = stratum_level, warning = I(warn), action = I(act)
+                ))
+              } else {
+                warn <- paste0("The local mean covariance estimator produced one or more negative variance estimates \nfor stage one sampling unit \"", cluster_levels[i], "\", the simple random sampling covariance \nestimator for an infinite population was used to calculate covariance of the total of \nthe indicator variables.\n")
+                warn_df <- rbind(warn_df, data.frame(
+                  func = I(fname), subpoptype = warn_vec[1],
+                  subpop = warn_vec[2], indicator = warn_vec[3], stratum = NA,
+                  warning = I(warn), action = I(act)
+                ))
+              }
+              var2est[i, ] <- as.vector(nresp * var(rm))
+            }
           }
         } else {
-          var2est[i, ] <- as.vector(pcfactor * nresp * var(rm))
+          var2est[i, ] <- as.vector(nresp * var(rm))
           if (SRSind) {
             vartype <- "Local"
           }
@@ -261,16 +251,16 @@ attrisk_var <- function(response, stressor, response_levels, stressor_levels,
 
     if (vartype == "Local" && ncluster < 4) {
       warn_ind <- TRUE
-      act <- "The simple random sampling variance estimator was used.\n"
+      act <- "The simple random sampling covariance estimator for an infinite population was used.\n"
       if (stratum_ind) {
-        warn <- paste0("There are less than four stage one sampling units in stratum \"", stratum_level, "\", the simple \nrandom sampling variance estimator was used to calculate variance of the category \nproportion estimates.\n")
+        warn <- paste0("There are less than four stage one sampling units in stratum \"", stratum_level, "\", the simple \nrandom sampling covariance estimator for an infinite population was used to calculate \ncovariance of the attributable risk estimate.\n")
         warn_df <- rbind(warn_df, data.frame(
           func = I(fname), subpoptype = warn_vec[1], subpop = warn_vec[2],
           indicator = warn_vec[3], stratum = stratum_level, warning = I(warn),
           action = I(act)
         ))
       } else {
-        warn <- paste0("There are less than four stage one sampling units, the simple random sampling variance \nestimator was used to calculate variance of the category proportion estimates.\n")
+        warn <- paste0("There are less than four stage one sampling units, the simple random sampling covariance \nestimator for an infinite population was used to calculate covariance of the attributable \nrisk estimate.\n")
         warn_df <- rbind(warn_df, data.frame(
           func = I(fname), subpoptype = warn_vec[1], subpop = warn_vec[2],
           indicator = warn_vec[3], stratum = NA, warning = I(warn),
@@ -280,51 +270,63 @@ attrisk_var <- function(response, stressor, response_levels, stressor_levels,
       vartype <- "SRS"
     }
 
-    # Calculate the population correction factor for the stage one sample
-
-    pcfactor <- ifelse(pcfactor_ind, (N.cluster - ncluster) / N.cluster, 1)
-
     # Calculate the variance/covariance estimate
 
     if (vartype == "Local") {
       weight_lst <- localmean_weight(x1_u, y1_u, 1 / wgt1_u)
       if(is.null(weight_lst)) {
+        warn_ind <- TRUE
+        act <- "The simple random sampling covariance estimator for an infinite population was used.\n"
         if (stratum_ind) {
-          warn_ind <- TRUE
-          act <- "The simple random sampling variance estimator was used.\n"
-          warn <- paste0("The local mean variance estimator cannot calculate valid estimates for stratum \n\"", stratum_level, "\", the simple random sampling variance estimator was used to calculate \nvariance of the category proportion estimates.\n")
+          warn <- paste0("The local mean covariance estimator cannot calculate valid estimates for stratum \n\"", stratum_level, "\", the simple random sampling covariance estimator for an infinite population \nwas used to calculate covariance of the attributable risk estimate.\n")
           warn_df <- rbind(warn_df, data.frame(
             func = I(fname), subpoptype = warn_vec[1], subpop = warn_vec[2],
             indicator = warn_vec[3], stratum = stratum_level, warning = I(warn),
             action = I(act)
           ))
         } else {
-          warn_ind <- TRUE
-          act <- "The simple random sampling variance estimator was used.\n"
-          warn <- paste0("The local mean variance estimator cannot calculate valid estimates, the simple random \nsampling variance estimator was used to calculate variance of the category proportion \nestimates.\n")
+          warn <- paste0("The local mean covariance estimator cannot calculate valid estimates, the simple random \nsampling variance estimator for an infinite population was used to calculate variance \nof the attributable risk estimate.\n")
           warn_df <- rbind(warn_df, data.frame(
             func = I(fname), subpoptype = warn_vec[1], subpop = warn_vec[2],
             indicator = warn_vec[3], stratum = NA,
             warning = I(warn), action = I(act)
           ))
         }
-        varest <- pcfactor * ncluster * var(total2est * matrix(rep(wgt1_u, 4),
-          nrow = ncluster
-        )) + matrix(apply(var2est * matrix(rep(wgt1_u, 16),
-          nrow = ncluster
-        ), 2, sum), nrow = 4)
+        varest <- ncluster * var(total2est * matrix(rep(wgt1_u, 4),
+          nrow = ncluster)) + matrix(apply(var2est * matrix(rep(wgt1_u, 16),
+            nrow = ncluster), 2, sum), nrow = 4)
       } else {
-        varest <- pcfactor * localmean_cov(total2est * matrix(rep(wgt1_u, 4),
-          nrow = ncluster
-        ), weight_lst) + matrix(apply(var2est *
-            matrix(rep(wgt1_u, 16), nrow = ncluster), 2, sum), nrow = 4)
+        varest <- localmean_cov(total2est * matrix(rep(wgt1_u, 4),
+          nrow = ncluster), weight_lst) + matrix(apply(var2est *
+              matrix(rep(wgt1_u, 16), nrow = ncluster), 2, sum), nrow = 4)
+        temp <- diag(varest)
+        if(any(temp < 0)) {
+          warn_ind <- TRUE
+          act <- "The simple random sampling covariance estimator for an infinite population was used.\n"
+          if (stratum_ind) {
+            warn <- paste0("The local mean covariance estimator produced one or more negative variance estimates for \nstratum \"", stratum_level, "\", the simple random sampling covariance estimator for an infinite \npopulation was used to calculate covariance of the attributable risk estimate.\n")
+            warn_df <- rbind(warn_df, data.frame(
+              func = I(fname), subpoptype = warn_vec[1], subpop = warn_vec[2],
+              indicator = warn_vec[3], stratum = stratum_level,
+              warning = I(warn), action = I(act)
+            ))
+          } else {
+            warn <- paste0("The local mean covariance estimator produced one or more negative variance estimates, \nthe simple random sampling covariance estimator for an infinite population was used to \ncalculate covariance of the attributable risk estimate.\n")
+            warn_df <- rbind(warn_df, data.frame(
+              func = I(fname), subpoptype = warn_vec[1], subpop = warn_vec[2],
+              indicator = warn_vec[3], stratum = NA, warning = I(warn),
+              action = I(act)
+            ))
+          }
+          varest <- (ncluster * var(total2est * matrix(rep(wgt1_u, 4),
+            nrow = ncluster)) + matrix(apply(var2est * matrix(rep(wgt1_u, 16),
+              nrow = ncluster), 2, sum), nrow = 4))
+        }
       }
     } else {
-      varest <- pcfactor * ncluster * var(total2est * matrix(rep(wgt1_u, 4),
-        nrow = ncluster
-      )) + matrix(apply(var2est * matrix(rep(wgt1_u, 16),
-        nrow = ncluster
-      ), 2, sum), nrow = 4)
+      varest <- ncluster * var(total2est * matrix(rep(wgt1_u, 4),
+        nrow = ncluster)) + matrix(apply(var2est * matrix(rep(wgt1_u, 16),
+          nrow = ncluster), 2, sum), nrow = 4)
     }
 
     # End of section for a two-stage sample
@@ -345,24 +347,20 @@ attrisk_var <- function(response, stressor, response_levels, stressor_levels,
     # Calculate the matrix of weighted indicator variables
     rm <- cbind(Ind1, Ind2, Ind3, Ind4) * wgt
 
-    # Calculate the population correction factor
-
-    pcfactor <- ifelse(pcfactor_ind, (fpcsize - nresp) / fpcsize, 1)
-
     # Adjust the variance/covariance estimator for small sample size
 
     if (vartype == "Local" && nresp < 4) {
       warn_ind <- TRUE
-      act <- "The simple random sampling variance estimator was used.\n"
+      act <- "The simple random sampling covariance estimator for an infinite population was used.\n"
       if (stratum_ind) {
-        warn <- paste0("There are less than four response values in stratum \"", stratum_level, "\", the simple random \nsampling variance estimator was used to calculate variance of the category proportion \nestimates.\n")
+        warn <- paste0("There are less than four response values in stratum \"", stratum_level, "\", the simple random \nsampling covariance estimator for an infinite population was used to calculate covariance \nof the attributable risk estimate.\n")
         warn_df <- rbind(warn_df, data.frame(
           func = I(fname), subpoptype = warn_vec[1], subpop = warn_vec[2],
           indicator = warn_vec[3], stratum = stratum_level, warning = I(warn),
           action = I(act)
         ))
       } else {
-        warn <- paste0("\nThere are less than four response values, the simple random sampling variance estimator \nwas used to calculate variance of the category proportion estimates.\n")
+        warn <- paste0("\nThere are less than four response values, the simple random sampling covariance estimator \nfor an infinite population was used to calculate covariance of the attributable risk \nestimate.\n")
         warn_df <- rbind(warn_df, data.frame(
           func = I(fname), subpoptype = warn_vec[1], subpop = warn_vec[2],
           indicator = warn_vec[3], stratum = NA, warning = I(warn),
@@ -377,31 +375,50 @@ attrisk_var <- function(response, stressor, response_levels, stressor_levels,
     if (vartype == "Local") {
       weight_lst <- localmean_weight(x = x, y = y, prb = 1 / wgt)
       if(is.null(weight_lst)) {
+        warn_ind <- TRUE
+        act <- "The simple random sampling covariance estimator for an infinite population was used.\n"
         if (stratum_ind) {
-          warn_ind <- TRUE
-          act <- "The simple random sampling variance estimator was used.\n"
-          warn <- paste0("The local mean variance estimator cannot calculate valid estimates for stratum \n\"", stratum_level, "\", the simple random sampling variance estimator was used to calculate \nvariance of the category proportion estimates.\n")
+          warn <- paste0("The local mean covariance estimator cannot calculate valid estimates for stratum \n\"", stratum_level, "\", the simple random sampling covariance estimator for an infinite population \nwas used to calculate covariance of the attributable risk estimate.\n")
           warn_df <- rbind(warn_df, data.frame(
             func = I(fname), subpoptype = warn_vec[1], subpop = warn_vec[2],
             indicator = warn_vec[3], stratum = stratum_level, warning = I(warn),
             action = I(act)
           ))
         } else {
-          warn_ind <- TRUE
-          act <- "The simple random sampling variance estimator was used.\n"
-          warn <- paste0("The local mean variance estimator cannot calculate valid estimates, the simple random \nsampling variance estimator was used to calculate variance of the category proportion \nestimates.\n")
+          warn <- paste0("The local mean covariance estimator cannot calculate valid estimates, the simple random \nsampling covariance estimator for an infinite population was used to calculate covariance \nof the attributable risk estimate.\n")
           warn_df <- rbind(warn_df, data.frame(
             func = I(fname), subpoptype = warn_vec[1], subpop = warn_vec[2],
             indicator = warn_vec[3], stratum = NA, warning = I(warn),
             action = I(act)
           ))
         }
-        varest <- pcfactor * nresp * var(rm)
+        varest <- nresp * var(rm)
       } else {
-        varest <- pcfactor * localmean_cov(rm, weight_lst)
+        varest <- localmean_cov(rm, weight_lst)
+        temp <- diag(varest)
+        if(any(temp < 0)) {
+          warn_ind <- TRUE
+          act <- "The simple random sampling covariance estimator for an infinite population was used.\n"
+          if (stratum_ind) {
+            warn <- paste0("The local mean covariance estimator produced one or more negative variance estimates for \nstratum \"", stratum_level, "\", the simple random sampling covariance estimator for an \ninfinite population was used to calculate covariance of the attributable risk estimate.\n")
+            warn_df <- rbind(warn_df, data.frame(
+              func = I(fname), subpoptype = warn_vec[1],
+              subpop = warn_vec[2], indicator = warn_vec[3],
+              stratum = stratum_level, warning = I(warn), action = I(act)
+            ))
+          } else {
+            warn <- paste0("The local mean covariance estimator produced one or more negative variance estimates, \nthe simple random sampling covariance estimator for an infinite population was used to \ncalculate covariance of the attributable risk estimate.\n")
+            warn_df <- rbind(warn_df, data.frame(
+              func = I(fname), subpoptype = warn_vec[1],
+              subpop = warn_vec[2], indicator = warn_vec[3], stratum = NA,
+              warning = I(warn), action = I(act)
+            ))
+          }
+          varest <- nresp * var(rm)
+        }
       }
     } else {
-      varest <- pcfactor * nresp * var(rm)
+      varest <- nresp * var(rm)
     }
 
     # End of section for a single-stage sample

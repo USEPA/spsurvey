@@ -1,4 +1,4 @@
-###############################################################################
+################################################################################
 # Function: cat_localmean_prop (not exported)
 # Programmer: Tom Kincaid
 # Date: July 23, 2020
@@ -8,7 +8,9 @@
 # Revised: April 27, 2021 to check whether the local mean variance estimator
 #          produced negative estimates and to use the SRS variance estimator
 #          when that situation occurs
-#'
+# Revised: June 8, 2021 to eliminate use of the finite population correction
+#          factor with the local mean variance estimator
+#
 #' Local Mean Variance Estimates of Estimated Proportions for Categorical Data
 #'
 #' This function organizes input and output for calculation of the local mean
@@ -32,20 +34,14 @@
 #' @param nlev_ivar Numeric value that provides the number of levels of the
 #'   categorical response variable.
 #'
-#' @param design Object of class \code{survey.design} that specifies a complex survey
-#'   design.
+#' @param design Object of class \code{survey.design} that specifies a complex
+#'   survey design.
 #'
 #' @param design_names Character vector that provides names of survey design
 #'   variables in the design argument.
 #'
 #' @param rslt_P Data frame that provides proportion estimates for the
 #'   categorical response variable.
-#'
-#' @param popcorrect Logical value that indicates whether the finite population
-#'   correction factor should be employed during variance estimation.
-#'
-#' @param vartype The choice of variance estimator, where \code{"Local"} = local mean
-#'   estimator and \code{"SRS"} = SRS estimator.
 #'
 #' @param mult Numeric value that provides the Normal distribution confidence
 #'   bound multiplier.
@@ -66,7 +62,7 @@
 #'
 #' @section Other Functions Required:
 #'   \describe{
-#'     \item{\code{\link{catvar_prop}}}{calculates variance estimates of the
+#'     \item{\code{catvar_prop}}{calculates variance estimates of the
 #'       estimated proportion in each of a set of categories}
 #'     \item{\code{\link{svymean}}}{calculates the mean for a complex survey
 #'       design}
@@ -75,17 +71,16 @@
 #' @author Tom Kincaid \email{Kincaid.Tom@epa.gov}
 #'
 #' @seealso
-#'   \code{\link{cat_localmean_total}}
 #'   \code{\link{svymean}}
 #'
 #' @keywords survey
 #'
 #' @noRd
-###############################################################################
+################################################################################
 
 cat_localmean_prop <- function(itype, lev_itype, nlev_itype, ivar, lev_ivar,
-                               nlev_ivar, design, design_names, rslt_P, popcorrect, vartype, mult, warn_ind,
-                               warn_df) {
+                               nlev_ivar, design, design_names, rslt_P,
+                               mult, warn_ind, warn_df) {
 
   # Assign a value to the function name variable
 
@@ -155,8 +150,8 @@ cat_localmean_prop <- function(itype, lev_itype, nlev_itype, ivar, lev_ivar,
 
     stratum_ind <- !is.null(stratumID)
 
-    # For a stratified design, determine whether the subpopulation contains a single
-    # stratum
+    # For a stratified design, determine whether the subpopulation contains a
+    # single stratum
 
     if (stratum_ind) {
       stratum <- factor(stratumID[tst])
@@ -199,17 +194,14 @@ cat_localmean_prop <- function(itype, lev_itype, nlev_itype, ivar, lev_ivar,
             factor(catvar[stratum_i]), wgt2[stratum_i],
             xcoord[stratum_i], ycoord[stratum_i], prop_st, prop_names,
             stratum_ind, stratum_levels[i], cluster_ind, clusterID[stratum_i],
-            wgt1[stratum_i], xcoord1[stratum_i], ycoord1[stratum_i], popcorrect,
-            NULL, Ncluster[stratum_i], stage1size[stratum_i], vartype, warn_ind,
-            warn_df, warn_vec
+            wgt1[stratum_i], xcoord1[stratum_i], ycoord1[stratum_i],
+            warn_ind, warn_df, warn_vec
           )
         } else {
           temp <- catvar_prop(factor(catvar[stratum_i]), wgt[stratum_i],
             xcoord[stratum_i], ycoord[stratum_i], prop_st, prop_names,
             stratum_ind, stratum_levels[i], cluster_ind,
-            pcfactor_ind = popcorrect, fpcsize = fpcsize[stratum_i],
-            vartype = vartype, warn_ind = warn_ind, warn_df = warn_df,
-            warn_vec = warn_vec
+            warn_ind = warn_ind, warn_df = warn_df, warn_vec = warn_vec
           )
         }
         warn_ind <- temp$warn_ind
@@ -217,14 +209,17 @@ cat_localmean_prop <- function(itype, lev_itype, nlev_itype, ivar, lev_ivar,
         if(any(temp$varest < 0)) {
           temp$vartype <- "SRS"
           warn_ind <- TRUE
-          act <- "The simple random sampling variance estimator was used.\n"
-          warn <- paste0("The local mean variance estimator produced one or more  negative varaince estimates in \nstratum \"", stratum_levels[i], "\", the simple random sampling variance estimator was used to calculate \nvariance of the category proportion estimates.\n")
-          warn_df <- rbind(warn_df, data.frame(
-            func = I(fname),
-            subpoptype = warn_vec[1], subpop = warn_vec[2],
-            indicator = warn_vec[3], stratum = I(stratum_levels[i]),
-            warning = I(warn), action = I(act)
-          ))
+          act <- "The simple random sampling variance estimator for an infinite population was used.\n"
+          warn <- paste0("The local mean variance estimator produced one or more  negative variance estimates in \nstratum \"", stratum_levels[i], "\", the simple random sampling variance estimator for an infinite \npopulation was used to calculate variance of the category proportion estimates.\n")
+          warn_df <-
+            rbind(
+              warn_df,
+              data.frame(
+                func = I(fname), subpoptype = warn_vec[1], subpop = warn_vec[2],
+                indicator = warn_vec[3], stratum = I(stratum_levels[i]),
+                warning = I(warn), action = I(act)
+              )
+            )
         }
         if (temp$vartype == "SRS") {
           rslt_svy <- svymean(make.formula(ivar),
@@ -273,14 +268,12 @@ cat_localmean_prop <- function(itype, lev_itype, nlev_itype, ivar, lev_ivar,
         temp <- catvar_prop(
           factor(catvar[tst]), wgt2[tst], xcoord[tst],
           ycoord[tst], prop, prop_names, stratum_ind, NULL, cluster_ind,
-          clusterID[tst], wgt1[tst], xcoord1[tst], ycoord1[tst], popcorrect,
-          NULL, Ncluster[tst], stage1size[tst], vartype, warn_ind, warn_df,
-          warn_vec
+          clusterID[tst], wgt1[tst], xcoord1[tst], ycoord1[tst], warn_ind,
+          warn_df, warn_vec
         )
       } else {
         temp <- catvar_prop(factor(catvar[tst]), wgt[tst], xcoord[tst],
           ycoord[tst], prop, prop_names, stratum_ind, NULL, cluster_ind,
-          pcfactor_ind = popcorrect, fpcsize = fpcsize[tst], vartype = vartype,
           warn_ind = warn_ind, warn_df = warn_df, warn_vec = warn_vec
         )
       }
@@ -289,14 +282,17 @@ cat_localmean_prop <- function(itype, lev_itype, nlev_itype, ivar, lev_ivar,
       if(any(temp$varest < 0)) {
         temp$vartype <- "SRS"
         warn_ind <- TRUE
-        act <- "The simple random sampling variance estimator was used.\n"
-        warn <- paste0("The local mean variance estimator produced one or more  negative varaince estimates, the \nsimple random sampling variance estimator was used to calculate variance of the category \nproportion estimates.\n")
-        warn_df <- rbind(warn_df, data.frame(
-          func = I(fname),
-          subpoptype = warn_vec[1], subpop = warn_vec[2],
-          indicator = warn_vec[3], stratum = NA,
-          warning = I(warn), action = I(act)
-        ))
+        act <- "The simple random sampling variance estimator for an infinite population was used.\n"
+        warn <- paste0("The local mean variance estimator produced one or more  negative variance estimates, the \nsimple random sampling variance estimator for an infinite population was used to \ncalculate variance of the category proportion estimates.\n")
+        warn_df <-
+          rbind(
+            warn_df,
+            data.frame(
+              func = I(fname), subpoptype = warn_vec[1], subpop = warn_vec[2],
+              indicator = warn_vec[3], stratum = NA, warning = I(warn),
+              action = I(act)
+            )
+          )
       }
       if (temp$vartype == "SRS") {
         rslt_svy <- svymean(make.formula(ivar),
