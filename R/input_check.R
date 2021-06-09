@@ -1,4 +1,4 @@
-###############################################################################
+################################################################################
 # Function: input_check (not exported)
 # Programmer: Tom Kincaid
 # Date: October 9, 2020
@@ -6,7 +6,10 @@
 #          two-stage samples
 # Revised: December 17, 2020 to check input values for the Horvitz-Thompson and
 #          Yates-Grundy options for variance estimator
-#'
+# Revised: June 4, 2021 to implement checking the revised approach used for
+#          specification of the finite population correction factor and to
+#          ensure that continuous variables have syntactically valid names
+#
 #' Check Input Values for Analytical Functions
 #'
 #' This function checks input values for errors, consistency, and compatibility
@@ -16,86 +19,85 @@
 #'   variables, and subpopulation (domain) variables.
 #'
 #' @param design_names Vector composed of character values that identify the
-#'   names of the following survey design variables in the \code{dframe} data frame:
-#'   \code{siteID}, \code{weight}, \code{xcoord}, \code{ycoord}, \code{stratumID},
-#'   \code{clusterID}, \code{weight1}, \code{xcoord1},
-#'   \code{ycoord1}, \code{sweight}, \code{sweight1}, \code{fpcsize}, \code{Ncluster}, \code{stage1size}.
+#'   names of the following survey design variables in the \code{dframe} data
+#'   frame: \code{siteID}, \code{weight}, \code{xcoord}, \code{ycoord},
+#'   \code{stratumID}, \code{clusterID}, \code{weight1}, \code{xcoord1},
+#'   \code{ycoord1}, \code{sweight}, \code{sweight1}, \code{fpcsize},
+#'   \code{Ncluster}, \code{stage1size}.
 #'
-#' @param vars_cat Vector composed of character values that identify the
-#'   names of categorical response variables in the \code{dframe} data frame.
+#' @param vars_cat Vector composed of character values that identify the names
+#'   of categorical response variables in the \code{dframe} data frame.
 #'
-#' @param vars_cont Vector composed of character values that identify the
-#'   names of continuous response variables in the \code{dframe} data frame.
+#' @param vars_cont Vector composed of character values that identify the names
+#'   of continuous response variables in the \code{dframe} data frame.
 #'
 #' @param vars_stressor Vector composed of character values that identify the
 #'   names of stressor variables in the \code{dframe} data frame.
 #'
 #' @param vars_nondetect Vector composed of character values that identify the
-#'   names of logical variables in the \code{dframe} data frame specifying the presence
-#'   of not detected (nondetect) values for response variables.
+#'   names of logical variables in the \code{dframe} data frame specifying the
+#'   presence of not detected (nondetect) values for response variables.
 #'
-#' @param subpops Vector composed of character values that identify the
-#'   names of subpopulation variables in the \code{dframe} data frame.
+#' @param subpops Vector composed of character values that identify the names of
+#'   subpopulation variables in the \code{dframe} data frame.
 #'
 #' @param sizeweight Logical value that indicates whether size weights should be
 #'   used during estimation.
 #'
-#' @param popcorrect Logical value that indicates whether the finite population
-#'   correction factor is used during variance estimation.
+#' @param fpc Object that specifies values required for calculation of the
+#'   finite population correction factor used during variance estimation.
 #'
-#' @param popsize List providing known size of the resource.
+#' @param popsize Object providing known size of the resource.
 #'
 #' @param vartype Character value providing choice of the variance estimator,
-#'   where \code{"Local"} = the local mean estimator, \code{"SRS"} = the simple random
-#'   sampling estimator, \code{"HT"} = the Horvitz-Thompson estimator, and \code{"YG"} = the
-#'   Yates-Grundy estimator.
+#'   where \code{"Local"} = the local mean estimator, \code{"SRS"} = the simple
+#'   random sampling estimator, \code{"HT"} = the Horvitz-Thompson estimator,
+#'   and \code{"YG"} = the Yates-Grundy estimator.
 #'
 #' @param jointprob Character value providing choice of joint inclusion
 #'   probability approximation for use with Horvitz-Thompson and Yates-Grundy
-#'   variance estimators, where \code{"overton"} indicates the Overton approximation,
-#'   \code{"hr"} indicates the Hartley_Rao approximation, and \code{"brewer"} equals the
-#'   Brewer approximation.
+#'   variance estimators, where \code{"overton"} indicates the Overton
+#'   approximation, \code{"hr"} indicates the Hartley_Rao approximation, and
+#'   \code{"brewer"} equals the Brewer approximation.
 #'
 #' @param conf Numeric value providing the confidence level.
 #'
 #' @param cdfval Vector of the set of values at which the CDF is estimated.
 #'
-#' @param pctval Vector of the set of values at which percentiles are
-#'   estimated.
-#'
-#' @param sigma Numeric value providing the measurement error variance.
-#'
-#' @param var_sigma Numeric value providing the variance of the measurement
-#'   error variance.
+#' @param pctval Vector of the set of values at which percentiles are estimated.
 #'
 #' @param error_ind Logical value that indicates whether error messages were
 #'   generated.
 #'
 #' @param error_vec Vector for storing error messages.
 #'
-#' @return A list consisting of \code{dframe}, \code{vars_cat}, \code{vars_cont}, \code{vars_stressor},
-#'   \code{subpops}, \code{popsize}, \code{vartype}, \code{jointprob}, \code{error_ind}, and \code{error_vec}.
+#' @return A list consisting of \code{dframe}, \code{vars_cat},
+#'   \code{vars_cont}, \code{vars_stressor}, \code{subpops}, \code{popsize},
+#'   \code{vartype}, \code{jointprob}, \code{error_ind}, and \code{error_vec}.
 #'
 #' @section Other Functions Required:
 #'   \describe{
-#'     \item{\code{\link{vecprint}}}{takes an input vector and outputs a
-#'       character string with line breaks inserted}
+#'     \item{\code{\link{make.names}}}{creates syntactically valid names}
+#'     \item{\code{vecprint}}{takes an input vector and outputs a character
+#'       string with line breaks inserted}
 #'   }
 #'
 #' @author Tom Kincaid \email{Kincaid.Tom@epa.gov}
 #'
 #' @noRd
-###############################################################################
+################################################################################
 
 input_check <- function(dframe, design_names, vars_cat, vars_cont,
-                        vars_stressor, vars_nondetect, subpops, sizeweight, popcorrect, popsize,
-                        vartype, jointprob, conf, cdfval = NULL, pctval = NULL, sigma = NULL,
-                        var_sigma = NULL, error_ind, error_vec) {
+                        vars_stressor, vars_nondetect, subpops, sizeweight,
+                        fpc, popsize, vartype, jointprob, conf, cdfval = NULL,
+                        pctval = NULL, error_ind, error_vec) {
 
   # For variables that exist in the dframe data frame, assign survey design
   # variables and check those variables for missing values
 
   temp <- c("surveyID", "siteID", "weight")
+  design_names <- design_names[!(names(design_names) %in% c("fpcsize",
+    "Ncluster", "stage1size"))]
   for (i in names(design_names)) {
     if (is.null(design_names[[i]])) {
       eval(parse(text = paste0(i, " <- NULL")))
@@ -124,16 +126,17 @@ input_check <- function(dframe, design_names, vars_cat, vars_cont,
 
   if (!is.null(stratumID)) {
     stratumID <- factor(stratumID)
-    stratum.levels <- levels(stratumID)
-    nstrata <- length(stratum.levels)
+    stratum_levels <- levels(stratumID)
+    nstrata <- length(stratum_levels)
   }
 
-  # Check the response variables arguments to ensure that the arguments are vectors
-  # composed of character values and that the elements of the vectors are included
-  # among the names in the dframe data frame.  For categorical response variables,
-  # ensure that the variables referenced in the argument are coded as factors.  For
-  # continuous response variables, ensure that the variables referenced in the
-  # argument are coded as numeric variables.
+  # Check the response variables arguments to ensure that the arguments are
+  # vectors composed of character values and that the elements of the vectors
+  # are included among the names in the dframe data frame.  For categorical
+  # response variables, ensure that the variables referenced in the argument are
+  # coded as factors.  For continuous response variables, ensure that the
+  # variables referenced in the argument are coded as numeric variables and that
+  # variable names are syntactically valid
 
   if (!is.null(vars_cat)) {
     if (!is.vector(vars_cat)) {
@@ -178,14 +181,23 @@ input_check <- function(dframe, design_names, vars_cat, vars_cont,
         temp_str <- vecprint(vars_cont[tst])
         msg <- paste0("The following continuous response variable names do not occur among the \nnames for the dframe data frame:\n", temp_str)
         error_vec <- c(error_vec, msg)
+      } else {
+        for (i in vars_cont) {
+          if (!is.numeric(dframe[, i])) {
+            dframe[, i] <- as.numeric(dframe[, i])
+          }
+        }
+        indx <- match(vars_cont, names(dframe))
+        vars_cont <- make.names(vars_cont)
+        names(dframe)[indx] <- vars_cont
       }
     }
   }
 
-  # Check the stressor variables argument to ensure that the argument is a vector
-  # composed of character values and that the elements of the vector are included
-  # among the names in the dframe data frame.  Ensure that the variables
-  # referenced in the vector are coded as factors.
+  # Check the stressor variables argument to ensure that the argument is a
+  # vector composed of character values,that elements of the vector are included
+  # among the names in the dframe data frame, and that the variables referenced
+  # in the vector are coded as factors.
 
   if (!is.null(vars_stressor)) {
     if (!is.vector(vars_stressor)) {
@@ -216,8 +228,9 @@ input_check <- function(dframe, design_names, vars_cat, vars_cont,
   }
 
   # Check the vars_nondetect logical variables argument to ensure that the
-  # argument is a vector composed of character values and that the elements of the
-  # vector are included among the names in the dframe data frame.
+  # argument is a vector composed of character values, that elements of the
+  # vector are included among the names in the dframe data frame, and that the
+  # variables referenced in the vector are coded as logical variables.
 
   if (!is.null(vars_nondetect)) {
     if (!is.vector(vars_nondetect)) {
@@ -239,17 +252,17 @@ input_check <- function(dframe, design_names, vars_cat, vars_cont,
         error_vec <- c(error_vec, msg)
       } else {
         for (i in vars_nondetect) {
-          if (!is.factor(dframe[, i])) {
-            dframe[, i] <- factor(dframe[, i])
+          if (!is.logical(dframe[, i])) {
+            dframe[, i] <- as.logical(dframe[, i])
           }
         }
       }
     }
   }
 
-  # Check the subpopulation (domain) names argument to ensure that the argument is
-  # a vector composed of character values, that the elements of the vector are
-  # included among the names in the dframe data frame, and that all response
+  # Check the subpopulation (domain) names argument to ensure that the argument
+  # is a vector composed of character values, that the elements of the vector
+  # are included among the names in the dframe data frame, and that all response
   # variables referenced in the vector are coded as factors
 
   if (is.list(subpops)) {
@@ -309,16 +322,16 @@ input_check <- function(dframe, design_names, vars_cat, vars_cont,
         error_vec <- c(error_vec, msg)
       }
       if (!is.null(stratumID)) {
-        temp.weight1 <- split(weight1, stratumID)
+        temp_weight1 <- split(weight1, stratumID)
         for (i in 1:nstrata) {
-          tst <- stratumID == stratum.levels[i]
+          tst <- stratumID == stratum_levels[i]
           temp_clusterID <- clusterID[tst]
           if (any(sapply(
-            tapply(temp.weight1[[i]], temp_clusterID, unique),
+            tapply(temp_weight1[[i]], temp_clusterID, unique),
             length
           ) > 1)) {
             error_ind <- TRUE
-            msg <- paste0("\nThe stage one weight must be constant for all stage two sampling units within \neach stage one sampling unit of stratum ", stratum.levels[i], ".\n")
+            msg <- paste0("\nThe stage one weight must be constant for all stage two sampling units within \neach stage one sampling unit of stratum ", stratum_levels[i], ".\n")
             error_vec <- c(error_vec, msg)
           }
         }
@@ -344,14 +357,14 @@ input_check <- function(dframe, design_names, vars_cat, vars_cont,
         if (!is.null(stratumID)) {
           temp.sweight1 <- split(sweight1, stratumID)
           for (i in 1:nstrata) {
-            tst <- stratumID == stratum.levels[i]
+            tst <- stratumID == stratum_levels[i]
             temp_clusterID <- clusterID[tst]
             if (any(sapply(
               tapply(temp.sweight1[[i]], temp_clusterID, unique),
               length
             ) > 1)) {
               error_ind <- TRUE
-              msg <- paste0("\nThe stage one size-weight must be constant for all stage two sampling units \nwithin each stage one sampling unit of stratum ", stratum.levels[i], ".\n")
+              msg <- paste0("\nThe stage one size-weight must be constant for all stage two sampling units \nwithin each stage one sampling unit of stratum ", stratum_levels[i], ".\n")
               error_vec <- c(error_vec, msg)
             }
           }
@@ -405,14 +418,14 @@ input_check <- function(dframe, design_names, vars_cat, vars_cont,
           temp_xcoord1 <- split(xcoord1, stratumID)
           temp_ycoord1 <- split(ycoord1, stratumID)
           for (i in 1:nstrata) {
-            tst <- stratumID == stratum.levels[i]
+            tst <- stratumID == stratum_levels[i]
             temp_clusterID <- clusterID[tst]
             if (any(sapply(
               tapply(temp_xcoord1[[i]], temp_clusterID, unique),
               length
             ) > 1)) {
               error_ind <- TRUE
-              msg <- paste0("\nThe stage one x-coordinate must be constant for all stage two sampling units within \neach stage one sampling unit of stratum ", stratum.levels[i], ".\n")
+              msg <- paste0("\nThe stage one x-coordinate must be constant for all stage two sampling units within \neach stage one sampling unit of stratum ", stratum_levels[i], ".\n")
               error_vec <- c(error_vec, msg)
             }
             if (any(sapply(
@@ -420,7 +433,7 @@ input_check <- function(dframe, design_names, vars_cat, vars_cont,
               length
             ) > 1)) {
               error_ind <- TRUE
-              msg <- paste0("\nThe stage one y-coordinate must be constant for all stage two sampling units within \neach stage one sampling unit of stratum ", stratum.levels[i], ".\n")
+              msg <- paste0("\nThe stage one y-coordinate must be constant for all stage two sampling units within \neach stage one sampling unit of stratum ", stratum_levels[i], ".\n")
               error_vec <- c(error_vec, msg)
             }
           }
@@ -523,174 +536,146 @@ input_check <- function(dframe, design_names, vars_cat, vars_cont,
     }
   }
 
-  # Check the finite population correction factor arguments
+  # Check the finite population correction factor argument and, as necessary,
+  # add variables to the dframe data frame
 
-  if (popcorrect) {
+  if (!is.null(fpc)) {
     if (!is.null(stratumID)) {
       if (!is.null(clusterID)) {
-        if (is.null(Ncluster)) {
+        cluster_levels <- tapply(clusterID, stratumID,
+          function(x) levels(factor(x)))
+        ncluster <- sapply(cluster_levels, length)
+        indx <- match(names(fpc), names(ncluster),nomatch = 0)
+        if (!is.list(fpc)) {
           error_ind <- TRUE
-          msg <- "The known number of stage one sampling units must be provided in order to \ncalculate the finite population correction factor for variance estimation \nin a two-stage sample.\n"
+          msg <- "For a stratified, two-stage survey design, the fpc argument must be a list.\n"
+          error_vec <- c(error_vec, msg)
+        } else if(length(fpc) != nstrata) {
+          error_ind <- TRUE
+          msg <- "For a stratified, two-stage survey design, the fpc argument must be the same length \nas the number of strata.\n"
+          error_vec <- c(error_vec, msg)
+        } else if(is.null(names(fpc))) {
+          error_ind <- TRUE
+          msg <- "For a stratified, single-stage survey design, the fpc argument must be a named list.\n"
+          error_vec <- c(error_vec, msg)
+        } else if(!all(stratum_levels %in% names(fpc))) {
+          error_ind <- TRUE
+          msg <- "For a stratified, single-stage survey design, names for the fpc argument must match \ncatgories for the stratum ID variable in the dframe data frame.\n"
+          error_vec <- c(error_vec, msg)
+        } else if(any(sapply(fpc, function(x) !is.vector(x))) ||
+            any(sapply(fpc, length) != (ncluster[indx] + 1)) ||
+            any(sapply(fpc, function(x) !is.numeric(x)))) {
+          error_ind <- TRUE
+          msg <- "For a stratified, two-stage survey design, the fpc argument, for each stratum, must be \na numeric vector with length equal to one plus the number of clusters in the sample for \nthe stratum.\n"
           error_vec <- c(error_vec, msg)
         } else {
-          if (any(Ncluster <= 0)) {
+          if (any(sapply(fpc, function(x) any(x <= 0)))) {
             error_ind <- TRUE
-            msg <- "The known number of stage one sampling units for each stratum must be positive.\n"
-            error_vec <- c(error_vec, msg)
-          }
-          temp.Ncluster <- tapply(Ncluster, stratumID, unique)
-          temp <- sapply(temp.Ncluster, length) > 1
-          if (any(temp)) {
-            error_ind <- TRUE
-            temp_str <- vecprint(stratum.levels[temp])
-            msg <- paste0("\nThe known number of stage one sampling units was not constant for the \nfollowing strata:\n", temp_str)
+            msg <- "For a stratified, two-stage survey design, the fpc argument, for each stratum, must contain positive values.\n"
             error_vec <- c(error_vec, msg)
           } else {
-            temp <- tapply(Ncluster, stratumID, length) > temp.Ncluster
-            if (any(temp)) {
-              error_ind <- TRUE
-              temp_str <- vecprint(stratum.levels[temp])
-              msg <- paste0("\nThe number of sampled stage one sampling units exceeded the known number of \nstage one sampling units for the following strata:\n", temp_str)
-              error_vec <- c(error_vec, msg)
-            }
-          }
-        }
-        if (is.null(stage1size)) {
-          error_ind <- TRUE
-          msg <- "The known number of stage two sampling units must be provided in order to \ncalculate the finite population correction factor for variance estimation \nin a two-stage sample.\n"
-          error_vec <- c(error_vec, msg)
-        } else {
-          if (any(stage1size <= 0)) {
-            error_ind <- TRUE
-            msg <- "The known number of stage two sampling units must be positiv.\n"
-            error_vec <- c(error_vec, msg)
-          }
-          temp_stage1size <- tapply(stage1size, factor(paste(stratumID,
-            clusterID,
-            sep = ":"
-          )), unique)
-          temp <- sapply(temp_stage1size, length) > 1
-          if (any(temp)) {
-            error_ind <- TRUE
-            temp_str <- vecprint(names(temp_stage1size[temp]))
-            msg <- paste0("\nThe known number of stage two sampling units was not constant for the \nfollowing stratumID:clusterID combination(s):\n", temp_str)
-            error_vec <- c(error_vec, msg)
-          } else {
-            temp <- tapply(stage1size, factor(paste(stratumID, clusterID,
-              sep = ":"
-            )), length) > temp_stage1size
-            if (any(temp)) {
-              error_ind <- TRUE
-              temp_str <- vecprint(names(temp_stage1size[temp]))
-              msg <- paste0("\nThe number of sampled stage two sampling units exceeded the known number of \nstage two sampling units for the following stratumID:clusterID combination(s):\n", temp_str)
-              error_vec <- c(error_vec, msg)
+            dframe$Ncluster <- numeric(nrow(dframe))
+            dframe$stage1size <- numeric(nrow(dframe))
+            for (i in stratum_levels) {
+              temp <- fpc[[i]]
+              tst <- stratumID == i
+              k <- 1
+              dframe$Ncluster[tst] <- temp[k]
+              for (j in levels(factor(clusterID[tst]))) {
+                tst <- stratumID == i & clusterID == j
+                k <- k + 1
+                dframe$stage1size[tst] <- temp[k]
+              }
             }
           }
         }
       } else {
-        if (is.null(fpcsize)) {
+        if (!is.list(fpc)) {
           error_ind <- TRUE
-          msg <- "The known size of the resource must be provided in order to calculate the \nfinite population correction factor for variance estimation in a single-stage \nsample.\n"
+          msg <- "For a stratified, single-stage survey design, the fpc argument must be a list.\n"
+          error_vec <- c(error_vec, msg)
+        } else if(length(fpc) != nstrata) {
+          error_ind <- TRUE
+          msg <- "For a stratified, single-stage survey design, the fpc argument must be the same length \nas the number of strata.\n"
+          error_vec <- c(error_vec, msg)
+        } else if(is.null(names(fpc))) {
+          error_ind <- TRUE
+          msg <- "For a stratified, single-stage survey design, the fpc argument must be a named list.\n"
+          error_vec <- c(error_vec, msg)
+        } else if(!all(stratum_levels %in% names(fpc))) {
+          error_ind <- TRUE
+          msg <- "For a stratified, single-stage survey design, names for the fpc argument must match \ncatgories for the stratum ID variable in the dframe data frame.\n"
+          error_vec <- c(error_vec, msg)
+        } else if(any(sapply(fpc, function(x) !is.vector(x))) ||
+            any(sapply(fpc, length) > 1) ||
+            any(sapply(fpc, function(x) !is.numeric(x)))) {
+          error_ind <- TRUE
+          msg <- "For a stratified, single-stage survey design, the fpc argument must contain a single \nnumeric value for each strata.\n"
           error_vec <- c(error_vec, msg)
         } else {
-          if (any(fpcsize <= 0)) {
+          if (any(fpc <= 0)) {
             error_ind <- TRUE
-            msg <- "The known size of the resource must be positive.\n"
-            error_vec <- c(error_vec, msg)
-          }
-          temp.fpcsize <- tapply(fpcsize, stratumID, unique)
-          temp <- sapply(temp.fpcsize, length) > 1
-          if (any(temp)) {
-            error_ind <- TRUE
-            temp_str <- vecprint(stratum.levels[temp])
-            msg <- paste0("\nThe known number of sites was not constant for the following strata:\n", temp_str)
+            msg <- "For a stratified, single-stage survey design, the fpc argument must contain a positive \nvalue for each stratum.\n"
             error_vec <- c(error_vec, msg)
           } else {
-            temp <- tapply(fpcsize, stratumID, length) > temp.fpcsize
-            if (any(temp)) {
-              error_ind <- TRUE
-              temp_str <- vecprint(stratum.levels[temp])
-              msg <- paste0("\nThe number of sampled sites exceeded the known number of sites for the \nfollowing strata:\n", temp_str)
-              error_vec <- c(error_vec, msg)
+            dframe$fpcsize <- numeric(nrow(dframe))
+            for (i in stratum_levels) {
+              tst <- stratumID == i
+              dframe$fpcsize[tst] <- fpc[[i]]
             }
           }
         }
       }
     } else {
       if (!is.null(clusterID)) {
-        if (is.null(Ncluster)) {
+        cluster_levels <- levels(factor(clusterID))
+        ncluster <- length(cluster_levels)
+        if (!is.vector(fpc)) {
           error_ind <- TRUE
-          msg <- "The known number of stage one sampling units must be provided in order to \ncalculate the finite population correction factor for variance estimation in a \ntwo-stage sample.\n"
+          msg <- "For an unstratified, two-stage survey design, the fpc argument must be a vector\n"
+          error_vec <- c(error_vec, msg)
+        } else if(length(fpc) != (ncluster+1)) {
+          error_ind <- TRUE
+          msg <- "For an unstratified, two-stage survey design, the fpc argument must be the same length \nas the number of clusters plus one\n"
+          error_vec <- c(error_vec, msg)
+        } else if(is.null(names(fpc))) {
+          error_ind <- TRUE
+          msg <- "For a stratified, single-stage survey design, the fpc argument must be a named vector.\n"
+        } else if(!all(cluster_levels %in% names(fpc)[-1])) {
+          error_ind <- TRUE
+          msg <- "For a stratified, single-stage survey design, names for the fpc argument must include \nall of the catgories for the cluster ID variable in the dframe data frame.\n"
+          error_vec <- c(error_vec, msg)
+        } else if(any(sapply(fpc, length) > 1) ||
+            any(sapply(fpc, function(x) !is.numeric(x)))) {
+          error_ind <- TRUE
+          msg <- "For unstratified, two-stage survey design, the fpc argument must contain a single \nnumeric value for each item in the vector\n"
           error_vec <- c(error_vec, msg)
         } else {
-          if (any(Ncluster <= 0)) {
+          if (any(fpc <= 0)) {
             error_ind <- TRUE
-            msg <- "The known number of stage one sampling units must be a positive value.\n"
-            error_vec <- c(error_vec, msg)
-          }
-          temp <- unique(Ncluster)
-          if (length(temp) > 1) {
-            error_ind <- TRUE
-            msg <- "The known number of stage one sampling units was not constant.\n"
+            msg <- "For an unstratified, two-stage survey design, the fpc argument must contain a positive \nvaluec.\n"
             error_vec <- c(error_vec, msg)
           } else {
-            if (length(Ncluster) > temp) {
-              error_ind <- TRUE
-              msg <- "The number of sampled stage one sampling units exceeded the known number of \nstage one sampling units.\n"
-              error_vec <- c(error_vec, msg)
-            }
-          }
-        }
-        if (is.null(stage1size)) {
-          error_ind <- TRUE
-          msg <- "The known size of the stage one sampling units must be provided in order to \ncalculate the finite and continuous population correction factor for variance \nestimation in a two-stage sample.\n"
-          error_vec <- c(error_vec, msg)
-        } else {
-          if (any(stage1size <= 0)) {
-            error_ind <- TRUE
-            msg <- "The known size of the stage one sampling units must be positive values.\n"
-            error_vec <- c(error_vec, msg)
-          }
-          temp_stage1size <- tapply(stage1size, clusterID, unique)
-          temp <- sapply(temp_stage1size, length) > 1
-          if (any(temp)) {
-            error_ind <- TRUE
-            temp_str <- vecprint(names(temp_stage1size[temp]))
-            msg <- paste0("\nThe known number of stage two sampling units was not constant for the \nfollowing clusterID value(s):\n", temp_str)
-            error_vec <- c(error_vec, msg)
-          } else {
-            temp <- tapply(stage1size, clusterID, length) > temp_stage1size
-            if (any(temp)) {
-              error_ind <- TRUE
-              temp_str <- vecprint(names(temp_stage1size[temp]))
-              msg <- paste0("\nThe number of sampled stage two sampling units exceeded the known number of \nstage two sampling units for the following clusterID value(s):\n", temp_str)
-              error_vec <- c(error_vec, msg)
+            dframe$Ncluster <- fpc[1]
+            dframe$stage1size <- numeric(nrow(dframe))
+            for (i in cluster_levels) {
+              tst <- clusterID == i
+              dframe$stage1size[tst] <- fpc[[i]]
             }
           }
         }
       } else {
-        if (is.null(fpcsize)) {
+        if (!is.vector(fpc) || length(fpc) != 1 || !is.numeric(fpc)) {
           error_ind <- TRUE
-          msg <- "The known size of the resource must be provided in order to calculate the \nfinite population correction factor for variance estimation in a single-stage \nsample.\n"
+          msg <- "For an unstratified, single-stage survey design, the fpc argument  must contain a single \nnumeric value.\n"
           error_vec <- c(error_vec, msg)
         } else {
-          if (any(fpcsize <= 0)) {
+          if (fpc <= 0) {
             error_ind <- TRUE
-            msg <- "The known size of the resource must be positive.\n"
+            msg <- "For an unstratified, single-stage survey design the fpc argument must contain a single \npositive value.\n"
             error_vec <- c(error_vec, msg)
           }
-          temp <- unique(fpcsize)
-          if (length(temp) > 1) {
-            error_ind <- TRUE
-            msg <- "The known number of sites was not constant.\n"
-            error_vec <- c(error_vec, msg)
-          } else {
-            if (length(fpcsize) > temp) {
-              error_ind <- TRUE
-              msg <- "The number of sampled sites exceeded the known number of sites.\n"
-              error_vec <- c(error_vec, msg)
-            }
-          }
+          dframe$fpcsize <- fpc
         }
       }
     }
@@ -742,16 +727,6 @@ input_check <- function(dframe, design_names, vars_cat, vars_cont,
     }
   }
 
-  # For a two-stage sample, ensure that the Ncluster argument is provided when
-  # popsize is not equal to NULL and vartype equals "Local"
-
-  if (!is.null(clusterID) && !is.null(popsize) && vartype == "Local" &&
-    is.null(Ncluster)) {
-    error_ind <- TRUE
-    msg <- "For a two-stage sample, the Ncluster argument must be specified whenever the \npopsize argument is not equal to NULL and the vartype argument equals \"Local\".\n"
-    error_vec <- c(error_vec, msg)
-  }
-
   # Check the confidence level argument
 
   if (!is.numeric(conf)) {
@@ -775,62 +750,6 @@ input_check <- function(dframe, design_names, vars_cat, vars_cont,
     error_ind <- TRUE
     msg <- "The set of value at which percentiles are estimated must be numeric values.\n"
     error_vec <- c(error_vec, msg)
-  }
-
-  # Check measurement error arguments
-
-  if (!is.null(sigma)) {
-    if (length(sigma) > 1) {
-      if (!is.numeric(sigma)) {
-        error_ind <- TRUE
-        msg <- "The values provided for measurement error variance must be numeric.\n"
-        error_vec <- c(error_vec, msg)
-      }
-      temp <- sigma[!is.na(sigma)] <= 0
-      if (any(temp)) {
-        error_ind <- TRUE
-        temp_str <- vecprint(names(sigma)[temp])
-        msg <- paste0("\nA positive value for measurement error variance was not provided for the \nfollowing response variables:\n", temp_str)
-        error_vec <- c(error_vec, msg)
-      }
-      if (!is.null(var_sigma)) {
-        if (!is.numeric(var_sigma)) {
-          error_ind <- TRUE
-          msg <- "The values provided for variance of the measurement error variance must be \nnumeric.\n"
-          error_vec <- c(error_vec, msg)
-        }
-        temp <- var_sigma[!is.na(var_sigma)] <= 0
-        if (any(temp)) {
-          error_ind <- TRUE
-          temp_str <- vecprint(names(var_sigma)[temp])
-          msg <- paste0("\nA positive value for variance of the estimated measurement error variance was \nnot provided for the following response variables:\n", temp_str)
-          error_vec <- c(error_vec, msg)
-        }
-      }
-    } else {
-      if (!is.numeric(sigma)) {
-        error_ind <- TRUE
-        msg <- "The value provided for measurement error variance must be numeric.\n"
-        error_vec <- c(error_vec, msg)
-      }
-      if (sigma <= 0) {
-        error_ind <- TRUE
-        msg <- "The value provided for measurement error variance must be positive.\n"
-        error_vec <- c(error_vec, msg)
-      }
-      if (!is.null(var_sigma)) {
-        if (!is.numeric(var_sigma)) {
-          error_ind <- TRUE
-          msg <- "The value provided for variance of the measurement error variance must be \nnumeric.\n"
-          error_vec <- c(error_vec, msg)
-        }
-        if (var_sigma <= 0) {
-          error_ind <- TRUE
-          msg <- "The value provided for variance of the measurement error variance must be positive.\n"
-          error_vec <- c(error_vec, msg)
-        }
-      }
-    }
   }
 
   # Return the results list
