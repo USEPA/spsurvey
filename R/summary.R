@@ -112,20 +112,22 @@ summary.spdesign <- function(object, formula, onlyshow = NULL, siteuse = NULL, .
     object$siteuse <- factor(object$siteuse, levels = siteuse)
   }
 
-  # keep the sites sf objects from class design
-  object_split <- split(object, object$siteuse)
-
-  # storing output if non-null
-  output <- lapply(object_split, function(x) {
-    if (is.null(x)) {
-      x
-    } else {
-      summary.sframe(x, formula, onlyshow, ...)
-    }
-  })
-  # returning non-null outuput
-  output <- output[!vapply(output, is.null, logical(1))]
+  output <- summary.sframe(object, formula, onlyshow, ...)
   output
+  # # keep the sites sf objects from class design
+  # object_split <- split(object, object$siteuse)
+  #
+  # # storing output if non-null
+  # output <- lapply(object_split, function(x) {
+  #   if (is.null(x)) {
+  #     x
+  #   } else {
+  #     summary.sframe(x, formula, onlyshow, ...)
+  #   }
+  # })
+  # # returning non-null outuput
+  # output <- output[!vapply(output, is.null, logical(1))]
+  # output
 }
 
 # Helpers -----------------------------------------------------------------
@@ -170,7 +172,8 @@ cont_summary <- function(formlist, varsf, ...) {
         list(
           X = varsf_nogeom[[formlist$response]],
           INDEX = varsf_nogeom[[x]],
-          FUN = summary.default
+          FUN = summary.default,
+          simplify = FALSE
         ),
         dotlist
       )
