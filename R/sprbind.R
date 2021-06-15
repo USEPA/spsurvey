@@ -53,12 +53,20 @@ sprbind <- function(object, siteuse = NULL) {
 
     new_non_legacy <- rbind(new_base, new_over, new_near)
 
+    if (is.null(new_non_legacy) & is.null(new_legacy)) {
+      stop("siteuse cannot be empty")
+    }
+
     if (is.null(new_legacy)) {
       return (new_non_legacy)
     } else {
-      new_legacy[setdiff(names(new_non_legacy), names(new_legacy))] <- NA
-      new_non_legacy[setdiff(names(new_legacy), names(new_non_legacy))] <- NA
-      return(rbind(new_legacy, new_non_legacy))
+      if (is.null(new_non_legacy)) {
+        return(new_legacy)
+      } else {
+        new_legacy[setdiff(names(new_non_legacy), names(new_legacy))] <- NA
+        new_non_legacy[setdiff(names(new_legacy), names(new_non_legacy))] <- NA
+        return(rbind(new_legacy, new_non_legacy))
+      }
     }
   }
 }
