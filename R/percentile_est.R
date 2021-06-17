@@ -2,15 +2,15 @@
 # Function: percentile_est (not exported)
 # Programmer: Tom Kincaid
 # Date: July 23, 2020
-# Revised: May 20 2021 to eliminate use of the finite population correction
+# Revised: May 20, 2021 to eliminate use of the finite population correction
 #          factor with the local mean variance estimator
+# Revised: June 11, 2021 to eliminate estimating means, which will be performed
+#          by a new function named mean_est
 #
 #' Percentile Estimates for Probability Survey Data
 #'
 #' This function calculates percentile estimates using the svyquantile function
-#' in the survey package.  In additon, the mean is estimated using the svymean
-#' function in the survey package.  Upper and lower confidence bounds also are
-#' estimated.
+#' in the survey package.  Upper and lower confidence bounds also are estimated.
 #'
 #' @param pctsum Data frame containing estimates.
 #'
@@ -74,13 +74,8 @@
 #'       object}
 #'     \item{\code{\link{confint}}}{computes confidence intervals for a survey
 #'       design object}
-#'     \item{\code{mean_localmean}}{organizes input and output for
-#'       calculation of the local mean variance estimator for the estimated
-#'       mean}
 #'     \item{\code{\link{svyby}}}{Compute survey statistics on subsets of a
 #'       survey defined by factors}
-#'     \item{\code{\link{svymean}}}{calculates the mean for a complex survey
-#'       design}
 #'     \item{\code{\link{svyquantile}}}{calculates percentile estimates for a
 #'       complex survey design}
 #'   }
@@ -91,7 +86,6 @@
 #'   \code{\link{confint}}
 #'   \code{\link{SE}}
 #'   \code{\link{svyby}}
-#'   \code{\link{svymean}}
 #'   \code{\link{svyquantile}}
 #'
 #' @keywords survey univar
@@ -129,21 +123,14 @@ percentile_est <- function(pctsum, dframe, itype, lev_itype, nlev_itype, ivar,
         act <- "Percentiles were not calculated.\n"
         warn <- paste0("Percentile estimates were not calculated for subpopulation type \"", itype, "\" \nsince the number of non-missing response values equals one.\n")
         warn_df <- rbind(warn_df, data.frame(
-          func = I(fname),
-          subpoptype = itype, subpop = NA, indicator = ivar, stratum = NA,
-          warning = I(warn), action = I(act)
+          func = I(fname), subpoptype = itype, subpop = NA, indicator = ivar,
+          stratum = NA, warning = I(warn), action = I(act)
         ))
         pctest <- rep(NA, npctval)
         nresp <- rep(NA, npctval)
         stderr <- rep(NA, npctval)
         lbound <- rep(NA, npctval)
         ubound <- rep(NA, npctval)
-        temp <- mean(dframe[tst, ivar], na.rm = TRUE)
-        meanest <- temp
-        nresp_mean <- 1
-        stderr_mean <- 0
-        lbound_mean <- temp
-        ubound_mean <- temp
       } else {
         options(warn = -1)
         rslt_svy <- svyquantile(make.formula(ivar),
@@ -157,28 +144,6 @@ percentile_est <- function(pctsum, dframe, itype, lev_itype, nlev_itype, ivar,
         temp <- confint(rslt_svy)
         lbound <- temp[, 1]
         ubound <- temp[, 2]
-        rslt <- svymean(make.formula(ivar),
-          design = subset(design, tst),
-          na.rm = TRUE
-        )
-        meanest <- rslt
-        nresp_mean <- sum(!is.na(dframe[, ivar]))
-        if (vartype == "Local") {
-          temp <- mean_localmean(
-            itype, lev_itype, nlev_itype, c(1), ivar, design, design_names,
-            meanest[1], mult, warn_ind, warn_df
-          )
-          stderr_mean <- temp$stderr
-          lbound_mean <- unlist(temp$confval[1])
-          ubound_mean <- unlist(temp$confval[2])
-          warn_ind <- temp$warn_ind
-          warn_df <- temp$warn_df
-        } else {
-          stderr_mean <- SE(rslt)
-          temp <- confint(rslt, level = conf / 100)
-          lbound_mean <- temp[1]
-          ubound_mean <- temp[2]
-        }
       }
     } else {
       pctest <- array(NA, c(nlev_itype, npctval))
@@ -186,11 +151,6 @@ percentile_est <- function(pctsum, dframe, itype, lev_itype, nlev_itype, ivar,
       stderr <- array(NA, c(nlev_itype, npctval))
       lbound <- array(NA, c(nlev_itype, npctval))
       ubound <- array(NA, c(nlev_itype, npctval))
-      meanest <- rep(NA, nlev_itype)
-      nresp_mean <- rep(NA, nlev_itype)
-      stderr_mean <- rep(NA, nlev_itype)
-      lbound_mean <- rep(NA, nlev_itype)
-      ubound_mean <- rep(NA, nlev_itype)
       nval <- tapply(dframe[tst, ivar], dframe[tst, itype], function(x) {
         sum(!is.na(x))
       })
@@ -205,16 +165,6 @@ percentile_est <- function(pctsum, dframe, itype, lev_itype, nlev_itype, ivar,
           subpoptype = itype, subpop = NA, indicator = ivar, stratum = NA,
           warning = I(warn), action = I(act)
         ))
-        levs <- (1:nlev_itype)[!subpop_ind]
-        for (i in levs) {
-          tst_mean <- tst & dframe[, itype] %in% lev_itype[i]
-          temp <- mean(dframe[tst_mean, ivar], na.rm = TRUE)
-          meanest[i] <- temp
-          nresp_mean[i] <- 1
-          stderr_mean[i] <- 0
-          lbound_mean[i] <- temp
-          ubound_mean[i] <- temp
-        }
       }
       if (any(subpop_ind)) {
         tst <- tst & dframe[, itype] %in% lev_itype[subpop_ind]
@@ -250,30 +200,6 @@ percentile_est <- function(pctsum, dframe, itype, lev_itype, nlev_itype, ivar,
         }
         rownames(lbound) <- lev_itype
         rownames(ubound) <- lev_itype
-        rslt <- svyby(make.formula(ivar), make.formula(itype),
-          design = subset(design, tst), svymean, na.rm = TRUE
-        )
-        meanest[levs] <- rslt[, 2]
-        temp <- tapply(dframe[, ivar], dframe[, itype], function(x) {
-          sum(!is.na(x))
-        })
-        nresp_mean[levs] <- temp[levs]
-        if (vartype == "Local") {
-          temp <- mean_localmean(
-            itype, lev_itype, nlev_itype, levs, ivar, design, design_names,
-            meanest, mult, warn_ind, warn_df
-          )
-          stderr_mean[levs] <- temp$stderr[levs]
-          lbound_mean[levs] <- unlist(temp$confval[levs, 1])
-          ubound_mean[levs] <- unlist(temp$confval[levs, 2])
-          warn_ind <- temp$warn_ind
-          warn_df <- temp$warn_df
-        } else {
-          stderr_mean[levs] <- SE(rslt)
-          temp <- confint(rslt, level = conf / 100)
-          lbound_mean[levs] <- temp[, 1]
-          ubound_mean[levs] <- temp[, 2]
-        }
       }
     }
   } else {
@@ -288,13 +214,13 @@ percentile_est <- function(pctsum, dframe, itype, lev_itype, nlev_itype, ivar,
         Type = itype,
         Subpopulation = lev_itype,
         Indicator = ivar,
-        Statistic = c(paste0(pctval, "Pct"), "Mean"),
-        nResp = c(nresp, nresp_mean),
-        Estimate = c(pctest, meanest),
-        StdError = c(stderr, stderr_mean),
-        MarginofError = mult * c(stderr, stderr_mean),
-        LCB = c(lbound, lbound_mean),
-        UCB = c(ubound, ubound_mean)
+        Statistic = paste0(pctval, "Pct"),
+        nResp = nresp,
+        Estimate = pctest[1, ],
+        StdError = stderr,
+        MarginofError = mult * stderr,
+        LCB = lbound,
+        UCB = ubound
       ))
     } else {
       for (i in 1:nlev_itype) {
@@ -302,13 +228,13 @@ percentile_est <- function(pctsum, dframe, itype, lev_itype, nlev_itype, ivar,
           Type = itype,
           Subpopulation = lev_itype[i],
           Indicator = ivar,
-          Statistic = c(paste0(pctval, "Pct"), "Mean"),
-          nResp = c(nresp[i, ], nresp_mean[i]),
-          Estimate = c(pctest[i, ], meanest[i]),
-          StdError = c(stderr[i, ], stderr_mean[i]),
-          MarginofError = mult * c(stderr[i, ], stderr_mean[i]),
-          LCB = unlist(c(lbound[i, ], lbound_mean[i])),
-          UCB = unlist(c(ubound[i, ], ubound_mean[i]))
+          Statistic = paste0(pctval, "Pct"),
+          nResp = nresp[i, ],
+          Estimate = pctest[i, ],
+          StdError = stderr[i, ],
+          MarginofError = mult * stderr[i, ],
+          LCB = lbound[i, ],
+          UCB = ubound[i, ]
         ))
       }
     }
