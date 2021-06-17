@@ -24,6 +24,8 @@
 #          calculation of the finite population correction factor and to
 #          eliminate use of the finite population correction factor with the
 #          local mean variance estimator
+# Revised: June 14, 2021 to acommodate the revised aproach for calculation of
+#          mean estimates
 #
 #' Estimation of Change between Two Probability Surveys
 #'
@@ -878,12 +880,12 @@ change_analysis <- function(
       1:nrow(changesum$contsum_mean),
       c(
         "Survey_1", "Survey_2", "Type", "Subpopulation", "Indicator",
-        "Statistic", "DiffEst", "StdError", "MarginofError",
-        paste0("LCB", conf, "Pct"), paste0("UCB", conf, "Pct"), "nResp_1",
-        "Estimate_1", "StdError_1", "MarginofError_1",
-        paste0("LCB", conf, "Pct_1"), paste0("UCB", conf, "Pct_1"), "nResp_2",
-        "Estimate_2", "StdError_2", "MarginofError_2",
-        paste0("LCB", conf, "Pct_2"), paste0("UCB", conf, "Pct_2")
+        "DiffEst", "StdError", "MarginofError", paste0("LCB", conf, "Pct"),
+        paste0("UCB", conf, "Pct"), "nResp_1", "Estimate_1", "StdError_1",
+        "MarginofError_1", paste0("LCB", conf, "Pct_1"),
+        paste0("UCB", conf, "Pct_1"), "nResp_2", "Estimate_2", "StdError_2",
+        "MarginofError_2", paste0("LCB", conf, "Pct_2"),
+        paste0("UCB", conf, "Pct_2")
       )
     )
   }
