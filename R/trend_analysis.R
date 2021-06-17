@@ -17,6 +17,8 @@
 #          calculation of the finite population correction factor and to
 #          eliminate use of the finite population correction factor with the
 #          local mean variance estimator
+# Revised: June 14, 2021 to use the new function named mean_est for calculation
+#          of mean estimates
 #
 #' Estimation of Trend across Time for a Series of Probability Surveys
 #'
@@ -351,7 +353,7 @@
 #'       consistency, and compatibility with analytical functions}
 #'     \item{\code{\link{lm}}}{fits a linear model}
 #'     \item{\code{\link{lmer}}}{fits a linear mixed-effects model}
-#'     \item{\code{percentile_est}}{calculates percentile estimates}
+#'     \item{\code{mean_est}}{calculates mean estimates}
 #'     \item{\code{\link{postStratify}}}{conduct post-stratification for survey
 #'       data}
 #'     \item{\code{survey_design}}{creates a survey design object}
@@ -803,7 +805,7 @@ trend_analysis <- function(
               itype, isubpop, 1, ivar, lev_ivar, nlev_ivar,
               subset(design, subpop_ind), design_names, vartype, conf,
               mult, warn_ind, warn_df)
-            temp.cat <- temp$catsum
+            temp_cat <- temp$catsum
             warn_ind <- temp$warn_ind
             warn_df <- temp$warn_df
 
@@ -811,10 +813,10 @@ trend_analysis <- function(
             # category
 
             for(icat in 1:nlev_ivar) {
-              if(lev_ivar[icat] %in% temp.cat$Category) {
-                tst <- temp.cat$Category == lev_ivar[icat]
-                catest[icat, iyear] <- temp.cat$Estimate.P[tst]
-                varest[icat, iyear] <- (temp.cat$StdError.P[tst])^2
+              if(lev_ivar[icat] %in% temp_cat$Category) {
+                tst <- temp_cat$Category == lev_ivar[icat]
+                catest[icat, iyear] <- temp_cat$Estimate.P[tst]
+                varest[icat, iyear] <- (temp_cat$StdError.P[tst])^2
               } else {
                 catest[icat, iyear] <- 0
                 varest[icat, iyear] <- 0
@@ -960,21 +962,19 @@ trend_analysis <- function(
 
               # Estimate the mean for the response variable
 
-              temp <- percentile_est(
+              temp <- mean_est(
                 NULL, droplevels(subset(dframe, subpop_ind)),
                 itype, isubpop, 1, ivar, subset(design, subpop_ind),
-                design_names, NULL, vartype, conf, mult, c(50), warn_ind,
-                warn_df
+                design_names, NULL, vartype, conf, mult, warn_ind, warn_df
               )
-              temp.cont <- temp$pctsum
+              temp_cont <- temp$meansum
               warn_ind <- temp$warn_ind
               warn_df <- temp$warn_df
 
               # Assign the mean estimate and variance estimate
 
-              tst <- temp.cont$Statistic == "Mean"
-              contest[iyear] <- temp.cont$Estimate[tst]
-              varest[iyear] <- (temp.cont$StdError[tst])^2
+              contest[iyear] <- temp_cont$Estimate
+              varest[iyear] <- (temp_cont$StdError)^2
 
               # End of the loop for years
 
