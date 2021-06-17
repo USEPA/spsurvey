@@ -6,8 +6,10 @@
 #          determined for a subpopulation
 # Revised: April 27, 2021 to ensure that the warnings indicator (warn_ind) and
 #          the warnings data frame (warn_df) are reassigned after function calls
-# Revised: June 8, 2021 to eliminate use of the finite population correction
+# Revised: June 11, 2021 to eliminate use of the finite population correction
 #          factor with the local mean variance estimator
+# Revised: June 14, 2021 to use the new function named mean_est for calculation
+#          of mean estimates
 #
 #' Estimate Change between Two Surveys
 #'
@@ -165,6 +167,7 @@
 #'    \item{\code{changevar_total}}{calculate covariance or correlation
 #'      estimates of the estimated change in class total estimates between two
 #'      probability surveys}
+#'     \item{\code{mean_est}}{calculates mean estimates}
 #'     \item{\code{percentile_est}}{calculates percentile estimates}
 #'     \item{\code{\link{svymean}}}{calculates means for a complex survey
 #'       design}
@@ -278,8 +281,7 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
 
     # Merge results for the two surveys
 
-    results <- merge(temp_1, temp_2,
-      by = "Category", suffix = c("_1", "_2"),
+    results <- merge(temp_1, temp_2, by = "Category", suffix = c("_1", "_2"),
       all = TRUE, sort = FALSE
     )
 
@@ -880,24 +882,6 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
     # Begin the section for a continuous variable
     #
 
-    # Calculate estimate for all sites from survey one
-
-    pctest_1 <- percentile_est(NULL, dframe_1, itype, isubpop, 1, ivar,
-      design_1, design_names, var_nondetect, vartype, conf, mult,
-      pctval = c(50), warn_ind, warn_df
-    )
-    warn_ind <- pctest_1$warn_ind
-    warn_df <- pctest_1$warn_df
-
-    # Calculate estimate for all sites from survey two
-
-    pctest_2 <- percentile_est(NULL, dframe_2, itype, isubpop, 1, ivar,
-      design_2, design_names, var_nondetect, vartype, conf, mult,
-      pctval = c(50), warn_ind, warn_df
-    )
-    warn_ind <- pctest_2$warn_ind
-    warn_df <- pctest_2$warn_df
-
     #
     # Begin the section for a continuous variable using the mean
     #
@@ -914,21 +898,32 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
         design_2_org <- design_2
       }
 
-      # Using the pctest_1 data frame, extract the mean estimate for survey one
+      # Calculate estimate for all sites from survey one
 
-      temp_cont_1 <- subset(pctest_1$pctsum, Statistic == "Mean")
+      temp <- mean_est(NULL, dframe_1, itype, isubpop, 1, ivar,
+        design_1, design_names, var_nondetect, vartype, conf, mult, warn_ind,
+        warn_df
+      )
+      meanest_1 <- temp$meansum
+      warn_ind <- temp$warn_ind
+      warn_df <- temp$warn_df
       tw_1 <- sum(weights(design_1))
 
-      # Using the pctest_2 data frame, extract the mean estimate for survey two
+      # Calculate estimate for all sites from survey two
 
-      temp_cont_2 <- subset(pctest_2$pctsum, Statistic == "Mean")
+      temp <- mean_est(NULL, dframe_2, itype, isubpop, 1, ivar,
+        design_2, design_names, var_nondetect, vartype, conf, mult, warn_ind,
+        warn_df
+      )
+      meanest_2 <- temp$meansum
+      warn_ind <- temp$warn_ind
+      warn_df <- temp$warn_df
       tw_2 <- sum(weights(design_2))
 
       # Merge results for the two surveys
 
-      results <- merge(temp_cont_1, temp_cont_2,
-        by = "Statistic",
-        suffix = c("_1", "_2")
+      results <- merge(meanest_1, meanest_2, suffix = c("_1", "_2"),
+        by = c("Type", "Subpopulation", "Indicator")
       )
 
       # Calculate the change estimate
@@ -1328,20 +1323,20 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
               results$StdError <- sqrt(temp)
             }
           } else {
-            temp <- percentile_est(NULL, dframe_1, itype, isubpop, 1, ivar,
+            temp <- mean_est(NULL, dframe_1, itype, isubpop, 1, ivar,
               design_1, design_names, var_nondetect, vartype, conf, mult,
-              pctval = c(50), warn_ind, warn_df
+              warn_ind, warn_df
             )
             warn_ind <- temp$warn_ind
             warn_df <- temp$warn_df
-            se_1 <- subset(temp$pctsum, Statistic == "Mean")$StdError
-            temp <- percentile_est(NULL, dframe_2, itype, isubpop, 1, ivar,
+            se_1 <- temp$meansum$StdError
+            temp <- mean_est(NULL, dframe_2, itype, isubpop, 1, ivar,
               design_2, design_names, var_nondetect, vartype, conf, mult,
-              pctval = c(50), warn_ind, warn_df
+              warn_ind, warn_df
             )
             warn_ind <- temp$warn_ind
             warn_df <- temp$warn_df
-            se_2 <- subset(temp$pctsum, Statistic == "Mean")$StdError
+            se_2 <- temp$meansum$StdError
             covest <- rslt * se_1 * se_2
             temp <- results$StdError_1^2 + results$StdError_2^2 -
               ((2 * tw_1r * tw_2r) / (tw_1 * tw_2)) * covest
@@ -1373,7 +1368,7 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
       changesum$contsum_mean <- rbind(changesum$contsum_mean, cbind(
         Survey_1 = survey_names[1],
         Survey_2 = survey_names[2],
-        subset(results, select = c(2:4, 1, 20:24, 5:10, 14:19))
+        subset(results, select = c(1:3, 16:20, 4:9, 10:15))
       ))
 
       #
@@ -1397,6 +1392,24 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
         design_1 <- design_1_org
         design_2 <- design_2_org
       }
+
+      # Calculate estimate for all sites from survey one
+
+      pctest_1 <- percentile_est(NULL, dframe_1, itype, isubpop, 1, ivar,
+        design_1, design_names, var_nondetect, vartype, conf, mult,
+        pctval = c(50), warn_ind, warn_df
+      )
+      warn_ind <- pctest_1$warn_ind
+      warn_df <- pctest_1$warn_df
+
+      # Calculate estimate for all sites from survey two
+
+      pctest_2 <- percentile_est(NULL, dframe_2, itype, isubpop, 1, ivar,
+        design_2, design_names, var_nondetect, vartype, conf, mult,
+        pctval = c(50), warn_ind, warn_df
+      )
+      warn_ind <- pctest_2$warn_ind
+      warn_df <- pctest_2$warn_df
 
       # Using the pctest_1 data frame, extract the median estimate for survey
       # one
@@ -1459,8 +1472,7 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
 
       # Merge results for the two surveys
 
-      results <- merge(temp_1, temp_2,
-        by = "Category", suffix = c("_1", "_2"),
+      results <- merge(temp_1, temp_2, by = "Category", suffix = c("_1", "_2"),
         all = TRUE, sort = FALSE
       )
 
