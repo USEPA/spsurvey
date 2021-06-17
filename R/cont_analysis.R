@@ -20,6 +20,9 @@
 #          calculation of the finite population correction factor and to
 #          eliminate use of the finite population correction factor with the
 #          local mean variance estimator
+# Revised: June 11, 2021 to allow user control over calculation of CDF
+#          estimates, percentile estimates and mean estimates and to use a new
+#          function named mean_est for calculation of mean estimates
 #
 #' Continuous Data Analysis for Probability Survey Data
 #'
@@ -111,7 +114,8 @@
 #'   \code{NULL}.
 #'
 #' @param sweight1 Character value providing name of the stage one size weight
-#'   variable in the \code{dframe} data frame.  The default value is \code{NULL}.
+#'   variable in the \code{dframe} data frame.  The default value is
+#'   \code{NULL}.
 #'
 #' @param fpc Object that specifies values required for calculation of the
 #'   finite population correction factor used during variance estimation. The
@@ -220,17 +224,25 @@
 #'   is \code{95}.
 #'
 #' @param pctval  Vector of the set of values at which percentiles are
-#'   estimated.  The default set is: \code{{5, 10, 25, 50, 75, 90, 95}}.
+#'   estimated.  The default set is: \code{c(5, 10, 25, 50, 75, 90, 95)}.
 #'
-#' @return A list composed of two data frames that contain population estimates
-#'   for all combinations of subpopulations, categories within each
-#'   subpopulation, and response variables.  Estimates are provided for
+#' @param statistics Character vector specifying desired estimates, where
+#'   \code{"cdf"} specifies CDF estimates, \code{"pct"} specifies percentile
+#'   estimates, and \code{"mean"} specifies mean estimates.  Any combination of
+#'   the three choices may be provided by the user.  The defalt value is
+#'   \code{c("cdf", "pct", "mean")}.
+#'
+#' @return A list composed of one, two, or three data frames that contain
+#'   population estimates for all combinations of subpopulations, categories
+#'   within each subpopulation, and response variables, where the number of data
+#'   frames is determined by argument statistics.  Estimates are provided for
 #'   proportion and total (size) of the population plus standard error, margin
-#'   of error, and confidence interval estimates.  The two data frames in the
-#'  output list are:
+#'   of error, and confidence interval estimates.  The possible data frames in
+#'   the output list are:
 #'   \describe{
 #'     \item{\code{CDF}}{data frame containing the CDF estimates}
 #'     \item{\code{Pct}}{data frame containing the percentile estimates}
+#'     \item{\code{Mean}}{data frame containing the mean estimates}
 #'   }
 
 #'
@@ -291,7 +303,7 @@ cont_analysis <- function(
   clusterID = NULL, weight1 = NULL, xcoord1 = NULL, ycoord1 = NULL,
   sizeweight = FALSE, sweight = NULL, sweight1 = NULL, fpc = NULL,
   popsize = NULL, vartype = "Local", jointprob = "overton", conf = 95,
-  pctval = c(5, 10, 25, 50, 75, 90, 95)) {
+  pctval = c(5, 10, 25, 50, 75, 90, 95), statistics = c("cdf", "pct", "mean")) {
 
   # Create a vector for error messages
 
@@ -439,6 +451,7 @@ cont_analysis <- function(
   }
 
   # Check input arguments
+
   temp <- input_check(dframe, design_names, NULL, vars, NULL, vars_nondetect,
     subpops, sizeweight, fpc, popsize, vartype, jointprob, conf,
     pctval = pctval, error_ind = error_ind, error_vec = error_vec
@@ -452,6 +465,31 @@ cont_analysis <- function(
   jointprob <- temp$jointprob
   error_ind <- temp$error_ind
   error_vec <- temp$error_vec
+
+  # Check argument statistics
+
+  if(!is.vector(statistics)) {
+    error_ind <- TRUE
+    msg <- "Argument statistics must be a vector\n"
+    error_vec <- c(error_vec, msg)
+  } else if(!is.character(statistics)) {
+    error_ind <- TRUE
+    msg <- "Argument statistics must contain character values.\n"
+    error_vec <- c(error_vec, msg)
+  } else {
+    tst <- "CDF" %in% statistics
+    statistics[tst] <- "cdf"
+    tst <- "Pct" %in% statistics
+    statistics[tst] <- "pct"
+    tst <- "Mean" %in% statistics
+    statistics[tst] <- "mean"
+    tst <- statistics %in% c("cdf", "pct", "mean")
+    if(any(!tst)) {
+      error_ind <- TRUE
+      msg <- "Argument statistics must contain only the values: 'cdf', 'pct', and 'mean'.\n"
+      error_vec <- c(error_vec, msg)
+    }
+  }
 
   # As necessary, output a message indicating that error messages were generated
   # during execution of the program
@@ -564,7 +602,8 @@ cont_analysis <- function(
 
   contsum <- list(
     CDF = NULL,
-    Pct = NULL
+    Pct = NULL,
+    Mean = NULL
   )
 
   # Assign the confidence bound multiplier
@@ -581,37 +620,57 @@ cont_analysis <- function(
 
     for (ivar in vars) {
 
+      indx <- match(ivar, vars)
+
       # Calculate CDF estimates
 
-      indx <- match(ivar, vars)
-      temp <- cdf_est(
-        contsum$CDF, dframe, itype, lev_itype, nlev_itype, ivar, design,
-        design_names, vars_nondetect[indx], vartype, conf, mult, warn_ind,
-        warn_df
-      )
-      contsum$CDF <- temp$cdfsum
-      warn_ind <- temp$warn_ind
-      warn_df <- temp$warn_df
+      if("cdf" %in% statistics) {
+        temp <- cdf_est(
+          contsum$CDF, dframe, itype, lev_itype, nlev_itype, ivar, design,
+          design_names, vars_nondetect[indx], vartype, conf, mult, warn_ind,
+          warn_df
+        )
+        contsum$CDF <- temp$cdfsum
+        warn_ind <- temp$warn_ind
+        warn_df <- temp$warn_df
+      }
 
       # Calculate percentile estimates
 
-      temp <- percentile_est(
-        contsum$Pct, dframe, itype, lev_itype, nlev_itype, ivar, design,
-        design_names, vars_nondetect[indx], vartype, conf, mult, pctval,
-        warn_ind, warn_df
-      )
-      contsum$Pct <- temp$pctsum
-      warn_ind <- temp$warn_ind
-      warn_df <- temp$warn_df
+      if("pct" %in% statistics) {
+        temp <- percentile_est(
+          contsum$Pct, dframe, itype, lev_itype, nlev_itype, ivar, design,
+          design_names, vars_nondetect[indx], vartype, conf, mult, pctval,
+          warn_ind, warn_df
+        )
+        contsum$Pct <- temp$pctsum
+        warn_ind <- temp$warn_ind
+        warn_df <- temp$warn_df
+      }
+
+      # Calculate mean estimates
+
+      if("mean" %in% statistics) {
+        temp <- mean_est(
+          contsum$Mean, dframe, itype, lev_itype, nlev_itype, ivar, design,
+          design_names, vars_nondetect[indx], vartype, conf, mult, warn_ind,
+          warn_df
+        )
+        contsum$Mean <- temp$meansum
+        warn_ind <- temp$warn_ind
+        warn_df <- temp$warn_df
+      }
 
       # End of the loop for response variables
+
     }
 
     # End of the loop for subpopulations
+
   }
 
-  # As necessary, output a message indicating that warning messages were generated
-  # during execution of the program
+  # As necessary, output a message indicating that warning messages were
+  # generated during execution of the program
 
   if (warn_ind) {
     warn_df <<- warn_df
@@ -624,20 +683,30 @@ cont_analysis <- function(
 
   # Assign dimension names to the contsum data frames
 
-  dimnames(contsum$CDF) <- list(1:nrow(contsum$CDF), c(
-    "Type", "Subpopulation",
-    "Indicator", "Value", "nResp", "Estimate.P", "StdError.P",
-    "MarginofError.P", paste0("LCB", conf, "Pct.P"),
-    paste0("UCB", conf, "Pct.P"), "Estimate.U", "StdError.U",
-    "MarginofError.U", paste0("LCB", conf, "Pct.U"),
-    paste0("UCB", conf, "Pct.U")
-  ))
 
-  dimnames(contsum$Pct) <- list(1:nrow(contsum$Pct), c(
-    "Type", "Subpopulation",
-    "Indicator", "Statistic", "nResp", "Estimate", "StdError", "MarginofError",
-    paste0("LCB", conf, "Pct"), paste0("UCB", conf, "Pct")
-  ))
+  if(!is.null(contsum$CDF)){
+    dimnames(contsum$CDF) <- list(1:nrow(contsum$CDF), c(
+      "Type", "Subpopulation", "Indicator", "Value", "nResp", "Estimate.P",
+      "StdError.P", "MarginofError.P", paste0("LCB", conf, "Pct.P"),
+      paste0("UCB", conf, "Pct.P"), "Estimate.U", "StdError.U", "MarginofError.U",
+      paste0("LCB", conf, "Pct.U"), paste0("UCB", conf, "Pct.U")
+    ))
+  }
+
+  if(!is.null(contsum$Pct)){
+    dimnames(contsum$Pct) <- list(1:nrow(contsum$Pct), c(
+      "Type", "Subpopulation", "Indicator", "Statistic", "nResp", "Estimate",
+      "StdError", "MarginofError", paste0("LCB", conf, "Pct"),
+      paste0("UCB", conf, "Pct")
+    ))
+  }
+
+  if(!is.null(contsum$Mean)){
+    dimnames(contsum$Mean) <- list(1:nrow(contsum$Mean), c(
+      "Type", "Subpopulation", "Indicator", "nResp", "Estimate", "StdError",
+      "MarginofError", paste0("LCB", conf, "Pct"), paste0("UCB", conf, "Pct")
+    ))
+  }
 
   # Return the contsum object
 
