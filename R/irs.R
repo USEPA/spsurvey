@@ -250,12 +250,14 @@ irs <- function(sframe, n_base, seltype = "equal", wgt_units = NULL,
   }
 
   # Create siteID for base sites using DesignID and SiteBegin
-  row.names(sites_base) <- 1:nrow(sites_base)
-  sites_base$siteID <- siteID[(nlast + 1):(nlast + nrow(sites_base))]
-  nlast <- nlast + nrow(sites_base)
-  # set siteuse and replsite for base sites
-  sites_base$siteuse <- "Base"
-  sites_base$replsite <- "None"
+  if (!is.null(sites_base)) {
+    row.names(sites_base) <- 1:nrow(sites_base)
+    sites_base$siteID <- siteID[(nlast + 1):(nlast + nrow(sites_base))]
+    nlast <- nlast + nrow(sites_base)
+    # set siteuse and replsite for base sites
+    sites_base$siteuse <- "Base"
+    sites_base$replsite <- "None"
+  }
 
   # create siteID for n_over sites if any
   if (!is.null(n_over)) {
@@ -326,8 +328,10 @@ irs <- function(sframe, n_base, seltype = "equal", wgt_units = NULL,
 
   # sites_base
   # check what design variables are present in sf objects and add if missing
-  add_names <- dsgn_names[dsgn_names %in% names(sites_base)]
-  sites_base <- subset(sites_base, select = c(add_names, sframe_names))
+  if (!is.null(sites_base)) {
+    add_names <- dsgn_names[dsgn_names %in% names(sites_base)]
+    sites_base <- subset(sites_base, select = c(add_names, sframe_names))
+  }
 
   # sites_over
   if (!is.null(sites_over)) {
