@@ -21,15 +21,13 @@ cont_analysis(
   sizeweight = FALSE,
   sweight = NULL,
   sweight1 = NULL,
-  popcorrect = FALSE,
-  fpcsize = NULL,
-  Ncluster = NULL,
-  stage1size = NULL,
+  fpc = NULL,
   popsize = NULL,
   vartype = "Local",
   jointprob = "overton",
   conf = 95,
-  pctval = c(5, 10, 25, 50, 75, 90, 95)
+  pctval = c(5, 10, 25, 50, 75, 90, 95),
+  statistics = c("cdf", "pct", "mean")
 )
 }
 \arguments{
@@ -104,7 +102,8 @@ used during estimation, where \code{TRUE} = use size weights and
 \code{FALSE} = do not use size weights. To employ size weights for a
 single-stage sample, a value must be supplied for argument weight.  To
 employ size weights for a two-stage sample, values must be supplied for
-arguments \code{weight} and \code{weight1}. The default value is \code{FALSE}.}
+arguments \code{weight} and \code{weight1}. The default value is
+\code{FALSE}.}
 
 \item{sweight}{Character value providing the name of the size weight variable
 in the \code{dframe} data frame.  For a two-stage sample, the size weight
@@ -112,33 +111,58 @@ variable identifies stage two size weights.  The default value is
 \code{NULL}.}
 
 \item{sweight1}{Character value providing name of the stage one size weight
-variable in the \code{dframe} data frame.  The default value is \code{NULL}.}
+variable in the \code{dframe} data frame.  The default value is
+\code{NULL}.}
 
-\item{popcorrect}{Logical value that indicates whether the finite population
-correction factor is used during variance estimation. To employ the
-correction factor for a single-stage sample, values must be supplied for
-argument \code{fpcsize}.  To employ the correction factor for a two-stage
-sample, values must be supplied for arguments \code{Ncluster} and
-\code{stage1size}. The default value is \code{FALSE}.}
-
-\item{fpcsize}{Character value providing the name of the variable in the
-\code{dframe} data frame that identifies size of the resource, which is
-required for calculation of the finite population correction factor for a
-single-stage sample.  The default value is \code{NULL}.}
-
-\item{Ncluster}{Character value providing the name of the variable in the
-\code{dframe} data frame that identifies the number of clusters (stage one
-sampling units) in the resource, which is required for calculation of the
-finite population correction factor for a two-stage sample.  This argument
-is also required for a two-stage sample when the popsize argument is not
-equal to \code{NULL} and the vartype argument equals \code{"Local"}.  The
-default value is \code{NULL}.}
-
-\item{stage1size}{Character value providing the name of the variable in the
-\code{dframe} data frame that identifies cluster size, i.e. the number of
-the stage two sampling units in the resource for a cluster.  Note that
-cluster size is required for calculation of the finite population
-correction factor for a two-stage sample. The default value is \code{NULL}.}
+\item{fpc}{Object that specifies values required for calculation of the
+finite population correction factor used during variance estimation. The
+object must match the survey design in terms of stratification and whether
+the design is single-stage or two-stage.  For an unstratified design, the
+object is a vector.  The vector is composed of a single numeric value for a
+single-stage design.  For a two-stage unstratified design, the object is a
+named vector containing one more than the number of clusters in the sample,
+where the first item in the vector specifies the number of clusters in the
+population and each subsequent item specifies the number of stage two units
+for the cluster.  The name for the first item in the vector is arbitrry.
+Subsequent names in the vector identify clusters and must match the cluster
+IDs.  For a stratified design, the object is a named list of vectors, where
+names must match the strata IDs.  For each stratum, the format of the
+vector is identical to the format described for unstratified single-stage
+and two-stage designs.  Note that the finite population correction factor
+is not used with the local mean variance estimator.\cr\cr
+Example fpc for a single-stage unstratified survey design:\cr
+\verb{fpc <- 15000}\cr\cr
+Example fpc for a single-stage stratified survey design:\cr
+\verb{fpc <- list(
+  Stratum_1 = 9000,
+  Stratum_2 = 6000)
+ }\cr
+Example fpc for a two-stage unstratified survey design:\cr
+\verb{fpc <- c(
+  Ncluster = 150,
+  Cluster_1 = 150,
+  Cluster_2 = 75,
+  Cluster_3 = 75,
+  Cluster_4 = 125,
+  Cluster_5 = 75)
+}\cr
+Example fpc for a two-stage stratified survey design:\cr
+\verb{fpc <- list(
+  Stratum_1 = c(
+    Ncluster_1 = 100,
+    Cluster_1 = 125,
+    Cluster_2 = 100,
+    Cluster_3 = 100,
+    Cluster_4 = 125,
+    Cluster_5 = 50),
+  Stratum_2 = c(
+    Ncluster_2 = 50,
+    Cluster_1 = 75,
+    Cluster_2 = 150,
+    Cluster_3 = 75,
+    Cluster_4 = 75,
+    Cluster_5 = 125))
+}}
 
 \item{popsize}{Object that provides values for the population argument of
 the \code{calibrate} or \code{postStratify} functions.  For the
@@ -157,20 +181,28 @@ equal to \code{NULL}, then neither calibration nor post-stratification is
 performed.  The default value is
 \code{NULL}.\cr\cr
 Example popsize for calibration:\cr
-  popsize <- list(Ecoregion = c(East = 750,\cr
-                                Central = 500,\cr
-                                West = 250),\cr
-                  Type = c(Streams = 1150,\cr
-                           Rivers = 350))\cr
+\verb{popsize <- list(
+  Ecoregion = c(
+    East = 750,
+    Central = 500,
+    West = 250),
+  Type = c(
+    Streams = 1150,
+    Rivers = 350))
+}\cr
 Example popsize for post-stratification using a data frame:\cr
-  popsize <- data.frame(
-    Ecoregion = rep(c("East", "Central", "West"), rep(2, 3)),\cr
-    Type = rep(c("Streams", "Rivers"), 3),\cr
-    Total = c(575, 175, 400, 100, 175, 75))\cr
-Example popsize for post-stratification using a table:\cr575
-  popsize <- with(MySurveyFrame, table(Ecoregion, Type))\cr
+\verb{popsize <- data.frame(
+  Ecoregion = rep(c("East", "Central", "West"),
+    rep(2, 3)),
+  Type = rep(c("Streams", "Rivers"), 3),
+  Total = c(575, 175, 400, 100, 175, 75))
+}\cr
+Example popsize for post-stratification using a table:\cr
+\verb{popsize <- with(MySurveyFrame,
+  table(Ecoregion, Type))}\cr\cr
 Example popsize for post-stratification using an xtabs object:\cr
-  popsize <- xtabs(~Ecoregion + Type, data = MySurveyFrame)\cr}
+\verb{popsize <- xtabs(~Ecoregion + Type,
+  data = MySurveyFrame)}}
 
 \item{vartype}{Character value providing the choice of the variance
 estimator, where "Local" = the local mean estimator, \code{"SRS"} = the
@@ -189,18 +221,26 @@ approximation, \code{"hr"} indicates the Hartley_Rao approximation, and
 is \code{95}.}
 
 \item{pctval}{Vector of the set of values at which percentiles are
-estimated.  The default set is: \code{{5, 10, 25, 50, 75, 90, 95}}.}
+estimated.  The default set is: \code{c(5, 10, 25, 50, 75, 90, 95)}.}
+
+\item{statistics}{Character vector specifying desired estimates, where
+\code{"cdf"} specifies CDF estimates, \code{"pct"} specifies percentile
+estimates, and \code{"mean"} specifies mean estimates.  Any combination of
+the three choices may be provided by the user.  The defalt value is
+\code{c("cdf", "pct", "mean")}.}
 }
 \value{
-A list composed of two data frames that contain population estimates
-  for all combinations of subpopulations, categories within each
-  subpopulation, and response variables.  Estimates are provided for
+A list composed of one, two, or three data frames that contain
+  population estimates for all combinations of subpopulations, categories
+  within each subpopulation, and response variables, where the number of data
+  frames is determined by argument statistics.  Estimates are provided for
   proportion and total (size) of the population plus standard error, margin
-  of error, and confidence interval estimates.  The two data frames in the
- output list are:
+  of error, and confidence interval estimates.  The possible data frames in
+  the output list are:
   \describe{
     \item{\code{CDF}}{data frame containing the CDF estimates}
     \item{\code{Pct}}{data frame containing the percentile estimates}
+    \item{\code{Mean}}{data frame containing the mean estimates}
   }
 }
 \description{

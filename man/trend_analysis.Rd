@@ -24,10 +24,7 @@ trend_analysis(
   sizeweight = FALSE,
   sweight = NULL,
   sweight1 = NULL,
-  popcorrect = FALSE,
-  fpcsize = NULL,
-  Ncluster = NULL,
-  stage1size = NULL,
+  fpc = NULL,
   popsize = NULL,
   invprboot = TRUE,
   nboot = 1000,
@@ -131,62 +128,95 @@ variable identifies stage two size weights.  The default value is
 variable in the \code{dframe} data frame.  The default value is
 \code{NULL}.}
 
-\item{popcorrect}{Logical value that indicates whether the finite population
-correction factor is used during variance estimation. To employ the
-correction factor for a single-stage sample, values must be supplied for
-argument \code{fpcsize}.  To employ the correction factor for a two-stage
-sample, values must be supplied for arguments \code{Ncluster} and
-\code{stage1size}.  The default value is \code{FALSE}.}
+\item{fpc}{Object that specifies values required for calculation of the
+finite population correction factor used during variance estimation. The
+object must match the survey design in terms of stratification and whether
+the design is single-stage or two-stage.  For an unstratified design, the
+object is a vector.  The vector is composed of a single numeric value for a
+single-stage design.  For a two-stage unstratified design, the object is a
+named vector containing one more than the number of clusters in the sample,
+where the first item in the vector specifies the number of clusters in the
+population and each subsequent item specifies the number of stage two units
+for the cluster.  The name for the first item in the vector is arbitrry.
+Subsequent names in the vector identify clusters and must match the cluster
+IDs.  For a stratified design, the object is a named list of vectors, where
+names must match the strata IDs.  For each stratum, the format of the
+vector is identical to the format described for unstratified single-stage
+and two-stage designs.  Note that the finite population correction factor
+is not used with the local mean variance estimator.\cr\cr
+Example fpc for a single-stage unstratified survey design:\cr
+\verb{fpc <- 15000}\cr\cr
+Example fpc for a single-stage stratified survey design:\cr
+\verb{fpc <- list(
+  Stratum_1 = 9000,
+  Stratum_2 = 6000)
+ }\cr
+Example fpc for a two-stage unstratified survey design:\cr
+\verb{fpc <- c(
+  Ncluster = 150,
+  Cluster_1 = 150,
+  Cluster_2 = 75,
+  Cluster_3 = 75,
+  Cluster_4 = 125,
+  Cluster_5 = 75)
+}\cr
+Example fpc for a two-stage stratified survey design:\cr
+\verb{fpc <- list(
+  Stratum_1 = c(
+    Ncluster_1 = 100,
+    Cluster_1 = 125,
+    Cluster_2 = 100,
+    Cluster_3 = 100,
+    Cluster_4 = 125,
+    Cluster_5 = 50),
+  Stratum_2 = c(
+    Ncluster_2 = 50,
+    Cluster_1 = 75,
+    Cluster_2 = 150,
+    Cluster_3 = 75,
+    Cluster_4 = 75,
+    Cluster_5 = 125))
+}}
 
-\item{fpcsize}{Character value providing name of the variable in the
-\code{dframe} data frame that identifies size of the resource, which is
-required for calculation of the finite population correction factor for a
-single-stage sample.  The default value is \code{NULL}.}
-
-\item{Ncluster}{Character value providing name of the variable in the
-\code{dframe} data frame that identifies the number of clusters (stage one
-sampling units) in the resource, which is required for calculation of the
-finite population correction factor for a two-stage sample.  This argument
-is also required for a two-stage sample when the popsize argument is not
-equal to \code{NULL} and the vartype argument equals \code{"Local"}.  The
-default value is \code{NULL}.}
-
-\item{stage1size}{Character value providing name of the variable in the
-\code{dframe} data frame that identifies cluster size, i.e. the number of
-the stage two sampling units in the resource for a cluster.  Note that
-cluster size is required for calculation of the finite population
-correction factor for a two-stage sample. The default value is \code{NULL}.}
-
-\item{popsize}{Object that provides values for the population argument of the
-\code{calibrate} or \code{postStratify} functions.  For the
+\item{popsize}{Object that provides values for the population argument of
+the \code{calibrate} or \code{postStratify} functions.  For the
 \code{calibrate} function, the object is a named list, where the names
-identify factor variables in the \code{dframe} data frame.  Each element of
-the list is a named vector containing the population total for each level
-of the associated factor variable.  For the \code{postStratify} function,
-the object is either a data frame, table, or xtabs object that provides the
-population total for all combinations of selected  factor varaibles in the
-\code{dframe} data frame.  If a data frame is used for \code{popsize}, the
-variable containing population totals must be the last variable in the data
-frame.  If a table is used for \code{popsize}, the table must have named
-dimnames where the names identify factor variables in the \code{dframe}
-data frame.  If the \code{popsize} argument is equal to \code{NULL}, then
-neither calibration nor post-stratification is performed.  The default
-value is \code{NULL}.\cr\cr
+identify factor variables in the \code{dframe} data frame.  Each element
+of the list is a named vector containing the population total for each
+level of the associated factor variable.  For the \code{postStratify}
+function, the object is either a data frame, table, or xtabs
+object that provides the population total for all combinations of selected
+factor varaibles in the \code{dframe} data frame.  If a data frame is used
+for \code{popsize}, the variable containing population totals must be the
+last variable in the data frame.  If a table is used for \code{popsize},
+the table must have named \code{dimnames} where the names identify factor
+variables in the \code{dframe} data frame.  If the popsize argument is
+equal to \code{NULL}, then neither calibration nor post-stratification is
+performed.  The default value is
+\code{NULL}.\cr\cr
 Example popsize for calibration:\cr
-  popsize <- list(Ecoregion = c(East = 750,\cr
-                                Central = 500,\cr
-                                West = 250),\cr
-                  Type = c(Streams = 1150,\cr
-                           Rivers = 350))\cr
+\verb{popsize <- list(
+  Ecoregion = c(
+    East = 750,
+    Central = 500,
+    West = 250),
+  Type = c(
+    Streams = 1150,
+    Rivers = 350))
+}\cr
 Example popsize for post-stratification using a data frame:\cr
-  popsize <- data.frame(
-    Ecoregion = rep(c("East", "Central", "West"), rep(2, 3)),\cr
-    Type = rep(c("Streams", "Rivers"), 3),\cr
-    Total = c(575, 175, 400, 100, 175, 75))\cr
-Example popsize for post-stratification using a table:\cr575
-  popsize <- with(MySurveyFrame, table(Ecoregion, Type))\cr
+\verb{popsize <- data.frame(
+  Ecoregion = rep(c("East", "Central", "West"),
+    rep(2, 3)),
+  Type = rep(c("Streams", "Rivers"), 3),
+  Total = c(575, 175, 400, 100, 175, 75))
+}\cr
+Example popsize for post-stratification using a table:\cr
+\verb{popsize <- with(MySurveyFrame,
+  table(Ecoregion, Type))}\cr\cr
 Example popsize for post-stratification using an xtabs object:\cr
-  popsize <- xtabs(~Ecoregion + Type, data = MySurveyFrame)\cr}
+\verb{popsize <- xtabs(~Ecoregion + Type,
+  data = MySurveyFrame)}}
 
 \item{invprboot}{Logical value that indicates whether the inverse probability
 bootstrap procedure is used to calculate trend parameter estimates.  This
@@ -340,7 +370,7 @@ the \code{boot} function.
       consistency, and compatibility with analytical functions}
     \item{\code{\link{lm}}}{fits a linear model}
     \item{\code{\link{lmer}}}{fits a linear mixed-effects model}
-    \item{\code{percentile_est}}{calculates percentile estimates}
+    \item{\code{mean_est}}{calculates mean estimates}
     \item{\code{\link{postStratify}}}{conduct post-stratification for survey
       data}
     \item{\code{survey_design}}{creates a survey design object}

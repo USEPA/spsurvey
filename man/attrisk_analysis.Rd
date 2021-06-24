@@ -8,8 +8,8 @@ attrisk_analysis(
   dframe,
   vars_response,
   vars_stressor,
-  response_levels = rep(list(c("Poor", "Good")), length(vars_response)),
-  stressor_levels = rep(list(c("Poor", "Good")), length(vars_stressor)),
+  response_levels = NULL,
+  stressor_levels = NULL,
   subpops = NULL,
   siteID = "siteID",
   weight = "weight",
@@ -23,13 +23,9 @@ attrisk_analysis(
   sizeweight = FALSE,
   sweight = NULL,
   sweight1 = NULL,
-  popcorrect = FALSE,
-  fpcsize = NULL,
-  Ncluster = NULL,
-  stage1size = NULL,
+  fpc = NULL,
   popsize = NULL,
   vartype = "Local",
-  jointprob = "overton",
   conf = 95
 )
 }
@@ -37,29 +33,41 @@ attrisk_analysis(
 \item{dframe}{Data frame containing survey design variables, response
 variables, stressor variables, and subpopulation (domain) variables.}
 
-\item{vars_response}{Vector composed of character values that
-identify the names of response variables in the \code{dframe} data frame.}
+\item{vars_response}{Vector composed of character values that identify the
+names of response variables in the \code{dframe} data frame. Each response
+variable must have two category values (levels), where one level is
+associated with poor condition and the other level is associated with good
+condition.}
 
 \item{vars_stressor}{Vector composed of character values that identify the
-names of stressor variables in the \code{dframe} data frame.}
+names of stressor variables in the \code{dframe} data frame. Each stressor
+variable must have two category values (levels), where one level is
+associated with poor condition and the other level is associated with good
+condition.}
 
 \item{response_levels}{List providing the category values (levels) for each
-element in the vars_response argument.  This argument should be named and
-must be the same length as argument \code{vars_response}.  The first level
-for each element in the list is used for calculating the numerator and the
-denominator of the relative risk estimate.  The default is a list
-containing the values \code{"Poor"} and \code{"Good"} for the first and
-second levels, respectively, of each element in the vars_response argument.}
+element in the \code{vars_response} argument.  Each element in the list
+must contian two values, where the first value identifies poor condition,
+and the second value identifies good condition.  This argument must be
+named and must be the same length as argument \code{vars_response}.  Names
+for this argument must match the values in the \code{vars_response}
+argument. If this argument equals NULL, then a named list is created that
+contains the values \code{"Poor"} and \code{"Good"} for the first and
+second levels, respectively, of each element in the \code{vars_response}
+argument and that uses values in the \code{vars_response} argument as names
+for the list.  The default value is NULL.}
 
 \item{stressor_levels}{List providing the category values (levels) for each
-element in the \code{vars_stressor} argument.  This argument should be
-named and must be the same length as argument vars_response.  The first
-level for each element in the list is used for calculating the numerator of
-the relative risk estimate, and the second level for each element in the
-list is used for calculating the denominator of the estimate.  The default
-is a list containing the values \code{"Poor"} and \code{"Good"} for the
-first and second levels, respectively, of each element in the
-\code{vars_stressor} argument.}
+element in the \code{vars_stressor} argument.  Each element in the list
+must contian two values, where the first value identifies poor condition,
+and the second value identifies good condition.  This argument must be
+named and must be the same length as argument \code{vars_stressor}.  Names
+for this argument must match the values in the \code{vars_stressor}
+argument. If this argument equals NULL, then a named list is created that
+contains the values \code{"Poor"} and \code{"Good"} for the first and
+second levels, respectively, of each element in the \code{vars_stressor}
+argument and that uses values in the \code{vars_stressor} argument as names
+for the list.  The default value is NULL.}
 
 \item{subpops}{Vector composed of character values that identify the
 names of subpopulation (domain) variables in the \code{dframe} data frame.
@@ -128,31 +136,55 @@ variable identifies stage two size weights.  The default value is
 weight variable in the \code{dframe} data frame.  The default value is
 \code{NULL}.}
 
-\item{popcorrect}{Logical value that indicates whether the finite population
-correction factor is used during variance estimation. To employ the
-correction factor for a single-stage sample, values must be supplied for
-argument \code{fpcsize}.  To employ the correction factor for a two-stage
-sample, values must be supplied for arguments \code{Ncluster} and
-\code{stage1size}. The default value is \code{FALSE}.}
-
-\item{fpcsize}{Character value providing the name of the variable in the
-\code{dframe} data frame that identifies size of the resource, which is
-required for calculation of the finite population correction factor for a
-single-stage sample.  The default value is \code{NULL}.}
-
-\item{Ncluster}{Character value providing the name of the variable in the
-\code{dframe} data frame that identifies the number of clusters (stage one
-sampling units) in the resource, which is required for calculation of the
-finite population correction factor for a two-stage sample.  This argument
-is also required for a two-stage sample when the popsize argument is not
-equal to \code{NULL} and the vartype argument equals \code{"Local"}.  The
-default value is \code{NULL}.}
-
-\item{stage1size}{Character value providing the name of the variable in the
-\code{dframe} data frame that identifies cluster size, i.e. the number of
-the stage two sampling units in the resource for a cluster.  Note that
-cluster size is required for calculation of the finite population
-correction factor for a two-stage sample. The default value is \code{NULL}.}
+\item{fpc}{Object that specifies values required for calculation of the
+finite population correction factor used during variance estimation. The
+object must match the survey design in terms of stratification and whether
+the design is single-stage or two-stage.  For an unstratified design, the
+object is a vector.  The vector is composed of a single numeric value for a
+single-stage design.  For a two-stage unstratified design, the object is a
+named vector containing one more than the number of clusters in the sample,
+where the first item in the vector specifies the number of clusters in the
+population and each subsequent item specifies the number of stage two units
+for the cluster.  The name for the first item in the vector is arbitrry.
+Subsequent names in the vector identify clusters and must match the cluster
+IDs.  For a stratified design, the object is a named list of vectors, where
+names must match the strata IDs.  For each stratum, the format of the
+vector is identical to the format described for unstratified single-stage
+and two-stage designs.  Note that the finite population correction factor
+is not used with the local mean variance estimator.\cr\cr
+Example fpc for a single-stage unstratified survey design:\cr
+\verb{fpc <- 15000}\cr\cr
+Example fpc for a single-stage stratified survey design:\cr
+\verb{fpc <- list(
+  Stratum_1 = 9000,
+  Stratum_2 = 6000)
+ }\cr
+Example fpc for a two-stage unstratified survey design:\cr
+\verb{fpc <- c(
+  Ncluster = 150,
+  Cluster_1 = 150,
+  Cluster_2 = 75,
+  Cluster_3 = 75,
+  Cluster_4 = 125,
+  Cluster_5 = 75)
+}\cr
+Example fpc for a two-stage stratified survey design:\cr
+\verb{fpc <- list(
+  Stratum_1 = c(
+    Ncluster_1 = 100,
+    Cluster_1 = 125,
+    Cluster_2 = 100,
+    Cluster_3 = 100,
+    Cluster_4 = 125,
+    Cluster_5 = 50),
+  Stratum_2 = c(
+    Ncluster_2 = 50,
+    Cluster_1 = 75,
+    Cluster_2 = 150,
+    Cluster_3 = 75,
+    Cluster_4 = 75,
+    Cluster_5 = 125))
+}}
 
 \item{popsize}{Object that provides values for the population argument of
 the \code{calibrate} or \code{postStratify} functions.  For the
@@ -171,33 +203,32 @@ equal to \code{NULL}, then neither calibration nor post-stratification is
 performed.  The default value is
 \code{NULL}.\cr\cr
 Example popsize for calibration:\cr
-  popsize <- list(Ecoregion = c(East = 750,\cr
-                                Central = 500,\cr
-                                West = 250),\cr
-                  Type = c(Streams = 1150,\cr
-                           Rivers = 350))\cr
+\verb{popsize <- list(
+  Ecoregion = c(
+    East = 750,
+    Central = 500,
+    West = 250),
+  Type = c(
+    Streams = 1150,
+    Rivers = 350))
+}\cr
 Example popsize for post-stratification using a data frame:\cr
-  popsize <- data.frame(
-    Ecoregion = rep(c("East", "Central", "West"), rep(2, 3)),\cr
-    Type = rep(c("Streams", "Rivers"), 3),\cr
-    Total = c(575, 175, 400, 100, 175, 75))\cr
-Example popsize for post-stratification using a table:\cr575
-  popsize <- with(MySurveyFrame, table(Ecoregion, Type))\cr
+\verb{popsize <- data.frame(
+  Ecoregion = rep(c("East", "Central", "West"),
+    rep(2, 3)),
+  Type = rep(c("Streams", "Rivers"), 3),
+  Total = c(575, 175, 400, 100, 175, 75))
+}\cr
+Example popsize for post-stratification using a table:\cr
+\verb{popsize <- with(MySurveyFrame,
+  table(Ecoregion, Type))}\cr\cr
 Example popsize for post-stratification using an xtabs object:\cr
-  popsize <- xtabs(~Ecoregion + Type, data = MySurveyFrame)\cr}
+\verb{popsize <- xtabs(~Ecoregion + Type,
+  data = MySurveyFrame)}}
 
 \item{vartype}{Character value providing the choice of the variance
-estimator, where "Local" = the local mean estimator, \code{"SRS"} = the
-simple random sampling estimator, \code{"HT"} = the Horvitz-Thompson
-estimator, and \code{"YG"} = the Yates-Grundy estimator.  The default value
-is \code{"Local"}.}
-
-\item{jointprob}{Character value providing the choice of joint inclusion
-probability approximation for use with Horvitz-Thompson and Yates-Grundy
-variance estimators, where \code{"overton"} indicates the Overton
-approximation, \code{"hr"} indicates the Hartley_Rao approximation, and
-\code{"brewer"} equals the Brewer approximation.  The default value is
-\code{"overton"}.}
+estimator, where "Local" = the local mean estimator and \code{"SRS"} = the
+simple random sampling estimator.  The default value is \code{"Local"}.}
 
 \item{conf}{Numeric value providing the confidence level.  The default value
 is \code{95}.}
@@ -211,10 +242,15 @@ Data frame of population estimates for all combinations of
 }
 \description{
 This function organizes input and output for attributable risk analysis of
-categorical data generated by a probability survey.  The input data argument
-can be either a data frame or a simple features (sf) object.  If an sf object
-is used, coordinates are extracted from the geometry column in the object,
-arguments \code{xcoord} and \code{ycoord} are assigned values \code{"xcoord"} and \code{"ycoord"},
+categorical data generated by a probability survey.  Attributable risk
+measures the percent reduction in the extent of poor condition of a response
+variable that presumably would result from eliminating a stressor variable,
+where the stressor variable and the response vriable are classified as either
+good (i.e., reference condition) or poor (i.e., different from reference
+condition). The input data argument, dframe, can be either a data frame or a
+simple features (sf) object.  If an sf object is used, coordinates are
+extracted from the geometry column in the object, arguments \code{xcoord} and
+\code{ycoord} are assigned values \code{"xcoord"} and \code{"ycoord"},
 respectively, and the geometry column is dropped from the object.
 }
 \section{Other Functions Required}{
