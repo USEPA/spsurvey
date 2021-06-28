@@ -1,0 +1,146 @@
+---
+title: "Summarizing and Visualizing Data"
+author: "Michael Dumelle, Tony Olsen, Tom Kincaid, and Marc Weber"
+output: 
+  html_document:
+    theme: flatly
+    number_sections: true
+    highlighted: default 
+    toc: yes
+    toc_float:
+      collapsed: no
+      smooth_scroll: no
+    toc_depth: 2
+vignette: >
+  %\VignetteIndexEntry{Summarizing and Visualizing Data}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>", 
+  warning = FALSE, 
+  message = FALSE
+)
+```
+
+The `summary()` and `plot()` functions in spsurvey are used to summarize and visualize sample frames and samples. They both use a formula (see `?formula`) argument that indicates the variables to be used by the functions. These functions function differently whether the formula is one-sided or two-sided. The `plot()` function in spsurvey is built on `plot()` in the sf package and takes all the same arguments while adding a few additional features. To learn more about the arguments in `plot()` for sf that can be used for `plot()` in spsurvey, run `?plot.sf()`. Before proceeding, we load spsurvey and set a reproducible seed:
+```{r}
+library(spsurvey)
+set.seed(5)
+```
+
+# Sample Frames
+
+The sample frame contains all units that may be selected in the sample. Summarizing and visualizing the sample frame is often helpful to better understand your data and inform sampling options like stratification, unequal selection probabilities, or proportional selection probabilities. The `NE_Lakes` data in spsurvey is a sample frame that contains lakes from the Northeastern United States. There are four variables in `NE_Lakes` that we will summarize and visualize:
+
+1. `AREA`: lake area in hectares
+2. `AREA_CAT`: lake area categories (small and large)
+3. `ELEV`: lake elevation
+4. `ELEV_CAT`: lake elevation categories (low and high)
+
+First we turn the `NE_Lakes` data into an `sframe` object using the `sframe()` function:
+```{r}
+NE_Lakes <- sframe(NE_Lakes)
+```
+
+## One-sided formulas
+
+One-sided formulas are used to summarize and visualize a variable's distribution. The variables of interest should be placed on the right-hand side of the formula. To summarize the distribution of `ELEV_CAT`, run
+```{r}
+summary(NE_Lakes, formula = ~ ELEV_CAT)
+```
+The output contains two columns: `total` and `ELEV_CAT`. The `total` column returns the total number of lakes -- it functions as an "intercept" to the formula (and can by removed by supplying `- 1` to the formula). The `ELEV_CAT` column returns the number of lakes in each elevation category (low and high). The `total` column functions as the "intercept" in the formula -- it can be removed by supplying a `- 1` to the formula. To visualize `ELEV_CAT`, run
+```{r}
+plot(NE_Lakes, formula = ~ ELEV_CAT)
+```
+
+The default title for the plot is the formula argument -- this is changed using the `main` argument.
+
+To summarize the distribution of `ELEV` (a numeric variable), run
+```{r}
+summary(NE_Lakes, formula = ~ ELEV)
+```
+When numeric variables are provided in the formula, a few relevant numeric summaries are provided. To visualize `ELEV`, run
+```{r}
+plot(NE_Lakes, formula = ~ ELEV)
+```
+
+The formula used by `summary()` and `plot()` is quite flexible. Additional variables can be included when separated by `+`:
+```{r}
+summary(NE_Lakes, formula = ~ ELEV_CAT + AREA_CAT)
+```
+The `plot()` function returns two plots, one for `ELEV_CAT` and another for `AREA_CAT`
+```{r}
+plot(NE_Lakes, formula = ~ ELEV_CAT + AREA_CAT)
+```
+
+The formula takes the interaction operator, `:`, which returns the interaction between variables. The interaction operator should be used with categorical variables to understand the distribution of combinations of levels among the variables. For example, to summarize the interaction between `ELEV_CAT` and `AREA_CAT`, run
+```{r}
+summary(NE_Lakes, formula = ~ ELEV_CAT:AREA_CAT)
+```
+For example, there are 2451 lakes that are in the low elevation category and the small area category. 
+```{r}
+plot(NE_Lakes, formula = ~ ELEV_CAT:AREA_CAT)
+```
+
+The formula also takes the `*` operator, where `ELEV_CAT * AREA_CAT` is shorthand for `ELEV_CAT + AREA_CAT + ELEV_CAT + AREA_CAT`. It also takes the `.` operator, which returns summaries or visualizations for all variables in the data.
+
+## Two-sided formulas
+
+Two-sided formulas are used to summarize the distribution of a left-hand side variable for each level of each right-hand side variable. To summarize the distribution of `ELEV_CAT` for each level of `AREA_CAT`, run
+```{r}
+summary(NE_Lakes, formula = ELEV_CAT ~ AREA_CAT)
+```
+To visualize the distribution of `ELEV_CAT` for each level of `AREA_CAT`, run
+```{r}
+plot(NE_Lakes, formula = ELEV_CAT ~ AREA_CAT)
+```
+
+To summarize the distribution of `ELEV` for each level of `AREA_CAT`, run
+```{r}
+summary(NE_Lakes, formula = ELEV ~ AREA_CAT)
+```
+To visualize the distribution of `ELEV` for each level of `AREA_CAT`, run
+```{r}
+plot(NE_Lakes, formula = ELEV ~ AREA_CAT)
+```
+
+## Adjusting graphical parameters
+
+spsurvey makes it straightforward to adjust graphical parameters when visualizing sample frames. There are three arguments in `plot()` designed to use the right-hand side variables of a formula to adjust graphical parameters:
+    1. `var_args`: adjusts graphical parameters for all levels of a variable 
+    2. `varlevel_args`: adjusts graphical parameters uniquely for each level of a variable
+    3. `...`: adjusts graphical parameters for all levels of all variables
+The `var_args` and `varlevel_args` arguments take lists whose names match variable names in the formula. For `varlevel_args`, each list element must have an entry called `levels` that matches the variable's levels. The following example combines all three layers of graphical parameter adjustment:
+```{r}
+list1 <- list(main = "my new title", pal = rainbow)
+list2 <- list(levels = c("small", "large"), pch = c(4, 19))
+plot(
+  NE_Lakes,
+  formula = ~ ELEV_CAT + AREA_CAT,
+  var_args = list(ELEV_CAT = list1), 
+  varlevel_args = list(AREA_CAT = list2),
+  cex = 0.75
+)
+```
+
+`var_args` uses `list1` to give the `AREA_CAT` plot a new title and color palette; `varlevel_args` uses `list2` to give the `ELEV_CAT` plot different shapes for the small and large levels; and `...` uses `cex = 0.75` to reduce the size of all points. If a two-sided formula is used, then it is possible to adjust graphical parameters for all levels of a left-hand side variable and a right-hand side variable when a sublist matching the structure of `varlevel_args` is used as an argument to `var_args`.
+```{r}
+sublist <- list(AREA_CAT = list2)
+plot(
+  NE_Lakes,
+  formula = AREA_CAT ~ ELEV_CAT,
+  var_args = list(ELEV_CAT = sublist)
+)
+```
+
+## Other useful arguments
+
+The `onlyshow` argument is a useful argument to spsurvey's `summary()` and `plot()` functions.
+
+Other arguments to the `summary()` and `plot()` functions in spsurvey can be found in the help files, which are viewed by running `?summary()` and `?plot()` after loading spsurvey.
+
+# Samples
