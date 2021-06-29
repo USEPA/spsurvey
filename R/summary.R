@@ -95,7 +95,7 @@ summary.dframe <- function(object, formula, onlyshow = NULL, ...) {
 #' @name summary
 #' @method summary spdesign
 #' @export
-summary.spdesign <- function(object, formula, onlyshow = NULL, siteuse = NULL, ...) {
+summary.spdesign <- function(object, formula = ~ siteuse, onlyshow = NULL, siteuse = NULL, ...) {
 
   if ((is.null(siteuse) & (!is.null(object$sites_near))) | "Near" %in% siteuse) {
     object$sites_near$siteuse <- "Near"
@@ -114,20 +114,6 @@ summary.spdesign <- function(object, formula, onlyshow = NULL, siteuse = NULL, .
 
   output <- summary.sframe(object, formula, onlyshow, ...)
   output
-  # # keep the sites sf objects from class design
-  # object_split <- split(object, object$siteuse)
-  #
-  # # storing output if non-null
-  # output <- lapply(object_split, function(x) {
-  #   if (is.null(x)) {
-  #     x
-  #   } else {
-  #     summary.sframe(x, formula, onlyshow, ...)
-  #   }
-  # })
-  # # returning non-null outuput
-  # output <- output[!vapply(output, is.null, logical(1))]
-  # output
 }
 
 # Helpers -----------------------------------------------------------------
