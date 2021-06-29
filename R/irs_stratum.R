@@ -53,6 +53,9 @@ irs_stratum <-function(stratum, dsgn, sframe, sf_type, wgt_units = NULL, pt_dens
     n_near <- 0
   }
   n_total <- n_base + n_over
+  
+  # set number of legacy sites to 0
+  n_legacy <- 0
 
   # subset sframe to stratum
   sftmp <- sframe[sframe$stratum == stratum, , drop = FALSE]
@@ -60,6 +63,7 @@ irs_stratum <-function(stratum, dsgn, sframe, sf_type, wgt_units = NULL, pt_dens
   # subset legacy_sites to stratum if present for linear and area option
   if (legacy_option == TRUE & sf_type != "sf_point") {
     legtmp <- legacy_sites[legacy_sites$stratum == stratum, , drop = FALSE]
+    n_legacy <- nrow(legtmp)
   }
 
 
@@ -161,7 +165,7 @@ irs_stratum <-function(stratum, dsgn, sframe, sf_type, wgt_units = NULL, pt_dens
   }
   
   # Step 2 site selection if linear or area; otherwise Step 1 for points.
-  # detemine overall sample size required from dsgn for stratum
+  # determine overall sample size required from dsgn for stratum
   # account for n_over sample option if present
   if (dsgn[["seltype"]][[stratum]] == "equal" | dsgn[["seltype"]][[stratum]] == "proportional") {
     n_caty <- n_total
