@@ -7,31 +7,22 @@
 \format{
 A data frame with 682 rows and 18 variables:
 \describe{
-  \item{UNIQUE_ID}{A unique observation identifier.}
   \item{SITE_ID}{A unique site identifier.}
-  \item{DSGN_CYCLE}{Year of design cycle.}
-  \item{LAT_DD83}{Latitude coordinate using the NAD83 Datum.}
-  \item{LON_DD83}{Longitude coordinate using the NAD83 Datum.}
-  \item{XCOORD}{Transformed latitude coordinate in meters.}
-  \item{YCOORD}{Transformed latitude coordinate in meters.}
-  \item{WGT_TP_EXTENT}{Target population weights for extent.}
-  \item{WGT_SP_CORE}{Sampled population weights for sampled sites.}
-  \item{WGT_TP_CORE}{Target population weights for sampled sites.}
-  \item{EVAL_CAT}{Lake evaluation category.}
-  \item{TNT_CAT}{Target vs Nontarget evaluation category.}
-  \item{NA_LEVEL1_ECO_NM}{Ecoregion.}
-  \item{STATE_NM}{State name.}
-  \item{BENTHIC_MMI}{Benthic MMI value.}
-  \item{BENTHIC_MMI_COND}{Benthic MMI categories.}
-  \item{PHOSPHORUS_COND}{Phosphorus condition categories.}
-  \item{NITROGEN_COND}{Nitrogen condition categories.}
+  \item{YEAR}{Year of design cycle.}
+  \item{WEIGHT}{Sampling design weights.}
+  \item{ECOREGION}{Ecoregion.}
+  \item{STATE}{State name.}
+  \item{BMMI}{Benthic MMI value.}
+  \item{BMMI_COND}{Benthic MMI categories.}
+  \item{PHOS_COND}{Phosphorus condition categories.}
+  \item{NITR_COND}{Nitrogen condition categories.}
 }
 }
 \usage{
 NRSA_EPA7
 }
 \description{
-A data frame consisting of stream observations from a subset of the Environmental
+An sf object consisting of stream observations from a subset of the Environmental
 Protection Agency's "National Rivers and Streams Assessment" in the Central
 United States duing the years 2008 and 2013.
 }

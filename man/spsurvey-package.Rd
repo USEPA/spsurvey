@@ -34,7 +34,7 @@ continuous data, estimation of the deconvoluted CDF and estimation of
 percentiles using the deconvoluted CDF are available.
 }
 \author{
-\strong{Maintainer}: Michael Dumelle \email{Dumelle.Michael@epa.gov}
+\strong{Maintainer}: Michael Dumelle \email{Dumelle.Michael@epa.gov} (\href{https://orcid.org/0000-0002-3393-5529}{ORCID})
 
 Authors:
 \itemize{
