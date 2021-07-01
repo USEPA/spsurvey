@@ -5,7 +5,7 @@
 \alias{NRSA_EPA7}
 \title{NRSA EPA7}
 \format{
-A data frame with 682 rows and 18 variables:
+A data frame with 682 rows and 10 variables:
 \describe{
   \item{SITE_ID}{A unique site identifier.}
   \item{YEAR}{Year of design cycle.}
@@ -16,6 +16,8 @@ A data frame with 682 rows and 18 variables:
   \item{BMMI_COND}{Benthic MMI categories.}
   \item{PHOS_COND}{Phosphorus condition categories.}
   \item{NITR_COND}{Nitrogen condition categories.}
+  \item{geometry}{Point geometry using a USA Contiguous Albers Equal Area
+    Conic projection.}
 }
 }
 \usage{

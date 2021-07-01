@@ -5,7 +5,7 @@
 \alias{NLA_West}
 \title{NLA West}
 \format{
-An \code{sf} point object with 851 rows and 18 variables:
+An \code{sf} point object with 851 rows and 9 variables:
 \describe{
   \item{SITE_ID}{A unique lake identifier.}
   \item{WEIGHT}{The sampling design weight.}
@@ -15,6 +15,8 @@ An \code{sf} point object with 851 rows and 18 variables:
   \item{BMMI_COND}{Benthic MMI condition categories.}
   \item{PHOS_COND}{Phosphorus condition categories.}
   \item{NITR_COND}{Nitrogen condition categories.}
+  \item{geometry}{Point geometry using a USA Contiguous Albers Equal Area
+    Conic projection.}
 }
 }
 \usage{

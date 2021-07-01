@@ -5,7 +5,7 @@
 \alias{Great_Lakes}
 \title{Great Lakes}
 \format{
-An \code{sf} multipolygon object with 4113 rows and 5 variables:
+An \code{sf} multipolygon object with 4113 rows and 6 variables:
 \describe{
   \item{COUNTRY}{Country.}
   \item{WTBDY_NM}{Water body name.}

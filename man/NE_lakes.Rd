@@ -5,7 +5,7 @@
 \alias{NE_Lakes}
 \title{New England Lakes}
 \format{
-An \code{sf} object with 5328 rows and 7 variables:
+An \code{sf} object with 5328 rows and 6 variables:
 \describe{
   \item{AREA}{Lake area in hectares.}
   \item{AREA_CAT}{Lake area categories based on a hectare cutoff.}

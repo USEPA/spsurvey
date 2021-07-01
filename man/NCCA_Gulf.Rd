@@ -5,7 +5,7 @@
 \alias{NCCA_Gulf}
 \title{NCCA Gulf}
 \format{
-A data frame with 851 rows and 19 variables:
+A data frame with 851 rows and 11 variables:
 \describe{
   \item{SITE_ID}{A unique site identifier.}
   \item{YEAR}{Year of design cycle.}
@@ -17,6 +17,8 @@ A data frame with 851 rows and 19 variables:
   \item{BMMI_COND}{Benthic MMI categories.}
   \item{FT_COND}{Fish tissue condition categories.}
   \item{PHOS_COND}{Phosphorus condition categories.}
+  \item{geometry}{Point geometry using a USA Contiguous Albers Equal Area
+    Conic projection.}
 }
 }
 \usage{
