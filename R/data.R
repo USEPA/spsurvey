@@ -3,7 +3,7 @@
 #' An \code{sf} point object of 5328 lakes in the Northeastern
 #' United States.
 #'
-#' @format An \code{sf} object with 5328 rows and 7 variables:
+#' @format An \code{sf} object with 5328 rows and 6 variables:
 #' \describe{
 #'   \item{AREA}{Lake area in hectares.}
 #'   \item{AREA_CAT}{Lake area categories based on a hectare cutoff.}
@@ -30,12 +30,25 @@
 #' }
 "Illinois_River"
 
+#' Illinois River Legacy
+#'
+#' A simple features (\code{sf}) point object of legacy sites for  the Illinois
+#' River data.
+#'
+#' @format An \code{sf} point object object with 5 rows and 1
+#' variable:
+#' \describe{
+#'   \item{geometry}{Point geometry using a USA Contiguous Albers
+#'     Equal Area Conic projection.}
+#' }
+"Illinois_River_Legacy"
+
 #' Great Lakes
 #'
 #' An \code{sf} multipolygon object of 4113 polygons consisting
 #' of shoreline segments in the Great Lakes region of North America.
 #'
-#' @format An \code{sf} multipolygon object with 4113 rows and 5 variables:
+#' @format An \code{sf} multipolygon object with 4113 rows and 6 variables:
 #' \describe{
 #'   \item{COUNTRY}{Country.}
 #'   \item{WTBDY_NM}{Water body name.}
@@ -52,7 +65,7 @@
 #' Protection Agency's "National Lakes Assessment" in the Western United
 #' States during the year 2017.
 #'
-#' @format An \code{sf} point object with 851 rows and 18 variables:
+#' @format An \code{sf} point object with 851 rows and 9 variables:
 #' \describe{
 #'   \item{SITE_ID}{A unique lake identifier.}
 #'   \item{WEIGHT}{The sampling design weight.}
@@ -62,6 +75,8 @@
 #'   \item{BMMI_COND}{Benthic MMI condition categories.}
 #'   \item{PHOS_COND}{Phosphorus condition categories.}
 #'   \item{NITR_COND}{Nitrogen condition categories.}
+#'   \item{geometry}{Point geometry using a USA Contiguous Albers Equal Area
+#'     Conic projection.}
 #' }
 "NLA_West"
 
@@ -71,7 +86,7 @@
 #' Protection Agency's "National Rivers and Streams Assessment" in the Central
 #' United States duing the years 2008 and 2013.
 #'
-#' @format A data frame with 682 rows and 18 variables:
+#' @format A data frame with 682 rows and 10 variables:
 #' \describe{
 #'   \item{SITE_ID}{A unique site identifier.}
 #'   \item{YEAR}{Year of design cycle.}
@@ -82,6 +97,8 @@
 #'   \item{BMMI_COND}{Benthic MMI categories.}
 #'   \item{PHOS_COND}{Phosphorus condition categories.}
 #'   \item{NITR_COND}{Nitrogen condition categories.}
+#'   \item{geometry}{Point geometry using a USA Contiguous Albers Equal Area
+#'     Conic projection.}
 #' }
 "NRSA_EPA7"
 
@@ -91,7 +108,7 @@
 #' Environmental Protection Agency's "National Coastal Condition
 #' Assessment" in the Southern United States duing the years 2010 and 2015.
 #'
-#' @format A data frame with 851 rows and 19 variables:
+#' @format A data frame with 851 rows and 11 variables:
 #' \describe{
 #'   \item{SITE_ID}{A unique site identifier.}
 #'   \item{YEAR}{Year of design cycle.}
@@ -103,5 +120,7 @@
 #'   \item{BMMI_COND}{Benthic MMI categories.}
 #'   \item{FT_COND}{Fish tissue condition categories.}
 #'   \item{PHOS_COND}{Phosphorus condition categories.}
+#'   \item{geometry}{Point geometry using a USA Contiguous Albers Equal Area
+#'     Conic projection.}
 #' }
 "NCCA_Gulf"
