@@ -139,8 +139,55 @@ plot(
 
 ## Other useful arguments
 
-The `onlyshow` argument is a useful argument to spsurvey's `summary()` and `plot()` functions.
+The `onlyshow` argument is a useful argument to spsurvey's `summary()` and `plot()` functions and works by only showing a requested level of a right-hand side variable. Currently, `onlyshow` is used only when a single right-hand side variable is provided:
+```{r}
+summary(NE_Lakes, formula = ~ AREA_CAT, onlyshow = "small")
+plot(NE_Lakes, formula = ~ AREA_CAT, onlyshow = "small")
+plot(NE_Lakes, formula = ELEV ~ AREA_CAT, onlyshow = "small")
+```
 
-Other arguments to the `summary()` and `plot()` functions in spsurvey can be found in the help files, which are viewed by running `?summary()` and `?plot()` after loading spsurvey.
+
+The `fix_bbox` argument fixes the bounding box across plots (when `fix_bbox = TRUE`) so all geometries are visually consistent. If `fix_bbox = FALSE`, bounding boxes are allowed to vary across plots. Other arguments to the `summary()` and `plot()` functions in spsurvey can be found in the help files, which are viewed by running `?summary()` and `?plot()` after loading spsurvey.
 
 # Samples
+
+Samples can also be summarized and visualized using `summary()` and `plot()` in spsurvey. Suppose an equal probability GRTS sample of size 50 was selected with 10 reverse hierarchically ordered replacement sites:
+```{r}
+eqprob <- grts(NE_Lakes, n_base = 50, n_over = 10)
+```
+
+The `summary()` function applies a formula to the `grts()` output. The default formula is `~ siteuse`, which returns the number of samples in each `sites` object from the `grts()` output. By default, the formula is applied to all `sites` objects in the `grts()` output. In this example, those are `sites_base` (for the base sites) and `sites_over` (for the reverse hierarchically ordered replacement sites).
+```{r}
+summary(eqprob)
+```
+
+The `summary()` function is more useful when you include `siteuse` as a left-hand side variable:
+```{r}
+summary(eqprob, formula = siteuse ~ AREA_CAT)
+```
+
+The `plot()` function separately plots each `sites` object. The default formula is `~ siteuse`, which returns the sampled sites:
+```{r}
+plot(eqprob)
+```
+
+The sample frame may be included in the `plot()` function 
+```{r}
+# pch = 19 plots closed circles
+plot(eqprob, NE_Lakes, pch = 19)
+```
+
+It can also be useful to plot the sampled sites separately for each level of a categorical variable:
+```{r}
+plot(eqprob, formula = siteuse ~ AREA_CAT)
+```
+
+# Design Frames
+
+Design frames are data frames or sf objects that contained observed data. These are the objects used in spsurvey's analysis functions. This gives users the ability to use spsurvey's `summary()` and `plot()` functions even if they did not use spsurvey for sampling. Design frames are summarized and visualized almost exactly like sample frames. The main difference is that design frames are a bit more flexible than sample frames, as there is no restriction that design frames be sf objects. 
+```{r}
+NLA_West <- dframe(NLA_West)
+summary(NLA_West, formula = ~ NITR_COND + BMMI)
+plot(NLA_West, formula = ~ NITR_COND + BMMI)
+```
+Visualizing design frames that are not sf objects requires some specification of coordinates.
