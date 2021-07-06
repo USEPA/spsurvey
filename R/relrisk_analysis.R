@@ -56,7 +56,8 @@
 #'   named and must be the same length as argument \code{vars_response}.  Names
 #'   for this argument must match the values in the \code{vars_response}
 #'   argument. If this argument equals NULL, then a named list is created that
-#'   contains the values \code{"Poor"} and \code{"Good"} for the first and
+#'   contains the values \code{"Poor"} (event occurs) and \code{"Good"}
+#'   (event does not occur) for the first and
 #'   second levels, respectively, of each element in the \code{vars_response}
 #'   argument and that uses values in the \code{vars_response} argument as names
 #'   for the list.  The default value is NULL.
@@ -68,7 +69,8 @@
 #'   named and must be the same length as argument \code{vars_stressor}.  Names
 #'   for this argument must match the values in the \code{vars_stressor}
 #'   argument. If this argument equals NULL, then a named list is created that
-#'   contains the values \code{"Poor"} and \code{"Good"} for the first and
+#'   contains the values \code{"Poor"} (event occurs) and \code{"Good"}
+#'   (event does not occur) for the first and
 #'   second levels, respectively, of each element in the \code{vars_stressor}
 #'   argument and that uses values in the \code{vars_stressor} argument as names
 #'   for the list.  The default value is NULL.
