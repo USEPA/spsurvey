@@ -26,7 +26,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-The Generalized Random Tessellation Stratified (GRTS) algorithm is a spatially balanced sampling algorithm implemented in spsurvey. The GRTS algorithm is used to sample from finite populations (point resources -- e.g. lakes treated as a whole) and infinite populations (linear resources -- e.g. rivers and streams; areal resources -- e.g. wetlands) and is implemented in spsurvey using the `grts()` function. The output from the `grts()` is a list with five elements:
+The Generalized Random Tessellation Stratified (GRTS) algorithm is a spatially balanced sampling algorithm implemented in spsurvey (Stevens and Olsen, 2004, Olsen et.al., 2012). The GRTS algorithm is used to sample from finite populations (point resources -- e.g. lakes treated as a whole) and infinite populations (linear resources -- e.g. rivers and streams; areal resources -- e.g. wetlands) and is implemented in spsurvey using the `grts()` function. The output from the `grts()` is a list with five elements:
 
 1. `sites_legacy`: legacy sites included in the sample (see [Legacy sampling])
 2. `sites_base`: sites included in the base (main) sample
@@ -91,7 +91,7 @@ propprob <- grts(
 )
 ```
 
-`seltype` is `"proportional"` to indicate proportional inclusion probabilities, and `aux_var` is the proportional probability variable (`"AREA"` in `NE_Lakes`). Proportional (to size) inclusion probabilities are useful because they can increase the precision of estimates when the response variable is positively correlated with the positive auxiliary variable.
+`seltype` is `"proportional"` to indicate proportional inclusion probabilities, and `aux_var` is the proportional probability variable (`"AREA"` in `NE_Lakes`). Proportional (to size) inclusion probabilities are useful because they can increase the precision of estimates when the response variable is positively correlated with the auxiliary variable.
 
 # Stratified sampling
 
@@ -117,7 +117,6 @@ plot(
 ```
 
 ## Unequal inclusion probabilities
-
 
 To select a sample stratified by elevation category with unequal inclusion probabilities for each area category, run
 ```{r}
@@ -178,7 +177,7 @@ Here we have specified that sites be no closer together than 1600 meters. In som
 
 ## Replacement sampling
 
-Sometimes sites are selected to be sampled but this sampling cannot occur. Sampling may not occur for a variety of reasons, some of which include landowner denial or a lack of funding. The `grts()` function has options for selecting replacement sites, which are sites available to replace sites originally selected but that cannot be sampled. The first replacement site option is the reverse hierarchical ordering option (Stevens and Olsen, 2004). To select a base sample with replacement sites selected by reverse hierarchical ordering, run
+Sometimes sites are selected to be sampled but this sampling cannot occur. Sampling may not occur for a variety of reasons, some of which include landowner denial or inaccessible sites. The `grts()` function has options for selecting replacement sites, which are sites available to replace sites originally selected but that cannot be sampled. The first replacement site option is the reverse hierarchical ordering option (Stevens and Olsen, 2004). To select a base sample with replacement sites selected by reverse hierarchical ordering, run
 ```{r}
 rho_replace <- grts(NE_Lakes, n_base = 50, n_over = 25)
 ```
@@ -255,5 +254,7 @@ plot(eqprob, Great_Lakes, pch = 19, key.width = lcm(3))
 ```
 
 # References
+
+Olsen, A. R., T. M. Kincaid and Q. Payton (2012). Spatially balanced survey designs for natural resources. Design and Analysis of Long-Term Ecological Monitoring Studies. R. A. Gitzen, J. J. Millspaugh, A. B. Cooper and D. S. Licht. Cambridge, UK, Cambridge University Press: 126-150.
 
 Stevens Jr, D. L. and Olsen, A. R. (2004). Spatially balanced sampling of natural resources. *Journal of the American Statistical Association*, 99(465):262-278.

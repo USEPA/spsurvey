@@ -52,7 +52,7 @@ One-sided formulas are used to summarize and visualize a variable's distribution
 ```{r}
 summary(NE_Lakes, formula = ~ ELEV_CAT)
 ```
-The output contains two columns: `total` and `ELEV_CAT`. The `total` column returns the total number of lakes -- it functions as an "intercept" to the formula (and can by removed by supplying `- 1` to the formula). The `ELEV_CAT` column returns the number of lakes in each elevation category (low and high). The `total` column functions as the "intercept" in the formula -- it can be removed by supplying a `- 1` to the formula. To visualize `ELEV_CAT`, run
+The output contains two columns: `total` and `ELEV_CAT`. The `total` column returns the total number of lakes -- it functions as an "intercept" to the formula (and can by removed by supplying `- 1` to the formula). The `ELEV_CAT` column returns the number of lakes in each elevation category (low and high). To visualize `ELEV_CAT`, run
 ```{r}
 plot(NE_Lakes, formula = ~ ELEV_CAT)
 ```
@@ -63,7 +63,7 @@ To summarize the distribution of `ELEV` (a numeric variable), run
 ```{r}
 summary(NE_Lakes, formula = ~ ELEV)
 ```
-When numeric variables are provided in the formula, a few relevant numeric summaries are provided. To visualize `ELEV`, run
+For numeric variables, '`summary()` provides a few simple numeric summaries. To visualize `ELEV`, run
 ```{r}
 plot(NE_Lakes, formula = ~ ELEV)
 ```
@@ -171,7 +171,7 @@ The `plot()` function separately plots each `sites` object. The default formula 
 plot(eqprob)
 ```
 
-The sample frame may be included in the `plot()` function 
+The sample frame may be included as a second argument in the `plot()` function 
 ```{r}
 # pch = 19 plots closed circles
 plot(eqprob, NE_Lakes, pch = 19)
@@ -184,10 +184,22 @@ plot(eqprob, formula = siteuse ~ AREA_CAT)
 
 # Design Frames
 
-Design frames are data frames or sf objects that contained observed data. These are the objects used in spsurvey's analysis functions. This gives users the ability to use spsurvey's `summary()` and `plot()` functions even if they did not use spsurvey for sampling. Design frames are summarized and visualized almost exactly like sample frames. The main difference is that design frames are a bit more flexible than sample frames, as there is no restriction that design frames be sf objects. 
+Design frames are data frames or sf objects that contained observed data. These are the objects used in spsurvey's analysis functions. This gives users the ability to use spsurvey's `summary()` and `plot()` functions even if they did not use spsurvey for sampling. Design frames are summarized and visualized almost exactly like sample frames. The main difference is that design frames are a bit more flexible than sample frames, as there is no restriction that design frames be sf objects.
+
+The `NLA_West` data in spsurvey is a design frame as an `sf` object that contains lakes from California, Oregon and Washington sampled in an NLA study. There are eight variables in `NLA_West`:
+
+1. `SITE_ID`: lake site identification
+2. `WEIGHT`: weight from survey design
+3. `URBAN`: lake categorized as urban or non-urban
+4. `STATE`: state in which lake is located
+5. `BMMI` : Benthic macroinvertebrate multi-metric index
+6. `BMMI_COND` : BMMI categorized into condition classes
+7. `PHOS_COND` : Total phosphorus categorized into condition classes
+8. `NITR_COND` : Total nitrogen categorized into condition classes
+
 ```{r}
 NLA_West <- dframe(NLA_West)
 summary(NLA_West, formula = ~ NITR_COND + BMMI)
 plot(NLA_West, formula = ~ NITR_COND + BMMI)
 ```
-Visualizing design frames that are not sf objects requires some specification of coordinates.
+Visualizing design frames that are not sf objects requires specification of coordinates in the `plot()` arguments.
