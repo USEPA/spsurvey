@@ -26,7 +26,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-After a probability sample is selected, population parameters may be estimated. To estimate these parameters, spsurvey offers several analysis approaches. The analysis functions estimate population parameters like means and totals using the Horvitz-Thompson estimator. The default variance estimator is the local neighborhood variance estimator, though several variance estimation options are available using the `vartype` and `jointprob` arguments.
+After a probability sample is selected, population parameters may be estimated. To estimate these parameters, spsurvey offers several analysis approaches. The analysis functions estimate population parameters like means and totals using the Horvitz-Thompson estimator. The default variance estimator is the local neighborhood variance estimator (Stevens and Olsen, 2003), though several variance estimation options are available using the `vartype` and `jointprob` arguments.
 
 We focus mainly on using the `NLA_West` data to introduce some of these analysis options. The `NLA_West` data contains response variables measured at several lakes in the Western United States. There are several variables we will use
 
@@ -164,6 +164,70 @@ strat_subpop_ests
 
 # Additonal Analysis Approaches
 
-Alongside the `cat_analysis()` and `cont_analysis()` functions, spsurvey offers analysis functions for attributable risk, relative risk, change, and trend. Attributable and relative risk analyses capture attributable and relative risks, respectively, of environmental resources being in poor condition after exposure to a stressor. Attributable risk analysis is performed using the `attrisk_analysis()` function, while relative risk analysis is performed using the `relrisk_analysis()` function. Change and trend analysis capture the behavior of environmental resources between two time points, while trend analysis generalizes this approach to include multiple time points.  Change analysis is performed using the `change_analysis()` function, and trend analysis is performed using the `trend_analysis()` function. The `attrisk_analysis()`, `relrisk_analysis()`, `change_analysis()` and `trend_analysis()` functions all share very similar syntax to the `cat_analysis()` and `cont_analysis()` functions.
+Alongside the `cat_analysis()` and `cont_analysis()` functions, spsurvey offers analysis functions for attributable risk, relative risk, change, and trend. Attributable and relative risk analyses capture attributable and relative risks, respectively, of environmental resources being in poor condition after exposure to a stressor. Attributable risk analysis is performed using the `attrisk_analysis()` function, while relative risk analysis is performed using the `relrisk_analysis()` function. Change and trend analysis capture the behavior of environmental resources between two probability samples, while trend analysis generalizes this approach to include multiple probability samples. Often, change and trend analyses are performed to study an environmental resources through time.  Change analysis is performed using the `change_analysis()` function, and trend analysis is performed using the `trend_analysis()` function. The `attrisk_analysis()`, `relrisk_analysis()`, `change_analysis()` and `trend_analysis()` functions all share very similar syntax to the `cat_analysis()` and `cont_analysis()` functions.
+
+## Attributable and Relative Risk
+
+The attributable risk is defined as $1 -  \frac{P(Response = Poor | Stressor = Good)}{P(Response = Poor)}$, where $P(\cdot)$ is a probability. The attributable risk measures the proportion of the response variable in poor condition that could be eliminated if the stressor was always in good condition. To estimate the attributable risk of benthic macroinvertebrate condition with a phosphorous condition stressor, run
+```{r}
+attrisk <- attrisk_analysis(
+  NLA_West, 
+  siteID = "SITE_ID",
+  vars_response = "BMMI_COND",
+  vars_stressor = "PHOS_COND",
+  weight = "WEIGHT"
+)
+attrisk
+```
+
+The relative risk is defined as $\frac{P(Response = Poor | Stressor = Poor)}{P(Response = Poor | Stressor = Good)}$, which measures the risk of the response variable being in poor condition relative to the stressor. To estimate the relative risk of benthic macroinvertebrate condition with a phosphorous condition stressor, run
+```{r}
+relrisk <- attrisk_analysis(
+  NLA_West, 
+  siteID = "SITE_ID",
+  vars_response = "BMMI_COND",
+  vars_stressor = "PHOS_COND",
+  weight = "WEIGHT"
+)
+relrisk
+```
+
+
+The default levels of `vars_response` and `vars_stressor` are `"Poor"` (event occurs) and `"Good"` (event does not occur), though this can be changed using `response_levels` and `stressor_levels`, respectively. Similar to `cat_analysis()` and `cont_analysis()` from the previous sections, subpopulations and stratification are incorporated using `subpops` and `stratumID`, respectively.
+For more on attributable and relative risk in an environmental resource context, see Van Sickle and Paulsen (2008).
+
+## Change and Trend Analysis
+
+To demonstrate change analysis, we use the `NRSA_EPA7` data. The `NRSA_EPA7` data contains several variables, a few of which we focus on next:
+
+* `SITE_ID`: a unique site identifier
+* `WEIGHT`: the sampling design weights
+* `NITR_COND`: nitrogen content condition class (with levels `Good`, `Fair`, and `Poor`)
+* `BMMI`: benthic macroinvertebrate multi-metric index
+* `YEAR`: The year of the probability survey
+
+To estimate the change between time points for `BMMI` (a continuous variable) and `NITR_COND`, run
+```{r}
+change <- change_analysis(
+  NRSA_EPA7,
+  siteID = "SITE_ID",
+  vars_cont = "BMMI",
+  vars_cat = "NITR_COND",
+  surveyID = "YEAR",
+  weight = "WEIGHT"
+)
+change
+```
+The `surveyID` argument is the variable in the data that indicates the probability sample (`YEAR` in the previous example).
+
+Trend analysis generalizes change analysis to multiple probability sample. Though we omit an example here, the arguments to `trend_analysis()` are very similar to the arguments for `change_analysis()`. One difference is that `trend_analysis()` contains arguments that specify which statistical model to apply to the estimates from each probability sample.
 
 # References
+
+Sickle, J. V., & Paulsen, S. G. (2008). Assessing the attributable risks, relative risks, and regional extents of aquatic stressors. *Journal of the North American Benthological Society*, 27(4), 920-931.
+
+Stevens Jr, D. L., & Olsen, A. R. (2003). Variance estimation for spatially balanced samples of environmental resources. *Environmetrics*, 14(6), 593-610.
+
+
+
+
