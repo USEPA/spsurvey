@@ -186,7 +186,7 @@ plot(eqprob, formula = siteuse ~ AREA_CAT)
 
 Design frames are data frames or sf objects that contained observed data. These are the objects used in spsurvey's analysis functions. This gives users the ability to use spsurvey's `summary()` and `plot()` functions even if they did not use spsurvey for sampling. Design frames are summarized and visualized almost exactly like sample frames. The main difference is that design frames are a bit more flexible than sample frames, as there is no restriction that design frames be sf objects.
 
-The `NLA_West` data in spsurvey is a design frame as an `sf` object that contains lakes from California, Oregon and Washington sampled in an NLA study. There are eight variables in `NLA_West`:
+The `NLA_PNW` data in spsurvey is a design frame as an `sf` object that contains lakes from California, Oregon and Washington sampled in an NLA study. There are eight variables in `NLA_PNW`:
 
 1. `SITE_ID`: lake site identification
 2. `WEIGHT`: weight from survey design
@@ -198,8 +198,8 @@ The `NLA_West` data in spsurvey is a design frame as an `sf` object that contain
 8. `NITR_COND` : Total nitrogen categorized into condition classes
 
 ```{r}
-NLA_West <- dframe(NLA_West)
-summary(NLA_West, formula = ~ NITR_COND + BMMI)
-plot(NLA_West, formula = ~ NITR_COND + BMMI)
+NLA_PNW <- dframe(NLA_PNW)
+summary(NLA_PNW, formula = ~ NITR_COND + BMMI)
+plot(NLA_PNW, formula = ~ NITR_COND + BMMI)
 ```
 Visualizing design frames that are not sf objects requires specification of coordinates in the `plot()` arguments.

@@ -12,7 +12,7 @@ output:
       smooth_scroll: no
     toc_depth: 2
 vignette: >
-  %\VignetteIndexEntry{Summarizing and Visualizing Data}
+  %\VignetteIndexEntry{Analyzing Probability Samples}
   %\VignetteEngine{knitr::rmarkdown}
   \usepackage[utf8]{inputenc}
 ---
@@ -28,7 +28,7 @@ knitr::opts_chunk$set(
 
 After a probability sample is selected, population parameters may be estimated. To estimate these parameters, spsurvey offers several analysis approaches. The analysis functions estimate population parameters like means and totals using the Horvitz-Thompson estimator. The default variance estimator is the local neighborhood variance estimator (Stevens and Olsen, 2003), though several variance estimation options are available using the `vartype` and `jointprob` arguments.
 
-We focus mainly on using the `NLA_West` data to introduce some of these analysis options. The `NLA_West` data contains response variables measured at several lakes in the Western United States. There are several variables we will use
+We focus mainly on using the `NLA_PNW` data to introduce some of these analysis options. The `NLA_PNW` data contains response variables measured at several lakes in the Western United States. There are several variables we will use
 
 * `SITE_ID`: a unique site identifier
 * `WEIGHT`: the sampling design weights
@@ -51,7 +51,7 @@ Categorical variables are analyzed in spsurvey using the `cat_analysis()` functi
 To estimate the proportion of total lakes and the total number of lakes in each nitrogen condition class, run
 ```{r}
 ests <- cat_analysis(
-  NLA_West,
+  NLA_PNW,
   siteID = "SITE_ID",
   vars = "NITR_COND",
   weight = "WEIGHT"
@@ -63,7 +63,7 @@ The estimate of the proportion of lakes in `Good` condition is around 51.35%, wh
 Sometimes the goal is to estimate proportions and totals separately for subsets of the population, known as subpopulations. To estimate the proportion of total lakes and the total number of lakes in each nitrogen condition class separately for `Urban` and `Non-Urban` lakes, run
 ```{r}
 subpop_ests <- cat_analysis(
-  NLA_West,
+  NLA_PNW,
   siteID = "SITE_ID",
   vars = "NITR_COND",
   weight = "WEIGHT",
@@ -78,7 +78,7 @@ subpop_ests
 To estimate the proportion of total lakes and the total number of lakes in each nitrogen condition class for a design stratified by state, run
 ```{r}
 strat_ests <- cat_analysis(
-  NLA_West,
+  NLA_PNW,
   siteID = "SITE_ID",
   vars = "NITR_COND",
   weight = "WEIGHT",
@@ -91,7 +91,7 @@ Notice that the stratified design's standard errors are smaller than the unstrat
 To then compute these estimates separately for `Urban` and `Non-Urban` lakes, run
 ```{r}
 strat_subpop_ests <- cat_analysis(
-  NLA_West,
+  NLA_PNW,
   siteID = "SITE_ID",
   vars = "NITR_COND",
   weight = "WEIGHT",
@@ -110,7 +110,7 @@ Continuous variables are analyzed in spsurvey using the `cont_analysis()` functi
 To estimate quantiles and means of `BMMI`, run
 ```{r}
 ests <- cont_analysis(
-  NLA_West,
+  NLA_PNW,
   siteID = "SITE_ID",
   vars = "BMMI",
   weight = "WEIGHT",
@@ -122,7 +122,7 @@ ests
 To estimate quantiles and means of `BMMI` separately for the `URBAN` subpopulation, run
 ```{r}
 subpop_ests <- cont_analysis(
-  NLA_West,
+  NLA_PNW,
   siteID = "SITE_ID",
   vars = "BMMI",
   weight = "WEIGHT",
@@ -138,7 +138,7 @@ subpop_ests
 To estimate quantiles and means of `BMMI` for a design stratified by state, run
 ```{r}
 strat_ests <- cont_analysis(
-  NLA_West,
+  NLA_PNW,
   siteID = "SITE_ID",
   vars = "BMMI",
   weight = "WEIGHT",
@@ -151,7 +151,7 @@ strat_ests
 To then compute these estimates separately for `Urban` and `Non-Urban` lake
 ```{r}
 strat_subpop_ests <- cont_analysis(
-  NLA_West,
+  NLA_PNW,
   siteID = "SITE_ID",
   vars = "BMMI",
   weight = "WEIGHT",
@@ -171,7 +171,7 @@ Alongside the `cat_analysis()` and `cont_analysis()` functions, spsurvey offers 
 The attributable risk is defined as $1 -  \frac{P(Response = Poor | Stressor = Good)}{P(Response = Poor)}$, where $P(\cdot)$ is a probability. The attributable risk measures the proportion of the response variable in poor condition that could be eliminated if the stressor was always in good condition. To estimate the attributable risk of benthic macroinvertebrate condition with a phosphorous condition stressor, run
 ```{r}
 attrisk <- attrisk_analysis(
-  NLA_West, 
+  NLA_PNW, 
   siteID = "SITE_ID",
   vars_response = "BMMI_COND",
   vars_stressor = "PHOS_COND",
@@ -183,7 +183,7 @@ attrisk
 The relative risk is defined as $\frac{P(Response = Poor | Stressor = Poor)}{P(Response = Poor | Stressor = Good)}$, which measures the risk of the response variable being in poor condition relative to the stressor. To estimate the relative risk of benthic macroinvertebrate condition with a phosphorous condition stressor, run
 ```{r}
 relrisk <- attrisk_analysis(
-  NLA_West, 
+  NLA_PNW, 
   siteID = "SITE_ID",
   vars_response = "BMMI_COND",
   vars_stressor = "PHOS_COND",

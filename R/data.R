@@ -59,7 +59,7 @@
 #' }
 "Great_Lakes"
 
-#' NLA West
+#' NLA PNW
 #'
 #' A data frame consisting lake observations from a subset of the Environmental
 #' Protection Agency's "National Lakes Assessment" in the Western United
@@ -78,7 +78,7 @@
 #'   \item{geometry}{Point geometry using a USA Contiguous Albers Equal Area
 #'     Conic projection.}
 #' }
-"NLA_West"
+"NLA_PNW"
 
 #' NRSA EPA7
 #'
