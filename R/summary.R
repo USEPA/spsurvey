@@ -27,7 +27,7 @@
 #' @param onlyshow A string indicating the level of the single right hand side
 #' variable for which a summary is requested.
 #'
-#' @param sites A character vector indicating the \code{design} sites
+#' @param siteuse A character vector indicating the \code{design} sites
 #' for which summaries are requested in \code{object}. Defaults to computing summaries for
 #' each non-\code{NULL} \code{site_*} list in \code{object}.
 #'
@@ -54,11 +54,11 @@
 #' @examples
 #' \dontrun{
 #' NE_lakes <- sframe(NE_lakes)
-#' summary(NE_lakes, ELEVATION ~ 1)
-#' summary(NE_lakes, ~ ELEVATION_CAT * AREA_HA_CAT)
+#' summary(NE_lakes, ELEV ~ 1)
+#' summary(NE_lakes, ~ ELEV_CAT * AREA_CAT)
 #' sample <- grts(NE_lakes, 100)
-#' summary(sample, ELEVATION ~ 1)
-#' summary(sample, ~ ELEVATION_CAT * AREA_HA_CAT)
+#' summary(sample, ELEV ~ 1)
+#' summary(sample, ~ ELEV_CAT * AREA_CAT)
 #' }
 #' ###############################################################################
 summary.sframe <- function(object, formula, onlyshow = NULL, ...) {

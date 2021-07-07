@@ -53,7 +53,7 @@
 #'     \item{\code{\link{revisit_dsgn}}}{create a panel revisit design}
 #'     \item{\code{\link{revisit_bibd}}}{create a balanced incomplete block
 #'       panel revisit design}
-#'     \item{\code{\link{summary.paneldesign}}}{summarize characteristics of a revisit
+#'     \item{\code{\link{summary.powerpaneldesign}}}{summarize characteristics of a revisit
 #'       panel design}
 #'     \item{\code{\link{power_dsgn}}}{power calculation for multiple panel
 #'       designs}

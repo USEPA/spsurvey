@@ -77,7 +77,7 @@
 #'   e.g. \code{0.05}) contained in \code{dsgnpower} to used for power plots. Specifying more
 #'   than a single value results in multiple plots. Default is \code{NULL} which
 #'   results in the minimum significance level in \code{dsgnpower} being used.
-#'   
+#'
 #' @param ... Additional arguments (S3 consistency)
 #'
 #' @details By default the plot function produces a standard power curve at end
@@ -114,7 +114,7 @@
 #'       panel revisit design}
 #'     \item{\code{\link{revisit_rand}}}{create a revisit design with random
 #'       assignment to panels and time periods}
-#'     \item{\code{\link{summary.paneldesign}}}{summarize characteristics of a revisit
+#'     \item{\code{\link{summary.powerpaneldesign}}}{summarize characteristics of a revisit
 #'       panel design}
 #'     \item{\code{\link{power_dsgn}}}{power calculation for multiple panel
 #'       designs}

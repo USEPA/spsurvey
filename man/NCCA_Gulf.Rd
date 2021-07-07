@@ -13,7 +13,7 @@ A data frame with 851 rows and 11 variables:
   \item{WEIGHT}{Sampling design weights.}
   \item{SIZE}{Size category.}
   \item{STATE}{State name.}
-  \item{B_MMI}{Benthic MMI value.}
+  \item{BMMI}{Benthic MMI value.}
   \item{BMMI_COND}{Benthic MMI categories.}
   \item{FT_COND}{Fish tissue condition categories.}
   \item{PHOS_COND}{Phosphorus condition categories.}
