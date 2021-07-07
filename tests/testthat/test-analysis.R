@@ -5,7 +5,7 @@ context("survey analysis")
 #
 
 # Read the data frame containing survey design and analysis variables
-load(system.file("extdata", "NLA_IN.rda", package = "svyanalysis"))
+load(system.file("extdata", "NLA_IN.rda", package = "spsurvey"))
 
 # Create a population size data frame
 popsize <- data.frame(
@@ -303,7 +303,7 @@ test_that("Continuous: Unstratified single-stage analysis", {
   expect_equal(attributes(CDF_Estimates$CDF)$class, "data.frame")
   expect_equal(attributes(CDF_Estimates$Pct)$class, "data.frame")
   expect_equal(nrow(CDF_Estimates$CDF), 66)
-  expect_equal(nrow(CDF_Estimates$Pct), 24)
+  expect_equal(nrow(CDF_Estimates$Pct), 21)
 })
 
 CDF_Estimates <- cont_analysis(dframe = dframe, vars = vars, subpops = subpops,
@@ -315,7 +315,7 @@ test_that("Continuous: with known population sizes", {
   expect_equal(attributes(CDF_Estimates$CDF)$class, "data.frame")
   expect_equal(attributes(CDF_Estimates$Pct)$class, "data.frame")
   expect_equal(nrow(CDF_Estimates$CDF), 66)
-  expect_equal(nrow(CDF_Estimates$Pct), 24)
+  expect_equal(nrow(CDF_Estimates$Pct), 21)
 })
 
 CDF_Estimates <- cont_analysis(dframe = dframe, vars = vars, subpops = subpops,
@@ -327,7 +327,7 @@ test_that("Continuous: with finite population correction factor", {
   expect_equal(attributes(CDF_Estimates$CDF)$class, "data.frame")
   expect_equal(attributes(CDF_Estimates$Pct)$class, "data.frame")
   expect_equal(nrow(CDF_Estimates$CDF), 66)
-  expect_equal(nrow(CDF_Estimates$Pct), 24)
+  expect_equal(nrow(CDF_Estimates$Pct), 21)
 })
 
 CDF_Estimates <- cont_analysis(dframe = dframe, vars = vars, subpops = subpops,
@@ -339,7 +339,7 @@ test_that("Continuous: Stratified single-stage analysis", {
   expect_equal(attributes(CDF_Estimates$CDF)$class, "data.frame")
   expect_equal(attributes(CDF_Estimates$Pct)$class, "data.frame")
   expect_equal(nrow(CDF_Estimates$CDF), 66)
-  expect_equal(nrow(CDF_Estimates$Pct), 24)
+  expect_equal(nrow(CDF_Estimates$Pct), 21)
 })
 
 CDF_Estimates <- cont_analysis(dframe = dframe, vars = vars, subpops = subpops,
@@ -351,7 +351,7 @@ test_that("Continuous: with known population sizes", {
   expect_equal(attributes(CDF_Estimates$CDF)$class, "data.frame")
   expect_equal(attributes(CDF_Estimates$Pct)$class, "data.frame")
   expect_equal(nrow(CDF_Estimates$CDF), 66)
-  expect_equal(nrow(CDF_Estimates$Pct), 24)
+  expect_equal(nrow(CDF_Estimates$Pct), 21)
 })
 
 CDF_Estimates <- cont_analysis(dframe = dframe, vars = vars, subpops = subpops,
@@ -363,7 +363,7 @@ test_that("Continuous: with finite population correction factor", {
   expect_equal(attributes(CDF_Estimates$CDF)$class, "data.frame")
   expect_equal(attributes(CDF_Estimates$Pct)$class, "data.frame")
   expect_equal(nrow(CDF_Estimates$CDF), 66)
-  expect_equal(nrow(CDF_Estimates$Pct), 24)
+  expect_equal(nrow(CDF_Estimates$Pct), 21)
 })
 
 CDF_Estimates <- cont_analysis(dframe = dframe, vars = vars, subpops = subpops,
@@ -376,7 +376,7 @@ test_that("Continuous: Unstratified two-stage analysis", {
   expect_equal(attributes(CDF_Estimates$CDF)$class, "data.frame")
   expect_equal(attributes(CDF_Estimates$Pct)$class, "data.frame")
   expect_equal(nrow(CDF_Estimates$CDF), 66)
-  expect_equal(nrow(CDF_Estimates$Pct), 24)
+  expect_equal(nrow(CDF_Estimates$Pct), 21)
 })
 
 CDF_Estimates <- cont_analysis(dframe = dframe, vars = vars, subpops = subpops,
@@ -389,7 +389,7 @@ test_that("Continuous: with known population sizes", {
   expect_equal(attributes(CDF_Estimates$CDF)$class, "data.frame")
   expect_equal(attributes(CDF_Estimates$Pct)$class, "data.frame")
   expect_equal(nrow(CDF_Estimates$CDF), 66)
-  expect_equal(nrow(CDF_Estimates$Pct), 24)
+  expect_equal(nrow(CDF_Estimates$Pct), 21)
 })
 
 CDF_Estimates <- cont_analysis(dframe = dframe, vars = vars, subpops = subpops,
@@ -402,7 +402,7 @@ test_that("Continuous: with finite population correction factor", {
   expect_equal(attributes(CDF_Estimates$CDF)$class, "data.frame")
   expect_equal(attributes(CDF_Estimates$Pct)$class, "data.frame")
   expect_equal(nrow(CDF_Estimates$CDF), 66)
-  expect_equal(nrow(CDF_Estimates$Pct), 24)
+  expect_equal(nrow(CDF_Estimates$Pct), 21)
 })
 
 CDF_Estimates <- cont_analysis(dframe = dframe, vars = vars, subpops = subpops,
@@ -415,7 +415,7 @@ test_that("Continuous: Stratified two-stage analysis", {
   expect_equal(attributes(CDF_Estimates$CDF)$class, "data.frame")
   expect_equal(attributes(CDF_Estimates$Pct)$class, "data.frame")
   expect_equal(nrow(CDF_Estimates$CDF), 66)
-  expect_equal(nrow(CDF_Estimates$Pct), 24)
+  expect_equal(nrow(CDF_Estimates$Pct), 21)
 })
 
 CDF_Estimates <- cont_analysis(dframe = dframe, vars = vars, subpops = subpops,
@@ -429,7 +429,7 @@ test_that("Continuous: with known population sizes", {
   expect_equal(attributes(CDF_Estimates$CDF)$class, "data.frame")
   expect_equal(attributes(CDF_Estimates$Pct)$class, "data.frame")
   expect_equal(nrow(CDF_Estimates$CDF), 66)
-  expect_equal(nrow(CDF_Estimates$Pct), 24)
+  expect_equal(nrow(CDF_Estimates$Pct), 21)
 })
 
 CDF_Estimates <- cont_analysis(dframe = dframe, vars = vars, subpops = subpops,
@@ -442,7 +442,7 @@ test_that("Continuous: with finite population correction factor", {
   expect_equal(attributes(CDF_Estimates$CDF)$class, "data.frame")
   expect_equal(attributes(CDF_Estimates$Pct)$class, "data.frame")
   expect_equal(nrow(CDF_Estimates$CDF), 66)
-  expect_equal(nrow(CDF_Estimates$Pct), 24)
+  expect_equal(nrow(CDF_Estimates$Pct), 21)
 })
 
 #
