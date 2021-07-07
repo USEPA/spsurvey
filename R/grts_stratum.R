@@ -87,7 +87,7 @@ grts_stratum <- function(stratum, dsgn, sframe, sf_type, wgt_units = NULL, pt_de
     n_near <- 0
   }
   n_total <- n_base + n_over
-  
+
   # set number of legacy sites to 0
   n_legacy <- 0
 
@@ -182,10 +182,10 @@ grts_stratum <- function(stratum, dsgn, sframe, sf_type, wgt_units = NULL, pt_de
   # set legacy that is NA to FALSE
   if (legacy_option == TRUE) {
     sftmp$legacy <- ifelse(is.na(sftmp$legacy), FALSE, TRUE)
-    tmp <- subset(sftmp, legacy == TRUE)
+    tmp <- sftmp[sftmp$legacy == TRUE, , drop = FALSE]
     n_legacy <- nrow(tmp)
   }
-  
+
   # check that number of legacy sites is less than or equal number of base sites
   # stop if not
   if (n_legacy > n_base) {
@@ -330,7 +330,7 @@ grts_stratum <- function(stratum, dsgn, sframe, sf_type, wgt_units = NULL, pt_de
     sites[["sites"]] <- sites[["sites"]][sites[["sites"]]$legacy == FALSE, ]
     n_legacy <- nrow(sites_legacy)
   }
-  
+
   # save base sites
   sites_base <- NULL
   if (n_base > n_legacy) {

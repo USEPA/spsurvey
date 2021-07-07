@@ -53,7 +53,7 @@ irs_stratum <-function(stratum, dsgn, sframe, sf_type, wgt_units = NULL, pt_dens
     n_near <- 0
   }
   n_total <- n_base + n_over
-  
+
   # set number of legacy sites to 0
   n_legacy <- 0
 
@@ -150,7 +150,7 @@ irs_stratum <-function(stratum, dsgn, sframe, sf_type, wgt_units = NULL, pt_dens
   # set legacy that is NA to FALSE
   if (legacy_option == TRUE) {
     sftmp$legacy <- ifelse(is.na(sftmp$legacy), FALSE, TRUE)
-    tmp <- subset(sftmp, legacy == TRUE)
+    tmp <- sftmp[sftmp$legacy == TRUE, , drop = FALSE]
     n_legacy <- nrow(tmp)
   }
 
@@ -163,7 +163,7 @@ irs_stratum <-function(stratum, dsgn, sframe, sf_type, wgt_units = NULL, pt_dens
     on.exit(options(opt))
     stop()
   }
-  
+
   # Step 2 site selection if linear or area; otherwise Step 1 for points.
   # determine overall sample size required from dsgn for stratum
   # account for n_over sample option if present
@@ -303,13 +303,13 @@ irs_stratum <-function(stratum, dsgn, sframe, sf_type, wgt_units = NULL, pt_dens
     sites[["sites"]] <- sites[["sites"]][sites[["sites"]]$legacy == FALSE, ]
     n_legacy <- nrow(sites_legacy)
   }
- 
+
   # save base sites
   sites_base <- NULL
   if (n_base > n_legacy) {
     sites_base <- sites[["sites"]][1:(n_base - n_legacy), ]
   }
-  
+
   # save n_over sample sites if any
   sites_over <- NULL
   if (n_over != 0) {
@@ -319,7 +319,7 @@ irs_stratum <-function(stratum, dsgn, sframe, sf_type, wgt_units = NULL, pt_dens
 
   # create list for output and return result
   rslts <- list(
-    sites_legacy = sites_legacy, sites_base = sites_base, 
+    sites_legacy = sites_legacy, sites_base = sites_base,
     sites_over = sites_over, sites_near = sites_near,
     warn_ind = warn_ind, warn_df = warn_df
   )
