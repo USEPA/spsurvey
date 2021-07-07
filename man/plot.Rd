@@ -50,8 +50,8 @@
 \arguments{
 \item{x}{object of class \code{sframe}, \code{spdesign}, or \code{dframe}.}
 
-\item{y}{ignored if \code{x} has class \code{sframe} or \code{dframe}; an object of class \code{sframe}
-if \code{x} has class \code{spdesign}.}
+\item{y}{ignored if \code{x} has class \code{sframe} or \code{dframe}; an 
+object of class \code{sframe} if \code{x} has class \code{spdesign}.}
 
 \item{formula}{A formula. Left hand side variables can be numeric or
 categorical (or factor) and right hand side variables can be categorical
@@ -106,9 +106,9 @@ required if \code{x} is not an sf object)}
 \description{
 Plot sample frames and design objects.
 
-This function is largely built on \code{plot.sf()}, and all spsurvey plotting methods can
-supply additional arguments to \code{plot.sf()}. For more information, run
-\code{vignette(plotting, package = "spsurvey"}. For more information on
+This function is largely built on \code{plot.sf()}, and all spsurvey plotting 
+methods can supply additional arguments to \code{plot.sf()}. For more information, 
+run \code{vignette(plotting, package = "spsurvey"}. For more information on
 plotting in \code{sf}, run \code{?plot.sf()}.
 }
 \examples{
