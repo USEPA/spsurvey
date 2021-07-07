@@ -10,11 +10,13 @@
 
 * Trend analysis is now available using the `trend_analysis()` function.
 
-* `plot()` functions have been added to visualize sample frames and design objects.
+* `plot()` functions have been added to visualize sample frames, samples, and design frames.
 
-* `summary()` functions have been added to summarize sample frames, design objects, and design frames.
+* `summary()` functions have been added to summarize sample frames, samples, and design frames.
 
-* The `spbalance()` function used to calculate the spatial balance of a design is now available for unequal probability and proportional probability designs.
+## Minor Updates
+.
+* Several functions have undergone minor changes to syntax and scope
 
 ## Breaking Changes
 
