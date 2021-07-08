@@ -26,7 +26,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-The Generalized Random Tessellation Stratified (GRTS) algorithm is a spatially balanced sampling algorithm implemented in spsurvey (Stevens and Olsen, 2004, Olsen et.al., 2012). The GRTS algorithm is used to sample from finite populations (point resources -- e.g. lakes treated as a whole) and infinite populations (linear resources -- e.g. rivers and streams; areal resources -- e.g. wetlands) and is implemented in spsurvey using the `grts()` function. The output from the `grts()` is a list with five elements:
+The Generalized Random Tessellation Stratified (GRTS) algorithm is a spatially balanced sampling algorithm available in spsurvey (Stevens and Olsen, 2004, Olsen et.al., 2012). The GRTS algorithm is used to sample from finite populations (point resources -- e.g. lakes treated as a whole) and infinite populations (linear resources -- e.g. rivers and streams; areal resources -- e.g. wetlands) and is implemented in spsurvey using the `grts()` function. The output from the `grts()` is a list with five elements:
 
 1. `sites_legacy`: legacy sites included in the sample (see [Legacy sampling])
 2. `sites_base`: sites included in the base (main) sample
@@ -34,7 +34,7 @@ The Generalized Random Tessellation Stratified (GRTS) algorithm is a spatially b
 4. `sites_near`: replacement sites obtained using nearest neighbor (see [Replacement sampling])
 5. `design`: a list with specific details regarding the sampling procedure that can be used to verify the sampling was performed as you intended
     
-We focus mainly on using the `NE_Lakes` sample frame in spsurvey to introduce spatially balanced sampling. The `NE_Lakes` sample frame is finite and contains lakes (treated as a whole) from the Northeastern United States. There are four variables in `NE_Lakes` that we will use:
+The `NE_Lakes` sample frame in spsurvey is used in this vignette to introduce spatially balanced sampling. The `NE_Lakes` sample frame is finite and contains lakes (treated as a whole) from the Northeastern United States. There are four variables in `NE_Lakes` used in this vignette:
 
 1. `AREA`: lake area in hectares
 2. `AREA_CAT`: lake area categories (small and large)
@@ -60,8 +60,6 @@ The first argument to `grts()` is the sample frame and `n_base` specifies the nu
 ```{r}
 plot(eqprob, NE_Lakes, pch = 19, key.width = lcm(3))
 ```
-
-`pch = 19` uses closed circles instead of open circles, and `key.width = lcm(3)` adjusts the legend margin so all of the text fits nicely within the plot's borders.
 
 ## Unequal inclusion probabilities
 
@@ -111,7 +109,8 @@ To visualize the sample overlain onto the sample frame (separately for each stra
 plot(
   strat_eqprob,
   formula = siteuse ~ ELEV_CAT,
-  NE_Lakes, pch = 19,
+  NE_Lakes,
+  pch = 19,
   key.width = lcm(3)
 )
 ```
@@ -177,7 +176,7 @@ Here we have specified that sites be no closer together than 1600 meters. In som
 
 ## Replacement sampling
 
-Sometimes sites are selected to be sampled but this sampling cannot occur. Sampling may not occur for a variety of reasons, some of which include landowner denial or inaccessible sites. The `grts()` function has options for selecting replacement sites, which are sites available to replace sites originally selected but that cannot be sampled. The first replacement site option is the reverse hierarchical ordering option (Stevens and Olsen, 2004). To select a base sample with replacement sites selected by reverse hierarchical ordering, run
+Sometimes sites are selected to be sampled but this sampling cannot occur. Sampling may not occur for a variety of reasons, some of which include landowner denial or inaccessible sites. The `grts()` function has options for selecting replacement sites, which are sites available to replace sites originally selected but cannot be sampled. The first replacement site option is the reverse hierarchical ordering option (Stevens and Olsen, 2004). To select a base sample with reverse hierarchically ordered replacement sites, run
 ```{r}
 rho_replace <- grts(NE_Lakes, n_base = 50, n_over = 25)
 ```
@@ -217,7 +216,7 @@ strat_eqprob_irs <- irs(NE_Lakes, n_base = strata_n, stratum_var = "ELEV_CAT")
 
 # Measuring spatial balance
 
-So far this vignette has broadly mentioned spatial balance but has not yet discussed how to empirically measure spatial balance. Stevens and Olsen (2004) proposed measuring spatial balance using Voroni polygons. A Voroni polygon for a sampled site contains all sites in the sample frame closer to this sampled site than any other sampled site. Loss functions are then constructed using these polygons to measure spatial balance. Several spatial balance metrics are available in spsurvey, but the default is Pielou's evenness index, which ranges from 0 (perfect spatial balance) to 1 (a complete lack of spatial balance). Larger values of the Pielou's evenness index indicate worse spatial balance. To measure the spatial balance of the unstratified GRTS and IRS samples with equal inclusion probabilities, run
+So far this vignette has broadly mentioned spatial balance but has not yet discussed how to empirically measure it. Stevens and Olsen (2004) proposed measuring spatial balance using Voroni polygons. A Voroni polygon for a sampled site contains all sites in the sample frame closer to this sampled site than any other sampled site. The voroni polygons are combind with a loss function to measure spatial balance. Several spatial balance metrics are available in spsurvey, but the default is Pielou's evenness index. Pielou's evenness index ranges from 0 (perfect spatial balance) to 1 (a complete lack of spatial balance). Larger values of the Pielou's evenness index indicate worse spatial balance. To measure the spatial balance of the unstratified GRTS and IRS samples with equal inclusion probabilities, run
 ```{r}
 spbalance(eqprob$sites_base, NE_Lakes) # grts
 spbalance(eqprob_irs$sites_base, NE_Lakes) # irs
@@ -233,7 +232,7 @@ The GRTS sample is more spatially balanced than the IRS sample for both strata.
 
 # Infinite population sampling
 
-Though this vignette used a finite population to illustrate the sampling options available in spsurvey, the same commands are used for sampling from infinite populations. The `Illinois_River` `sf` object in spsurvey is a linear resource, and the `Great_Lakes` `sf` object in spsurvey is an areal resource; both are examples of infinite populations. To select a GRTS sample with equal inclusion probabilities from `Illinois_River`, run
+Though this vignette used a finite population to illustrate the sampling options available in spsurvey, the same commands are used for sampling from infinite populations. The `Illinois_River` `sf` object in spsurvey is a linear resource, and the `Great_Lakes` `sf` object in spsurvey is an areal resource -- both are examples of infinite populations. To select a GRTS sample with equal inclusion probabilities from `Illinois_River`, run
 ```{r}
 eqprob <- grts(Illinois_River, n_base = 50)
 ```
