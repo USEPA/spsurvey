@@ -56,5 +56,6 @@ Imports:
 VignetteBuilder: knitr
 Encoding: UTF-8
 LazyData: true
+LazyDataCompression: gzip
 RoxygenNote: 7.1.1
 NeedsCompilation: no
