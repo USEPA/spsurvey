@@ -207,7 +207,7 @@ plot(eqprob_irs, NE_Lakes, pch = 19, key.width = lcm(3))
 
 Notice how this IRS sample appears less spread out than the unstratified GRTS sample with equal inclusion probabilities.
 
-To select an IRS sample stratified by elevation category with equal inclusion probabilities witihin strata, run
+To select an IRS sample stratified by elevation category with equal inclusion probabilities within strata, run
 ```{r}
 strata_n <- c(low = 25, high = 25)
 strat_eqprob_irs <- irs(NE_Lakes, n_base = strata_n, stratum_var = "ELEV_CAT")
@@ -216,7 +216,7 @@ strat_eqprob_irs <- irs(NE_Lakes, n_base = strata_n, stratum_var = "ELEV_CAT")
 
 # Measuring spatial balance
 
-So far this vignette has broadly mentioned spatial balance but has not yet discussed how to empirically measure it. Stevens and Olsen (2004) proposed measuring spatial balance using Voroni polygons. A Voroni polygon for a sampled site contains all sites in the sample frame closer to this sampled site than any other sampled site. The voroni polygons are combind with a loss function to measure spatial balance. Several spatial balance metrics are available in spsurvey, but the default is Pielou's evenness index. Pielou's evenness index ranges from 0 (perfect spatial balance) to 1 (a complete lack of spatial balance). Larger values of the Pielou's evenness index indicate worse spatial balance. To measure the spatial balance of the unstratified GRTS and IRS samples with equal inclusion probabilities, run
+So far this vignette has broadly mentioned spatial balance but has not yet discussed how to empirically measure it. Stevens and Olsen (2004) proposed measuring spatial balance using Voroni polygons. A Voroni polygon for a sampled site contains all sites in the sample frame closer to this sampled site than any other sampled site. The Voroni polygons are combined with a loss function to measure spatial balance. Several spatial balance metrics are available in spsurvey, but the default is Pielou's evenness index. Pielou's evenness index ranges from 0 (perfect spatial balance) to 1 (a complete lack of spatial balance). Larger values of the Pielou's evenness index indicate worse spatial balance. To measure the spatial balance of the unstratified GRTS and IRS samples with equal inclusion probabilities, run
 ```{r}
 spbalance(eqprob$sites_base, NE_Lakes) # grts
 spbalance(eqprob_irs$sites_base, NE_Lakes) # irs
