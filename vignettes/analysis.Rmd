@@ -26,7 +26,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-After a probability sample is selected, population parameters may be estimated. To estimate these parameters, spsurvey offers several analysis approaches. The analysis functions estimate population parameters like means and totals using the Horvitz-Thompson estimator. The default variance estimator is the local neighborhood variance estimator (Stevens and Olsen, 2003), though several variance estimation options are available using the `vartype` and `jointprob` arguments.
+After selecting a probability sample, population parameters are estimated.  Population parameters like means and totals using the Horvitz-Thompson estimator. The default variance estimator is the local neighborhood variance estimator (Stevens and Olsen, 2003), though several variance estimation options are available using the `vartype` and `jointprob` arguments. spsurvey offers several types of analysis approaches that we cover throughout the rest of this vignette.
 
 We focus mainly on using the `NLA_PNW` data to introduce some of these analysis options. The `NLA_PNW` data contains response variables measured at several lakes in the Western United States. There are several variables we will use
 
