@@ -42,7 +42,7 @@ library(spsurvey)
 
 # Categorical Variable Analysis
 
-Categorical variables are analyzed in spsurvey using the `cat_analysis()` function. The `cat_analysis()` function estimates the proportion of observations and the total extent (area) that belongs to each level of the categorical variable. Several useful pieces of output are returned by `cat_analysis()`, including estimates, standard errors, margins of error, and confidence intervals. The `.P` suffix correspond to estimates of proportions for each category, while the `.U` estimates correspond to estimates of totals for each category. 
+Categorical variables are analyzed in spsurvey using the `cat_analysis()` function. The `cat_analysis()` function estimates the proportion of observations and the total extent (number of units, length or area) that belongs to each level of the categorical variable. Several useful pieces of output are returned by `cat_analysis()`, including estimates, standard errors, margins of error, and confidence intervals. The `.P` suffix correspond to estimates of proportions for each category, while the `.U` estimates correspond to estimates of number of units, length or area for each category. 
 
 ## Unstratified Analysis
 
@@ -56,7 +56,7 @@ ests <- cat_analysis(
 )
 ests
 ```
-The estimate of the proportion of lakes in `Good` condition is around 51.35%, while the estimate of the total number of lakes in `Good` condition is around 5484 lakes. 
+The estimate of the proportion of lakes in `Good` condition is 51.35% with a 95% confidence interval of (36.8%, 65.9%), while the estimate of the total number of lakes in `Good` condition is 5484 lakes with a 95% confidence interval of (3089, 7882). In each case, the estimated standard error and margin of error is given.
 
 Sometimes the goal is to estimate proportions and totals separately for subsets of the population -- these subsets are known as subpopulations. To estimate the proportion of total lakes in each nitrogen condition category and the total number of lakes in each nitrogen condition category separately for `Urban` and `Non-Urban` lakes, run
 ```{r}
@@ -69,7 +69,7 @@ subpop_ests <- cat_analysis(
 )
 subpop_ests
 ```
-
+If more than one type of subpopulation is of interest,  then `subpop` can be a vector of the subpopulation variables.
 
 ## Stratified Analysis
 
