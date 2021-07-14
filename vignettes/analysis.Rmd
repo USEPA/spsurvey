@@ -162,9 +162,9 @@ strat_subpop_ests
 
 # Additonal Analysis Approaches
 
-Alongside the `cat_analysis()` and `cont_analysis()` functions, spsurvey offers analysis functions for attributable risk, relative risk, change, and trend. Attributable and relative risk analyses capture attributable and relative risks, respectively, of environmental resources being in poor condition after exposure to a stressor. Attributable risk analysis is performed using the `attrisk_analysis()` function, while relative risk analysis is performed using the `relrisk_analysis()` function. Change and trend analysis capture the behavior of environmental resources between two probability samples, while trend analysis generalizes this approach to include multiple probability samples. Often, change and trend analyses are performed to study an environmental resources through time.  Change analysis is performed using the `change_analysis()` function, and trend analysis is performed using the `trend_analysis()` function. The `attrisk_analysis()`, `relrisk_analysis()`, `change_analysis()` and `trend_analysis()` functions all share very similar syntax to the `cat_analysis()` and `cont_analysis()` functions.
+Alongside the `cat_analysis()` and `cont_analysis()` functions, spsurvey offers analysis functions for estimating attributable risk, relative risk, risk difference, change, and trend. Attributable risk analysis, relative risk analysis, and risk difference analysis capture attributable risk, relative risk, and risk difference, respectively, of environmental resources being in poor condition after exposure to a stressor. Attributable risk analysis is performed using the `attrisk_analysis()` function, relative risk analysis is performed using the `relrisk_analysis()` function, and risk difference analysis is performed using the `riskdiff_analysis()` function. Change and trend analysis capture the behavior of environmental resources between two probability samples, while trend analysis generalizes this approach to include multiple probability samples. Often, change and trend analyses are performed to study an environmental resources through time.  Change analysis is performed using the `change_analysis()` function, and trend analysis is performed using the `trend_analysis()` function. The `attrisk_analysis()`, `relrisk_analysis()`, `change_analysis()` and `trend_analysis()` functions all share very similar syntax to the `cat_analysis()` and `cont_analysis()` functions.
 
-## Attributable and Relative Risk
+## Attributable Risk, Relative Risk, and Risk Difference
 
 The attributable risk is defined as $1 -  \frac{P(Response = Poor | Stressor = Good)}{P(Response = Poor)}$, where $P(\cdot)$ is a probability. The attributable risk measures the proportion of the response variable in poor condition that could be eliminated if the stressor was always in good condition. To estimate the attributable risk of benthic macroinvertebrates with a phosphorous condition stressor, run
 ```{r}
@@ -178,9 +178,9 @@ attrisk <- attrisk_analysis(
 attrisk
 ```
 
-The relative risk is defined as $\frac{P(Response = Poor | Stressor = Poor)}{P(Response = Poor | Stressor = Good)}$, which measures the risk of the response variable being in poor condition relative to the stressor. To estimate the relative risk of benthic macroinvertebrates being in poor condition relative to a phosphorous condition category stressor, run
+The relative risk is defined as $\frac{P(Response = Poor | Stressor = Poor)}{P(Response = Poor | Stressor = Good)}$, which measures the risk of the response variable being in poor condition relative to the stressor. To estimate the relative risk of benthic macroinvertebrates being in poor condition with a phosphorous condition category stressor, run
 ```{r}
-relrisk <- attrisk_analysis(
+relrisk <- relrisk_analysis(
   NLA_PNW, 
   siteID = "SITE_ID",
   vars_response = "BMMI_COND",
@@ -188,6 +188,18 @@ relrisk <- attrisk_analysis(
   weight = "WEIGHT"
 )
 relrisk
+```
+
+The risk difference is defined as $P(Response = Poor | Stressor = Poor) - P(Response = Poor | Stressor = Good)$, which measures the difference is risks of the variable being in poor condition between the stressor being in poor condition and the stressor being in good condition. To estimate the risk difference of benthic macroinvertebrates with a phosphorous condition category stressor, run
+```{r}
+riskdiff <- diffrisk_analysis(
+  NLA_PNW, 
+  siteID = "SITE_ID",
+  vars_response = "BMMI_COND",
+  vars_stressor = "PHOS_COND",
+  weight = "WEIGHT"
+)
+riskdiff
 ```
 
 The default levels of `vars_response` and `vars_stressor` are `"Poor"` (event occurs) and `"Good"` (event does not occur), though this can be changed using the `response_levels` and `stressor_levels` arguments, respectively. Similar to `cat_analysis()` and `cont_analysis()` from the previous sections, subpopulations and stratification are incorporated using `subpops` and `stratumID`, respectively. For more on attributable and relative risk in an environmental resource context, see Van Sickle and Paulsen (2008).
