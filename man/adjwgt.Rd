@@ -38,7 +38,7 @@ This function adjusts initial survey design weights when
   is done separately for each category specified in \code{wgtcat}.
 }
 \examples{
-wgt <- runif(50, 10, 100)
+wgt <- runif(50)
 wgtcat <- rep(c("A", "B"), c(30, 20))
 framesize <- c(A = 15, B = 10)
 sites <- rep(rep(c(TRUE, FALSE), c(9, 1)), 5)
