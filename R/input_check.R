@@ -9,6 +9,8 @@
 # Revised: June 4, 2021 to implement checking the revised approach used for
 #          specification of the finite population correction factor and to
 #          ensure that continuous variables have syntactically valid names
+# Revised: July 14, 2021 to ensure that character variables are processed as
+#          factors
 #
 #' Check Input Values for Analytical Functions
 #'
@@ -92,12 +94,16 @@ input_check <- function(dframe, design_names, vars_cat, vars_cont,
                         fpc, popsize, vartype, jointprob, conf, cdfval = NULL,
                         pctval = NULL, error_ind, error_vec) {
 
+  # Ensure that character variables are processed as factors
+
+  options(stringsAsFactors = TRUE)
+
   # For variables that exist in the dframe data frame, assign survey design
   # variables and check those variables for missing values
 
   temp <- c("surveyID", "siteID", "weight")
   design_names <- design_names[!(names(design_names) %in% c("fpcsize",
-    "Ncluster", "stage1size"))]
+                                                            "Ncluster", "stage1size"))]
   for (i in names(design_names)) {
     if (is.null(design_names[[i]])) {
       eval(parse(text = paste0(i, " <- NULL")))
@@ -543,7 +549,7 @@ input_check <- function(dframe, design_names, vars_cat, vars_cont,
     if (!is.null(stratumID)) {
       if (!is.null(clusterID)) {
         cluster_levels <- tapply(clusterID, stratumID,
-          function(x) levels(factor(x)))
+                                 function(x) levels(factor(x)))
         ncluster <- sapply(cluster_levels, length)
         indx <- match(names(fpc), names(ncluster),nomatch = 0)
         if (!is.list(fpc)) {
@@ -563,8 +569,8 @@ input_check <- function(dframe, design_names, vars_cat, vars_cont,
           msg <- "For a stratified, single-stage survey design, names for the fpc argument must match \ncatgories for the stratum ID variable in the dframe data frame.\n"
           error_vec <- c(error_vec, msg)
         } else if(any(sapply(fpc, function(x) !is.vector(x))) ||
-            any(sapply(fpc, length) != (ncluster[indx] + 1)) ||
-            any(sapply(fpc, function(x) !is.numeric(x)))) {
+                  any(sapply(fpc, length) != (ncluster[indx] + 1)) ||
+                  any(sapply(fpc, function(x) !is.numeric(x)))) {
           error_ind <- TRUE
           msg <- "For a stratified, two-stage survey design, the fpc argument, for each stratum, must be \na numeric vector with length equal to one plus the number of clusters in the sample for \nthe stratum.\n"
           error_vec <- c(error_vec, msg)
@@ -607,8 +613,8 @@ input_check <- function(dframe, design_names, vars_cat, vars_cont,
           msg <- "For a stratified, single-stage survey design, names for the fpc argument must match \ncatgories for the stratum ID variable in the dframe data frame.\n"
           error_vec <- c(error_vec, msg)
         } else if(any(sapply(fpc, function(x) !is.vector(x))) ||
-            any(sapply(fpc, length) > 1) ||
-            any(sapply(fpc, function(x) !is.numeric(x)))) {
+                  any(sapply(fpc, length) > 1) ||
+                  any(sapply(fpc, function(x) !is.numeric(x)))) {
           error_ind <- TRUE
           msg <- "For a stratified, single-stage survey design, the fpc argument must contain a single \nnumeric value for each strata.\n"
           error_vec <- c(error_vec, msg)
@@ -646,7 +652,7 @@ input_check <- function(dframe, design_names, vars_cat, vars_cont,
           msg <- "For a stratified, single-stage survey design, names for the fpc argument must include \nall of the catgories for the cluster ID variable in the dframe data frame.\n"
           error_vec <- c(error_vec, msg)
         } else if(any(sapply(fpc, length) > 1) ||
-            any(sapply(fpc, function(x) !is.numeric(x)))) {
+                  any(sapply(fpc, function(x) !is.numeric(x)))) {
           error_ind <- TRUE
           msg <- "For unstratified, two-stage survey design, the fpc argument must contain a single \nnumeric value for each item in the vector\n"
           error_vec <- c(error_vec, msg)
