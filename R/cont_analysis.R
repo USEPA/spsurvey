@@ -291,7 +291,7 @@
 #' cont_analysis(dframe,
 #'   vars = myvars, subpops = mysubpops, siteID = "siteID",
 #'   weight = "wgt", xcoord = "xcoord", ycoord = "ycoord",
-#'   stratumID = "stratum", popsize = mypopsize
+#'   stratumID = "stratum", popsize = mypopsize, statistics = "mean"
 #' )
 #'
 #' @export
