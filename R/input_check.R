@@ -96,7 +96,8 @@ input_check <- function(dframe, design_names, vars_cat, vars_cont,
 
   # Ensure that character variables are processed as factors
 
-  options(stringsAsFactors = TRUE)
+  # options(stringsAsFactors = TRUE)
+  dframe <- as.data.frame(unclass(dframe), stringsAsFactors = TRUE)
 
   # For variables that exist in the dframe data frame, assign survey design
   # variables and check those variables for missing values
