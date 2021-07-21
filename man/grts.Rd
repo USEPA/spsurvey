@@ -2,118 +2,152 @@
 % Please edit documentation in R/grts.R
 \name{grts}
 \alias{grts}
-\title{Select a Generalized Random Tesselation Stratified (GRTS) Sample}
+\title{Select a Generalized Random Tessellation Stratified (GRTS) Sample}
 \usage{
 grts(
   sframe,
   n_base,
-  seltype = "equal",
-  wgt_units = NULL,
-  pt_density = NULL,
-  caty_n = NULL,
-  n_over = NULL,
-  n_near = NULL,
   stratum_var = NULL,
+  seltype = "equal",
   caty_var = NULL,
+  caty_n = NULL,
   aux_var = NULL,
+  legacy_var = NULL,
   legacy_sites = NULL,
   legacy_stratum_var = NULL,
-  legacy_var = NULL,
   mindis = NULL,
+  maxtry = 10,
+  n_over = NULL,
+  n_near = NULL,
+  wgt_units = NULL,
+  pt_density = NULL,
   DesignID = "Site",
-  SiteBegin = 1,
-  maxtry = 10
+  SiteBegin = 1
 )
 }
 \arguments{
-\item{sframe}{Sample frame as an \code{sf} object. If the design is stratified, unequal probability
-or proportional probability, then sample frame must include variables that identify the
-stratum; and the category or auxillary variables for unequal selection. The coordinate
-system for sframe must be one where distance for coordinates is meaningful. If legacy sites
-are included in a finite sample frame, then a legacy variable must be provided to
-identify elements that are legacy sites.}
+\item{sframe}{The sample frame as an \code{sf} object. The coordinate
+system for \code{sframe} must be one where distance for coordinates is meaningful.}
 
-\item{n_base}{The sample size required. If the design is unstratified, this is a single numeric value.
-If design is stratified, this is a numeric vector whose names equal the relevant strata in \code{stratum_var}
-and whose entries equal the sample size for each strata.#'}
+\item{n_base}{The base sample size required. If the design is unstratified,
+this is a single numeric value. If the design is stratified, this is a named
+vector whose names represent each stratum and whose values represent each
+stratum's sample size. These names must match the values of the stratification
+variable represented by \code{stratum_var}.}
 
-\item{seltype}{Single character value or character vector that identifies the type of
-random selection, which must be one of following: \code{"equal"} for equal probability selection,
-\code{"unequal"} for unequal probability selection by the categories specified in \code{caty_n} or
-\code{"proportional"} for unequal probability selection proportional to the auxiliary variable
-\code{aux_var}. If single character, then \code{seltype} applies to all strata. If vector, then each
-stratum may have different selection type. Default is single character value of \code{"equal"}.}
-
-\item{wgt_units}{The units for weights if different from units in the \code{sf} object. Default
-is \code{NULL}. Unit conversion uses \code{set_unit}s in \code{sf} package.}
-
-\item{pt_density}{For linear and area sample frame, the point density for the systematic
-sample. Must be in units of the \code{sframe} \code{sf} object. Default is \code{NULL}.}
-
-\item{caty_n}{If design is not stratified and seltype is \code{"unequal"}, a named character vector
-with the expected sample size for each category specified in variable \code{caty_var}. If design
-is stratified, then either a named character vector with the expected sample size for each
-category for all strata or if the expected sample size for each category may differ, then
-a list of named character vectors with the expected sample size for each category in the
-stratum. The list must be in same order as the \code{"stratum"} variable. For each stratum,
-the sum of \code{caty_n} values must equal \code{n_base} for that stratum. Default is \code{NULL}.}
-
-\item{n_over}{If \code{seltype} is \code{"equal"} and is not stratified, a numeric value specifying the
-over sample size requested. If \code{seltype} is \code{"equal"} and is stratified either a numeric value
-specifying the over sample size that will be applied to each stratum or a numeric vector
-specifying the over sample size for each stratum listed in same order as \code{"stratum"}.
-If seltype is \code{"unequal"} and is not stratified, a named character vector with the over sample size
-for each category where names are the same as \code{"caty_n"}. If seltype is \code{"unequal"} and is
-stratified, either a numeric vector specifying the over sample size for each category in
-\code{"caty_n"} that will be applied to each stratum or a list of named numeric vectors with
-the over sample size for each \code{"caty_n"} category for each stratum. List must be in same order
-as the \code{"stratum"} variable order. Default is \code{NULL}.}
-
-\item{n_near}{Numeric value specifying the number of nearby points to select as
-possible replacement sites if a site cannot be sampled. Default is \code{NULL}. If specified,
-must be integer from \code{1} to \code{10}.}
-
-\item{stratum_var}{Character string containing the name of the column from
+\item{stratum_var}{A character string containing the name of the column from
 \code{sframe} that identifies stratum membership for each element in the frame.
-If stratum equals \code{NULL}, the design is unstratified and all elements in sample frame
+If stratum equals \code{NULL}, the design is unstratified and all elements in \code{sframe}
 are eligible to be selected in the sample. The default is \code{NULL}.}
 
-\item{caty_var}{Character string containing the name of the column from
-\code{sframe} that identifies the unequal probability category for each element
-in the frame.  Default is \code{NULL}.}
+\item{seltype}{A character string or vector indicating the inclusion probability type,
+which must be one of following: \code{"equal"} for equal inclusion probabilities;
+\code{"unequal"} for unequal inclusion probabilities according to a categorical
+variable specified by \code{caty_var}; and \code{"proportional"} for inclusion
+probabilities proportional to a positive auxiliary variable. If the design is
+unstratified, \code{seltype} is a single character vector with a default value 
+of \code{"equal"}. If the design is stratified, \code{seltype} is a named vector
+whose names represent each stratum and whose values represent each stratum's 
+inclusion probability type. When the design is unstratified, \code{seltype}'s 
+default value assumes equal inclusion probabilities for each stratum.}
 
-\item{aux_var}{Character string that is the name of the column from \code{sframe} that
-identifies the auxiliary variable value for each element in the sample frame
-that will be used to calculate inclusion probabilities when the survey design
-specifies that the selection type (\code{seltype}) is \code{"proportional"}. Default is \code{NULL}.}
+\item{caty_var}{A character string containing the name of the column from
+\code{sframe} that represents the unequal probability variable.}
 
-\item{legacy_sites}{\code{sf} object of legacy sites to be included in the survey design when
-sample frame is linear or area. Note \code{legacy_option} must be equal to \code{TRUE}. The \code{sf} object
-must include the variables \code{stratum_var}, \code{caty_variable} and \code{aux_variable} if required by
-the survey design.  The \code{legacy_var} is required and the contents of the variable must
-either be a legacy \code{siteID} if the sample frame element is a legacy site or must
-be equal to \code{NA} otherwise.}
+\item{caty_n}{A character vector indicating the expected sample size for each
+level of \code{caty_var}, the unequal probability variable. If the design
+is unstratified, \code{caty_n} is a named vector whose names represent each
+level of \code{caty_var} and whose values represent each level's expected
+sample size. The sum of \code{caty_n} must equal \code{n_base}. If the design
+is stratified and the expected sample sizes are the same among strata, \code{caty_n} is
+a named vector whose names represent represent each
+level of \code{caty_var} and whose values represent each level's expected
+sample size -- these expected sample sizes are applied to all strata. The sum of
+\code{caty_n} must equal each stratum's value in \code{n_base}.
+If the design is stratified and the expected sample sizes differ among strata,
+\code{caty_n} is a list where each element represents a stratum in \code{n_base}.
+The order of the strata in this list must match the order of the strata in \code{n_base}.
+Each stratum's list element is a named vector whose
+names represent each level of \code{caty_var} and whose values represent each
+level's expected sample size (within the stratum). The sum of the values in each stratum's
+list element must equal that stratum's value in \code{n_base}.}
 
-\item{legacy_stratum_var}{The name of the variable in \code{legacy_sites} that contains the
-stratum information.}
+\item{aux_var}{A character string containing the name of the column from
+\code{sframe} that represents the proportional (to size) inclusion probability
+variable (auxiliary variable). This auxiliary variable must be positive, and the resulting
+inclusion probabilities are proportional to the values of the auxiliary variable.
+Larger values of the auxiliary variable result in higher inclusion probabilities.}
 
-\item{legacy_var}{For finite sample frames when legacy sites are to be included in the
-survey design, a character string that is the name of the character variable in \code{sframe} that
-identifies which elements in the sample frame are legacy sites. The contents of the
-variable must either be a legacy \code{siteID} if the sample frame element is a legacy site or must
-be equal to \code{NA} otherwise. Default is \code{NULL}.}
+\item{legacy_var}{If \code{sframe} is a \code{POINT} or \code{MULTIPOINT} geometry (a finite sample frame), 
+\code{legacy_var} is a character string containing the name of the column
+from \code{sframe} that represents the legacy site variable. For legacy sites, the values of the
+\code{legacy_var} column in \code{sframe} must contain character strings that
+act as a legacy site identifier. For non-legacy sites, the values of the 
+\code{legacy_var} column in \code{sframe} must be \code{NA}.}
 
-\item{mindis}{Numeric value for the minimum distance required between elements
-in the sample. If design is stratified, then mindis applies only within each stratum.
-Units must be the same units as in \code{sf} geometry. Default is \code{NULL}.}
+\item{legacy_sites}{If \code{sframe} is a \code{LINESTRING}, \code{MULTILINESTRING},
+\code{POLYGON}, or \code{MULTIPOLYGON} geometry (an infinite sample frame),
+\code{legacy_sites} is an sf object with a \code{POINT} geometry representing the 
+legacy sites.}
 
-\item{DesignID}{Name for the design, which is used to create a site ID for
-each site.  Default is \code{"Site"}.}
+\item{legacy_stratum_var}{A character string containing the name of the column from
+\code{legacy_sites} that identifies stratum membership for each element of \code{legacy_sites}.
+\code{legacy_stratum_var} is required when the design is stratified and its levels
+must be contained in the levels of \code{stratum_var}. The default value of \code{legacy_stratum_var}
+is \code{stratum_var}, so \code{legacy_stratum_var} need only be specified explicitly when
+the name of the stratification variable in \code{legacy_sites} differs from \code{stratum_var}.}
 
-\item{SiteBegin}{Number to use for first site in the design.  Default is \code{1}.}
+\item{mindis}{A numeric value indicating the desired minimum distance between sampled
+sites. If design is stratified, then mindis is applied separately for each stratum.
+The units of \code{mindis} must match the units in \code{sframe}.}
 
-\item{maxtry}{Number of maximum attempts to ensure minimum distance (mindis) between sites.
-Default is \code{10}.}
+\item{maxtry}{The number of maximum attempts to apply the minimum distance algorithm to obtain
+the desired minimum distance between sites. Each iteration takes roughly as long as the 
+standard GRTS algorithm. Successive iterations will always contain at least as many 
+sites satisfying the minimum distance requirement as the previous iteration. The algorithm stops 
+when the minimum distance requirement is met or there are \code{maxtry} iterations.
+The default number of maximum iterations is \code{10}.}
+
+\item{n_over}{If the design is unstratified and \code{seltype} is \code{"equal"} or \code{"proportional"},
+\code{n_over} is an integer specifying the number of reverse hierarchically 
+ordered (rho) replacement sites desired.  If the design is unstratified and \code{seltype} is \code{"unequal"},
+then \code{n_over} is a named character vector whose names match the levels of 
+\code{caty_var} and whose values are the expected rho replacement sample sizes for each
+level. If the design is stratified and \code{seltype} is \code{"equal"} or \code{"proportional"},
+\code{n_over} is a named vector whose names match the names of \code{n_base} and whose values
+indicate the number of rho replacement sites for each stratum. If the design is stratified and
+\code{seltype} is \code{"unequal"}, \code{n_over} changes based on whether the expected
+rho replacement sample sizes change among strata. If \code{n_over} does not change among strata, \code{n_over}
+is a named vector whose names match the names of \code{caty_var} and whose values are the expected rho replacement
+sample sizes to be used for each stratum. If \code{n_over} changes among strata, \code{n_over} is a
+list where each element represents a stratum in \code{n_base}.
+The order of the strata in this list must match the order of the strata in \code{n_base}.
+Each stratum's list element is a named vector whose names represent each level of \code{caty_var} and whose values represent each
+level's expected rho replacement sample sizes (within the stratum).}
+
+\item{n_near}{An integer from \code{1} to \code{10} specifying the number of
+nearest neighbor replacement sites to be selected for each base site.}
+
+\item{wgt_units}{The units used to compute the survey design weights. These
+units must be standard units as defined by the \code{set_units()} function in
+the units package. The default units match the units of the sf object.}
+
+\item{pt_density}{A numeric value controlling the density of the GRTS approximation
+for infinite sample frames. The GRTS approximation for infinite sample
+frames vastly improves computational efficiency by generating many finite points and 
+selecting a sample from the points. \code{pt_density} represents the density 
+of finite points per unit to use in the approximation (and the units match
+the units of the sample frame. The default is a density
+such that the number of finite points used in the approximation equals 10
+times the sample size requested.}
+
+\item{DesignID}{A character string indicating the naming structure for each
+site's identifier selected in the sample, which is included as a variable in the 
+sf object in the function's output.}
+
+\item{SiteBegin}{A character string indicating the first number to use to match
+with \code{DesignID} while creating each site's identifier selected in the sample. Successive
+sites are given successive integers. The default starting number is \code{1}.}
 }
 \value{
 sites A list of three \code{sf} objects containing the base sites (\code{sites_base}),
@@ -122,25 +156,27 @@ sites A list of three \code{sf} objects containing the base sites (\code{sites_b
   the survey design used.
 }
 \description{
-Select a spatially balanced sample from a finite, linear or area population using
-generalized random tessalation stratified algorithm  from a sample frame based on
-a survey design specification. The survey design may be stratified and within each stratum
-may be equal probability, unequal probability by categories or unequal probabilty
-proportional to an auxillary variable. Additional options include selecting additional
-sites as an "over" sample, selecting nearby replacement sites, including legacy sites,
-and requiring minimum distance between sites.
+Select a spatially balanced sample from a point (finite), linear (infinite),
+or areal (infinite) sample frame using the Generalized Random Tessellation
+Stratified (GRTS) algorithm. The GRTS algorithm accommodates unstratified and 
+stratified designs and allows for equal inclusion probabilities, unequal 
+inclusion probabilities according to a categorical variable, and inclusion
+probabilities proportional to a positive auxiliary variable. Several additional
+sampling options are included, such as including legacy (historical) sites,
+requiring a minimum distance between sites, and selecting replacement sites.
 }
 \examples{
 \dontrun{
-test_sample <- grts(sframe = "test_sf", n_base = 100)
-caty_n <- c("var1" = 15, "var2" = 5)
-test_sample <- grts(
-  sframe = test_sf, n_base = 20,
-  n_over = 0, seltype = "unequal",
-  caty_var = "Var_Name", caty_n = caty_n
-)
+sample <- grts(NE_Lakes, n_base = 100)
+strata_n <- c(low = 25, high = 30)
+sample_strat <- grts(NE_Lakes, n_base = strata_n, stratum_var = "ELEV_CAT")
+sample_over <- grts(NE_Lakes, n_base = 30, n_over = 5)
 }
 
+}
+\references{
+Stevens Jr., Don L. and Olsen, Anthony R. (2004). Spatially balanced sampling
+of natural resources. \emph{Journal of the american Statistical association}, 99(465), 262-278.
 }
 \author{
 Tony Olsen email{olsen.tony@epa.gov}

@@ -25,17 +25,20 @@
 #'
 #' @examples
 #' \dontrun{
-#' test.sample <- grts(sframe = "test_sf", n_base = 100)
+#' sample <- irs(NE_Lakes, n_base = 100)
+#' strata_n <- c(low = 25, high = 30)
+#' sample_strat <- irs(NE_Lakes, n_base = strata_n, stratum_var = "ELEV_CAT")
+#' sample_over <- irs(NE_Lakes, n_base = 30, n_over = 5)
 #' }
 #'
 #' @export
 ###############################################################################
 
-irs <- function(sframe, n_base, seltype = "equal", wgt_units = NULL,
-                pt_density = NULL, caty_n = NULL, n_over = NULL, n_near = NULL,
-                stratum_var = NULL, caty_var = NULL, aux_var = NULL,
-                legacy_sites = NULL, legacy_stratum_var = NULL, legacy_var = NULL,
-                mindis = NULL, DesignID = "Site", SiteBegin = 1, maxtry = 10) {
+irs <- function(sframe, n_base, stratum_var = NULL, seltype = "equal", caty_var = NULL,
+                caty_n = NULL, aux_var = NULL, legacy_var = NULL,
+                legacy_sites = NULL, legacy_stratum_var = NULL, mindis = NULL,
+                maxtry = 10, n_over = NULL, n_near = NULL, wgt_units = NULL,
+                pt_density = NULL, DesignID = "Site", SiteBegin = 1) {
 
   if (inherits(sframe, c("tbl_df", "tbl"))) { # identify if tibble class elements are present
     class(sframe) <- setdiff(class(sframe), c("tbl_df", "tbl"))
@@ -85,9 +88,12 @@ irs <- function(sframe, n_base, seltype = "equal", wgt_units = NULL,
 
   # check input. If errors, dsgn_check will stop grtspts and report errors.
   dsgn_check(
-    sframe, sf_type, legacy_sites, legacy_option, stratum, seltype, n_base, caty_n,
-    n_over, n_near, stratum_var, caty_var, aux_var, legacy_var, mindis,
-    DesignID, SiteBegin, maxtry
+    sframe = sframe, sf_type = sf_type, legacy_sites = legacy_sites,
+    legacy_option = legacy_option, stratum = stratum, seltype = seltype,
+    n_base = n_base, caty_n = caty_n, n_over = n_over, n_near = n_near,
+    stratum_var = stratum_var, caty_var = caty_var, aux_var = aux_var,
+    legacy_var = legacy_var, mindis = mindis, DesignID = DesignID, 
+    SiteBegin = SiteBegin, maxtry = maxtry
   )
 
   # preserve original sframe names
@@ -211,7 +217,8 @@ irs <- function(sframe, n_base, seltype = "equal", wgt_units = NULL,
   rslts <- lapply(dsgn$stratum, irs_stratum,
                   dsgn = dsgn, sframe = sframe, sf_type = sf_type, wgt_units = wgt_units,
                   pt_density = pt_density, legacy_option = legacy_option,
-                  legacy_sites = legacy_sites, maxtry = maxtry, warn_ind, warn_df
+                  legacy_sites = legacy_sites, maxtry = maxtry,
+                  warn_ind = warn_ind, warn_df = warn_df
   )
   names(rslts) <- stratum
 
