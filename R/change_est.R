@@ -508,7 +508,8 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
 
       # Assign levels of the categorical variable
 
-      catvar_levels <- levels(results$Category)
+      # catvar_levels <- levels(as.factor(results$Category))
+      catvar_levels <- unique(results$Category)
       nlevels <- length(catvar_levels)
 
       # Calculate population size values
