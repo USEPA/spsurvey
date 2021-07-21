@@ -24,7 +24,6 @@
 #' variables:
 #' \describe{
 #'   \item{STATE_NAME}{State name.}
-#'   \item{SO_ID}{Strahler order identifier.}
 #'   \item{geometry}{Multilinestring geometry using a USA Contiguous Albers
 #'     Equal Area Conic projection.}
 #' }
@@ -38,6 +37,7 @@
 #' @format An \code{sf} point object object with 5 rows and 1
 #' variable:
 #' \describe{
+#'   \item{STATE_NAME}{State name.}
 #'   \item{geometry}{Point geometry using a USA Contiguous Albers
 #'     Equal Area Conic projection.}
 #' }

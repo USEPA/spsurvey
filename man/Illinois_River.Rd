@@ -9,7 +9,6 @@ An \code{sf} multilinestring object object with 9087 rows and 3
 variables:
 \describe{
   \item{STATE_NAME}{State name.}
-  \item{SO_ID}{Strahler order identifier.}
   \item{geometry}{Multilinestring geometry using a USA Contiguous Albers
     Equal Area Conic projection.}
 }
