@@ -130,21 +130,52 @@
 #'   times the sample size requested.
 #'
 #' @param DesignID A character string indicating the naming structure for each
-#' site's identifier selected in the sample, which is included as a variable in the 
-#' sf object in the function's output.
+#'   site's identifier selected in the sample, which is included as a variable in the 
+#'   sf object in the function's output.
 #'
 #' @param SiteBegin A character string indicating the first number to use to match
-#' with \code{DesignID} while creating each site's identifier selected in the sample. Successive
-#' sites are given successive integers. The default starting number is \code{1}.
+#'   with \code{DesignID} while creating each site's identifier selected in the sample. Successive
+#'   sites are given successive integers. The default starting number is \code{1}.
 #'
 #'
-#' @return sites A list of three \code{sf} objects containing the base sites (\code{sites_base}),
-#'   the \code{n_over} sites (\code{sites_over}) and the \code{n_near} sites (\code{sites_near}) selected
-#'   that meet the survey design requirementse plus a design list object that documents
-#'   the survey design used.
+#' @return A list with five elements:
+#'   \itemize{
+#'     \item \code{sites_legacy}: An sf object containing legacy sites. This is 
+#'       \code{NULL} if legacy sites were not included in the sample.
+#'     \item \code{sites_base}: An sf object containing the base sites.
+#'     \item \code{sites_over}: An sf object containing the reverse hierarchically
+#'       ordered replacement sites. This is \code{NULL} if no reverse hierarchically
+#'       ordered replacement sites were included in the sample.
+#'     \item \code{sites_near}: An sf object containing the nearest neighbor 
+#'       replacement sites. This is \code{NULL} if no nearest neighbor replacement
+#'       sites were included in the sample.
+#'     \item \code{design}: A list documenting the specifications of this design.
+#'       This can be checked to verify your design ran as intended.
+#'       \itemize{
+#'         \item \code{Call}: The original function call.
+#'         \item \code{stratum}: The unique strata. This equals \code{"None"} if
+#'           the design was unstratified.
+#'         \item \code{n_base}: The base sample size per stratum.
+#'         \item \code{seltype}: The selection type per stratum.
+#'         \item \code{caty_n}: The expected sample sizes for each level of the 
+#'           unequal probability grouping variable per stratum. This equals 
+#'           \code{NULL} when \code{seltype} is not \code{"unequal"}.
+#'         \item \code{legacy}: A logical variable indicating whether legacy sites
+#'           were included in the sample.
+#'         \item \code{mindis}: The minimum distance requirement desired. This 
+#'           equals \code{NULL} if there was no minimum distance requirement.
+#'         \item \code{n_over}: The reverse hierarchically ordered replacement 
+#'           site sample sizes per stratum. If \code{seltype} is \code{unequal},
+#'           this represents the expected sample sizes. This is \code{NULL}
+#'           if no reverse hierarchically ordered replacement sites were included
+#'           in the sample.
+#'         \item \code{n_near}: The number of nearest neighbor replacement sites
+#'           desired. This is \code{NULL} if no nearest neighbor replacement
+#'           sites were included in the sample.
+#'       }
+#'   }
 #'
-#'
-#' @author Tony Olsen email{olsen.tony@epa.gov}
+#' @author Tony Olsen \email{olsen.tony@@epa.gov}
 #'
 #' @keywords survey design
 #' 
@@ -490,7 +521,10 @@ grts <- function(sframe, n_base, stratum_var = NULL, seltype = "equal", caty_var
   }
 
   # add function call to dsgn list
-  dsgn <- c(list(Call = match.call()), dsgn)
+  # dsgn <- c(list(Call = match.call()), dsgn)
+  dsgn <- list(call = match.call(), stratum = dsgn$stratum, n_base = dsgn$n_base,
+               seltype = dsgn$seltype, caty_n = dsgn$caty_n, legacy = dsgn$legacy_option,
+               mindis = dsgn$mindis, n_over = dsgn$n_over, n_near = dsgn$n_near)
 
   # create output list
   sites <- list(
