@@ -71,6 +71,9 @@ fpc4b <- list(
 vars_response <- c("BENT_MMI_COND_2017")
 vars_stressor <- c("PTL_COND", "NTL_COND")
 
+# Assign subpopulation variable names to the subpops vector
+subpops <- c("All_Sites", "LAKE_ORGN")
+
 # Perform tests
 AttRisk_Estimates <- attrisk_analysis(dframe = NLA_IN,
                                       vars_response = vars_response, vars_stressor= vars_stressor,
