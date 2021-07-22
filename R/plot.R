@@ -77,8 +77,8 @@
 #' @examples
 #' \dontrun{
 #' plot(NE_Lakes)
-#' plot(NE_Lakes, formula = ~ELEVATION_CAT)
-#' plot(NE_Lakes, formula = AREA_HA ~ ELEVATION_CAT)
+#' plot(NE_Lakes, formula = ~ ELEV_CAT)
+#' plot(NE_Lakes, formula = AREA ~ ELEV_CAT)
 #' sample <- grts(NE_Lakes, 30)
 #' plot(sample, NE_Lakes)
 #' }
