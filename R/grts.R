@@ -194,7 +194,7 @@
 #' @export
 ###############################################################################
 
-grts <- function(sframe, n_base, stratum_var = NULL, seltype = "equal", caty_var = NULL,
+grts <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = NULL,
                  caty_n = NULL, aux_var = NULL, legacy_var = NULL,
                  legacy_sites = NULL, legacy_stratum_var = NULL, mindis = NULL,
                  maxtry = 10, n_over = NULL, n_near = NULL, wgt_units = NULL,
@@ -245,6 +245,17 @@ grts <- function(sframe, n_base, stratum_var = NULL, seltype = "equal", caty_var
     stratum <- NULL
   } else {
     stratum <- names(n_base)
+  }
+  
+  # set default seltype if not provided (based on specification of other variables)
+  if (is.null(seltype)) {
+    if (is.null(caty_var) & is.null(aux_var)) {
+      seltype <- "equal"
+    } else if (!is.null(caty_var)) {
+      seltype <- "unequal"
+    } else {
+      seltype <- "proportional"
+    }
   }
 
 

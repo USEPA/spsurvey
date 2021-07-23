@@ -117,6 +117,17 @@ irs <- function(sframe, n_base, stratum_var = NULL, seltype = "equal", caty_var 
   } else {
     stratum <- names(n_base)
   }
+  
+  # set default seltype if not provided (based on specification of other variables)
+  if (is.null(seltype)) {
+    if (is.null(caty_var) & is.null(aux_var)) {
+      seltype <- "equal"
+    } else if (!is.null(caty_var)) {
+      seltype <- "unequal"
+    } else {
+      seltype <- "proportional"
+    }
+  }
 
   # check input. If errors, dsgn_check will stop grtspts and report errors.
   dsgn_check(

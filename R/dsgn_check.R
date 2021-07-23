@@ -211,6 +211,15 @@ dsgn_check <- function(sframe, sf_type, legacy_sites, legacy_option, stratum, se
     stop_mess <- paste0("seltype must be 'equal', 'unequal' or 'proportional'.")
     stop_df <- rbind(stop_df, data.frame(func = I("seltype"), I(stop_mess)))
   }
+  
+  # check seltype when caty_var and aux_var provided
+  if (all(seltype %in% "unequal") | all(seltype %in% "proportional")) {
+    if (!is.null(caty_var) & !is.null(aux_var)) {
+      stop_ind <- TRUE
+      stop_mess <- paste0("aux_var and caty_var cannot both be specified when all elements of seltype are the same.")
+      stop_df <- rbind(stop_df, data.frame(func = I("seltype mismatch"), I(stop_mess)))
+    }
+  }
 
   # check n_base
   if (any(n_base <= 0)) {
