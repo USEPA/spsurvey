@@ -45,11 +45,13 @@ which must be one of following: \code{"equal"} for equal inclusion probabilities
 \code{"unequal"} for unequal inclusion probabilities according to a categorical
 variable specified by \code{caty_var}; and \code{"proportional"} for inclusion
 probabilities proportional to a positive auxiliary variable. If the design is
-unstratified, \code{seltype} is a single character vector with a default value 
-of \code{"equal"}. If the design is stratified, \code{seltype} is a named vector
+unstratified, \code{seltype} is a single character vector. If the design is stratified, \code{seltype} is a named vector
 whose names represent each stratum and whose values represent each stratum's 
-inclusion probability type. When the design is unstratified, \code{seltype}'s 
-default value assumes equal inclusion probabilities for each stratum.}
+inclusion probability type. \code{seltype}'s default value tries to match the 
+intended inclusion probability type: If \code{caty_var} and \code{aux_var} are 
+not specified, \code{seltype} is \code{"equal"}; if \code{caty_var} is specified,
+\code{seltype} is \code{"unequal"}; and if \code{aux_var} is specified, \code{seltype}
+is \code{"proportional"}.}
 
 \item{caty_var}{A character string containing the name of the column from
 \code{sframe} that represents the unequal probability variable.}
@@ -65,8 +67,7 @@ level of \code{caty_var} and whose values represent each level's expected
 sample size -- these expected sample sizes are applied to all strata. The sum of
 \code{caty_n} must equal each stratum's value in \code{n_base}.
 If the design is stratified and the expected sample sizes differ among strata,
-\code{caty_n} is a list where each element represents a stratum in \code{n_base}.
-The order of the strata in this list must match the order of the strata in \code{n_base}.
+\code{caty_n} is a list where each element  is named as a stratum in \code{n_base}.
 Each stratum's list element is a named vector whose
 names represent each level of \code{caty_var} and whose values represent each
 level's expected sample size (within the stratum). The sum of the values in each stratum's
@@ -185,6 +186,36 @@ A list with five elements:
           desired. This is \code{NULL} if no nearest neighbor replacement
           sites were included in the sample.
       }
+  }
+  When non-\code{NULL}, the \code{sites_legacy}, \code{sites_base},
+  \code{sites_over}, and \code{sites_near} objects contain the original columns
+  in \code{sframe} and include a few additional columns. These additional columns
+  are
+  \itemize{
+    \item \code{siteID}: A site identifier (as named using the \code{DesignID}
+      and \code{SiteBegin} arguments to \code{grts()}.)
+    \item \code{siteuse}: Whether the site is a legacy site (\code{Legacy}), base
+      site (\code{Base}), reverse hierarchically ordered replacement site 
+      (\code{Over}), or nearest neighbor replacement site (\code{Near}). 
+    \item \code{replsite}: The replacement site ordering. \code{replsite} is
+      \code{None} if the site is not a replacement site, \code{Next} if it is
+      the next reverse hierarchically ordered replacement site to use, or 
+      \code{Near_*}, where \code{*} indicates the ordering of sites closest to
+      the originally sampled site.
+    \item \code{lon_WGS84}: Longitude coordinates using the WGS84 coordinate
+      system (EPSG:4326).
+    \item \code{lat_WGS84}: Latitude coordinates using the WGS84 coordinate
+      system (EPSG:4326). 
+    \item \code{stratum}: A stratum indicator. \code{stratum} is \code{None}
+      if the design was unstratified. If the design was \code{stratified},
+      \code{stratum} indicates the stratum.
+    \item \code{wgt}: The survey design weight.
+    \item \code{ip}: The site's original inclusion probability (the reciprocal)
+      of (\code{wgt}).
+    \item \code{caty}: An unequal probability grouping indicator. \code{caty}
+      is \code{None} if the design did not use unequal inclusion probabilities.
+      If the design did use unequal inclusion probabilities, \code{caty}
+      indicates the unequal probability level.
   }
 }
 \description{

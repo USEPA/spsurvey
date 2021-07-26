@@ -49,7 +49,36 @@
 #'           sites were included in the sample.
 #'       }
 #'   }
-#'
+#'   When non-\code{NULL}, the \code{sites_legacy}, \code{sites_base},
+#'   \code{sites_over}, and \code{sites_near} objects contain the original columns
+#'   in \code{sframe} and include a few additional columns. These additional columns
+#'   are
+#'   \itemize{
+#'     \item \code{siteID}: A site identifier (as named using the \code{DesignID}
+#'       and \code{SiteBegin} arguments to \code{grts()}.)
+#'     \item \code{siteuse}: Whether the site is a legacy site (\code{Legacy}), base
+#'       site (\code{Base}), reverse hierarchically ordered replacement site 
+#'       (\code{Over}), or nearest neighbor replacement site (\code{Near}). 
+#'     \item \code{replsite}: The replacement site ordering. \code{replsite} is
+#'       \code{None} if the site is not a replacement site, \code{Next} if it is
+#'       the next reverse hierarchically ordered replacement site to use, or 
+#'       \code{Near_*}, where \code{*} indicates the ordering of sites closest to
+#'       the originally sampled site.
+#'     \item \code{lon_WGS84}: Longitude coordinates using the WGS84 coordinate
+#'       system (EPSG:4326).
+#'     \item \code{lat_WGS84}: Latitude coordinates using the WGS84 coordinate
+#'       system (EPSG:4326). 
+#'     \item \code{stratum}: A stratum indicator. \code{stratum} is \code{None}
+#'       if the design was unstratified. If the design was \code{stratified},
+#'       \code{stratum} indicates the stratum.
+#'     \item \code{wgt}: The survey design weight.
+#'     \item \code{ip}: The site's original inclusion probability (the reciprocal)
+#'       of (\code{wgt}).
+#'     \item \code{caty}: An unequal probability grouping indicator. \code{caty}
+#'       is \code{None} if the design did not use unequal inclusion probabilities.
+#'       If the design did use unequal inclusion probabilities, \code{caty}
+#'       indicates the unequal probability level.
+#'   }
 #'
 #' @author Tony Olsen \email{olsen.tony@@epa.gov}
 #'
