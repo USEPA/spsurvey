@@ -398,7 +398,7 @@ grts <- function(sframe, n_base, stratum_var = NULL, seltype = "equal", caty_var
       dsgn$n_over <- n_over
     } else {
       tmp <- lapply(stratum, function(x, n_over) {
-        x <- n_over
+        x <- n_over[[x]]
       }, n_over)
       names(tmp) <- stratum
       dsgn$n_over <- tmp
