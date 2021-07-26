@@ -313,7 +313,7 @@ irs_stratum <-function(stratum, dsgn, sframe, sf_type, wgt_units = NULL, pt_dens
   # save n_over sample sites if any
   sites_over <- NULL
   if (n_over != 0) {
-    sites_over <- sites[["sites"]][(n_base > n_legacy + 1):(n_total - n_legacy), ]
+    sites_over <- sites[["sites"]][(n_base - n_legacy + 1):(n_total - n_legacy), ]
     sites_over$siteuse <- "Over"
   }
 
