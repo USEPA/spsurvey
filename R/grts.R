@@ -204,6 +204,9 @@
 #'       is \code{None} if the design did not use unequal inclusion probabilities.
 #'       If the design did use unequal inclusion probabilities, \code{caty}
 #'       indicates the unequal probability level.
+#'     \item \code{aux}: The auxiliary proportional probability variable. This
+#'       column is only returned if \code{seltype} was \code{proportional} in the
+#'       original design.
 #'   }
 #'
 #' @author Tony Olsen \email{olsen.tony@@epa.gov}

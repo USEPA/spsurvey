@@ -8,7 +8,7 @@ grts(
   sframe,
   n_base,
   stratum_var = NULL,
-  seltype = NULL,
+  seltype = "equal",
   caty_var = NULL,
   caty_n = NULL,
   aux_var = NULL,
@@ -216,6 +216,9 @@ A list with five elements:
       is \code{None} if the design did not use unequal inclusion probabilities.
       If the design did use unequal inclusion probabilities, \code{caty}
       indicates the unequal probability level.
+    \item \code{aux}: The auxiliary proportional probability variable. This
+      column is only returned if \code{seltype} was \code{proportional} in the
+      original design.
   }
 }
 \description{

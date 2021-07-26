@@ -47,6 +47,9 @@
 #'         \item \code{n_near}: The number of nearest neighbor replacement sites
 #'           desired. This is \code{NULL} if no nearest neighbor replacement
 #'           sites were included in the sample.
+#'         \item \code{aux}: The auxiliary proportional probability variable. This
+#'           column is only returned if \code{seltype} was \code{proportional} in the
+#'           original design.
 #'       }
 #'   }
 #'   When non-\code{NULL}, the \code{sites_legacy}, \code{sites_base},
