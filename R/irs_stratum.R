@@ -216,7 +216,8 @@ irs_stratum <-function(stratum, dsgn, sframe, sf_type, wgt_units = NULL, pt_dens
     if (nrow(sftmp) <= n_total) {
       samp.id <- sftmp$idpts
     } else {
-      samp.id <- sftmp$idpts[UPpivotal(sftmp$ip) != 0]
+      s <- UPpivotal(sftmp$ip)
+      samp.id <- sftmp$idpts[round(s) == 1]
     }
     # extract sites from sample frame
     sites <- sftmp[sftmp$idpts %in% samp.id, ]
