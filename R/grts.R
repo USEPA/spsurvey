@@ -6,8 +6,8 @@
 #'
 #' Select a spatially balanced sample from a point (finite), linear (infinite),
 #' or areal (infinite) sample frame using the Generalized Random Tessellation
-#' Stratified (GRTS) algorithm. The GRTS algorithm accommodates unstratified and 
-#' stratified designs and allows for equal inclusion probabilities, unequal 
+#' Stratified (GRTS) algorithm. The GRTS algorithm accommodates unstratified and
+#' stratified designs and allows for equal inclusion probabilities, unequal
 #' inclusion probabilities according to a categorical variable, and inclusion
 #' probabilities proportional to a positive auxiliary variable. Several additional
 #' sampling options are included, such as including legacy (historical) sites,
@@ -15,8 +15,8 @@
 #'
 #'
 #' @param sframe The sample frame as an \code{sf} object. The coordinate
-#'   system for \code{sframe} must be one where distance for coordinates is meaningful. 
-#'   
+#'   system for \code{sframe} must be one where distance for coordinates is meaningful.
+#'
 #' @param n_base The base sample size required. If the design is unstratified,
 #'   this is a single numeric value. If the design is stratified, this is a named
 #'   vector whose names represent each stratum and whose values represent each
@@ -34,9 +34,9 @@
 #'   variable specified by \code{caty_var}; and \code{"proportional"} for inclusion
 #'   probabilities proportional to a positive auxiliary variable. If the design is
 #'   unstratified, \code{seltype} is a single character vector. If the design is stratified, \code{seltype} is a named vector
-#'   whose names represent each stratum and whose values represent each stratum's 
-#'   inclusion probability type. \code{seltype}'s default value tries to match the 
-#'   intended inclusion probability type: If \code{caty_var} and \code{aux_var} are 
+#'   whose names represent each stratum and whose values represent each stratum's
+#'   inclusion probability type. \code{seltype}'s default value tries to match the
+#'   intended inclusion probability type: If \code{caty_var} and \code{aux_var} are
 #'   not specified, \code{seltype} is \code{"equal"}; if \code{caty_var} is specified,
 #'   \code{seltype} is \code{"unequal"}; and if \code{aux_var} is specified, \code{seltype}
 #'   is \code{"proportional"}.
@@ -59,48 +59,48 @@
 #'   Each stratum's list element is a named vector whose
 #'   names represent each level of \code{caty_var} and whose values represent each
 #'   level's expected sample size (within the stratum). The sum of the values in each stratum's
-#'   list element must equal that stratum's value in \code{n_base}. 
+#'   list element must equal that stratum's value in \code{n_base}.
 #'
 #' @param aux_var A character string containing the name of the column from
 #'   \code{sframe} that represents the proportional (to size) inclusion probability
 #'   variable (auxiliary variable). This auxiliary variable must be positive, and the resulting
 #'   inclusion probabilities are proportional to the values of the auxiliary variable.
-#'   Larger values of the auxiliary variable result in higher inclusion probabilities. 
+#'   Larger values of the auxiliary variable result in higher inclusion probabilities.
 #'
-#' @param legacy_var If \code{sframe} is a \code{POINT} or \code{MULTIPOINT} geometry (a finite sample frame), 
+#' @param legacy_var If \code{sframe} is a \code{POINT} or \code{MULTIPOINT} geometry (a finite sample frame),
 #'   \code{legacy_var} is a character string containing the name of the column
 #'   from \code{sframe} that represents the legacy site variable. For legacy sites, the values of the
 #'   \code{legacy_var} column in \code{sframe} must contain character strings that
-#'   act as a legacy site identifier. For non-legacy sites, the values of the 
+#'   act as a legacy site identifier. For non-legacy sites, the values of the
 #'   \code{legacy_var} column in \code{sframe} must be \code{NA}.
 #'
 #' @param legacy_sites If \code{sframe} is a \code{LINESTRING}, \code{MULTILINESTRING},
 #'   \code{POLYGON}, or \code{MULTIPOLYGON} geometry (an infinite sample frame),
-#'   \code{legacy_sites} is an sf object with a \code{POINT} geometry representing the 
-#'   legacy sites. 
+#'   \code{legacy_sites} is an sf object with a \code{POINT} geometry representing the
+#'   legacy sites.
 #'
 #' @param legacy_stratum_var A character string containing the name of the column from
 #'   \code{legacy_sites} that identifies stratum membership for each element of \code{legacy_sites}.
 #'   \code{legacy_stratum_var} is required when the design is stratified and its levels
 #'   must be contained in the levels of \code{stratum_var}. The default value of \code{legacy_stratum_var}
 #'   is \code{stratum_var}, so \code{legacy_stratum_var} need only be specified explicitly when
-#'   the name of the stratification variable in \code{legacy_sites} differs from \code{stratum_var}. 
+#'   the name of the stratification variable in \code{legacy_sites} differs from \code{stratum_var}.
 #'
 #' @param mindis A numeric value indicating the desired minimum distance between sampled
 #'   sites. If design is stratified, then mindis is applied separately for each stratum.
 #'   The units of \code{mindis} must match the units in \code{sframe}.
 #'
 #' @param maxtry The number of maximum attempts to apply the minimum distance algorithm to obtain
-#'   the desired minimum distance between sites. Each iteration takes roughly as long as the 
-#'   standard GRTS algorithm. Successive iterations will always contain at least as many 
-#'   sites satisfying the minimum distance requirement as the previous iteration. The algorithm stops 
+#'   the desired minimum distance between sites. Each iteration takes roughly as long as the
+#'   standard GRTS algorithm. Successive iterations will always contain at least as many
+#'   sites satisfying the minimum distance requirement as the previous iteration. The algorithm stops
 #'   when the minimum distance requirement is met or there are \code{maxtry} iterations.
-#'   The default number of maximum iterations is \code{10}. 
+#'   The default number of maximum iterations is \code{10}.
 #'
 #' @param n_over If the design is unstratified and \code{seltype} is \code{"equal"} or \code{"proportional"},
-#'   \code{n_over} is an integer specifying the number of reverse hierarchically 
+#'   \code{n_over} is an integer specifying the number of reverse hierarchically
 #'   ordered (rho) replacement sites desired.  If the design is unstratified and \code{seltype} is \code{"unequal"},
-#'   then \code{n_over} is a named character vector whose names match the levels of 
+#'   then \code{n_over} is a named character vector whose names match the levels of
 #'   \code{caty_var} and whose values are the expected rho replacement sample sizes for each
 #'   level. If the design is stratified and \code{seltype} is \code{"equal"} or \code{"proportional"},
 #'   \code{n_over} is a named vector whose names match the names of \code{n_base} and whose values
@@ -113,25 +113,25 @@
 #'   The order of the strata in this list must match the order of the strata in \code{n_base}.
 #'   Each stratum's list element is a named vector whose names represent each level of \code{caty_var} and whose values represent each
 #'   level's expected rho replacement sample sizes (within the stratum).
-#'    
+#'
 #' @param n_near An integer from \code{1} to \code{10} specifying the number of
 #'   nearest neighbor replacement sites to be selected for each base site.
 #'
 #' @param wgt_units The units used to compute the survey design weights. These
 #'   units must be standard units as defined by the \code{set_units()} function in
-#'   the units package. The default units match the units of the sf object.  
+#'   the units package. The default units match the units of the sf object.
 #'
 #' @param pt_density A numeric value controlling the density of the GRTS approximation
 #'   for infinite sample frames. The GRTS approximation for infinite sample
-#'   frames vastly improves computational efficiency by generating many finite points and 
-#'   selecting a sample from the points. \code{pt_density} represents the density 
+#'   frames vastly improves computational efficiency by generating many finite points and
+#'   selecting a sample from the points. \code{pt_density} represents the density
 #'   of finite points per unit to use in the approximation (and the units match
 #'   the units of the sample frame. The default is a density
 #'   such that the number of finite points used in the approximation equals 10
 #'   times the sample size requested.
 #'
 #' @param DesignID A character string indicating the naming structure for each
-#'   site's identifier selected in the sample, which is included as a variable in the 
+#'   site's identifier selected in the sample, which is included as a variable in the
 #'   sf object in the function's output.
 #'
 #' @param SiteBegin A character string indicating the first number to use to match
@@ -141,13 +141,13 @@
 #'
 #' @return A list with five elements:
 #'   \itemize{
-#'     \item \code{sites_legacy}: An sf object containing legacy sites. This is 
+#'     \item \code{sites_legacy}: An sf object containing legacy sites. This is
 #'       \code{NULL} if legacy sites were not included in the sample.
 #'     \item \code{sites_base}: An sf object containing the base sites.
 #'     \item \code{sites_over}: An sf object containing the reverse hierarchically
 #'       ordered replacement sites. This is \code{NULL} if no reverse hierarchically
 #'       ordered replacement sites were included in the sample.
-#'     \item \code{sites_near}: An sf object containing the nearest neighbor 
+#'     \item \code{sites_near}: An sf object containing the nearest neighbor
 #'       replacement sites. This is \code{NULL} if no nearest neighbor replacement
 #'       sites were included in the sample.
 #'     \item \code{design}: A list documenting the specifications of this design.
@@ -158,14 +158,14 @@
 #'           the design was unstratified.
 #'         \item \code{n_base}: The base sample size per stratum.
 #'         \item \code{seltype}: The selection type per stratum.
-#'         \item \code{caty_n}: The expected sample sizes for each level of the 
-#'           unequal probability grouping variable per stratum. This equals 
+#'         \item \code{caty_n}: The expected sample sizes for each level of the
+#'           unequal probability grouping variable per stratum. This equals
 #'           \code{NULL} when \code{seltype} is not \code{"unequal"}.
 #'         \item \code{legacy}: A logical variable indicating whether legacy sites
 #'           were included in the sample.
-#'         \item \code{mindis}: The minimum distance requirement desired. This 
+#'         \item \code{mindis}: The minimum distance requirement desired. This
 #'           equals \code{NULL} if there was no minimum distance requirement.
-#'         \item \code{n_over}: The reverse hierarchically ordered replacement 
+#'         \item \code{n_over}: The reverse hierarchically ordered replacement
 #'           site sample sizes per stratum. If \code{seltype} is \code{unequal},
 #'           this represents the expected sample sizes. This is \code{NULL}
 #'           if no reverse hierarchically ordered replacement sites were included
@@ -183,17 +183,17 @@
 #'     \item \code{siteID}: A site identifier (as named using the \code{DesignID}
 #'       and \code{SiteBegin} arguments to \code{grts()}.)
 #'     \item \code{siteuse}: Whether the site is a legacy site (\code{Legacy}), base
-#'       site (\code{Base}), reverse hierarchically ordered replacement site 
-#'       (\code{Over}), or nearest neighbor replacement site (\code{Near}). 
+#'       site (\code{Base}), reverse hierarchically ordered replacement site
+#'       (\code{Over}), or nearest neighbor replacement site (\code{Near}).
 #'     \item \code{replsite}: The replacement site ordering. \code{replsite} is
 #'       \code{None} if the site is not a replacement site, \code{Next} if it is
-#'       the next reverse hierarchically ordered replacement site to use, or 
+#'       the next reverse hierarchically ordered replacement site to use, or
 #'       \code{Near_*}, where \code{*} indicates the ordering of sites closest to
 #'       the originally sampled site.
 #'     \item \code{lon_WGS84}: Longitude coordinates using the WGS84 coordinate
 #'       system (EPSG:4326).
 #'     \item \code{lat_WGS84}: Latitude coordinates using the WGS84 coordinate
-#'       system (EPSG:4326). 
+#'       system (EPSG:4326).
 #'     \item \code{stratum}: A stratum indicator. \code{stratum} is \code{None}
 #'       if the design was unstratified. If the design was \code{stratified},
 #'       \code{stratum} indicates the stratum.
@@ -212,7 +212,7 @@
 #' @author Tony Olsen \email{olsen.tony@@epa.gov}
 #'
 #' @keywords survey design
-#' 
+#'
 #' @references
 #' Stevens Jr., Don L. and Olsen, Anthony R. (2004). Spatially balanced sampling
 #' of natural resources. \emph{Journal of the american Statistical association}, 99(465), 262-278.
@@ -228,7 +228,7 @@
 #' @export
 ###############################################################################
 
-grts <- function(sframe, n_base, stratum_var = NULL, seltype = "equal", caty_var = NULL,
+grts <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = NULL,
                  caty_n = NULL, aux_var = NULL, legacy_var = NULL,
                  legacy_sites = NULL, legacy_stratum_var = NULL, mindis = NULL,
                  maxtry = 10, n_over = NULL, n_near = NULL, wgt_units = NULL,
@@ -280,7 +280,7 @@ grts <- function(sframe, n_base, stratum_var = NULL, seltype = "equal", caty_var
   } else {
     stratum <- names(n_base)
   }
-  
+
   # set default seltype if not provided (based on specification of other variables)
   if (is.null(seltype)) {
     if (is.null(caty_var) & is.null(aux_var)) {
@@ -299,7 +299,7 @@ grts <- function(sframe, n_base, stratum_var = NULL, seltype = "equal", caty_var
     legacy_option = legacy_option, stratum = stratum, seltype = seltype,
     n_base = n_base, caty_n = caty_n, n_over = n_over, n_near = n_near,
     stratum_var = stratum_var, caty_var = caty_var, aux_var = aux_var,
-    legacy_var = legacy_var, mindis = mindis, DesignID = DesignID, 
+    legacy_var = legacy_var, mindis = mindis, DesignID = DesignID,
     SiteBegin = SiteBegin, maxtry = maxtry
   )
 

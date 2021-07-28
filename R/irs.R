@@ -15,13 +15,13 @@
 #'
 #' @return A list with five elements:
 #'   \itemize{
-#'     \item \code{sites_legacy}: An sf object containing legacy sites. This is 
+#'     \item \code{sites_legacy}: An sf object containing legacy sites. This is
 #'       \code{NULL} if legacy sites were not included in the sample.
 #'     \item \code{sites_base}: An sf object containing the base sites.
 #'     \item \code{sites_over}: An sf object containing the reverse hierarchically
 #'       ordered replacement sites. This is \code{NULL} if no reverse hierarchically
 #'       ordered replacement sites were included in the sample.
-#'     \item \code{sites_near}: An sf object containing the nearest neighbor 
+#'     \item \code{sites_near}: An sf object containing the nearest neighbor
 #'       replacement sites. This is \code{NULL} if no nearest neighbor replacement
 #'       sites were included in the sample.
 #'     \item \code{design}: A list documenting the specifications of this design.
@@ -32,14 +32,14 @@
 #'           the design was unstratified.
 #'         \item \code{n_base}: The base sample size per stratum.
 #'         \item \code{seltype}: The selection type per stratum.
-#'         \item \code{caty_n}: The expected sample sizes for each level of the 
-#'           unequal probability grouping variable per stratum. This equals 
+#'         \item \code{caty_n}: The expected sample sizes for each level of the
+#'           unequal probability grouping variable per stratum. This equals
 #'           \code{NULL} when \code{seltype} is not \code{"unequal"}.
 #'         \item \code{legacy}: A logical variable indicating whether legacy sites
 #'           were included in the sample.
-#'         \item \code{mindis}: The minimum distance requirement desired. This 
+#'         \item \code{mindis}: The minimum distance requirement desired. This
 #'           equals \code{NULL} if there was no minimum distance requirement.
-#'         \item \code{n_over}: The reverse hierarchically ordered replacement 
+#'         \item \code{n_over}: The reverse hierarchically ordered replacement
 #'           site sample sizes per stratum. If \code{seltype} is \code{unequal},
 #'           this represents the expected sample sizes. This is \code{NULL}
 #'           if no reverse hierarchically ordered replacement sites were included
@@ -60,17 +60,17 @@
 #'     \item \code{siteID}: A site identifier (as named using the \code{DesignID}
 #'       and \code{SiteBegin} arguments to \code{grts()}.)
 #'     \item \code{siteuse}: Whether the site is a legacy site (\code{Legacy}), base
-#'       site (\code{Base}), reverse hierarchically ordered replacement site 
-#'       (\code{Over}), or nearest neighbor replacement site (\code{Near}). 
+#'       site (\code{Base}), reverse hierarchically ordered replacement site
+#'       (\code{Over}), or nearest neighbor replacement site (\code{Near}).
 #'     \item \code{replsite}: The replacement site ordering. \code{replsite} is
 #'       \code{None} if the site is not a replacement site, \code{Next} if it is
-#'       the next reverse hierarchically ordered replacement site to use, or 
+#'       the next reverse hierarchically ordered replacement site to use, or
 #'       \code{Near_*}, where \code{*} indicates the ordering of sites closest to
 #'       the originally sampled site.
 #'     \item \code{lon_WGS84}: Longitude coordinates using the WGS84 coordinate
 #'       system (EPSG:4326).
 #'     \item \code{lat_WGS84}: Latitude coordinates using the WGS84 coordinate
-#'       system (EPSG:4326). 
+#'       system (EPSG:4326).
 #'     \item \code{stratum}: A stratum indicator. \code{stratum} is \code{None}
 #'       if the design was unstratified. If the design was \code{stratified},
 #'       \code{stratum} indicates the stratum.
@@ -98,7 +98,7 @@
 #' @export
 ###############################################################################
 
-irs <- function(sframe, n_base, stratum_var = NULL, seltype = "equal", caty_var = NULL,
+irs <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = NULL,
                 caty_n = NULL, aux_var = NULL, legacy_var = NULL,
                 legacy_sites = NULL, legacy_stratum_var = NULL, mindis = NULL,
                 maxtry = 10, n_over = NULL, n_near = NULL, wgt_units = NULL,
@@ -149,7 +149,7 @@ irs <- function(sframe, n_base, stratum_var = NULL, seltype = "equal", caty_var 
   } else {
     stratum <- names(n_base)
   }
-  
+
   # set default seltype if not provided (based on specification of other variables)
   if (is.null(seltype)) {
     if (is.null(caty_var) & is.null(aux_var)) {
@@ -167,7 +167,7 @@ irs <- function(sframe, n_base, stratum_var = NULL, seltype = "equal", caty_var 
     legacy_option = legacy_option, stratum = stratum, seltype = seltype,
     n_base = n_base, caty_n = caty_n, n_over = n_over, n_near = n_near,
     stratum_var = stratum_var, caty_var = caty_var, aux_var = aux_var,
-    legacy_var = legacy_var, mindis = mindis, DesignID = DesignID, 
+    legacy_var = legacy_var, mindis = mindis, DesignID = DesignID,
     SiteBegin = SiteBegin, maxtry = maxtry
   )
 
@@ -187,7 +187,7 @@ irs <- function(sframe, n_base, stratum_var = NULL, seltype = "equal", caty_var 
     # ensure class for stratum variable is character and assign to stratum
     sframe$stratum <- as.character(sframe[[stratum_var]])
   }
-  
+
   # set caty, aux and legacy variables in sample frame if needed
   if (!is.null(caty_var)) sframe$caty <- as.character(sframe[[caty_var]])
   if (!is.null(aux_var)) sframe$aux <- sframe[[aux_var]]
@@ -439,7 +439,7 @@ irs <- function(sframe, n_base, stratum_var = NULL, seltype = "equal", caty_var 
 
   # create output list
   sites <- list(
-    sites_legacy = sites_legacy, sites_base = sites_base, 
+    sites_legacy = sites_legacy, sites_base = sites_base,
     sites_over = sites_over, sites_near = sites_near,
     design = dsgn
   )
