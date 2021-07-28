@@ -436,6 +436,27 @@ test_that("algorithm executes", {
   expect_equal(NCOL(grts_output$sites_near), col_out + 1)
 })
 
+#--------------------------------------
+#-------- NN replacement
+#--------------------------------------
+
+# both replacement sites, unstratified
+test_that("algorithm executes", {
+  n_base <- 50
+  n_over <- 5
+  n_near <- 2
+  grts_output<- grts(NE_Lakes, n_base = n_base, seltype = "equal", n_over = n_over, n_near = n_near)
+  expect_true(exists("grts_output"))
+  expect_equal(NROW(grts_output$sites_legacy), 0)
+  expect_equal(NROW(grts_output$sites_base), n_base)
+  expect_equal(NROW(grts_output$sites_over), n_over)
+  expect_equal(NROW(grts_output$sites_near), (n_base + n_over) * n_near)
+  expect_equal(NCOL(grts_output$sites_legacy), 1)
+  expect_equal(NCOL(grts_output$sites_base), col_out)
+  expect_equal(NCOL(grts_output$sites_over), col_out)
+  expect_equal(NCOL(grts_output$sites_near), col_out)
+})
+
 #################################################
 ########### Illinois_River DATA TESTS
 #################################################
