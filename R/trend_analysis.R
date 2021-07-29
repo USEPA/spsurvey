@@ -19,6 +19,9 @@
 #          local mean variance estimator
 # Revised: June 14, 2021 to use the new function named mean_est for calculation
 #          of mean estimates
+# Revised: July 28, 2021 to ensure that data is available for a sufficient
+#          number of years to perform linear regression for categorical
+#          variables
 #
 #' Estimation of Trend across Time for a Series of Probability Surveys
 #'
@@ -28,7 +31,7 @@
 #' for model are: (1) simple linear regression, (2) weighted linear regression,
 #' and (3) the Piepho and Ogutu (2002) model.  The input data argument can be
 #' either a data frame or a simple features (sf) object.  If an sf object is
-#' used, coo \code{xcoord} and \code{ycoord} are assigned values \code{"xcoord"}
+#' used, \code{xcoord} and \code{ycoord} are assigned values \code{"xcoord"}
 #' and \code{"ycoord"}, respectively, and the geometry column is dropped from
 #' the object.
 #'
@@ -707,10 +710,12 @@ trend_analysis <- function(
 
   # If invprboot equals TRUE, then assign the bootstrap weights
 
-  if(cluster_ind) {
-    bootwgt <- dframe$wgt1 * dframe$wgt2
-  } else {
-    bootwgt <- dframe$wgt
+  if(invprboot == TRUE) {
+    if(cluster_ind) {
+      bootwgt <- dframe$wgt1 * dframe$wgt2
+    } else {
+      bootwgt <- dframe$wgt
+    }
   }
 
   # Create a year variable for use in modelling
@@ -776,12 +781,12 @@ trend_analysis <- function(
 
             if(all(is.na(dframe[subpop_ind, ivar]))) {
               warn_ind <- TRUE
-              warn <- paste("Year", years[iyear], "of Subpopulation", isubpop, "of population type", itype, "\nfor indicator", ivar, "contains no data.\n")
+              warn <- paste0("Year ", years[iyear], " of Subpopulation \"", isubpop, "\" of population type \"", itype, "\" for indicator\n \"", ivar, "\" contains no data.\n")
               act <- "None.\n"
-              warn_df <- rbind(warn_df, data.frame(func=I(fname),
-                subpoptype=I(itype),
-                subpop=I(isubpop), indicator=I(ivar),
-                stratum=NA,  warning=I(warn), action=I(act)))
+              warn_df <- rbind(warn_df, data.frame(
+                func=I(fname), subpoptype=I(itype), subpop=I(isubpop),
+                indicator=I(ivar), stratum=NA,  warning=I(warn), action=I(act)
+              ))
               next
             }
 
@@ -790,21 +795,22 @@ trend_analysis <- function(
             tst <- !is.na(dframe[subpop_ind, ivar])
             if(sum(tst) == 1) {
               warn_ind <- TRUE
-              warn <- paste("Year", years[iyear], "of Subpopulation", isubpop, "of population type", itype, "\nfor indicator", ivar, "contains a single value.\n")
+              warn <- paste0("Year ", years[iyear], " of Subpopulation \"", isubpop, "\" of population type \"", itype, "\" for indicator\n \"", ivar, "\" contains a single value.\n")
               act <- "None.\n"
-              warn_df <- rbind(warn_df, data.frame(func=I(fname),
-                subpoptype=I(itype),
-                subpop=I(isubpop), indicator=I(ivar),
-                stratum=NA,  warning=I(warn), action=I(act)))
+              warn_df <- rbind(warn_df, data.frame(
+                func=I(fname), subpoptype=I(itype), subpop=I(isubpop),
+                indicator=I(ivar), stratum=NA,  warning=I(warn), action=I(act)
+              ))
               next
             }
 
             # Estimate category proportions for the response variable
 
-            temp <- category_est(NULL, droplevels(subset(dframe, subpop_ind)),
-              itype, isubpop, 1, ivar, lev_ivar, nlev_ivar,
-              subset(design, subpop_ind), design_names, vartype, conf,
-              mult, warn_ind, warn_df)
+            tempdf <- subset(dframe, subpop_ind)
+            templev <- levels(tempdf[, ivar])
+            temp <- category_est(NULL, tempdf, itype, isubpop, 1, ivar, templev,
+              length(templev), subset(design, subpop_ind), design_names,
+              vartype, conf, mult, warn_ind, warn_df)
             temp_cat <- temp$catsum
             warn_ind <- temp$warn_ind
             warn_df <- temp$warn_df
@@ -833,12 +839,21 @@ trend_analysis <- function(
             tst <- !is.na(catest[icat,])
             if(all(tst == FALSE)) {
               warn_ind <- TRUE
-              warn <- paste("Subpopulation", isubpop, "of population type", itype, "\nfor indicator", ivar, "contains no data for the ", lev_ivar[icat], " category.\n")
+              warn <- paste0("Subpopulation \"", isubpop, "\" of population type \"", itype, "\" for indicator \"", ivar, "\" \ncontains no data for the \"", lev_ivar[icat], "\" category.\n")
               act <- "None.\n"
-              warn_df <- rbind(warn_df, data.frame(func=I(fname),
-                subpoptype=I(itype),
-                subpop=I(isubpop), indicator=I(ivar),
-                stratum=NA,  warning=I(warn), action=I(act)))
+              warn_df <- rbind(warn_df, data.frame(
+                func=I(fname), subpoptype=I(itype), subpop=I(isubpop),
+                indicator=I(ivar), stratum=NA,  warning=I(warn), action=I(act)
+              ))
+              next
+            } else if(sum(tst) < 3) {
+              warn_ind <- TRUE
+              warn <- paste0("Subpopulation \"", isubpop, "\" of population type \"", itype, "\" for indicator \"", ivar, "\" \ncontains less than three years of data for the \"", lev_ivar[icat], "\" category.\n")
+              act <- "None.\n"
+              warn_df <- rbind(warn_df, data.frame(
+                func=I(fname), subpoptype=I(itype), subpop=I(isubpop),
+                indicator=I(ivar), stratum=NA,  warning=I(warn), action=I(act)
+              ))
               next
             }
             if(model_cat == "SLR" ) {
@@ -937,12 +952,12 @@ trend_analysis <- function(
 
               if(all(is.na(dframe[subpop_ind, ivar]))) {
                 warn_ind <- TRUE
-                warn <- paste("Year", years[iyear], "of Subpopulation", isubpop, "of population type", itype, "\nfor indicator", ivar, "contains no data.\n")
+                warn <- paste0("Year ", years[iyear], " of Subpopulation \"", isubpop, "\" of population type \"", itype, "\" for indicator\n \"", ivar, "\" contains no data.\n")
                 act <- "None.\n"
-                warn_df <- rbind(warn_df, data.frame(func=I(fname),
-                  subpoptype=I(itype),
-                  subpop=I(isubpop), indicator=I(ivar),
-                  stratum=NA,  warning=I(warn), action=I(act)))
+                warn_df <- rbind(warn_df, data.frame(
+                  func=I(fname), subpoptype=I(itype), subpop=I(isubpop),
+                  indicator=I(ivar), stratum=NA,  warning=I(warn), action=I(act)
+                ))
                 next
               }
 
@@ -951,12 +966,12 @@ trend_analysis <- function(
               tst <- !is.na(dframe[subpop_ind, ivar])
               if(sum(tst) == 1) {
                 warn_ind <- TRUE
-                warn <- paste("Year", years[iyear], "of Subpopulation", isubpop, "of population type", itype, "\nfor indicator", ivar, "contains a single value.\n")
+                warn <- paste0("Year ", years[iyear], " of Subpopulation \"", isubpop, "\" of population type \"", itype, "\" for indicator\n \"", ivar, "\" contains a single value.\n")
                 act <- "None.\n"
-                warn_df <- rbind(warn_df, data.frame(func=I(fname),
-                  subpoptype=I(itype),
-                  subpop=I(isubpop), indicator=I(ivar),
-                  stratum=NA,  warning=I(warn), action=I(act)))
+                warn_df <- rbind(warn_df, data.frame(
+                  func=I(fname), subpoptype=I(itype), subpop=I(isubpop),
+                  indicator=I(ivar), stratum=NA,  warning=I(warn), action=I(act)
+                ))
                 next
               }
 

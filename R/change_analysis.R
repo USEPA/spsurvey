@@ -26,6 +26,8 @@
 #          local mean variance estimator
 # Revised: June 14, 2021 to acommodate the revised aproach for calculation of
 #          mean estimates
+# Revised: July 23, 2021 to eliminate analysis of subpopulation categories that
+#          contain only missing values in one of the surveys
 #
 #' Estimation of Change between Two Probability Surveys
 #'
@@ -604,6 +606,37 @@ change_analysis <- function(
       temp.str <- vecprint(temp)
       msg <- paste("For the following subpopulation variables, at least one of the surveys contains only \nmissing values:\n", temp.str)
       error_vec <- c(error_vec, msg)
+    } else {
+
+      # For each subpopulation variable, remove levels that contain only missing
+      #  values for one of the surveys
+
+      temp <- NULL
+      for(v in subpops) {
+        for(lv in unique(dframe[, v])) {
+          tst1 <- dframe[survey_1, v] == lv
+          tst2 <- dframe[survey_2, v] == lv
+          if (all(is.na(dframe[survey_1, v][tst1])) |
+              all(is.na(dframe[survey_2, v][tst2]))) {
+            temp <- c(temp, lv)
+          }
+        }
+        if (!is.null(temp)) {
+          warn_ind <- TRUE
+          temp.str <- vecprint(temp)
+          warn <- paste0("For subpopulation variable \"" , v, "\", one of the surveys contains only missing values \nfor the following categories:\n", temp.str)
+          act <- "The subpopulation categories were eliminated from the analysis.\n"
+          warn_df <- rbind(warn_df, data.frame(
+            func = I(fname), subpoptype = v, subpop = NA, indicator = NA,
+            stratum = NA, warning = I(warn), action = I(act)
+          ))
+          dframe[, v] <- as.character(dframe[, v])
+          for(lv in temp) {
+            tst <- dframe[, v] == lv
+            dframe[tst, v] <- NA
+          }
+        }
+      }
     }
   }
 
