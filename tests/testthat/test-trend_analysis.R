@@ -5,7 +5,7 @@ context("trend analysis")
 #
 
 # Read the data frame containing survey design and analysis variables
-load(system.file("extdata", "NLA_IN.rda", package = "svyanalysis"))
+load(system.file("extdata", "NLA_IN.rda", package = "spsurvey"))
 
 # Create a population size data frame
 popsize <- data.frame(
