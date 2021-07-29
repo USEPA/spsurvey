@@ -6,14 +6,14 @@
 #'
 #' @description Plot sample frames and design objects.
 #'
-#' This function is largely built on \code{plot.sf()}, and all spsurvey plotting 
-#' methods can supply additional arguments to \code{plot.sf()}. For more information, 
+#' This function is largely built on \code{plot.sf()}, and all spsurvey plotting
+#' methods can supply additional arguments to \code{plot.sf()}. For more information,
 #' run \code{vignette(plotting, package = "spsurvey"}. For more information on
 #' plotting in \code{sf}, run \code{?plot.sf()}.
 #'
 #' @param x object of class \code{sframe}, \code{spdesign}, or \code{dframe}.
 #'
-#' @param y ignored if \code{x} has class \code{sframe} or \code{dframe}; an 
+#' @param y ignored if \code{x} has class \code{sframe} or \code{dframe}; an
 #' object of class \code{sframe} if \code{x} has class \code{spdesign}.
 #'
 #' @param formula A formula. Left hand side variables can be numeric or
@@ -273,14 +273,16 @@ plot.spdesign <- function(x, y = NULL, formula = ~siteuse, siteuse = NULL,
   if ((is.null(siteuse) & (!is.null(x$sites_near))) | "Near" %in% siteuse) {
     x$sites_near$siteuse <- "Near"
   }
+
   # bind
-  x <- sprbind(x)
+  siteuse_spr <- siteuse[!(siteuse %in% "sframe")]
+  x <- sprbind(x, siteuse = siteuse_spr)
   # make formlists
   formlist_x <- make_formlist(formula, onlyshow, x)
   # make sframe
   varsf_x <- make_varsf(x, formlist_x)
 
-  if (!is.null(y)) {
+  if (!is.null(y) & "sframe" %in% siteuse) {
     y$siteuse <- "sframe"
     # make formlists
     formlist_y <- make_formlist(formula, onlyshow, y)
