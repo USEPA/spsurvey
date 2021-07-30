@@ -282,8 +282,7 @@ revisit_dsgn <- function(n_period, panels, begin = 1, skip = 1) {
           c(paste(names(panels)[nsplit], 1:nrow(pan_dsgn), sep = "_")),
           seq(begin, by = skip, length.out = ncol(pan_dsgn))
         )
-      }
-      else {
+      } else {
         dimnames(pan_dsgn) <- list(
           c(
             paste(names(panels)[nsplit], 1:9, sep = "_0"),
@@ -307,8 +306,7 @@ revisit_dsgn <- function(n_period, panels, begin = 1, skip = 1) {
       for (i in 1:(n_panels + n_cycle)) {
         if (i == 1) {
           pan_dsgn <- c(visit, rep(0, n_period + n_cycle))
-        }
-        else {
+        } else {
           pan_dsgn <- rbind(pan_dsgn, c(rep(0, i - 1), visit, rep(0, n_period + n_cycle - (i - 1))))
         }
       }
@@ -364,8 +362,7 @@ revisit_dsgn <- function(n_period, panels, begin = 1, skip = 1) {
           c(paste(names(panels)[nsplit], 1:nrow(pan_dsgn), sep = "_")),
           seq(begin, by = skip, length.out = ncol(pan_dsgn))
         )
-      }
-      else {
+      } else {
         dimnames(pan_dsgn) <- list(
           c(
             paste(names(panels)[nsplit], 1:9, sep = "_0"),

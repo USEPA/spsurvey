@@ -295,17 +295,15 @@
 #'   weight = "wgt", xcoord = "xcoord", ycoord = "ycoord",
 #'   stratumID = "stratum", popsize = mypopsize, testname = "RaoScott_First"
 #' )
-#'
 #' @export
 ################################################################################
 
-cont_cdftest <- function(
-  dframe, vars, subpops = NULL, surveyID = NULL, siteID = "siteID",
-  weight = "weight", xcoord = NULL, ycoord = NULL, stratumID = NULL,
-  clusterID = NULL, weight1 = NULL, xcoord1 = NULL, ycoord1 = NULL,
-  sizeweight = FALSE, sweight = NULL, sweight1 = NULL, fpc = NULL,
-  popsize = NULL, vartype = "Local", jointprob = "overton",
-  testname = "adjWald", nclass = 3) {
+cont_cdftest <- function(dframe, vars, subpops = NULL, surveyID = NULL, siteID = "siteID",
+                         weight = "weight", xcoord = NULL, ycoord = NULL, stratumID = NULL,
+                         clusterID = NULL, weight1 = NULL, xcoord1 = NULL, ycoord1 = NULL,
+                         sizeweight = FALSE, sweight = NULL, sweight1 = NULL, fpc = NULL,
+                         popsize = NULL, vartype = "Local", jointprob = "overton",
+                         testname = "adjWald", nclass = 3) {
 
   # Create a vector for error messages
 
@@ -490,7 +488,7 @@ cont_cdftest <- function(
   } else {
     fpcfactor_ind <- TRUE
     if (is.null(clusterID)) {
-      fpcsize = "fpcsize"
+      fpcsize <- "fpcsize"
       Ncluster <- NULL
       stage1size <- NULL
     } else {
@@ -540,7 +538,8 @@ cont_cdftest <- function(
 
   # Check input arguments
   temp <- input_check(dframe, design_names, NULL, vars, NULL, NULL, subpops,
-    sizeweight, fpc, popsize, vartype, jointprob, conf = 95,
+    sizeweight, fpc, popsize, vartype, jointprob,
+    conf = 95,
     error_ind = error_ind, error_vec = error_vec
   )
   dframe <- temp$dframe

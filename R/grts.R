@@ -233,7 +233,6 @@ grts <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = 
                  legacy_sites = NULL, legacy_stratum_var = NULL, mindis = NULL,
                  maxtry = 10, n_over = NULL, n_near = NULL, wgt_units = NULL,
                  pt_density = NULL, DesignID = "Site", SiteBegin = 1) {
-
   if (inherits(sframe, c("tbl_df", "tbl"))) { # identify if tibble class elements are present
     class(sframe) <- setdiff(class(sframe), c("tbl_df", "tbl"))
     # remove tibble class for rownames warning
@@ -567,9 +566,11 @@ grts <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = 
 
   # add function call to dsgn list
   # dsgn <- c(list(Call = match.call()), dsgn)
-  dsgn <- list(call = match.call(), stratum = dsgn$stratum, n_base = dsgn$n_base,
-               seltype = dsgn$seltype, caty_n = dsgn$caty_n, legacy = dsgn$legacy_option,
-               mindis = dsgn$mindis, n_over = dsgn$n_over, n_near = dsgn$n_near)
+  dsgn <- list(
+    call = match.call(), stratum = dsgn$stratum, n_base = dsgn$n_base,
+    seltype = dsgn$seltype, caty_n = dsgn$caty_n, legacy = dsgn$legacy_option,
+    mindis = dsgn$mindis, n_over = dsgn$n_over, n_near = dsgn$n_near
+  )
 
   # create output list
   sites <- list(

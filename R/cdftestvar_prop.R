@@ -104,10 +104,13 @@ cdftestvar_prop <- function(design, wgt, x, y, stratum_ind, stratum_level,
 
   # Create the model matrix for the contingency table using all of the data
 
-  frm_cells <- eval(bquote(~ interaction(factor(.(as.name("rowvar"))),
-    factor(.(as.name("colvar")))) - 1))
+  frm_cells <- eval(bquote(~ interaction(
+    factor(.(as.name("rowvar"))),
+    factor(.(as.name("colvar")))
+  ) - 1))
   mm_cells <- model.matrix(frm_cells, model.frame(frm_cells, design$variables,
-    na.action = na.pass))
+    na.action = na.pass
+  ))
 
   # Calculate contingency table means
 
@@ -152,7 +155,8 @@ cdftestvar_prop <- function(design, wgt, x, y, stratum_ind, stratum_level,
       design_var <- subset(design$variables, cluster == cluster_levels[i] &
         !(is.na(rowvar) | is.na(colvar)))
       mm_cluster <- model.matrix(frm_cells, model.frame(frm_cells, design_var,
-        na.action = na.pass))
+        na.action = na.pass
+      ))
 
       # Calculate the weighted residuals matrix
 
@@ -198,7 +202,7 @@ cdftestvar_prop <- function(design, wgt, x, y, stratum_ind, stratum_level,
             x2_lst[[i]], y2_lst[[i]],
             1 / wgt2_lst[[i]]
           )
-          if(is.null(weight_lst)) {
+          if (is.null(weight_lst)) {
             warn_ind <- TRUE
             act <- "The simple random sampling covariance estimator for an infinite population was used.\n"
             if (stratum_ind) {
@@ -220,7 +224,7 @@ cdftestvar_prop <- function(design, wgt, x, y, stratum_ind, stratum_level,
           } else {
             temp <- localmean_cov(rm, weight_lst)
             var2est[i, ] <- as.vector(temp)
-            if(any(diag(temp) < 0)) {
+            if (any(diag(temp) < 0)) {
               warn_ind <- TRUE
               act <- "The simple random sampling covariance estimator for an infinite population was used.\n"
               if (stratum_ind) {
@@ -275,7 +279,7 @@ cdftestvar_prop <- function(design, wgt, x, y, stratum_ind, stratum_level,
 
     if (vartype == "Local") {
       weight_lst <- localmean_weight(x1_u, y1_u, 1 / wgt1_u)
-      if(is.null(weight_lst)) {
+      if (is.null(weight_lst)) {
         warn_ind <- TRUE
         act <- "The simple random sampling covariance estimator for an infinite population was used.\n"
         if (stratum_ind) {
@@ -294,15 +298,18 @@ cdftestvar_prop <- function(design, wgt, x, y, stratum_ind, stratum_level,
           ))
         }
         varest <- (ncluster * var(total2est * matrix(rep(wgt1_u, m_cl),
-          nrow = ncluster)) + matrix(apply(var2est * matrix(rep(wgt1_u, m_cl^2),
-          nrow = ncluster), 2, sum), nrow = m_cl)) / tw2
+          nrow = ncluster
+        )) + matrix(apply(var2est * matrix(rep(wgt1_u, m_cl^2),
+          nrow = ncluster
+        ), 2, sum), nrow = m_cl)) / tw2
       } else {
         varest <- (localmean_cov(total2est * matrix(rep(wgt1_u, m_cl),
-          nrow = ncluster), weight_lst) + matrix(apply(var2est *
+          nrow = ncluster
+        ), weight_lst) + matrix(apply(var2est *
           matrix(rep(wgt1_u, m_cl^2), nrow = ncluster), 2, sum), nrow = m_cl)) /
           tw2
         temp <- diag(varest)
-        if(any(temp < 0)) {
+        if (any(temp < 0)) {
           warn_ind <- TRUE
           act <- "The simple random sampling covariance estimator for an infinite population was used.\n"
           if (stratum_ind) {
@@ -321,20 +328,23 @@ cdftestvar_prop <- function(design, wgt, x, y, stratum_ind, stratum_level,
             ))
           }
           varest <- (ncluster * var(total2est * matrix(rep(wgt1_u, m_cl),
-            nrow = ncluster)) + matrix(apply(var2est *
+            nrow = ncluster
+          )) + matrix(apply(var2est *
             matrix(rep(wgt1_u, m_cl^2), nrow = ncluster), 2, sum),
-            nrow = m_cl)) / tw2
+          nrow = m_cl
+          )) / tw2
         }
       }
     } else {
       varest <- (ncluster * var(total2est * matrix(rep(wgt1_u, m_cl),
-        nrow = ncluster)) + matrix(apply(var2est * matrix(rep(wgt1_u, m_cl^2),
-        nrow = ncluster), 2, sum), nrow = m_cl)) / tw2
+        nrow = ncluster
+      )) + matrix(apply(var2est * matrix(rep(wgt1_u, m_cl^2),
+        nrow = ncluster
+      ), 2, sum), nrow = m_cl)) / tw2
     }
     colnames(varest) <- names_means
 
     # End of section for a two-stage sample
-
   } else {
 
     # Begin the section for a single-stage sample
@@ -346,7 +356,7 @@ cdftestvar_prop <- function(design, wgt, x, y, stratum_ind, stratum_level,
     # Calculate the weighted residuals matrix
 
     mm_cells <- subset(mm_cells, !(is.na(design$variables$rowvar) |
-        is.na(design$variables$colvar)))
+      is.na(design$variables$colvar)))
     n <- nrow(mm_cells)
     rm <- (mm_cells - matrix(rep(means, n), nrow = n, byrow = TRUE)) *
       matrix(rep(wgt, m), nrow = n)
@@ -378,18 +388,18 @@ cdftestvar_prop <- function(design, wgt, x, y, stratum_ind, stratum_level,
 
     if (vartype == "Local") {
       weight_lst <- localmean_weight(x, y, 1 / wgt)
-      if(is.null(weight_lst)) {
+      if (is.null(weight_lst)) {
         warn_ind <- TRUE
         act <- "The simple random sampling covariance estimator for an infinite population was used.\n"
         if (stratum_ind) {
-            warn <- paste0("The local mean covariance estimator cannot calculate valid estimates for stratum \n\"", stratum_level, "\", the simple random sampling covariance estimator for an infinite \npopulation was used to calculate covariance of the contingency table proportion \nestimates.\n")
+          warn <- paste0("The local mean covariance estimator cannot calculate valid estimates for stratum \n\"", stratum_level, "\", the simple random sampling covariance estimator for an infinite \npopulation was used to calculate covariance of the contingency table proportion \nestimates.\n")
           warn_df <- rbind(warn_df, data.frame(
             func = I(fname), subpoptype = warn_vec[1], subpop = warn_vec[2],
             indicator = warn_vec[3], stratum = stratum_level, warning = I(warn),
             action = I(act)
           ))
         } else {
-            warn <- paste0("The local mean covariance estimator cannot calculate valid estimates, the simple random \nsampling covariance estimator for an infinite population was used to calculate \ncovariance of the contingency table proportion estimates.\n")
+          warn <- paste0("The local mean covariance estimator cannot calculate valid estimates, the simple random \nsampling covariance estimator for an infinite population was used to calculate \ncovariance of the contingency table proportion estimates.\n")
           warn_df <- rbind(warn_df, data.frame(
             func = I(fname), subpoptype = warn_vec[1], subpop = warn_vec[2],
             indicator = warn_vec[3], stratum = NA, warning = I(warn),
@@ -400,7 +410,7 @@ cdftestvar_prop <- function(design, wgt, x, y, stratum_ind, stratum_level,
       } else {
         varest <- localmean_cov(rm, weight_lst) / tw2
         temp <- diag(varest)
-        if(any(temp < 0)) {
+        if (any(temp < 0)) {
           warn_ind <- TRUE
           act <- "The simple random sampling covariance estimator for an infinite population was used.\n"
           if (stratum_ind) {
@@ -427,7 +437,6 @@ cdftestvar_prop <- function(design, wgt, x, y, stratum_ind, stratum_level,
     colnames(varest) <- names_means
 
     # End of section for a single-stage sample
-
   }
 
   # Return the variance estimates, warning message indicator, and the warn_df

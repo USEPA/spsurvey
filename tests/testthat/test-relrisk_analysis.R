@@ -10,7 +10,8 @@ load(system.file("extdata", "NLA_IN.rda", package = "spsurvey"))
 # Create a population size data frame
 popsize <- data.frame(
   LAKE_ORGN = c("MAN_MADE", "NATURAL"),
-  Total = c(6000, 14000))
+  Total = c(6000, 14000)
+)
 
 # Create finite population correction factor objects
 fpc1 <- 20000
@@ -75,10 +76,12 @@ vars_stressor <- c("PTL_COND", "NTL_COND")
 subpops <- c("All_Sites", "LAKE_ORGN")
 
 # Perform tests
-RelRisk_Estimates <- relrisk_analysis(dframe = NLA_IN,
-                                      vars_response = vars_response, vars_stressor= vars_stressor,
-                                      subpops = subpops, siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD",
-                                      ycoord = "YCOORD")
+RelRisk_Estimates <- relrisk_analysis(
+  dframe = NLA_IN,
+  vars_response = vars_response, vars_stressor = vars_stressor,
+  subpops = subpops, siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD",
+  ycoord = "YCOORD"
+)
 
 test_that("Relative Risk: Unstratified single-stage analysis", {
   expect_true(exists("RelRisk_Estimates"))
@@ -86,10 +89,12 @@ test_that("Relative Risk: Unstratified single-stage analysis", {
   expect_equal(nrow(RelRisk_Estimates), 6)
 })
 
-RelRisk_Estimates <- relrisk_analysis(dframe = NLA_IN,
-                                      vars_response = vars_response, vars_stressor= vars_stressor,
-                                      subpops = subpops, siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD",
-                                      ycoord = "YCOORD", popsize = popsize)
+RelRisk_Estimates <- relrisk_analysis(
+  dframe = NLA_IN,
+  vars_response = vars_response, vars_stressor = vars_stressor,
+  subpops = subpops, siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD",
+  ycoord = "YCOORD", popsize = popsize
+)
 
 test_that("Relative Risk: with known population sizes", {
   expect_true(exists("RelRisk_Estimates"))
@@ -97,10 +102,12 @@ test_that("Relative Risk: with known population sizes", {
   expect_equal(nrow(RelRisk_Estimates), 6)
 })
 
-RelRisk_Estimates <- relrisk_analysis(dframe = NLA_IN,
-                                      vars_response = vars_response, vars_stressor= vars_stressor,
-                                      subpops = subpops, siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD",
-                                      ycoord = "YCOORD", fpc = fpc1)
+RelRisk_Estimates <- relrisk_analysis(
+  dframe = NLA_IN,
+  vars_response = vars_response, vars_stressor = vars_stressor,
+  subpops = subpops, siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD",
+  ycoord = "YCOORD", fpc = fpc1
+)
 
 test_that("Relative Risk: with finite population correction factor", {
   expect_true(exists("RelRisk_Estimates"))
@@ -108,10 +115,12 @@ test_that("Relative Risk: with finite population correction factor", {
   expect_equal(nrow(RelRisk_Estimates), 6)
 })
 
-RelRisk_Estimates <- relrisk_analysis(dframe = NLA_IN,
-                                      vars_response = vars_response, vars_stressor= vars_stressor,
-                                      subpops = subpops, siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD",
-                                      ycoord = "YCOORD", stratumID = "URBN_NLA17")
+RelRisk_Estimates <- relrisk_analysis(
+  dframe = NLA_IN,
+  vars_response = vars_response, vars_stressor = vars_stressor,
+  subpops = subpops, siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD",
+  ycoord = "YCOORD", stratumID = "URBN_NLA17"
+)
 
 test_that("Relative Risk: Stratified single-stage analysis", {
   expect_true(exists("RelRisk_Estimates"))
@@ -119,10 +128,12 @@ test_that("Relative Risk: Stratified single-stage analysis", {
   expect_equal(nrow(RelRisk_Estimates), 6)
 })
 
-RelRisk_Estimates <- relrisk_analysis(dframe = NLA_IN,
-                                      vars_response = vars_response, vars_stressor= vars_stressor,
-                                      subpops = subpops, siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD",
-                                      ycoord = "YCOORD", stratumID = "URBN_NLA17", popsize = popsize)
+RelRisk_Estimates <- relrisk_analysis(
+  dframe = NLA_IN,
+  vars_response = vars_response, vars_stressor = vars_stressor,
+  subpops = subpops, siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD",
+  ycoord = "YCOORD", stratumID = "URBN_NLA17", popsize = popsize
+)
 
 test_that("Relative Risk: with known population sizes", {
   expect_true(exists("RelRisk_Estimates"))
@@ -130,10 +141,12 @@ test_that("Relative Risk: with known population sizes", {
   expect_equal(nrow(RelRisk_Estimates), 6)
 })
 
-RelRisk_Estimates <- relrisk_analysis(dframe = NLA_IN,
-                                      vars_response = vars_response, vars_stressor= vars_stressor,
-                                      subpops = subpops, siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD",
-                                      ycoord = "YCOORD", stratumID = "URBN_NLA17", fpc = fpc2a)
+RelRisk_Estimates <- relrisk_analysis(
+  dframe = NLA_IN,
+  vars_response = vars_response, vars_stressor = vars_stressor,
+  subpops = subpops, siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD",
+  ycoord = "YCOORD", stratumID = "URBN_NLA17", fpc = fpc2a
+)
 
 test_that("Relative Risk: with finite population correction factor", {
   expect_true(exists("RelRisk_Estimates"))
@@ -141,11 +154,13 @@ test_that("Relative Risk: with finite population correction factor", {
   expect_equal(nrow(RelRisk_Estimates), 6)
 })
 
-RelRisk_Estimates <- relrisk_analysis(dframe = NLA_IN,
-                                      vars_response = vars_response, vars_stressor= vars_stressor,
-                                      subpops = subpops, siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD",
-                                      ycoord = "YCOORD", clusterID = "clusterID", weight1 = "weight1",
-                                      xcoord1 = "xcoord1", ycoord1 = "ycoord1")
+RelRisk_Estimates <- relrisk_analysis(
+  dframe = NLA_IN,
+  vars_response = vars_response, vars_stressor = vars_stressor,
+  subpops = subpops, siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD",
+  ycoord = "YCOORD", clusterID = "clusterID", weight1 = "weight1",
+  xcoord1 = "xcoord1", ycoord1 = "ycoord1"
+)
 
 test_that("Relative Risk: Unstratified two-stage analysis", {
   expect_true(exists("RelRisk_Estimates"))
@@ -153,11 +168,13 @@ test_that("Relative Risk: Unstratified two-stage analysis", {
   expect_equal(nrow(RelRisk_Estimates), 6)
 })
 
-RelRisk_Estimates <- relrisk_analysis(dframe = NLA_IN,
-                                      vars_response = vars_response, vars_stressor= vars_stressor,
-                                      subpops = subpops, siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD",
-                                      ycoord = "YCOORD", clusterID = "clusterID", weight1 = "weight1",
-                                      xcoord1 = "xcoord1", ycoord1 = "ycoord1", popsize = popsize)
+RelRisk_Estimates <- relrisk_analysis(
+  dframe = NLA_IN,
+  vars_response = vars_response, vars_stressor = vars_stressor,
+  subpops = subpops, siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD",
+  ycoord = "YCOORD", clusterID = "clusterID", weight1 = "weight1",
+  xcoord1 = "xcoord1", ycoord1 = "ycoord1", popsize = popsize
+)
 
 test_that("Relative Risk: with known population sizes", {
   expect_true(exists("RelRisk_Estimates"))
@@ -165,11 +182,13 @@ test_that("Relative Risk: with known population sizes", {
   expect_equal(nrow(RelRisk_Estimates), 6)
 })
 
-RelRisk_Estimates <- relrisk_analysis(dframe = NLA_IN,
-                                      vars_response = vars_response, vars_stressor= vars_stressor,
-                                      subpops = subpops, siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD",
-                                      ycoord = "YCOORD", clusterID = "clusterID", weight1 = "weight1",
-                                      xcoord1 = "xcoord1", ycoord1 = "ycoord1", fpc = fpc3)
+RelRisk_Estimates <- relrisk_analysis(
+  dframe = NLA_IN,
+  vars_response = vars_response, vars_stressor = vars_stressor,
+  subpops = subpops, siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD",
+  ycoord = "YCOORD", clusterID = "clusterID", weight1 = "weight1",
+  xcoord1 = "xcoord1", ycoord1 = "ycoord1", fpc = fpc3
+)
 
 test_that("Relative Risk: with finite population correction factor", {
   expect_true(exists("RelRisk_Estimates"))
@@ -177,12 +196,14 @@ test_that("Relative Risk: with finite population correction factor", {
   expect_equal(nrow(RelRisk_Estimates), 6)
 })
 
-RelRisk_Estimates <- relrisk_analysis(dframe = NLA_IN,
-                                      vars_response = vars_response, vars_stressor= vars_stressor,
-                                      subpops = subpops, siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD",
-                                      ycoord = "YCOORD", stratumID = "URBN_NLA17", clusterID = "clusterID",
-                                      weight1 = "weight1", xcoord1 = "xcoord1", ycoord1 = "ycoord1",
-                                      vartype = "SRS")
+RelRisk_Estimates <- relrisk_analysis(
+  dframe = NLA_IN,
+  vars_response = vars_response, vars_stressor = vars_stressor,
+  subpops = subpops, siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD",
+  ycoord = "YCOORD", stratumID = "URBN_NLA17", clusterID = "clusterID",
+  weight1 = "weight1", xcoord1 = "xcoord1", ycoord1 = "ycoord1",
+  vartype = "SRS"
+)
 
 test_that("Relative Risk: Stratified two-stage analysis", {
   expect_true(exists("RelRisk_Estimates"))
@@ -190,12 +211,14 @@ test_that("Relative Risk: Stratified two-stage analysis", {
   expect_equal(nrow(RelRisk_Estimates), 6)
 })
 
-RelRisk_Estimates <- relrisk_analysis(dframe = NLA_IN,
-                                      vars_response = vars_response, vars_stressor= vars_stressor,
-                                      subpops = subpops, siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD",
-                                      ycoord = "YCOORD", stratumID = "URBN_NLA17", clusterID = "clusterID",
-                                      weight1 = "weight1", xcoord1 = "xcoord1", ycoord1 = "ycoord1",
-                                      popsize = popsize, vartype = "SRS")
+RelRisk_Estimates <- relrisk_analysis(
+  dframe = NLA_IN,
+  vars_response = vars_response, vars_stressor = vars_stressor,
+  subpops = subpops, siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD",
+  ycoord = "YCOORD", stratumID = "URBN_NLA17", clusterID = "clusterID",
+  weight1 = "weight1", xcoord1 = "xcoord1", ycoord1 = "ycoord1",
+  popsize = popsize, vartype = "SRS"
+)
 
 test_that("Relative Risk: with known population sizes", {
   expect_true(exists("RelRisk_Estimates"))
@@ -203,12 +226,14 @@ test_that("Relative Risk: with known population sizes", {
   expect_equal(nrow(RelRisk_Estimates), 6)
 })
 
-RelRisk_Estimates <- relrisk_analysis(dframe = NLA_IN,
-                                      vars_response = vars_response, vars_stressor= vars_stressor,
-                                      subpops = subpops, siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD",
-                                      ycoord = "YCOORD", stratumID = "URBN_NLA17", clusterID = "clusterID",
-                                      weight1 = "weight1", xcoord1 = "xcoord1", ycoord1 = "ycoord1",
-                                      fpc = fpc4a, vartype = "SRS")
+RelRisk_Estimates <- relrisk_analysis(
+  dframe = NLA_IN,
+  vars_response = vars_response, vars_stressor = vars_stressor,
+  subpops = subpops, siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD",
+  ycoord = "YCOORD", stratumID = "URBN_NLA17", clusterID = "clusterID",
+  weight1 = "weight1", xcoord1 = "xcoord1", ycoord1 = "ycoord1",
+  fpc = fpc4a, vartype = "SRS"
+)
 
 test_that("Relative Risk: with finite population correction factor", {
   expect_true(exists("RelRisk_Estimates"))

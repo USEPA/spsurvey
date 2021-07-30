@@ -205,8 +205,7 @@ plot.powerpaneldesign <- function(x, y = NULL, plot_type = "standard",
       stop("\nOne or more dsgn names not present in dsgnpower")
     }
     dsgn_plot <- dsgns
-  }
-  else {
+  } else {
     dsgn_plot <- dsgn_names[1]
   }
 
@@ -216,8 +215,7 @@ plot.powerpaneldesign <- function(x, y = NULL, plot_type = "standard",
       stop("\nOne or more indicator names not present in dsgnpower")
     }
     ind_plot <- indicator
-  }
-  else {
+  } else {
     ind_plot <- ind_names[1]
   }
 
@@ -235,8 +233,7 @@ plot.powerpaneldesign <- function(x, y = NULL, plot_type = "standard",
         dsgnpower$trend >= min(trend) & dsgnpower$trend <= max(trend)
       ]
     }
-  }
-  else {
+  } else {
     # find maximum trend value to plot
     trend_value <- max(dsgnpower$trend)
   }
@@ -262,8 +259,7 @@ plot.powerpaneldesign <- function(x, y = NULL, plot_type = "standard",
     if (xaxis_type == "change") {
       period_plot <- period
     }
-  }
-  else {
+  } else {
     # extract periods covered by panel designs
     period_values <- dsgnpower$period
     period_min <- min(period_values)
@@ -278,8 +274,7 @@ plot.powerpaneldesign <- function(x, y = NULL, plot_type = "standard",
     }
     alpha_value <- alpha
     alpha_plot <- paste("alpha_", alpha, sep = "")
-  }
-  else {
+  } else {
     # use minimum alpha value
     alpha_value <- min(dsgnpower$alpha)
     alpha_plot <- paste("alpha_", min(dsgnpower$alpha), sep = "")
@@ -468,8 +463,7 @@ plot.powerpaneldesign <- function(x, y = NULL, plot_type = "standard",
                   as.character(period_plot[i]), ind_plot[k]
                 ]
                 xlabel <- paste("Trend: %/period; Total % and Mean at Period ", period_plot[i], sep = "")
-              }
-              else {
+              } else {
                 xlabel <- paste("Trend: %/period and Total % at Period ", period_plot[i], sep = "")
               }
               # set up initial plot area,  xaxis and yaxis

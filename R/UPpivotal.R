@@ -41,18 +41,15 @@ UPpivotal <- function(pik, eps = 1e-06) {
         if (u < (1 - b) / (2 - a - b)) {
           b <- a + b - 1
           a <- 1
-        }
-        else {
+        } else {
           a <- a + b - 1
           b <- 1
         }
-      }
-      else {
+      } else {
         if (u < b / (a + b)) {
           b <- a + b
           a <- 0
-        }
-        else {
+        } else {
           a <- a + b
           b <- 0
         }
@@ -77,18 +74,15 @@ UPpivotal <- function(pik, eps = 1e-06) {
       if (u < (1 - b) / (2 - a - b)) {
         b <- a + b - 1
         a <- 1
-      }
-      else {
+      } else {
         a <- a + b - 1
         b <- 1
       }
-    }
-    else {
+    } else {
       if (u < b / (a + b)) {
         b <- a + b
         a <- 0
-      }
-      else {
+      } else {
         a <- a + b
         b <- 0
       }

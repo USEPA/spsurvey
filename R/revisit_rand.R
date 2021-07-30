@@ -126,8 +126,7 @@ revisit_rand <- function(n_period, n_pnl, rand_control = "period", n_visit,
       c(paste(panel_name, 1:nrow(pan_dsgn), sep = "_")),
       seq(begin, by = skip, length.out = ncol(pan_dsgn))
     )
-  }
-  else {
+  } else {
     dimnames(pan_dsgn) <- list(
       c(
         paste(panel_name, 1:9, sep = "_0"),

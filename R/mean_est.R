@@ -124,7 +124,8 @@ mean_est <- function(meansum, dframe, itype, lev_itype, nlev_itype, ivar,
         ubound <- temp
       } else {
         rslt <- svymean(
-          make.formula(ivar), design = subset(design, tst), na.rm = TRUE
+          make.formula(ivar),
+          design = subset(design, tst), na.rm = TRUE
         )
         meanest <- rslt
         nresp <- sum(!is.na(dframe[, ivar]))
@@ -171,7 +172,8 @@ mean_est <- function(meansum, dframe, itype, lev_itype, nlev_itype, ivar,
         tst <- tst & dframe[, itype] %in% lev_itype[subpop_ind]
         levs <- (1:nlev_itype)[subpop_ind]
         rslt <- svyby(
-          make.formula(ivar), make.formula(itype), design = subset(design, tst),
+          make.formula(ivar), make.formula(itype),
+          design = subset(design, tst),
           svymean, na.rm = TRUE
         )
         meanest[levs] <- rslt[, 2]

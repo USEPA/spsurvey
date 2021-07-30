@@ -154,8 +154,7 @@ cov_panel_dsgn <- function(paneldsgn = matrix(50, 1, 10), nrepeats = 1,
       diag(nperiod),
       diag(ifelse(nunits > 0, 1 / (nunits * apply(nrepeats, 1, max)), 0))
     )
-  }
-  else {
+  } else {
     index_cov <- index_var * diag(nperiod) / nunits
   }
 

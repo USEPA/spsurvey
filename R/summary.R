@@ -95,8 +95,7 @@ summary.dframe <- function(object, formula, onlyshow = NULL, ...) {
 #' @name summary
 #' @method summary spdesign
 #' @export
-summary.spdesign <- function(object, formula = ~ siteuse, onlyshow = NULL, siteuse = NULL, ...) {
-
+summary.spdesign <- function(object, formula = ~siteuse, onlyshow = NULL, siteuse = NULL, ...) {
   if ((is.null(siteuse) & (!is.null(object$sites_near))) | "Near" %in% siteuse) {
     object$sites_near$siteuse <- "Near"
   }

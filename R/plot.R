@@ -77,7 +77,7 @@
 #' @examples
 #' \dontrun{
 #' plot(NE_Lakes)
-#' plot(NE_Lakes, formula = ~ ELEV_CAT)
+#' plot(NE_Lakes, formula = ~ELEV_CAT)
 #' plot(NE_Lakes, formula = AREA ~ ELEV_CAT)
 #' sample <- grts(NE_Lakes, 30)
 #' plot(sample, NE_Lakes)
@@ -267,9 +267,8 @@ plot.sframe <- function(x, y, formula = ~1, var_args = NULL, varlevel_args = NUL
 #'
 #' @export
 plot.spdesign <- function(x, y = NULL, formula = ~siteuse, siteuse = NULL,
-                        var_args = NULL, varlevel_args = NULL, geom = FALSE, onlyshow = NULL,
-                        fix_bbox = TRUE, ...) {
-
+                          var_args = NULL, varlevel_args = NULL, geom = FALSE, onlyshow = NULL,
+                          fix_bbox = TRUE, ...) {
   if ((is.null(siteuse) & (!is.null(x$sites_near))) | "Near" %in% siteuse) {
     x$sites_near$siteuse <- "Near"
   }

@@ -88,92 +88,100 @@
 #'   stratum = rep(c("Stratum1", "Stratum2"), 50),
 #'   ContVar = rnorm(100, 10, 1),
 #'   All_Sites = rep("All Sites", 100),
-#'   Resource_Class = rep(c("Good","Poor"), c(55,45)))
+#'   Resource_Class = rep(c("Good", "Poor"), c(55, 45))
+#' )
 #' myvars <- c("ContVar")
 #' mysubpops <- c("All_Sites", "Resource_Class")
 #' mypopsize <- data.frame(
 #'   Resource_Class = c("Good", "Poor"),
-#'   Total = c(4000, 1500))
-#' myanalysis <- cont_analysis(dframe, vars = myvars, subpops = mysubpops,
+#'   Total = c(4000, 1500)
+#' )
+#' myanalysis <- cont_analysis(dframe,
+#'   vars = myvars, subpops = mysubpops,
 #'   siteID = "siteID", weight = "wgt", xcoord = "xcoord", ycoord = "ycoord",
-#'   stratumID = "stratum", popsize = mypopsize)
-#' cont_cdfplot("myanalysis.pdf", myanalysis$CDF, ylbl_r="Stream Length (km)")
+#'   stratumID = "stratum", popsize = mypopsize
+#' )
+#' cont_cdfplot("myanalysis.pdf", myanalysis$CDF, ylbl_r = "Stream Length (km)")
 #' }
 #'
 #' @export
 ################################################################################
 
 cont_cdfplot <- function(pdffile = "cdf2x2.pdf", cdfest, units_cdf = "Percent",
-   ind_type = rep("Continuous", nind), logx = rep("", nind), xlbl = NULL,
-   ylbl = "Percent", ylbl_r = NULL, legloc = "BR", cdf_page = 4, width = 10,
-   height = 8, confcut = 5, cex.main = 1.2, ...) {
+                         ind_type = rep("Continuous", nind), logx = rep("", nind), xlbl = NULL,
+                         ylbl = "Percent", ylbl_r = NULL, legloc = "BR", cdf_page = 4, width = 10,
+                         height = 8, confcut = 5, cex.main = 1.2, ...) {
 
-# Open the PDF file
+  # Open the PDF file
 
-pdf(file = pdffile, width = width, height = height)
+  pdf(file = pdffile, width = width, height = height)
 
-# Set up the number of plots per page
+  # Set up the number of plots per page
 
-if(cdf_page == 1) {
-  mf <- c(1, 1)
-} else if(cdf_page == 2) {
-  mf <- c(2, 1)
-} else if(cdf_page == 4) {
-  mf <- c(2, 2)
-} else if(cdf_page == 6) {
-  mf <- c(3, 2)
-} else {
-  mf <- c(2, 2)
-}
+  if (cdf_page == 1) {
+    mf <- c(1, 1)
+  } else if (cdf_page == 2) {
+    mf <- c(2, 1)
+  } else if (cdf_page == 4) {
+    mf <- c(2, 2)
+  } else if (cdf_page == 6) {
+    mf <- c(3, 2)
+  } else {
+    mf <- c(2, 2)
+  }
 
-# Set graphical parameter values
+  # Set graphical parameter values
 
-op <- par(mfrow = mf, mgp = c(1.5,0.7,0))
+  op <- par(mfrow = mf, mgp = c(1.5, 0.7, 0))
 
-# Assign the vectors of population type names and indicator names
+  # Assign the vectors of population type names and indicator names
 
-typenames <- unique(cdfest$Type)
-indnames <- unique(cdfest$Indicator)
-nind <- length(indnames)
+  typenames <- unique(cdfest$Type)
+  indnames <- unique(cdfest$Indicator)
+  nind <- length(indnames)
 
-# If not supplied, set up the x-axis labels
+  # If not supplied, set up the x-axis labels
 
-if(is.null(xlbl)) {
-   xlbl <- as.character(indnames)
-   names(xlbl) <- as.character(indnames)
-}
+  if (is.null(xlbl)) {
+    xlbl <- as.character(indnames)
+    names(xlbl) <- as.character(indnames)
+  }
 
-# Obtain the confidence level
+  # Obtain the confidence level
 
-conflev <- as.numeric(substr(names(cdfest)[9], 4, 5))
+  conflev <- as.numeric(substr(names(cdfest)[9], 4, 5))
 
-# Create the plots
+  # Create the plots
 
-for(itype in 1:length(typenames)) {
-   tsttype <- cdfest$Type == typenames[itype]
-   subnames <- unique(cdfest$Subpopulation[tsttype])
-   for(jsub in 1:length(subnames)) {
+  for (itype in 1:length(typenames)) {
+    tsttype <- cdfest$Type == typenames[itype]
+    subnames <- unique(cdfest$Subpopulation[tsttype])
+    for (jsub in 1:length(subnames)) {
       tstsub <- tsttype & cdfest$Subpopulation == subnames[jsub]
       temp <- match(unique(cdfest$Indicator[tstsub]), indnames)
-      for(kin in temp) {
-	    tstind <- tstsub & cdfest$Indicator == indnames[kin]
-         cdf_plot(cdfest[tstind,], units_cdf=units_cdf, type_cdf=ind_type[kin],
-            logx=logx[kin], xlbl=xlbl[indnames[kin]], ylbl=ylbl, ylbl_r=ylbl_r,
-            figlab=paste(typenames[itype], " - ", subnames[jsub], ": ",
-            indnames[kin], sep=""), legloc=legloc, confcut=confcut,
-            conflev=conflev, cex.main=cex.main, ...)
+      for (kin in temp) {
+        tstind <- tstsub & cdfest$Indicator == indnames[kin]
+        cdf_plot(cdfest[tstind, ],
+          units_cdf = units_cdf, type_cdf = ind_type[kin],
+          logx = logx[kin], xlbl = xlbl[indnames[kin]], ylbl = ylbl, ylbl_r = ylbl_r,
+          figlab = paste(typenames[itype], " - ", subnames[jsub], ": ",
+            indnames[kin],
+            sep = ""
+          ), legloc = legloc, confcut = confcut,
+          conflev = conflev, cex.main = cex.main, ...
+        )
       }
-   }
-}
+    }
+  }
 
 
-# Reset graphical parameter values
+  # Reset graphical parameter values
 
-par(op)
+  par(op)
 
-# Close the PDF file
+  # Close the PDF file
 
-graphics.off()
+  graphics.off()
 
-invisible(NULL)
+  invisible(NULL)
 }

@@ -83,7 +83,7 @@
 #' sa_visit[1, sa_visit[1, ] > 0] <- 2
 #' summary(sa_dsgn, sa_visit)
 #' }
-###############################################################################
+#' ###############################################################################
 summary.powerpaneldesign <- function(object, visitdsgn = NULL, ...) {
   paneldsgn <- object
   n_pan <- dim(paneldsgn)[1]

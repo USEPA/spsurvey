@@ -83,159 +83,179 @@
 #'   stratum = rep(c("Stratum1", "Stratum2"), 50),
 #'   ContVar = rnorm(100, 10, 1),
 #'   All_Sites = rep("All Sites", 100),
-#'   Resource_Class = rep(c("Good","Poor"), c(55,45)))
+#'   Resource_Class = rep(c("Good", "Poor"), c(55, 45))
+#' )
 #' myvars <- c("ContVar")
 #' mysubpops <- c("All_Sites", "Resource_Class")
 #' mypopsize <- data.frame(
 #'   Resource_Class = c("Good", "Poor"),
-#'   Total = c(4000, 1500))
-#' myanalysis <- cont_analysis(dframe, vars = myvars, subpops = mysubpops,
+#'   Total = c(4000, 1500)
+#' )
+#' myanalysis <- cont_analysis(dframe,
+#'   vars = myvars, subpops = mysubpops,
 #'   siteID = "siteID", weight = "wgt", xcoord = "xcoord", ycoord = "ycoord",
-#'   stratumID = "stratum", popsize = mypopsize)
+#'   stratumID = "stratum", popsize = mypopsize
+#' )
 #' keep <- with(myanalysis$CDF, Type == "Resource_Class" &
 #'   Subpopulation == "Good")
-#' par(mfrow=c(2, 1))
-#' cdf_plot(myanalysis$CDF[keep,], xlbl = "ContVar",
-#'    ylbl = "Percent of Stream Length", ylbl_r = "Stream Length (km)",
-#'    figlab = "Estimates for Resource Class: Good")
-#' cdf_plot(myanalysis$CDF[keep,], xlbl = "ContVar",
-#'    ylbl = "Percent of Stream Length", ylbl_r = "Same",
-#'    figlab = "Estimates for Resource Class: Good")
-#'
+#' par(mfrow = c(2, 1))
+#' cdf_plot(myanalysis$CDF[keep, ],
+#'   xlbl = "ContVar",
+#'   ylbl = "Percent of Stream Length", ylbl_r = "Stream Length (km)",
+#'   figlab = "Estimates for Resource Class: Good"
+#' )
+#' cdf_plot(myanalysis$CDF[keep, ],
+#'   xlbl = "ContVar",
+#'   ylbl = "Percent of Stream Length", ylbl_r = "Same",
+#'   figlab = "Estimates for Resource Class: Good"
+#' )
 #' @noRd
 ################################################################################
 
 cdf_plot <- function(cdfest, units_cdf = "Percent", type_cdf = "Continuous",
-   logx = "", xlbl = NULL, ylbl = "Percent", ylbl_r = NULL, figlab = NULL,
-   legloc = "BR", confcut = 5, conflev = 95, cex.main = 1.2, ...) {
+                     logx = "", xlbl = NULL, ylbl = "Percent", ylbl_r = NULL, figlab = NULL,
+                     legloc = "BR", confcut = 5, conflev = 95, cex.main = 1.2, ...) {
 
-# Set graphical parameter values
+  # Set graphical parameter values
 
-op <- par(mgp=c(1.7,0.6,0), mar=c(3,3,2,4)+0.1)
+  op <- par(mgp = c(1.7, 0.6, 0), mar = c(3, 3, 2, 4) + 0.1)
 
-# Create the data frame of values to be plotted and set the y-axis limits
-# The data frame structure follows: column 1: x-axis values
-#                                   column 2: CDF estimates for left y-axis
-#                                   column 3: lower confidence limit values
-#                                   column 4: upper confidence limit values
-#                                   column 5: CDF estimates for right y-axis
+  # Create the data frame of values to be plotted and set the y-axis limits
+  # The data frame structure follows: column 1: x-axis values
+  #                                   column 2: CDF estimates for left y-axis
+  #                                   column 3: lower confidence limit values
+  #                                   column 4: upper confidence limit values
+  #                                   column 5: CDF estimates for right y-axis
 
-if(units_cdf == "Percent") {
-   cdfdata <- cdfest[,c(4,6,9,10,11)]
-} else if(units_cdf == "Units"){
-   cdfdata <- cdfest[,c(4,11,14,15,6)]
-} else{
-   stop(paste("\nThe choice of units for the CDF must be either \"Percent\" or \"Units\". The value \nsupplied for argument units_cdf was: \"", units_cdf, "\".\n", sep=""))
-}
+  if (units_cdf == "Percent") {
+    cdfdata <- cdfest[, c(4, 6, 9, 10, 11)]
+  } else if (units_cdf == "Units") {
+    cdfdata <- cdfest[, c(4, 11, 14, 15, 6)]
+  } else {
+    stop(paste("\nThe choice of units for the CDF must be either \"Percent\" or \"Units\". The value \nsupplied for argument units_cdf was: \"", units_cdf, "\".\n", sep = ""))
+  }
 
-# Restrict confidence limits to lie between confcut and 100-confcut percent
+  # Restrict confidence limits to lie between confcut and 100-confcut percent
 
-pctval <- c(confcut, 100-confcut)
-tvalue <- cdfest[,6] >= pctval[1] & cdfest[,6] <= pctval[2]
-x <-  interp_cdf(pctval, cdfest[,6], cdfdata[,1])
-ylow <- interp_cdf(pctval, cdfest[,6], cdfdata[,3])
-yhi <- interp_cdf(pctval, cdfest[,6], cdfdata[,4])
+  pctval <- c(confcut, 100 - confcut)
+  tvalue <- cdfest[, 6] >= pctval[1] & cdfest[, 6] <= pctval[2]
+  x <- interp_cdf(pctval, cdfest[, 6], cdfdata[, 1])
+  ylow <- interp_cdf(pctval, cdfest[, 6], cdfdata[, 3])
+  yhi <- interp_cdf(pctval, cdfest[, 6], cdfdata[, 4])
 
-# Set the left side y-axis limits
+  # Set the left side y-axis limits
 
-if(units_cdf == "Percent") {
-  ylimit <- c(0,100)
-} else if(units_cdf == "Units"){
-  ylimit <- pretty(c(min(c(cdfdata[,2], ylow)), max(c(cdfdata[,2], yhi))))
-  ylimit <- ylimit[c(1, length(ylimit))]
-}
+  if (units_cdf == "Percent") {
+    ylimit <- c(0, 100)
+  } else if (units_cdf == "Units") {
+    ylimit <- pretty(c(min(c(cdfdata[, 2], ylow)), max(c(cdfdata[, 2], yhi))))
+    ylimit <- ylimit[c(1, length(ylimit))]
+  }
 
-# Plot the CDF for a continuous indicator
+  # Plot the CDF for a continuous indicator
 
-if(type_cdf == "Continuous") {
-   plot(cdfdata[,1], cdfdata[,2], type="l", ylim=ylimit, xlab=xlbl, ylab=ylbl,
-        log=logx, ...)
+  if (type_cdf == "Continuous") {
+    plot(cdfdata[, 1], cdfdata[, 2],
+      type = "l", ylim = ylimit, xlab = xlbl, ylab = ylbl,
+      log = logx, ...
+    )
 
-# Plot confidence limits
+    # Plot confidence limits
 
-   value <- c(x[1], cdfdata[,1][tvalue], x[2])
-   lower <- c(ylow[1], cdfdata[,3][tvalue], ylow[2])
-   upper <- c(yhi[1], cdfdata[,4][tvalue], yhi[2])
-   lines(value, lower, lty=3, lwd=1.5)
-   lines(value, upper, lty=3, lwd=1.5)
+    value <- c(x[1], cdfdata[, 1][tvalue], x[2])
+    lower <- c(ylow[1], cdfdata[, 3][tvalue], ylow[2])
+    upper <- c(yhi[1], cdfdata[, 4][tvalue], yhi[2])
+    lines(value, lower, lty = 3, lwd = 1.5)
+    lines(value, upper, lty = 3, lwd = 1.5)
 
-# Plot the CDF for an ordinal (count) indicator
+    # Plot the CDF for an ordinal (count) indicator
+  } else if (type_cdf == "Ordinal") {
+    x <- rep(cdfdata[, 1], each = 2)[-1]
+    y <- rep(cdfdata[, 2], each = 2)
+    tmp <- cbind(matrix(c(x, x[length(x)]), ncol = 2, byrow = TRUE), rep(NA, nrow(cdfdata)))
+    x <- as.vector(t(tmp))
+    tmp <- cbind(matrix(y, ncol = 2, byrow = TRUE), rep(NA, nrow(cdfdata)))
+    y <- as.vector(t(tmp))
+    plot(x, y, type = "l", ylim = ylimit, xlab = xlbl, ylab = ylbl, ...)
 
-} else if(type_cdf == "Ordinal") {
-   x <- rep(cdfdata[,1], each=2)[-1]
-   y <- rep(cdfdata[,2], each=2)
-   tmp <- cbind(matrix(c(x,x[length(x)]),ncol=2,byrow=TRUE),rep(NA,nrow(cdfdata)))
-   x <- as.vector(t(tmp))
-   tmp <- cbind(matrix(y,ncol=2,byrow=TRUE),rep(NA,nrow(cdfdata)))
-   y <- as.vector(t(tmp))
-   plot(x, y, type="l", ylim=ylimit, xlab=xlbl, ylab=ylbl, ...)
+    # Plot confidence limits
 
-# Plot confidence limits
-
-   len <- length(cdfdata[,1][tvalue])
-   if(len > 1) {
-      value <- rep(cdfdata[,1][tvalue], each=2)[-1]
-      tmp <- cbind(matrix(c(value,value[length(value)]),ncol=2,byrow=TRUE),
-                   rep(NA,len))
+    len <- length(cdfdata[, 1][tvalue])
+    if (len > 1) {
+      value <- rep(cdfdata[, 1][tvalue], each = 2)[-1]
+      tmp <- cbind(
+        matrix(c(value, value[length(value)]), ncol = 2, byrow = TRUE),
+        rep(NA, len)
+      )
       value <- as.vector(t(tmp))
-      len <- length(cdfdata[,4][tvalue])
-      if(len > 1) {
-         lower <- rep(cdfdata[,3][tvalue], each=2)
-         tmp <- cbind(matrix(lower,ncol=2,byrow=TRUE),rep(NA,len))
-         lower <- as.vector(t(tmp))
-         upper <- rep(cdfdata[,4][tvalue], each=2)
-         tmp <- cbind(matrix(upper,ncol=2,byrow=TRUE),rep(NA,len))
-         upper <- as.vector(t(tmp))
-         lines(value,lower,lty=3, lwd=1.5)
-         lines(value,upper,lty=3, lwd=1.5)
+      len <- length(cdfdata[, 4][tvalue])
+      if (len > 1) {
+        lower <- rep(cdfdata[, 3][tvalue], each = 2)
+        tmp <- cbind(matrix(lower, ncol = 2, byrow = TRUE), rep(NA, len))
+        lower <- as.vector(t(tmp))
+        upper <- rep(cdfdata[, 4][tvalue], each = 2)
+        tmp <- cbind(matrix(upper, ncol = 2, byrow = TRUE), rep(NA, len))
+        upper <- as.vector(t(tmp))
+        lines(value, lower, lty = 3, lwd = 1.5)
+        lines(value, upper, lty = 3, lwd = 1.5)
       }
-   }
-} else {
-   stop(paste("\nThe type of CDF must be either \"Continuous\" or \"Ordinal\". The value supplied \nfor argument type_cdf was: \"", type_cdf, "\".\n", sep=""))
-}
+    }
+  } else {
+    stop(paste("\nThe type of CDF must be either \"Continuous\" or \"Ordinal\". The value supplied \nfor argument type_cdf was: \"", type_cdf, "\".\n", sep = ""))
+  }
 
-# Create the plot title
+  # Create the plot title
 
-title(figlab, line=1, cex.main=cex.main)
+  title(figlab, line = 1, cex.main = cex.main)
 
-# Create the plot legend
+  # Create the plot legend
 
-rx <- range(par("usr")[1:2], cdfdata[,1])
-ry <- range(par("usr")[3:4], cdfdata[,2])
-if(legloc=="BR") {
-   xjust <- 1; yjust <- 0;
-   legx <- rx[2]; legy <- ry[1]
-} else if(legloc=="BL") {
-   xjust <- 0; yjust <- 0;
-   legx <- rx[1]; legy <- ry[1]
-} else if(legloc=="TR") {
-   xjust <- 1; yjust <- 1;
-   legx <- rx[2]; legy <- ry[2]
-} else if(legloc=="TL") {
-   xjust <- 0; yjust <- 1;
-   legx <- rx[1]; legy <- ry[2]
-}
-legend(x=legx, y=legy, xjust=xjust, yjust=yjust,
-       legend=c("CDF Estimate",paste(conflev,"% Confidence Limits", sep="")),
-       lty=c(1,3), lwd=c(1,1.5), bty="n", cex=1)
+  rx <- range(par("usr")[1:2], cdfdata[, 1])
+  ry <- range(par("usr")[3:4], cdfdata[, 2])
+  if (legloc == "BR") {
+    xjust <- 1
+    yjust <- 0
+    legx <- rx[2]
+    legy <- ry[1]
+  } else if (legloc == "BL") {
+    xjust <- 0
+    yjust <- 0
+    legx <- rx[1]
+    legy <- ry[1]
+  } else if (legloc == "TR") {
+    xjust <- 1
+    yjust <- 1
+    legx <- rx[2]
+    legy <- ry[2]
+  } else if (legloc == "TL") {
+    xjust <- 0
+    yjust <- 1
+    legx <- rx[1]
+    legy <- ry[2]
+  }
+  legend(
+    x = legx, y = legy, xjust = xjust, yjust = yjust,
+    legend = c("CDF Estimate", paste(conflev, "% Confidence Limits", sep = "")),
+    lty = c(1, 3), lwd = c(1, 1.5), bty = "n", cex = 1
+  )
 
-# If requested, create the right side y-axis labels
+  # If requested, create the right side y-axis labels
 
-if(!is.null(ylbl_r)) {
-   yl.lab <- seq(par("yaxp")[1], par("yaxp")[2], len=par("yaxp")[3]+1)
-   if(ylbl_r == "Same") {
-      axis(side=4, at=yl.lab, labels=yl.lab)
-      mtext(ylbl, side=4, line=2, cex=par("cex"))
-   } else {
-      yr.lab <- interp_axis(yl.lab, cdfdata[,2], cdfdata[,5])
-      axis(side=4, at=yl.lab, labels=as.character(round(yr.lab)))
-      mtext(ylbl_r, side=4, line=2, cex=par("cex"))
-   }
-}
+  if (!is.null(ylbl_r)) {
+    yl.lab <- seq(par("yaxp")[1], par("yaxp")[2], len = par("yaxp")[3] + 1)
+    if (ylbl_r == "Same") {
+      axis(side = 4, at = yl.lab, labels = yl.lab)
+      mtext(ylbl, side = 4, line = 2, cex = par("cex"))
+    } else {
+      yr.lab <- interp_axis(yl.lab, cdfdata[, 2], cdfdata[, 5])
+      axis(side = 4, at = yl.lab, labels = as.character(round(yr.lab)))
+      mtext(ylbl_r, side = 4, line = 2, cex = par("cex"))
+    }
+  }
 
-# Reset graphical parameter values
+  # Reset graphical parameter values
 
-par(op)
+  par(op)
 
-invisible(NULL)
+  invisible(NULL)
 }

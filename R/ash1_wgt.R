@@ -72,13 +72,11 @@ ash1_wgt <- function(x, wgt = rep(1, length(x)), m = 5, nbin = 50, ab = NULL,
     v <- c(rep(0, m - 1), v, rep(0, m - 1))
     nbin <- nbin + 2 * (m - 1)
     adj <- m - 1
-  }
-  else if (is.na(ab[1])) {
+  } else if (is.na(ab[1])) {
     v <- c(rep(0, m - 1), v)
     nbin <- nbin + (m - 1)
     adj <- m - 1
-  }
-  else if (is.na(ab[2])) {
+  } else if (is.na(ab[2])) {
     v <- c(v, rep(0, m - 1))
     nbin <- nbin
   }

@@ -27,28 +27,29 @@
 ################################################################################
 
 interp_axis <- function(yl_lab, cdfest_l, cdfest_r) {
-
-nvec <- 1:length(cdfest_l)
-rslt <- numeric(0)
-for (j in 1:length(yl_lab)) {
-   high <- ifelse(length(nvec[cdfest_l >= yl_lab[j]]) > 0,
-                  min(nvec[cdfest_l >= yl_lab[j]]), nvec[length(nvec)])
-   low <- ifelse(length(nvec[cdfest_l <= yl_lab[j]]) >  0,
-                 max(nvec[cdfest_l <= yl_lab[j]]), NA)
-   if(is.na(low)) {
+  nvec <- 1:length(cdfest_l)
+  rslt <- numeric(0)
+  for (j in 1:length(yl_lab)) {
+    high <- ifelse(length(nvec[cdfest_l >= yl_lab[j]]) > 0,
+      min(nvec[cdfest_l >= yl_lab[j]]), nvec[length(nvec)]
+    )
+    low <- ifelse(length(nvec[cdfest_l <= yl_lab[j]]) > 0,
+      max(nvec[cdfest_l <= yl_lab[j]]), NA
+    )
+    if (is.na(low)) {
       ulow <- 0
       plow <- 0
-      pdis <- (yl_lab[j] - plow)/(cdfest_l[high] - plow)
-    	 rslt[j] <- ulow + pdis * (cdfest_r[high] - ulow)
-   } else {
-      if( high > low) {
-    	    pdis <- (yl_lab[j] - cdfest_l[low])/(cdfest_l[high] - cdfest_l[low])
-    	    rslt[j] <- cdfest_r[low] + pdis * (cdfest_r[high] - cdfest_r[low])
+      pdis <- (yl_lab[j] - plow) / (cdfest_l[high] - plow)
+      rslt[j] <- ulow + pdis * (cdfest_r[high] - ulow)
+    } else {
+      if (high > low) {
+        pdis <- (yl_lab[j] - cdfest_l[low]) / (cdfest_l[high] - cdfest_l[low])
+        rslt[j] <- cdfest_r[low] + pdis * (cdfest_r[high] - cdfest_r[low])
       } else {
-         rslt[j] <- cdfest_r[high]
+        rslt[j] <- cdfest_r[high]
       }
-   }
-}
+    }
+  }
 
-return(rslt)
+  return(rslt)
 }

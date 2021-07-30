@@ -293,7 +293,6 @@ cont_analysis(dframe,
   weight = "wgt", xcoord = "xcoord", ycoord = "ycoord",
   stratumID = "stratum", popsize = mypopsize, statistics = "mean"
 )
-
 }
 \seealso{
 \code{\link{calibrate}}

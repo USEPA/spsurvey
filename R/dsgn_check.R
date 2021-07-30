@@ -211,7 +211,7 @@ dsgn_check <- function(sframe, sf_type, legacy_sites, legacy_option, stratum, se
     stop_mess <- paste0("seltype must be 'equal', 'unequal' or 'proportional'.")
     stop_df <- rbind(stop_df, data.frame(func = I("seltype"), I(stop_mess)))
   }
-  
+
   # check seltype when caty_var and aux_var provided
   if (all(seltype %in% "unequal") | all(seltype %in% "proportional")) {
     if (!is.null(caty_var) & !is.null(aux_var)) {
@@ -220,28 +220,28 @@ dsgn_check <- function(sframe, sf_type, legacy_sites, legacy_option, stratum, se
       stop_df <- rbind(stop_df, data.frame(func = I("seltype mismatch"), I(stop_mess)))
     }
   }
-  
+
   # check caty_var and caty_n are provided together
   if ((is.null(caty_var) & !is.null(caty_n)) | (!is.null(caty_var) & is.null(caty_n))) {
     stop_ind <- TRUE
     stop_mess <- paste0("caty_n and caty_var must be provided together.")
     stop_df <- rbind(stop_df, data.frame(func = I("caty_var and caty_n"), I(stop_mess)))
   }
-  
+
   # check n_base length and stratum_var are provided together
   if (length(n_base) > 1 & is.null(stratum_var)) {
     stop_ind <- TRUE
     stop_mess <- paste0("if the length of n_base is larger than 1 then stratification is assumed and stratum_var must be provided.")
     stop_df <- rbind(stop_df, data.frame(func = I("n_base and stratum_var"), I(stop_mess)))
   }
-  
+
   # check names of caty_n when it is a list
   if (is.list(caty_n) & is.null(names(caty_n))) {
     stop_ind <- TRUE
     stop_mess <- paste0("caty_n must be a named list (and these names must match the strata)")
     stop_df <- rbind(stop_df, data.frame(func = I("caty_n names"), I(stop_mess)))
   }
-  
+
 
   # check n_base
   if (any(n_base <= 0)) {

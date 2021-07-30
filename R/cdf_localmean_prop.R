@@ -75,7 +75,7 @@
 ################################################################################
 
 cdf_localmean_prop <- function(itype, lev_itype, nlev_itype, ivar, design,
-                               design_names, cdfval, ncdfval, cdfest_P,  mult,
+                               design_names, cdfval, ncdfval, cdfest_P, mult,
                                warn_ind, warn_df) {
 
   # Assign a value to the function name variable
@@ -201,13 +201,14 @@ cdf_localmean_prop <- function(itype, lev_itype, nlev_itype, ivar, design,
         } else {
           temp <- cdfvar_prop(contvar[stratum_i], wgt[stratum_i],
             xcoord[stratum_i], ycoord[stratum_i], cdfval, cdfest_st,
-            stratum_ind, stratum_levels[i], cluster_ind, warn_ind = warn_ind,
+            stratum_ind, stratum_levels[i], cluster_ind,
+            warn_ind = warn_ind,
             warn_df = warn_df, warn_vec = warn_vec
           )
         }
         warn_ind <- temp$warn_ind
         warn_df <- temp$warn_df
-        if(any(temp$varest < 0)) {
+        if (any(temp$varest < 0)) {
           temp$vartype <- "SRS"
           warn_ind <- TRUE
           act <- "The simple random sampling variance estimator for an infinite population was used.\n"
@@ -264,13 +265,14 @@ cdf_localmean_prop <- function(itype, lev_itype, nlev_itype, ivar, design,
         )
       } else {
         temp <- cdfvar_prop(contvar[tst], wgt[tst], xcoord[tst], ycoord[tst],
-          cdfval, prop, stratum_ind, NULL, cluster_ind, warn_ind = warn_ind,
+          cdfval, prop, stratum_ind, NULL, cluster_ind,
+          warn_ind = warn_ind,
           warn_df = warn_df, warn_vec = warn_vec
         )
       }
       warn_ind <- temp$warn_ind
       warn_df <- temp$warn_df
-      if(any(temp$varest < 0)) {
+      if (any(temp$varest < 0)) {
         temp$vartype <- "SRS"
         warn_ind <- TRUE
         act <- "The simple random sampling variance estimator for an infinite population was used.\n"

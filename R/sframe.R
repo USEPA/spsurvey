@@ -26,7 +26,7 @@
 #' data("NE_lakes")
 #' NE_lakes <- sframe(NE_lakes)
 #' }
-###############################################################################
+#' ###############################################################################
 sframe <- function(object, ...) {
   if (inherits(object, "sframe")) {
     new_sframe <- structure(object, class = c("sframe", setdiff(class(object), "sframe")))

@@ -305,7 +305,6 @@ change_analysis(dframe,
   surveyID = "surveyID", siteID = "siteID", weight = "wgt",
   xcoord = "xcoord", ycoord = "ycoord", stratumID = "stratum"
 )
-
 }
 \seealso{
 \code{\link{calibrate}}

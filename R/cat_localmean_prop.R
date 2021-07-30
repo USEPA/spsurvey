@@ -206,7 +206,7 @@ cat_localmean_prop <- function(itype, lev_itype, nlev_itype, ivar, lev_ivar,
         }
         warn_ind <- temp$warn_ind
         warn_df <- temp$warn_df
-        if(any(temp$varest < 0)) {
+        if (any(temp$varest < 0)) {
           temp$vartype <- "SRS"
           warn_ind <- TRUE
           act <- "The simple random sampling variance estimator for an infinite population was used.\n"
@@ -279,7 +279,7 @@ cat_localmean_prop <- function(itype, lev_itype, nlev_itype, ivar, lev_ivar,
       }
       warn_ind <- temp$warn_ind
       warn_df <- temp$warn_df
-      if(any(temp$varest < 0)) {
+      if (any(temp$varest < 0)) {
         temp$vartype <- "SRS"
         warn_ind <- TRUE
         act <- "The simple random sampling variance estimator for an infinite population was used.\n"

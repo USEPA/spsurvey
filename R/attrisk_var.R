@@ -143,13 +143,13 @@ attrisk_var <- function(response, stressor, response_levels, stressor_levels,
       # Create indicator variables for contingency table cells
 
       Ind1 <- (response_lst[[i]] == response_levels[1]) * (stressor_lst[[i]] ==
-          stressor_levels[1])
+        stressor_levels[1])
       Ind2 <- (response_lst[[i]] == response_levels[2]) * (stressor_lst[[i]] ==
-          stressor_levels[1])
+        stressor_levels[1])
       Ind3 <- (response_lst[[i]] == response_levels[1]) * (stressor_lst[[i]] ==
-          stressor_levels[2])
+        stressor_levels[2])
       Ind4 <- (response_lst[[i]] == response_levels[2]) * (stressor_lst[[i]] ==
-          stressor_levels[2])
+        stressor_levels[2])
 
       # Calculate the matrix of weighted indicator variables
 
@@ -193,7 +193,7 @@ attrisk_var <- function(response, stressor, response_levels, stressor_levels,
             x2_lst[[i]], y2_lst[[i]],
             1 / wgt2_lst[[i]]
           )
-          if(is.null(weight_lst)) {
+          if (is.null(weight_lst)) {
             if (stratum_ind) {
               warn_ind <- TRUE
               act <- "The simple random sampling covariance estimator for an infinite population was used.\n"
@@ -217,7 +217,7 @@ attrisk_var <- function(response, stressor, response_levels, stressor_levels,
           } else {
             temp <- localmean_cov(rm, weight_lst)
             var2est[i, ] <- as.vector(temp)
-            if(any(diag(temp) < 0)) {
+            if (any(diag(temp) < 0)) {
               warn_ind <- TRUE
               act <- "The simple random sampling covariance estimator for an infinite population was used.\n"
               if (stratum_ind) {
@@ -274,7 +274,7 @@ attrisk_var <- function(response, stressor, response_levels, stressor_levels,
 
     if (vartype == "Local") {
       weight_lst <- localmean_weight(x1_u, y1_u, 1 / wgt1_u)
-      if(is.null(weight_lst)) {
+      if (is.null(weight_lst)) {
         warn_ind <- TRUE
         act <- "The simple random sampling covariance estimator for an infinite population was used.\n"
         if (stratum_ind) {
@@ -293,14 +293,17 @@ attrisk_var <- function(response, stressor, response_levels, stressor_levels,
           ))
         }
         varest <- ncluster * var(total2est * matrix(rep(wgt1_u, 4),
-          nrow = ncluster)) + matrix(apply(var2est * matrix(rep(wgt1_u, 16),
-            nrow = ncluster), 2, sum), nrow = 4)
+          nrow = ncluster
+        )) + matrix(apply(var2est * matrix(rep(wgt1_u, 16),
+          nrow = ncluster
+        ), 2, sum), nrow = 4)
       } else {
         varest <- localmean_cov(total2est * matrix(rep(wgt1_u, 4),
-          nrow = ncluster), weight_lst) + matrix(apply(var2est *
-              matrix(rep(wgt1_u, 16), nrow = ncluster), 2, sum), nrow = 4)
+          nrow = ncluster
+        ), weight_lst) + matrix(apply(var2est *
+          matrix(rep(wgt1_u, 16), nrow = ncluster), 2, sum), nrow = 4)
         temp <- diag(varest)
-        if(any(temp < 0)) {
+        if (any(temp < 0)) {
           warn_ind <- TRUE
           act <- "The simple random sampling covariance estimator for an infinite population was used.\n"
           if (stratum_ind) {
@@ -319,18 +322,21 @@ attrisk_var <- function(response, stressor, response_levels, stressor_levels,
             ))
           }
           varest <- (ncluster * var(total2est * matrix(rep(wgt1_u, 4),
-            nrow = ncluster)) + matrix(apply(var2est * matrix(rep(wgt1_u, 16),
-              nrow = ncluster), 2, sum), nrow = 4))
+            nrow = ncluster
+          )) + matrix(apply(var2est * matrix(rep(wgt1_u, 16),
+            nrow = ncluster
+          ), 2, sum), nrow = 4))
         }
       }
     } else {
       varest <- ncluster * var(total2est * matrix(rep(wgt1_u, 4),
-        nrow = ncluster)) + matrix(apply(var2est * matrix(rep(wgt1_u, 16),
-          nrow = ncluster), 2, sum), nrow = 4)
+        nrow = ncluster
+      )) + matrix(apply(var2est * matrix(rep(wgt1_u, 16),
+        nrow = ncluster
+      ), 2, sum), nrow = 4)
     }
 
     # End of section for a two-stage sample
-
   } else {
 
     # Begin the section for a single-stage sample
@@ -374,7 +380,7 @@ attrisk_var <- function(response, stressor, response_levels, stressor_levels,
 
     if (vartype == "Local") {
       weight_lst <- localmean_weight(x = x, y = y, prb = 1 / wgt)
-      if(is.null(weight_lst)) {
+      if (is.null(weight_lst)) {
         warn_ind <- TRUE
         act <- "The simple random sampling covariance estimator for an infinite population was used.\n"
         if (stratum_ind) {
@@ -396,7 +402,7 @@ attrisk_var <- function(response, stressor, response_levels, stressor_levels,
       } else {
         varest <- localmean_cov(rm, weight_lst)
         temp <- diag(varest)
-        if(any(temp < 0)) {
+        if (any(temp < 0)) {
           warn_ind <- TRUE
           act <- "The simple random sampling covariance estimator for an infinite population was used.\n"
           if (stratum_ind) {
@@ -422,7 +428,6 @@ attrisk_var <- function(response, stressor, response_levels, stressor_levels,
     }
 
     # End of section for a single-stage sample
-
   }
 
   # Return the variance/covariance estimate, the warning message indicator, and

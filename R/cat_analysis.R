@@ -258,16 +258,14 @@
 #'   weight = "wgt", xcoord = "xcoord", ycoord = "ycoord",
 #'   stratumID = "stratum", popsize = mypopsize
 #' )
-#'
 #' @export
 ################################################################################
 
-cat_analysis <- function(
-  dframe, vars, subpops = NULL, siteID = "siteID", weight = "weight",
-  xcoord = NULL, ycoord = NULL, stratumID = NULL, clusterID = NULL,
-  weight1 = NULL, xcoord1 = NULL, ycoord1 = NULL, sizeweight = FALSE,
-  sweight = NULL, sweight1 = NULL, fpc = NULL, popsize = NULL,
-  vartype = "Local", jointprob = "overton", conf = 95) {
+cat_analysis <- function(dframe, vars, subpops = NULL, siteID = "siteID", weight = "weight",
+                         xcoord = NULL, ycoord = NULL, stratumID = NULL, clusterID = NULL,
+                         weight1 = NULL, xcoord1 = NULL, ycoord1 = NULL, sizeweight = FALSE,
+                         sweight = NULL, sweight1 = NULL, fpc = NULL, popsize = NULL,
+                         vartype = "Local", jointprob = "overton", conf = 95) {
 
   # Create a vector for error messages
 
@@ -366,7 +364,7 @@ cat_analysis <- function(
   } else {
     fpcfactor_ind <- TRUE
     if (is.null(clusterID)) {
-      fpcsize = "fpcsize"
+      fpcsize <- "fpcsize"
       Ncluster <- NULL
       stage1size <- NULL
     } else {
@@ -416,7 +414,8 @@ cat_analysis <- function(
 
   # Check input arguments
   temp <- input_check(dframe, design_names, vars, NULL, NULL, NULL, subpops,
-    sizeweight, fpc, popsize, vartype, jointprob, conf, error_ind = error_ind,
+    sizeweight, fpc, popsize, vartype, jointprob, conf,
+    error_ind = error_ind,
     error_vec = error_vec
   )
   dframe <- temp$dframe

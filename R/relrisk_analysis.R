@@ -302,17 +302,15 @@
 #'   weight = "wgt", xcoord = "xcoord", ycoord = "ycoord",
 #'   stratumID = "stratum"
 #' )
-#'
 #' @export
 ################################################################################
 
-relrisk_analysis <- function(
-  dframe, vars_response, vars_stressor, response_levels = NULL,
-  stressor_levels = NULL, subpops = NULL, siteID = "siteID", weight = "weight",
-  xcoord = NULL, ycoord = NULL, stratumID = NULL, clusterID = NULL,
-  weight1 = NULL, xcoord1 = NULL, ycoord1 = NULL, sizeweight = FALSE,
-  sweight = NULL, sweight1 = NULL, fpc = NULL, popsize = NULL,
-  vartype = "Local", conf = 95) {
+relrisk_analysis <- function(dframe, vars_response, vars_stressor, response_levels = NULL,
+                             stressor_levels = NULL, subpops = NULL, siteID = "siteID", weight = "weight",
+                             xcoord = NULL, ycoord = NULL, stratumID = NULL, clusterID = NULL,
+                             weight1 = NULL, xcoord1 = NULL, ycoord1 = NULL, sizeweight = FALSE,
+                             sweight = NULL, sweight1 = NULL, fpc = NULL, popsize = NULL,
+                             vartype = "Local", conf = 95) {
 
   # Create a vector for error messages
 
@@ -411,7 +409,7 @@ relrisk_analysis <- function(
   } else {
     fpcfactor_ind <- TRUE
     if (is.null(clusterID)) {
-      fpcsize = "fpcsize"
+      fpcsize <- "fpcsize"
       Ncluster <- NULL
       stage1size <- NULL
     } else {
@@ -512,7 +510,7 @@ relrisk_analysis <- function(
       if (all(vars_response %in% names(dframe))) {
         tst <- logical(length(vars_response))
         for (i in 1:length(vars_response)) {
-          if (!all(response_levels[[i]] %in% levels(dframe[,vars_response[i]]))) {
+          if (!all(response_levels[[i]] %in% levels(dframe[, vars_response[i]]))) {
             tst[i] <- TRUE
           }
         }
@@ -562,7 +560,7 @@ relrisk_analysis <- function(
       if (all(vars_stressor %in% names(dframe))) {
         tst <- logical(length(vars_stressor))
         for (i in 1:length(vars_stressor)) {
-          if (!all(stressor_levels[[i]] %in% levels(dframe[,vars_stressor[i]]))) {
+          if (!all(stressor_levels[[i]] %in% levels(dframe[, vars_stressor[i]]))) {
             tst[i] <- TRUE
           }
         }
@@ -826,7 +824,6 @@ relrisk_analysis <- function(
               #
               # End the subsection for individual strata
               #
-
             }
 
             # Add margins to the wgt_total table
@@ -838,12 +835,12 @@ relrisk_analysis <- function(
             total1 <- wgt_total[
               response_levels[[ivar_r]][1],
               stressor_levels[[ivar_s]][1]
-              ]
+            ]
             total2 <- wgt_total["Sum", stressor_levels[[ivar_s]][1]]
             total3 <- wgt_total[
               response_levels[[ivar_r]][1],
               stressor_levels[[ivar_s]][2]
-              ]
+            ]
             total4 <- wgt_total["Sum", stressor_levels[[ivar_s]][2]]
 
             # Calculate the estimate of relative risk for all strata combined
@@ -922,7 +919,6 @@ relrisk_analysis <- function(
             #
             # End the section for stratified data
             #
-
           } else {
 
             #
@@ -948,12 +944,12 @@ relrisk_analysis <- function(
             total1 <- wgt_total[
               response_levels[[ivar_r]][1],
               stressor_levels[[ivar_s]][1]
-              ]
+            ]
             total2 <- wgt_total["Sum", stressor_levels[[ivar_s]][1]]
             total3 <- wgt_total[
               response_levels[[ivar_r]][1],
               stressor_levels[[ivar_s]][2]
-              ]
+            ]
             total4 <- wgt_total["Sum", stressor_levels[[ivar_s]][2]]
 
             # Calculate the estimate of relative risk
@@ -1040,7 +1036,8 @@ relrisk_analysis <- function(
                 temp <- relrisk_var(response[tst], stressor[tst],
                   response_levels[[ivar_r]], stressor_levels[[ivar_s]],
                   wgt[tst], xcoord[tst], ycoord[tst], stratum_ind, NULL,
-                  cluster_ind,vartype = vartype, warn_ind = warn_ind,
+                  cluster_ind,
+                  vartype = vartype, warn_ind = warn_ind,
                   warn_df = warn_df, warn_vec = warn_vec
                 )
               }
@@ -1058,7 +1055,6 @@ relrisk_analysis <- function(
             #
             # End section for unstratified data
             #
-
           }
 
           # Calculate confidence limits for the estimate of relative risk
@@ -1067,7 +1063,7 @@ relrisk_analysis <- function(
             cl <- NA
           } else {
             cl <- c(exp(log(rr) - rrlog_se * mult), exp(log(rr) + rrlog_se *
-                mult))
+              mult))
           }
 
           # Calculate the table of cell and margin counts
@@ -1100,51 +1096,47 @@ relrisk_analysis <- function(
             CellCounts_11 = cc[
               response_levels[[ivar_r]][1],
               stressor_levels[[ivar_s]][1]
-              ],
+            ],
             CellCounts_12 = cc[
               response_levels[[ivar_r]][1],
               stressor_levels[[ivar_s]][2]
-              ],
+            ],
             CellCounts_21 = cc[
               response_levels[[ivar_r]][2],
               stressor_levels[[ivar_s]][1]
-              ],
+            ],
             CellCounts_22 = cc[
               response_levels[[ivar_r]][2],
               stressor_levels[[ivar_s]][2]
-              ],
+            ],
             CellProportions_11 = cp[
               response_levels[[ivar_r]][1],
               stressor_levels[[ivar_s]][1]
-              ],
+            ],
             CellProportions_12 = cp[
               response_levels[[ivar_r]][1],
               stressor_levels[[ivar_s]][2]
-              ],
+            ],
             CellProportions_21 = cp[
               response_levels[[ivar_r]][2],
               stressor_levels[[ivar_s]][1]
-              ],
+            ],
             CellProportions_22 = cp[
               response_levels[[ivar_r]][2],
               stressor_levels[[ivar_s]][2]
-              ]
+            ]
           ))
 
           # End of the loop for levels of the subpopulation
-
         }
 
         # End of the loop for stressor variables
-
       }
 
       # End of the loop for response variables
-
     }
 
     # End of the loop for subpopulations
-
   }
 
   # As necessary, output a message indicating that warning messages were

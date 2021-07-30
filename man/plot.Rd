@@ -114,7 +114,7 @@ plotting in \code{sf}, run \code{?plot.sf()}.
 \examples{
 \dontrun{
 plot(NE_Lakes)
-plot(NE_Lakes, formula = ~ ELEV_CAT)
+plot(NE_Lakes, formula = ~ELEV_CAT)
 plot(NE_Lakes, formula = AREA ~ ELEV_CAT)
 sample <- grts(NE_Lakes, 30)
 plot(sample, NE_Lakes)

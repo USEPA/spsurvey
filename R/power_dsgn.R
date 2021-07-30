@@ -277,8 +277,7 @@ power_dsgn <- function(ind_names, ind_values, unit_var, period_var,
             ifelse(trend_type == "mean", bhat.std <- trend_delta / indexse,
               bhat.std <- bhat[2] / indexse
             )
-          }
-          else {
+          } else {
             bhat.std <- 0
           }
 

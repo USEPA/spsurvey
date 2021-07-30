@@ -296,7 +296,6 @@ cont_cdftest(dframe,
   weight = "wgt", xcoord = "xcoord", ycoord = "ycoord",
   stratumID = "stratum", popsize = mypopsize, testname = "RaoScott_First"
 )
-
 }
 \seealso{
 \code{\link{calibrate}}

@@ -50,10 +50,14 @@ test_that("algorithm executes", {
   irs_output <- irs(NE_Lakes, n_base = n_base, seltype = "equal", stratum_var = "ELEV_CAT")
   expect_true(exists("irs_output"))
   expect_equal(NROW(irs_output$sites_legacy), 0)
-  expect_equal(NROW(irs_output$sites_base[irs_output$sites_base$stratum == "low", , drop = FALSE]),
-               n_base[["low"]])
-  expect_equal(NROW(irs_output$sites_base[irs_output$sites_base$stratum == "high", , drop = FALSE]),
-               n_base[["high"]])
+  expect_equal(
+    NROW(irs_output$sites_base[irs_output$sites_base$stratum == "low", , drop = FALSE]),
+    n_base[["low"]]
+  )
+  expect_equal(
+    NROW(irs_output$sites_base[irs_output$sites_base$stratum == "high", , drop = FALSE]),
+    n_base[["high"]]
+  )
   expect_equal(NROW(irs_output$sites_base), sum(n_base))
   expect_equal(NROW(irs_output$sites_over), 0)
   expect_equal(NROW(irs_output$sites_near), 0)
@@ -67,7 +71,7 @@ test_that("algorithm executes", {
 test_that("algorithm executes", {
   n_base <- 50
   caty_n <- c(small = 24, large = 26)
-  irs_output<- irs(NE_Lakes, n_base = n_base, seltype = "unequal", caty_var = "AREA_CAT", caty_n = caty_n)
+  irs_output <- irs(NE_Lakes, n_base = n_base, seltype = "unequal", caty_var = "AREA_CAT", caty_n = caty_n)
   expect_true(exists("irs_output"))
   expect_equal(NROW(irs_output$sites_legacy), 0)
   expect_equal(NROW(irs_output$sites_base), n_base)
@@ -83,14 +87,20 @@ test_that("algorithm executes", {
 test_that("algorithm executes", {
   n_base <- c(low = 20, high = 30)
   caty_n <- list(low = c(small = 10, large = 10), high = c(small = 10, large = 20))
-  irs_output <- irs(NE_Lakes, n_base = n_base, seltype = "unequal", stratum_var = "ELEV_CAT",
-                      caty_var = "AREA_CAT", caty_n = caty_n)
+  irs_output <- irs(NE_Lakes,
+    n_base = n_base, seltype = "unequal", stratum_var = "ELEV_CAT",
+    caty_var = "AREA_CAT", caty_n = caty_n
+  )
   expect_true(exists("irs_output"))
   expect_equal(NROW(irs_output$sites_legacy), 0)
-  expect_equal(NROW(irs_output$sites_base[irs_output$sites_base$stratum == "low", , drop = FALSE]),
-               n_base[["low"]])
-  expect_equal(NROW(irs_output$sites_base[irs_output$sites_base$stratum == "high", , drop = FALSE]),
-               n_base[["high"]])
+  expect_equal(
+    NROW(irs_output$sites_base[irs_output$sites_base$stratum == "low", , drop = FALSE]),
+    n_base[["low"]]
+  )
+  expect_equal(
+    NROW(irs_output$sites_base[irs_output$sites_base$stratum == "high", , drop = FALSE]),
+    n_base[["high"]]
+  )
   expect_equal(NROW(irs_output$sites_base), sum(n_base))
   expect_equal(NROW(irs_output$sites_over), 0)
   expect_equal(NROW(irs_output$sites_near), 0)
@@ -104,14 +114,20 @@ test_that("algorithm executes", {
 test_that("algorithm executes", {
   n_base <- c(low = 25, high = 25)
   caty_n <- c(small = 12.5, large = 12.5)
-  irs_output <- irs(NE_Lakes, n_base = n_base, seltype = "unequal", stratum_var = "ELEV_CAT",
-                      caty_var = "AREA_CAT", caty_n = caty_n)
+  irs_output <- irs(NE_Lakes,
+    n_base = n_base, seltype = "unequal", stratum_var = "ELEV_CAT",
+    caty_var = "AREA_CAT", caty_n = caty_n
+  )
   expect_true(exists("irs_output"))
   expect_equal(NROW(irs_output$sites_legacy), 0)
-  expect_equal(NROW(irs_output$sites_base[irs_output$sites_base$stratum == "low", , drop = FALSE]),
-               n_base[["low"]])
-  expect_equal(NROW(irs_output$sites_base[irs_output$sites_base$stratum == "high", , drop = FALSE]),
-               n_base[["high"]])
+  expect_equal(
+    NROW(irs_output$sites_base[irs_output$sites_base$stratum == "low", , drop = FALSE]),
+    n_base[["low"]]
+  )
+  expect_equal(
+    NROW(irs_output$sites_base[irs_output$sites_base$stratum == "high", , drop = FALSE]),
+    n_base[["high"]]
+  )
   expect_equal(NROW(irs_output$sites_base), sum(n_base))
   expect_equal(NROW(irs_output$sites_over), 0)
   expect_equal(NROW(irs_output$sites_near), 0)
@@ -125,14 +141,20 @@ test_that("algorithm executes", {
 test_that("algorithm executes", {
   n_base <- c(low = 25, high = 25)
   caty_n <- list(low = c(small = 10, large = 15), high = c(small = 12, large = 13))
-  irs_output <- irs(NE_Lakes, n_base = n_base, seltype = "unequal", stratum_var = "ELEV_CAT",
-                    caty_var = "AREA_CAT", caty_n = caty_n)
+  irs_output <- irs(NE_Lakes,
+    n_base = n_base, seltype = "unequal", stratum_var = "ELEV_CAT",
+    caty_var = "AREA_CAT", caty_n = caty_n
+  )
   expect_true(exists("irs_output"))
   expect_equal(NROW(irs_output$sites_legacy), 0)
-  expect_equal(NROW(irs_output$sites_base[irs_output$sites_base$stratum == "low", , drop = FALSE]),
-               n_base[["low"]])
-  expect_equal(NROW(irs_output$sites_base[irs_output$sites_base$stratum == "high", , drop = FALSE]),
-               n_base[["high"]])
+  expect_equal(
+    NROW(irs_output$sites_base[irs_output$sites_base$stratum == "low", , drop = FALSE]),
+    n_base[["low"]]
+  )
+  expect_equal(
+    NROW(irs_output$sites_base[irs_output$sites_base$stratum == "high", , drop = FALSE]),
+    n_base[["high"]]
+  )
   expect_equal(NROW(irs_output$sites_base), sum(n_base))
   expect_equal(NROW(irs_output$sites_over), 0)
   expect_equal(NROW(irs_output$sites_near), 0)
@@ -163,10 +185,14 @@ test_that("algorithm executes", {
   irs_output <- irs(NE_Lakes, n_base = n_base, stratum_var = "ELEV_CAT", aux_var = "AREA")
   expect_true(exists("irs_output"))
   expect_equal(NROW(irs_output$sites_legacy), 0)
-  expect_equal(NROW(irs_output$sites_base[irs_output$sites_base$stratum == "low", , drop = FALSE]),
-               n_base[["low"]])
-  expect_equal(NROW(irs_output$sites_base[irs_output$sites_base$stratum == "high", , drop = FALSE]),
-               n_base[["high"]])
+  expect_equal(
+    NROW(irs_output$sites_base[irs_output$sites_base$stratum == "low", , drop = FALSE]),
+    n_base[["low"]]
+  )
+  expect_equal(
+    NROW(irs_output$sites_base[irs_output$sites_base$stratum == "high", , drop = FALSE]),
+    n_base[["high"]]
+  )
   expect_equal(NROW(irs_output$sites_base), sum(n_base))
   expect_equal(NROW(irs_output$sites_over), 0)
   expect_equal(NROW(irs_output$sites_near), 0)
@@ -200,16 +226,22 @@ test_that("algorithm executes", {
 test_that("algorithm executes", {
   n_base <- c(low = 20, high = 30)
   n_legacy <- sum(!is.na(NE_Lakes$LEGACY))
-  irs_output <- irs(NE_Lakes, n_base = n_base, seltype = "equal",
-                      stratum_var = "ELEV_CAT", legacy_var = "LEGACY")
+  irs_output <- irs(NE_Lakes,
+    n_base = n_base, seltype = "equal",
+    stratum_var = "ELEV_CAT", legacy_var = "LEGACY"
+  )
   expect_true(exists("irs_output"))
   expect_equal(NROW(irs_output$sites_legacy), n_legacy)
   n_legacy_low <- sum(irs_output$sites_legacy$stratum == "low")
   n_legacy_high <- sum(irs_output$sites_legacy$stratum == "high")
-  expect_equal(NROW(irs_output$sites_base[irs_output$sites_base$stratum == "low", , drop = FALSE]),
-               n_base[["low"]] - n_legacy_low)
-  expect_equal(NROW(irs_output$sites_base[irs_output$sites_base$stratum == "high", , drop = FALSE]),
-               n_base[["high"]] - n_legacy_high)
+  expect_equal(
+    NROW(irs_output$sites_base[irs_output$sites_base$stratum == "low", , drop = FALSE]),
+    n_base[["low"]] - n_legacy_low
+  )
+  expect_equal(
+    NROW(irs_output$sites_base[irs_output$sites_base$stratum == "high", , drop = FALSE]),
+    n_base[["high"]] - n_legacy_high
+  )
   expect_equal(NROW(irs_output$sites_base), sum(n_base) - n_legacy)
   expect_equal(NROW(irs_output$sites_over), 0)
   expect_equal(NROW(irs_output$sites_near), 0)
@@ -224,8 +256,10 @@ test_that("algorithm executes", {
   n_base <- 50
   caty_n <- c(small = 24, large = 26)
   n_legacy <- sum(!is.na(NE_Lakes$LEGACY))
-  irs_output<- irs(NE_Lakes, n_base = n_base, seltype = "unequal",
-                     caty_var = "AREA_CAT", caty_n = caty_n, legacy_var = "LEGACY")
+  irs_output <- irs(NE_Lakes,
+    n_base = n_base, seltype = "unequal",
+    caty_var = "AREA_CAT", caty_n = caty_n, legacy_var = "LEGACY"
+  )
   expect_true(exists("irs_output"))
   expect_equal(NROW(irs_output$sites_legacy), n_legacy)
   expect_equal(NROW(irs_output$sites_base), n_base - n_legacy)
@@ -241,8 +275,10 @@ test_that("algorithm executes", {
 test_that("algorithm executes", {
   n_base <- 50
   n_legacy <- sum(!is.na(NE_Lakes$LEGACY))
-  irs_output<- irs(NE_Lakes, n_base = n_base, seltype = "proportional",
-                     aux_var = "AREA", legacy_var = "LEGACY")
+  irs_output <- irs(NE_Lakes,
+    n_base = n_base, seltype = "proportional",
+    aux_var = "AREA", legacy_var = "LEGACY"
+  )
   expect_true(exists("irs_output"))
   expect_equal(NROW(irs_output$sites_legacy), n_legacy)
   expect_equal(NROW(irs_output$sites_base), n_base - n_legacy)
@@ -263,7 +299,7 @@ test_that("algorithm executes", {
   library(sf)
   n_base <- 50
   mindis <- 1600
-  irs_output<- irs(NE_Lakes, n_base = n_base, seltype = "equal", mindis = mindis)
+  irs_output <- irs(NE_Lakes, n_base = n_base, seltype = "equal", mindis = mindis)
   expect_true(exists("irs_output"))
   expect_equal(NROW(irs_output$sites_legacy), 0)
   expect_equal(NROW(irs_output$sites_base), n_base)
@@ -285,7 +321,7 @@ test_that("algorithm executes", {
 test_that("algorithm executes", {
   n_base <- 50
   n_over <- 5
-  irs_output<- irs(NE_Lakes, n_base = n_base, seltype = "equal", n_over = n_over)
+  irs_output <- irs(NE_Lakes, n_base = n_base, seltype = "equal", n_over = n_over)
   expect_true(exists("irs_output"))
   expect_equal(NROW(irs_output$sites_legacy), 0)
   expect_equal(NROW(irs_output$sites_base), n_base)
@@ -301,19 +337,29 @@ test_that("algorithm executes", {
 test_that("algorithm executes", {
   n_base <- c(low = 20, high = 30)
   n_over <- list(low = 2, high = 3)
-  irs_output <- irs(NE_Lakes, n_base = n_base, seltype = "equal",
-                      stratum_var = "ELEV_CAT", n_over = n_over)
+  irs_output <- irs(NE_Lakes,
+    n_base = n_base, seltype = "equal",
+    stratum_var = "ELEV_CAT", n_over = n_over
+  )
   expect_true(exists("irs_output"))
   expect_equal(NROW(irs_output$sites_legacy), 0)
-  expect_equal(NROW(irs_output$sites_base[irs_output$sites_base$stratum == "low", , drop = FALSE]),
-               n_base[["low"]])
-  expect_equal(NROW(irs_output$sites_base[irs_output$sites_base$stratum == "high", , drop = FALSE]),
-               n_base[["high"]])
+  expect_equal(
+    NROW(irs_output$sites_base[irs_output$sites_base$stratum == "low", , drop = FALSE]),
+    n_base[["low"]]
+  )
+  expect_equal(
+    NROW(irs_output$sites_base[irs_output$sites_base$stratum == "high", , drop = FALSE]),
+    n_base[["high"]]
+  )
   expect_equal(NROW(irs_output$sites_base), sum(n_base))
-  expect_equal(NROW(irs_output$sites_over[irs_output$sites_over$stratum == "low", , drop = FALSE]),
-               n_over[["low"]])
-  expect_equal(NROW(irs_output$sites_over[irs_output$sites_over$stratum == "high", , drop = FALSE]),
-               n_over[["high"]])
+  expect_equal(
+    NROW(irs_output$sites_over[irs_output$sites_over$stratum == "low", , drop = FALSE]),
+    n_over[["low"]]
+  )
+  expect_equal(
+    NROW(irs_output$sites_over[irs_output$sites_over$stratum == "high", , drop = FALSE]),
+    n_over[["high"]]
+  )
   expect_equal(NROW(irs_output$sites_over), sum(unlist(n_over)))
   expect_equal(NROW(irs_output$sites_near), 0)
   expect_equal(NCOL(irs_output$sites_legacy), 1)
@@ -328,8 +374,10 @@ test_that("algorithm executes", {
   caty_n <- c(small = 24, large = 26)
   n_over <- 10
   caty_n_over <- c(small = 5, large = 5)
-  irs_output<- irs(NE_Lakes, n_base = n_base, seltype = "unequal",
-                     caty_var = "AREA_CAT", caty_n = caty_n, n_over = caty_n_over)
+  irs_output <- irs(NE_Lakes,
+    n_base = n_base, seltype = "unequal",
+    caty_var = "AREA_CAT", caty_n = caty_n, n_over = caty_n_over
+  )
   expect_true(exists("irs_output"))
   expect_equal(NROW(irs_output$sites_legacy), 0)
   expect_equal(NROW(irs_output$sites_base), n_base)
@@ -346,8 +394,10 @@ test_that("algorithm executes", {
   n_base <- 50
   caty_n <- c(small = 24, large = 26)
   n_over <- 10
-  irs_output<- irs(NE_Lakes, n_base = n_base, seltype = "proportional",
-                     aux_var = "AREA", n_over = n_over)
+  irs_output <- irs(NE_Lakes,
+    n_base = n_base, seltype = "proportional",
+    aux_var = "AREA", n_over = n_over
+  )
   expect_true(exists("irs_output"))
   expect_equal(NROW(irs_output$sites_legacy), 0)
   expect_equal(NROW(irs_output$sites_base), n_base)
@@ -367,7 +417,7 @@ test_that("algorithm executes", {
 test_that("algorithm executes", {
   n_base <- 50
   n_near <- 2
-  irs_output<- irs(NE_Lakes, n_base = n_base, seltype = "equal", n_near = n_near)
+  irs_output <- irs(NE_Lakes, n_base = n_base, seltype = "equal", n_near = n_near)
   expect_true(exists("irs_output"))
   expect_equal(NROW(irs_output$sites_legacy), 0)
   expect_equal(NROW(irs_output$sites_base), n_base)
@@ -383,14 +433,20 @@ test_that("algorithm executes", {
 test_that("algorithm executes", {
   n_base <- c(low = 20, high = 30)
   n_near <- 2
-  irs_output <- irs(NE_Lakes, n_base = n_base, seltype = "equal",
-                      stratum_var = "ELEV_CAT", n_near = n_near)
+  irs_output <- irs(NE_Lakes,
+    n_base = n_base, seltype = "equal",
+    stratum_var = "ELEV_CAT", n_near = n_near
+  )
   expect_true(exists("irs_output"))
   expect_equal(NROW(irs_output$sites_legacy), 0)
-  expect_equal(NROW(irs_output$sites_base[irs_output$sites_base$stratum == "low", , drop = FALSE]),
-               n_base[["low"]])
-  expect_equal(NROW(irs_output$sites_base[irs_output$sites_base$stratum == "high", , drop = FALSE]),
-               n_base[["high"]])
+  expect_equal(
+    NROW(irs_output$sites_base[irs_output$sites_base$stratum == "low", , drop = FALSE]),
+    n_base[["low"]]
+  )
+  expect_equal(
+    NROW(irs_output$sites_base[irs_output$sites_base$stratum == "high", , drop = FALSE]),
+    n_base[["high"]]
+  )
   expect_equal(NROW(irs_output$sites_base), sum(n_base))
   expect_equal(NROW(irs_output$sites_over), 0)
   expect_equal(NROW(irs_output$sites_near), n_near * sum(n_base))
@@ -405,8 +461,10 @@ test_that("algorithm executes", {
   n_base <- 50
   caty_n <- c(small = 24, large = 26)
   n_near <- 2
-  irs_output<- irs(NE_Lakes, n_base = n_base, seltype = "unequal",
-                     caty_var = "AREA_CAT", caty_n = caty_n, n_near = n_near)
+  irs_output <- irs(NE_Lakes,
+    n_base = n_base, seltype = "unequal",
+    caty_var = "AREA_CAT", caty_n = caty_n, n_near = n_near
+  )
   expect_true(exists("irs_output"))
   expect_equal(NROW(irs_output$sites_legacy), 0)
   expect_equal(NROW(irs_output$sites_base), n_base)
@@ -423,8 +481,10 @@ test_that("algorithm executes", {
   n_base <- 50
   caty_n <- c(small = 24, large = 26)
   n_near <- 2
-  irs_output<- irs(NE_Lakes, n_base = n_base, seltype = "proportional",
-                     aux_var = "AREA", n_near = n_near)
+  irs_output <- irs(NE_Lakes,
+    n_base = n_base, seltype = "proportional",
+    aux_var = "AREA", n_near = n_near
+  )
   expect_true(exists("irs_output"))
   expect_equal(NROW(irs_output$sites_legacy), 0)
   expect_equal(NROW(irs_output$sites_base), n_base)
@@ -445,7 +505,7 @@ test_that("algorithm executes", {
   n_base <- 50
   n_over <- 5
   n_near <- 2
-  grts_output<- irs(NE_Lakes, n_base = n_base, seltype = "equal", n_over = n_over, n_near = n_near)
+  grts_output <- irs(NE_Lakes, n_base = n_base, seltype = "equal", n_over = n_over, n_near = n_near)
   expect_true(exists("grts_output"))
   expect_equal(NROW(grts_output$sites_legacy), 0)
   expect_equal(NROW(grts_output$sites_base), n_base)
@@ -495,10 +555,14 @@ test_that("algorithm executes", {
   irs_output <- irs(Illinois_River, n_base = n_base, seltype = "equal", stratum_var = "STATE_NAME")
   expect_true(exists("irs_output"))
   expect_equal(NROW(irs_output$sites_legacy), 0)
-  expect_equal(NROW(irs_output$sites_base[irs_output$sites_base$stratum == "Oklahoma", , drop = FALSE]),
-               n_base[["Oklahoma"]])
-  expect_equal(NROW(irs_output$sites_base[irs_output$sites_base$stratum == "Arkansas", , drop = FALSE]),
-               n_base[["Arkansas"]])
+  expect_equal(
+    NROW(irs_output$sites_base[irs_output$sites_base$stratum == "Oklahoma", , drop = FALSE]),
+    n_base[["Oklahoma"]]
+  )
+  expect_equal(
+    NROW(irs_output$sites_base[irs_output$sites_base$stratum == "Arkansas", , drop = FALSE]),
+    n_base[["Arkansas"]]
+  )
   expect_equal(NROW(irs_output$sites_base), sum(n_base))
   expect_equal(NROW(irs_output$sites_over), 0)
   expect_equal(NROW(irs_output$sites_near), 0)
@@ -532,17 +596,23 @@ test_that("algorithm executes", {
 test_that("algorithm executes", {
   n_base <- c(Oklahoma = 20, Arkansas = 30)
   n_legacy <- nrow(Illinois_River_Legacy)
-  irs_output <- irs(Illinois_River, n_base = n_base, seltype = "equal",
-                      stratum_var = "STATE_NAME", legacy_sites = Illinois_River_Legacy,
-                      legacy_stratum_var = "STATE_NAME")
+  irs_output <- irs(Illinois_River,
+    n_base = n_base, seltype = "equal",
+    stratum_var = "STATE_NAME", legacy_sites = Illinois_River_Legacy,
+    legacy_stratum_var = "STATE_NAME"
+  )
   expect_true(exists("irs_output"))
   expect_equal(NROW(irs_output$sites_legacy), n_legacy)
   n_legacy_Oklahoma <- sum(irs_output$sites_legacy$stratum == "Oklahoma")
   n_legacy_Arkansas <- sum(irs_output$sites_legacy$stratum == "Arkansas")
-  expect_equal(NROW(irs_output$sites_base[irs_output$sites_base$stratum == "Oklahoma", , drop = FALSE]),
-               n_base[["Oklahoma"]] - n_legacy_Oklahoma)
-  expect_equal(NROW(irs_output$sites_base[irs_output$sites_base$stratum == "Arkansas", , drop = FALSE]),
-               n_base[["Arkansas"]] - n_legacy_Arkansas)
+  expect_equal(
+    NROW(irs_output$sites_base[irs_output$sites_base$stratum == "Oklahoma", , drop = FALSE]),
+    n_base[["Oklahoma"]] - n_legacy_Oklahoma
+  )
+  expect_equal(
+    NROW(irs_output$sites_base[irs_output$sites_base$stratum == "Arkansas", , drop = FALSE]),
+    n_base[["Arkansas"]] - n_legacy_Arkansas
+  )
   expect_equal(NROW(irs_output$sites_base), sum(n_base) - n_legacy)
   expect_equal(NROW(irs_output$sites_over), 0)
   expect_equal(NROW(irs_output$sites_near), 0)
@@ -590,10 +660,14 @@ test_that("algorithm executes", {
   irs_output <- irs(Great_Lakes, n_base = n_base, seltype = "equal", stratum_var = "COUNTRY")
   expect_true(exists("irs_output"))
   expect_equal(NROW(irs_output$sites_legacy), 0)
-  expect_equal(NROW(irs_output$sites_base[irs_output$sites_base$stratum == "CAN", , drop = FALSE]),
-               n_base[["CAN"]])
-  expect_equal(NROW(irs_output$sites_base[irs_output$sites_base$stratum == "USA", , drop = FALSE]),
-               n_base[["USA"]])
+  expect_equal(
+    NROW(irs_output$sites_base[irs_output$sites_base$stratum == "CAN", , drop = FALSE]),
+    n_base[["CAN"]]
+  )
+  expect_equal(
+    NROW(irs_output$sites_base[irs_output$sites_base$stratum == "USA", , drop = FALSE]),
+    n_base[["USA"]]
+  )
   expect_equal(NROW(irs_output$sites_base), sum(n_base))
   expect_equal(NROW(irs_output$sites_over), 0)
   expect_equal(NROW(irs_output$sites_near), 0)

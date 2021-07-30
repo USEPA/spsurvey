@@ -142,7 +142,7 @@ catvar_total <- function(z, wgt, x, y, size_names, stratum_ind, stratum_level,
             matrix(rep(1:(m - 1), n), nrow = n, byrow = TRUE),
           rep(1, n)
         ) *
-        matrix(rep(wgt2_lst[[i]], m), nrow = n)
+          matrix(rep(wgt2_lst[[i]], m), nrow = n)
 
       # Calculate the total estimate for each category
 
@@ -179,7 +179,7 @@ catvar_total <- function(z, wgt, x, y, size_names, stratum_ind, stratum_level,
             x2_lst[[i]], y2_lst[[i]],
             1 / wgt2_lst[[i]]
           )
-          if(is.null(weight_lst)) {
+          if (is.null(weight_lst)) {
             warn_ind <- TRUE
             act <- "The simple random sampling variance estimator for an infinite population was used.\n"
             if (stratum_ind) {
@@ -200,7 +200,7 @@ catvar_total <- function(z, wgt, x, y, size_names, stratum_ind, stratum_level,
             var2est[i, ] <- n * apply(im, 2, var)
           } else {
             var2est[i, ] <- apply(im, 2, localmean_var, weight_lst)
-            if(any(var2est[i, ] < 0)) {
+            if (any(var2est[i, ] < 0)) {
               warn_ind <- TRUE
               act <- "The simple random sampling variance estimator for an infinite population was used.\n"
               if (stratum_ind) {
@@ -255,7 +255,7 @@ catvar_total <- function(z, wgt, x, y, size_names, stratum_ind, stratum_level,
 
     if (vartype == "Local") {
       weight_lst <- localmean_weight(x1_u, y1_u, 1 / wgt1_u)
-      if(is.null(weight_lst)) {
+      if (is.null(weight_lst)) {
         warn_ind <- TRUE
         act <- "The simple random sampling variance estimator for an infinite population was used.\n"
         if (stratum_ind) {
@@ -277,8 +277,10 @@ catvar_total <- function(z, wgt, x, y, size_names, stratum_ind, stratum_level,
         varest <- 0
       } else {
         varest <-
-          apply(total2est * matrix(rep(wgt1_u, m), nrow = ncluster ), 2,
-                localmean_var, weight_lst) +
+          apply(
+            total2est * matrix(rep(wgt1_u, m), nrow = ncluster), 2,
+            localmean_var, weight_lst
+          ) +
           apply(var2est * matrix(rep(wgt1_u, m), nrow = ncluster), 2, sum)
         names(varest) <- size_names
       }
@@ -287,7 +289,6 @@ catvar_total <- function(z, wgt, x, y, size_names, stratum_ind, stratum_level,
     }
 
     # End of section for a two-stage sample
-
   } else {
 
     # Begin the section for a single-stage sample
@@ -305,7 +306,7 @@ catvar_total <- function(z, wgt, x, y, size_names, stratum_ind, stratum_level,
         tapply(wgt, z) == matrix(rep(1:(m - 1), n), nrow = n, byrow = TRUE),
         rep(1, n)
       ) *
-      matrix(rep(wgt, m), nrow = n)
+        matrix(rep(wgt, m), nrow = n)
 
     # Adjust the variance estimator for small sample size
 
@@ -334,7 +335,7 @@ catvar_total <- function(z, wgt, x, y, size_names, stratum_ind, stratum_level,
 
     if (vartype == "Local") {
       weight_lst <- localmean_weight(x, y, 1 / wgt)
-      if(is.null(weight_lst)) {
+      if (is.null(weight_lst)) {
         warn_ind <- TRUE
         act <- "The simple random sampling variance estimator for an infinite population was used.\n"
         if (stratum_ind) {
@@ -363,12 +364,13 @@ catvar_total <- function(z, wgt, x, y, size_names, stratum_ind, stratum_level,
     }
 
     # End of section for a single-stage sample
-
   }
 
   # Return the indicator for type of variance estimator, the variance estimate,
   # the warning message indicator, and the warn_df data frame
 
-  list(vartype = vartype, varest = varest, warn_ind = warn_ind,
-    warn_df = warn_df)
+  list(
+    vartype = vartype, varest = varest, warn_ind = warn_ind,
+    warn_df = warn_df
+  )
 }

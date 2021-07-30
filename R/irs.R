@@ -103,7 +103,6 @@ irs <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = N
                 legacy_sites = NULL, legacy_stratum_var = NULL, mindis = NULL,
                 maxtry = 10, n_over = NULL, n_near = NULL, wgt_units = NULL,
                 pt_density = NULL, DesignID = "Site", SiteBegin = 1) {
-
   if (inherits(sframe, c("tbl_df", "tbl"))) { # identify if tibble class elements are present
     class(sframe) <- setdiff(class(sframe), c("tbl_df", "tbl"))
     # remove tibble class for rownames warning
@@ -121,8 +120,8 @@ irs <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = N
     all(temp %in% c("POLYGON", "MULTIPOLYGON"))
   if (!tst) {
     stop(paste("\nThe geometry types for the survey frame object passed to function irs: \n\"",
-               unique(st_geometry_type(sframe)), "\" are not consistent.",
-               sep = ""
+      unique(st_geometry_type(sframe)), "\" are not consistent.",
+      sep = ""
     ))
   }
 
@@ -290,10 +289,10 @@ irs <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = N
 
   ## select sites for each stratum
   rslts <- lapply(dsgn$stratum, irs_stratum,
-                  dsgn = dsgn, sframe = sframe, sf_type = sf_type, wgt_units = wgt_units,
-                  pt_density = pt_density, legacy_option = legacy_option,
-                  legacy_sites = legacy_sites, maxtry = maxtry,
-                  warn_ind = warn_ind, warn_df = warn_df
+    dsgn = dsgn, sframe = sframe, sf_type = sf_type, wgt_units = wgt_units,
+    pt_density = pt_density, legacy_option = legacy_option,
+    legacy_sites = legacy_sites, maxtry = maxtry,
+    warn_ind = warn_ind, warn_df = warn_df
   )
   names(rslts) <- stratum
 
@@ -354,13 +353,13 @@ irs <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = N
   # if n_near sample sites, assign base ids to the replacement sites. then add siteIDs
   if (!is.null(n_near)) {
     tst <- match(paste(sites_near$stratum, sites_near$replsite, sep = "_"),
-                 paste(sites_base$stratum, sites_base$idpts, sep = "_"),
-                 nomatch = 0
+      paste(sites_base$stratum, sites_base$idpts, sep = "_"),
+      nomatch = 0
     )
     sites_near$replsite[tst > 0] <- sites_base$siteID[tst]
     tst <- match(paste(sites_near$stratum, sites_near$replsite, sep = "_"),
-                 paste(sites_over$stratum, sites_over$idpts, sep = "_"),
-                 nomatch = 0
+      paste(sites_over$stratum, sites_over$idpts, sep = "_"),
+      nomatch = 0
     )
     sites_near$replsite[tst > 0] <- sites_over$siteID[tst]
 
@@ -419,7 +418,7 @@ irs <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = N
   if (!is.null(sites_over)) {
     add_names <- dsgn_names[dsgn_names %in% names(sites_over)]
     sites_over <- subset(sites_over,
-                         select = c(add_names, sframe_names)
+      select = c(add_names, sframe_names)
     )
   }
 
@@ -427,15 +426,17 @@ irs <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = N
   if (!is.null(sites_near)) {
     add_names <- dsgn_names[dsgn_names %in% names(sites_near)]
     sites_near <- subset(sites_near,
-                         select = c(add_names, sframe_names)
+      select = c(add_names, sframe_names)
     )
   }
 
   # add function call to dsgn list
   # dsgn <- c(list(Call = match.call()), dsgn)
-  dsgn <- list(call = match.call(), stratum = dsgn$stratum, n_base = dsgn$n_base,
-               seltype = dsgn$seltype, caty_n = dsgn$caty_n, legacy = dsgn$legacy_option,
-               mindis = dsgn$mindis, n_over = dsgn$n_over, n_near = dsgn$n_near)
+  dsgn <- list(
+    call = match.call(), stratum = dsgn$stratum, n_base = dsgn$n_base,
+    seltype = dsgn$seltype, caty_n = dsgn$caty_n, legacy = dsgn$legacy_option,
+    mindis = dsgn$mindis, n_over = dsgn$n_over, n_near = dsgn$n_near
+  )
 
   # create output list
   sites <- list(

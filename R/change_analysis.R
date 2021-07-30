@@ -306,18 +306,16 @@
 #'   surveyID = "surveyID", siteID = "siteID", weight = "wgt",
 #'   xcoord = "xcoord", ycoord = "ycoord", stratumID = "stratum"
 #' )
-#'
 #' @export
 ################################################################################
 
-change_analysis <- function(
-  dframe, vars_cat = NULL, vars_cont = NULL, vars_nondetect = NULL,
-  test = "mean", subpops = NULL, surveyID = "surveyID", survey_names = NULL,
-  siteID = "siteID", weight = "weight", revisitwgt = FALSE, xcoord = NULL,
-  ycoord = NULL, stratumID = NULL, clusterID = NULL, weight1 = NULL,
-  xcoord1 = NULL, ycoord1 = NULL, sizeweight = FALSE, sweight = NULL,
-  sweight1 = NULL, fpc = NULL, popsize = NULL, vartype = "Local",
-  jointprob = "overton", conf = 95) {
+change_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL, vars_nondetect = NULL,
+                            test = "mean", subpops = NULL, surveyID = "surveyID", survey_names = NULL,
+                            siteID = "siteID", weight = "weight", revisitwgt = FALSE, xcoord = NULL,
+                            ycoord = NULL, stratumID = NULL, clusterID = NULL, weight1 = NULL,
+                            xcoord1 = NULL, ycoord1 = NULL, sizeweight = FALSE, sweight = NULL,
+                            sweight1 = NULL, fpc = NULL, popsize = NULL, vartype = "Local",
+                            jointprob = "overton", conf = 95) {
 
   # Create a vector for error messages
 
@@ -470,11 +468,11 @@ change_analysis <- function(
     repeat_1[survey_1] <- dframe[survey_1, siteID] %in% dframe[
       survey_2,
       siteID
-      ]
+    ]
     repeat_2[survey_2] <- dframe[survey_2, siteID] %in% dframe[
       survey_1,
       siteID
-      ]
+    ]
   }
 
   # Ensure that repeat visit sites for both surveys occur in the same order among
@@ -506,7 +504,7 @@ change_analysis <- function(
   } else {
     fpcfactor_ind <- TRUE
     if (is.null(clusterID)) {
-      fpcsize = "fpcsize"
+      fpcsize <- "fpcsize"
       Ncluster <- NULL
       stage1size <- NULL
     } else {
@@ -550,7 +548,7 @@ change_analysis <- function(
 
   if (!is.null(vars_cat) && ind1 && ind2) {
     temp <- NULL
-    for(v in vars_cat) {
+    for (v in vars_cat) {
       if (all(is.na(dframe[survey_1, v])) | all(is.na(dframe[survey_2, v]))) {
         temp <- c(temp, v)
       }
@@ -568,7 +566,7 @@ change_analysis <- function(
 
   if (!is.null(vars_cont) && ind1 && ind2) {
     temp <- NULL
-    for(v in vars_cont) {
+    for (v in vars_cont) {
       if (all(is.na(dframe[survey_1, v])) | all(is.na(dframe[survey_2, v]))) {
         temp <- c(temp, v)
       }
@@ -596,7 +594,7 @@ change_analysis <- function(
 
   if (ind1 && ind2) {
     temp <- NULL
-    for(v in subpops) {
+    for (v in subpops) {
       if (all(is.na(dframe[survey_1, v])) | all(is.na(dframe[survey_2, v]))) {
         temp <- c(temp, v)
       }
@@ -612,26 +610,26 @@ change_analysis <- function(
       #  values for one of the surveys
 
       temp <- NULL
-      for(v in subpops) {
-        for(lv in unique(dframe[, v])) {
+      for (v in subpops) {
+        for (lv in unique(dframe[, v])) {
           tst1 <- dframe[survey_1, v] == lv
           tst2 <- dframe[survey_2, v] == lv
           if (all(is.na(dframe[survey_1, v][tst1])) |
-              all(is.na(dframe[survey_2, v][tst2]))) {
+            all(is.na(dframe[survey_2, v][tst2]))) {
             temp <- c(temp, lv)
           }
         }
         if (!is.null(temp)) {
           warn_ind <- TRUE
           temp.str <- vecprint(temp)
-          warn <- paste0("For subpopulation variable \"" , v, "\", one of the surveys contains only missing values \nfor the following categories:\n", temp.str)
+          warn <- paste0("For subpopulation variable \"", v, "\", one of the surveys contains only missing values \nfor the following categories:\n", temp.str)
           act <- "The subpopulation categories were eliminated from the analysis.\n"
           warn_df <- rbind(warn_df, data.frame(
             func = I(fname), subpoptype = v, subpop = NA, indicator = NA,
             stratum = NA, warning = I(warn), action = I(act)
           ))
           dframe[, v] <- as.character(dframe[, v])
-          for(lv in temp) {
+          for (lv in temp) {
             tst <- dframe[, v] == lv
             dframe[tst, v] <- NA
           }

@@ -16,7 +16,7 @@ NE_Lakes <- sframe(NE_Lakes)
 
 # intercept only formula
 test_that("one sided formulas work", {
-  output <- summary(NE_Lakes, formula = ~ 1)
+  output <- summary(NE_Lakes, formula = ~1)
   expect_true(exists("output"))
   expect_equal(NCOL(output), 1)
   expect_equal(length(output[, 1]), 1)
@@ -24,7 +24,7 @@ test_that("one sided formulas work", {
 
 # single categorical variable
 test_that("one sided formulas work", {
-  output <- summary(NE_Lakes, formula = ~ ELEV_CAT)
+  output <- summary(NE_Lakes, formula = ~ELEV_CAT)
   expect_true(exists("output"))
   expect_equal(NCOL(output), 2)
   expect_equal(length(output[, 2]), length(unique(NE_Lakes$ELEV_CAT)))
@@ -65,7 +65,7 @@ test_that("one sided formulas work", {
 
 # single categorical variable
 test_that("one sided formulas work", {
-  output <- summary(NE_Lakes, formula = ~ ELEV)
+  output <- summary(NE_Lakes, formula = ~ELEV)
   expect_true(exists("output"))
   expect_equal(NCOL(output), 2)
   expect_equal(length(output[, 2]), 6) # 5 number summary plus mean
@@ -80,18 +80,18 @@ test_that("one sided formulas work", {
 
 # . interaction operator works
 test_that("one sided formulas work", {
-  output <- summary(NE_Lakes, formula = ~ .)
+  output <- summary(NE_Lakes, formula = ~.)
   expect_true(exists("output"))
   expect_equal(NCOL(output), NCOL(NE_Lakes)) # our summary removes geometry but includes total
 })
 
 # maxsum works operator works
 test_that("one sided formulas work", {
-  output <- summary(NE_Lakes, formula = ~ LEGACY, maxsum = 4)
+  output <- summary(NE_Lakes, formula = ~LEGACY, maxsum = 4)
   expect_true(exists("output"))
   expect_equal(length(output[, 2]), 4)
 
-  output <- summary(NE_Lakes, formula = ~ LEGACY)
+  output <- summary(NE_Lakes, formula = ~LEGACY)
   expect_true(exists("output"))
   expect_equal(length(output[, 2]), 6)
 })
@@ -143,7 +143,7 @@ eqprob_strat <- grts(NE_Lakes, n_base = n_base_strat, stratum_var = "ELEV_CAT")
 
 # one sided formula
 test_that("one sided formulas work", {
-  output <- summary(eqprob, formula = ~ siteuse)
+  output <- summary(eqprob, formula = ~siteuse)
   expect_true(exists("output"))
   expect_equal(NCOL(output), 2)
   expect_equal(length(output[, 2]), 1)
@@ -159,7 +159,7 @@ test_that("one sided formulas work", {
 
 # use with legacy variable
 test_that("one sided formulas work", {
-  output <- summary(eqprob_legacy, formula = ~ siteuse)
+  output <- summary(eqprob_legacy, formula = ~siteuse)
   expect_true(exists("output"))
   expect_equal(NCOL(output), 2)
   expect_equal(length(output[, 2]), 2)
@@ -167,7 +167,7 @@ test_that("one sided formulas work", {
 
 # siteuse variable being set
 test_that("one sided formulas work", {
-  output <- summary(eqprob_legacy, formula = ~ siteuse, siteuse = "Base")
+  output <- summary(eqprob_legacy, formula = ~siteuse, siteuse = "Base")
   expect_true(exists("output"))
   expect_equal(NCOL(output), 2)
   expect_equal(length(output[, 2]), 1)
@@ -175,7 +175,7 @@ test_that("one sided formulas work", {
 
 # use with rho replacement
 test_that("one sided formulas work", {
-  output <- summary(eqprob_rho, formula = ~ siteuse)
+  output <- summary(eqprob_rho, formula = ~siteuse)
   expect_true(exists("output"))
   expect_equal(NCOL(output), 2)
   expect_equal(length(output[, 2]), 2)
@@ -183,7 +183,7 @@ test_that("one sided formulas work", {
 
 # siteuse variable being set
 test_that("one sided formulas work", {
-  output <- summary(eqprob_rho, formula = ~ siteuse, siteuse = "Base")
+  output <- summary(eqprob_rho, formula = ~siteuse, siteuse = "Base")
   expect_true(exists("output"))
   expect_equal(NCOL(output), 2)
   expect_equal(length(output[, 2]), 1)
@@ -191,7 +191,7 @@ test_that("one sided formulas work", {
 
 # use with nn replacement
 test_that("one sided formulas work", {
-  output <- summary(eqprob_nn, formula = ~ siteuse)
+  output <- summary(eqprob_nn, formula = ~siteuse)
   expect_true(exists("output"))
   expect_equal(NCOL(output), 2)
   expect_equal(length(output[, 2]), 2)
@@ -199,7 +199,7 @@ test_that("one sided formulas work", {
 
 # siteuse variable being set
 test_that("one sided formulas work", {
-  output <- summary(eqprob_nn, formula = ~ siteuse, siteuse = "Base")
+  output <- summary(eqprob_nn, formula = ~siteuse, siteuse = "Base")
   expect_true(exists("output"))
   expect_equal(NCOL(output), 2)
   expect_equal(length(output[, 2]), 1)
@@ -207,7 +207,7 @@ test_that("one sided formulas work", {
 
 # use with both replacement
 test_that("one sided formulas work", {
-  output <- summary(eqprob_both, formula = ~ siteuse)
+  output <- summary(eqprob_both, formula = ~siteuse)
   expect_true(exists("output"))
   expect_equal(NCOL(output), 2)
   expect_equal(length(output[, 2]), 3)
@@ -215,7 +215,7 @@ test_that("one sided formulas work", {
 
 # siteuse variable being set
 test_that("one sided formulas work", {
-  output <- summary(eqprob_both, formula = ~ siteuse, siteuse = "Base")
+  output <- summary(eqprob_both, formula = ~siteuse, siteuse = "Base")
   expect_true(exists("output"))
   expect_equal(NCOL(output), 2)
   expect_equal(length(output[, 2]), 1)
@@ -223,7 +223,7 @@ test_that("one sided formulas work", {
 
 # siteuse variable being set
 test_that("one sided formulas work", {
-  output <- summary(eqprob_both, formula = ~ siteuse, siteuse = c("Base", "Over"))
+  output <- summary(eqprob_both, formula = ~siteuse, siteuse = c("Base", "Over"))
   expect_true(exists("output"))
   expect_equal(NCOL(output), 2)
   expect_equal(length(output[, 2]), 2)
@@ -231,7 +231,7 @@ test_that("one sided formulas work", {
 
 # siteuse variable being set
 test_that("one sided formulas work", {
-  output <- summary(eqprob_both, formula = ~ siteuse, siteuse = c("Base", "Near"))
+  output <- summary(eqprob_both, formula = ~siteuse, siteuse = c("Base", "Near"))
   expect_true(exists("output"))
   expect_equal(NCOL(output), 2)
   expect_equal(length(output[, 2]), 2)
@@ -239,7 +239,7 @@ test_that("one sided formulas work", {
 
 # siteuse variable being set
 test_that("one sided formulas work", {
-  output <- summary(eqprob_both, formula = ~ siteuse, siteuse = c("Over", "Near"))
+  output <- summary(eqprob_both, formula = ~siteuse, siteuse = c("Over", "Near"))
   expect_true(exists("output"))
   expect_equal(NCOL(output), 2)
   expect_equal(length(output[, 2]), 2)
@@ -247,7 +247,7 @@ test_that("one sided formulas work", {
 
 # with a stratified design
 test_that("one sided formulas work", {
-  output <- summary(eqprob_strat, formula = ~ siteuse)
+  output <- summary(eqprob_strat, formula = ~siteuse)
   expect_true(exists("output"))
   expect_equal(NCOL(output), 2)
   expect_equal(length(output[, 2]), 1)
@@ -282,7 +282,7 @@ NE_Lakes <- dframe(NE_Lakes)
 
 # intercept only formula
 test_that("one sided formulas work", {
-  output <- summary(NE_Lakes, formula = ~ 1)
+  output <- summary(NE_Lakes, formula = ~1)
   expect_true(exists("output"))
   expect_equal(NCOL(output), 1)
   expect_equal(length(output[, 1]), 1)
@@ -290,7 +290,7 @@ test_that("one sided formulas work", {
 
 # single categorical variable
 test_that("one sided formulas work", {
-  output <- summary(NE_Lakes, formula = ~ ELEV_CAT)
+  output <- summary(NE_Lakes, formula = ~ELEV_CAT)
   expect_true(exists("output"))
   expect_equal(NCOL(output), 2)
   expect_equal(length(output[, 2]), length(unique(NE_Lakes$ELEV_CAT)))
@@ -331,7 +331,7 @@ test_that("one sided formulas work", {
 
 # single categorical variable
 test_that("one sided formulas work", {
-  output <- summary(NE_Lakes, formula = ~ ELEV)
+  output <- summary(NE_Lakes, formula = ~ELEV)
   expect_true(exists("output"))
   expect_equal(NCOL(output), 2)
   expect_equal(length(output[, 2]), 6) # 5 number summary plus mean
@@ -346,18 +346,18 @@ test_that("one sided formulas work", {
 
 # . interaction operator works
 test_that("one sided formulas work", {
-  output <- summary(NE_Lakes, formula = ~ .)
+  output <- summary(NE_Lakes, formula = ~.)
   expect_true(exists("output"))
   expect_equal(NCOL(output), NCOL(NE_Lakes)) # our summary removes geometry but includes total
 })
 
 # maxsum works operator works
 test_that("one sided formulas work", {
-  output <- summary(NE_Lakes, formula = ~ LEGACY, maxsum = 4)
+  output <- summary(NE_Lakes, formula = ~LEGACY, maxsum = 4)
   expect_true(exists("output"))
   expect_equal(length(output[, 2]), 4)
 
-  output <- summary(NE_Lakes, formula = ~ LEGACY)
+  output <- summary(NE_Lakes, formula = ~LEGACY)
   expect_true(exists("output"))
   expect_equal(length(output[, 2]), 6)
 })

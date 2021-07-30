@@ -191,13 +191,14 @@ cat_localmean_total <- function(itype, lev_itype, nlev_itype, ivar, lev_ivar,
           temp <- catvar_total(
             factor(catvar[stratum_i]), wgt[stratum_i], xcoord[stratum_i],
             ycoord[stratum_i], size_names, stratum_ind, stratum_levels[i],
-            cluster_ind, warn_ind = warn_ind, warn_df = warn_df,
+            cluster_ind,
+            warn_ind = warn_ind, warn_df = warn_df,
             warn_vec = warn_vec
           )
         }
         warn_ind <- temp$warn_ind
         warn_df <- temp$warn_df
-        if(any(temp$varest < 0)) {
+        if (any(temp$varest < 0)) {
           temp$vartype <- "SRS"
           warn_ind <- TRUE
           act <- "The simple random sampling variance estimator for an infinite population was used.\n"
@@ -294,7 +295,7 @@ cat_localmean_total <- function(itype, lev_itype, nlev_itype, ivar, lev_ivar,
       }
       warn_ind <- temp$warn_ind
       warn_df <- temp$warn_df
-      if(any(temp$varest < 0)) {
+      if (any(temp$varest < 0)) {
         temp$vartype <- "SRS"
         warn_ind <- TRUE
         act <- "The simple random sampling variance estimator for an infinite population was used.\n"

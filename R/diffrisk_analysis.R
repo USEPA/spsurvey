@@ -283,17 +283,15 @@
 #'   weight = "wgt", xcoord = "xcoord", ycoord = "ycoord",
 #'   stratumID = "stratum"
 #' )
-#'
 #' @export
 ################################################################################
 
-diffrisk_analysis <- function(
-  dframe, vars_response, vars_stressor, response_levels = NULL,
-  stressor_levels = NULL, subpops = NULL, siteID = "siteID", weight = "weight",
-  xcoord = NULL, ycoord = NULL, stratumID = NULL, clusterID = NULL,
-  weight1 = NULL, xcoord1 = NULL, ycoord1 = NULL, sizeweight = FALSE,
-  sweight = NULL, sweight1 = NULL, fpc = NULL, popsize = NULL,
-  vartype = "Local", conf = 95) {
+diffrisk_analysis <- function(dframe, vars_response, vars_stressor, response_levels = NULL,
+                              stressor_levels = NULL, subpops = NULL, siteID = "siteID", weight = "weight",
+                              xcoord = NULL, ycoord = NULL, stratumID = NULL, clusterID = NULL,
+                              weight1 = NULL, xcoord1 = NULL, ycoord1 = NULL, sizeweight = FALSE,
+                              sweight = NULL, sweight1 = NULL, fpc = NULL, popsize = NULL,
+                              vartype = "Local", conf = 95) {
 
   # Create a vector for error messages
 
@@ -392,7 +390,7 @@ diffrisk_analysis <- function(
   } else {
     fpcfactor_ind <- TRUE
     if (is.null(clusterID)) {
-      fpcsize = "fpcsize"
+      fpcsize <- "fpcsize"
       Ncluster <- NULL
       stage1size <- NULL
     } else {
@@ -493,7 +491,7 @@ diffrisk_analysis <- function(
       if (all(vars_response %in% names(dframe))) {
         tst <- logical(length(vars_response))
         for (i in 1:length(vars_response)) {
-          if (!all(response_levels[[i]] %in% levels(dframe[,vars_response[i]]))) {
+          if (!all(response_levels[[i]] %in% levels(dframe[, vars_response[i]]))) {
             tst[i] <- TRUE
           }
         }
@@ -543,7 +541,7 @@ diffrisk_analysis <- function(
       if (all(vars_stressor %in% names(dframe))) {
         tst <- logical(length(vars_stressor))
         for (i in 1:length(vars_stressor)) {
-          if (!all(stressor_levels[[i]] %in% levels(dframe[,vars_stressor[i]]))) {
+          if (!all(stressor_levels[[i]] %in% levels(dframe[, vars_stressor[i]]))) {
             tst[i] <- TRUE
           }
         }
@@ -740,8 +738,8 @@ diffrisk_analysis <- function(
             mult, warn_ind, warn_df
           )
           ind <- temp$catsum$Category == response_levels[[ivar_r]][1]
-          prop1 <- temp$catsum$Estimate.P[ind]/100
-          var1 <- (temp$catsum$StdError.P[ind]/100)^2
+          prop1 <- temp$catsum$Estimate.P[ind] / 100
+          var1 <- (temp$catsum$StdError.P[ind] / 100)^2
           warn_ind <- temp$warn_ind
           warn_df <- temp$warn_df
 
@@ -756,8 +754,8 @@ diffrisk_analysis <- function(
             mult, warn_ind, warn_df
           )
           ind <- temp$catsum$Category == response_levels[[ivar_r]][1]
-          prop2 <- temp$catsum$Estimate.P[ind]/100
-          var2 <- (temp$catsum$StdError.P[ind]/100)^2
+          prop2 <- temp$catsum$Estimate.P[ind] / 100
+          var2 <- (temp$catsum$StdError.P[ind] / 100)^2
           warn_ind <- temp$warn_ind
           warn_df <- temp$warn_df
 
@@ -795,57 +793,53 @@ diffrisk_analysis <- function(
             Estimate_Good = prop2,
             StdError = stderr_est,
             MarginofError = mult * stderr_est,
-            LCB = max(diffest - mult*stderr_est, -1),
-            UCB = min(diffest + mult*stderr_est, 1),
+            LCB = max(diffest - mult * stderr_est, -1),
+            UCB = min(diffest + mult * stderr_est, 1),
             WeightTotal = wgt_total["Sum", "Sum"],
             CellCounts_11 = cc[
               response_levels[[ivar_r]][1],
               stressor_levels[[ivar_s]][1]
-              ],
+            ],
             CellCounts_12 = cc[
               response_levels[[ivar_r]][1],
               stressor_levels[[ivar_s]][2]
-              ],
+            ],
             CellCounts_21 = cc[
               response_levels[[ivar_r]][2],
               stressor_levels[[ivar_s]][1]
-              ],
+            ],
             CellCounts_22 = cc[
               response_levels[[ivar_r]][2],
               stressor_levels[[ivar_s]][2]
-              ],
+            ],
             CellProportions_11 = cp[
               response_levels[[ivar_r]][1],
               stressor_levels[[ivar_s]][1]
-              ],
+            ],
             CellProportions_12 = cp[
               response_levels[[ivar_r]][1],
               stressor_levels[[ivar_s]][2]
-              ],
+            ],
             CellProportions_21 = cp[
               response_levels[[ivar_r]][2],
               stressor_levels[[ivar_s]][1]
-              ],
+            ],
             CellProportions_22 = cp[
               response_levels[[ivar_r]][2],
               stressor_levels[[ivar_s]][2]
-              ]
+            ]
           ))
 
           # End of the loop for levels of the subpopulation
-
         }
 
         # End of the loop for stressor variables
-
       }
 
       # End of the loop for response variables
-
     }
 
     # End of the loop for subpopulations
-
   }
 
   # As necessary, output a message indicating that warning messages were

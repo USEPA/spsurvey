@@ -58,7 +58,7 @@ sprbind <- function(object, siteuse = NULL) {
     }
 
     if (is.null(new_legacy)) {
-      return (new_non_legacy)
+      return(new_non_legacy)
     } else {
       if (is.null(new_non_legacy)) {
         return(new_legacy)

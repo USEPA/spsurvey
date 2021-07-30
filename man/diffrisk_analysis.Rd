@@ -305,7 +305,6 @@ diffrisk_analysis(dframe,
   weight = "wgt", xcoord = "xcoord", ycoord = "ycoord",
   stratumID = "stratum"
 )
-
 }
 \seealso{
 \code{\link{calibrate}}

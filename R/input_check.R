@@ -103,8 +103,10 @@ input_check <- function(dframe, design_names, vars_cat, vars_cont,
   # variables and check those variables for missing values
 
   temp <- c("surveyID", "siteID", "weight")
-  design_names <- design_names[!(names(design_names) %in% c("fpcsize",
-                                                            "Ncluster", "stage1size"))]
+  design_names <- design_names[!(names(design_names) %in% c(
+    "fpcsize",
+    "Ncluster", "stage1size"
+  ))]
   for (i in names(design_names)) {
     if (is.null(design_names[[i]])) {
       eval(parse(text = paste0(i, " <- NULL")))
@@ -549,29 +551,31 @@ input_check <- function(dframe, design_names, vars_cat, vars_cont,
   if (!is.null(fpc)) {
     if (!is.null(stratumID)) {
       if (!is.null(clusterID)) {
-        cluster_levels <- tapply(clusterID, stratumID,
-                                 function(x) levels(factor(x)))
+        cluster_levels <- tapply(
+          clusterID, stratumID,
+          function(x) levels(factor(x))
+        )
         ncluster <- sapply(cluster_levels, length)
-        indx <- match(names(fpc), names(ncluster),nomatch = 0)
+        indx <- match(names(fpc), names(ncluster), nomatch = 0)
         if (!is.list(fpc)) {
           error_ind <- TRUE
           msg <- "For a stratified, two-stage survey design, the fpc argument must be a list.\n"
           error_vec <- c(error_vec, msg)
-        } else if(length(fpc) != nstrata) {
+        } else if (length(fpc) != nstrata) {
           error_ind <- TRUE
           msg <- "For a stratified, two-stage survey design, the fpc argument must be the same length \nas the number of strata.\n"
           error_vec <- c(error_vec, msg)
-        } else if(is.null(names(fpc))) {
+        } else if (is.null(names(fpc))) {
           error_ind <- TRUE
           msg <- "For a stratified, single-stage survey design, the fpc argument must be a named list.\n"
           error_vec <- c(error_vec, msg)
-        } else if(!all(stratum_levels %in% names(fpc))) {
+        } else if (!all(stratum_levels %in% names(fpc))) {
           error_ind <- TRUE
           msg <- "For a stratified, single-stage survey design, names for the fpc argument must match \ncatgories for the stratum ID variable in the dframe data frame.\n"
           error_vec <- c(error_vec, msg)
-        } else if(any(sapply(fpc, function(x) !is.vector(x))) ||
-                  any(sapply(fpc, length) != (ncluster[indx] + 1)) ||
-                  any(sapply(fpc, function(x) !is.numeric(x)))) {
+        } else if (any(sapply(fpc, function(x) !is.vector(x))) ||
+          any(sapply(fpc, length) != (ncluster[indx] + 1)) ||
+          any(sapply(fpc, function(x) !is.numeric(x)))) {
           error_ind <- TRUE
           msg <- "For a stratified, two-stage survey design, the fpc argument, for each stratum, must be \na numeric vector with length equal to one plus the number of clusters in the sample for \nthe stratum.\n"
           error_vec <- c(error_vec, msg)
@@ -601,21 +605,21 @@ input_check <- function(dframe, design_names, vars_cat, vars_cont,
           error_ind <- TRUE
           msg <- "For a stratified, single-stage survey design, the fpc argument must be a list.\n"
           error_vec <- c(error_vec, msg)
-        } else if(length(fpc) != nstrata) {
+        } else if (length(fpc) != nstrata) {
           error_ind <- TRUE
           msg <- "For a stratified, single-stage survey design, the fpc argument must be the same length \nas the number of strata.\n"
           error_vec <- c(error_vec, msg)
-        } else if(is.null(names(fpc))) {
+        } else if (is.null(names(fpc))) {
           error_ind <- TRUE
           msg <- "For a stratified, single-stage survey design, the fpc argument must be a named list.\n"
           error_vec <- c(error_vec, msg)
-        } else if(!all(stratum_levels %in% names(fpc))) {
+        } else if (!all(stratum_levels %in% names(fpc))) {
           error_ind <- TRUE
           msg <- "For a stratified, single-stage survey design, names for the fpc argument must match \ncatgories for the stratum ID variable in the dframe data frame.\n"
           error_vec <- c(error_vec, msg)
-        } else if(any(sapply(fpc, function(x) !is.vector(x))) ||
-                  any(sapply(fpc, length) > 1) ||
-                  any(sapply(fpc, function(x) !is.numeric(x)))) {
+        } else if (any(sapply(fpc, function(x) !is.vector(x))) ||
+          any(sapply(fpc, length) > 1) ||
+          any(sapply(fpc, function(x) !is.numeric(x)))) {
           error_ind <- TRUE
           msg <- "For a stratified, single-stage survey design, the fpc argument must contain a single \nnumeric value for each strata.\n"
           error_vec <- c(error_vec, msg)
@@ -641,19 +645,19 @@ input_check <- function(dframe, design_names, vars_cat, vars_cont,
           error_ind <- TRUE
           msg <- "For an unstratified, two-stage survey design, the fpc argument must be a vector\n"
           error_vec <- c(error_vec, msg)
-        } else if(length(fpc) != (ncluster+1)) {
+        } else if (length(fpc) != (ncluster + 1)) {
           error_ind <- TRUE
           msg <- "For an unstratified, two-stage survey design, the fpc argument must be the same length \nas the number of clusters plus one\n"
           error_vec <- c(error_vec, msg)
-        } else if(is.null(names(fpc))) {
+        } else if (is.null(names(fpc))) {
           error_ind <- TRUE
           msg <- "For a stratified, single-stage survey design, the fpc argument must be a named vector.\n"
-        } else if(!all(cluster_levels %in% names(fpc)[-1])) {
+        } else if (!all(cluster_levels %in% names(fpc)[-1])) {
           error_ind <- TRUE
           msg <- "For a stratified, single-stage survey design, names for the fpc argument must include \nall of the catgories for the cluster ID variable in the dframe data frame.\n"
           error_vec <- c(error_vec, msg)
-        } else if(any(sapply(fpc, length) > 1) ||
-                  any(sapply(fpc, function(x) !is.numeric(x)))) {
+        } else if (any(sapply(fpc, length) > 1) ||
+          any(sapply(fpc, function(x) !is.numeric(x)))) {
           error_ind <- TRUE
           msg <- "For unstratified, two-stage survey design, the fpc argument must contain a single \nnumeric value for each item in the vector\n"
           error_vec <- c(error_vec, msg)

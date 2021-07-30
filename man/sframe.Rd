@@ -27,6 +27,7 @@ which may be useful when calling sf generic functions.
 data("NE_lakes")
 NE_lakes <- sframe(NE_lakes)
 }
+###############################################################################
 }
 \seealso{
 sframe_to_sf

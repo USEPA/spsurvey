@@ -10,7 +10,8 @@ load(system.file("extdata", "NLA_IN.rda", package = "spsurvey"))
 # Create a population size data frame
 popsize <- data.frame(
   LAKE_ORGN = c("MAN_MADE", "NATURAL"),
-  Total = c(6000, 14000))
+  Total = c(6000, 14000)
+)
 
 # Create finite population correction factor objects
 fpc1 <- 20000
@@ -76,8 +77,10 @@ vars <- c("ContVar")
 subpops <- c("All_Sites", "LAKE_ORGN")
 
 # Perform tests
-CDF_Estimates <- cont_analysis(dframe = dframe, vars = vars, subpops = subpops,
-                               siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD", ycoord = "YCOORD")
+CDF_Estimates <- cont_analysis(
+  dframe = dframe, vars = vars, subpops = subpops,
+  siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD", ycoord = "YCOORD"
+)
 
 test_that("Continuous: Unstratified single-stage analysis", {
   expect_true(exists("CDF_Estimates"))
@@ -89,9 +92,11 @@ test_that("Continuous: Unstratified single-stage analysis", {
   expect_equal(nrow(CDF_Estimates$Mean), 3)
 })
 
-CDF_Estimates <- cont_analysis(dframe = dframe, vars = vars, subpops = subpops,
-                               siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD", ycoord = "YCOORD",
-                               popsize = popsize)
+CDF_Estimates <- cont_analysis(
+  dframe = dframe, vars = vars, subpops = subpops,
+  siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD", ycoord = "YCOORD",
+  popsize = popsize
+)
 
 test_that("Continuous: with known population sizes", {
   expect_true(exists("CDF_Estimates"))
@@ -103,9 +108,11 @@ test_that("Continuous: with known population sizes", {
   expect_equal(nrow(CDF_Estimates$Mean), 3)
 })
 
-CDF_Estimates <- cont_analysis(dframe = dframe, vars = vars, subpops = subpops,
-                               siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD", ycoord = "YCOORD",
-                               fpc = fpc1)
+CDF_Estimates <- cont_analysis(
+  dframe = dframe, vars = vars, subpops = subpops,
+  siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD", ycoord = "YCOORD",
+  fpc = fpc1
+)
 
 test_that("Continuous: with finite population correction factor", {
   expect_true(exists("CDF_Estimates"))
@@ -117,9 +124,11 @@ test_that("Continuous: with finite population correction factor", {
   expect_equal(nrow(CDF_Estimates$Mean), 3)
 })
 
-CDF_Estimates <- cont_analysis(dframe = dframe, vars = vars, subpops = subpops,
-                               siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD", ycoord = "YCOORD",
-                               stratumID = "URBN_NLA17")
+CDF_Estimates <- cont_analysis(
+  dframe = dframe, vars = vars, subpops = subpops,
+  siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD", ycoord = "YCOORD",
+  stratumID = "URBN_NLA17"
+)
 
 test_that("Continuous: Stratified single-stage analysis", {
   expect_true(exists("CDF_Estimates"))
@@ -131,9 +140,11 @@ test_that("Continuous: Stratified single-stage analysis", {
   expect_equal(nrow(CDF_Estimates$Mean), 3)
 })
 
-CDF_Estimates <- cont_analysis(dframe = dframe, vars = vars, subpops = subpops,
-                               siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD", ycoord = "YCOORD",
-                               stratumID = "URBN_NLA17", popsize = popsize)
+CDF_Estimates <- cont_analysis(
+  dframe = dframe, vars = vars, subpops = subpops,
+  siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD", ycoord = "YCOORD",
+  stratumID = "URBN_NLA17", popsize = popsize
+)
 
 test_that("Continuous: with known population sizes", {
   expect_true(exists("CDF_Estimates"))
@@ -145,9 +156,11 @@ test_that("Continuous: with known population sizes", {
   expect_equal(nrow(CDF_Estimates$Mean), 3)
 })
 
-CDF_Estimates <- cont_analysis(dframe = dframe, vars = vars, subpops = subpops,
-                               siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD", ycoord = "YCOORD",
-                               stratumID = "URBN_NLA17", fpc = fpc2a)
+CDF_Estimates <- cont_analysis(
+  dframe = dframe, vars = vars, subpops = subpops,
+  siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD", ycoord = "YCOORD",
+  stratumID = "URBN_NLA17", fpc = fpc2a
+)
 
 test_that("Continuous: with finite population correction factor", {
   expect_true(exists("CDF_Estimates"))
@@ -159,10 +172,12 @@ test_that("Continuous: with finite population correction factor", {
   expect_equal(nrow(CDF_Estimates$Mean), 3)
 })
 
-CDF_Estimates <- cont_analysis(dframe = dframe, vars = vars, subpops = subpops,
-                               siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD",  ycoord = "YCOORD",
-                               clusterID = "clusterID", weight1 = "weight1", xcoord1 = "xcoord1",
-                               ycoord1 = "ycoord1", vartype = "SRS")
+CDF_Estimates <- cont_analysis(
+  dframe = dframe, vars = vars, subpops = subpops,
+  siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD", ycoord = "YCOORD",
+  clusterID = "clusterID", weight1 = "weight1", xcoord1 = "xcoord1",
+  ycoord1 = "ycoord1", vartype = "SRS"
+)
 
 test_that("Continuous: Unstratified two-stage analysis", {
   expect_true(exists("CDF_Estimates"))
@@ -174,10 +189,12 @@ test_that("Continuous: Unstratified two-stage analysis", {
   expect_equal(nrow(CDF_Estimates$Mean), 3)
 })
 
-CDF_Estimates <- cont_analysis(dframe = dframe, vars = vars, subpops = subpops,
-                               siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD", ycoord = "YCOORD",
-                               clusterID = "clusterID", weight1 = "weight1", xcoord1 = "xcoord1",
-                               ycoord1 = "ycoord1", popsize = popsize, vartype = "SRS")
+CDF_Estimates <- cont_analysis(
+  dframe = dframe, vars = vars, subpops = subpops,
+  siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD", ycoord = "YCOORD",
+  clusterID = "clusterID", weight1 = "weight1", xcoord1 = "xcoord1",
+  ycoord1 = "ycoord1", popsize = popsize, vartype = "SRS"
+)
 
 test_that("Continuous: with known population sizes", {
   expect_true(exists("CDF_Estimates"))
@@ -189,10 +206,12 @@ test_that("Continuous: with known population sizes", {
   expect_equal(nrow(CDF_Estimates$Mean), 3)
 })
 
-CDF_Estimates <- cont_analysis(dframe = dframe, vars = vars, subpops = subpops,
-                               siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD", ycoord = "YCOORD",
-                               clusterID = "clusterID", weight1 = "weight1", xcoord1 = "xcoord1",
-                               ycoord1 = "ycoord1", fpc = fpc3, vartype = "SRS")
+CDF_Estimates <- cont_analysis(
+  dframe = dframe, vars = vars, subpops = subpops,
+  siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD", ycoord = "YCOORD",
+  clusterID = "clusterID", weight1 = "weight1", xcoord1 = "xcoord1",
+  ycoord1 = "ycoord1", fpc = fpc3, vartype = "SRS"
+)
 
 test_that("Continuous: with finite population correction factor", {
   expect_true(exists("CDF_Estimates"))
@@ -204,10 +223,12 @@ test_that("Continuous: with finite population correction factor", {
   expect_equal(nrow(CDF_Estimates$Mean), 3)
 })
 
-CDF_Estimates <- cont_analysis(dframe = dframe, vars = vars, subpops = subpops,
-                               siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD", ycoord = "YCOORD",
-                               stratumID = "URBN_NLA17", clusterID = "clusterID", weight1 = "weight1",
-                               xcoord1 = "xcoord1", ycoord1 = "ycoord1", vartype = "SRS")
+CDF_Estimates <- cont_analysis(
+  dframe = dframe, vars = vars, subpops = subpops,
+  siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD", ycoord = "YCOORD",
+  stratumID = "URBN_NLA17", clusterID = "clusterID", weight1 = "weight1",
+  xcoord1 = "xcoord1", ycoord1 = "ycoord1", vartype = "SRS"
+)
 
 test_that("Continuous: Stratified two-stage analysis", {
   expect_true(exists("CDF_Estimates"))
@@ -219,11 +240,13 @@ test_that("Continuous: Stratified two-stage analysis", {
   expect_equal(nrow(CDF_Estimates$Mean), 3)
 })
 
-CDF_Estimates <- cont_analysis(dframe = dframe, vars = vars, subpops = subpops,
-                               siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD", ycoord = "YCOORD",
-                               stratumID = "URBN_NLA17", clusterID = "clusterID", weight1 = "weight1",
-                               xcoord1 = "xcoord1", ycoord1 = "ycoord1", popsize = popsize,
-                               vartype = "SRS")
+CDF_Estimates <- cont_analysis(
+  dframe = dframe, vars = vars, subpops = subpops,
+  siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD", ycoord = "YCOORD",
+  stratumID = "URBN_NLA17", clusterID = "clusterID", weight1 = "weight1",
+  xcoord1 = "xcoord1", ycoord1 = "ycoord1", popsize = popsize,
+  vartype = "SRS"
+)
 
 test_that("Continuous: with known population sizes", {
   expect_true(exists("CDF_Estimates"))
@@ -235,10 +258,12 @@ test_that("Continuous: with known population sizes", {
   expect_equal(nrow(CDF_Estimates$Mean), 3)
 })
 
-CDF_Estimates <- cont_analysis(dframe = dframe, vars = vars, subpops = subpops,
-                               siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD", ycoord = "YCOORD",
-                               stratumID = "URBN_NLA17", clusterID = "clusterID", weight1 = "weight1",
-                               xcoord1 = "xcoord1", ycoord1 = "ycoord1", fpc = fpc4a, vartype = "SRS")
+CDF_Estimates <- cont_analysis(
+  dframe = dframe, vars = vars, subpops = subpops,
+  siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD", ycoord = "YCOORD",
+  stratumID = "URBN_NLA17", clusterID = "clusterID", weight1 = "weight1",
+  xcoord1 = "xcoord1", ycoord1 = "ycoord1", fpc = fpc4a, vartype = "SRS"
+)
 
 test_that("Continuous: with finite population correction factor", {
   expect_true(exists("CDF_Estimates"))

@@ -410,7 +410,6 @@ trend_analysis(
   xcoord = "xcoord",
   ycoord = "ycoord"
 )
-
 }
 \seealso{
 \code{\link{boot}}

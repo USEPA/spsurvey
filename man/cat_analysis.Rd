@@ -259,7 +259,6 @@ cat_analysis(dframe,
   weight = "wgt", xcoord = "xcoord", ycoord = "ycoord",
   stratumID = "stratum", popsize = mypopsize
 )
-
 }
 \seealso{
 \code{\link{calibrate}}

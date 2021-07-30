@@ -90,8 +90,7 @@ revisit_bibd <- function(n_period, n_pnl, n_visit, nsamp, panel_name = "BIB",
       c(paste(panel_name, 1:nrow(pan_dsgn), sep = "_")),
       seq(begin, by = skip, length.out = ncol(pan_dsgn))
     )
-  }
-  else {
+  } else {
     dimnames(pan_dsgn) <- list(
       c(
         paste(panel_name, 1:9, sep = "_0"),

@@ -50,7 +50,7 @@
 #' @noRd
 ################################################################################
 
-cdftest_localmean_total <- function(design, design_names,  warn_ind, warn_df,
+cdftest_localmean_total <- function(design, design_names, warn_ind, warn_df,
                                     warn_vec) {
 
   # Assign a value to the function name variable
@@ -175,7 +175,6 @@ cdftest_localmean_total <- function(design, design_names,  warn_ind, warn_df,
     )
 
     # Branch for an unstratified sample
-
   } else {
 
     # Calculate the variance/covariance estimates
@@ -187,7 +186,8 @@ cdftest_localmean_total <- function(design, design_names,  warn_ind, warn_df,
       )
     } else {
       results <- cdftestvar_total(design, wgt, xcoord, ycoord, stratum_ind,
-        NULL, cluster_ind, warn_ind = warn_ind, warn_df = warn_df,
+        NULL, cluster_ind,
+        warn_ind = warn_ind, warn_df = warn_df,
         warn_vec = warn_vec
       )
     }

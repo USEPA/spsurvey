@@ -103,7 +103,6 @@ survey_design <- function(dframe, siteID, weight, stratum_ind, stratumID,
                           cluster_ind, clusterID, weight1, sizeweight, sweight,
                           sweight1, fpcfactor_ind, fpcsize, Ncluster,
                           stage1size, vartype, jointprob) {
-
   if (vartype %in% c("Local", "SRS")) {
     if (stratum_ind) {
       if (cluster_ind) {

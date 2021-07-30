@@ -293,17 +293,15 @@
 #'   weight = "wgt", xcoord = "xcoord", ycoord = "ycoord",
 #'   stratumID = "stratum", popsize = mypopsize, statistics = "mean"
 #' )
-#'
 #' @export
 ################################################################################
 
-cont_analysis <- function(
-  dframe, vars, vars_nondetect = NULL, subpops = NULL, siteID = "siteID",
-  weight = "weight", xcoord = NULL, ycoord = NULL, stratumID = NULL,
-  clusterID = NULL, weight1 = NULL, xcoord1 = NULL, ycoord1 = NULL,
-  sizeweight = FALSE, sweight = NULL, sweight1 = NULL, fpc = NULL,
-  popsize = NULL, vartype = "Local", jointprob = "overton", conf = 95,
-  pctval = c(5, 10, 25, 50, 75, 90, 95), statistics = c("cdf", "pct", "mean")) {
+cont_analysis <- function(dframe, vars, vars_nondetect = NULL, subpops = NULL, siteID = "siteID",
+                          weight = "weight", xcoord = NULL, ycoord = NULL, stratumID = NULL,
+                          clusterID = NULL, weight1 = NULL, xcoord1 = NULL, ycoord1 = NULL,
+                          sizeweight = FALSE, sweight = NULL, sweight1 = NULL, fpc = NULL,
+                          popsize = NULL, vartype = "Local", jointprob = "overton", conf = 95,
+                          pctval = c(5, 10, 25, 50, 75, 90, 95), statistics = c("cdf", "pct", "mean")) {
 
   # Create a vector for error messages
 
@@ -402,7 +400,7 @@ cont_analysis <- function(
   } else {
     fpcfactor_ind <- TRUE
     if (is.null(clusterID)) {
-      fpcsize = "fpcsize"
+      fpcsize <- "fpcsize"
       Ncluster <- NULL
       stage1size <- NULL
     } else {
@@ -468,11 +466,11 @@ cont_analysis <- function(
 
   # Check argument statistics
 
-  if(!is.vector(statistics)) {
+  if (!is.vector(statistics)) {
     error_ind <- TRUE
     msg <- "Argument statistics must be a vector\n"
     error_vec <- c(error_vec, msg)
-  } else if(!is.character(statistics)) {
+  } else if (!is.character(statistics)) {
     error_ind <- TRUE
     msg <- "Argument statistics must contain character values.\n"
     error_vec <- c(error_vec, msg)
@@ -484,7 +482,7 @@ cont_analysis <- function(
     tst <- "Mean" %in% statistics
     statistics[tst] <- "mean"
     tst <- statistics %in% c("cdf", "pct", "mean")
-    if(any(!tst)) {
+    if (any(!tst)) {
       error_ind <- TRUE
       msg <- "Argument statistics must contain only the values: 'cdf', 'pct', and 'mean'.\n"
       error_vec <- c(error_vec, msg)
@@ -619,12 +617,11 @@ cont_analysis <- function(
     # Loop through all response variables (vars)
 
     for (ivar in vars) {
-
       indx <- match(ivar, vars)
 
       # Calculate CDF estimates
 
-      if("cdf" %in% statistics) {
+      if ("cdf" %in% statistics) {
         temp <- cdf_est(
           contsum$CDF, dframe, itype, lev_itype, nlev_itype, ivar, design,
           design_names, vars_nondetect[indx], vartype, conf, mult, warn_ind,
@@ -637,7 +634,7 @@ cont_analysis <- function(
 
       # Calculate percentile estimates
 
-      if("pct" %in% statistics) {
+      if ("pct" %in% statistics) {
         temp <- percentile_est(
           contsum$Pct, dframe, itype, lev_itype, nlev_itype, ivar, design,
           design_names, vars_nondetect[indx], vartype, conf, mult, pctval,
@@ -650,7 +647,7 @@ cont_analysis <- function(
 
       # Calculate mean estimates
 
-      if("mean" %in% statistics) {
+      if ("mean" %in% statistics) {
         temp <- mean_est(
           contsum$Mean, dframe, itype, lev_itype, nlev_itype, ivar, design,
           design_names, vars_nondetect[indx], vartype, conf, mult, warn_ind,
@@ -662,11 +659,9 @@ cont_analysis <- function(
       }
 
       # End of the loop for response variables
-
     }
 
     # End of the loop for subpopulations
-
   }
 
   # As necessary, output a message indicating that warning messages were
@@ -684,7 +679,7 @@ cont_analysis <- function(
   # Assign dimension names to the contsum data frames
 
 
-  if(!is.null(contsum$CDF)){
+  if (!is.null(contsum$CDF)) {
     dimnames(contsum$CDF) <- list(1:nrow(contsum$CDF), c(
       "Type", "Subpopulation", "Indicator", "Value", "nResp", "Estimate.P",
       "StdError.P", "MarginofError.P", paste0("LCB", conf, "Pct.P"),
@@ -693,7 +688,7 @@ cont_analysis <- function(
     ))
   }
 
-  if(!is.null(contsum$Pct)){
+  if (!is.null(contsum$Pct)) {
     dimnames(contsum$Pct) <- list(1:nrow(contsum$Pct), c(
       "Type", "Subpopulation", "Indicator", "Statistic", "nResp", "Estimate",
       "StdError", "MarginofError", paste0("LCB", conf, "Pct"),
@@ -701,7 +696,7 @@ cont_analysis <- function(
     ))
   }
 
-  if(!is.null(contsum$Mean)){
+  if (!is.null(contsum$Mean)) {
     dimnames(contsum$Mean) <- list(1:nrow(contsum$Mean), c(
       "Type", "Subpopulation", "Indicator", "nResp", "Estimate", "StdError",
       "MarginofError", paste0("LCB", conf, "Pct"), paste0("UCB", conf, "Pct")

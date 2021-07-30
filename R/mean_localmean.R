@@ -182,13 +182,14 @@ mean_localmean <- function(itype, lev_itype, nlev_itype, levs, ivar, design,
           temp <- mean_var(
             contvar[stratum_i], wgt[stratum_i], xcoord[stratum_i],
             ycoord[stratum_i], meanest_st[1], stratum_ind, stratum_levels[i],
-            cluster_ind, warn_ind = warn_ind, warn_df = warn_df,
+            cluster_ind,
+            warn_ind = warn_ind, warn_df = warn_df,
             warn_vec = warn_vec
           )
         }
         warn_ind <- temp$warn_ind
         warn_df <- temp$warn_df
-        if(temp$varest < 0) {
+        if (temp$varest < 0) {
           temp$vartype <- "SRS"
           warn_ind <- TRUE
           act <- "The simple random sampling variance estimator for an infinite population was used.\n"
@@ -233,7 +234,6 @@ mean_localmean <- function(itype, lev_itype, nlev_itype, levs, ivar, design,
       # End the subsection for all strata combined
 
       # Branch for an unstratified sample
-
     } else {
 
       # Calculate the standard error estimates
@@ -246,13 +246,14 @@ mean_localmean <- function(itype, lev_itype, nlev_itype, levs, ivar, design,
         )
       } else {
         temp <- mean_var(contvar[tst], wgt[tst], xcoord[tst], ycoord[tst],
-          meanest[isubpop], stratum_ind, NULL, cluster_ind, warn_ind = warn_ind,
+          meanest[isubpop], stratum_ind, NULL, cluster_ind,
+          warn_ind = warn_ind,
           warn_df = warn_df, warn_vec = warn_vec
         )
       }
       warn_ind <- temp$warn_ind
       warn_df <- temp$warn_df
-      if(temp$varest < 0) {
+      if (temp$varest < 0) {
         temp$vartype <- "SRS"
         warn_ind <- TRUE
         act <- "The simple random sampling variance estimator for an infinite population was used.\n"

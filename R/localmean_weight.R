@@ -70,7 +70,7 @@ localmean_weight <- function(x, y, prb, nbh = 4) {
   hij <- matrix(0, n, n)
   hij[ij] <- 0.5
   a22 <- try(ginv(diag(gct / 2) - hij %*% diag(2 / gct) %*% hij), TRUE)
-  if("try-error" %in% class(a22)) {
+  if ("try-error" %in% class(a22)) {
     return(NULL)
   }
   a21 <- -diag(2 / gct) %*% hij %*% a22

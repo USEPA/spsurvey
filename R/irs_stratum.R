@@ -38,9 +38,9 @@
 #' @noRd
 ###############################################################################
 
-irs_stratum <-function(stratum, dsgn, sframe, sf_type, wgt_units = NULL, pt_density = NULL,
-                       legacy_option = FALSE, legacy_sites = NULL, maxtry = 10,
-                       warn_ind = FALSE, warn_df = NULL) {
+irs_stratum <- function(stratum, dsgn, sframe, sf_type, wgt_units = NULL, pt_density = NULL,
+                        legacy_option = FALSE, legacy_sites = NULL, maxtry = 10,
+                        warn_ind = FALSE, warn_df = NULL) {
 
   # Sample sizes required
   n_base <- dsgn[["n_base"]][[stratum]]
@@ -248,8 +248,8 @@ irs_stratum <-function(stratum, dsgn, sframe, sf_type, wgt_units = NULL, pt_dens
   if (legacy_option == FALSE) {
     if (!is.null(dsgn[["n_near"]][[stratum]])) {
       sites_near <- replace_near(dsgn[["n_near"]][[stratum]],
-                                 sites = sites[["sites"]],
-                                 sframe = sftmp
+        sites = sites[["sites"]],
+        sframe = sftmp
       )
 
       # Adjust inclusion probabilities for replacement sites if over sample sites present
@@ -264,8 +264,8 @@ irs_stratum <-function(stratum, dsgn, sframe, sf_type, wgt_units = NULL, pt_dens
     if (!is.null(dsgn[["n_near"]][[stratum]])) {
       keep <- sites[["sites"]][sites[["sites"]]$legacy == FALSE, "idpts", drop = TRUE]
       sites_near <- replace_near(dsgn[["n_near"]][[stratum]],
-                                 sites = sites[["sites"]][sites[["sites"]]$legacy == FALSE, ],
-                                 sframe = subset(sftmp, !(sftmp$idpts %in% keep))
+        sites = sites[["sites"]][sites[["sites"]]$legacy == FALSE, ],
+        sframe = subset(sftmp, !(sftmp$idpts %in% keep))
       )
 
       # Adjust inclusion probabilities for replacement sites if over sample sites present
@@ -281,7 +281,7 @@ irs_stratum <-function(stratum, dsgn, sframe, sf_type, wgt_units = NULL, pt_dens
   sites[["sites"]]$wgt <- 1 / sites[["sites"]]$ip
   tmp <- names(sites[["sites"]])
   sites[["sites"]] <- subset(sites[["sites"]],
-                             select = tmp[!(tmp %in% c("ip_init", "geometry"))]
+    select = tmp[!(tmp %in% c("ip_init", "geometry"))]
   )
 
   # Do same for sites_near if any

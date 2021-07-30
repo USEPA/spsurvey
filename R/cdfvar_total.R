@@ -84,7 +84,7 @@
 ################################################################################
 
 cdfvar_total <- function(z, wgt, x, y, val, stratum_ind, stratum_level,
-                         cluster_ind, clusterID, wgt1, x1, y1,  warn_ind,
+                         cluster_ind, clusterID, wgt1, x1, y1, warn_ind,
                          warn_df, warn_vec) {
 
   # Assign the function name
@@ -168,9 +168,11 @@ cdfvar_total <- function(z, wgt, x, y, val, stratum_ind, stratum_level,
 
       if (var_ind[i]) {
         if (vartype == "Local") {
-          weight_lst <- localmean_weight(x2_lst[[i]], y2_lst[[i]],
-            1 / wgt2_lst[[i]])
-          if(is.null(weight_lst)) {
+          weight_lst <- localmean_weight(
+            x2_lst[[i]], y2_lst[[i]],
+            1 / wgt2_lst[[i]]
+          )
+          if (is.null(weight_lst)) {
             warn_ind <- TRUE
             act <- "The simple random sampling variance estimator for an infinite population was used.\n"
             if (stratum_ind) {
@@ -191,7 +193,7 @@ cdfvar_total <- function(z, wgt, x, y, val, stratum_ind, stratum_level,
             var2est[i, ] <- n * apply(rm, 2, var)
           } else {
             var2est[i, ] <- apply(rm, 2, localmean_var, weight_lst)
-            if(any(var2est[i, ] < 0)) {
+            if (any(var2est[i, ] < 0)) {
               warn_ind <- TRUE
               act <- "The simple random sampling variance estimator for an infinite population was used.\n"
               if (stratum_ind) {
@@ -246,7 +248,7 @@ cdfvar_total <- function(z, wgt, x, y, val, stratum_ind, stratum_level,
 
     if (vartype == "Local") {
       weight_lst <- localmean_weight(x1_u, y1_u, 1 / wgt1_u)
-      if(is.null(weight_lst)) {
+      if (is.null(weight_lst)) {
         warn_ind <- TRUE
         act <- "The simple random sampling variance estimator for an infinite population was used.\n"
         if (stratum_ind) {
@@ -268,16 +270,17 @@ cdfvar_total <- function(z, wgt, x, y, val, stratum_ind, stratum_level,
         varest <- 0
       } else {
         varest <-
-          apply(total2est * matrix(rep(wgt1_u, m), nrow = ncluster), 2,
-                localmean_var, weight_lst) +
+          apply(
+            total2est * matrix(rep(wgt1_u, m), nrow = ncluster), 2,
+            localmean_var, weight_lst
+          ) +
           apply(var2est * matrix(rep(wgt1_u, m), nrow = ncluster), 2, sum)
       }
     } else {
-        varest <- 0
+      varest <- 0
     }
 
     # End of section for a two-stage sample
-
   } else {
 
     # Begin the section for a single-stage sample
@@ -326,7 +329,7 @@ cdfvar_total <- function(z, wgt, x, y, val, stratum_ind, stratum_level,
 
     if (vartype == "Local") {
       weight_lst <- localmean_weight(x, y, 1 / wgt)
-      if(is.null(weight_lst)) {
+      if (is.null(weight_lst)) {
         warn_ind <- TRUE
         act <- "The simple random sampling variance estimator for an infinite population was used.\n"
         if (stratum_ind) {
@@ -354,12 +357,13 @@ cdfvar_total <- function(z, wgt, x, y, val, stratum_ind, stratum_level,
     }
 
     # End of section for a single-stage sample
-
   }
 
   # Return the indicator for type of variance estimator, the variance estimate,
   # the warning message indicator, and the warn_df data frame
 
-  list(vartype = vartype, varest = varest, warn_ind = warn_ind,
-    warn_df = warn_df)
+  list(
+    vartype = vartype, varest = varest, warn_ind = warn_ind,
+    warn_df = warn_df
+  )
 }

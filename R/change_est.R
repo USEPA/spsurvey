@@ -213,7 +213,7 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
   # Determine whether the response variable contains only missing values for
   # one of the surveys
 
-  if(all(is.na(dframe_1[, ivar])) | all(is.na(dframe_2[, ivar]))) {
+  if (all(is.na(dframe_1[, ivar])) | all(is.na(dframe_2[, ivar]))) {
     warn_ind <- TRUE
     warn <- paste0("For subpopulation \"", isubpop, "\" of population type \"", itype, "\", indicator \"", ivar, "\" \ncontains only missing values for one of the surveys.\n")
     act <- "A change estimate was not calculated.\n"
@@ -221,7 +221,6 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
       func = I(fname), subpoptype = I(itype), subpop = I(isubpop),
       indicator = I(ivar), stratum = NA, warning = I(warn), action = I(act)
     ))
-
   } else {
 
     # Subset the design_1 and design_2 objects
@@ -296,7 +295,8 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
 
       # Merge results for the two surveys
 
-      results <- merge(temp_1, temp_2, by = "Category", suffix = c("_1", "_2"),
+      results <- merge(temp_1, temp_2,
+        by = "Category", suffix = c("_1", "_2"),
         all = TRUE, sort = FALSE
       )
 
@@ -316,9 +316,9 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
 
       if (sum(repeat_1) == 0) {
         results$StdError.P <- sqrt(results$StdError.P_1^2 +
-            results$StdError.P_2^2)
+          results$StdError.P_2^2)
         results$StdError.U <- sqrt(results$StdError.U_1^2 +
-            results$StdError.U_2^2)
+          results$StdError.U_2^2)
         results$LCB.P <- 100 * pmax(
           results$DiffEst.P - mult * results$StdError.P,
           -1
@@ -353,7 +353,6 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
 
         # Calculate standard error of the change estimates for surveys with
         # repeat visit sites
-
       } else {
 
         # Subset the dframe_1 and dframe_2 objects to retain repeat visit sites
@@ -383,8 +382,10 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
           if (is.null(design_names[[i]])) {
             eval(parse(text = paste0(i, " <- NULL")))
           } else {
-            eval(parse(text = paste0(i, " <- tempdf[, \"", design_names[[i]],
-              "\"]")))
+            eval(parse(text = paste0(
+              i, " <- tempdf[, \"", design_names[[i]],
+              "\"]"
+            )))
           }
         }
 
@@ -573,7 +574,6 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
 
             # Begin section for nonempty vectors of categorical variable values
             # for revisit sites
-
           } else {
 
             # Begin the loop for individual strata
@@ -585,7 +585,7 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
 
               stratum_i <- stratum == stratum_levels[i]
               if ((sum(!is.na(catvar_1[stratum_i])) <= 1) |
-                  (sum(!is.na(catvar_2[stratum_i])) <= 1)) {
+                (sum(!is.na(catvar_2[stratum_i])) <= 1)) {
                 warn_ind <- TRUE
                 act <- "Due to insufficient number of sites, the stratum was not included in \ncalculation of covariance among the revisited sites.\n"
                 warn <- paste("The number of nonmissing repeat visit sites in one of the surveys was less \nthan two for stratum \"", stratum_levels[i], "\".\n", sep = "")
@@ -598,7 +598,6 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
 
                 # Begin section for nonempty vectors of categorical variable
                 # values for revisit sites for a stratum
-
               } else {
 
                 # Calculate proportion estimates
@@ -674,20 +673,16 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
 
                 # End the section for nonempty vectors of categorical variable
                 # values for revisit sites for a stratum
-
               }
 
               # End the loop for individual strata
-
             }
 
             # End the section for nonempty vectors of categorical variable values
             # for revisit sites
-
           }
 
           # End the section for stratified data
-
         } else {
 
           # Begin the section for unstratified data
@@ -709,7 +704,6 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
 
             # Begin section for nonempty vectors of categorical variable values
             # for revisit sites
-
           } else {
 
             # Calculate proportion estimates
@@ -770,11 +764,9 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
 
             # End the section for nonempty vectors of categorical variable values
             # for revisit sites
-
           }
 
           # End the section for unstratified data
-
         }
 
         # Calculate standard errors
@@ -783,9 +775,9 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
         results$StdError.U <- rep(NA, nlevels)
         ind <- is.na(rslt_P)
         results$StdError.P[ind] <- sqrt(results$StdError.P_1[ind]^2 +
-            results$StdError.P_2[ind]^2)
+          results$StdError.P_2[ind]^2)
         results$StdError.U[ind] <- sqrt(results$StdError.U_1[ind]^2 +
-            results$StdError.U_2[ind]^2)
+          results$StdError.U_2[ind]^2)
         if (any(!ind)) {
           tw_1r <- sum(weights(design_1))
           tw_2r <- sum(weights(design_2))
@@ -794,13 +786,13 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
               ((2 * tw_1r * tw_2r) / (tw_1 * tw_2)) * rslt_P
             ind <- !is.na(rslt_P) & temp <= 0
             results$StdError.P[ind] <- sqrt(results$StdError.P_1[ind]^2 +
-                results$StdError.P_2[ind]^2)
+              results$StdError.P_2[ind]^2)
             ind <- !is.na(rslt_P) & temp > 0
             results$StdError.P[ind] <- sqrt(temp[ind])
             temp <- results$StdError.U_1^2 + results$StdError.U_2^2 - 2 * rslt_U
             ind <- !is.na(rslt_U) & temp <= 0
             results$StdError.U[ind] <- sqrt(results$StdError.U_1[ind]^2 +
-                results$StdError.U_2[ind]^2)
+              results$StdError.U_2[ind]^2)
             ind <- !is.na(rslt_U) & temp > 0
             results$StdError.U[ind] <- sqrt(temp[ind])
           } else {
@@ -833,14 +825,14 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
               ((2 * tw_1r * tw_2r) / (tw_1 * tw_2)) * covest
             ind <- !is.na(rslt_P) & temp <= 0
             results$StdError.P[ind] <- sqrt(results$StdError.P_1[ind]^2 +
-                results$StdError.P_2[ind]^2)
+              results$StdError.P_2[ind]^2)
             ind <- !is.na(rslt_P) & temp > 0
             results$StdError.P[ind] <- sqrt(temp[ind])
             covest <- rslt_U * se_1_u * se_2_u
             temp <- results$StdError.U_1^2 + results$StdError.U_2^2 - 2 * covest
             ind <- !is.na(rslt_U) & temp <= 0
             results$StdError.U[ind] <- sqrt(results$StdError.U_1[ind]^2 +
-                results$StdError.U_2[ind]^2)
+              results$StdError.U_2[ind]^2)
             ind <- !is.na(rslt_U) & temp > 0
             results$StdError.U[ind] <- sqrt(temp[ind])
           }
@@ -849,9 +841,9 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
         # Calculate margins of error and confidence bounds
 
         results$LCB.P <- 100 * pmax(results$DiffEst.P -
-            mult * results$StdError.P, -1)
+          mult * results$StdError.P, -1)
         results$UCB.P <- 100 * pmin(results$DiffEst.P +
-            mult * results$StdError.P, 1)
+          mult * results$StdError.P, 1)
         results$DiffEst.P <- 100 * results$DiffEst.P
         results$MarginofError.P <- 100 * (mult * results$StdError.P)
         results$MarginofError.P_1 <- 100 * (mult * results$StdError.P_1)
@@ -875,7 +867,6 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
         }
 
         # End the section for surveys with repeat visit sites
-
       }
 
       # Add estimates to the catsum data frame
@@ -892,7 +883,6 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
       #
       # End the section for a categorical variable
       #
-
     } else if (resp_ind == "cont") {
 
       #
@@ -917,7 +907,8 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
 
         # Calculate estimate for all sites from survey one
 
-        temp <- mean_est(NULL, dframe_1, itype, isubpop, 1, ivar,
+        temp <- mean_est(
+          NULL, dframe_1, itype, isubpop, 1, ivar,
           design_1, design_names, var_nondetect, vartype, conf, mult, warn_ind,
           warn_df
         )
@@ -928,7 +919,8 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
 
         # Calculate estimate for all sites from survey two
 
-        temp <- mean_est(NULL, dframe_2, itype, isubpop, 1, ivar,
+        temp <- mean_est(
+          NULL, dframe_2, itype, isubpop, 1, ivar,
           design_2, design_names, var_nondetect, vartype, conf, mult, warn_ind,
           warn_df
         )
@@ -939,7 +931,8 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
 
         # Merge results for the two surveys
 
-        results <- merge(meanest_1, meanest_2, suffix = c("_1", "_2"),
+        results <- merge(meanest_1, meanest_2,
+          suffix = c("_1", "_2"),
           by = c("Type", "Subpopulation", "Indicator")
         )
 
@@ -965,7 +958,6 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
 
 
           # Section for surveys with repeat visit sites
-
         } else {
 
           # Subset the dframe_1 and dframe_2 objects to retain repeat visit sites
@@ -991,8 +983,10 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
             if (is.null(design_names[[i]])) {
               eval(parse(text = paste0(i, " <- NULL")))
             } else {
-              eval(parse(text = paste0(i, " <- tempdf[, \"", design_names[[i]],
-                "\"]")))
+              eval(parse(text = paste0(
+                i, " <- tempdf[, \"", design_names[[i]],
+                "\"]"
+              )))
             }
           }
 
@@ -1175,7 +1169,6 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
 
               # Begin section for nonempty vectors of continuous variable values
               # for revisit sites
-
             } else {
 
               # Begin the loop for individual strata
@@ -1199,7 +1192,6 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
 
                   # Begin section for nonempty vectors of continuous variables
                   # values for revisit sites for a stratum
-
                 } else {
 
                   # Calculate mean estimates
@@ -1243,20 +1235,16 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
 
                   # End the section for nonempty vectors of continuous variable
                   # values for revisit sites for a stratum
-
                 }
 
                 # End the loop for individual strata
-
               }
 
               # End the section for nonempty vectors of continuous variable
               # values for revisit sites
-
             }
 
             # End the section for stratified data
-
           } else {
 
             # Begin the section for unstratified data
@@ -1277,7 +1265,6 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
 
               # Begin section for nonempty vectors of continuous variable values
               # for revisit sites
-
             } else {
 
               # Calculate mean estimates
@@ -1314,11 +1301,9 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
 
               # End the section for nonempty vectors of continuous variable
               # values for revisit sites
-
             }
 
             # End the section for unstratified data
-
           }
 
           # Calculate standard errors
@@ -1336,19 +1321,21 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
               }
               if (temp <= 0) {
                 results$StdError <- sqrt(results$StdError_1^2 +
-                    results$StdError_2^2)
+                  results$StdError_2^2)
               } else {
                 results$StdError <- sqrt(temp)
               }
             } else {
-              temp <- mean_est(NULL, dframe_1, itype, isubpop, 1, ivar,
+              temp <- mean_est(
+                NULL, dframe_1, itype, isubpop, 1, ivar,
                 design_1, design_names, var_nondetect, vartype, conf, mult,
                 warn_ind, warn_df
               )
               warn_ind <- temp$warn_ind
               warn_df <- temp$warn_df
               se_1 <- temp$meansum$StdError
-              temp <- mean_est(NULL, dframe_2, itype, isubpop, 1, ivar,
+              temp <- mean_est(
+                NULL, dframe_2, itype, isubpop, 1, ivar,
                 design_2, design_names, var_nondetect, vartype, conf, mult,
                 warn_ind, warn_df
               )
@@ -1363,7 +1350,7 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
               }
               if (temp <= 0) {
                 results$StdError <- sqrt(results$StdError_1^2 +
-                    results$StdError_2^2)
+                  results$StdError_2^2)
               } else {
                 results$StdError <- sqrt(temp)
               }
@@ -1378,7 +1365,6 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
           results$UCB <- results$DiffEst + mult * results$StdError
 
           # End the section for surveys with repeat visit sites
-
         }
 
         # Add estimates to the contsum_mean data frame
@@ -1392,7 +1378,6 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
         #
         # End the section for a continuous variable using the mean
         #
-
       }
 
       if ("median" %in% test) {
@@ -1490,7 +1475,8 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
 
         # Merge results for the two surveys
 
-        results <- merge(temp_1, temp_2, by = "Category", suffix = c("_1", "_2"),
+        results <- merge(temp_1, temp_2,
+          by = "Category", suffix = c("_1", "_2"),
           all = TRUE, sort = FALSE
         )
 
@@ -1514,9 +1500,9 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
 
         if (sum(repeat_1) == 0) {
           results$StdError.P <- sqrt(results$StdError.P_1^2 +
-              results$StdError.P_2^2)
+            results$StdError.P_2^2)
           results$StdError.U <- sqrt(results$StdError.U_1^2 +
-              results$StdError.U_2^2)
+            results$StdError.U_2^2)
           results$LCB.P <- 100 * pmax(
             results$DiffEst.P - mult * results$StdError.P,
             -1
@@ -1543,7 +1529,6 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
 
           # Calculate standard error of the change estimates for surveys with
           # repeat visit sites
-
         } else {
 
           # Subset the dframe_1 and design_2 objects to retain repeat visit sites
@@ -1569,8 +1554,10 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
             if (is.null(design_names[[i]])) {
               eval(parse(text = paste0(i, " <- NULL")))
             } else {
-              eval(parse(text = paste0(i, " <- tempdf[, \"", design_names[[i]],
-                "\"]")))
+              eval(parse(text = paste0(
+                i, " <- tempdf[, \"", design_names[[i]],
+                "\"]"
+              )))
             }
           }
 
@@ -1759,7 +1746,6 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
 
               # Begin section for nonempty vectors of categorical variable values
               # for revisit sites
-
             } else {
 
               # Begin the loop for individual strata
@@ -1771,7 +1757,7 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
 
                 stratum_i <- stratum == stratum_levels[i]
                 if ((sum(!is.na(catvar_1[stratum_i])) <= 1) |
-                    (sum(!is.na(catvar_2[stratum_i])) <= 1)) {
+                  (sum(!is.na(catvar_2[stratum_i])) <= 1)) {
                   warn_ind <- TRUE
                   act <- "Due to insufficient number of sites, the stratum was not included in \ncalculation of covariance among the revisited sites.\n"
                   warn <- paste("The number of nonmissing repeat visit sites  in one of the surveys was less \nthan two for stratum \"", stratum_levels[i], "\".\n", sep = "")
@@ -1784,7 +1770,6 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
 
                   # Begin section for nonempty vectors of categorical variable
                   # values for revisit sites for a stratum
-
                 } else {
 
                   # Calculate proportion estimates
@@ -1860,20 +1845,16 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
 
                   # End the section for nonempty vectors of categorical variable
                   # values for revisit sites for a stratum
-
                 }
 
                 # End the loop for individual strata
-
               }
 
               # End the section for nonempty vectors of categorical variable
               # values for revisit sites
-
             }
 
             # End the section for stratified data
-
           } else {
 
             # Begin the section for unstratified data
@@ -1895,7 +1876,6 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
 
               # Begin section for nonempty vectors of categorical variable values
               # for revisit sites
-
             } else {
 
               # Calculate proportion estimates
@@ -1946,7 +1926,8 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
               } else {
                 temp <- changevar_total(
                   catvar_levels, z1, z2, wgt, xcoord, ycoord, revisitwgt, size1,
-                  size2, stratum_ind, NULL, cluster_ind, vartype = vartype,
+                  size2, stratum_ind, NULL, cluster_ind,
+                  vartype = vartype,
                   warn_ind = warn_ind, warn_df = warn_df, warn_vec = warn_vec
                 )
               }
@@ -1956,11 +1937,9 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
 
               # End the section for nonempty vectors of categorical variable
               # values for revisit sites
-
             }
 
             # End the section for unstratified data
-
           }
 
           # Calculate standard errors
@@ -1969,9 +1948,9 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
           results$StdError.U <- rep(NA, nlevels)
           ind <- is.na(rslt_P)
           results$StdError.P[ind] <- sqrt(results$StdError.P_1[ind]^2 +
-              results$StdError.P_2[ind]^2)
+            results$StdError.P_2[ind]^2)
           results$StdError.U[ind] <- sqrt(results$StdError.U_1[ind]^2 +
-              results$StdError.U_2[ind]^2)
+            results$StdError.U_2[ind]^2)
           if (any(!ind)) {
             tw_1r <- sum(weights(design_1))
             tw_2r <- sum(weights(design_2))
@@ -1980,14 +1959,14 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
                 ((2 * tw_1r * tw_2r) / (tw_1 * tw_2)) * rslt_P
               ind <- !is.na(rslt_P) & temp <= 0
               results$StdError.P[ind] <- sqrt(results$StdError.P_1[ind]^2 +
-                  results$StdError.P_2[ind]^2)
+                results$StdError.P_2[ind]^2)
               ind <- !is.na(rslt_P) & temp > 0
               results$StdError.P[ind] <- sqrt(temp[ind])
               temp <- results$StdError.U_1^2 + results$StdError.U_2^2 - 2 *
                 rslt_U
               ind <- !is.na(rslt_U) & temp <= 0
               results$StdError.U[ind] <- sqrt(results$StdError.U_1[ind]^2 +
-                  results$StdError.U_2[ind]^2)
+                results$StdError.U_2[ind]^2)
               ind <- !is.na(rslt_U) & temp > 0
               results$StdError.U[ind] <- sqrt(temp[ind])
             } else {
@@ -2020,7 +1999,7 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
                 ((2 * tw_1r * tw_2r) / (tw_1 * tw_2)) * covest
               ind <- !is.na(rslt_P) & temp <= 0
               results$StdError.P[ind] <- sqrt(results$StdError.P_1[ind]^2 +
-                  results$StdError.P_2[ind]^2)
+                results$StdError.P_2[ind]^2)
               ind <- !is.na(rslt_P) & temp > 0
               results$StdError.P[ind] <- sqrt(temp[ind])
               covest <- rslt_U * se_1_u * se_2_u
@@ -2028,7 +2007,7 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
                 covest
               ind <- !is.na(rslt_U) & temp <= 0
               results$StdError.U[ind] <- sqrt(results$StdError.U_1[ind]^2 +
-                  results$StdError.U_2[ind]^2)
+                results$StdError.U_2[ind]^2)
               ind <- !is.na(rslt_U) & temp > 0
               results$StdError.U[ind] <- sqrt(temp[ind])
             }
@@ -2037,9 +2016,9 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
           # Calculate margins of error and confidence bounds
 
           results$LCB.P <- 100 * pmax(results$DiffEst.P -
-              mult * results$StdError.P, -1)
+            mult * results$StdError.P, -1)
           results$UCB.P <- 100 * pmin(results$DiffEst.P +
-              mult * results$StdError.P, 1)
+            mult * results$StdError.P, 1)
           results$DiffEst.P <- 100 * results$DiffEst.P
           results$MarginofError.P <- 100 * (mult * results$StdError.P)
           results$MarginofError.P_1 <- 100 * (mult * results$StdError.P_1)
@@ -2063,7 +2042,6 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
           }
 
           # End the section for surveys with repeat visit sites
-
         }
 
         # Add estimates to the contsum_median data frame
@@ -2080,24 +2058,25 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
         #
         # End the section for a continuous variable using the median
         #
-
       }
 
       # Print an error message for an unrecognized type of test
 
       if (!any(c("mean", "median") %in% test)) {
         stop(paste0("\nThe value provided for argument test, \"", test,
-          "\", is not a valid value", sep = ""))
+          "\", is not a valid value",
+          sep = ""
+        ))
       }
-
     } else {
 
       # Print an error message for an unrecognized type of response variable
 
       stop(paste("\nThe value provided for argument resp_ind, ", resp_ind,
-        ", is not a valid value", sep = ""))
+        ", is not a valid value",
+        sep = ""
+      ))
     }
-
   }
 
   # Return the changesum object, the warn_ind logical value, and the warn_df

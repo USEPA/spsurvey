@@ -120,7 +120,9 @@ cdftest_localmean_prop <- function(design, design_names, warn_ind, warn_df,
       1:2
     )
     colnames_varest <- paste(rep(temp, length(levels(dframe$colvar))),
-      rep(levels(dframe$colvar), each = 2), sep = ".")
+      rep(levels(dframe$colvar), each = 2),
+      sep = "."
+    )
     colnames(varest) <- colnames_varest
 
     # Calculate variance estimates
@@ -141,7 +143,8 @@ cdftest_localmean_prop <- function(design, design_names, warn_ind, warn_df,
       } else {
         temp <- cdftestvar_prop(
           design_temp, wgt[stratum_i], xcoord[stratum_i], ycoord[stratum_i],
-          stratum_ind, stratum_levels[i], cluster_ind, warn_ind = warn_ind,
+          stratum_ind, stratum_levels[i], cluster_ind,
+          warn_ind = warn_ind,
           warn_df = warn_df, warn_vec = warn_vec
         )
       }
@@ -156,7 +159,6 @@ cdftest_localmean_prop <- function(design, design_names, warn_ind, warn_df,
         ((popsize_hat[i] / sum_popsize_hat)^2) * varest_st
 
       # End the loop for strata
-
     }
 
     # Create the results list
@@ -168,7 +170,6 @@ cdftest_localmean_prop <- function(design, design_names, warn_ind, warn_df,
     )
 
     # Branch for an unstratified sample
-
   } else {
 
     # Calculate the variance/covariance estimates
