@@ -19,10 +19,12 @@ present in \code{dframe}}
 An \code{sf} object (\code{dframe_to_sf()}) or a data frame object (\code{dframe_to_df()}).
 }
 \description{
-\code{dframe_to_sf()} transforms an sframe object into an sf object,
+\code{dframe_to_sf()} transforms an sframe object into an \code{sf} object,
 which may be useful when calling generic functions with sf class (e.g. mapview).
-\code{dframe_to_df()} transforms a dframe object into an data frame object,
-while retaining the remaining structure of dframe (e.g. if dframe is also a tibble,
+\code{dframe_to_df()} transforms a \code{dframe} object into an \code{data.frame} object. If
+the \code{dframe} object is also an \code{sf} object, \code{dframe_to_df()} stores the
+coordinates as columns in the new \code{data.frame} object.
+The remaining structure of \code{dframe} stays the same (e.g. if \code{dframe} is also a tibble,
 it will remain a tibble after \code{dframe_to_df}).
 }
 \section{Functions}{

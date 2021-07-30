@@ -13,7 +13,7 @@ sframe_to_sf(object)
 An \code{sf} object.
 }
 \description{
-\code{sframe_to_sf()} transforms an sframe object into an sf object,
+\code{sframe_to_sf()} transforms an \code{sframe} object into an \code{sf} object,
 which may be useful when calling generic functions with sf class (e.g. mapview)
 }
 \seealso{
