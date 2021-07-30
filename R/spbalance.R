@@ -31,11 +31,16 @@
 #'
 #' @param metrics A character vector of spatial balance metrics:
 #' \itemize{
-#'   \item{pielou - }{pielou evenness index (the default)}
-#'   \item{simpsons - }{simpsons evenness index}
-#'   \item{chisq - }{chi-squared loss}
-#'   \item{abserr - }{absolute error loss}
+#'   \item{\code{pielou}:}{pielou evenness index (the default)}
+#'   \item{\code{simpsons}:}{simpsons evenness index}
+#'   \item{\code{rmse}:}{root-mean-squared error}
+#'   \item{\code{mse}:}{mean-squared error}
+#'   \item{\code{mae}:}{median-absolute error}
+#'   \item{\code{medae}:}{mean-absolute error}
+#'   \item{\code{chisq}:}{chi-squared loss}
 #'  }
+#'   All spatial balance metrics have a lower bound of zero, which indicates perfect
+#'   spatial balance. As the metric value increases, the spatial balance decreases.
 #'
 #' @param extents Should the total extent within each dirichlet
 #' tesselation be returned? Defaults to FALSE.
@@ -190,14 +195,27 @@ get_sftess <- function(tile) {
 
 calculate_metric <- function(metric, proportions, expected_proportions) {
   switch(metric,
+    pielou = calculate_pielou(proportions, expected_proportions),
+    simpsons = calculate_simpsons(proportions, expected_proportions),
     rmse = calculate_rmse(proportions, expected_proportions),
     mse = calculate_mse(proportions, expected_proportions),
-    pielou = calculate_pielou(proportions, expected_proportions),
+    mae = calculate_mae(proportions, expected_proportions),
+    medae = calculate_medae(proportions, expected_proportions),
     chisq = calculate_chisq(proportions, expected_proportions),
-    abserr = calculate_abserr(proportions, expected_proportions),
-    simpsons = calculate_simpsons(proportions, expected_proportions),
     stop("an invalid metric was provided")
   )
+}
+
+calculate_pielou <- function(proportions, expected_proportions) {
+  pielou <- 1 + sum(proportions * log(proportions)) / log(1 / expected_proportions) # 1/E(p) = n$
+  names(pielou) <- "pielou"
+  pielou
+}
+
+calculate_simpsons <- function(proportions, expected_proportions) {
+  simpsons <- sum(proportions^2) - expected_proportions
+  names(simpsons) <- "simpsons"
+  simpsons
 }
 
 calculate_rmse <- function(proportions, expected_proportions) {
@@ -215,26 +233,20 @@ calculate_mse <- function(proportions, expected_proportions) {
   mse
 }
 
-calculate_pielou <- function(proportions, expected_proportions) {
-  pielou <- 1 + sum(proportions * log(proportions)) / log(1 / expected_proportions) # 1/E(p) = n$
-  names(pielou) <- "pielou"
-  pielou
+calculate_mae <- function(proportions, expected_proportions) {
+  mae <- mean(abs(proportions - expected_proportions) / expected_proportions)
+  names(mae) <- "mae"
+  mae
+}
+
+calculate_medae <- function(proportions, expected_proportions) {
+  medae <- median(abs(proportions - expected_proportions) / expected_proportions)
+  names(medae) <- "medae"
+  medae
 }
 
 calculate_chisq <- function(proportions, expected_proportions) {
   chisq <- sum((proportions - expected_proportions)^2 / expected_proportions)
   names(chisq) <- "chisq"
   chisq
-}
-
-calculate_abserr <- function(proportions, expected_proportions) {
-  abserr <- sum(abs(proportions - expected_proportions) / expected_proportions)
-  names(abserr) <- "abserr"
-  abserr
-}
-
-calculate_simpsons <- function(proportions, expected_proportions) {
-  simpsons <- sum(proportions^2) - expected_proportions
-  names(simpsons) <- "simpsons"
-  simpsons
 }

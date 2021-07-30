@@ -33,11 +33,16 @@ strata).}
 
 \item{metrics}{A character vector of spatial balance metrics:
 \itemize{
-  \item{pielou - }{pielou evenness index (the default)}
-  \item{simpsons - }{simpsons evenness index}
-  \item{chisq - }{chi-squared loss}
-  \item{abserr - }{absolute error loss}
- }}
+  \item{\code{pielou}:}{pielou evenness index (the default)}
+  \item{\code{simpsons}:}{simpsons evenness index}
+  \item{\code{rmse}:}{root-mean-squared error}
+  \item{\code{mse}:}{mean-squared error}
+  \item{\code{mae}:}{median-absolute error}
+  \item{\code{medae}:}{mean-absolute error}
+  \item{\code{chisq}:}{chi-squared loss}
+ }
+  All spatial balance metrics have a lower bound of zero, which indicates perfect
+  spatial balance. As the metric value increases, the spatial balance decreases.}
 
 \item{extents}{Should the total extent within each dirichlet
 tesselation be returned? Defaults to FALSE.}
