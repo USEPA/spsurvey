@@ -310,7 +310,7 @@ analytical procedure identified by the model arguments.  The current choices
 for model are: (1) simple linear regression, (2) weighted linear regression,
 and (3) the Piepho and Ogutu (2002) model.  The input data argument can be
 either a data frame or a simple features (sf) object.  If an sf object is
-used, coo \code{xcoord} and \code{ycoord} are assigned values \code{"xcoord"}
+used, \code{xcoord} and \code{ycoord} are assigned values \code{"xcoord"}
 and \code{"ycoord"}, respectively, and the geometry column is dropped from
 the object.
 }
