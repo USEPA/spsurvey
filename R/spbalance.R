@@ -31,13 +31,20 @@
 #'
 #' @param metrics A character vector of spatial balance metrics:
 #' \itemize{
-#'   \item{\code{pielou}:}{pielou evenness index (the default)}
-#'   \item{\code{simpsons}:}{simpsons evenness index}
-#'   \item{\code{rmse}:}{root-mean-squared error}
-#'   \item{\code{mse}:}{mean-squared error}
-#'   \item{\code{mae}:}{median-absolute error}
-#'   \item{\code{medae}:}{mean-absolute error}
-#'   \item{\code{chisq}:}{chi-squared loss}
+#'   \item{\code{pielou}:}{Pielou's Evenness Index (the default). This statistic
+#'     can take on a value between zero and one.}
+#'   \item{\code{simpsons}:}{Simpsons Evenness Index. This statistic
+#'     can take on a value between zero and logarithm of the sample size.}
+#'   \item{\code{rmse}:}{Root-Mean-Squared Error. This statistic
+#'     can take on a value between zero and infinity.}
+#'   \item{\code{mse}:}{Mean-Squared Error. This statistic
+#'     can take on a value between zero and infinity.}
+#'   \item{\code{mae}:}{Median-Absolute Error. This statistic
+#'     can take on a value between zero and infinity.}
+#'   \item{\code{medae}:}{Mean-Absolute Error. This statistic
+#'     can take on a value between zero and infinity.}
+#'   \item{\code{chisq}:}{Chi-Squared Loss. This statistic
+#'     can take on a value between zero and infinity.}
 #'  }
 #'   All spatial balance metrics have a lower bound of zero, which indicates perfect
 #'   spatial balance. As the metric value increases, the spatial balance decreases.
@@ -46,9 +53,9 @@
 #' tesselation be returned? Defaults to FALSE.
 #'
 #' @return A list having names equal to each strata.
-#' 
+#'
 #' @importFrom stats median
-#' 
+#'
 #' @export
 #'
 #' @examples
