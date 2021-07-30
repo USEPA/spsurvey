@@ -46,6 +46,9 @@
 #' tesselation be returned? Defaults to FALSE.
 #'
 #' @return A list having names equal to each strata.
+#' 
+#' @importFrom stats median
+#' 
 #' @export
 #'
 #' @examples
