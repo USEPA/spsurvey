@@ -9,7 +9,7 @@
 #
 #' Percentile Estimates for Probability Survey Data
 #'
-#' This function calculates percentile estimates using the svyquantile function
+#' This function calculates percentile estimates using the oldsvyquantile function
 #' in the survey package.  Upper and lower confidence bounds also are estimated.
 #'
 #' @param pctsum Data frame containing estimates.
@@ -76,7 +76,7 @@
 #'       design object}
 #'     \item{\code{\link{svyby}}}{Compute survey statistics on subsets of a
 #'       survey defined by factors}
-#'     \item{\code{\link{svyquantile}}}{calculates percentile estimates for a
+#'     \item{\code{\link{oldsvyquantile}}}{calculates percentile estimates for a
 #'       complex survey design}
 #'   }
 #'
@@ -86,7 +86,7 @@
 #'   \code{\link{confint}}
 #'   \code{\link{SE}}
 #'   \code{\link{svyby}}
-#'   \code{\link{svyquantile}}
+#'   \code{\link{oldsvyquantile}}
 #'
 #' @keywords survey univar
 #'
@@ -133,7 +133,7 @@ percentile_est <- function(pctsum, dframe, itype, lev_itype, nlev_itype, ivar,
         ubound <- rep(NA, npctval)
       } else {
         options(warn = -1)
-        rslt_svy <- svyquantile(make.formula(ivar),
+        rslt_svy <- oldsvyquantile(make.formula(ivar),
           design = subset(design, tst), quantiles = pctval / 100,
           alpha = (100 - conf) / 100, ci = TRUE, na.rm = TRUE
         )
@@ -171,7 +171,7 @@ percentile_est <- function(pctsum, dframe, itype, lev_itype, nlev_itype, ivar,
         levs <- (1:nlev_itype)[subpop_ind]
         options(warn = -1)
         rslt_svy <- svyby(make.formula(ivar), make.formula(itype),
-          design = subset(design, tst), svyquantile, quantiles = pctval / 100,
+          design = subset(design, tst), oldsvyquantile, quantiles = pctval / 100,
           alpha = (100 - conf) / 100, ci = TRUE, na.rm = TRUE
         )
         options(warn = 0)
