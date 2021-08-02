@@ -18,7 +18,7 @@ Maintainer: Michael Dumelle <Dumelle.Michael@epa.gov>
 Depends:
     R (>= 3.5.0),
     sf,
-    survey
+    survey (>= 4.1-1)
 Suggests: 
     knitr,
     testthat,
