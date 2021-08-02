@@ -49,8 +49,6 @@
 #'
 #' @export
 #'
-#' @author Michael Dumelle \email{Dumelle.Michael@@epa.gov}
-#'
 #' @examples
 #' \dontrun{
 #' NE_lakes <- sframe(NE_lakes)

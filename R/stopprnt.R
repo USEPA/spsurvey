@@ -3,7 +3,9 @@
 # Programmer: Tony Olsen
 # Date: January 22, 2021
 #
-#' Internal Function: Print the stop data Frame that contains errors for the design.
+#' Print Design Errors.
+#'
+#' This function prints the error messages vector in the design functions.
 #'
 #' @param stop_df Data frame that contains stop messages.  The default is
 #'   \code{stop_df}, which is the name given to the stop data frame created by

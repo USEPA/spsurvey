@@ -4,7 +4,7 @@
 #' United States.
 #'
 #' @format An \code{sf} object with 5328 rows and 6 variables:
-#' \describe{
+#' \itemize{
 #'   \item{AREA}{Lake area in hectares.}
 #'   \item{AREA_CAT}{Lake area categories based on a hectare cutoff.}
 #'   \item{ELEV}{Elevation in meters.}
@@ -22,7 +22,7 @@
 #'
 #' @format An \code{sf} multilinestring object object with 9087 rows and 3
 #' variables:
-#' \describe{
+#' \itemize{
 #'   \item{STATE_NAME}{State name.}
 #'   \item{geometry}{Multilinestring geometry using a USA Contiguous Albers
 #'     Equal Area Conic projection.}
@@ -36,7 +36,7 @@
 #'
 #' @format An \code{sf} point object object with 5 rows and 1
 #' variable:
-#' \describe{
+#' \itemize{
 #'   \item{STATE_NAME}{State name.}
 #'   \item{geometry}{Point geometry using a USA Contiguous Albers
 #'     Equal Area Conic projection.}
@@ -49,7 +49,7 @@
 #' of shoreline segments in the Great Lakes region of North America.
 #'
 #' @format An \code{sf} multipolygon object with 4113 rows and 6 variables:
-#' \describe{
+#' \itemize{
 #'   \item{COUNTRY}{Country.}
 #'   \item{WTBDY_NM}{Water body name.}
 #'   \item{RSRC_CLASS}{Bay class.}
@@ -66,7 +66,7 @@
 #' States during the year 2017.
 #'
 #' @format An \code{sf} point object with 851 rows and 9 variables:
-#' \describe{
+#' \itemize{
 #'   \item{SITE_ID}{A unique lake identifier.}
 #'   \item{WEIGHT}{The sampling design weight.}
 #'   \item{URBAN}{Urban category.}
@@ -87,7 +87,7 @@
 #' United States duing the years 2008 and 2013.
 #'
 #' @format A data frame with 682 rows and 10 variables:
-#' \describe{
+#' \itemize{
 #'   \item{SITE_ID}{A unique site identifier.}
 #'   \item{YEAR}{Year of design cycle.}
 #'   \item{WEIGHT}{Sampling design weights.}
@@ -109,7 +109,7 @@
 #' Assessment" in the Southern United States duing the years 2010 and 2015.
 #'
 #' @format A data frame with 851 rows and 11 variables:
-#' \describe{
+#' \itemize{
 #'   \item{SITE_ID}{A unique site identifier.}
 #'   \item{YEAR}{Year of design cycle.}
 #'   \item{REVISIT}{Site revisit status.}

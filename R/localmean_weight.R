@@ -27,7 +27,7 @@
 #'   index values of neighboring points and a vector named \code{gwt}
 #'   composed of weights.
 #'
-#' @author  Tom Kincaid \email{Kincaid.Tom@epa.gov}
+#' @author  Tom Kincaid \email{Kincaid.Tom@@epa.gov}
 #'
 #' @noRd
 ################################################################################

@@ -23,7 +23,7 @@
 #' @return Data frame containing the following variables: \code{cellID}, \code{featureArea},
 #'   and \code{featureID}.
 #'
-#' @author Tom Kincaid \email{Kincaid.Tom@epa.gov}
+#' @author Tom Kincaid \email{Kincaid.Tom@@epa.gov}
 #'
 #' @keywords survey
 #'

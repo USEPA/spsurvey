@@ -87,11 +87,10 @@
 #'   One or more errors will cause the call to \code{grts()} to stop.
 #'
 #'
-#' @author Tony Olsen email{olsen.tony@epa.gov}
+#' @author Tony Olsen email{olsen.tony@@epa.gov}
 #'
 #' @noRd
 ###############################################################################
-
 dsgn_check <- function(sframe, sf_type, legacy_sites, legacy_option, stratum, seltype, n_base, caty_n,
                        n_over, n_near, stratum_var, caty_var, aux_var, legacy_var, mindis,
                        DesignID, SiteBegin, maxtry) {

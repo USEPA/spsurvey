@@ -9,13 +9,14 @@ dframe(object, ...)
 \arguments{
 \item{object}{An \code{sp} or \code{sf} object}
 
-\item{...}{Additional arguments to \code{st_as_sf()} if converting an sp object to an sf and sframe object}
+\item{...}{Additional arguments to \code{st_as_sf()} if converting an \code{sp}
+object to an \code{sf} and \code{dframe} object}
 }
 \value{
-An \code{dframe} object
+A \code{dframe} object
 }
 \description{
-dframe gives data frames, \code{sp}, and \code{sf} objects class \code{dframe} to be used
+\code{dframe} gives data frames, \code{sp}, and \code{sf} objects class \code{dframe} to be used
 in \code{summary()} generics. \code{sp} objects are coerced to \code{sf}
 objects prior to giving class \code{dframe}.
 }
@@ -24,7 +25,4 @@ objects prior to giving class \code{dframe}.
 data("NE_lakes")
 NE_lakes <- dframe(NE_lakes)
 }
-}
-\author{
-Michael Dumelle
 }

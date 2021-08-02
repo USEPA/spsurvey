@@ -91,15 +91,7 @@
 #'   named \code{warn_ind}, which is the indicator for warning messges, and a
 #'   data frame named \code{warn_df}, which contains warning messages.
 #'
-#' @section Other Functions Required:
-#'   \describe{
-#'     \item{\code{localmean_weight}}{calculate the weighting matrix for
-#'       the local mean variance estimator}
-#'     \item{\code{localmean_cov}}{calculate the variance/covariance
-#'       matrix using the local mean estimator}
-#'   }
-#'
-#' @author Tom Kincaid \email{Kincaid.Tom@epa.gov}
+#' @author Tom Kincaid \email{Kincaid.Tom@@epa.gov}
 #'
 #' @keywords survey
 #'

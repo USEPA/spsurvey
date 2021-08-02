@@ -133,15 +133,21 @@
 #'   names must match the strata IDs.  For each stratum, the format of the
 #'   vector is identical to the format described for unstratified single-stage
 #'   and two-stage designs.  Note that the finite population correction factor
-#'   is not used with the local mean variance estimator.\cr\cr
-#'   Example fpc for a single-stage unstratified survey design:\cr
-#'   \verb{fpc <- 15000}\cr\cr
-#'   Example fpc for a single-stage stratified survey design:\cr
+#'   is not used with the local mean variance estimator.
+#'
+#'   Example fpc for a single-stage unstratified survey design:
+#'
+#'   \verb{fpc <- 15000}
+#'
+#'   Example fpc for a single-stage stratified survey design:
+#'
 #'   \verb{fpc <- list(
 #'     Stratum_1 = 9000,
 #'     Stratum_2 = 6000)
-#'    }\cr
-#'   Example fpc for a two-stage unstratified survey design:\cr
+#'    }
+#'
+#'   Example fpc for a two-stage unstratified survey design:
+#'
 #'   \verb{fpc <- c(
 #'     Ncluster = 150,
 #'     Cluster_1 = 150,
@@ -149,8 +155,10 @@
 #'     Cluster_3 = 75,
 #'     Cluster_4 = 125,
 #'     Cluster_5 = 75)
-#'   }\cr
-#'   Example fpc for a two-stage stratified survey design:\cr
+#'   }
+#'
+#'   Example fpc for a two-stage stratified survey design:
+#'
 #'   \verb{fpc <- list(
 #'     Stratum_1 = c(
 #'       Ncluster_1 = 100,
@@ -183,8 +191,10 @@
 #'   variables in the \code{dframe} data frame.  If the popsize argument is
 #'   equal to \code{NULL}, then neither calibration nor post-stratification is
 #'   performed.  The default value is
-#'   \code{NULL}.\cr\cr
-#'   Example popsize for calibration:\cr
+#'   \code{NULL}.
+#'
+#'   Example popsize for calibration:
+#'
 #'   \verb{popsize <- list(
 #'     Ecoregion = c(
 #'       East = 750,
@@ -193,25 +203,31 @@
 #'     Type = c(
 #'       Streams = 1150,
 #'       Rivers = 350))
-#'   }\cr
-#'   Example popsize for post-stratification using a data frame:\cr
+#'   }
+#'
+#'   Example popsize for post-stratification using a data frame:
+#'
 #'   \verb{popsize <- data.frame(
 #'     Ecoregion = rep(c("East", "Central", "West"),
 #'       rep(2, 3)),
 #'     Type = rep(c("Streams", "Rivers"), 3),
 #'     Total = c(575, 175, 400, 100, 175, 75))
-#'   }\cr
-#'   Example popsize for post-stratification using a table:\cr
+#'   }
+#'
+#'   Example popsize for post-stratification using a table:
+#'
 #'   \verb{popsize <- with(MySurveyFrame,
-#'     table(Ecoregion, Type))}\cr\cr
-#'   Example popsize for post-stratification using an xtabs object:\cr
+#'     table(Ecoregion, Type))}
+#'
+#'   Example popsize for post-stratification using an xtabs object:
+#'
 #'   \verb{popsize <- xtabs(~Ecoregion + Type,
 #'     data = MySurveyFrame)}
 #'
 #' @param vartype Character value providing the choice of the variance
-#'   estimator, where "Local" = the local mean estimator, \code{"SRS"} = the
-#'   simple random sampling estimator, \code{"HT"} = the Horvitz-Thompson
-#'   estimator, and \code{"YG"} = the Yates-Grundy estimator.  The default value
+#'   estimator, where \code{"Local"} indicates the local mean estimator, \code{"SRS"} indicates the
+#'   simple random sampling estimator, \code{"HT"} indicates the Horvitz-Thompson
+#'   estimator, and \code{"YG"} indicates the Yates-Grundy estimator.  The default value
 #'   is \code{"Local"}.
 #'
 #' @param jointprob Character value providing the choice of joint inclusion
@@ -236,31 +252,7 @@
 #'   includes the test statistic specified by argument \code{testname} plus its
 #'   degrees of freedom and p-value.
 #'
-#' @section Other Functions Required:
-#'   \describe{
-#'     \item{\code{\link{calibrate}}}{conduct calibration for survey data}
-#'     \item{\code{cdftest_localmean_prop}}{calculates local mean
-#'       variance/covarince estimates of estimated population proportions}
-#'     \item{\code{cdftest_localmean_total}}{calculates local mean
-#'       variance/covarince estimates of estimated population totals}
-#'     \item{\code{input_check}}{check input values for errors,
-#'       consistency, and compatibility with analytical functions}
-#'     \item{\code{\link{postStratify}}}{conduct post-stratification for survey
-#'       data}
-#'     \item{\code{svychisq_localmean}}{performs design-based contingency
-#'       table tests}
-#'     \item{\code{survey_design}}{creates a survey design object}
-#'     \item{\code{uniqueID}}{creates unique site IDs by appending a
-#'       unique number to each occurrence of a site ID}
-#'     \item{\code{vecprint}}{takes an input vector and outputs a
-#'       character string with line breaks inserted}
-#'   }
-#'
-#' @author Tom Kincaid \email{Kincaid.Tom@epa.gov}
-#'
-#' @seealso
-#'   \code{\link{calibrate}}
-#'   \code{\link{postStratify}}
+#' @author Tom Kincaid \email{Kincaid.Tom@@epa.gov}
 #'
 #' @keywords survey
 #'

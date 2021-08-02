@@ -83,7 +83,7 @@
 #' plot(sample, NE_Lakes)
 #' }
 #' ###############################################################################
-plot.sframe <- function(x, y, formula = ~1, var_args = NULL, varlevel_args = NULL,
+plot.sframe <- function(x, y, formula = ~ 1, var_args = NULL, varlevel_args = NULL,
                         geom = FALSE, onlyshow = NULL, fix_bbox = TRUE, ...) {
 
   # setting old graphical parameter value

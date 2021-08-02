@@ -74,43 +74,15 @@
 #' @param warn_df Data frame for storing warning messages.
 #'
 #' @return A list composed of the following objects:
-#'   \describe{
+#'   \itemize{
 #'     \item{\code{cdfsum}}{data frame containing the CDF estimate}
 #'     \item{\code{warn_ind}}{logical variable that indicates whether warning
 #'       messages were generated}
 #'     \item{\code{warn_df}}{data frame for storing warning messages}
 #'   }
 #'
-#' @section Other Functions Required:
-#'   \describe{
-#'     \item{\code{cdf_localmean_prop}}{organizes input and output for
-#'       calculation of the local mean variance estimator for the estimated CDF
-#'       using the proportion scale}
-#'     \item{\code{cdf_localmean_total}}{organizes input and output for
-#'       calculation of the local mean variance estimator for the estimated CDF
-#'       using the total scale}
-#'     \item{\code{cdf_nresp}}{calculates number of response values less
-#'       than a set of values}
-#'     \item{\code{\link{SE}}}{extracts standard errors from a survey design
-#'       object}
-#'     \item{\code{\link{confint}}}{computes confidence intervals for a survey
-#'       design object}
-#'     \item{\code{\link{svyby}}}{Compute survey statistics on subsets of a
-#'       survey defined by factors}
-#'     \item{\code{\link{svymean}}}{calculates the mean for a complex survey
-#'       design}
-#'     \item{\code{\link{svytotal}}}{calculates the total for a complex survey
-#'       design}
-#'   }
 #'
-#' @author Tom Kincaid \email{Kincaid.Tom@epa.gov}
-#'
-#' @seealso
-#'   \code{\link{confint}}
-#'   \code{\link{SE}}
-#'   \code{\link{svyby}}
-#'   \code{\link{svymean}}
-#'   \code{\link{svytotal}}
+#' @author Tom Kincaid \email{Kincaid.Tom@@epa.gov}
 #'
 #' @keywords survey univar
 #'

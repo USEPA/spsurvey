@@ -14,7 +14,7 @@
 #'
 #' @return Vector of unique site IDs.
 #'
-#' @author Tom Kincaid \email{Kincaid.Tom@epa.gov}
+#' @author Tom Kincaid \email{Kincaid.Tom@@epa.gov}
 #'
 #' @noRd
 ###############################################################################

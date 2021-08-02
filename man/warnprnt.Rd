@@ -2,7 +2,7 @@
 % Please edit documentation in R/warnprnt.R
 \name{warnprnt}
 \alias{warnprnt}
-\title{Internal Function: Print the Warnings Data Frame}
+\title{Print the Warnings}
 \usage{
 warnprnt(warn_df = get("warn_df", envir = .GlobalEnv), m = 1:nrow(warn_df))
 }
@@ -16,10 +16,10 @@ default is a vector containing the integers from 1 through the number of
 rows in \code{warn_df}, which will print all warning messages in the data frame.}
 }
 \value{
-Invisible return.  Prints warnings.
+Printed warnings.
 }
 \description{
-This function prints the warnings data frame.
+This function prints the warnings.
 }
 \author{
 Tom Kincaid \email{Kincaid.Tom@epa.gov}

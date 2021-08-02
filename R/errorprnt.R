@@ -3,17 +3,17 @@
 # Programmer: Tom Kincaid
 # Date: June 24, 2020
 #
-#' Internal Function: Print the Error Messages Vector
+#' Print Analysis Errors
 #'
-#' This function prints the error messages vector.
+#' This function prints the error messages vector in analysis functions.
 #'
 #' @param error_vec Data frame that contains error messages.  The default is
-#'   \code{"error_vec"}, which is the name given to the error messagess vector created
+#'   \code{"error_vec"}, which is the name given to the error messages vector created
 #'   by functions in the spsurvey package.
 #'
-#' @return Invisible return.  Prints errors.
+#' @return Printed errors.
 #'
-#' @author Tom Kincaid \email{Kincaid.Tom@epa.gov}
+#' @author Tom Kincaid \email{Kincaid.Tom@@epa.gov}
 #'
 #' @export
 ###############################################################################

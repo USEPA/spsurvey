@@ -4,19 +4,18 @@
 # Date: January 22, 2021
 #' Create an dframe object
 #'
-#' @description dframe gives data frames, \code{sp}, and \code{sf} objects class \code{dframe} to be used
+#' @description \code{dframe} gives data frames, \code{sp}, and \code{sf} objects class \code{dframe} to be used
 #' in \code{summary()} generics. \code{sp} objects are coerced to \code{sf}
 #' objects prior to giving class \code{dframe}.
 #'
 #' @param object An \code{sp} or \code{sf} object
 #'
-#' @param ... Additional arguments to \code{st_as_sf()} if converting an sp object to an sf and sframe object
+#' @param ... Additional arguments to \code{st_as_sf()} if converting an \code{sp}
+#' object to an \code{sf} and \code{dframe} object
 #'
-#' @return An \code{dframe} object
+#' @return A \code{dframe} object
 #'
 #' @export
-#'
-#' @author Michael Dumelle
 #'
 #' @examples
 #' \dontrun{

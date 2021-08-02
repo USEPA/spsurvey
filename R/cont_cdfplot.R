@@ -68,13 +68,7 @@
 #'
 #' @return A PDF file containing the CDF plots.
 #'
-#' @section Other Functions Required:
-#'   \describe{
-#'     \item{\code{cdf_plot}}{plot the CDF and associated confidence
-#'       limits}
-#'   }
-#'
-#' @author Tom Kincaid \email{Kincaid.Tom@epa.gov}
+#' @author Tom Kincaid \email{Kincaid.Tom@@epa.gov}
 #'
 #' @keywords survey plot
 #'

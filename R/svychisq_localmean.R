@@ -74,31 +74,7 @@
 #'
 #' @return List belonging to class \code{htest}.
 #'
-#' @section Other Functions Required:
-#'   \describe{
-#'     \item{\code{\link{cat_localmean_prop}}}{organizes input and output for
-#'       calculation of the local mean variance estimator for estimated
-#'       proportions for categorical data}
-#'     \item{\code{\link{cat_localmean_total}}}{organizes input and output for
-#'       calculation of the local mean variance estimator for estimated sizes
-#'       (totals) for categorical data}
-#'     \item{\code{\link{chisq.test}}}{performs chi-squared contingency table
-#'       tests and goodness-of-fit tests}
-#'     \item{\code{\link{svymean}}}{calculates the mean for a complex survey
-#'       design}
-#'     \item{\code{\link{svytotal}}}{calculates the total for a complex survey
-#'       design}
-#'   }
-#'
-#' @author Tom Kincaid \email{Kincaid.Tom@epa.gov}
-#'
-#' @seealso
-#'   \code{\link{cat_localmean_prop}}
-#'   \code{\link{cat_localmean_total}}
-#'   \code{\link{chisq.test}}
-#'   \code{\link{svydesign}}
-#'   \code{\link{svymean}}
-#'   \code{\link{svytotal}}
+#' @author Tom Kincaid \email{Kincaid.Tom@@epa.gov}
 #'
 #' @keywords survey
 #'

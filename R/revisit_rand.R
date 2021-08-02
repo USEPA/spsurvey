@@ -46,10 +46,10 @@
 #' @return A two-dimensional array of sample sizes to be sampled for each panel
 #'   and each time period.
 #'
-#' @author Tony Olsen \email{Olsen.Tony@epa.gov}
+#' @author Tony Olsen \email{Olsen.Tony@@epa.gov}
 #'
 #' @seealso
-#'   \describe{
+#'   \itemize{
 #'     \item{\code{\link{revisit_dsgn}}}{create a panel revisit design}
 #'     \item{\code{\link{revisit_bibd}}}{create a balanced incomplete block
 #'       panel revisit design}

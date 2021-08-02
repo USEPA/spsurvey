@@ -6,7 +6,7 @@
 \title{NRSA EPA7}
 \format{
 A data frame with 682 rows and 10 variables:
-\describe{
+\itemize{
   \item{SITE_ID}{A unique site identifier.}
   \item{YEAR}{Year of design cycle.}
   \item{WEIGHT}{Sampling design weights.}

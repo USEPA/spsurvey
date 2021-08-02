@@ -6,7 +6,7 @@
 \title{NCCA Gulf}
 \format{
 A data frame with 851 rows and 11 variables:
-\describe{
+\itemize{
   \item{SITE_ID}{A unique site identifier.}
   \item{YEAR}{Year of design cycle.}
   \item{REVISIT}{Site revisit status.}

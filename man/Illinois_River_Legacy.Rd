@@ -7,7 +7,7 @@
 \format{
 An \code{sf} point object object with 5 rows and 1
 variable:
-\describe{
+\itemize{
   \item{STATE_NAME}{State name.}
   \item{geometry}{Point geometry using a USA Contiguous Albers
     Equal Area Conic projection.}

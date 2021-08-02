@@ -84,15 +84,7 @@
 #'
 #' @return An object of class \code{survey.design2}.
 #'
-#' @section Other Functions Required:
-#'   \describe{
-#'     \item{\code{\link{svydesign}}}{specifies a complex survey design}
-#'   }
-#'
-#' @author Tom Kincaid \email{Kincaid.Tom@epa.gov}
-#'
-#' @seealso
-#'   \code{\link{svydesign}}
+#' @author Tom Kincaid \email{Kincaid.Tom@@epa.gov}
 #'
 #' @keywords survey
 #'

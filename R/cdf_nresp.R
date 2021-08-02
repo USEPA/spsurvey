@@ -16,7 +16,7 @@
 #' @return Vector containing the number of response values for each CDF estimation
 #'   value.
 #'
-#' @author Tom Kincaid \email{Kincaid.Tom@epa.gov}
+#' @author Tom Kincaid \email{Kincaid.Tom@@epa.gov}
 #'
 #' @noRd
 ###############################################################################

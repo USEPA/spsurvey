@@ -8,9 +8,9 @@
 #'
 #' @description This function adjusts initial survey design weights when
 #'   implementation results in the use of oversample sites or if it is desired
-#'   to have final weights sum to the known frame size.  Adjusted weights are
-#'   equal to \code{initial_weight * framesize/sum(initial_weight)}.  The adjustment
-#'   is done separately for each category specified in \code{wgtcat}.
+#'   to have final weights sum to the known frame size.  Adjusted weights
+#'   proportionally scale the initial weights to sum to the desired framesize.
+#'   Separate adjustments are applied to each category specified in \code{wgtcat}.
 #'
 #' @param wgt Vector of initial weights for each site. These equal
 #'   the reciprocal of the sample inclusion probabilities.
@@ -34,7 +34,7 @@
 #'   to \code{0} for sites whose value in the sites argument was set to
 #'   \code{FALSE}.
 #'
-#' @author Tony Olsen \email{olsen.tony@epa.gov}
+#' @author Tony Olsen \email{olsen.tony@@epa.gov}
 #'
 #' @keywords survey misc
 #'

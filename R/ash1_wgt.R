@@ -37,7 +37,7 @@
 #'
 #' @keywords survey misc
 #'
-#' @author Tony Olsen \email{Olsen.tony@epa.gov}
+#' @author Tony Olsen \email{Olsen.tony@@epa.gov}
 #'
 #' @references
 #'   Scott, D. W. (1985). "Averaged shifted histograms: effective nonparametric

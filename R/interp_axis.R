@@ -21,7 +21,7 @@
 #'
 #' @return A numeric vector consisting of the right side y-axis labels.
 #'
-#' @author Tom Kincaid \email{Kincaid.Tom@epa.gov}
+#' @author Tom Kincaid \email{Kincaid.Tom@@epa.gov}
 #'
 #' @noRd
 ################################################################################

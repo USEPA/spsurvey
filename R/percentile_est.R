@@ -9,8 +9,8 @@
 #
 #' Percentile Estimates for Probability Survey Data
 #'
-#' This function calculates percentile estimates using the oldsvyquantile function
-#' in the survey package.  Upper and lower confidence bounds also are estimated.
+#' This function calculates percentile estimates using the \code{oldsvyquantile()} function
+#' in the survey package (\code{svyquantile()} on survey version pre 4.1-1.  Upper and lower confidence bounds also are estimated.
 #'
 #' @param pctsum Data frame containing estimates.
 #'
@@ -59,34 +59,15 @@
 #' @param warn_df Data frame for storing warning messages.
 #'
 #' @return A list composed of the following objects:
-#'   \describe{
+#'   \itemize{
 #'     \item{\code{pctsum}}{data frame containing the percentile estimates}
 #'     \item{\code{warn_ind}}{logical variable that indicates whether warning
 #'       messages were generated}
 #'     \item{\code{warn_df}}{data frame for storing warning messages}
 #'   }
 #'
-#' @section Other Functions Required:
-#'   \describe{
-#'     \item{\code{cdf_nresp}}{calculates number of response values less
-#'       than a set of values}
-#'     \item{\code{\link{SE}}}{extracts standard errors from a survey design
-#'       object}
-#'     \item{\code{\link{confint}}}{computes confidence intervals for a survey
-#'       design object}
-#'     \item{\code{\link{svyby}}}{Compute survey statistics on subsets of a
-#'       survey defined by factors}
-#'     \item{\code{\link{oldsvyquantile}}}{calculates percentile estimates for a
-#'       complex survey design}
-#'   }
 #'
 #' @author Tom Kincaid \email{Kincaid.Tom@@epa.gov}
-#'
-#' @seealso
-#'   \code{\link{confint}}
-#'   \code{\link{SE}}
-#'   \code{\link{svyby}}
-#'   \code{\link{oldsvyquantile}}
 #'
 #' @keywords survey univar
 #'

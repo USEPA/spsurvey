@@ -51,8 +51,8 @@ strata).}
   All spatial balance metrics have a lower bound of zero, which indicates perfect
   spatial balance. As the metric value increases, the spatial balance decreases.}
 
-\item{extents}{Should the total extent within each dirichlet
-tesselation be returned? Defaults to FALSE.}
+\item{extents}{Should the total extent within each Dirichlet
+tessellation be returned? Defaults to FALSE.}
 }
 \value{
 A list having names equal to each strata.

@@ -77,14 +77,7 @@
 #'   \code{vars_cont}, \code{vars_stressor}, \code{subpops}, \code{popsize},
 #'   \code{vartype}, \code{jointprob}, \code{error_ind}, and \code{error_vec}.
 #'
-#' @section Other Functions Required:
-#'   \describe{
-#'     \item{\code{\link{make.names}}}{creates syntactically valid names}
-#'     \item{\code{vecprint}}{takes an input vector and outputs a character
-#'       string with line breaks inserted}
-#'   }
-#'
-#' @author Tom Kincaid \email{Kincaid.Tom@epa.gov}
+#' @author Tom Kincaid \email{Kincaid.Tom@@epa.gov}
 #'
 #' @noRd
 ################################################################################

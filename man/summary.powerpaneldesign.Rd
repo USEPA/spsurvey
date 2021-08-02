@@ -20,7 +20,9 @@ will be sampled only once at each time period.}
 }
 \value{
 List of six elements.
-  \itemize{ \item \code{n_panel} - number of panels in revisit design
+  \itemize{
+
+  \item \code{n_panel} - number of panels in revisit design
 
   \item \code{n_period} - number of time periods in revisit design
 
@@ -69,20 +71,6 @@ sa_visit[1, sa_visit[1, ] > 0] <- 2
 summary(sa_dsgn, sa_visit)
 }
 ###############################################################################
-}
-\seealso{
-\describe{
-    \item{\code{\link{revisit_dsgn}}}{create a panel revisit design}
-    \item{\code{\link{revisit_bibd}}}{create a balanced incomplete block
-      panel revisit design}
-    \item{\code{\link{revisit_rand}}}{create a revisit design with random
-      assignment to panels and time periods}
-    \item{\code{\link{power_dsgn}}}{power calculation for multiple panel
-      designs}
-    \item{\code{\link{cov_panel_dsgn}}}{covariance matrix for a panel design}
-    \item{\code{\link{plot.powerpaneldesign}}}{plot power curves for panel
-      designs}
-  }
 }
 \author{
 Tony Olsen \email{Olsen.Tony@epa.gov}

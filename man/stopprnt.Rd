@@ -2,7 +2,7 @@
 % Please edit documentation in R/stopprnt.R
 \name{stopprnt}
 \alias{stopprnt}
-\title{Internal Function: Print the stop data Frame that contains errors for the design.}
+\title{Print Design Errors.}
 \usage{
 stopprnt(stop_df = get("stop_df", envir = .GlobalEnv), m = 1:nrow(stop_df))
 }
@@ -19,7 +19,7 @@ rows in \code{stop_df}, which will print all stop messages in the data frame.}
 Invisible return.  Prints stop messages
 }
 \description{
-Internal Function: Print the stop data Frame that contains errors for the design.
+This function prints the error messages vector in the design functions.
 }
 \author{
 Tony Olsen \email{Olsen.Tony@epa.gov}

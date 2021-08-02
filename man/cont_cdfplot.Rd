@@ -86,14 +86,6 @@ frame named "CDF" that is included in the output object produced by function
 cont_analysis.  Plots are produced for every combination of Type of
 population, subpopulation within Type, and indicator.
 }
-\section{Other Functions Required}{
-
-  \describe{
-    \item{\code{cdf_plot}}{plot the CDF and associated confidence
-      limits}
-  }
-}
-
 \examples{
 \dontrun{
 dframe <- data.frame(

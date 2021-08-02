@@ -46,7 +46,7 @@ default is \code{NULL}.}
 }
 \value{
 A list containing the covariance matrix (\code{cov}) for the panel design,
-  the input panel design (\code{paneldsgn}), the input nrepeats design
+  the input panel design (\code{paneldsgn}), the input \code{nrepeats} design
   (\code{nrepeats.dsgn}) and the function call.
 }
 \description{
@@ -73,12 +73,12 @@ Covariance structure accounts for the panel design and the four
 Urquhart, N. S., W. S. Overton, et al. (1993) Comparing sampling designs
   for monitoring ecological status and trends: impact of temporal patterns.
   In: \emph{Statistics for the Environment.} V. Barnett and K. F. Turkman.
-  John Wiley & Sons, New York, pp. 71-86.\cr
+  John Wiley & Sons, New York, pp. 71-86.
 
   Urquhart, N. S. and T. M. Kincaid (1999). Designs for detecting trends
   from repeated surveys of ecological resources. \emph{Journal of
   Agricultural, Biological, and Environmental Statistics}, \bold{4(4)},
-  404-414.\cr
+  404-414.
 
   Urquhart, N. S. (2012). The role of monitoring design in detecting trend in
   long-term ecological monitoring studies. In: \emph{Design and Analysis of
@@ -87,7 +87,7 @@ Urquhart, N. S., W. S. Overton, et al. (1993) Comparing sampling designs
   pp. 151-173.
 }
 \seealso{
-\describe{
+\itemize{
     \item{\code{\link{revisit_dsgn}}}{create a panel revisit design}
     \item{\code{\link{revisit_bibd}}}{create a balanced incomplete block
       panel revisit design}

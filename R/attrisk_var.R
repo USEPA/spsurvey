@@ -73,22 +73,15 @@
 #'   subpopulation, and an indicator.
 #'
 #' @return A list containing the following objects:
-#'   \describe{
+#'   \itemize{
 #'     \item{\code{varest}}{vector containing variance estimates}
 #'     \item{\code{warn_ind}}{logical variable that indicates whether warning
 #'       messages were generated}
 #'     \item{\code{warn_df}}{data frame for storing warning messages}
 #'   }
 #'
-#' @section Other Functions Required:
-#'   \describe{
-#'     \item{\code{localmean_cov}}{calculate the variance/covariance
-#'       matrix using the local mean estimator}
-#'     \item{\code{localmean_weight}}{calculate the weighting matrix for
-#'        the local mean variance estimator}
-#'   }
 #'
-#' @author Tom Kincaid \email{Kincaid.Tom@epa.gov}
+#' @author Tom Kincaid \email{Kincaid.Tom@@epa.gov}
 #'
 #' @keywords survey
 #'

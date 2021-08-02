@@ -33,13 +33,6 @@
 #' @return sites A list of \code{sf} object of sample points, an \code{sf} object of over sample
 #'   points if any, warning indicator and warning messages \code{data.frame}.
 #'
-#' @section Other Functions Required:
-#'   \describe{
-#'     \item{\code{get_address}}{constructs the hierarchical address for
-#'       sample points}
-#'     \item{\code{UPpivotal}}{selects sample point(s)}
-#'   }
-#'
 #' @author Tony Olsen \email{Olsen.Tony@@epa.gov}
 #'
 #' @keywords survey

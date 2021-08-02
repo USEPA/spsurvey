@@ -1,7 +1,7 @@
 #' spsurvey: Spatial Survey Design and Analysis
 #'
 #' This package provides functions for design and analysis of probability
-#' surveys.  The functions in spsurvey can select generalized random-tesselation
+#' surveys.  The functions in spsurvey can select generalized random-tessellation
 #' stratified (GRTS) and independent random sample (IRS) survey designs.
 #' Although the function can be used with a wide range of environmental survey
 #' designs, the spsurvey analysis functions were written to accommodate data

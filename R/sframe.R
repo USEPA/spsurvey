@@ -13,9 +13,9 @@
 #' \code{sframe} object.
 #'
 #' @param ... Additional arguments to \code{st_as_sf()} when using \code{sframe()}
-#' to convert an sp object to an sf and sframe object
+#' to convert an \code{sp} object to an \code{sf} and \code{sframe} object
 #'
-#' @return For \code{sframe()}, an \code{sframe} object. For \code{unsframe()}, an \code{sf} object.
+#' @return An \code{sframe} object.
 #'
 #' @seealso sframe_to_sf
 #'

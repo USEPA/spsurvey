@@ -49,8 +49,8 @@
 #'   All spatial balance metrics have a lower bound of zero, which indicates perfect
 #'   spatial balance. As the metric value increases, the spatial balance decreases.
 #'
-#' @param extents Should the total extent within each dirichlet
-#' tesselation be returned? Defaults to FALSE.
+#' @param extents Should the total extent within each Dirichlet
+#' tessellation be returned? Defaults to FALSE.
 #'
 #' @return A list having names equal to each strata.
 #'

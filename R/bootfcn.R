@@ -5,7 +5,7 @@
 #
 #' Bootstrap Function for Trend Parameter Estimation
 #'
-#' This function calculates trend parameter estimates using bootstrap replcates.
+#' This function calculates trend parameter estimates using bootstrap replicates.
 #'
 #' @param dframe Data frame containing survey design variables, response
 #'   variables, and subpopulation (domain) variables.
@@ -21,7 +21,7 @@
 #' @param yearID Character value providing name of the year variable in
 #'   the dframe data frame.
 #'
-#' @author Tom Kincaid \email{Kincaid.Tom@epa.gov}
+#' @author Tom Kincaid \email{Kincaid.Tom@@epa.gov}
 #'
 #' @noRd
 ################################################################################

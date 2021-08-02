@@ -65,6 +65,3 @@ summary(sample, ~ ELEV_CAT * AREA_CAT)
 }
 ###############################################################################
 }
-\author{
-Michael Dumelle \email{Dumelle.Michael@epa.gov}
-}

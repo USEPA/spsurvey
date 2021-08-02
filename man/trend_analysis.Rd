@@ -129,94 +129,110 @@ variable in the \code{dframe} data frame.  The default value is
 \code{NULL}.}
 
 \item{fpc}{Object that specifies values required for calculation of the
-finite population correction factor used during variance estimation. The
-object must match the survey design in terms of stratification and whether
-the design is single-stage or two-stage.  For an unstratified design, the
-object is a vector.  The vector is composed of a single numeric value for a
-single-stage design.  For a two-stage unstratified design, the object is a
-named vector containing one more than the number of clusters in the sample,
-where the first item in the vector specifies the number of clusters in the
-population and each subsequent item specifies the number of stage two units
-for the cluster.  The name for the first item in the vector is arbitrry.
-Subsequent names in the vector identify clusters and must match the cluster
-IDs.  For a stratified design, the object is a named list of vectors, where
-names must match the strata IDs.  For each stratum, the format of the
-vector is identical to the format described for unstratified single-stage
-and two-stage designs.  Note that the finite population correction factor
-is not used with the local mean variance estimator.\cr\cr
-Example fpc for a single-stage unstratified survey design:\cr
-\verb{fpc <- 15000}\cr\cr
-Example fpc for a single-stage stratified survey design:\cr
-\verb{fpc <- list(
-  Stratum_1 = 9000,
-  Stratum_2 = 6000)
- }\cr
-Example fpc for a two-stage unstratified survey design:\cr
-\verb{fpc <- c(
-  Ncluster = 150,
-  Cluster_1 = 150,
-  Cluster_2 = 75,
-  Cluster_3 = 75,
-  Cluster_4 = 125,
-  Cluster_5 = 75)
-}\cr
-Example fpc for a two-stage stratified survey design:\cr
-\verb{fpc <- list(
-  Stratum_1 = c(
-    Ncluster_1 = 100,
-    Cluster_1 = 125,
-    Cluster_2 = 100,
-    Cluster_3 = 100,
-    Cluster_4 = 125,
-    Cluster_5 = 50),
-  Stratum_2 = c(
-    Ncluster_2 = 50,
-    Cluster_1 = 75,
-    Cluster_2 = 150,
+  finite population correction factor used during variance estimation. The
+  object must match the survey design in terms of stratification and whether
+  the design is single-stage or two-stage.  For an unstratified design, the
+  object is a vector.  The vector is composed of a single numeric value for a
+  single-stage design.  For a two-stage unstratified design, the object is a
+  named vector containing one more than the number of clusters in the sample,
+  where the first item in the vector specifies the number of clusters in the
+  population and each subsequent item specifies the number of stage two units
+  for the cluster.  The name for the first item in the vector is arbitrry.
+  Subsequent names in the vector identify clusters and must match the cluster
+  IDs.  For a stratified design, the object is a named list of vectors, where
+  names must match the strata IDs.  For each stratum, the format of the
+  vector is identical to the format described for unstratified single-stage
+  and two-stage designs.  Note that the finite population correction factor
+  is not used with the local mean variance estimator.
+
+  Example fpc for a single-stage unstratified survey design:
+
+  \verb{fpc <- 15000}
+
+  Example fpc for a single-stage stratified survey design:
+
+  \verb{fpc <- list(
+    Stratum_1 = 9000,
+    Stratum_2 = 6000)
+   }
+
+  Example fpc for a two-stage unstratified survey design:
+
+  \verb{fpc <- c(
+    Ncluster = 150,
+    Cluster_1 = 150,
+    Cluster_2 = 75,
     Cluster_3 = 75,
-    Cluster_4 = 75,
-    Cluster_5 = 125))
-}}
+    Cluster_4 = 125,
+    Cluster_5 = 75)
+  }
+
+  Example fpc for a two-stage stratified survey design:
+
+  \verb{fpc <- list(
+    Stratum_1 = c(
+      Ncluster_1 = 100,
+      Cluster_1 = 125,
+      Cluster_2 = 100,
+      Cluster_3 = 100,
+      Cluster_4 = 125,
+      Cluster_5 = 50),
+    Stratum_2 = c(
+      Ncluster_2 = 50,
+      Cluster_1 = 75,
+      Cluster_2 = 150,
+      Cluster_3 = 75,
+      Cluster_4 = 75,
+      Cluster_5 = 125))
+  }}
 
 \item{popsize}{Object that provides values for the population argument of
-the \code{calibrate} or \code{postStratify} functions.  For the
-\code{calibrate} function, the object is a named list, where the names
-identify factor variables in the \code{dframe} data frame.  Each element
-of the list is a named vector containing the population total for each
-level of the associated factor variable.  For the \code{postStratify}
-function, the object is either a data frame, table, or xtabs
-object that provides the population total for all combinations of selected
-factor varaibles in the \code{dframe} data frame.  If a data frame is used
-for \code{popsize}, the variable containing population totals must be the
-last variable in the data frame.  If a table is used for \code{popsize},
-the table must have named \code{dimnames} where the names identify factor
-variables in the \code{dframe} data frame.  If the popsize argument is
-equal to \code{NULL}, then neither calibration nor post-stratification is
-performed.  The default value is
-\code{NULL}.\cr\cr
-Example popsize for calibration:\cr
-\verb{popsize <- list(
-  Ecoregion = c(
-    East = 750,
-    Central = 500,
-    West = 250),
-  Type = c(
-    Streams = 1150,
-    Rivers = 350))
-}\cr
-Example popsize for post-stratification using a data frame:\cr
-\verb{popsize <- data.frame(
-  Ecoregion = rep(c("East", "Central", "West"),
-    rep(2, 3)),
-  Type = rep(c("Streams", "Rivers"), 3),
-  Total = c(575, 175, 400, 100, 175, 75))
-}\cr
-Example popsize for post-stratification using a table:\cr
-\verb{popsize <- with(MySurveyFrame,
-  table(Ecoregion, Type))}\cr\cr
-Example popsize for post-stratification using an xtabs object:\cr
-\verb{popsize <- xtabs(~Ecoregion + Type,
-  data = MySurveyFrame)}}
+  the \code{calibrate} or \code{postStratify} functions.  For the
+  \code{calibrate} function, the object is a named list, where the names
+  identify factor variables in the \code{dframe} data frame.  Each element
+  of the list is a named vector containing the population total for each
+  level of the associated factor variable.  For the \code{postStratify}
+  function, the object is either a data frame, table, or xtabs
+  object that provides the population total for all combinations of selected
+  factor varaibles in the \code{dframe} data frame.  If a data frame is used
+  for \code{popsize}, the variable containing population totals must be the
+  last variable in the data frame.  If a table is used for \code{popsize},
+  the table must have named \code{dimnames} where the names identify factor
+  variables in the \code{dframe} data frame.  If the popsize argument is
+  equal to \code{NULL}, then neither calibration nor post-stratification is
+  performed.  The default value is
+  \code{NULL}.
+
+  Example popsize for calibration:
+
+  \verb{popsize <- list(
+    Ecoregion = c(
+      East = 750,
+      Central = 500,
+      West = 250),
+    Type = c(
+      Streams = 1150,
+      Rivers = 350))
+  }
+
+  Example popsize for post-stratification using a data frame:
+
+  \verb{popsize <- data.frame(
+    Ecoregion = rep(c("East", "Central", "West"),
+      rep(2, 3)),
+    Type = rep(c("Streams", "Rivers"), 3),
+    Total = c(575, 175, 400, 100, 175, 75))
+  }
+
+  Example popsize for post-stratification using a table:
+
+  \verb{popsize <- with(MySurveyFrame,
+    table(Ecoregion, Type))}
+
+  Example popsize for post-stratification using an xtabs object:
+
+  \verb{popsize <- xtabs(~Ecoregion + Type,
+    data = MySurveyFrame)}}
 
 \item{invprboot}{Logical value that indicates whether the inverse probability
 bootstrap procedure is used to calculate trend parameter estimates.  This
@@ -229,9 +245,9 @@ is \code{TRUE}.}
 default is \code{1000}.}
 
 \item{vartype}{Character value providing choice of the variance estimator,
-where \code{"Local"} = the local mean estimator, \code{"SRS"} = the simple
-random sampling estimator, \code{"HT"} = the Horvitz-Thompson estimator,
-and \code{"YG"} = the Yates-Grundy estimator.  The default value is
+where \code{"Local"} indicates the local mean estimator, \code{"SRS"} indicates the simple
+random sampling estimator, \code{"HT"} indicates the Horvitz-Thompson estimator,
+and \code{"YG"} indicates the Yates-Grundy estimator.  The default value is
 \code{"Local"}.}
 
 \item{jointprob}{Character value providing choice of joint inclusion
@@ -249,7 +265,7 @@ List composed of two data frames containing trend estimates for all
   combinations of population Types, subpopulations within Types, and response
   variables.  For categorical variables, trend estimates are calculated for
   each category of the variable.  The two data frames in the output list are:
-  \describe{
+  \itemize{
     \item{\code{catsum}}{data frame containing trend estimates for categorical
       variables}
     \item{\code{contsum}}{data frame containing trend estimates for continuous
@@ -258,7 +274,7 @@ List composed of two data frames containing trend estimates for all
 
   For the SLR and WLR models, the data frame contains the following
   variables:
-  \describe{
+  \itemize{
     \item{Type}{subpopulation (domain) name}
     \item{Subpopulation}{subpopulation name within a domain}
     \item{Indicator}{response variable}
@@ -279,7 +295,7 @@ List composed of two data frames containing trend estimates for all
   }
 
   For the PO model, the data frame contains the following variables:
-  \describe{
+  \itemize{
     \item{Type}{subpopulation (domain) name}
     \item{Subpopulation}{subpopulation name within a domain}
     \item{Indicator}{response variable}
@@ -357,30 +373,6 @@ population.  Parameter estimates are calculated using the object returned by
 the \code{boot} function.
 }
 
-\section{Other Functions Required}{
-
-  \describe{
-    \item{\code{\link{boot}}}{conduct bootstrap resampling}
-    \item{\code{bootfcn}}{calculates trend parameter estimates using
-      bootstrap replicates and the lmer function}
-    \item{\code{\link{calibrate}}}{conduct calibration for survey data}
-    \item{\code{category_est}}{calculate category proportion and total
-      estimates}
-    \item{\code{input_check}}{check input values for errors,
-      consistency, and compatibility with analytical functions}
-    \item{\code{\link{lm}}}{fits a linear model}
-    \item{\code{\link{lmer}}}{fits a linear mixed-effects model}
-    \item{\code{mean_est}}{calculates mean estimates}
-    \item{\code{\link{postStratify}}}{conduct post-stratification for survey
-      data}
-    \item{\code{survey_design}}{creates a survey design object}
-    \item{\code{uniqueID}}{creates unique site IDs by appending a
-      unique number to each occurrence of a site ID}
-    \item{\code{vecprint}}{takes an input vector and outputs a
-      character string with line breaks inserted}
-  }
-}
-
 \examples{
 # Categorical variable example for three resource classes
 mydframe <- data.frame(
@@ -410,11 +402,6 @@ trend_analysis(
   xcoord = "xcoord",
   ycoord = "ycoord"
 )
-}
-\seealso{
-\code{\link{boot}}
-  \code{\link{calibrate}}
-  \code{\link{postStratify}}
 }
 \author{
 Tom Kincaid \email{Kincaid.Tom@epa.gov}

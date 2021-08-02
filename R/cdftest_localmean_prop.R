@@ -28,7 +28,7 @@
 #'   name.
 #'
 #' @return A list containing the following objects:
-#'   \describe{
+#'   \itemize{
 #'     \item{\code{varest}}{matrix containing the variance/covariance estimates
 #'       for the contingency table proportion estimates}
 #'     \item{\code{warn_ind}}{logical variable that indicates whether warning
@@ -36,13 +36,7 @@
 #'     \item{\code{warn_df}}{data frame for storing warning messages}
 #'   }
 #'
-#' @section Other Functions Required:
-#'   \describe{
-#'     \item{\code{cdftestvar_prop}}{calculates variance-covariance estimates of
-#'       the estimated proportion in each cell of a contingency table}
-#'   }
-#'
-#' @author Tom Kincaid \email{Kincaid.Tom@epa.gov}
+#' @author Tom Kincaid \email{Kincaid.Tom@@epa.gov}
 #'
 #' @keywords survey
 #'

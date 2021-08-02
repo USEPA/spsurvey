@@ -117,10 +117,10 @@
 #'   designs. \emph{Environmental Monitoring and Assessment} \bold{85},
 #'   277-292.
 #'
-#' @author Tony Olsen \email{Olsen.Tony@epa.gov}
+#' @author Tony Olsen \email{Olsen.Tony@@epa.gov}
 #'
 #' @seealso
-#'   \describe{
+#'   \itemize{
 #'     \item{\code{\link{revisit_bibd}}}{create a balanced incomplete block
 #'       panel revisit design}
 #'     \item{\code{\link{revisit_rand}}}{create a revisit design with random

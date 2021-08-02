@@ -6,7 +6,7 @@
 \title{NLA PNW}
 \format{
 An \code{sf} point object with 851 rows and 9 variables:
-\describe{
+\itemize{
   \item{SITE_ID}{A unique lake identifier.}
   \item{WEIGHT}{The sampling design weight.}
   \item{URBAN}{Urban category.}

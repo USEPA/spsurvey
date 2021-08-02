@@ -66,7 +66,7 @@ Cook R. D.  and C. Nachtsheim. (1989). Computer-aided blocking of factorial
   and response-surface designs. \emph{Technometrics} \bold{31(3)}, 339-346.
 }
 \seealso{
-\describe{
+\itemize{
     \item{\code{\link{revisit_dsgn}}}{create a panel revisit design}
     \item{\code{\link{revisit_rand}}}{create a revisit design with random
       assignment to panels and time periods}

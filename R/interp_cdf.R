@@ -19,7 +19,7 @@
 #'
 #' @return A numeric vector consisting of the interpolated CDF values.
 #'
-#' @author Tom Kincaid \email{Kincaid.Tom@epa.gov}
+#' @author Tom Kincaid \email{Kincaid.Tom@@epa.gov}
 #'
 #' @noRd
 ################################################################################

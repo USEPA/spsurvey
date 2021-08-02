@@ -2,20 +2,20 @@
 % Please edit documentation in R/errorprnt.R
 \name{errorprnt}
 \alias{errorprnt}
-\title{Internal Function: Print the Error Messages Vector}
+\title{Print Analysis Errors}
 \usage{
 errorprnt(error_vec = get("error_vec", envir = .GlobalEnv))
 }
 \arguments{
 \item{error_vec}{Data frame that contains error messages.  The default is
-\code{"error_vec"}, which is the name given to the error messagess vector created
+\code{"error_vec"}, which is the name given to the error messages vector created
 by functions in the spsurvey package.}
 }
 \value{
-Invisible return.  Prints errors.
+Printed errors.
 }
 \description{
-This function prints the error messages vector.
+This function prints the error messages vector in analysis functions.
 }
 \author{
 Tom Kincaid \email{Kincaid.Tom@epa.gov}

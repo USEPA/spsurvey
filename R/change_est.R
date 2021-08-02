@@ -144,7 +144,7 @@
 #'   subpopulation, and an indicator.
 #'
 #' @return A list composed of the following objects:
-#'   \describe{
+#'   \itemize{
 #'     \item{\code{results}}{if resp_ind equals \code{"cat"}, a data frame named
 #'       catsum containing change estimates for categories; if \code{resp_ind}
 #'       equals \code{"cont"}, two data frames named contsum_mean and
@@ -155,30 +155,7 @@
 #'     \item{\code{warn_df}}{data frame for storing warning messages}
 #'   }
 #'
-#'
-#' @section Other Functions Required:
-#'  \describe{
-#'     \item{\code{category_est}}{calculate category proportion and total
-#'       estimates}
-#'    \item{\code{changevar_mean}}{calculate the covariance or
-#'      correlation estimate of the estimated change in means between two
-#'      probability surveys}
-#'    \item{\code{changevar_prop}}{calculate covariance or correlation
-#'      estimates of the estimated change in class proportion estimates between
-#'     two probability surveys}
-#'    \item{\code{changevar_total}}{calculate covariance or correlation
-#'      estimates of the estimated change in class total estimates between two
-#'      probability surveys}
-#'     \item{\code{mean_est}}{calculates mean estimates}
-#'     \item{\code{percentile_est}}{calculates percentile estimates}
-#'     \item{\code{\link{svymean}}}{calculates means for a complex survey
-#'       design}
-#'  }
-#'
-#' @author Tom Kincaid \email{Kincaid.Tom@epa.gov}
-#'
-#' @seealso
-#'   \code{\link{svymean}}
+#' @author Tom Kincaid \email{Kincaid.Tom@@epa.gov}
 #'
 #' @keywords survey
 #'

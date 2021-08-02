@@ -75,7 +75,7 @@ revisit_rand(
 )
 }
 \seealso{
-\describe{
+\itemize{
     \item{\code{\link{revisit_dsgn}}}{create a panel revisit design}
     \item{\code{\link{revisit_bibd}}}{create a balanced incomplete block
       panel revisit design}

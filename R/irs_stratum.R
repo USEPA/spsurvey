@@ -18,15 +18,7 @@
 #'   and \code{warn_ind} - logical value for warning indicator and \code{warn_df} - a data frame
 #'   for warning messages.
 #'
-#' @section Other functions required:
-#'   \describe{
-#'     \item{\code{\link{grtspts_ip}}}{Calculates inclusion probabilities}
-#'     \item{\code{\link{grtspts_ipleg}}}{Calculates inclusion probabilities with legacy points}
-#'     \item{\code{\link{grtspts_mindis}}}{selects a grts sample with minimum distance between
-#'       points}
-#'     }
-#'
-#' @author Tony Olsen email{olsen.tony@epa.gov}
+#' @author Tony Olsen email{olsen.tony@@epa.gov}
 #'
 #' @keywords survey
 #'

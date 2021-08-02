@@ -6,7 +6,7 @@
 \title{Great Lakes}
 \format{
 An \code{sf} multipolygon object with 4113 rows and 6 variables:
-\describe{
+\itemize{
   \item{COUNTRY}{Country.}
   \item{WTBDY_NM}{Water body name.}
   \item{RSRC_CLASS}{Bay class.}

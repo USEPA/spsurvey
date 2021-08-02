@@ -159,7 +159,7 @@ McDonald, T. (2003). Review of environmental monitoring methods: survey
   277-292.
 }
 \seealso{
-\describe{
+\itemize{
     \item{\code{\link{revisit_bibd}}}{create a balanced incomplete block
       panel revisit design}
     \item{\code{\link{revisit_rand}}}{create a revisit design with random

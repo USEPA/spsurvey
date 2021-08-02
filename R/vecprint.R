@@ -20,7 +20,7 @@
 #' @return  Character string that is suitable for printing by the functions:
 #'   \code{stop}, \code{warning}, or \code{cat}.
 #'
-#' @author Tom Kincaid \email{Kincaid.Tom\@epa.gov}
+#' @author Tom Kincaid \email{Kincaid.Tom@@epa.gov}
 #'
 #' @examples
 #' sites <- paste("Site Number", 1:50)

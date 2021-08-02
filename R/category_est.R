@@ -61,9 +61,9 @@
 #'   variables in the design argument.
 #'
 #' @param vartype Character value providing the choice of the variance
-#'   estimator, where "Local" = the local mean estimator, \code{"SRS"} = the
-#'   simple random sampling estimator, \code{"HT"} = the Horvitz-Thompson
-#'   estimator, and \code{"YG"} = the Yates-Grundy estimator.  The default value
+#'   estimator, where "Local" = the local mean estimator, \code{"SRS"} is the
+#'   simple random sampling estimator, \code{"HT"} is the Horvitz-Thompson
+#'   estimator, and \code{"YG"} is the Yates-Grundy estimator.  The default value
 #'   is \code{"Local"}.
 #'
 #' @param conf Numeric value for the confidence level.
@@ -77,41 +77,15 @@
 #' @param warn_df Data frame for storing warning messages.
 #'
 #' @return A list composed of the following objects:
-#'   \describe{
+#'   \itemize{
 #'     \item{\code{catsum}}{data frame containing the category estimates}
 #'     \item{\code{warn_ind}}{logical variable that indicates whether warning
 #'       messages were generated}
 #'     \item{\code{warn_df}}{data frame for storing warning messages}
 #'   }
 #'
-#' @section Other Functions Required:
-#'   \describe{
-#'     \item{\code{cat_localmean_prop}}{organizes input and output for
-#'       calculation of the local mean variance estimator for estimated
-#'       proportions for categorical data}
-#'     \item{\code{cat_localmean_total}}{organizes input and output for
-#'       calculation of the local mean variance estimator for estimated sizes
-#'       (totals) for categorical data}
-#'     \item{\code{\link{SE}}}{extracts standard errors from a survey design
-#'       object}
-#'     \item{\code{\link{confint}}}{computes confidence intervals for a survey
-#'       design object}
-#'     \item{\code{\link{svyby}}}{Compute survey statistics on subsets of a
-#'       survey defined by factors}
-#'     \item{\code{\link{svymean}}}{calculates the mean for a complex survey
-#'       design}
-#'     \item{\code{\link{svytotal}}}{calculates the total for a complex survey
-#'       design}
-#'   }
 #'
-#' @author Tom Kincaid \email{Kincaid.Tom@epa.gov}
-#'
-#' @seealso
-#'   \code{\link{confint}}
-#'   \code{\link{SE}}
-#'   \code{\link{svyby}}
-#'   \code{\link{svymean}}
-#'   \code{\link{svytotal}}
+#' @author Tom Kincaid \email{Kincaid.Tom@@epa.gov}
 #'
 #' @keywords survey univar
 #'

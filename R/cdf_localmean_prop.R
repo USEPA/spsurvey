@@ -48,7 +48,7 @@
 #' @param warn_df Data frame for storing warning messages.
 #'
 #' @return A list containing the following objects:
-#'   \describe{
+#'   \itemize{
 #'     \item{\code{stderr_P}}{data frame containing standard error estimates}
 #'     \item{\code{confval_P}}{data frame containing confidence bound estimates}
 #'     \item{\code{warn_ind}}{logical variable that indicates whether warning
@@ -56,18 +56,7 @@
 #'     \item{\code{warn_df}}{data frame for storing warning messages}
 #'   }
 #'
-#' @section Other Functions Required:
-#'   \describe{
-#'     \item{\code{cdfvar_prop}}{calculates variance estimates of the
-#'       estimated CDF using the proportion scale}
-#'     \item{\code{\link{svymean}}}{calculates the mean for a complex survey
-#'       design}
-#'   }
-#'
-#' @author Tom Kincaid \email{Kincaid.Tom@epa.gov}
-#'
-#' @seealso
-#'   \code{\link{svymean}}
+#' @author Tom Kincaid \email{Kincaid.Tom@@epa.gov}
 #'
 #' @keywords survey
 #'

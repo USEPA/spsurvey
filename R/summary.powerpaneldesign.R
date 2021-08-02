@@ -28,7 +28,9 @@
 #'   produced.
 #'
 #' @return List of six elements.
-#'   \itemize{ \item \code{n_panel} - number of panels in revisit design
+#'   \itemize{
+#'
+#'   \item \code{n_panel} - number of panels in revisit design
 #'
 #'   \item \code{n_period} - number of time periods in revisit design
 #'
@@ -52,20 +54,6 @@
 #' @export
 #'
 #' @author Tony Olsen \email{Olsen.Tony@@epa.gov}
-#'
-#' @seealso
-#'   \describe{
-#'     \item{\code{\link{revisit_dsgn}}}{create a panel revisit design}
-#'     \item{\code{\link{revisit_bibd}}}{create a balanced incomplete block
-#'       panel revisit design}
-#'     \item{\code{\link{revisit_rand}}}{create a revisit design with random
-#'       assignment to panels and time periods}
-#'     \item{\code{\link{power_dsgn}}}{power calculation for multiple panel
-#'       designs}
-#'     \item{\code{\link{cov_panel_dsgn}}}{covariance matrix for a panel design}
-#'     \item{\code{\link{plot.powerpaneldesign}}}{plot power curves for panel
-#'       designs}
-#'   }
 #'
 #' @keywords survey
 #'

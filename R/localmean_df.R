@@ -16,7 +16,7 @@
 #' @return The degrees of freedom of the local mean variance-covariance
 #'   estimator.
 #'
-#' @author Tom Kincaid \email{Kincaid.Tom@epa.gov}
+#' @author Tom Kincaid \email{Kincaid.Tom@@epa.gov}
 #'
 #' @noRd
 ###############################################################################

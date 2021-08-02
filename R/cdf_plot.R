@@ -62,15 +62,7 @@
 #'
 #' @return A plot of the CDF and its associated confidence limits.
 #'
-#' @section Other Functions Required:
-#'   \describe{
-#'     \item{\code{interp_cdf}}{interpolate CDF values at a set of
-#'       percentiles}
-#'     \item{\code{interp_axis}}{create right side y-axis labels for a
-#'       CDF plot}
-#'   }
-#'
-#' @author Tom Kincaid \email{Kincaid.Tom@epa.gov}
+#' @author Tom Kincaid \email{Kincaid.Tom@@epa.gov}
 #'
 #' @keywords survey
 #'

@@ -21,7 +21,7 @@
 #'
 #' @param sframe sf point object that was used as sample frame to select sites.
 #'
-#' @author Michael Dumelle \email{Dumelle.Michael@@epa.gov} and Tony Olsen \email{Olsen.Tony@@epa.gov}
+#' @author Tony Olsen \email{Olsen.Tony@@epa.gov}
 #'
 #' @keywords survey design
 #'
