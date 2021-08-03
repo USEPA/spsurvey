@@ -24,10 +24,10 @@ Suggests:
     testthat,
     rmarkdown
 Description: The spsurvey package provides functions for selecting and analyzing
-    probability samples. spsurvey implements the Generalized Random Tesselation Stratified (GRTS)
+    probability samples. spsurvey implements the Generalized Random Tessellation Stratified (GRTS)
     algorithm, used to select spatially balanced probability samples. The GRTS
     algorithm works for finite and infinite resources (point, linear, and areal 
-    geometries) and flexibly accomodates a diverse set of sampling
+    geometries) and flexibly accommodates a diverse set of sampling
     design features, including stratification, unequal selection probabilities,
     legacy (or historical) sites, minimum distances between sites,
     and two options for replacement sites. spsurvey also implements several

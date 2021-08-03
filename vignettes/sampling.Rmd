@@ -242,16 +242,6 @@ To visualize the sample overlain onto the sample frame, run
 plot(eqprob, Illinois_River, pch = 19, key.width = lcm(3))
 ```
 
-To select a GRTS sample with equal inclusion probabilities from `Great_Lakes`, run
-```{r}
-eqprob <- grts(Great_Lakes, n_base = 50)
-```
-
-To visualize the sample overlain onto the sample frame, run
-```{r}
-plot(eqprob, Great_Lakes, pch = 19, key.width = lcm(3))
-```
-
 # References
 
 Olsen, A. R., T. M. Kincaid and Q. Payton (2012). Spatially balanced survey designs for natural resources. Design and Analysis of Long-Term Ecological Monitoring Studies. R. A. Gitzen, J. J. Millspaugh, A. B. Cooper and D. S. Licht. Cambridge, UK, Cambridge University Press: 126-150.

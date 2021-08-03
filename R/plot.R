@@ -266,11 +266,46 @@ plot.sframe <- function(x, y, formula = ~ 1, var_args = NULL, varlevel_args = NU
 #' @method plot spdesign
 #'
 #' @export
-plot.spdesign <- function(x, y = NULL, formula = ~siteuse, siteuse = NULL,
+plot.spdesign <- function(x, y = NULL, formula = ~ siteuse, siteuse = NULL,
                           var_args = NULL, varlevel_args = NULL, geom = FALSE, onlyshow = NULL,
                           fix_bbox = TRUE, ...) {
   if ((is.null(siteuse) & (!is.null(x$sites_near))) | "Near" %in% siteuse) {
     x$sites_near$siteuse <- "Near"
+  }
+
+  # set siteuse when NULL
+  if (is.null(siteuse)) {
+
+    if (is.null(y)) {
+      siteuse_sframe <- NULL
+    } else {
+      siteuse_sframe <- "sframe"
+    }
+
+    if (is.null(x$sites_legacy)) {
+      siteuse_legacy <- NULL
+    } else {
+      siteuse_legacy <- "Legacy"
+    }
+
+    if (is.null(x$sites_base)) {
+      siteuse_base <- NULL
+    } else {
+      siteuse_base <- "Base"
+    }
+
+    if (is.null(x$sites_over)) {
+      siteuse_over <- NULL
+    } else {
+      siteuse_over <- "Over"
+    }
+
+    if (is.null(x$sites_near)) {
+      siteuse_near <- NULL
+    } else {
+      siteuse_near <- "Near"
+    }
+    siteuse <- c(siteuse_sframe, siteuse_legacy, siteuse_base, siteuse_over, siteuse_near)
   }
 
   # bind
@@ -292,14 +327,8 @@ plot.spdesign <- function(x, y = NULL, formula = ~siteuse, siteuse = NULL,
   }
 
   new_varsf <- rbind(varsf_x, varsf_y)
-
-  if (is.null(siteuse)) {
-    fac_levels <- c("sframe", "Near", "Over", "Base", "Legacy")
-    fac_levels_used <- fac_levels[fac_levels %in% unique(new_varsf$siteuse)]
-    new_varsf$siteuse <- factor(new_varsf$siteuse, levels = fac_levels_used)
-  } else {
-    new_varsf$siteuse <- factor(new_varsf$siteuse, levels = siteuse)
-  }
+  # set as factor
+  new_varsf$siteuse <- factor(new_varsf$siteuse, levels = siteuse)
 
   # arrange by factor level
   ordered_varsf <- with(new_varsf, new_varsf[order(new_varsf$siteuse), , drop = FALSE])

@@ -2,12 +2,9 @@
 % Please edit documentation in R/dframe_to_sf.R
 \name{dframe_to_sf}
 \alias{dframe_to_sf}
-\alias{dframe_to_df}
 \title{Transform a dframe object into an sf object or a data frame object}
 \usage{
 dframe_to_sf(object, ...)
-
-dframe_to_df(object)
 }
 \arguments{
 \item{object}{A \code{dframe} object.}
@@ -16,22 +13,12 @@ dframe_to_df(object)
 present in \code{dframe}}
 }
 \value{
-An \code{sf} object (\code{dframe_to_sf()}) or a data frame object (\code{dframe_to_df()}).
+An \code{sf} object.
 }
 \description{
 \code{dframe_to_sf()} transforms an sframe object into an \code{sf} object,
 which may be useful when calling generic functions with sf class (e.g. mapview).
-\code{dframe_to_df()} transforms a \code{dframe} object into an \code{data.frame} object. If
-the \code{dframe} object is also an \code{sf} object, \code{dframe_to_df()} stores the
-coordinates as columns in the new \code{data.frame} object.
-The remaining structure of \code{dframe} stays the same (e.g. if \code{dframe} is also a tibble,
-it will remain a tibble after \code{dframe_to_df}).
 }
-\section{Functions}{
-\itemize{
-\item \code{dframe_to_df}: 
-}}
-
 \seealso{
-dframe
+dframe dframe_to_df
 }

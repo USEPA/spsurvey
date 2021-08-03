@@ -623,16 +623,16 @@ test_that("algorithm executes", {
 })
 
 #################################################
-########### Great_Lakes DATA TESTS
+########### Lake_Ontario DATA TESTS
 #################################################
 
 # number of irs columns added
 col_irs_add <- 9
 
-# number of Great_Lakes columns
-col_data <- NCOL(Great_Lakes)
+# number of Lake_Ontario columns
+col_data <- NCOL(Lake_Ontario)
 
-# number of irs columns plus Great_Lakes columns
+# number of irs columns plus Lake_Ontario columns
 col_out <- col_irs_add + col_data
 
 #--------------------------------------
@@ -642,7 +642,7 @@ col_out <- col_irs_add + col_data
 # unstratified, equal probability
 test_that("algorithm executes", {
   n_base <- 50
-  irs_output <- irs(Great_Lakes, n_base = n_base, seltype = "equal")
+  irs_output <- irs(Lake_Ontario, n_base = n_base, seltype = "equal")
   expect_true(exists("irs_output"))
   expect_equal(NROW(irs_output$sites_legacy), 0)
   expect_equal(NROW(irs_output$sites_base), n_base)
@@ -657,7 +657,7 @@ test_that("algorithm executes", {
 # stratified, equal probability
 test_that("algorithm executes", {
   n_base <- c(CAN = 20, USA = 30)
-  irs_output <- irs(Great_Lakes, n_base = n_base, seltype = "equal", stratum_var = "COUNTRY")
+  irs_output <- irs(Lake_Ontario, n_base = n_base, seltype = "equal", stratum_var = "COUNTRY")
   expect_true(exists("irs_output"))
   expect_equal(NROW(irs_output$sites_legacy), 0)
   expect_equal(

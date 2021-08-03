@@ -43,21 +43,20 @@
 #' }
 "Illinois_River_Legacy"
 
-#' Great Lakes
+#' Lake Ontario
 #'
-#' An \code{sf} multipolygon object of 4113 polygons consisting
-#' of shoreline segments in the Great Lakes region of North America.
+#' An \code{sf} multipolygon object of 187 polygons consisting
+#' of shoreline segments in Lake Ontario.
 #'
-#' @format An \code{sf} multipolygon object with 4113 rows and 6 variables:
+#' @format An \code{sf} multipolygon object with 187 rows and 4 variables:
 #' \itemize{
 #'   \item{COUNTRY}{Country.}
-#'   \item{WTBDY_NM}{Water body name.}
 #'   \item{RSRC_CLASS}{Bay class.}
 #'   \item{PSTL_CODE}{Postal code.}
 #'   \item{AREA_SQKM}{Area in square kilometers}
 #'   \item{geometry}{simple features geometry list-column}
 #' }
-"Great_Lakes"
+"Lake_Ontario"
 
 #' NLA PNW
 #'
@@ -101,26 +100,3 @@
 #'     Conic projection.}
 #' }
 "NRSA_EPA7"
-
-#' NCCA Gulf
-#'
-#' An sf object data frame consisting of gulf observations from a subset of the
-#' Environmental Protection Agency's "National Coastal Condition
-#' Assessment" in the Southern United States duing the years 2010 and 2015.
-#'
-#' @format A data frame with 851 rows and 11 variables:
-#' \itemize{
-#'   \item{SITE_ID}{A unique site identifier.}
-#'   \item{YEAR}{Year of design cycle.}
-#'   \item{REVISIT}{Site revisit status.}
-#'   \item{WEIGHT}{Sampling design weights.}
-#'   \item{SIZE}{Size category.}
-#'   \item{STATE}{State name.}
-#'   \item{BMMI}{Benthic MMI value.}
-#'   \item{BMMI_COND}{Benthic MMI categories.}
-#'   \item{FT_COND}{Fish tissue condition categories.}
-#'   \item{PHOS_COND}{Phosphorus condition categories.}
-#'   \item{geometry}{Point geometry using a USA Contiguous Albers Equal Area
-#'     Conic projection.}
-#' }
-"NCCA_Gulf"
