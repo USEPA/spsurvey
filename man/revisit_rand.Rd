@@ -2,7 +2,7 @@
 % Please edit documentation in R/revisit_rand.R
 \name{revisit_rand}
 \alias{revisit_rand}
-\title{Create a Revisit Design with Random Assignment to Panels and Time Periods}
+\title{Create a revisit design with random assignment to panels and time periods}
 \usage{
 revisit_rand(
   n_period,
@@ -75,17 +75,12 @@ revisit_rand(
 )
 }
 \seealso{
-\itemize{
-    \item{\code{\link{revisit_dsgn}}}{create a panel revisit design}
+\describe{
     \item{\code{\link{revisit_bibd}}}{create a balanced incomplete block
       panel revisit design}
-    \item{\code{\link{summary.powerpaneldesign}}}{summarize characteristics of a revisit
-      panel design}
-    \item{\code{\link{power_dsgn}}}{power calculation for multiple panel
-      designs}
-    \item{\code{\link{cov_panel_dsgn}}}{covariance matrix for a panel design}
-    \item{\code{\link{plot.powerpaneldesign}}}{plot power curves for panel
-      designs}
+    \item{\code{\link{revisit_dsgn}}}{create a panel revisit design}
+    \item{\code{\link{summary.paneldesign}}}{ to summarize characteristics of a
+      panel revisit design}
   }
 }
 \author{

@@ -2,7 +2,7 @@
 % Please edit documentation in R/dframe_to_sf.R
 \name{dframe_to_sf}
 \alias{dframe_to_sf}
-\title{Transform a dframe object into an sf object or a data frame object}
+\title{Transform a dframe object into an sf object}
 \usage{
 dframe_to_sf(object, ...)
 }
@@ -16,9 +16,21 @@ present in \code{dframe}}
 An \code{sf} object.
 }
 \description{
-\code{dframe_to_sf()} transforms an sframe object into an \code{sf} object,
-which may be useful when calling generic functions with sf class (e.g. mapview).
+\code{dframe_to_sf()} transforms an \code{sframe} object into an \code{sf} object,
+which may be useful when calling generic functions with sf class (e.g. mapview::mapview).
+}
+\examples{
+data("NLA_PNW")
+NLA_PNW <- dframe(NLA_PNW)
+NLA_PNW <- dframe_to_sf(NLA_PNW)
+
 }
 \seealso{
-dframe dframe_to_df
+\describe{
+    \item{\code{\link{dframe}}}{ to create a \code{dframe} object}
+    \item{\code{\link{dframe_to_df}}}{ to turn a \code{dframe} object into a data frame}
+  }
+}
+\author{
+Michael Dumelle \email{Dumelle.Michael@epa.gov}
 }

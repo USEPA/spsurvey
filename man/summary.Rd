@@ -23,8 +23,9 @@ categorical (or factor) and right hand side variables can be categorical
 to a categorical (or factor) variable. If an intercept is included in the
 right hand side formula, the total will also be summarized.}
 
-\item{onlyshow}{A string indicating the level of the single right hand side
-variable for which a summary is requested.}
+\item{onlyshow}{A string indicating the single level of the single right hand side
+variable for which a summary is requested. This argument is only used when
+a single right hand side variable is provided.}
 
 \item{...}{Additional arguments to pass to \code{summary()}. If the left hand
 side of the formula is empty, the appropriate generic arguments are passed
@@ -38,8 +39,8 @@ each non-\code{NULL} \code{site_*} list in \code{object}.}
 \value{
 If the left hand side of the formula is empty, a named list
 containing summaries of the count distribution for each right hand side
-varaiable is returned. If the left hand side of the formula contains a
-variable, a named list contianing five number
+variable is returned. If the left hand side of the formula contains a
+variable, a named list containing five number
 summaries (numeric left hand side) or tables (categorical or factor left
 hand side) is returned for each right hand side variable.
 }
@@ -64,4 +65,7 @@ summary(sample, ELEV ~ 1)
 summary(sample, ~ ELEV_CAT * AREA_CAT)
 }
 ###############################################################################
+}
+\author{
+Michael Dumelle \email{Dumelle.Michael@epa.gov}
 }

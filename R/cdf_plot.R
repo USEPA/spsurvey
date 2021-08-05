@@ -1,9 +1,9 @@
 ################################################################################
-# Function: cdf_plot (not exported)
+# Function: cdf_plot (exported)
 # Programmer Tom Kincaid
 # Date: May 5, 2021
 #'
-#' Plot a Cumulatiave Distribution Function
+#' Plot a cumulative distribution function (CDF)
 #'
 #' This function creates a CDF plot.  Input data for the plots is provided by a
 #' data frame utilizing the same structure as the data frame named "CDF" that is
@@ -64,6 +64,12 @@
 #'
 #' @author Tom Kincaid \email{Kincaid.Tom@@epa.gov}
 #'
+#' @seealso
+#'   \describe{
+#'   \item{\code{\link{cont_cdfplot}}}{ for making CDF plots output to pdfs}
+#'   \item{\code{\link{cont_cdftest}}}{ for CDF hypothesis testing}
+#'   }
+#'
 #' @keywords survey
 #'
 #' @examples
@@ -101,7 +107,7 @@
 #'   ylbl = "Percent of Stream Length", ylbl_r = "Same",
 #'   figlab = "Estimates for Resource Class: Good"
 #' )
-#' @noRd
+#' @export
 ################################################################################
 
 cdf_plot <- function(cdfest, units_cdf = "Percent", type_cdf = "Continuous",

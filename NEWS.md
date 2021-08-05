@@ -1,10 +1,10 @@
-# spsurvey 5.0.0 (2021-xx-xx)
+# spsurvey 5.0.0 (2021-08-13)
 
 ## Major Updates
 
 * Syntax for the `grts()` (Generalized Random Tessellation Stratified Designs) and the `irs()` (Independent Random Samling Designs) functions has been significantly simplified. These functions now require the sample frame be an `sf` object.  
 
-* The `grts()` and `irs()` functions now accomodate legacy (or historical) sites sites, a minimum distance between sites, and two approaches for selecting replacement sites (reverse heirarchical ordering and nearest neighbor).
+* The `grts()` and `irs()` functions now accomodate legacy (or historical) sites, a minimum distance between sites, and two approaches for selecting replacement sites (reverse heirarchical ordering and nearest neighbor).
 
 * Syntax for the analysis functions (`*_analysis()`) has been significantly simplified. 
 
@@ -15,12 +15,12 @@
 * `summary()` functions have been added to summarize sample frames, samples, and design frames.
 
 ## Minor Updates
-.
+
 * Several functions have undergone minor changes to syntax and scope
 
 ## Breaking Changes
 
-* Several functions have changed and version 5.0.0 is not backwards compatible with previous versions. Though we recommend users upgrade existing code to work with the current version's simpler implementations, backwards compatibility can be achieved by downloading previous versions.
+* Several functions have changed (both inputs and outputs) and functions in version 5.0.0 are not always backwards compatible with functions from previous versions. Though we recommend users upgrade existing code to work with the current version's simpler implementations, backwards compatibility can be achieved by downloading previous versions of spsurvey.
 
 # spsurvey 4.1.2 (2020-03-31)
 

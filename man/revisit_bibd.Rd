@@ -2,7 +2,7 @@
 % Please edit documentation in R/revisit_bibd.R
 \name{revisit_bibd}
 \alias{revisit_bibd}
-\title{Create a Balanced Incomplete Block Panel Revisit Design}
+\title{Create a balanced incomplete block panel revisit design}
 \usage{
 revisit_bibd(
   n_period,
@@ -66,17 +66,12 @@ Cook R. D.  and C. Nachtsheim. (1989). Computer-aided blocking of factorial
   and response-surface designs. \emph{Technometrics} \bold{31(3)}, 339-346.
 }
 \seealso{
-\itemize{
-    \item{\code{\link{revisit_dsgn}}}{create a panel revisit design}
-    \item{\code{\link{revisit_rand}}}{create a revisit design with random
+\describe{
+    \item{\code{\link{revisit_dsgn}}}{to create a panel revisit design}
+    \item{\code{\link{revisit_rand}}}{to create a panel revisit design with random
       assignment to panels and time periods}
-    \item{\code{\link{summary.powerpaneldesign}}}{summarize characteristics of a revisit
-      panel design}
-    \item{\code{\link{power_dsgn}}}{power calculation for multiple panel
-      designs}
-    \item{\code{\link{cov_panel_dsgn}}}{covariance matrix for a panel design}
-    \item{\code{\link{plot.powerpaneldesign}}}{plot power curves for panel
-      designs}
+    \item{\code{\link{summary.paneldesign}}}{ to summarize characteristics of a
+      panel revisit design}
   }
 }
 \author{

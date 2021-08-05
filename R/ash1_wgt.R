@@ -5,9 +5,9 @@
 # Date: February 1, 2005
 # Last Revised: January 22, 2021
 #
-#' Compute the Average Shifted Histogram (ASH) for Weighted Data
+#' Compute the average shifted histogram (ASH) for weighted data
 #'
-#' Calculate the average shifted histogram estimate of a density based on data
+#' Calculate the average shifted histogram estimate of a density based on one-dimensional data
 #'   from a survey design with weights.
 #'
 #' @param x Vector used to estimate the density. \code{NA} values are allowed.
@@ -30,18 +30,17 @@
 #'   \code{"Continuous"}.
 #'
 #' @return List containing the ASH density estimate.  List consists of
-#'   \itemize{
-#'     \item \code{tcen} - x-coordinate for center of bin
-#'     \item \code{f} - y-coordinate for density estimate height
+#'   \describe{
+#'     \item{\code{tcen}}{ x-coordinate for center of bin}
+#'     \item{\code{f}}{ y-coordinate for density estimate height}
 #'   }
 #'
-#' @keywords survey misc
 #'
 #' @author Tony Olsen \email{Olsen.tony@@epa.gov}
 #'
 #' @references
 #'   Scott, D. W. (1985). "Averaged shifted histograms: effective nonparametric
-#'   density estimators in several dimensions." The Annals of Statistics 13(3):
+#'   density estimators in several dimensions." \emph{The Annals of Statistics} 13(3):
 #'   1024-1040.
 #'
 #'

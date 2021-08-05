@@ -5,7 +5,7 @@
 \alias{plot.sframe}
 \alias{plot.spdesign}
 \alias{plot.dframe}
-\title{Plot sample frame and design objects}
+\title{Plot sample frames, samples, and design frames.}
 \usage{
 \method{plot}{sframe}(
   x,
@@ -57,7 +57,8 @@ object of class \code{sframe} if \code{x} has class \code{spdesign}.}
 categorical (or factor) and right hand side variables can be categorical
 (or factor). Right hand side variables that are numeric will be coerced to
 a categorical (or factor) variable. If an intercept is included in the right
-hand side formula, the total will also be summarized.}
+hand side formula, the total will also be summarized. When plotting samples,
+(class \code{spdesign}), \code{siteuse} will likely be desired in the formula.}
 
 \item{var_args}{A named list. The name of each list corresponds to a
 right hand side variable in \code{formula}. Values in the list are composed of
@@ -75,8 +76,9 @@ will be matched by inputting the value \code{NA}.}
 \item{geom}{Should separate geometries for each level of the right hand
 side \code{formula} variables be plotted? Defaults to \code{FALSE}.}
 
-\item{onlyshow}{A string indicating the level of the single right hand side
-variable for which a summary is requested.}
+\item{onlyshow}{A string indicating the single level of the single right hand side
+variable for which a summary is requested. This argument is only used when
+a single right hand side variable is provided.}
 
 \item{fix_bbox}{Should the geometry bounding box be fixed across plots?
 Defaults to \code{TRUE}. If \code{TRUE}, the bounding box will be the largest
@@ -104,21 +106,21 @@ in \code{x} and \code{y} with plot order \code{"sframe"}, \code{"Near"},
 required if \code{x} is not an sf object)}
 }
 \description{
-Plot sample frames and design objects.
-
-This function is largely built on \code{plot.sf()}, and all spsurvey plotting
+This function plots sample frames, samples, and design frames.
+It is largely built on \code{plot.sf()}, and all spsurvey plotting
 methods can supply additional arguments to \code{plot.sf()}. For more information,
 run \code{vignette(plotting, package = "spsurvey"}. For more information on
-plotting in \code{sf}, run \code{?plot.sf()}.
+plotting in \code{sf}, run \code{?sf::plot.sf()}.
 }
 \examples{
-\dontrun{
-plot(NE_Lakes)
-plot(NE_Lakes, formula = ~ELEV_CAT)
-plot(NE_Lakes, formula = AREA ~ ELEV_CAT)
+data("NE_Lakes")
+NE_Lakes <- sframe(NE_Lakes)
+plot(NE_Lakes, formula = ~ ELEV_CAT)
 sample <- grts(NE_Lakes, 30)
-plot(sample, NE_Lakes)
-}
+plot(sample, NE_Lakes, formula = ~ siteuse)
+data("NLA_PNW")
+NLA_PNW <- dframe(NLA_PNW)
+plot(NLA_PNW, formula = ~ BMMI)
 ###############################################################################
 }
 \author{

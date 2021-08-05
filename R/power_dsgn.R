@@ -3,7 +3,7 @@
 # Programmer: Tony Olsen
 # Date: March 14, 2019
 #'
-#' Power Calculation for Multiple Panel Designs
+#' Power calculation for multiple panel designs
 #'
 #' Calculates the power for trend detection for one or more variables, for one
 #' or more panel designs, for one or more linear trends, and for one or more
@@ -101,6 +101,12 @@
 #' @author Tony Olsen \email{Olsen.Tony@@epa.gov}
 #'
 #' @keywords survey
+#'
+#' @seealso
+#'   \itemize{
+#'     \item{\code{\link{plot.powerpaneldesign}}}{ to plot power curves for
+#'       panel designs}
+#'   }
 #'
 #' @examples
 #' # Power for rotating panel with sample size 60

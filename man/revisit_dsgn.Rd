@@ -2,7 +2,7 @@
 % Please edit documentation in R/revisit_dsgn.R
 \name{revisit_dsgn}
 \alias{revisit_dsgn}
-\title{Create a Panel Revisit Design}
+\title{Create a panel revisit design}
 \usage{
 revisit_dsgn(n_period, panels, begin = 1, skip = 1)
 }
@@ -159,18 +159,13 @@ McDonald, T. (2003). Review of environmental monitoring methods: survey
   277-292.
 }
 \seealso{
-\itemize{
-    \item{\code{\link{revisit_bibd}}}{create a balanced incomplete block
+\describe{
+    \item{\code{\link{revisit_bibd}}}{to create a balanced incomplete block
       panel revisit design}
-    \item{\code{\link{revisit_rand}}}{create a revisit design with random
+    \item{\code{\link{revisit_rand}}}{to create a revisit design with random
       assignment to panels and time periods}
-    \item{\code{\link{summary.powerpaneldesign}}}{summarize characteristics of a revisit
-      panel design}
-    \item{\code{\link{power_dsgn}}}{power calculation for multiple panel
-      designs}
-    \item{\code{\link{cov_panel_dsgn}}}{covariance matrix for a panel design}
-    \item{\code{\link{plot.powerpaneldesign}}}{plot power curves for panel
-      designs}
+    \item{\code{\link{summary.paneldesign}}}{ to summarize characteristics of a
+      panel revisit design}
   }
 }
 \author{

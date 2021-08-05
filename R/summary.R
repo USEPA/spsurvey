@@ -24,8 +24,9 @@
 #' to a categorical (or factor) variable. If an intercept is included in the
 #' right hand side formula, the total will also be summarized.
 #'
-#' @param onlyshow A string indicating the level of the single right hand side
-#' variable for which a summary is requested.
+#' @param onlyshow A string indicating the single level of the single right hand side
+#' variable for which a summary is requested. This argument is only used when
+#' a single right hand side variable is provided.
 #'
 #' @param siteuse A character vector indicating the \code{design} sites
 #' for which summaries are requested in \code{object}. Defaults to computing summaries for
@@ -38,14 +39,16 @@
 #'
 #' @return If the left hand side of the formula is empty, a named list
 #' containing summaries of the count distribution for each right hand side
-#' varaiable is returned. If the left hand side of the formula contains a
-#' variable, a named list contianing five number
+#' variable is returned. If the left hand side of the formula contains a
+#' variable, a named list containing five number
 #' summaries (numeric left hand side) or tables (categorical or factor left
 #' hand side) is returned for each right hand side variable.
 #'
 #' @name summary
 #'
 #' @method summary sframe
+#'
+#' @author Michael Dumelle \email{Dumelle.Michael@@epa.gov}
 #'
 #' @export
 #'

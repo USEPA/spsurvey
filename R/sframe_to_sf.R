@@ -11,7 +11,12 @@
 #'
 #' @return An \code{sf} object.
 #'
-#' @seealso sframe
+#' @author Michael Dumelle \email{Dumelle.Michael@@epa.gov}
+#'
+#' @seealso
+#'   \describe{
+#'     \item{\code{\link{sframe}}}{ to create an \code{sframe} object}
+#'  }
 #'
 #' @export
 ###############################################################################

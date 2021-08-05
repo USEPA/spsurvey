@@ -2,7 +2,7 @@
 % Please edit documentation in R/diffrisk_analysis.R
 \name{diffrisk_analysis}
 \alias{diffrisk_analysis}
-\title{Risk Difference Analysis for Probability Survey Data}
+\title{Risk difference analysis for probability survey data}
 \usage{
 diffrisk_analysis(
   dframe,
@@ -119,8 +119,8 @@ y-coordinates are required for calculation of the local mean variance
 estimator.  The default value is \code{NULL}.}
 
 \item{sizeweight}{Logical value that indicates whether size weights should be
-used during estimation, where \code{TRUE} = use size weights and
-\code{FALSE} = do not use size weights. To employ size weights for a
+used during estimation, where \code{TRUE} uses size weights and
+\code{FALSE} does not use size weights. To employ size weights for a
 single-stage sample, a value must be supplied for argument weight.  To
 employ size weights for a two-stage sample, values must be supplied for
 arguments \code{weight} and \code{weight1}. The default value is
@@ -194,7 +194,7 @@ weight variable in the \code{dframe} data frame.  The default value is
   }}
 
 \item{popsize}{Object that provides values for the population argument of
-  the \code{calibrate} or \code{postStratify} functions.  For the
+  the \code{calibrate} or \code{postStratify} functions in the survey package.  For the
   \code{calibrate} function, the object is a named list, where the names
   identify factor variables in the \code{dframe} data frame.  Each element
   of the list is a named vector containing the population total for each
@@ -304,6 +304,12 @@ diffrisk_analysis(dframe,
   weight = "wgt", xcoord = "xcoord", ycoord = "ycoord",
   stratumID = "stratum"
 )
+}
+\seealso{
+\describe{
+  \item{\code{\link{attrisk_analysis}}}{ for attributable risk analysis}
+  \item{\code{\link{relrisk_analysis}}}{ for relative risk analysis}
+  }
 }
 \author{
 Tom Kincaid \email{Kincaid.Tom@epa.gov}

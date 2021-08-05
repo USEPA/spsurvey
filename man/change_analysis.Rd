@@ -2,7 +2,7 @@
 % Please edit documentation in R/change_analysis.R
 \name{change_analysis}
 \alias{change_analysis}
-\title{Estimation of Change between Two Probability Surveys}
+\title{Estimation of change between two probability surveys}
 \usage{
 change_analysis(
   dframe,
@@ -52,7 +52,7 @@ order of the values for this argument must match the order of the values
 for the \code{vars} argument. Each logical variable specifies the detection
 status for the corresponding values of a response variable, where
 \code{TRUE} equals not detected, and \code{FALSE} equals detected.  If a
-response variable does not include any notdetect values, then the name for
+response variable does not include any nondetect values, then the name for
 the corresponding logical variable may be set equal to \code{NULL}.  If
 this argument equals \code{NULL}, then none of the response variables
 contain nondetect values.  The default is \code{NULL}.}
@@ -129,8 +129,8 @@ y-coordinates are required for calculation of the local mean variance
 estimator.  The default value is \code{NULL}.}
 
 \item{sizeweight}{Logical value that indicates whether size weights should be
-used during estimation, where \code{TRUE} = use size weights and
-\code{FALSE} = do not use size weights. To employ size weights for a
+used during estimation, where \code{TRUE} uses size weights and
+\code{FALSE} does not use size weights. To employ size weights for a
 single-stage sample, a value must be supplied for argument weight.  To
 employ size weights for a two-stage sample, values must be supplied for
 arguments \code{weight} and \code{weight1}. The default value is \code{FALSE}.}
@@ -202,7 +202,7 @@ variable in the \code{dframe} data frame.  The default value is \code{NULL}.}
   }}
 
 \item{popsize}{Object that provides values for the population argument of
-  the \code{calibrate} or \code{postStratify} functions.  For the
+  the \code{calibrate} or \code{postStratify} functions in the survey package.  For the
   \code{calibrate} function, the object is a named list, where the names
   identify factor variables in the \code{dframe} data frame.  Each element
   of the list is a named vector containing the population total for each
@@ -242,8 +242,10 @@ variable in the \code{dframe} data frame.  The default value is \code{NULL}.}
   Example popsize for post-stratification using a table:
 
   \verb{popsize <- with(MySurveyFrame,
-    table(Ecoregion, Type))}\cr\cr
+    table(Ecoregion, Type))}
+
   Example popsize for post-stratification using an xtabs object:
+
   \verb{popsize <- xtabs(~Ecoregion + Type,
     data = MySurveyFrame)}}
 
@@ -254,7 +256,7 @@ simple random sampling estimator.  The default value is \code{"Local"}.}
 \item{jointprob}{Character value providing the choice of joint inclusion
 probability approximation for use with Horvitz-Thompson and Yates-Grundy
 variance estimators, where \code{"overton"} indicates the Overton
-approximation, \code{"hr"} indicates the Hartley_Rao approximation, and
+approximation, \code{"hr"} indicates the Hartley-Rao approximation, and
 \code{"brewer"} equals the Brewer approximation.  The default value is
 \code{"overton"}.}
 
@@ -277,7 +279,7 @@ List of change estimates composed of three items:
 \description{
 This function organizes input and output for estimation of change between two
 probability surveys.  The input data argument can be either a data frame or a
-simple features (sf) object.  If an sf object is used, coordinates are
+simple features (\code{sf}) object.  If an \code{sf} object is used, coordinates are
 extracted from the geometry column in the object, arguments \code{xcoord} and
 \code{ycoord} are assigned values \code{"xcoord"} and \code{"ycoord"},
 respectively, and the geometry column is dropped from the object.
@@ -302,6 +304,11 @@ change_analysis(dframe,
   surveyID = "surveyID", siteID = "siteID", weight = "wgt",
   xcoord = "xcoord", ycoord = "ycoord", stratumID = "stratum"
 )
+}
+\seealso{
+\describe{
+  \item{\code{\link{trend_analysis}}}{ for trend analysis}
+  }
 }
 \author{
 Tom Kincaid \email{Kincaid.Tom@epa.gov}

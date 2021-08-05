@@ -17,5 +17,10 @@ An \code{sf} object.
 which may be useful when calling generic functions with sf class (e.g. mapview)
 }
 \seealso{
-sframe
+\describe{
+    \item{\code{\link{sframe}}}{ to create an \code{sframe} object}
+ }
+}
+\author{
+Michael Dumelle \email{Dumelle.Michael@epa.gov}
 }

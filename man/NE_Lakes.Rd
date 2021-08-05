@@ -3,17 +3,17 @@
 \docType{data}
 \name{NE_Lakes}
 \alias{NE_Lakes}
-\title{New England Lakes}
+\title{New England Lakes data}
 \format{
 An \code{sf} object with 5328 rows and 6 variables:
-\itemize{
-  \item{AREA}{Lake area in hectares.}
-  \item{AREA_CAT}{Lake area categories based on a hectare cutoff.}
-  \item{ELEV}{Elevation in meters.}
-  \item{ELEV_CAT}{Elevation categories based on a meter cutoff.}
-  \item{LEGACY}{Legacy site indicator.}
-  \item{geometry}{Point geometry using a USA Contiguous Albers Equal Area
-    Conic projection.}
+\describe{
+  \item{\code{AREA}}{ Lake area in hectares.}
+  \item{\code{AREA_CAT}}{ Lake area categories based on a hectare cutoff.}
+  \item{\code{ELEV}}{ Elevation in meters.}
+  \item{\code{ELEV_CAT}}{ Elevation categories based on a meter cutoff.}
+  \item{\code{LEGACY}}{ Legacy site indicator.}
+  \item{\code{geometry}}{ Point geometry using a NAD83 / Conus Albers
+    projection (EPSG: 5070).}
 }
 }
 \usage{

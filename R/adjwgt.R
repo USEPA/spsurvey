@@ -4,23 +4,22 @@
 # Date: July 17, 2002
 # Last Revised: February 25, 2004
 #
-#' Adjust Survey Design Weights by Categories
+#' Adjust survey design weights by categories
 #'
-#' @description This function adjusts initial survey design weights when
-#'   implementation results in the use of oversample sites or if it is desired
-#'   to have final weights sum to the known frame size.  Adjusted weights
-#'   proportionally scale the initial weights to sum to the desired framesize.
-#'   Separate adjustments are applied to each category specified in \code{wgtcat}.
+#' @description Adjust initial survey design weights so that the
+#' final weights sum to a desired frame size. Adjusted weights
+#' proportionally scale the initial weights to sum to the desired frame size.
+#' Separate adjustments are applied to each category specified in \code{wgtcat}.
 #'
 #' @param wgt Vector of initial weights for each site. These equal
-#'   the reciprocal of the sample inclusion probabilities.
+#'   the reciprocal of the site's inclusion probability.
 #'
 #' @param wgtcat Vector containing each site's weight adjustment
 #'   category name. The default is \code{NULL}, which assumes every
 #'   site is in the same category.
 #'
 #' @param framesize Vector containing the known size of the frame
-#'   for each category name in wgtcat. If \code{wgtcat} is provided,
+#'   for each category name in \code{wgtcat}. If \code{wgtcat} is provided,
 #'   the names in \code{framesize} must match the names in \code{wgtcat}.
 #'   If \code{wgtcat} is not provided, an unnamed scalar is given to
 #'   \code{framesize}.

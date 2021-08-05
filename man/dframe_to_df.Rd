@@ -18,8 +18,20 @@ added as extra columns.
 the \code{dframe} object is also an \code{sf} object, \code{dframe_to_df()} stores the
 coordinates as columns in the new \code{data.frame} object.
 The remaining structure of \code{dframe} stays the same (e.g. if \code{dframe} is also a tibble,
-it will remain a tibble after \code{dframe_to_df}).
+it will remain a tibble after \code{dframe_to_df()}).
+}
+\examples{
+data("NLA_PNW")
+NLA_PNW <- dframe(NLA_PNW)
+NLA_PNW <- dframe_to_df(NLA_PNW)
+
 }
 \seealso{
-dframe dframe_to_sf
+\describe{
+    \item{\code{\link{dframe}}}{ to create a \code{dframe} object}
+    \item{\code{\link{dframe_to_sf}}}{ to turn a \code{dframe} object into an \code{sf} object}
+  }
+}
+\author{
+Michael Dumelle \email{Dumelle.Michael@epa.gov}
 }

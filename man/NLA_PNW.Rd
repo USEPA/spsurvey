@@ -3,20 +3,20 @@
 \docType{data}
 \name{NLA_PNW}
 \alias{NLA_PNW}
-\title{NLA PNW}
+\title{NLA PNW data}
 \format{
 An \code{sf} point object with 851 rows and 9 variables:
-\itemize{
-  \item{SITE_ID}{A unique lake identifier.}
-  \item{WEIGHT}{The sampling design weight.}
-  \item{URBAN}{Urban category.}
-  \item{STATE}{State name.}
-  \item{BMMI}{Benthic MMI value.}
-  \item{BMMI_COND}{Benthic MMI condition categories.}
-  \item{PHOS_COND}{Phosphorus condition categories.}
-  \item{NITR_COND}{Nitrogen condition categories.}
-  \item{geometry}{Point geometry using a USA Contiguous Albers Equal Area
-    Conic projection.}
+\describe{
+  \item{\code{SITE_ID}}{ A unique lake identifier.}
+  \item{\code{WEIGHT}}{ The sampling design weight.}
+  \item{\code{URBAN}}{ Urban category.}
+  \item{\code{STATE}}{ State name.}
+  \item{\code{BMMI}}{ Benthic MMI value.}
+  \item{\code{BMMI_COND}}{ Benthic MMI condition categories.}
+  \item{\code{PHOS_COND}}{ Phosphorus condition categories.}
+  \item{\code{NITR_COND}}{ Nitrogen condition categories.}
+  \item{\code{geometry}}{ Point geometry using a NAD83 / Conus Albers
+    projection (EPSG: 5070).}
 }
 }
 \usage{
@@ -24,7 +24,7 @@ NLA_PNW
 }
 \description{
 A data frame consisting lake observations from a subset of the Environmental
-Protection Agency's "National Lakes Assessment" in the Western United
+Protection Agency's "National Lakes Assessment" in the Pacific Northwest Region of the United
 States during the year 2017.
 }
 \keyword{datasets}

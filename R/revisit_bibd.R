@@ -3,7 +3,7 @@
 # Programmer: Tony Olsen
 # Date: March 14, 2019
 #'
-#' Create a Balanced Incomplete Block Panel Revisit Design
+#' Create a balanced incomplete block panel revisit design
 #'
 #' Create a revisit design for panels in a survey that specifies the time
 #' periods for the units of each panel to be sampled based on searching for a
@@ -49,17 +49,12 @@
 #' @author Tony Olsen \email{Olsen.Tony@@epa.gov}
 #'
 #' @seealso
-#'   \itemize{
-#'     \item{\code{\link{revisit_dsgn}}}{create a panel revisit design}
-#'     \item{\code{\link{revisit_rand}}}{create a revisit design with random
+#'   \describe{
+#'     \item{\code{\link{revisit_dsgn}}}{to create a panel revisit design}
+#'     \item{\code{\link{revisit_rand}}}{to create a panel revisit design with random
 #'       assignment to panels and time periods}
-#'     \item{\code{\link{summary.powerpaneldesign}}}{summarize characteristics of a revisit
-#'       panel design}
-#'     \item{\code{\link{power_dsgn}}}{power calculation for multiple panel
-#'       designs}
-#'     \item{\code{\link{cov_panel_dsgn}}}{covariance matrix for a panel design}
-#'     \item{\code{\link{plot.powerpaneldesign}}}{plot power curves for panel
-#'       designs}
+#'     \item{\code{\link{summary.paneldesign}}}{ to summarize characteristics of a
+#'       panel revisit design}
 #'   }
 #'
 #' @keywords survey

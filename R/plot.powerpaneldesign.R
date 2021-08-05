@@ -3,7 +3,7 @@
 # Programmer: Tony Olsen
 # Date: March 14, 2019
 #
-#' Plot Power Curves for Panel Designs
+#' Plot power curves for panel designs
 #'
 #' Plot power curves and relative power curves for trend detection for set of
 #' panel designs, time periods, indicators, signifance levels and trend.  Trend
@@ -34,7 +34,7 @@
 #'   \code{xaxis_type = "change"}, then x-axis is percent per period with secondary
 #'   x-axises for total percent per period and associated change in mean.
 #'   Default is \code{"period"}.  Note that \code{xaxis_type} controls how the input for
-#'   \code{"period"} and \code{"trend"} paramenters is used.
+#'   \code{"period"} and \code{"trend"} parameters is used.
 #'
 #' @param comp_type  Character value equal to \code{"design"} or \code{"Indicator"} which
 #'   designates the type of power curve comparison that will occur on a single
@@ -107,19 +107,6 @@
 #'
 #' @author Tony Olsen \email{Olsen.Tony@@epa.gov}
 #'
-#' @seealso
-#'   \itemize{
-#'     \item{\code{\link{revisit_dsgn}}}{create a panel revisit design}
-#'     \item{\code{\link{revisit_bibd}}}{create a balanced incomplete block
-#'       panel revisit design}
-#'     \item{\code{\link{revisit_rand}}}{create a revisit design with random
-#'       assignment to panels and time periods}
-#'     \item{\code{\link{summary.powerpaneldesign}}}{summarize characteristics of a revisit
-#'       panel design}
-#'     \item{\code{\link{power_dsgn}}}{power calculation for multiple panel
-#'       designs}
-#'     \item{\code{\link{cov_panel_dsgn}}}{covariance matrix for a panel design}
-#'   }
 #'
 #' @keywords survey
 #'
@@ -148,16 +135,11 @@
 #' plot(Power_tst)
 #' plot(Power_tst, dsgns = c("F60", "R60N"))
 #' plot(Power_tst, dsgns = c("F60", "R60N"), trend = 1.0)
-#' \dontrun{
-#' pdf("Power_tst.pdf")
 #' plot(Power_tst,
 #'   plot_type = "relative", comp_type = "design",
 #'   trend_type = "mean", trend = c(1, 2), dsgns = c("R60N", "F60"),
 #'   indicator = "Variable_Name"
 #' )
-#' graphics.off()
-#' }
-#'
 #' @export
 ###############################################################################
 plot.powerpaneldesign <- function(x, y = NULL, plot_type = "standard",

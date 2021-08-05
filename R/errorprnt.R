@@ -3,9 +3,9 @@
 # Programmer: Tom Kincaid
 # Date: June 24, 2020
 #
-#' Print Analysis Errors
+#' Print errors from analysis functions
 #'
-#' This function prints the error messages vector in analysis functions.
+#' This function prints the error messages vector in the analysis functions.
 #'
 #' @param error_vec Data frame that contains error messages.  The default is
 #'   \code{"error_vec"}, which is the name given to the error messages vector created

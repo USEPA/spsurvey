@@ -5,7 +5,7 @@
 # Revised: May 6, 2021 to correct an error when specifying argument type_cdf for
 #          function cdf_plot
 #
-#' Plot Cumulative Distribution Functions
+#' Plot cumulative distribution functions (CDFs) and output to a pdf
 #'
 #' This function creates a pdf file containing CDF plots.  Input data for the
 #' plots is provided by a data frame utilizing the same structure as the data
@@ -67,6 +67,12 @@
 #' @param ... Additional arguments passed to the cdf_plot function.
 #'
 #' @return A PDF file containing the CDF plots.
+#'
+#' @seealso
+#'   \describe{
+#'   \item{\code{\link{cdf_plot}}}{ for visualizing CDF plots}
+#'   \item{\code{\link{cont_cdftest}}}{ for CDF hypothesis testing}
+#'   }
 #'
 #' @author Tom Kincaid \email{Kincaid.Tom@@epa.gov}
 #'

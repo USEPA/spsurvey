@@ -2,7 +2,7 @@
 % Please edit documentation in R/warnprnt.R
 \name{warnprnt}
 \alias{warnprnt}
-\title{Print the Warnings}
+\title{Print grts, irs, and analysis function warnings}
 \usage{
 warnprnt(warn_df = get("warn_df", envir = .GlobalEnv), m = 1:nrow(warn_df))
 }
@@ -19,7 +19,8 @@ rows in \code{warn_df}, which will print all warning messages in the data frame.
 Printed warnings.
 }
 \description{
-This function prints the warnings.
+This function prints the warnings messages from the \code{grts()}, \code{irs()},
+  and analysis functions.
 }
 \author{
 Tom Kincaid \email{Kincaid.Tom@epa.gov}

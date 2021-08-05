@@ -2,14 +2,13 @@
 # Function: plot (exported)
 # Programmers: Michael Dumelle
 # Date: January 22, 2021
-#' Plot sample frame and design objects
+#' Plot sample frames, samples, and design frames.
 #'
-#' @description Plot sample frames and design objects.
-#'
-#' This function is largely built on \code{plot.sf()}, and all spsurvey plotting
+#' This function plots sample frames, samples, and design frames.
+#' It is largely built on \code{plot.sf()}, and all spsurvey plotting
 #' methods can supply additional arguments to \code{plot.sf()}. For more information,
 #' run \code{vignette(plotting, package = "spsurvey"}. For more information on
-#' plotting in \code{sf}, run \code{?plot.sf()}.
+#' plotting in \code{sf}, run \code{?sf::plot.sf()}.
 #'
 #' @param x object of class \code{sframe}, \code{spdesign}, or \code{dframe}.
 #'
@@ -20,7 +19,8 @@
 #' categorical (or factor) and right hand side variables can be categorical
 #' (or factor). Right hand side variables that are numeric will be coerced to
 #' a categorical (or factor) variable. If an intercept is included in the right
-#' hand side formula, the total will also be summarized.
+#' hand side formula, the total will also be summarized. When plotting samples,
+#' (class \code{spdesign}), \code{siteuse} will likely be desired in the formula.
 #'
 #' @param siteuse A character vector of site types to include when plotting a
 #' design object. Can only take on values \code{"sframe"} (sample frame),
@@ -48,8 +48,9 @@
 #' @param geom Should separate geometries for each level of the right hand
 #' side \code{formula} variables be plotted? Defaults to \code{FALSE}.
 #'
-#' @param onlyshow A string indicating the level of the single right hand side
-#' variable for which a summary is requested.
+#' @param onlyshow A string indicating the single level of the single right hand side
+#' variable for which a summary is requested. This argument is only used when
+#' a single right hand side variable is provided.
 #'
 #' @param fix_bbox Should the geometry bounding box be fixed across plots?
 #' Defaults to \code{TRUE}. If \code{TRUE}, the bounding box will be the largest
@@ -75,13 +76,14 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' plot(NE_Lakes)
-#' plot(NE_Lakes, formula = ~ELEV_CAT)
-#' plot(NE_Lakes, formula = AREA ~ ELEV_CAT)
+#' data("NE_Lakes")
+#' NE_Lakes <- sframe(NE_Lakes)
+#' plot(NE_Lakes, formula = ~ ELEV_CAT)
 #' sample <- grts(NE_Lakes, 30)
-#' plot(sample, NE_Lakes)
-#' }
+#' plot(sample, NE_Lakes, formula = ~ siteuse)
+#' data("NLA_PNW")
+#' NLA_PNW <- dframe(NLA_PNW)
+#' plot(NLA_PNW, formula = ~ BMMI)
 #' ###############################################################################
 plot.sframe <- function(x, y, formula = ~ 1, var_args = NULL, varlevel_args = NULL,
                         geom = FALSE, onlyshow = NULL, fix_bbox = TRUE, ...) {
@@ -340,6 +342,7 @@ plot.spdesign <- function(x, y = NULL, formula = ~ siteuse, siteuse = NULL,
 #' @name plot
 #'
 #' @method plot dframe
+#'
 #'
 #' @export
 plot.dframe <- function(x, y = NULL, formula = ~1, var_args = NULL, varlevel_args = NULL,

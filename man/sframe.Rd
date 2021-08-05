@@ -7,11 +7,10 @@
 sframe(object, ...)
 }
 \arguments{
-\item{object}{For \code{sframe}, an \code{sp} or \code{sf} object. For \code{unsframe()}, an
-\code{sframe} object.}
+\item{object}{For \code{sframe}, an \code{sp} or \code{sf} object.}
 
 \item{...}{Additional arguments to \code{st_as_sf()} when using \code{sframe()}
-to convert an \code{sp} object to an \code{sf} and \code{sframe} object}
+to convert an \code{sp} object to an \code{sf} and \code{sframe} object.}
 }
 \value{
 An \code{sframe} object.
@@ -23,12 +22,15 @@ objects prior to giving class \code{sframe}. \code{unsframe()} removes class \co
 which may be useful when calling sf generic functions.
 }
 \examples{
-\dontrun{
-data("NE_lakes")
-NE_lakes <- sframe(NE_lakes)
-}
+data("NE_Lakes")
+NE_Lakes <- sframe(NE_Lakes)
 ###############################################################################
 }
 \seealso{
-sframe_to_sf
+\describe{
+    \item{\code{\link{sframe_to_sf}}}{ to turn an \code{sframe} object into an \code{sf} object}
+ }
+}
+\author{
+Michael Dumelle \email{Dumelle.Michael@epa.gov}
 }

@@ -1,6 +1,12 @@
-#' Combine rows from a GRTS or IRS design
+#' Combine rows from GRTS or IRS samples.
 #'
-#' @param object A design object from \code{grts()} or \code{irs()}
+#' This function row binds the \code{sites_legacy}, \code{sites_base},
+#' \code{sites_over}, and \code{sites_near} objects from a GRTS or IRS sample
+#' into a single \code{sf} object. This function is most useful when a single
+#' \code{sf} object is desired; e.g. writing the sites to a single shape file the
+#' \code{st_write} function in the sf package.
+#'
+#' @param object A sample from \code{grts()} or \code{irs()}
 #'
 #' @param siteuse A character vector of site types to return. Can contain
 #' \code{"Legacy"} (for legacy sites), \code{"Base"} (for base sites),
@@ -11,12 +17,15 @@
 #'
 #' @return A single \code{sf} object containing rows for the requested sites.
 #'
+#' @author Michael Dumelle \email{Dumelle.Michael@@epa.gov}
+#'
 #' @export
 #'
 #' @examples
+#' sample <- grts(NE_Lakes, 50, n_over = 10)
+#' sample <- sprbind(sample)
 #' \dontrun{
-#' grts1 <- grts(NE_Lakes, 50, n_over = 10)
-#' sprbind(grts1)
+#' st_write(sample, "mypath/sample.shp")
 #' }
 sprbind <- function(object, siteuse = NULL) {
   if (!inherits(object, "spdesign")) {

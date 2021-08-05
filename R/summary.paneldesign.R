@@ -3,9 +3,9 @@
 # Programmer: Tony Olsen
 # Date: March 14, 2019
 #'
-#' Summary Characteristics of a Revisit Panel Design
+#' Summary characteristics of a panel revisit design
 #'
-#' Revisit panel design characteristics are summarized: number of panels, number
+#' Panel revisit design characteristics are summarized: number of panels, number
 #' of time periods, total number of sample events for the revisit design, total
 #' number of sample events for each panel, total number of sample events for
 #' each time period and cumulative number of unique units sampled by time
@@ -28,27 +28,20 @@
 #'   produced.
 #'
 #' @return List of six elements.
-#'   \itemize{
-#'
-#'   \item \code{n_panel} - number of panels in revisit design
-#'
-#'   \item \code{n_period} - number of time periods in revisit design
-#'
-#'   \item \code{n_total} - total number of sample events across all panels and all
-#'   time periods, accounting for visitdsgn, that will be sampled in the revisit
-#'   design
-#'
-#'   \item \code{n_periodunit} - Vector of the number of time periods a unit will be
-#'   sampled in each panel
-#'
-#'   \item \code{n_unitpnl} - Vector of the number of sample units, accounting for
-#'   visitdsgn, that will be sampled in each panel
-#'
-#'   \item \code{n_unitperiod} - Vector of the number of sample units, accounting for
-#'   visitdsgn, that will be sampled during each time period
-#'
-#'   \item \code{ncum_unit} - Vector of the cumulative number of unique units that will
-#'   be sampled in time periods up to and including the current time period.
+#'   \describe{
+#'     \item{\code{n_panel}}{ number of panels in revisit design}
+#'     \item{\code{n_period}}{ number of time periods in revisit design}
+#'     \item{\code{n_total}}{ total number of sample events across all panels and all
+#'       time periods, accounting for \code{visitdsgn}, that will be sampled in the revisit
+#'       design}
+#'     \item{\code{n_periodunit}}{ vector of the number of time periods a unit will be
+#'       sampled in each panel}
+#'     \item{\code{n_unitpnl}}{ vector of the number of sample units, accounting for
+#'       \code{visitdsgn}, that will be sampled in each panel}
+#'     \item{\code{n_unitperiod}}{ vector of the number of sample units, accounting for
+#'       \code{visitdsgn}, that will be sampled during each time period}
+#'     \item{\code{ncum_unit}}{ vector of the cumulative number of unique units that will
+#'   be sampled in time periods up to and including the current time period.}
 #'   }
 #'
 #' @export
@@ -58,7 +51,6 @@
 #' @keywords survey
 #'
 #' @examples
-#' \dontrun{
 #' # Serially alternating panel revisit design summary
 #' sa_dsgn <- revisit_dsgn(20, panels = list(SA60N = list(
 #'   n = 60, pnl_dsgn = c(1, 4),
@@ -70,9 +62,8 @@
 #' sa_visit[sa_visit > 0] <- 1
 #' sa_visit[1, sa_visit[1, ] > 0] <- 2
 #' summary(sa_dsgn, sa_visit)
-#' }
 #' ###############################################################################
-summary.powerpaneldesign <- function(object, visitdsgn = NULL, ...) {
+summary.paneldesign <- function(object, visitdsgn = NULL, ...) {
   paneldsgn <- object
   n_pan <- dim(paneldsgn)[1]
   n_period <- dim(paneldsgn)[2]

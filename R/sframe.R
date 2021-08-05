@@ -9,23 +9,25 @@
 #' objects prior to giving class \code{sframe}. \code{unsframe()} removes class \code{"sframe"},
 #' which may be useful when calling sf generic functions.
 #'
-#' @param object For \code{sframe}, an \code{sp} or \code{sf} object. For \code{unsframe()}, an
-#' \code{sframe} object.
+#' @param object For \code{sframe}, an \code{sp} or \code{sf} object.
 #'
 #' @param ... Additional arguments to \code{st_as_sf()} when using \code{sframe()}
-#' to convert an \code{sp} object to an \code{sf} and \code{sframe} object
+#' to convert an \code{sp} object to an \code{sf} and \code{sframe} object.
 #'
 #' @return An \code{sframe} object.
 #'
-#' @seealso sframe_to_sf
+#' @author Michael Dumelle \email{Dumelle.Michael@@epa.gov}
+#'
+#' @seealso
+#'   \describe{
+#'     \item{\code{\link{sframe_to_sf}}}{ to turn an \code{sframe} object into an \code{sf} object}
+#'  }
 #'
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' data("NE_lakes")
-#' NE_lakes <- sframe(NE_lakes)
-#' }
+#' data("NE_Lakes")
+#' NE_Lakes <- sframe(NE_Lakes)
 #' ###############################################################################
 sframe <- function(object, ...) {
   if (inherits(object, "sframe")) {

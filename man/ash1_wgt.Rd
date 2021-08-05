@@ -2,7 +2,7 @@
 % Please edit documentation in R/ash1_wgt.R
 \name{ash1_wgt}
 \alias{ash1_wgt}
-\title{Compute the Average Shifted Histogram (ASH) for Weighted Data}
+\title{Compute the average shifted histogram (ASH) for weighted data}
 \usage{
 ash1_wgt(
   x,
@@ -35,13 +35,13 @@ a discrete distribution defined for integers only.  The default is
 }
 \value{
 List containing the ASH density estimate.  List consists of
-  \itemize{
-    \item \code{tcen} - x-coordinate for center of bin
-    \item \code{f} - y-coordinate for density estimate height
+  \describe{
+    \item{\code{tcen}}{ x-coordinate for center of bin}
+    \item{\code{f}}{ y-coordinate for density estimate height}
   }
 }
 \description{
-Calculate the average shifted histogram estimate of a density based on data
+Calculate the average shifted histogram estimate of a density based on one-dimensional data
   from a survey design with weights.
 }
 \examples{
@@ -52,11 +52,9 @@ plot(rslt)
 }
 \references{
 Scott, D. W. (1985). "Averaged shifted histograms: effective nonparametric
-  density estimators in several dimensions." The Annals of Statistics 13(3):
+  density estimators in several dimensions." \emph{The Annals of Statistics} 13(3):
   1024-1040.
 }
 \author{
 Tony Olsen \email{Olsen.tony@epa.gov}
 }
-\keyword{misc}
-\keyword{survey}

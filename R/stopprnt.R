@@ -3,9 +3,10 @@
 # Programmer: Tony Olsen
 # Date: January 22, 2021
 #
-#' Print Design Errors.
+#' Print grts and irs errors.
 #'
-#' This function prints the error messages vector in the design functions.
+#' This function prints the error messages vector in the \code{grts}
+#' and \code{irs} functions.
 #'
 #' @param stop_df Data frame that contains stop messages.  The default is
 #'   \code{stop_df}, which is the name given to the stop data frame created by
@@ -15,7 +16,7 @@
 #'   default is a vector containing the integers from 1 through the number of
 #'   rows in \code{stop_df}, which will print all stop messages in the data frame.
 #'
-#' @return Invisible return.  Prints stop messages
+#' @return Printed errors
 #'
 #' @author Tony Olsen \email{Olsen.Tony@@epa.gov}
 #'

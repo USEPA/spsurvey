@@ -2,7 +2,7 @@
 % Please edit documentation in R/power_dsgn.R
 \name{power_dsgn}
 \alias{power_dsgn}
-\title{Power Calculation for Multiple Panel Designs}
+\title{Power calculation for multiple panel designs}
 \usage{
 power_dsgn(
   ind_names,
@@ -132,6 +132,12 @@ Urquhart, N. S., W. S. Overton, et al. (1993) Comparing sampling designs
   Long-term Ecological Monitoring Studies.} R. A. Gitzen, J. J. Millspaugh,
   A. B. Cooper, and D. S. Licht (eds.). Cambridge University Press, New York,
   pp. 151-173.
+}
+\seealso{
+\itemize{
+    \item{\code{\link{plot.powerpaneldesign}}}{ to plot power curves for
+      panel designs}
+  }
 }
 \author{
 Tony Olsen \email{Olsen.Tony@epa.gov}

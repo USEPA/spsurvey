@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot.powerpaneldesign.R
 \name{plot.powerpaneldesign}
 \alias{plot.powerpaneldesign}
-\title{Plot Power Curves for Panel Designs}
+\title{Plot power curves for panel designs}
 \usage{
 \method{plot}{powerpaneldesign}(
   x,
@@ -41,7 +41,7 @@ y-axis.  For \code{xaxis_type = "period"}, x-axis is periods in \code{dsgnpower}
 \code{xaxis_type = "change"}, then x-axis is percent per period with secondary
 x-axises for total percent per period and associated change in mean.
 Default is \code{"period"}.  Note that \code{xaxis_type} controls how the input for
-\code{"period"} and \code{"trend"} paramenters is used.}
+\code{"period"} and \code{"trend"} parameters is used.}
 
 \item{comp_type}{Character value equal to \code{"design"} or \code{"Indicator"} which
 designates the type of power curve comparison that will occur on a single
@@ -148,30 +148,11 @@ Power_tst <- power_dsgn("Variable_Name",
 plot(Power_tst)
 plot(Power_tst, dsgns = c("F60", "R60N"))
 plot(Power_tst, dsgns = c("F60", "R60N"), trend = 1.0)
-\dontrun{
-pdf("Power_tst.pdf")
 plot(Power_tst,
   plot_type = "relative", comp_type = "design",
   trend_type = "mean", trend = c(1, 2), dsgns = c("R60N", "F60"),
   indicator = "Variable_Name"
 )
-graphics.off()
-}
-
-}
-\seealso{
-\itemize{
-    \item{\code{\link{revisit_dsgn}}}{create a panel revisit design}
-    \item{\code{\link{revisit_bibd}}}{create a balanced incomplete block
-      panel revisit design}
-    \item{\code{\link{revisit_rand}}}{create a revisit design with random
-      assignment to panels and time periods}
-    \item{\code{\link{summary.powerpaneldesign}}}{summarize characteristics of a revisit
-      panel design}
-    \item{\code{\link{power_dsgn}}}{power calculation for multiple panel
-      designs}
-    \item{\code{\link{cov_panel_dsgn}}}{covariance matrix for a panel design}
-  }
 }
 \author{
 Tony Olsen \email{Olsen.Tony@epa.gov}

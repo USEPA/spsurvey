@@ -1,5 +1,5 @@
 ###############################################################################
-# Function: aaa (not exported)
+# Function: startup (not exported)
 # Programmer: Tom Kincaid
 # Date: July 17, 2002
 # Last Revised: February 25, 2004
@@ -14,6 +14,9 @@
 #' @noRd
 .onAttach <- function(libname, pkgname) {
   packageStartupMessage(
-    "\nVersion 5.0 of the spsurvey package was loaded successfully.\n"
+    "spsurvey version 5.0 introduced significant changes to the
+    inputs and outputs of many functions. Please review the updated materials, reference manual, and
+    vignettes by visiting https://cran.r-project.org/web/packages/spsurvey/index.html
+    for more information."
   )
 }

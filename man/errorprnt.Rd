@@ -2,7 +2,7 @@
 % Please edit documentation in R/errorprnt.R
 \name{errorprnt}
 \alias{errorprnt}
-\title{Print Analysis Errors}
+\title{Print errors from analysis functions}
 \usage{
 errorprnt(error_vec = get("error_vec", envir = .GlobalEnv))
 }
@@ -15,7 +15,7 @@ by functions in the spsurvey package.}
 Printed errors.
 }
 \description{
-This function prints the error messages vector in analysis functions.
+This function prints the error messages vector in the analysis functions.
 }
 \author{
 Tom Kincaid \email{Kincaid.Tom@epa.gov}

@@ -3,15 +3,16 @@
 \docType{data}
 \name{Lake_Ontario}
 \alias{Lake_Ontario}
-\title{Lake Ontario}
+\title{Lake Ontario data}
 \format{
 An \code{sf} multipolygon object with 187 rows and 4 variables:
-\itemize{
-  \item{COUNTRY}{Country.}
-  \item{RSRC_CLASS}{Bay class.}
-  \item{PSTL_CODE}{Postal code.}
-  \item{AREA_SQKM}{Area in square kilometers}
-  \item{geometry}{simple features geometry list-column}
+\describe{
+  \item{\code{COUNTRY}}{ Country.}
+  \item{\code{RSRC_CLASS}}{ Bay class.}
+  \item{\code{PSTL_CODE}}{ Postal code.}
+  \item{\code{AREA_SQKM}}{ Area in square kilometers}
+  \item{\code{geometry}}{ Multipolygon geometry using a NAD83 / Conus Albers
+    projection (EPSG: 5070).}
 }
 }
 \usage{

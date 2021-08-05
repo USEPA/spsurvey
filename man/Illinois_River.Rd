@@ -3,14 +3,14 @@
 \docType{data}
 \name{Illinois_River}
 \alias{Illinois_River}
-\title{Illinois River}
+\title{Illinois River data}
 \format{
 An \code{sf} multilinestring object object with 9087 rows and 3
 variables:
-\itemize{
-  \item{STATE_NAME}{State name.}
-  \item{geometry}{Multilinestring geometry using a USA Contiguous Albers
-    Equal Area Conic projection.}
+\describe{
+  \item{\code{STATE_NAME}}{ State name.}
+  \item{\code{geometry}}{ Multilinestring geometry using a NAD83 / Conus Albers
+    projection (EPSG: 5070).}
 }
 }
 \usage{

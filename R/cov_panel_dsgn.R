@@ -5,7 +5,7 @@
 # Date: March 14, 2019
 #
 #'
-#' Covariance Matrix for a Panel Design
+#' Create a covariance matrix for a panel design
 #'
 #' Covariance structure accounts for the panel design and the four variance
 #' components: unit variation, period variation, unit by period interaction
@@ -77,17 +77,8 @@
 #' @author Tony Olsen \email{Olsen.Tony@@epa.gov}
 #'
 #' @seealso
-#'   \itemize{
-#'     \item{\code{\link{revisit_dsgn}}}{create a panel revisit design}
-#'     \item{\code{\link{revisit_bibd}}}{create a balanced incomplete block
-#'       panel revisit design}
-#'     \item{\code{\link{revisit_rand}}}{create a revisit design with random
-#'       assignment to panels and time periods}
-#'     \item{\code{\link{summary.powerpaneldesign}}}{summarize characteristics of a revisit
-#'       panel design}
-#'     \item{\code{\link{power_dsgn}}}{power calculation for multiple panel
-#'       designs}
-#'     \item{\code{\link{plot.powerpaneldesign}}}{plot power curves for panel
+#'   \describe{
+#'     \item{\code{\link{power_dsgn}}}{ for power calculations of multiple panel
 #'       designs}
 #'   }
 #'

@@ -2,7 +2,7 @@
 % Please edit documentation in R/stopprnt.R
 \name{stopprnt}
 \alias{stopprnt}
-\title{Print Design Errors.}
+\title{Print grts and irs errors.}
 \usage{
 stopprnt(stop_df = get("stop_df", envir = .GlobalEnv), m = 1:nrow(stop_df))
 }
@@ -16,10 +16,11 @@ default is a vector containing the integers from 1 through the number of
 rows in \code{stop_df}, which will print all stop messages in the data frame.}
 }
 \value{
-Invisible return.  Prints stop messages
+Printed errors
 }
 \description{
-This function prints the error messages vector in the design functions.
+This function prints the error messages vector in the \code{grts}
+and \code{irs} functions.
 }
 \author{
 Tony Olsen \email{Olsen.Tony@epa.gov}

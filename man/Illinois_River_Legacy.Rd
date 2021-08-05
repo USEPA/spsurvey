@@ -3,14 +3,14 @@
 \docType{data}
 \name{Illinois_River_Legacy}
 \alias{Illinois_River_Legacy}
-\title{Illinois River Legacy}
+\title{Illinois River legacy data}
 \format{
 An \code{sf} point object object with 5 rows and 1
 variable:
-\itemize{
-  \item{STATE_NAME}{State name.}
-  \item{geometry}{Point geometry using a USA Contiguous Albers
-    Equal Area Conic projection.}
+\describe{
+  \item{\code{STATE_NAME}}{ State name.}
+  \item{\code{geometry}}{ Point geometry using a NAD83 / Conus Albers
+    projection (EPSG: 5070).}
 }
 }
 \usage{

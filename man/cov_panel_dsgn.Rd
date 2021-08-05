@@ -2,7 +2,7 @@
 % Please edit documentation in R/cov_panel_dsgn.R
 \name{cov_panel_dsgn}
 \alias{cov_panel_dsgn}
-\title{Covariance Matrix for a Panel Design}
+\title{Create a covariance matrix for a panel design}
 \usage{
 cov_panel_dsgn(
   paneldsgn = matrix(50, 1, 10),
@@ -87,17 +87,8 @@ Urquhart, N. S., W. S. Overton, et al. (1993) Comparing sampling designs
   pp. 151-173.
 }
 \seealso{
-\itemize{
-    \item{\code{\link{revisit_dsgn}}}{create a panel revisit design}
-    \item{\code{\link{revisit_bibd}}}{create a balanced incomplete block
-      panel revisit design}
-    \item{\code{\link{revisit_rand}}}{create a revisit design with random
-      assignment to panels and time periods}
-    \item{\code{\link{summary.powerpaneldesign}}}{summarize characteristics of a revisit
-      panel design}
-    \item{\code{\link{power_dsgn}}}{power calculation for multiple panel
-      designs}
-    \item{\code{\link{plot.powerpaneldesign}}}{plot power curves for panel
+\describe{
+    \item{\code{\link{power_dsgn}}}{ for power calculations of multiple panel
       designs}
   }
 }

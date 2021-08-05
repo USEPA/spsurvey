@@ -3,9 +3,10 @@
 # Programmer: Tom Kincaid
 # Date: June 18, 2020
 #
-#' Print the Warnings
+#' Print grts, irs, and analysis function warnings
 #'
-#' This function prints the warnings.
+#' This function prints the warnings messages from the \code{grts()}, \code{irs()},
+#'   and analysis functions.
 #'
 #' @param warn_df Data frame that contains warning messages.  The default is
 #'   \code{"warn_df"}, which is the name given to the warnings data frame created by

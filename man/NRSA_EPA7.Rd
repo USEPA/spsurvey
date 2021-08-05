@@ -3,21 +3,21 @@
 \docType{data}
 \name{NRSA_EPA7}
 \alias{NRSA_EPA7}
-\title{NRSA EPA7}
+\title{NRSA EPA7 data}
 \format{
 A data frame with 682 rows and 10 variables:
-\itemize{
-  \item{SITE_ID}{A unique site identifier.}
-  \item{YEAR}{Year of design cycle.}
-  \item{WEIGHT}{Sampling design weights.}
-  \item{ECOREGION}{Ecoregion.}
-  \item{STATE}{State name.}
-  \item{BMMI}{Benthic MMI value.}
-  \item{BMMI_COND}{Benthic MMI categories.}
-  \item{PHOS_COND}{Phosphorus condition categories.}
-  \item{NITR_COND}{Nitrogen condition categories.}
-  \item{geometry}{Point geometry using a USA Contiguous Albers Equal Area
-    Conic projection.}
+\describe{
+  \item{\code{SITE_ID}}{ A unique site identifier.}
+  \item{\code{YEAR}}{ Year of design cycle.}
+  \item{\code{WEIGHT}}{ Sampling design weights.}
+  \item{\code{ECOREGION}}{ Ecoregion.}
+  \item{\code{STATE}}{ State name.}
+  \item{\code{BMMI}}{ Benthic MMI value.}
+  \item{\code{BMMI_COND}}{ Benthic MMI categories.}
+  \item{\code{PHOS_COND}}{ Phosphorus condition categories.}
+  \item{\code{NITR_COND}}{ Nitrogen condition categories.}
+  \item{\code{geometry}}{ Point geometry using a NAD83 / Conus Albers
+    projection (EPSG: 5070).}
 }
 }
 \usage{

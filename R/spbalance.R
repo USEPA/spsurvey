@@ -30,39 +30,40 @@
 #' strata).
 #'
 #' @param metrics A character vector of spatial balance metrics:
-#' \itemize{
-#'   \item{\code{pielou}:}{Pielou's Evenness Index (the default). This statistic
+#' \describe{
+#'   \item{\code{pielou}}{ Pielou's Evenness Index (the default). This statistic
 #'     can take on a value between zero and one.}
-#'   \item{\code{simpsons}:}{Simpsons Evenness Index. This statistic
+#'   \item{\code{simpsons}}{ Simpsons Evenness Index. This statistic
 #'     can take on a value between zero and logarithm of the sample size.}
-#'   \item{\code{rmse}:}{Root-Mean-Squared Error. This statistic
+#'   \item{\code{rmse}}{ Root-Mean-Squared Error. This statistic
 #'     can take on a value between zero and infinity.}
-#'   \item{\code{mse}:}{Mean-Squared Error. This statistic
+#'   \item{\code{mse}}{ Mean-Squared Error. This statistic
 #'     can take on a value between zero and infinity.}
-#'   \item{\code{mae}:}{Median-Absolute Error. This statistic
+#'   \item{\code{mae}}{ Median-Absolute Error. This statistic
 #'     can take on a value between zero and infinity.}
-#'   \item{\code{medae}:}{Mean-Absolute Error. This statistic
+#'   \item{\code{medae}}{ Mean-Absolute Error. This statistic
 #'     can take on a value between zero and infinity.}
-#'   \item{\code{chisq}:}{Chi-Squared Loss. This statistic
+#'   \item{\code{chisq}}{ Chi-Squared Loss. This statistic
 #'     can take on a value between zero and infinity.}
 #'  }
 #'   All spatial balance metrics have a lower bound of zero, which indicates perfect
 #'   spatial balance. As the metric value increases, the spatial balance decreases.
 #'
 #' @param extents Should the total extent within each Dirichlet
-#' tessellation be returned? Defaults to FALSE.
+#' tessellation be returned? Defaults to \code{FALSE}.
 #'
-#' @return A list having names equal to each strata.
+#' @return A data frame with columns providing the stratum (\code{stratum}),
+#'  spatial balance metric (\code{metric}), and spatial balance (\code{value}).
 #'
 #' @importFrom stats median
+#'
+#' @author Michael Dumelle \email{Dumelle.Michael@@epa.gov}
 #'
 #' @export
 #'
 #' @examples
-#' \dontrun{
 #' sample <- grts(NE_Lakes, 30)
-#' spbalance(sample, NE_Lakes)
-#' }
+#' spbalance(sample$sites_base, NE_Lakes)
 #' ###############################################################################
 spbalance <- function(object, sframe, stratum_var = NULL, ip = NULL, metrics = "pielou", extents = FALSE) {
   if (is.null(stratum_var)) {
