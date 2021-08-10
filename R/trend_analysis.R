@@ -22,6 +22,8 @@
 # Revised: July 28, 2021 to ensure that data is available for a sufficient
 #          number of years to perform linear regression for categorical
 #          variables
+# Revised: August 9, 2021 to correct an error when appending values to the
+#          contsum data frame
 #
 #' Estimation of trend across time for a series of probability surveys
 #'
@@ -879,10 +881,12 @@ trend_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL, subpops = 
             # Assign the trend estimates for the response variable to a data
             # frame
 
-            trendsum$catsum <- rbind(trendsum$catsum, data.frame(
-              itype, isubpop,
-              ivar, lev_ivar[icat], trend, t_stderror, t_lcb, t_ucb, t_pval,
-              intercept, i_stderror, i_lcb, i_ucb, i_pval, rsq, adjrsq
+            trendsum$catsum <- rbind(
+              trendsum$catsum,
+              data.frame(
+                itype, isubpop, ivar, lev_ivar[icat], trend, t_stderror, t_lcb,
+                t_ucb, t_pval, intercept, i_stderror, i_lcb, i_ucb, i_pval, rsq,
+                adjrsq
             ))
           }
 
@@ -1121,11 +1125,12 @@ trend_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL, subpops = 
 
             # Assign estimates for the response variable to a data frame
 
-            trendsum$contsum <- rbind(trendsum$catsum, data.frame(
-              itype, isubpop,
-              ivar, trend, t_stderror, t_lcb, t_ucb, t_pval, intercept,
-              i_stderror, i_lcb, i_ucb, i_pval, var_siteint, var_sitetrend,
-              corr_site, var_year, var_resid, AIC
+            trendsum$contsum <- rbind(
+              trendsum$contsum,
+              data.frame(
+                itype, isubpop, ivar, trend, t_stderror, t_lcb, t_ucb, t_pval,
+                intercept, i_stderror, i_lcb, i_ucb, i_pval, var_siteint,
+                var_sitetrend, corr_site, var_year, var_resid, AIC
             ))
           }
 
