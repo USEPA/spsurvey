@@ -9,16 +9,17 @@
 The spsurvey package provides functions for selecting and analyzing
 probability samples. To select spatially balanced probability samples,
 spsurvey implements the Generalized Random Tessellation Stratified (GRTS)
-algorithm.  The GRTS algorithm can be applied to finite and infinite resources (point, linear, and areal
-geometries) and flexibly accommodates a diverse set of sampling
-design features, including stratification, unequal inclusion probabilities,
-proportional (to size) inclusion probabilities,
-legacy (or historical) sites, minimum distances between sites,
-and two options for replacement sites. To analyze probability samples, spsurvey
-implements a wide range of analysis functions that cover categorical variable analysis, continuous
-variable analysis, relative risk analysis, attributable risk analysis,
-risk difference analysis, change analysis, and trend analysis.
-spsurvey can also be used to plot and summarize data, select samples that are not spatially balanced,
+algorithm.  The GRTS algorithm can be applied to finite resources (point
+geometries) And infinite resources (linear and polygon / areal geometries)
+and flexibly accommodates a diverse set of sampling design features,
+including stratification, unequal inclusion probabilities, proportional
+(to size) inclusion probabilities, legacy (historical) sites, a minimum
+distance between sites, and two options for replacement sites. To analyze
+probability samples, spsurvey implements a wide range of analysis functions
+that cover categorical variable analysis, continuous variable analysis,
+relative risk analysis, attributable risk analysis, risk difference
+analysis, change analysis, and trend analysis. spsurvey can also be used to
+plot and summarize data, select samples that are not spatially balanced,
 compute spatial balance metrics, select panel samples, and more.
 }
 \author{
