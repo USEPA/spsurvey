@@ -54,10 +54,10 @@ of the formula contains a variable, the summary will be of the left-hand size va
 for each level of each right-hand side variable.
 }
 \examples{
-NE_lakes <- sframe(NE_lakes)
-summary(NE_lakes, ELEV ~ 1)
-summary(NE_lakes, ~ ELEV_CAT * AREA_CAT)
-sample <- grts(NE_lakes, 100)
+NE_Lakes <- sframe(NE_Lakes)
+summary(NE_Lakes, ELEV ~ 1)
+summary(NE_Lakes, ~ ELEV_CAT * AREA_CAT)
+sample <- grts(NE_Lakes, 100)
 summary(sample, ~ ELEV_CAT * AREA_CAT)
 }
 \author{
