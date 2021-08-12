@@ -887,7 +887,8 @@ trend_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL, subpops = 
                 itype, isubpop, ivar, lev_ivar[icat], trend, t_stderror, t_lcb,
                 t_ucb, t_pval, intercept, i_stderror, i_lcb, i_ucb, i_pval, rsq,
                 adjrsq
-            ))
+              )
+            )
           }
 
           # End of the loop for levels of a subpopulation
@@ -1131,7 +1132,8 @@ trend_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL, subpops = 
                 itype, isubpop, ivar, trend, t_stderror, t_lcb, t_ucb, t_pval,
                 intercept, i_stderror, i_lcb, i_ucb, i_pval, var_siteint,
                 var_sitetrend, corr_site, var_year, var_resid, AIC
-            ))
+              )
+            )
           }
 
           # End of the loop for levels of a subpopulation

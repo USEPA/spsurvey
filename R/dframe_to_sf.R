@@ -28,7 +28,6 @@
 #' data("NLA_PNW")
 #' NLA_PNW <- dframe(NLA_PNW)
 #' NLA_PNW <- dframe_to_sf(NLA_PNW)
-#'
 #' @export
 ###############################################################################
 dframe_to_sf <- function(object, ...) {

@@ -227,7 +227,6 @@
 #' strata_n <- c(low = 25, high = 30)
 #' sample_strat <- grts(NE_Lakes, n_base = strata_n, stratum_var = "ELEV_CAT")
 #' sample_over <- grts(NE_Lakes, n_base = 30, n_over = 5)
-#'
 #' @export
 ###############################################################################
 

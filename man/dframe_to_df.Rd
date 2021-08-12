@@ -24,7 +24,6 @@ it will remain a tibble after \code{dframe_to_df()}).
 data("NLA_PNW")
 NLA_PNW <- dframe(NLA_PNW)
 NLA_PNW <- dframe_to_df(NLA_PNW)
-
 }
 \seealso{
 \describe{

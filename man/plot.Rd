@@ -119,12 +119,12 @@ plotting in \code{sf}, run \code{?sf::plot.sf()}.
 \examples{
 data("NE_Lakes")
 NE_Lakes <- sframe(NE_Lakes)
-plot(NE_Lakes, formula = ~ ELEV_CAT)
+plot(NE_Lakes, formula = ~ELEV_CAT)
 sample <- grts(NE_Lakes, 30)
-plot(sample, NE_Lakes, formula = ~ siteuse)
+plot(sample, NE_Lakes, formula = ~siteuse)
 data("NLA_PNW")
 NLA_PNW <- dframe(NLA_PNW)
-plot(NLA_PNW, formula = ~ BMMI)
+plot(NLA_PNW, formula = ~BMMI)
 }
 \author{
 Michael Dumelle \email{Dumelle.Michael@epa.gov}

@@ -82,13 +82,13 @@
 #' @examples
 #' data("NE_Lakes")
 #' NE_Lakes <- sframe(NE_Lakes)
-#' plot(NE_Lakes, formula = ~ ELEV_CAT)
+#' plot(NE_Lakes, formula = ~ELEV_CAT)
 #' sample <- grts(NE_Lakes, 30)
-#' plot(sample, NE_Lakes, formula = ~ siteuse)
+#' plot(sample, NE_Lakes, formula = ~siteuse)
 #' data("NLA_PNW")
 #' NLA_PNW <- dframe(NLA_PNW)
-#' plot(NLA_PNW, formula = ~ BMMI)
-plot.sframe <- function(x, y, formula = ~ 1, var_args = NULL, varlevel_args = NULL,
+#' plot(NLA_PNW, formula = ~BMMI)
+plot.sframe <- function(x, y, formula = ~1, var_args = NULL, varlevel_args = NULL,
                         geom = FALSE, onlyshow = NULL, fix_bbox = TRUE, ...) {
 
   # setting old graphical parameter value
@@ -271,7 +271,7 @@ plot.sframe <- function(x, y, formula = ~ 1, var_args = NULL, varlevel_args = NU
 #' @method plot spdesign
 #'
 #' @export
-plot.spdesign <- function(x, y = NULL, formula = ~ siteuse, siteuse = NULL,
+plot.spdesign <- function(x, y = NULL, formula = ~siteuse, siteuse = NULL,
                           var_args = NULL, varlevel_args = NULL, geom = FALSE, onlyshow = NULL,
                           fix_bbox = TRUE, ...) {
   if ((is.null(siteuse) & (!is.null(x$sites_near))) | "Near" %in% siteuse) {
@@ -280,7 +280,6 @@ plot.spdesign <- function(x, y = NULL, formula = ~ siteuse, siteuse = NULL,
 
   # set siteuse when NULL
   if (is.null(siteuse)) {
-
     if (is.null(y)) {
       siteuse_sframe <- NULL
     } else {

@@ -23,7 +23,6 @@ which may be useful when calling generic functions with sf class (e.g. mapview::
 data("NLA_PNW")
 NLA_PNW <- dframe(NLA_PNW)
 NLA_PNW <- dframe_to_sf(NLA_PNW)
-
 }
 \seealso{
 \describe{
