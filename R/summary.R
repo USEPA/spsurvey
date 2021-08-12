@@ -2,47 +2,45 @@
 # Function: summary.sframe and summary.design (exported)
 # Programmers: Michael Dumelle
 # Date: January 22, 2021
-#' Calculate summaries of design objects
+#' Summarize sample frames, samples, and design frames.
 #'
 #' @description
-#' \code{summary()} summarizes sample frames or design objects, depending on
-#' which is provided. For design objects, sites in the base sample and
-#' replacement sites (if they exist) are summarized. The right hand of the
-#' formula specifies the categorical variables (or factors) you want to
-#' summarize by. If the left hand side of the formula is empty, the
-#' summary will be of the
-#' count distribution of the right hand side variables. If the left hand side
-#' contains a variable, the summary will be of the left hand size variable
-#' grouped by each of the right hand variables.
+#' \code{summary()} summarizes sample frames, samples or design objects, depending on
+#' which is provided. The right-hand of the
+#' formula specifies the variables (or factors) to
+#' summarize by. If the left-hand side of the formula is empty, the
+#' summary will be of the distributions of the right-hand side variables. If the left-hand side
+#' of the formula contains a variable, the summary will be of the left-hand size variable
+#' for each level of each right-hand side variable.
 #'
 #' @param object A sample frame object having class \code{sframe} or a design object
 #'  output from \code{grts()} or \code{irs()} having class \code{design}.
 #'
-#' @param formula A formula. Left hand side variables can be numeric or
-#' categorical (or factor) and right hand side variables can be categorical
-#' (or factor). Right hand side variables that are numeric will be coerced
+#' @param formula A formula. Left-hand side variables can be numeric or
+#' categorical (or factor) and right-hand side variables can be categorical
+#' (or factor). Right-hand side variables that are numeric will be coerced
 #' to a categorical (or factor) variable. If an intercept is included in the
-#' right hand side formula, the total will also be summarized.
+#' right-hand side formula, the total will also be summarized.
 #'
-#' @param onlyshow A string indicating the single level of the single right hand side
+#' @param onlyshow A string indicating the single level of the single right-hand side
 #' variable for which a summary is requested. This argument is only used when
-#' a single right hand side variable is provided.
+#' a single right-hand side variable is provided.
 #'
 #' @param siteuse A character vector indicating the \code{design} sites
 #' for which summaries are requested in \code{object}. Defaults to computing summaries for
 #' each non-\code{NULL} \code{site_*} list in \code{object}.
 #'
-#' @param ... Additional arguments to pass to \code{summary()}. If the left hand
+#' @param ... Additional arguments to pass to \code{summary()}. If the left-hand
 #' side of the formula is empty, the appropriate generic arguments are passed
-#' to \code{summary.data.frame}. If the left hand side of the formula is provided,
+#' to \code{summary.data.frame}. If the left-hand side of the formula is provided,
 #' the appropriate generic arguments are passed to \code{summary.default}.
 #'
-#' @return If the left hand side of the formula is empty, a named list
-#' containing summaries of the count distribution for each right hand side
-#' variable is returned. If the left hand side of the formula contains a
+#' @return If the left-hand side of the formula is empty, a named list
+#' containing summaries of the count distribution for each right-hand side
+#' variable is returned. If the left-hand side of the formula contains a
 #' variable, a named list containing five number
-#' summaries (numeric left hand side) or tables (categorical or factor left
-#' hand side) is returned for each right hand side variable.
+#' summaries (numeric left-hand side) or tables (categorical or factor left
+#' hand side) is returned for each right-hand side variable.
 #'
 #' @name summary
 #'
@@ -53,15 +51,11 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
 #' NE_lakes <- sframe(NE_lakes)
 #' summary(NE_lakes, ELEV ~ 1)
 #' summary(NE_lakes, ~ ELEV_CAT * AREA_CAT)
 #' sample <- grts(NE_lakes, 100)
-#' summary(sample, ELEV ~ 1)
 #' summary(sample, ~ ELEV_CAT * AREA_CAT)
-#' }
-#' ###############################################################################
 summary.sframe <- function(object, formula, onlyshow = NULL, ...) {
   # making formlist (utils.R)
   formlist <- make_formlist(formula, onlyshow, object)
@@ -76,7 +70,7 @@ summary.sframe <- function(object, formula, onlyshow = NULL, ...) {
     # adding the factor to varsf
     varsf <- varsf[, c(formlist$response, formlist$varlabels), drop = FALSE]
   }
-  # calling the appropriate summary based on formula (right hand side vs two sided)
+  # calling the appropriate summary based on formula (right-hand side vs two sided)
   if (is.null(formlist$response)) {
     output <- cat_summary(formlist, varsf, ...)
     output

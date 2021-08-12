@@ -24,9 +24,7 @@
 #' @examples
 #' sample <- grts(NE_Lakes, 50, n_over = 10)
 #' sample <- sprbind(sample)
-#' \dontrun{
-#' st_write(sample, "mypath/sample.shp")
-#' }
+#' \dontrun{st_write(sample, "mypath/sample.shp")}
 sprbind <- function(object, siteuse = NULL) {
   if (!inherits(object, "spdesign")) {
     stop("object must be output from grts() or irs()")

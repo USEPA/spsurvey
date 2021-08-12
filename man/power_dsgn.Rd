@@ -82,11 +82,11 @@ or negative. The default is \code{2}.}
 trend test, alpha, Type I error, level.  The defualt is \code{0.05}.}
 }
 \value{
-A list with components trend_type, ind_pct, ind_tail, trend values
+A list with components \code{trend_type}, \code{ind_pct}, \code{ind_tail}, trend values
   across periods, periods (all periods included in one or more panel
   designs), significance levels, a five-dimensional array of power
   calculations (dimensions: panel, design names, periods, indicator names,
-  trend names, alpha_names), an array of indicator mean values for each trend
+  trend names, \code{alpha_names}), an array of indicator mean values for each trend
   and the function call.
 }
 \description{

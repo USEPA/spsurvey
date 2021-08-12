@@ -91,11 +91,11 @@
 #'   A. B. Cooper, and D. S. Licht (eds.). Cambridge University Press, New York,
 #'   pp. 151-173.
 #
-#' @return A list with components trend_type, ind_pct, ind_tail, trend values
+#' @return A list with components \code{trend_type}, \code{ind_pct}, \code{ind_tail}, trend values
 #'   across periods, periods (all periods included in one or more panel
 #'   designs), significance levels, a five-dimensional array of power
 #'   calculations (dimensions: panel, design names, periods, indicator names,
-#'   trend names, alpha_names), an array of indicator mean values for each trend
+#'   trend names, \code{alpha_names}), an array of indicator mean values for each trend
 #'   and the function call.
 #'
 #' @author Tony Olsen \email{Olsen.Tony@@epa.gov}

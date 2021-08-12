@@ -61,7 +61,6 @@ sa_visit <- sa_dsgn
 sa_visit[sa_visit > 0] <- 1
 sa_visit[1, sa_visit[1, ] > 0] <- 2
 summary(sa_dsgn, sa_visit)
-###############################################################################
 }
 \author{
 Tony Olsen \email{Olsen.Tony@epa.gov}

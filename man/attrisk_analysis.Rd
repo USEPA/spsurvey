@@ -2,7 +2,7 @@
 % Please edit documentation in R/attrisk_analysis.R
 \name{attrisk_analysis}
 \alias{attrisk_analysis}
-\title{Attributable Risk Analysis for Probability Survey Data}
+\title{Attributable risk analysis for probability survey data}
 \usage{
 attrisk_analysis(
   dframe,

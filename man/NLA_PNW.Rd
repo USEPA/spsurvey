@@ -5,7 +5,7 @@
 \alias{NLA_PNW}
 \title{NLA PNW data}
 \format{
-An \code{sf} point object with 851 rows and 9 variables:
+An \code{sf} point object with 96 rows and 9 variables:
 \describe{
   \item{\code{SITE_ID}}{ A unique lake identifier.}
   \item{\code{WEIGHT}}{ The sampling design weight.}
@@ -23,8 +23,8 @@ An \code{sf} point object with 851 rows and 9 variables:
 NLA_PNW
 }
 \description{
-A data frame consisting lake observations from a subset of the Environmental
-Protection Agency's "National Lakes Assessment" in the Pacific Northwest Region of the United
-States during the year 2017.
+An \code{sf} point object of 96 lakes in the Pacific Northwest Region of the United
+States during the year 2017, from a subset of the Environmental
+Protection Agency's "National Lakes Assessment."
 }
 \keyword{datasets}

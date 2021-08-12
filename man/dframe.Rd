@@ -18,7 +18,7 @@ A \code{dframe} object
 \description{
 \code{dframe} gives data frames, \code{sp} objects, and \code{sf}
 objects class \code{dframe} to be used
-in generic functions. \code{sp} objects are coerced to \code{sf}
+spsurvey's \code{summary()} and \code{plot()} generics. \code{sp} objects are coerced to \code{sf}
 objects prior to giving class \code{dframe}.
 }
 \examples{

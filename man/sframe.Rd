@@ -18,13 +18,11 @@ An \code{sframe} object.
 \description{
 \code{sframe()} gives \code{sp} and \code{sf} objects class \code{"sframe"} to be used
 in spsurvey's \code{summary()} and \code{plot()} generics. \code{sp} objects are coerced to \code{sf}
-objects prior to giving class \code{sframe}. \code{unsframe()} removes class \code{"sframe"},
-which may be useful when calling sf generic functions.
+objects prior to giving class \code{sframe}.
 }
 \examples{
 data("NE_Lakes")
 NE_Lakes <- sframe(NE_Lakes)
-###############################################################################
 }
 \seealso{
 \describe{

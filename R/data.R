@@ -1,9 +1,9 @@
 #' New England Lakes data
 #'
-#' An \code{sf} point object of 5328 lakes in the Northeastern
+#' An \code{sf} point object of 200 lakes in the Northeastern
 #' United States.
 #'
-#' @format An \code{sf} object with 5328 rows and 6 variables:
+#' @format An \code{sf} object with 200 rows and 6 variables:
 #' \describe{
 #'   \item{\code{AREA}}{ Lake area in hectares.}
 #'   \item{\code{AREA_CAT}}{ Lake area categories based on a hectare cutoff.}
@@ -17,10 +17,10 @@
 
 #' Illinois River data
 #'
-#' A simple features (\code{sf}) multilinestring object of 9087 segments of the
+#' An (\code{sf}) multilinestring object of 244 segments of the
 #' Illinois River in Arkansas and Oklahoma.
 #'
-#' @format An \code{sf} multilinestring object object with 9087 rows and 3
+#' @format An \code{sf} multilinestring object object with 244 rows and 2
 #' variables:
 #' \describe{
 #'   \item{\code{STATE_NAME}}{ State name.}
@@ -31,11 +31,11 @@
 
 #' Illinois River legacy data
 #'
-#' A simple features (\code{sf}) point object of legacy sites for  the Illinois
+#' An (\code{sf}) point object of legacy sites for  the Illinois
 #' River data.
 #'
-#' @format An \code{sf} point object object with 5 rows and 1
-#' variable:
+#' @format An \code{sf} point object object with 5 rows and 2
+#' variables:
 #' \describe{
 #'   \item{\code{STATE_NAME}}{ State name.}
 #'   \item{\code{geometry}}{ Point geometry using a NAD83 / Conus Albers
@@ -48,7 +48,7 @@
 #' An \code{sf} multipolygon object of 187 polygons consisting
 #' of shoreline segments in Lake Ontario.
 #'
-#' @format An \code{sf} multipolygon object with 187 rows and 4 variables:
+#' @format An \code{sf} multipolygon object with 187 rows and 5 variables:
 #' \describe{
 #'   \item{\code{COUNTRY}}{ Country.}
 #'   \item{\code{RSRC_CLASS}}{ Bay class.}
@@ -61,11 +61,11 @@
 
 #' NLA PNW data
 #'
-#' A data frame consisting lake observations from a subset of the Environmental
-#' Protection Agency's "National Lakes Assessment" in the Pacific Northwest Region of the United
-#' States during the year 2017.
+#' An \code{sf} point object of 96 lakes in the Pacific Northwest Region of the United
+#' States during the year 2017, from a subset of the Environmental
+#' Protection Agency's "National Lakes Assessment."
 #'
-#' @format An \code{sf} point object with 851 rows and 9 variables:
+#' @format An \code{sf} point object with 96 rows and 9 variables:
 #' \describe{
 #'   \item{\code{SITE_ID}}{ A unique lake identifier.}
 #'   \item{\code{WEIGHT}}{ The sampling design weight.}
@@ -82,11 +82,11 @@
 
 #' NRSA EPA7 data
 #'
-#' An sf object consisting of stream observations from a subset of the Environmental
-#' Protection Agency's "National Rivers and Streams Assessment" in the Central
-#' United States duing the years 2008 and 2013.
+#' An \code{sf} point object of 353 stream segments in the Central
+#' United States during the years 2008 and 2013, from a subset of the Environmental
+#' Protection Agency's "National Rivers and Streams Assessment."
 #'
-#' @format A data frame with 682 rows and 10 variables:
+#' @format A data frame with 353 rows and 10 variables:
 #' \describe{
 #'   \item{\code{SITE_ID}}{ A unique site identifier.}
 #'   \item{\code{YEAR}}{ Year of design cycle.}

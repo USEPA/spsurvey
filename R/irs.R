@@ -2,14 +2,16 @@
 # Function: irs (exported)
 # Programmers: Tony Olsen, Tom Kincaid
 # Date: January 22, 2022
-#' Select an Independent random sample (IRS)
+#' Select an independent random sample (IRS)
 #'
-#' Select an independent random sample from a point, linear, or areal frame based on
-#' a survey design specification. The survey design may be stratified and within each stratum
-#' may be equal probability, unequal probability by categories or unequal probabilty
-#' proportional to an auxillary variable. Additional options include selecting additional
-#' sites as an "over" sample, selecting nearby replacement sites, including legacy sites,
-#' and requiring minimum distance between sites.
+#' Select a spatially balanced sample from a point (finite), linear (infinite),
+#' or polygon / areal (infinite) sample frame using the Independent Random Sampling
+#' (IRS) algorithm. The IRS algorithm accommodates unstratified and
+#' stratified designs and allows for equal inclusion probabilities, unequal
+#' inclusion probabilities according to a categorical variable, and inclusion
+#' probabilities proportional to a positive auxiliary variable. Several additional
+#' sampling options are included, such as including legacy (historical) sites,
+#' requiring a minimum distance between sites, and selecting replacement sites.
 #'
 #' @inheritParams grts
 #'

@@ -53,32 +53,32 @@
 \item{y}{ignored if \code{x} has class \code{sframe} or \code{dframe}; an
 object of class \code{sframe} if \code{x} has class \code{spdesign}.}
 
-\item{formula}{A formula. Left hand side variables can be numeric or
-categorical (or factor) and right hand side variables can be categorical
-(or factor). Right hand side variables that are numeric will be coerced to
+\item{formula}{A formula. Left-hand side variables can be numeric or
+categorical (or factor) and right-hand side variables can be categorical
+(or factor). Right-hand side variables that are numeric will be coerced to
 a categorical (or factor) variable. If an intercept is included in the right
 hand side formula, the total will also be summarized. When plotting samples,
 (class \code{spdesign}), \code{siteuse} will likely be desired in the formula.}
 
 \item{var_args}{A named list. The name of each list corresponds to a
-right hand side variable in \code{formula}. Values in the list are composed of
+right-hand side variable in \code{formula}. Values in the list are composed of
 graphical arguments that are to be passed to \strong{every} level of the
 variable.}
 
 \item{varlevel_args}{A named list. The name of each list corresponds to a
-right hand side variable in \code{formula}. The first name of each sublist
+right-hand side variable in \code{formula}. The first name of each sublist
 should be \code{"levels"} and contain all levels of the variable. Subsequent
 names correspond to graphical arguments that are to be passed to
 the specified levels (in order). Values must be specified
 for every level of each graphical argument, but applicable \code{sf} defaults
 will be matched by inputting the value \code{NA}.}
 
-\item{geom}{Should separate geometries for each level of the right hand
+\item{geom}{Should separate geometries for each level of the right-hand
 side \code{formula} variables be plotted? Defaults to \code{FALSE}.}
 
-\item{onlyshow}{A string indicating the single level of the single right hand side
+\item{onlyshow}{A string indicating the single level of the single right-hand side
 variable for which a summary is requested. This argument is only used when
-a single right hand side variable is provided.}
+a single right-hand side variable is provided.}
 
 \item{fix_bbox}{Should the geometry bounding box be fixed across plots?
 Defaults to \code{TRUE}. If \code{TRUE}, the bounding box will be the largest
@@ -93,8 +93,8 @@ design object. Can only take on values \code{"sframe"} (sample frame),
 (for \code{n_near} replacement sites). The order of sites represents the
 layering in the plot (e.g. \code{siteuse = c("Base", "Legacy")} will plot
 legacy sites on top of base sites. Defaults to all non-\code{NULL} elements
-in \code{x} and \code{y} with plot order \code{"sframe"}, \code{"Near"},
-\code{"Over"}, \code{"Base"}, \code{"Legacy"}.}
+in \code{x} and \code{y} with plot order \code{"sframe"}, \code{"Legacy"},
+\code{"Base"}, \code{"Over"}, \code{"Near"}.}
 
 \item{xcoord}{Name of x (east-west)-coordinate in \code{x} (only required if
 \code{x} is not an sf object)}
@@ -107,7 +107,11 @@ required if \code{x} is not an sf object)}
 }
 \description{
 This function plots sample frames, samples, and design frames.
-It is largely built on \code{plot.sf()}, and all spsurvey plotting
+If the left-hand side of the formula is empty, plots
+will be of the distributions of the right-hand side variables. If the left-hand side
+of the variable contains a variable, plots will be of the left-hand size variable
+for each level of each right-hand side variable.
+This function is largely built on \code{plot.sf()}, and all spsurvey plotting
 methods can supply additional arguments to \code{plot.sf()}. For more information,
 run \code{vignette(plotting, package = "spsurvey"}. For more information on
 plotting in \code{sf}, run \code{?sf::plot.sf()}.
@@ -121,7 +125,6 @@ plot(sample, NE_Lakes, formula = ~ siteuse)
 data("NLA_PNW")
 NLA_PNW <- dframe(NLA_PNW)
 plot(NLA_PNW, formula = ~ BMMI)
-###############################################################################
 }
 \author{
 Michael Dumelle \email{Dumelle.Michael@epa.gov}

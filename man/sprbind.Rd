@@ -29,9 +29,7 @@ into a single \code{sf} object. This function is most useful when a single
 \examples{
 sample <- grts(NE_Lakes, 50, n_over = 10)
 sample <- sprbind(sample)
-\dontrun{
-st_write(sample, "mypath/sample.shp")
-}
+\dontrun{st_write(sample, "mypath/sample.shp")}
 }
 \author{
 Michael Dumelle \email{Dumelle.Michael@epa.gov}

@@ -5,7 +5,7 @@
 \alias{NRSA_EPA7}
 \title{NRSA EPA7 data}
 \format{
-A data frame with 682 rows and 10 variables:
+A data frame with 353 rows and 10 variables:
 \describe{
   \item{\code{SITE_ID}}{ A unique site identifier.}
   \item{\code{YEAR}}{ Year of design cycle.}
@@ -24,8 +24,8 @@ A data frame with 682 rows and 10 variables:
 NRSA_EPA7
 }
 \description{
-An sf object consisting of stream observations from a subset of the Environmental
-Protection Agency's "National Rivers and Streams Assessment" in the Central
-United States duing the years 2008 and 2013.
+An \code{sf} point object of 353 stream segments in the Central
+United States during the years 2008 and 2013, from a subset of the Environmental
+Protection Agency's "National Rivers and Streams Assessment."
 }
 \keyword{datasets}

@@ -2,7 +2,7 @@
 % Please edit documentation in R/ash1_wgt.R
 \name{ash1_wgt}
 \alias{ash1_wgt}
-\title{Compute the average shifted histogram (ASH) for weighted data}
+\title{Compute the average shifted histogram (ASH) for one-dimensional weighted data}
 \usage{
 ash1_wgt(
   x,

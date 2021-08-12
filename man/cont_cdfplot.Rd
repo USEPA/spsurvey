@@ -74,7 +74,7 @@ The default is 5.}
 
 \item{cex.main}{Expansion factor for the plot title.  The default is 1.2.}
 
-\item{...}{Additional arguments passed to the cdf_plot function.}
+\item{...}{Additional arguments passed to the \code{cdf_plot} function.}
 }
 \value{
 A PDF file containing the CDF plots.
@@ -83,11 +83,10 @@ A PDF file containing the CDF plots.
 This function creates a pdf file containing CDF plots.  Input data for the
 plots is provided by a data frame utilizing the same structure as the data
 frame named "CDF" that is included in the output object produced by function
-cont_analysis.  Plots are produced for every combination of Type of
+\code{cont_analysis}.  Plots are produced for every combination of Type of
 population, subpopulation within Type, and indicator.
 }
 \examples{
-\dontrun{
 dframe <- data.frame(
   siteID = paste0("Site", 1:100),
   wgt = runif(100, 10, 100),
@@ -109,13 +108,14 @@ myanalysis <- cont_analysis(dframe,
   siteID = "siteID", weight = "wgt", xcoord = "xcoord", ycoord = "ycoord",
   stratumID = "stratum", popsize = mypopsize
 )
+\dontrun{
 cont_cdfplot("myanalysis.pdf", myanalysis$CDF, ylbl_r = "Stream Length (km)")
 }
 
 }
 \seealso{
 \describe{
-  \item{\code{\link{cdf_plot}}}{ for visualizing CDF plots}
+  \item{\code{\link{cdf_plot}}}{ for visualizing cumulative distribution functions (CDFs)}
   \item{\code{\link{cont_cdftest}}}{ for CDF hypothesis testing}
   }
 }

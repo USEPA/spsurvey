@@ -5,7 +5,7 @@
 #' Select a generalized random tessellation stratified (GRTS) sample
 #'
 #' Select a spatially balanced sample from a point (finite), linear (infinite),
-#' or areal (infinite) sample frame using the Generalized Random Tessellation
+#' or polygon / areal (infinite) sample frame using the Generalized Random Tessellation
 #' Stratified (GRTS) algorithm. The GRTS algorithm accommodates unstratified and
 #' stratified designs and allows for equal inclusion probabilities, unequal
 #' inclusion probabilities according to a categorical variable, and inclusion

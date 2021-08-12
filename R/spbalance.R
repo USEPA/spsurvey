@@ -64,7 +64,9 @@
 #' @examples
 #' sample <- grts(NE_Lakes, 30)
 #' spbalance(sample$sites_base, NE_Lakes)
-#' ###############################################################################
+#' strata_n <- c(low = 25, high = 30)
+#' sample_strat <- grts(NE_Lakes, n_base = strata_n, stratum_var = "ELEV_CAT")
+#' spbalance(sample_strat$sites_base, NE_Lakes, stratum_var = "ELEV_CAT", metric = "rmse")
 spbalance <- function(object, sframe, stratum_var = NULL, ip = NULL, metrics = "pielou", extents = FALSE) {
   if (is.null(stratum_var)) {
     object$stratum_var <- "None"

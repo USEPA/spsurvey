@@ -5,7 +5,7 @@
 # Date: February 1, 2005
 # Last Revised: January 22, 2021
 #
-#' Compute the average shifted histogram (ASH) for weighted data
+#' Compute the average shifted histogram (ASH) for one-dimensional weighted data
 #'
 #' Calculate the average shifted histogram estimate of a density based on one-dimensional data
 #'   from a survey design with weights.

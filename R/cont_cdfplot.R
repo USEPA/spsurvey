@@ -10,7 +10,7 @@
 #' This function creates a pdf file containing CDF plots.  Input data for the
 #' plots is provided by a data frame utilizing the same structure as the data
 #' frame named "CDF" that is included in the output object produced by function
-#' cont_analysis.  Plots are produced for every combination of Type of
+#' \code{cont_analysis}.  Plots are produced for every combination of Type of
 #' population, subpopulation within Type, and indicator.
 #'
 #' @param pdffile Name of the PDF file.  The default is "cdf2x2.pdf".
@@ -64,13 +64,13 @@
 #'
 #' @param cex.main Expansion factor for the plot title.  The default is 1.2.
 #'
-#' @param ... Additional arguments passed to the cdf_plot function.
+#' @param ... Additional arguments passed to the \code{cdf_plot} function.
 #'
 #' @return A PDF file containing the CDF plots.
 #'
 #' @seealso
 #'   \describe{
-#'   \item{\code{\link{cdf_plot}}}{ for visualizing CDF plots}
+#'   \item{\code{\link{cdf_plot}}}{ for visualizing cumulative distribution functions (CDFs)}
 #'   \item{\code{\link{cont_cdftest}}}{ for CDF hypothesis testing}
 #'   }
 #'
@@ -79,7 +79,6 @@
 #' @keywords survey plot
 #'
 #' @examples
-#' \dontrun{
 #' dframe <- data.frame(
 #'   siteID = paste0("Site", 1:100),
 #'   wgt = runif(100, 10, 100),
@@ -101,6 +100,7 @@
 #'   siteID = "siteID", weight = "wgt", xcoord = "xcoord", ycoord = "ycoord",
 #'   stratumID = "stratum", popsize = mypopsize
 #' )
+#' \dontrun{
 #' cont_cdfplot("myanalysis.pdf", myanalysis$CDF, ylbl_r = "Stream Length (km)")
 #' }
 #'

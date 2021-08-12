@@ -5,7 +5,7 @@
 \alias{NE_Lakes}
 \title{New England Lakes data}
 \format{
-An \code{sf} object with 5328 rows and 6 variables:
+An \code{sf} object with 200 rows and 6 variables:
 \describe{
   \item{\code{AREA}}{ Lake area in hectares.}
   \item{\code{AREA_CAT}}{ Lake area categories based on a hectare cutoff.}
@@ -20,7 +20,7 @@ An \code{sf} object with 5328 rows and 6 variables:
 NE_Lakes
 }
 \description{
-An \code{sf} point object of 5328 lakes in the Northeastern
+An \code{sf} point object of 200 lakes in the Northeastern
 United States.
 }
 \keyword{datasets}

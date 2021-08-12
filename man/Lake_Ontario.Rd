@@ -5,7 +5,7 @@
 \alias{Lake_Ontario}
 \title{Lake Ontario data}
 \format{
-An \code{sf} multipolygon object with 187 rows and 4 variables:
+An \code{sf} multipolygon object with 187 rows and 5 variables:
 \describe{
   \item{\code{COUNTRY}}{ Country.}
   \item{\code{RSRC_CLASS}}{ Bay class.}
