@@ -174,12 +174,12 @@ calculate_spbalance <- function(object_split, sframe_split, ip, metrics, extents
   }
 
   ## summing over each polygon
-  extent <- with(sftess, tapply(adjip, poly, sum))
+  propextent <- with(sftess, tapply(adjip, poly, sum))
   ## setting NA's equal to zero
-  extent[is.na(extent)] <- 0
+  propextent[is.na(propextent)] <- 0
 
   # making proportions and expected quantities
-  proportions <- extent / sum(extent)
+  proportions <- propextent / sum(propextent) # which equals n
   expected_proportions <- 1 / n
 
 
@@ -189,7 +189,7 @@ calculate_spbalance <- function(object_split, sframe_split, ip, metrics, extents
   # returning the results when stored by the user
   output <- list(values = values)
   if (extents) {
-    output$extent <- extent
+    output$extent <- with(sftess, tapply(polydens, poly, sum))
   }
   output
 }
