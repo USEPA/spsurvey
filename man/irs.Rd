@@ -127,7 +127,9 @@ Each stratum's list element is a named vector whose names represent each level o
 level's expected rho replacement sample sizes (within the stratum).}
 
 \item{n_near}{An integer from \code{1} to \code{10} specifying the number of
-nearest neighbor replacement sites to be selected for each base site.}
+nearest neighbor replacement sites to be selected for each base site. For
+infinite sample frames, the distance between a site and its nearest neighbor
+depends on \code{pt_density}.}
 
 \item{wgt_units}{The units used to compute the survey design weights. These
 units must be standard units as defined by the \code{set_units()} function in
