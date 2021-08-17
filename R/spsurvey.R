@@ -1,6 +1,6 @@
-#' spsurvey: Spatial Probability Survey Design and Analysis
+#' spsurvey: Spatial Survey Design and Analysis
 #'
-#' The spsurvey package provides functions for spatial probability survey design and analysis.
+#' The spsurvey package provides functions for spatial survey design and analysis.
 #' To select spatially balanced probability samples, spsurvey implements the
 #' Generalized Random Tessellation Stratified (GRTS) algorithm.  The GRTS algorithm
 #' can be applied to finite resources (point geometries) and infinite resources
