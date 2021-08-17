@@ -13,10 +13,9 @@
 #' @return A startup message
 #' @noRd
 .onAttach <- function(libname, pkgname) {
-  packageStartupMessage(
-    "spsurvey version 5.0 introduced significant changes to the
-    inputs and outputs of many functions. Please review the updated materials, reference manual, and
-    vignettes by visiting https://cran.r-project.org/web/packages/spsurvey/index.html
-    for more information."
-  )
+packageStartupMessage(
+"spsurvey version 5.0 introduced significant changes to the inputs and outputs
+of many functions. Please review the updated materials, reference manual, and
+vignettes by visiting https://cran.r-project.org/web/packages/spsurvey/index.html"
+)
 }
