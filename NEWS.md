@@ -22,6 +22,22 @@
 
 * Several functions have changed (both inputs and outputs) and functions in version 5.0.0 are not always backwards compatible with functions from previous versions. Though we recommend users upgrade existing code to work with the current version's simpler implementations, backwards compatibility can be achieved by downloading previous versions of spsurvey.
 
+# spsurvey 4.1.4 (2020-9-15)
+
+## Bug fix
+
+* This is a bug-fix release to specifically address issue:  
+* A new check in R-devel (part of --as-cran) looks for return without (): 
+this is reported on the CRAN results pages for fedora-clang and fedora-gcc.
+
+# spsurvey 4.1.3 (2020-6-15)
+
+## Bug fix
+
+* Fixed code so that sp design objects inherit CRS of input files and shapefiles written out also have inherited projection from input file. [(#2)](https://github.com/USEPA/spsurvey/issues/2)
+
+* Variable sframe$len was used in grts function and never defined. Now uses length_mdm that is calculated earlier. [(#6)](https://github.com/USEPA/spsurvey/issues/6)
+
 # spsurvey 4.1.2 (2020-03-31)
 
 ## Bug fix
