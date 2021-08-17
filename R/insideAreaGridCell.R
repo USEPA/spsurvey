@@ -1,5 +1,5 @@
-################################################################################
-# Function: insideAreaGridCell
+###############################################################################
+# Function: insideAreaGridCell (not exported)
 # Programmer: Tom Kincaid
 # Date: July 8, 2019
 #
@@ -8,7 +8,7 @@
 #' For each grid cell, this function calculates the clipped area of each polygon
 #' feature contained in the cell.
 #'
-#' @param sfobject The sf polygon object.
+#' @param sfobject The \code{sf} polygon object.
 #'
 #' @param rdx.u Vector of cell IDs.
 #'
@@ -20,37 +20,40 @@
 #'
 #' @param dy The y-axis grid cell dimension.
 #'
-#' @return Data frame containing the following variables: cellID, featureArea,
-#'   and featureID.
+#' @return Data frame containing the following variables: \code{cellID}, \code{featureArea},
+#'   and \code{featureID}.
 #'
-#' @author Tom Kincaid \email{Kincaid.Tom@epa.gov}
+#' @author Tom Kincaid \email{Kincaid.Tom@@epa.gov}
 #'
 #' @keywords survey
 #'
-#' @export
-################################################################################
+#' @noRd
+###############################################################################
 
 insideAreaGridCell <- function(sfobject, rdx.u, xc, yc, dx, dy) {
 
-# Create a data frame for results
+  # Create a data frame for results
 
   cell.df <- data.frame()
 
-# Calculate clipped feature areas for each cell
+  # Calculate clipped feature areas for each cell
 
-  for(i in 1:length(xc)) {
-    temp <- rbind(c(xc[i] - dx, yc[i] - dy), c(xc[i], yc[i] - dy),
-                  c(xc[i], yc[i]), c(xc[i] - dx, yc[i]),
-                  c(xc[i] - dx, yc[i] - dy))
+  for (i in 1:length(xc)) {
+    temp <- rbind(
+      c(xc[i] - dx, yc[i] - dy), c(xc[i], yc[i] - dy),
+      c(xc[i], yc[i]), c(xc[i] - dx, yc[i]),
+      c(xc[i] - dx, yc[i] - dy)
+    )
     sfcell <- st_sf(st_sfc(st_polygon(list(temp)), crs = st_crs(sfobject)))
     tempsf <- st_intersection(sfobject, sfcell)
     cell.df <- rbind(cell.df, cbind(
-                       cellID = rdx.u[i],
-                       featureArea = as.numeric(st_area(tempsf)),
-                       featureID = tempsf$id))
+      cellID = rdx.u[i],
+      featureArea = as.numeric(st_area(tempsf)),
+      featureID = tempsf$id
+    ))
   }
 
-# Return the data frame containing results
- 
+  # Return the data frame containing results
+
   return(cell.df)
 }

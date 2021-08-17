@@ -1,1066 +1,602 @@
-################################################################################
-# Function: grts
-# Programmers: Tony Olsen, Tom Kincaid, Don Stevens, Christian Platt,
-#              Denis White, Richard Remington
-# Date: October 8, 2002
-# Last Revised: April 1, 2020
+###############################################################################
+# Function: grts (exported)
+# Programmers: Tony Olsen, Tom Kincaid
+# Date: January 22, 2021
+#' Select a generalized random tessellation stratified (GRTS) sample
 #'
-#' Select a Generalized Random-Tesselation Stratified (GRTS) Sample
+#' Select a spatially balanced sample from a point (finite), linear (infinite),
+#' or polygon / areal (infinite) sample frame using the Generalized Random Tessellation
+#' Stratified (GRTS) algorithm. The GRTS algorithm accommodates unstratified and
+#' stratified designs and allows for equal inclusion probabilities, unequal
+#' inclusion probabilities according to a categorical variable, and inclusion
+#' probabilities proportional to a positive auxiliary variable. Several additional
+#' sampling options are included, such as including legacy (historical) sites,
+#' requiring a minimum distance between sites, and selecting replacement sites.
 #'
-#' This function select a GRTS sample of a finite, linear, or area resource.
-#' Frame elements must be located in 1- or 2-dimensional coordinate system.
-#' Sample may be equal probability or unequal probability (either categorical or
-#' proportional to auxiliary variable).  May designate panels of sites for
-#' surveys over time.
 #'
-#' @param design Named list of stratum design specifications which are also
-#'   lists.  Stratum names must be subset of values in stratum argument.  Each
-#'   stratum list has four components:
-#'   \describe{
-#'     \item{panel}{named vector of sample sizes for each panel in stratum}
-#'     \item{seltype}{the type of random selection, which must be one of
-#'       following: "Equal" - equal probability selection, "Unequal" - unequal
-#'       probability selection by the categories specified in caty.n and mdcaty,
-#'       or "Continuous" - unequal probability selection proportional to
-#'       auxiliary variable mdcaty}
-#'     \item{caty.n}{if seltype equals "Unequal", a named vector of sample sizes
-#'       for each category specified by mdcaty, where sum of the sample sizes
-#'       must equal sum of the panel sample sizes, and names must be a subset of
-#'       values in mdcaty}
-#'     \item{over}{number of replacement sites ("oversample" sites) for the
-#'       entire design, which is set equal to 0 if none are required)}
+#' @param sframe The sample frame as an \code{sf} object. The coordinate
+#'   system for \code{sframe} must be one where distance for coordinates is meaningful.
+#'
+#' @param n_base The base sample size required. If the design is unstratified,
+#'   this is a single numeric value. If the design is stratified, this is a named
+#'   vector whose names represent each stratum and whose values represent each
+#'   stratum's sample size. These names must match the values of the stratification
+#'   variable represented by \code{stratum_var}.
+#'
+#' @param stratum_var A character string containing the name of the column from
+#'   \code{sframe} that identifies stratum membership for each element in the frame.
+#'   If stratum equals \code{NULL}, the design is unstratified and all elements in \code{sframe}
+#'   are eligible to be selected in the sample. The default is \code{NULL}.
+#'
+#' @param seltype A character string or vector indicating the inclusion probability type,
+#'   which must be one of following: \code{"equal"} for equal inclusion probabilities;
+#'   \code{"unequal"} for unequal inclusion probabilities according to a categorical
+#'   variable specified by \code{caty_var}; and \code{"proportional"} for inclusion
+#'   probabilities proportional to a positive auxiliary variable. If the design is
+#'   unstratified, \code{seltype} is a single character vector. If the design is stratified, \code{seltype} is a named vector
+#'   whose names represent each stratum and whose values represent each stratum's
+#'   inclusion probability type. \code{seltype}'s default value tries to match the
+#'   intended inclusion probability type: If \code{caty_var} and \code{aux_var} are
+#'   not specified, \code{seltype} is \code{"equal"}; if \code{caty_var} is specified,
+#'   \code{seltype} is \code{"unequal"}; and if \code{aux_var} is specified, \code{seltype}
+#'   is \code{"proportional"}.
+#'
+#' @param caty_var A character string containing the name of the column from
+#'   \code{sframe} that represents the unequal probability variable.
+#'
+#' @param caty_n A character vector indicating the expected sample size for each
+#'   level of \code{caty_var}, the unequal probability variable. If the design
+#'   is unstratified, \code{caty_n} is a named vector whose names represent each
+#'   level of \code{caty_var} and whose values represent each level's expected
+#'   sample size. The sum of \code{caty_n} must equal \code{n_base}. If the design
+#'   is stratified and the expected sample sizes are the same among strata, \code{caty_n} is
+#'   a named vector whose names represent represent each
+#'   level of \code{caty_var} and whose values represent each level's expected
+#'   sample size -- these expected sample sizes are applied to all strata. The sum of
+#'   \code{caty_n} must equal each stratum's value in \code{n_base}.
+#'   If the design is stratified and the expected sample sizes differ among strata,
+#'   \code{caty_n} is a list where each element  is named as a stratum in \code{n_base}.
+#'   Each stratum's list element is a named vector whose
+#'   names represent each level of \code{caty_var} and whose values represent each
+#'   level's expected sample size (within the stratum). The sum of the values in each stratum's
+#'   list element must equal that stratum's value in \code{n_base}.
+#'
+#' @param aux_var A character string containing the name of the column from
+#'   \code{sframe} that represents the proportional (to size) inclusion probability
+#'   variable (auxiliary variable). This auxiliary variable must be positive, and the resulting
+#'   inclusion probabilities are proportional to the values of the auxiliary variable.
+#'   Larger values of the auxiliary variable result in higher inclusion probabilities.
+#'
+#' @param legacy_var If \code{sframe} is a \code{POINT} or \code{MULTIPOINT} geometry (a finite sample frame),
+#'   \code{legacy_var} is a character string containing the name of the column
+#'   from \code{sframe} that represents the legacy site variable. For legacy sites, the values of the
+#'   \code{legacy_var} column in \code{sframe} must contain character strings that
+#'   act as a legacy site identifier. For non-legacy sites, the values of the
+#'   \code{legacy_var} column in \code{sframe} must be \code{NA}.
+#'
+#' @param legacy_sites If \code{sframe} is a \code{LINESTRING}, \code{MULTILINESTRING},
+#'   \code{POLYGON}, or \code{MULTIPOLYGON} geometry (an infinite sample frame),
+#'   \code{legacy_sites} is an sf object with a \code{POINT} geometry representing the
+#'   legacy sites.
+#'
+#' @param legacy_stratum_var A character string containing the name of the column from
+#'   \code{legacy_sites} that identifies stratum membership for each element of \code{legacy_sites}.
+#'   This argument is required when the design is stratified and its levels
+#'   must be contained in the levels of \code{stratum_var}. The default value of \code{legacy_stratum_var}
+#'   is \code{stratum_var}, so \code{legacy_stratum_var} need only be specified explicitly when
+#'   the name of the stratification variable in \code{legacy_sites} differs from \code{stratum_var}.
+#'
+#' @param mindis A numeric value indicating the desired minimum distance between sampled
+#'   sites. If design is stratified, then mindis is applied separately for each stratum.
+#'   The units of \code{mindis} must match the units in \code{sframe}.
+#'
+#' @param maxtry The number of maximum attempts to apply the minimum distance algorithm to obtain
+#'   the desired minimum distance between sites. Each iteration takes roughly as long as the
+#'   standard GRTS algorithm. Successive iterations will always contain at least as many
+#'   sites satisfying the minimum distance requirement as the previous iteration. The algorithm stops
+#'   when the minimum distance requirement is met or there are \code{maxtry} iterations.
+#'   The default number of maximum iterations is \code{10}.
+#'
+#' @param n_over If the design is unstratified and \code{seltype} is \code{"equal"} or \code{"proportional"},
+#'   \code{n_over} is an integer specifying the number of reverse hierarchically
+#'   ordered (rho) replacement sites desired.  If the design is unstratified and \code{seltype} is \code{"unequal"},
+#'   then \code{n_over} is a named character vector whose names match the levels of
+#'   \code{caty_var} and whose values are the expected rho replacement sample sizes for each
+#'   level. If the design is stratified and \code{seltype} is \code{"equal"} or \code{"proportional"},
+#'   \code{n_over} is a named vector whose names match the names of \code{n_base} and whose values
+#'   indicate the number of rho replacement sites for each stratum. If the design is stratified and
+#'   \code{seltype} is \code{"unequal"}, \code{n_over} changes based on whether the expected
+#'   rho replacement sample sizes change among strata. If \code{n_over} does not change among strata, \code{n_over}
+#'   is a named vector whose names match the names of \code{caty_var} and whose values are the expected rho replacement
+#'   sample sizes to be used for each stratum. If \code{n_over} changes among strata, \code{n_over} is a
+#'   list where each element represents a stratum in \code{n_base}.
+#'   The order of the strata in this list must match the order of the strata in \code{n_base}.
+#'   Each stratum's list element is a named vector whose names represent each level of \code{caty_var} and whose values represent each
+#'   level's expected rho replacement sample sizes (within the stratum).
+#'
+#' @param n_near An integer from \code{1} to \code{10} specifying the number of
+#'   nearest neighbor replacement sites to be selected for each base site. For
+#'   infinite sample frames, the distance between a site and its nearest neighbor
+#'   depends on \code{pt_density}.
+#'
+#' @param wgt_units The units used to compute the survey design weights. These
+#'   units must be standard units as defined by the \code{set_units()} function in
+#'   the units package. The default units match the units of the sf object.
+#'
+#' @param pt_density A numeric value controlling the density of the GRTS approximation
+#'   for infinite sample frames. The GRTS approximation for infinite sample
+#'   frames vastly improves computational efficiency by generating many finite points and
+#'   selecting a sample from the points. \code{pt_density} represents the density
+#'   of finite points per unit to use in the approximation (and the units match
+#'   the units of the sample frame. The default is a density
+#'   such that the number of finite points used in the approximation equals 10
+#'   times the sample size requested.
+#'
+#' @param DesignID A character string indicating the naming structure for each
+#'   site's identifier selected in the sample, which is included as a variable in the
+#'   sf object in the function's output.
+#'
+#' @param SiteBegin A character string indicating the first number to use to match
+#'   with \code{DesignID} while creating each site's identifier selected in the sample. Successive
+#'   sites are given successive integers. The default starting number is \code{1}.
+#'
+#'
+#' @return A list with five elements:
+#'   \itemize{
+#'     \item \code{sites_legacy} An sf object containing legacy sites. This is
+#'       \code{NULL} if legacy sites were not included in the sample.
+#'     \item \code{sites_base} An sf object containing the base sites.
+#'     \item \code{sites_over} An sf object containing the reverse hierarchically
+#'       ordered replacement sites. This is \code{NULL} if no reverse hierarchically
+#'       ordered replacement sites were included in the sample.
+#'     \item \code{sites_near} An sf object containing the nearest neighbor
+#'       replacement sites. This is \code{NULL} if no nearest neighbor replacement
+#'       sites were included in the sample.
+#'     \item \code{design} A list documenting the specifications of this design.
+#'       This can be checked to verify your design ran as intended.
+#'       \itemize{
+#'         \item \code{Call} The original function call.
+#'         \item \code{stratum} The unique strata. This equals \code{"None"} if
+#'           the design was unstratified.
+#'         \item \code{n_base} The base sample size per stratum.
+#'         \item \code{seltype} The selection type per stratum.
+#'         \item \code{caty_n} The expected sample sizes for each level of the
+#'           unequal probability grouping variable per stratum. This equals
+#'           \code{NULL} when \code{seltype} is not \code{"unequal"}.
+#'         \item \code{legacy} A logical variable indicating whether legacy sites
+#'           were included in the sample.
+#'         \item \code{mindis} The minimum distance requirement desired. This
+#'           equals \code{NULL} if there was no minimum distance requirement.
+#'         \item \code{n_over} The reverse hierarchically ordered replacement
+#'           site sample sizes per stratum. If \code{seltype} is \code{unequal},
+#'           this represents the expected sample sizes. This is \code{NULL}
+#'           if no reverse hierarchically ordered replacement sites were included
+#'           in the sample.
+#'         \item \code{n_near} The number of nearest neighbor replacement sites
+#'           desired. This is \code{NULL} if no nearest neighbor replacement
+#'           sites were included in the sample.
+#'       }
 #'   }
-#'   Example design for a stratified sample:\cr
-#'     design=list(
-#'       Stratum1=list(panel=c(PanelOne=50), seltype="Equal", over=10),
-#'       Stratum2=list(panel=c(PanelOne=50, PanelTwo=50), seltype="Unequal",
-#'         caty.n=c(CatyOne=25, CatyTwo=25, CatyThree=25, CatyFour=25),
-#'         over=75))
-#'   Example design for an unstratified sample:\cr
-#'     design <- list(
-#'       None=list(panel=c(Panel1=50, Panel2=100, Panel3=50), seltype="Unequal",
-#'         caty.n=c("Caty 1"=50, "Caty 2"=25, "Caty 3"=25, "Caty 4"=25,
-#'         "Caty 5"=75), over=100))
-#'
-#' @param DesignID Name for the design, which is used to create a site ID for
-#'   each site.  The default is "Site".
-#'
-#' @param SiteBegin Number to use for first site in the design.  The default
-#'   is 1.
-#'
-#' @param type.frame The type of frame, which must be one of following:
-#'   "finite", "linear", or "area".  The default is NULL.
-#'
-#' @param src.frame Source of the frame, which equals "sf.object" if the frame
-#'   is contained in an sf package object, "shapefile" if the frame is to be
-#'   read from a shapefile, "sp.object" if the frame is obtained from an sp
-#'   package object, or "att.frame" if type.frame equals "finite" and the
-#'   frame is included in att.frame.  The default is "shapefile".
-#'
-#' @param in.shape Name of a shapefile containing the frame, which is required
-#'   when src.frame equals "shapefile".  The shapefile name should include the
-#'   ".shp" extension.  If the name does not include that extension, it will be
-#'   added.  The default is NULL.
-#'
-#' @param sf.object An sf package object containing the frame, which is required
-#'   when src.frame equals "sf.object".  The default is NULL.
-#'
-#' @param sp.object Name of the sp package object when src.frame equals
-#'   "sp.object". The default is NULL.
-#'
-#' @param att.frame Data frame composed of attributes associated with elements
-#'   in the frame.  If src.frame equals "att.frame", then att.frame must include
-#'   columns that contain x-coordinates and y-coordinates for each element in
-#'   the frame.  If src.frame does not equal "att.frame" and att.frame is not
-#'   equal to NULL, then an sf object is created from att.frame and the geometry
-#'   column from the object named "sf.object" that is created by the function.
-#'   The default is NULL.
-#'
-#' @param id This argument is depricated.
-#'
-#' @param xcoord Character string containing the name of the column from
-#'   att.frame that identifies x-coordinates when src.frame equals "att.frame".
-#'   If xcoord equals NULL, then xcoord is given the value "x".  The default is
-#'   NULL.
-#'
-#' @param ycoord Character string containing the name of the column from
-#'   att.frame that identifies y-coordinates when src.frame equals "att.frame".
-#'   If ycoord equals NULL, then ycoord is given the value "y".  The default is
-#'   NULL.
-#'
-#' @param stratum Character string containing the name of the column from
-#'   att.frame that identifies stratum membership for each element in the frame.
-#'   If stratum equals NULL, the design is unstratified, and a column named
-#'   "stratum" (with all of its elements equal to the stratum name specified in
-#'   design) is added to att.frame.  The default is NULL.
-#'
-#' @param mdcaty Character string containing the name of the column from
-#'   att.frame that identifies the unequal probability category for each element
-#'   in the frame.  The default is NULL.
-#'
-#' @param startlev Initial number of hierarchical levels to use for the GRTS
-#'   grid, which must be less than or equal to maxlev (if maxlev is specified)
-#'   and cannot be greater than 11.  The default is NULL.
-#'
-#' @param maxlev Maxmum number of hierarchical levels to use for the GRTS
-#'   grid, which cannot be greater than 11.  The default is 11.
-#'
-#' @param maxtry This argument is depricated.
-#'
-#' @param shift.grid Option to randomly shift the hierarchical grid, where
-#'   TRUE means shift the grid and FALSE means do not shift the grid, which is
-#'   useful if one desires strict spatial stratification by hierarchical grid
-#'   cells.  The default is TRUE.
-#'
-#' @param do.sample Named vector that provides the option controlling sample
-#'   selection for each stratum, where TRUE means select a sample from a stratum
-#'   and FALSE means return the sample frame for a stratum in reverse
-#'   hierarchical order.  Note that FALSE can only be used when type.frame
-#'   equals "points" and seltype equals "Equal".  Names for the vector must
-#'   match the names in design.  If the vector is not named, then the names in
-#'   design are used.  The default is TRUE for each stratum.
-#'
-#' @param shapefile Option to create a shapefile containing the survey design
-#'   information,  where TRUE equals create a shapefile and FALSE equals do not
-#'   create a shapefile.  The default is TRUE.
-#'
-#' @param prjfilename This argument is depricated.
-#'
-#' @param out.shape  Name of the output shapefile.  The default is "sample.shp".
-#'
-#' @return  An object of class SpatialDesign containing the survey design
-#'   information and any additional attribute variables that were provided.
-#'   Optionally, a shapefile can be created that contains the survey design
-#'   information.
-#'
-#' @section Other Functions Required:
-#'   \describe{
-#'     \item{\code{\link{grtsarea}}}{select a GRTS sample of an area resource}
-#'     \item{\code{\link{grtslin}}}{select a GRTS sample of a linear resource}
-#'     \item{\code{\link{grtspts}}}{select a GRTS sample of a finite resource}
-#'     \item{\code{\link{SpatialPoints}}}{sp package function to create an
-#'       object of class SpatialPoints}
-#'     \item{\code{\link{SpatialPointsDataFrame}}}{sp package function to create
-#'       an object of class SpatialPointsDataFrame}
+#'   When non-\code{NULL}, the \code{sites_legacy}, \code{sites_base},
+#'   \code{sites_over}, and \code{sites_near} objects contain the original columns
+#'   in \code{sframe} and include a few additional columns. These additional columns
+#'   are
+#'   \itemize{
+#'     \item \code{siteID} A site identifier (as named using the \code{DesignID}
+#'       and \code{SiteBegin} arguments to \code{grts()}).
+#'     \item \code{siteuse} Whether the site is a legacy site (\code{Legacy}), base
+#'       site (\code{Base}), reverse hierarchically ordered replacement site
+#'       (\code{Over}), or nearest neighbor replacement site (\code{Near}).
+#'     \item \code{replsite} The replacement site ordering. \code{replsite} is
+#'       \code{None} if the site is not a replacement site, \code{Next} if it is
+#'       the next reverse hierarchically ordered replacement site to use, or
+#'       \code{Near_}, where the word following \code{_} indicates the ordering of sites closest to
+#'       the originally sampled site.
+#'     \item \code{lon_WGS84} Longitude coordinates using the WGS84 coordinate
+#'       system (EPSG:4326).
+#'     \item \code{lat_WGS84} Latitude coordinates using the WGS84 coordinate
+#'       system (EPSG:4326).
+#'     \item \code{stratum} A stratum indicator. \code{stratum} is \code{None}
+#'       if the design was unstratified. If the design was \code{stratified},
+#'       \code{stratum} indicates the stratum.
+#'     \item \code{wgt} The survey design weight.
+#'     \item \code{ip} The site's original inclusion probability (the reciprocal)
+#'       of (\code{wgt}).
+#'     \item \code{caty} An unequal probability grouping indicator. \code{caty}
+#'       is \code{None} if the design did not use unequal inclusion probabilities.
+#'       If the design did use unequal inclusion probabilities, \code{caty}
+#'       indicates the unequal probability level.
+#'     \item \code{aux} The auxiliary proportional probability variable. This
+#'       column is only returned if \code{seltype} was \code{proportional} in the
+#'       original design.
 #'   }
 #'
-#' @author Tom Kincaid  email{Kincaid.Tom@epa.gov}
+#' @author Tony Olsen \email{olsen.tony@@epa.gov}
 #'
-#' @keywords survey
-#' 
-#' @importFrom sf st_read st_as_sf st_geometry st_coordinates st_set_geometry st_geometry_type st_agr st_length st_area st_write st_crs
-#'  
-#' @importFrom sp SpatialPoints SpatialPointsDataFrame proj4string CRS
-#' 
+#' @keywords survey design
+#'
+#' @seealso
+#'   \describe{
+#'     \item{\code{\link{irs}}}{ to select a sample that is not spatially balanced}
+#'  }
+#'
+#' @references
+#' Stevens Jr., Don L. and Olsen, Anthony R. (2004). Spatially balanced sampling
+#' of natural resources. \emph{Journal of the american Statistical association}, 99(465), 262-278.
+#'
 #' @examples
-#' \dontrun{
-#'   test_design <- list(
-#'     Stratum1=list(panel=c(PanelOne=50), seltype="Equal", over=10),
-#'     Stratum2=list(panel=c(PanelOne=50, PanelTwo=50), seltype="Unequal",
-#'       caty.n=c(CatyOne=25, CatyTwo=25, CatyThree=25, CatyFour=25), over=75))
-#'   test.sample <- grts(design=test_design, DesignID="TestSite",
-#'     type.frame="area", src.frame="shapefile", in.shape="test_shapefile.shp",
-#'     stratum="test_stratum", mdcaty="test_mdcaty", shapefile=TRUE,
-#'     out.shape="test_sample.shp")
-#' }
-#'
+#' sample <- grts(NE_Lakes, n_base = 100)
+#' strata_n <- c(low = 25, high = 30)
+#' sample_strat <- grts(NE_Lakes, n_base = strata_n, stratum_var = "ELEV_CAT")
+#' sample_over <- grts(NE_Lakes, n_base = 30, n_over = 5)
 #' @export
 ################################################################################
+grts <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = NULL,
+                 caty_n = NULL, aux_var = NULL, legacy_var = NULL,
+                 legacy_sites = NULL, legacy_stratum_var = NULL, mindis = NULL,
+                 maxtry = 10, n_over = NULL, n_near = NULL, wgt_units = NULL,
+                 pt_density = NULL, DesignID = "Site", SiteBegin = 1) {
+  if (inherits(sframe, c("tbl_df", "tbl"))) { # identify if tibble class elements are present
+    class(sframe) <- setdiff(class(sframe), c("tbl_df", "tbl"))
+    # remove tibble class for rownames warning
+  }
 
-grts <- function(design, DesignID = "Site", SiteBegin = 1, type.frame = NULL,
-   src.frame = "shapefile", in.shape = NULL, sf.object = NULL, sp.object = NULL,
-   att.frame = NULL, id = NULL, xcoord = NULL, ycoord = NULL, stratum = NULL,
-   mdcaty = NULL, startlev = NULL, maxlev = 11, maxtry = NULL, shift.grid =
-   TRUE, do.sample = rep(TRUE, length(design)), shapefile = TRUE, prjfilename =
-   NULL, out.shape = "sample.shp") {
+  # Create warning indicator and data frame to collect all potential issues during
+  # sample selection
+  warn_ind <- FALSE
+  warn_df <- data.frame(stratum = "Stratum", func = "Calling Function", warn = "Message")
 
-# Ensure that a design list is provided
+  # Ensure that the geometry types for sframe are consistent
 
-if(is.null(design))
-   stop("\nA design list must be provided.")
+  temp <- st_geometry_type(sframe)
+  tst <- all(temp %in% c("POINT", "MULTIPOINT")) |
+    all(temp %in% c("LINESTRING", "MULTILINESTRING")) |
+    all(temp %in% c("POLYGON", "MULTIPOLYGON"))
+  if (!tst) {
+    stop(paste("\nThe geometry types for the survey frame object passed to function grts: \n\"",
+      unique(st_geometry_type(sframe)), "\" are not consistent.",
+      sep = ""
+    ))
+  }
 
-# Ensure that the design list is named and determine strata names from the
-# design list
+  # Drop m and z values to ensure no issues with grts functionality with sf object
+  if (!is.null(st_m_range(sframe)) & !is.null(st_z_range(sframe))) {
+    warn_ind <- TRUE
+    warn_df$warn <- "\nThe survey frame object passed to function grts contains m or z values - they are being dropped to ensure functionality in grts."
+    sframe <- st_zm(sframe)
+  }
 
-strata.names <- names(design)
-if(is.null(strata.names)) {
-   if(length(design) > 1) {
-      stop("\nThe design list must be named.")
-   } else {
-      warning("\nSince the single stratum specified in the design list was not named, \n\"None\" will be used for the stratum name.\n")
-      strata.names <- "None"
-      names(design) <- strata.names
-   }
-}
+  # Determine type of sample frame: point, line, polygon
+  if (all(temp %in% c("POINT", "MULTIPOINT"))) sf_type <- "sf_point"
+  if (all(temp %in% c("LINESTRING", "MULTILINESTRING"))) sf_type <- "sf_linear"
+  if (all(temp %in% c("POLYGON", "MULTIPOLYGON"))) sf_type <- "sf_area"
 
-# Ensure that type.frame contains a valid value
+  if (all(is.null(legacy_sites), is.null(legacy_var))) {
+    legacy_option <- FALSE
+  } else {
+    legacy_option <- TRUE
+  }
 
-if(is.null(type.frame))
-   stop("\nA value must be provided for argument type.frame.")
-temp <- match(type.frame, c("finite", "linear", "area"), nomatch=0)
-if(temp == 0)
-   stop(paste("\nThe value provided for argument type.frame, \"", type.frame, "\", is not a valid value.", sep=""))
+  if (is.null(stratum_var)) {
+    stratum <- NULL
+  } else {
+    stratum <- names(n_base)
+  }
 
-# Ensure that src.frame contains a valid value
+  # set default seltype if not provided (based on specification of other variables)
+  if (is.null(seltype)) {
+    if (is.null(caty_var) & is.null(aux_var)) {
+      seltype <- "equal"
+    } else if (!is.null(caty_var)) {
+      seltype <- "unequal"
+    } else {
+      seltype <- "proportional"
+    }
+  }
 
-temp <- match(src.frame, c("sf.object", "shapefile", "sp.object", "att.frame"),
-   nomatch=0)
-if(temp == 0)
-   stop(paste("\nThe value provided for argument src.frame, \"", src.frame, "\", is not a valid value.", sep=""))
 
-# If src.frame equals "shapefile", then create an sf object from the shapefile
+  # check input. If errors, dsgn_check will stop grtspts and report errors.
+  dsgn_check(
+    sframe = sframe, sf_type = sf_type, legacy_sites = legacy_sites,
+    legacy_option = legacy_option, stratum = stratum, seltype = seltype,
+    n_base = n_base, caty_n = caty_n, n_over = n_over, n_near = n_near,
+    stratum_var = stratum_var, caty_var = caty_var, aux_var = aux_var,
+    legacy_var = legacy_var, mindis = mindis, DesignID = DesignID,
+    SiteBegin = SiteBegin, maxtry = maxtry
+  )
 
-if(src.frame == "shapefile") {
-   if(is.null(shapefile))
-      stop("\nA shapefile name is required when the value provided for argument src.frame \nequals \"shapefile\".")
-   nc <- nchar(in.shape)
-   if(substr(in.shape, nc-3, nc) != ".shp") {
-      if(substr(in.shape, nc-3, nc-3) == ".") {
-         in.shape <- paste(substr(in.shape, 1, nc-4), ".shp", sep="")
-      } else {
-         in.shape <- paste(in.shape, ".shp", sep="")
+  # preserve original sframe names
+  sframe_names <- names(sframe)
+
+  ## Create variables in sample frame if needed.
+  # Create unique sample frame ID values
+  sframe$id <- 1:nrow(sframe)
+
+  # Assign stratum variable or create it if design not stratified and variable not provided.
+  if (is.null(stratum_var)) {
+    stratum_var <- "stratum"
+    sframe$stratum <- "None"
+    stratum <- c("None") # names of all strata
+  } else {
+    # ensure class for stratum variable is character and assign to stratum
+    sframe$stratum <- as.character(sframe[[stratum_var]])
+  }
+
+  # set caty, aux and legacy variables in sample frame if needed
+  if (!is.null(caty_var)) sframe$caty <- as.character(sframe[[caty_var]])
+  if (!is.null(aux_var)) sframe$aux <- sframe[[aux_var]]
+  if (!is.null(legacy_var)) sframe$legacy <- sframe[[legacy_var]]
+
+  # set stratum, caty, aux and legacy variables in legacy_sites if needed
+  # add idpts to legacy_sites
+  if (legacy_option == TRUE & sf_type != "sf_point") {
+    legacy_names <- names(legacy_sites)
+    legacy_sites$idpts <- 1:nrow(legacy_sites)
+    if (stratum[1] == "None") {
+      legacy_sites$stratum <- "None"
+    } else {
+      if (is.null(legacy_stratum_var)) {
+        legacy_stratum_var <- stratum_var
       }
-   }
-   sf.object <- st_read(in.shape, quiet = TRUE)
-}
-
-# If src,frame equals "sf.object", ensure that an sf object was provided
-
-if(src.frame == "sf.object") {
-   if(is.null(sf.object))
-      stop("\nAn sf package object is required when the value provided for argument src.frame \nequals \"sf.object\".")
-}
-
-# If src.frame equals "sp.object", then create an sf object from the sp object
-
-if(src.frame == "sp.object") {
-   if(is.null(sp.object))
-      stop("\nAn sp package object is required when the value provided for argument src.frame \nequals \"sp.object\".")
-   sf.object <- st_as_sf(sp.object)
-}
-
-# If src.frame equals "att.frame", ensure that type.frame equals "finite",
-# ensure that a data frame object is assigned to argument att.frame, and create
-# an sf object from att.frame
-
-if(src.frame == "att.frame") {
-   if(type.frame != "finite") {
-      stop(paste("\nThe value provided for argument type.frame must equal \"finite\" when argument \nsrc.frame equals \"att.frame\"  The value provided for argument type.frame was \n\"", type.frame, "\".", sep=""))
-   }
-   if(is.null(att.frame)) {
-      stop(paste("\nA data frame object must be assigned to argument att.frame when argument\nsrc.frame equals \"att.frame\"."))
-   }
-   if(is.null(xcoord) | is.null(ycoord)) {
-      stop(paste("\nValues must be provided for arguments xcoord and ycoord when argument src.frame \nequals \"att.frame\"."))
-   }
-   if(!(all(c(xcoord, ycoord) %in% names(att.frame)))) {
-      stop(paste("\nThe values provided for arguments xcoord and ycoord do not occur among the \nnames for att.frame."))
-   }
-   sf.object <- st_as_sf(att.frame, coords = c(xcoord, ycoord))
-}
-
-# If src.frame does not equal "att.frame" and att.frame is not NULL, create an
-# sf object composed of att.frame and the geometry column from sf.object
-
-if(src.frame != "att.frame" & !is.null(att.frame)) {
-   geom <- st_geometry(sf.object)
-   sf.object <- st_set_geometry(att.frame, geom)
-}
-
-# Ensure that the class attribute for sf.object contains only the values "sf"
-# and "data.frame"
-
-class(sf.object) <- c("sf", "data.frame")
-
-# Ensure that the geometry types for sf.object are consistent
-
-temp <- st_geometry_type(sf.object)
-tst <- all(temp %in% c("POINT", "MULTIPOINT")) |
-       all(temp %in% c("LINESTRING", "MULTILINESTRING")) |
-       all(temp %in% c("POLYGON", "MULTIPOLYGON"))
-if(!tst) {
-   stop(paste("\nThe geometry types for the survey frame object passed to function grts: \n\"", unique(st_geometry_type(sf.object)), "\" are not consistent.", sep=""))
-}
-
-# Create ID values
-
-id <- "id"
-sf.object$id <- 1:nrow(sf.object)
-
-# If stratum equals NULL, ensure that the design list specifies a single stratum
-# and add an attribute named "stratum" to sf.object.  Otherwise, ensure that the
-# name provided for stratum identifies an attribute in sf.object.
-
-if(is.null(stratum)) {
-   if(length(strata.names) > 1)
-      stop("\nThe attribute in sf.object that identifies stratum membership was not provided \nand the design list specifies more than one stratum.")
-   stratum <- "stratum"
-   sf.object$stratum <- factor(rep(strata.names, nrow(sf.object)))
-} else {
-   temp <- match(stratum, names(sf.object), nomatch=0)
-   if(temp == 0)
-      stop(paste("\nThe value provided for the attribute in sf.object that identifies stratum \nmembership for each feature, \"", stratum, "\", does not occur among the \nattributes in sf.object.", sep=""))
-}
-
-# Ensure that the stratum attribute in sf.object is a factor
-
-if(!is.factor(sf.object$stratum))
-   sf.object[, stratum] <- as.factor(sf.object[, stratum, drop = TRUE])
-
-# Check whether strata names from the design list occur among the values for the
-# stratum attribute in sf.object
-
-temp <- match(strata.names, levels(sf.object[, stratum, drop = TRUE]),
-   nomatch=0)
-if(any(temp == 0)) {
-   temp.str <- vecprint(strata.names[temp == 0])
-   stop(paste("\nThe following strata names in the design list do not occur among the strata \nnames in the stratum attribute in sf.object:\n", temp.str, sep=""))
-}
-
-# If seltype is not "Equal" for every stratum, then do the following: (1) ensure
-# that mdcaty is not NULL and (2) ensure that the name provided for mdcaty
-# identifies an attribute in sf.object
-
-seltype.ind <- FALSE
-for(s in strata.names) {
-   if(design[[s]]$seltype != "Equal") {
-      seltype.ind <- TRUE
-   }
-}
-if(seltype.ind) {
-   if(is.null(mdcaty))
-      stop(paste("\nThe name of the attribute in sf.object that identifies the unequal probability \ncategory for each feature must be provided.", sep=""))
-   temp <- match(mdcaty, names(sf.object), nomatch=0)
-   if(temp == 0)
-      stop(paste("\nThe value provided for the attribute in sf.object that identifies the unequal \nprobability category for each feature, \"", mdcaty, "\", does not occur among \nthe attributes in sf.object.", sep=""))
-}
-
-# Ensure that startlev and maxlev are valid and compatible values
-
-if(!is.null(startlev)) {
-   if(startlev < 1)
-      stop("\nThe value for startlev cannot be less than 1")
-   if(startlev > 11)
-      stop("\nThe value for startlev cannot be greater than 11")
-   if(maxlev < 1)
-      stop("\nThe value for maxlev cannot be less than 1")
-   if(maxlev > 11)
-      stop("\nThe value for maxlev cannot be greater than 11")
-   if(startlev > maxlev)
-      stop("\nThe value for startlev cannot be greater than the value for maxlev")
-} else {
-   if(maxlev < 1)
-      stop("\nThe value for maxlev cannot be less than 1")
-   if(maxlev > 11)
-      stop("\nThe value for maxlev cannot be greater than 11")
-}
-
-# As necessary, initialize parallel processing
-
-if(type.frame != "finite") {
-   ncore <- detectCores()
-   tst <- Sys.getenv("_R_CHECK_LIMIT_CORES_", "")
-   if(nzchar(tst)) {
-      ncore <- ifelse(ncore == 1L, 1L, 2L)
-   } else {
-      temp <- as.integer(floor(0.1 * ncore))
-      ncore <- ifelse(ncore == 1L, 1L, ifelse(temp == 0, ncore - 1L, ncore - temp))
-   }
-   cl <- makeCluster(ncore, methods=FALSE)
-   invisible(clusterEvalQ(cl, library(sf)))
-   setDefaultCluster(cl)
-}
-
-# Begin the section for a finite population (discrete points)
-
-if(type.frame == "finite") {
-
-   first <- TRUE
-   SiteBegin <- SiteBegin
-
-# Ensure that do.sample is the correct length and is named
-
-   if(length(do.sample) > 1) {
-      if(length(do.sample) != length(design))
-         stop("\nArgument do.sample must be the same length as the design list.")
-      if(is.null(names(do.sample))) {
-         names(do.sample) <- strata.names
-      } else {
-         temp <- match(names(do.sample), strata.names, nomatch=0)
-         if(any(temp) == 0)
-            temp.str <- vecprint(names(do.sample)[temp == 0])
-            stop(paste("\nThe following names in do.sample do not occur among the names in design:\n", temp.str, sep=""))
-      }
-   } else if(is.null(names(do.sample))) {
-      names(do.sample) <- strata.names
-   }
-
-# Begin the loop for strata
-
-   for(s in strata.names) {
-
-      cat(paste("\nStratum:", s, "\n"))
-
-# Create the sample frame
-
-      temp <- sf.object[, stratum, drop = TRUE] == s
-      grtspts.ind <- TRUE
-      if(sum(temp) == 0) {
-         warning(paste("\nThe stratum column in the attributes data frame contains no values that match \nthe stratum named \"", s, "\" in the design list.\n", sep=""))
-         next
-      } else if(sum(temp) == 1) {
-         warning(paste("\nThe stratum column in the attributes data frame contains a single value that \nmatches the stratum named \"", s, "\" in the design list. \nThe sample for this stratum will be composed of a single point.\n", sep=""))
-         grtspts.ind <- FALSE
-      }
-
-      sframe <- subset(sf.object, temp)
-      if(design[[s]]$seltype == "Equal") {
-         sframe$mdcaty <- "Equal"
-      } else if(design[[s]]$seltype == "Unequal") {
-         sframe$mdcaty <- factor(sframe[, mdcaty, drop = TRUE])
-      } else if(design[[s]]$seltype == "Continuous") {
-         sframe$mdcaty <- sframe[, mdcaty, drop = TRUE]
-      } else {
-         stop(paste("\nThe value provided for the type of random selection, \"", design[[s]]$seltype, "\", \nfor stratum \"", s, "\" is not valid.", sep=""))
-      }
-
-# If seltype is not "Equal", ensure that mdcaty contains valid values
-
-      if(design[[s]]$seltype == "Unequal") {
-         if(any(is.na(sframe$mdcaty)))
-            stop(paste("\nMissing values were detected among the unequal probability category values for \nstratum \"", s, "\".", sep=""))
-      } else if(design[[s]]$seltype == "Continuous") {
-         if(any(is.na(sframe$mdcaty)))
-            stop(paste("\nMissing values were detected among the unequal probability category values for \nstratum \"", s, "\".", sep=""))
-         if(!is.numeric(sframe$mdcaty))
-            stop(paste("\nThe type of random selection for stratum \"", s, "\" is \"Continuous\", \nbut the unequal probability category values are not numeric.", sep=""))
-         if(any(sframe$mdcaty < 0))
-            stop(paste("\nNonpositive values were detected among the unequal probability category values \nfor stratum \"", s, "\".", sep=""))
-      }
-
-# If seltype is "Unequal", ensure that caty.n is provided and that the names
-# in caty.n are included amont the levels of mdcaty
-
-      if(design[[s]]$seltype == "Unequal") {
-         if(is.null(design[[s]]$caty.n))
-            stop(paste("The type of random selection was set to \"Unequal\", but caty.n was not \nprovided for stratum \"", s, "\".", sep=""))
-         temp <- match(names(design[[s]]$caty.n),
-            levels(as.factor(sframe$mdcaty)), nomatch=0)
-         if(any(temp == 0)) {
-            temp.str <- vecprint(names(design[[s]]$caty.n)[temp == 0])
-            stop(paste("\nThe following names in caty.n for stratum \"", s, "\" do not occur \namong the levels of the mdcaty variable in att.frame:\n", temp.str, sep=""))
-         }
-      }
-
-# Ensure that panel and caty.n contain valid values
-
-      if(!is.numeric(design[[s]]$panel))
-         stop(paste(" The design list must contain numeric values in the panel argument for \nstratum \"", s, "\".\n", sep=""))
-      design[[s]]$panel <- round(design[[s]]$panel)
-      design[[s]]$panel <- design[[s]]$panel[design[[s]]$panel > 0]
-      if(length(design[[s]]$panel) == 0)
-         stop(paste(" The design list does not not contain any valid values of the panel \nargument for stratum \"", s, "\".\n", sep=""))
-
-      if(design[[s]]$seltype == "Unequal") {
-         if(!is.numeric(design[[s]]$caty.n))
-            stop(paste(" The design list must contain numeric values in the caty.n argument for \nstratum \"", s, "\".\n", sep=""))
-         design[[s]]$caty.n <- round(design[[s]]$caty.n)
-         design[[s]]$caty.n <- design[[s]]$caty.n[design[[s]]$caty.n > 0]
-         if(length(design[[s]]$caty.n) == 0)
-            stop(paste(" The design list does not not contain any valid values of the caty.n \nargument for stratum \"", s, "\".\n", sep=""))
-      }
-
-# As necessary, remove rows from sframe that have values of mdcaty which are not
-# included among the names in caty.n
-
-      if(design[[s]]$seltype == "Unequal") {
-         temp <- sframe$mdcaty %in% names(design[[s]]$caty.n)
-         if(any(!temp)) {
-            sframe <- sframe[temp,]
-         }
-      }
-
-# Determine overall sample size for the stratum
-
-      if(is.null(design[[s]]$over))
-         design[[s]]$over <- 0
-      if(design[[s]]$seltype != "Unequal") {
-         samplesize <- sum(design[[s]]$panel)
-         n.desired <- sum(samplesize, design[[s]]$over)
-      } else {
-         if(sum(design[[s]]$panel) != sum(design[[s]]$caty.n))
-            stop("\nThe sum of panel sample sizes does not equal sum of caty.n sample sizes")
-         samplesize <- sum(design[[s]]$caty.n)
-         if(design[[s]]$over == 0) {
-            n.desired <- design[[s]]$caty.n
-         } else {
-            over.n <- design[[s]]$over * design[[s]]$caty.n /
-               sum(design[[s]]$caty.n)
-            if(any(over.n != floor(over.n)))
-               warning(paste("\nOversample size is not proportional to category sample sizes for stratum\n\"", s, "\".\n", sep=""))
-            n.desired <- design[[s]]$caty.n + ceiling(over.n)
-         }
-      }
-
-# Calculate mdm - inclusion probabilities
-
-      if(design[[s]]$seltype == "Equal")
-         	sframe$mdm <- mdmpts(sframe$mdcaty, c(Equal=n.desired))
-      else if(design[[s]]$seltype == "Unequal")
-         sframe$mdm <- mdmpts(sframe$mdcaty, n.desired)
-      else
-         sframe$mdm <- n.desired * sframe$mdcaty / sum(sframe$mdcaty)
-
-# Select the sample
-
-      st_agr(sframe) <- "constant"
-      if(grtspts.ind) {
-         stmp <- grtspts(sframe, sum(n.desired), SiteBegin,
-            shift.grid, do.sample[s], startlev, maxlev)
-      } else {
-         stmp <- sframe
-         stmp$siteID <- SiteBegin
-         temp <- st_coordinates(stmp)
-         stmp$xcoord <- temp[,1]
-         stmp$ycoord <- temp[,2]
-         stmp$wgt <- 1/sframe$mdm
-         stmp <- subset(stmp, select = c("siteID", "id", "xcoord", "ycoord",
-            "mdcaty", "wgt"))
-         row.names(stmp) <- 1
-         attr(stmp, "nlev") <- NA
-      }
-
-# Determine whether the realized sample size is less than the desired size
-
-      if(nrow(stmp) < sum(n.desired))
-         warning(paste("\nThe size of the selected sample was less than the desired size for stratum\n\"", s, "\".\n", sep=""))
-
-# Add the stratum variable
-
-      stmp$stratum <- as.factor(rep(s,nrow(stmp)))
-
-# Add panel and oversample structure
-
-      stmp$panel <- as.character(rep("OverSamp",nrow(stmp)))
-      n.panel <- length(design[[s]]$panel)
-      if(nrow(stmp) < samplesize) {
-         n.short <- samplesize - nrow(stmp)
-         n.temp <- n.short / n.panel
-         if(n.temp != floor(n.temp)) {
-            n.temp <- c(ceiling(n.temp), rep(floor(n.temp), n.panel-1))
-            i <- 1
-            while(sum(n.temp) != n.short) {
-               i <- i+1
-               n.temp[i] <- n.temp[i] + 1
-            }
-         }
-         np <- c(0, cumsum(design[[s]]$panel - n.temp))
-      } else {
-         np <- c(0, cumsum(design[[s]]$panel))
-      }
-      for(i in 1:n.panel)
-         stmp$panel[(np[i]+1):np[i+1]] <- names(design[[s]]$panel[i])
-
-# If an oversample is present or the realized sample size is less than the
-# desired size, then adjust the weights
-
-      if(design[[s]]$over > 0 || nrow(stmp) < samplesize) {
-         if(design[[s]]$seltype != "Unequal") {
-            if(nrow(stmp) < samplesize) {
-               stmp$wgt <- n.desired * stmp$wgt / nrow(stmp)
-            } else {
-               stmp$wgt <- n.desired * stmp$wgt / samplesize
-            }
-         } else {
-            if(nrow(stmp) < samplesize) {
-               n.caty <- length(design[[s]]$caty.n)
-               n.temp <- n.short / n.caty
-               nc <- design[[s]]$caty.n - n.temp
-            } else {
-               nc <- design[[s]]$caty.n
-            }
-            for(i in names(n.desired)) {
-               stmp$wgt[stmp$mdcaty == i] <- n.desired[i] *
-                  stmp$wgt[stmp$mdcaty == i] / nc[i]
-            }
-         }
-      }
-
-# Add stratum sample to the output object
-
-      if(first) {
-         sites <- stmp
-         levels(sites$stratum) <- strata.names
-         first <- FALSE
-      } else {
-         sites <- rbind(sites, stmp)
-      }
-      SiteBegin <- SiteBegin + nrow(stmp)
-
-# End the loop for strata
-
-   }
-
-# End the section for a finite population (discrete points)
-
-} else if(type.frame == "linear") {
-
-# Begin the section for a linear network
-
-   first <- TRUE
-   SiteBegin <- SiteBegin
-   sf.object$length_mdm <- as.numeric(st_length(sf.object))
-
-# Begin the loop for strata
-
-   for(s in strata.names) {
-
-      cat(paste("\nStratum:", s, "\n"))
-
-# Create the sample frame
-
-      temp <- sf.object[, stratum, drop = TRUE] == s
-      if(sum(temp) == 0) {
-         warning(paste("\nThe stratum column in the attributes data frame contains no values that match \nthe stratum named \"", s, "\" in the design list.\n", sep=""))
-         next
-      }
-
-      sframe <- subset(sf.object, temp)
-      if(design[[s]]$seltype == "Equal") {
-         sframe$mdcaty <- "Equal"
-      } else if(design[[s]]$seltype == "Unequal") {
-         sframe$mdcaty <- factor(sframe[, mdcaty, drop = TRUE])
-      } else if(design[[s]]$seltype == "Continuous") {
-         sframe$mdcaty <- sframe[, mdcaty, drop = TRUE]
-      } else {
-         stop(paste("\nThe value provided for the type of random selection, \"", design[[s]]$seltype, "\", \nfor stratum \"", s, "\" is not valid.", sep=""))
-      }
-
-# If seltype is not "Equal", ensure that mdcaty contains valid values
-
-      if(design[[s]]$seltype == "Unequal") {
-         if(any(is.na(sframe$mdcaty)))
-            stop(paste("\nMissing values were detected among the unequal probability category values for \nstratum \"", s, "\".", sep=""))
-      } else if(design[[s]]$seltype == "Continuous") {
-         if(any(is.na(sframe$mdcaty)))
-            stop(paste("\nMissing values were detected among the unequal probability category values for \nstratum \"", s, "\".", sep=""))
-         if(!is.numeric(sframe$mdcaty))
-            stop(paste("\nThe type of random selection for stratum \"", s, "\" is \"Continuous\", \nbut the unequal probability category values are not numeric.", sep=""))
-         if(any(sframe$mdcaty < 0))
-            stop(paste("\nNonpositive values were detected among the unequal probability category values \nfor stratum \"", s, "\".", sep=""))
-      }
-
-# If seltype is "Unequal", ensure that caty.n is provided and that the names
-# in caty.n and the levels of mdcaty are equivalent
-
-      if(design[[s]]$seltype == "Unequal") {
-         if(is.null(design[[s]]$caty.n))
-            stop(paste("The type of random selection was set to \"Unequal\", but caty.n was not \nprovided for stratum \"", s, "\".", sep=""))
-         temp <- match(names(design[[s]]$caty.n),
-            levels(as.factor(sframe$mdcaty)), nomatch=0)
-         if(any(temp == 0)) {
-            temp.str <- vecprint(names(design[[s]]$caty.n)[temp == 0])
-            stop(paste("\nThe following names in caty.n for stratum \"", s, "\" do not occur \namong the levels of the mdcaty variable in att.frame:\n", temp.str, sep=""))
-         }
-      }
-
-# Ensure that panel and caty.n contain valid values
-
-      if(!is.numeric(design[[s]]$panel))
-         stop(paste(" The design list must contain numeric values in the panel argument for \nstratum \"", s, "\".\n", sep=""))
-      design[[s]]$panel <- round(design[[s]]$panel)
-      design[[s]]$panel <- design[[s]]$panel[design[[s]]$panel > 0]
-      if(length(design[[s]]$panel) == 0)
-         stop(paste(" The design list does not not contain any valid values of the panel \nargument for stratum \"", s, "\".\n", sep=""))
-
-      if(design[[s]]$seltype == "Unequal") {
-         if(!is.numeric(design[[s]]$caty.n))
-            stop(paste(" The design list must contain numeric values in the caty.n argument for \nstratum \"", s, "\".\n", sep=""))
-         design[[s]]$caty.n <- round(design[[s]]$caty.n)
-         design[[s]]$caty.n <- design[[s]]$caty.n[design[[s]]$caty.n > 0]
-         if(length(design[[s]]$caty.n) == 0)
-            stop(paste(" The design list does not not contain any valid values of the caty.n \nargument for stratum \"", s, "\".\n", sep=""))
-      }
-
-# As necessary, remove rows from sframe that have values of mdcaty which are not
-# included among the names in caty.n
-
-      if(design[[s]]$seltype == "Unequal") {
-         temp <- sframe$mdcaty %in% names(design[[s]]$caty.n)
-         if(any(!temp)) {
-            sframe <- sframe[temp,]
-         }
-      }
-
-# Determine overall sample size for the stratum
-
-      if(is.null(design[[s]]$over))
-         design[[s]]$over <- 0
-      if(design[[s]]$seltype != "Unequal") {
-         samplesize <- sum(design[[s]]$panel)
-         n.desired <- sum(samplesize, design[[s]]$over)
-      } else {
-         if(sum(design[[s]]$panel) != sum(design[[s]]$caty.n))
-            stop("\nThe sum of panel sample sizes does not equal sum of caty.n sample sizes")
-         samplesize <- sum(design[[s]]$caty.n)
-         if(design[[s]]$over == 0) {
-            n.desired <- design[[s]]$caty.n
-         } else {
-            over.n <- design[[s]]$over * design[[s]]$caty.n /
-               sum(design[[s]]$caty.n)
-            if(any(over.n != floor(over.n)))
-               warning(paste("\nOversample size is not proportional to category sample sizes for stratum\n\"", s, "\".\n", sep=""))
-            n.desired <- design[[s]]$caty.n + ceiling(over.n)
-         }
-      }
-
-# Calculate mdm - inclusion probabilities
-
-      if(design[[s]]$seltype == "Equal")
-         sframe$mdm <- mdmlin(sframe$length_mdm, sframe$mdcaty, c(Equal=n.desired))
-      else if(design[[s]]$seltype == "Unequal")
-         sframe$mdm <- mdmlin(sframe$length_mdm, sframe$mdcaty, n.desired)
-      else
-         sframe$mdm <- n.desired * sframe$mdcaty /
-                       sum(sframe$length_mdm * sframe$mdcaty)
-
-# Select the sample
-
-      st_agr(sframe) <- "constant"
-      stmp <- grtslin(sframe, sum(n.desired), SiteBegin, shift.grid, startlev,
-         maxlev)
-
-# Add the stratum variable
-
-      stmp$stratum <- as.factor(rep(s,nrow(stmp)))
-
-# Add panel and oversample structure
-
-      stmp$panel <- rep("OverSamp",nrow(stmp))
-      np <- c(0,cumsum(design[[s]]$panel))
-      for(i in 1:length(design[[s]]$panel))
-         stmp$panel[(np[i]+1):np[i+1]] <- names(design[[s]]$panel[i])
-
-# If an oversample is present, then adjust the weights
-
-      if(design[[s]]$over > 0) {
-         if(design[[s]]$seltype != "Unequal") {
-            stmp$wgt <- n.desired * stmp$wgt / samplesize
-         } else {
-            nc <- design[[s]]$caty.n
-            for(i in names(n.desired)) {
-               stmp$wgt[stmp$mdcaty == i] <- n.desired[i] *
-                  stmp$wgt[stmp$mdcaty == i] / nc[i]
-            }
-         }
-      }
-
-# Add stratum sample to the output data frame
-
-      if(first) {
-         sites <- stmp
-         levels(sites$stratum) <- strata.names
-         first <- FALSE
-      } else {
-         sites <- rbind(sites, stmp)
-      }
-      SiteBegin <- SiteBegin + nrow(stmp)
-
-# End the loop for strata
-
-   }
-
-# End the section for a linear network
-
-} else if(type.frame == "area") {
-
-# Begin the section for a polygonal area
-
-   first <- TRUE
-   SiteBegin <- SiteBegin
-   sf.object$area_mdm <- as.numeric(st_area(sf.object))
-
-# Begin the loop for strata
-
-   for(s in strata.names) {
-
-      cat(paste("\nStratum:", s, "\n"))
-
-# Create the sample frame
-
-      temp <- sf.object[, stratum, drop = TRUE] == s
-      if(sum(temp) == 0) {
-         warning(paste("\nThe stratum column in the attributes data frame contains no values that match \nthe stratum named \"", s, "\" in the design list.\n", sep=""))
-         next
-      }
-
-      sframe <- subset(sf.object, temp)
-      if(design[[s]]$seltype == "Equal") {
-         sframe$mdcaty <- "Equal"
-      } else if(design[[s]]$seltype == "Unequal") {
-         sframe$mdcaty <- factor(sframe[, mdcaty, drop = TRUE])
-      } else if(design[[s]]$seltype == "Continuous") {
-         sframe$mdcaty <- sframe[, mdcaty, drop = TRUE]
-      } else {
-         stop(paste("\nThe value provided for the type of random selection, \"", design[[s]]$seltype, "\", \nfor stratum \"", s, "\" is not valid.", sep=""))
-      }
-
-# If seltype is not "Equal", ensure that mdcaty contains valid values
-
-      if(design[[s]]$seltype == "Unequal") {
-         if(any(is.na(sframe$mdcaty)))
-            stop(paste("\nMissing values were detected among the unequal probability category values for \nstratum \"", s, "\".", sep=""))
-      } else if(design[[s]]$seltype == "Continuous") {
-         if(any(is.na(sframe$mdcaty)))
-            stop(paste("\nMissing values were detected among the unequal probability category values for \nstratum \"", s, "\".", sep=""))
-         if(!is.numeric(sframe$mdcaty))
-            stop(paste("\nThe type of random selection for stratum \"", s, "\" is \"Continuous\", \nbut the unequal probability category values are not numeric.", sep=""))
-         if(any(sframe$mdcaty < 0))
-            stop(paste("\nNonpositive values were detected among the unequal probability category values \nfor stratum \"", s, "\".", sep=""))
-      }
-
-# If seltype is "Unequal", ensure that caty.n is provided and that the names
-# in caty.n and the levels of mdcaty are equivalent
-
-      if(design[[s]]$seltype == "Unequal") {
-         if(is.null(design[[s]]$caty.n))
-            stop(paste("The type of random selection was set to \"Unequal\", but caty.n was not \nprovided for stratum \"", s, "\".", sep=""))
-         temp <- match(names(design[[s]]$caty.n),
-            levels(as.factor(sframe$mdcaty)), nomatch=0)
-         if(any(temp == 0)) {
-            temp.str <- vecprint(names(design[[s]]$caty.n)[temp == 0])
-            stop(paste("\nThe following names in caty.n for stratum \"", s, "\" do not occur \namong the levels of the mdcaty variable in att.frame:\n", temp.str, sep=""))
-         }
-      }
-
-# Ensure that panel and caty.n contain valid values
-
-      if(!is.numeric(design[[s]]$panel))
-         stop(paste(" The design list must contain numeric values in the panel argument for \nstratum \"", s, "\".\n", sep=""))
-      design[[s]]$panel <- round(design[[s]]$panel)
-      design[[s]]$panel <- design[[s]]$panel[design[[s]]$panel > 0]
-      if(length(design[[s]]$panel) == 0)
-         stop(paste(" The design list does not not contain any valid values of the panel \nargument for stratum \"", s, "\".\n", sep=""))
-
-      if(design[[s]]$seltype == "Unequal") {
-         if(!is.numeric(design[[s]]$caty.n))
-            stop(paste(" The design list must contain numeric values in the caty.n argument for \nstratum \"", s, "\".\n", sep=""))
-         design[[s]]$caty.n <- round(design[[s]]$caty.n)
-         design[[s]]$caty.n <- design[[s]]$caty.n[design[[s]]$caty.n > 0]
-         if(length(design[[s]]$caty.n) == 0)
-            stop(paste(" The design list does not not contain any valid values of the caty.n \nargument for stratum \"", s, "\".\n", sep=""))
-      }
-
-# As necessary, remove rows from sframe that have values of mdcaty which are not
-# included among the names in caty.n
-
-      if(design[[s]]$seltype == "Unequal") {
-         temp <- sframe$mdcaty %in% names(design[[s]]$caty.n)
-         if(any(!temp)) {
-            sframe <- sframe[temp,]
-         }
-      }
-
-# Determine overall sample size for the stratum
-
-      if(is.null(design[[s]]$over))
-         design[[s]]$over <- 0
-      if(design[[s]]$seltype != "Unequal") {
-         samplesize <- sum(design[[s]]$panel)
-         n.desired <- sum(samplesize, design[[s]]$over)
-      } else {
-         if(sum(design[[s]]$panel) != sum(design[[s]]$caty.n))
-            stop("\nThe sum of panel sample sizes does not equal sum of caty.n sample sizes")
-         samplesize <- sum(design[[s]]$caty.n)
-         if(design[[s]]$over == 0) {
-            n.desired <- design[[s]]$caty.n
-         } else {
-            over.n <- design[[s]]$over * design[[s]]$caty.n /
-               sum(design[[s]]$caty.n)
-            if(any(over.n != floor(over.n)))
-               warning(paste("\nOversample size is not proportional to category sample sizes for stratum\n\"", s, "\".\n", sep=""))
-            n.desired <- design[[s]]$caty.n + ceiling(over.n)
-         }
-      }
-
-# Calculate mdm - inclusion probabilities
-
-      if(design[[s]]$seltype == "Equal")
-         sframe$mdm <- mdmarea(sframe$area_mdm, sframe$mdcaty, c(Equal=n.desired))
-      else if(design[[s]]$seltype == "Unequal")
-         sframe$mdm <- mdmarea(sframe$area, sframe$mdcaty, n.desired)
-      else
-         sframe$mdm <- n.desired * sframe$mdcaty /
-                       sum(sframe$area * sframe$mdcaty)
-
-# Select the sample
-
-      st_agr(sframe) <- "constant"
-      stmp <- grtsarea(sframe, sum(n.desired), SiteBegin, shift.grid,
-         startlev, maxlev, maxtry)
-
-# Determine whether the realized sample size is less than the desired size
-
-      if(nrow(stmp) < sum(n.desired))
-         warning(paste("\nThe size of the selected sample was less than the desired size for stratum \n\"", s, "\".\n", sep=""))
-
-# Add the stratum variable
-
-      stmp$stratum <- as.factor(rep(s, nrow(stmp)))
-
-# Add panel and oversample structure
-
-      stmp$panel <- as.character(rep("OverSamp",nrow(stmp)))
-      n.panel <- length(design[[s]]$panel)
-      if(nrow(stmp) < samplesize) {
-         n.short <- samplesize - nrow(stmp)
-         n.temp <- n.short / n.panel
-         if(n.temp != floor(n.temp)) {
-            n.temp <- c(ceiling(n.temp), rep(floor(n.temp), n.panel-1))
-            i <- 1
-            while(sum(n.temp) != n.short) {
-               i <- i+1
-               ntemp[i] <- n.temp[i] + 1
-            }
-         }
-         np <- c(0, cumsum(design[[s]]$panel - n.temp))
-      } else {
-         np <- c(0, cumsum(design[[s]]$panel))
-      }
-      for(i in 1:n.panel)
-         stmp$panel[(np[i]+1):np[i+1]] <- names(design[[s]]$panel[i])
-
-# If an oversample is present or the realized sample size is less than the
-# desired size, then adjust the weights
-
-      if(design[[s]]$over > 0 || nrow(stmp) < samplesize) {
-         if(design[[s]]$seltype != "Unequal") {
-            if(nrow(stmp) < samplesize) {
-               stmp$wgt <- n.desired * stmp$wgt / nrow(stmp)
-            } else {
-               stmp$wgt <- n.desired * stmp$wgt / samplesize
-            }
-         } else {
-            if(nrow(stmp) < samplesize) {
-               n.caty <- length(design[[s]]$caty.n)
-               n.temp <- n.short / n.caty
-               nc <- design[[s]]$caty.n - n.temp
-            } else {
-               nc <- design[[s]]$caty.n
-            }
-            for(i in names(n.desired)) {
-               stmp$wgt[stmp$mdcaty == i] <- n.desired[i] *
-                  stmp$wgt[stmp$mdcaty == i] / nc[i]
-            }
-         }
-      }
-
-# Add stratum sample to the output data frame
-
-      if(first) {
-         sites <- stmp
-         levels(sites$stratum) <- strata.names
-         first <- FALSE
-      } else {
-         sites <- rbind(sites, stmp)
-      }
-      SiteBegin <- SiteBegin + nrow(stmp)
-
-# End the loop for strata
-
-   }
-
-# End the section for a polygonal area
-
-}
-
-# As necessary, terminate parallel processing
-
-if(type.frame != "finite") {
-   stopCluster(cl)
-}
-
-# Add DesignID name to the numeric siteID value to create a new siteID
-
-sites$siteID <- as.character(gsub(" ","0", paste(DesignID,"-",
-   format(sites$siteID), sep="")))
-
-# Add Evaluation Status and Evaluation Reason variables to the output data frame
-
-sites$EvalStatus <- rep("NotEval", nrow(sites))
-sites$EvalReason <- rep(" ", nrow(sites))
-
-# Add attributes from sf.object that are not included in sites
-
-tm <- match(sites$id, sf.object$id)
-geom_name <- attr(sf.object, "sf_column")
-if(design[[s]]$seltype == "Equal") {
-   td <- match(c(id, stratum, "length_mdm", "area_mdm", geom_name),
-      names(sf.object), nomatch=0)
-} else {
-   td <- match(c(id, stratum, mdcaty, "length_mdm", "area_mdm", geom_name),
-      names(sf.object), nomatch=0)
-}
-temp <- names(sf.object)[-td]
-if(length(temp) > 0) {
-   for(i in temp) {
-      sites[, i] <- sf.object[tm, i, drop = TRUE]
-   }
-}
-
-# Remove the id attribute from sites
-
-temp <- names(sites)
-temp <- temp[!(temp %in% c("id", geom_name))]
-sites <- subset(sites, select=temp)
-
-# Add row names to sites
-
-n <- nrow(sites)
-IDs <- as.character(1:n)
-row.names(sites) <- IDs
-
-# Assign attributes to sites
-
-ifelse(is.null(startlev),
-   attr(sites, "startlev") <- "Not specified",
-   attr(sites, "startlev") <- startlev)
-ifelse(is.null(maxlev),
-   attr(sites, "maxlev") <- "Not specified",
-   attr(sites, "maxlev") <- maxlev)
-attr(sites, "endlev") <- attributes(stmp)$nlev
-attr(sites, "shift.grid") <- shift.grid
-attr(sites, "do.sample") <- do.sample
-
-# If requested, create a shapefile containing the sample information
-
-if(shapefile == TRUE) {
-   nc <- nchar(out.shape)
-   if(substr(out.shape, nc-3, nc) != ".shp") {
-      if(substr(out.shape, nc-3, nc-3) == ".") {
-         out.shape <- paste(substr(out.shape, 1, nc-4), ".shp", sep="")
-      } else {
-         out.shape <- paste(out.shape, ".shp", sep="")
-      }
-   }
-   if(out.shape %in% list.files()) {
-      warning(paste("\nThe output shapefile named \"", out.shape, "\" already exists and was \noverwritten.\n", sep=""))
-      st_write(sites, out.shape, quiet = TRUE, delete_dsn = TRUE)
-   } else {
-      st_write(sites, out.shape, quiet = TRUE)
-   }
-}
-
-# Create an object of class SpatialDesign
-
-SpointsMat <- st_coordinates(sites)
-rownames(SpointsMat) <- IDs
-dat <- st_set_geometry(sites, NULL)
-sp_obj <- SpatialPointsDataFrame(SpatialPoints(SpointsMat),data = dat)
-sp::proj4string(sp_obj) <-  sp::CRS(st_crs(sites)$proj4string)
-rslt <- SpatialDesign(design = design, sp_obj = sp_obj)
-
-# Return the SpatialDesign object
-
-invisible(rslt)
+      legacy_sites$stratum <- as.character(legacy_sites[[legacy_stratum_var]])
+    }
+    if (!is.null(caty_var)) legacy_sites$caty <- as.character(legacy_sites[[caty_var]])
+    if (!is.null(aux_var)) legacy_sites$aux <- legacy_sites[[aux_var]]
+    if (is.null(legacy_var)) {
+      legacy_sites$legacy <- TRUE
+      legacy_var <- "legacy"
+    } else {
+      legacy_sites$legacy <- legacy_sites[[legacy_var]]
+    }
+  }
+
+  ## Create a dsgn list object
+  # variable assignments to dsgn list object
+  dsgn <- list(
+    stratum_var = stratum_var, caty_var = caty_var, aux_var = aux_var,
+    legacy_option = legacy_option, legacy_var = legacy_var, stratum = stratum,
+    wgt_units = wgt_units, seltype = NULL, n_base = NULL, caty_n = NULL,
+    n_over = NULL, n_near = NULL, mindis = mindis
+  )
+
+  # seltype
+  if (length(seltype) == length(stratum)) {
+    dsgn$seltype <- seltype
+    names(dsgn$seltype) <- stratum
+  } else {
+    tmp <- sapply(stratum, function(x, seltype) {
+      x <- seltype
+    }, seltype)
+    names(tmp) <- stratum
+    dsgn$seltype <- tmp
+  }
+
+  # n_base
+  if (length(n_base) == length(stratum)) {
+    dsgn$n_base <- n_base
+    names(dsgn$n_base) <- stratum
+  } else {
+    tmp <- sapply(stratum, function(x, n_base) {
+      x <- n_base
+    }, n_base)
+    names(tmp) <- stratum
+    dsgn$n_base <- tmp
+  }
+
+  # caty_n
+  if (is.list(caty_n)) {
+    dsgn$caty_n <- caty_n
+  } else {
+    tmp <- lapply(stratum, function(x, caty_n) {
+      x <- caty_n
+    }, caty_n)
+    names(tmp) <- stratum
+    dsgn$caty_n <- tmp
+  }
+
+  # n_over
+  if (!is.null(n_over)) {
+    if (is.list(n_over)) {
+      dsgn$n_over <- n_over
+    } else {
+      tmp <- lapply(stratum, function(x, n_over) {
+        x <- n_over
+      }, n_over)
+      names(tmp) <- stratum
+      dsgn$n_over <- tmp
+    }
+  }
+
+  # n_near
+  if (!is.null(n_near)) {
+    tmp <- sapply(stratum, function(x, n_near) {
+      x <- n_near
+    }, n_near)
+    names(tmp) <- stratum
+    dsgn$n_near <- tmp
+  }
+
+  # legacy_option
+  if (legacy_option == TRUE) {
+    tmp <- sapply(stratum, function(x, legacy_option) {
+      x <- legacy_option
+    }, legacy_option)
+    names(tmp) <- stratum
+    dsgn$legacy_option <- tmp
+  }
+
+  ## select sites for each stratum
+  rslts <- lapply(dsgn$stratum, grts_stratum,
+    dsgn = dsgn, sframe = sframe, sf_type = sf_type, wgt_units = wgt_units,
+    pt_density = pt_density, legacy_option = legacy_option,
+    legacy_sites = legacy_sites, maxtry = maxtry, warn_ind = warn_ind, warn_df = warn_df
+  )
+  names(rslts) <- stratum
+
+
+  # combine across strata
+  sites_legacy <- NULL
+  sites_base <- NULL
+  sites_over <- NULL
+  sites_near <- NULL
+  warn_ind <- FALSE
+  warn_df <- NULL
+  for (i in 1:length(rslts)) {
+    sites_legacy <- rbind(sites_legacy, rslts[[i]]$sites_legacy)
+    sites_base <- rbind(sites_base, rslts[[i]]$sites_base)
+    sites_over <- rbind(sites_over, rslts[[i]]$sites_over)
+    sites_near <- rbind(sites_near, rslts[[i]]$sites_near)
+    if (rslts[[i]]$warn_ind) {
+      warn_ind <- TRUE
+      warn_df <- rbind(warn_df, rslts[[i]]$warn_df)
+    }
+  }
+
+  # Create a siteID for all sites
+  ntot <- NROW(sites_legacy) + NROW(sites_base) + NROW(sites_over) + NROW(sites_near)
+  siteID <- gsub(" ", "0", paste0(DesignID, "-", format(SiteBegin - 1 + 1:ntot, sep = "")))
+  nlast <- 0
+
+  # Create siteID for legacy sites if present using DesignID and SiteBegin
+  if (!is.null(sites_legacy)) {
+    row.names(sites_legacy) <- 1:nrow(sites_legacy)
+    sites_legacy$siteID <- siteID[1:nrow(sites_legacy)]
+    nlast <- nrow(sites_legacy)
+    # set siteuse and replsite
+    sites_legacy$siteuse <- "Legacy"
+    sites_legacy$replsite <- "None"
+  }
+
+  # Create siteID for base sites using DesignID and SiteBegin
+  if (!is.null(sites_base)) {
+    row.names(sites_base) <- 1:nrow(sites_base)
+    sites_base$siteID <- siteID[(nlast + 1):(nlast + nrow(sites_base))]
+    nlast <- nlast + nrow(sites_base)
+    # set siteuse and replsite for base sites
+    sites_base$siteuse <- "Base"
+    sites_base$replsite <- "None"
+  }
+
+  # create siteID for n_over sites if any
+  if (!is.null(n_over)) {
+    row.names(sites_over) <- 1:nrow(sites_over)
+    sites_over$siteID <- siteID[(nlast + 1):(nlast + nrow(sites_over))]
+    nlast <- nlast + nrow(sites_over)
+    # set siteuse and replsite for n_over sites
+    sites_over$siteuse <- "Over"
+    sites_over$replsite <- "Next"
+  }
+
+  # if n_near sample sites, assign base ids to the replacement sites. then add siteIDs
+  if (!is.null(n_near)) {
+    tst <- match(paste(sites_near$stratum, sites_near$replsite, sep = "_"),
+      paste(sites_base$stratum, sites_base$idpts, sep = "_"),
+      nomatch = 0
+    )
+    sites_near$replsite[tst > 0] <- sites_base$siteID[tst]
+    tst <- match(paste(sites_near$stratum, sites_near$replsite, sep = "_"),
+      paste(sites_over$stratum, sites_over$idpts, sep = "_"),
+      nomatch = 0
+    )
+    sites_near$replsite[tst > 0] <- sites_over$siteID[tst]
+
+    # sort by id so that sites_near in same order as sites in sites_base and sites_over
+    sites_near <- sites_near[order(sites_near$replsite, sites_near$siteuse), ]
+    row.names(sites_near) <- 1:nrow(sites_near)
+    # assign siteIDs
+    sites_near$siteID <- siteID[(nlast + 1):(nlast + nrow(sites_near))]
+  }
+
+  # Add lat/lon in WGS84
+  if (!is.null(sites_legacy)) {
+    sites_legacy$lon_WGS84 <- st_coordinates(st_transform(sites_legacy, crs = 4326))[, "X"]
+    sites_legacy$lat_WGS84 <- st_coordinates(st_transform(sites_legacy, crs = 4326))[, "Y"]
+  }
+  if (!is.null(sites_base)) {
+    sites_base$lon_WGS84 <- st_coordinates(st_transform(sites_base, crs = 4326))[, "X"]
+    sites_base$lat_WGS84 <- st_coordinates(st_transform(sites_base, crs = 4326))[, "Y"]
+  }
+  if (!is.null(sites_over)) {
+    sites_over$lon_WGS84 <- st_coordinates(st_transform(sites_over, crs = 4326))[, "X"]
+    sites_over$lat_WGS84 <- st_coordinates(st_transform(sites_over, crs = 4326))[, "Y"]
+  }
+  if (!is.null(sites_near)) {
+    sites_near$lon_WGS84 <- st_coordinates(st_transform(sites_near, crs = 4326))[, "X"]
+    sites_near$lat_WGS84 <- st_coordinates(st_transform(sites_near, crs = 4326))[, "Y"]
+  }
+
+
+  # reorder sf object variables by first specifying design names excluding unique
+  # feature ID id and idpts as they are internal
+  dsgn_names <- c(
+    "siteID", "siteuse", "replsite", "lon_WGS84", "lat_WGS84",
+    "stratum", "wgt", "ip", "caty", "aux"
+  )
+  # sites_legacy
+  if (!is.null(sites_legacy)) {
+    if (sf_type != "sf_point") {
+      add_names <- dsgn_names[dsgn_names %in% names(sites_legacy)]
+      sites_legacy <- subset(sites_legacy, select = c(add_names, legacy_names))
+    }
+    if (sf_type == "sf_point") {
+      add_names <- dsgn_names[dsgn_names %in% names(sites_legacy)]
+      sites_legacy <- subset(sites_legacy, select = c(add_names, sframe_names))
+    }
+  }
+
+  # sites_base
+  # check what design variables are present in sf objects and add if missing
+  if (!is.null(sites_base)) {
+    add_names <- dsgn_names[dsgn_names %in% names(sites_base)]
+    sites_base <- subset(sites_base, select = c(add_names, sframe_names))
+  }
+
+  # sites_over
+  if (!is.null(sites_over)) {
+    add_names <- dsgn_names[dsgn_names %in% names(sites_over)]
+    sites_over <- subset(sites_over,
+      select = c(add_names, sframe_names)
+    )
+  }
+
+  # sites_near
+  if (!is.null(sites_near)) {
+    add_names <- dsgn_names[dsgn_names %in% names(sites_near)]
+    sites_near <- subset(sites_near,
+      select = c(add_names, sframe_names)
+    )
+  }
+
+  # add function call to dsgn list
+  # dsgn <- c(list(Call = match.call()), dsgn)
+  dsgn <- list(
+    call = match.call(), stratum = dsgn$stratum, n_base = dsgn$n_base,
+    seltype = dsgn$seltype, caty_n = dsgn$caty_n, legacy = dsgn$legacy_option,
+    mindis = dsgn$mindis, n_over = dsgn$n_over, n_near = dsgn$n_near
+  )
+
+  # create output list
+  sites <- list(
+    sites_legacy = sites_legacy, sites_base = sites_base,
+    sites_over = sites_over, sites_near = sites_near,
+    design = dsgn
+  )
+
+  # As necessary, output a message indicating that warning messages were generated
+  # during execution of the program
+
+  if (warn_ind) {
+    warn_df <<- warn_df
+    if (nrow(warn_df) == 1) {
+      cat("During execution of the program, a warning message was generated. The warning \nmessage is stored in a data frame named 'warn_df'.  Enter the following command \nto view the warning message: warnprnt()\n")
+    } else {
+      cat(paste("During execution of the program,", nrow(warn_df), "warning messages were generated.  The warning \nmessages are stored in a data frame named 'warn_df'.  Enter the following \ncommand to view the warning messages: warnprnt() \nTo view a subset of the warning messages (say, messages number 1, 3, and 5), \nenter the following command: warnprnt(m=c(1,3,5))\n"))
+    }
+  }
+
+  # constructor for design class
+  sites <- structure(sites, class = "spdesign")
+
+  # return the survey design sf object
+  invisible(sites)
 }

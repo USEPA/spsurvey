@@ -1,9 +1,33 @@
+# spsurvey 5.0.0 (2021-08-17)
+
+## Major Updates
+
+* Syntax for the `grts()` (Generalized Random Tessellation Stratified Designs) and the `irs()` (Independent Random Samling Designs) functions has been significantly simplified. These functions now require the sample frame be an `sf` object.  
+
+* The `grts()` and `irs()` functions now accomodate legacy (or historical) sites, a minimum distance between sites, and two approaches for selecting replacement sites (reverse heirarchical ordering and nearest neighbor).
+
+* Syntax for the analysis functions (`*_analysis()`) has been significantly simplified. 
+
+* Trend analysis is now available using the `trend_analysis()` function.
+
+* `plot()` functions have been added to visualize sample frames, samples, and design frames.
+
+* `summary()` functions have been added to summarize sample frames, samples, and design frames.
+
+## Minor Updates
+
+* Several functions have undergone minor changes to syntax and scope
+
+## Breaking Changes
+
+* Several functions have changed (both inputs and outputs) and functions in version 5.0.0 are not always backwards compatible with functions from previous versions. Though we recommend users upgrade existing code to work with the current version's simpler implementations, backwards compatibility can be achieved by downloading previous versions of spsurvey.
+
 # spsurvey 4.1.4 (2020-9-15)
 
 ## Bug fix
 
 * This is a bug-fix release to specifically address issue:  
-A new check in R-devel (part of --as-cran) looks for return without (): 
+* A new check in R-devel (part of --as-cran) looks for return without (): 
 this is reported on the CRAN results pages for fedora-clang and fedora-gcc.
 
 # spsurvey 4.1.3 (2020-6-15)
@@ -14,7 +38,7 @@ this is reported on the CRAN results pages for fedora-clang and fedora-gcc.
 
 * Variable sframe$len was used in grts function and never defined. Now uses length_mdm that is calculated earlier. [(#6)](https://github.com/USEPA/spsurvey/issues/6)
 
-# spsurvey 4.1.2 (2020-3-31)
+# spsurvey 4.1.2 (2020-03-31)
 
 ## Bug fix
 

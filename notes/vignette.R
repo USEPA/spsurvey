@@ -1,6 +1,0 @@
-library(spsurvey)
-library(tools)
-setwd('C:/Users/mweber/GitProjects/spsurvey/vignettes')
-Sweave("Risk_Analysis.Rnw")
-texi2pdf("Risk_Analysis.tex")
-Stangle("Finite_Design.Rnw", annotate=FALSE)

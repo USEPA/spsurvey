@@ -3,3 +3,5 @@
 .RData
 spsurvey.Rproj
 inst/doc
+/doc/
+/Meta/

@@ -1,5 +1,5 @@
-################################################################################
-# Function: vecprint
+###############################################################################
+# Function: vecprint (not exported)
 # Programmer: Tom Kincaid
 # Date: February 6, 2004
 # Last Revised:  May 3, 2004
@@ -8,64 +8,61 @@
 #'
 #' This function takes an input vector and outputs a character string with line
 #' breaks inserted so that, whenever possible, no line in the string exceeds the
-#' input value n.char, which is set to 78 characters by default.  The input
+#' input value n_char, which is set to 78 characters by default.  The input
 #' vector is coereced to mode character.  When an element of the input vector is
-#' greater than n.char characters in length, then that element is inserted in
+#' greater than n_char characters in length, then that element is inserted in
 #' the output character string as an individual line.
 #'
 #' @param x Character vector.
 #'
-#' @param n.char The maximum number of characters per line.  The default is 78.
+#' @param n_char The maximum number of characters per line.  The default is \code{78}.
 #'
 #' @return  Character string that is suitable for printing by the functions:
-#'   stop, warning, or cat.
+#'   \code{stop}, \code{warning}, or \code{cat}.
 #'
-#' @author Tom Kincaid \email{Kincaid.Tom@epa.gov}
+#' @author Tom Kincaid \email{Kincaid.Tom@@epa.gov}
 #'
 #' @examples
 #' sites <- paste("Site Number", 1:50)
-#' sites.str <- vecprint(sites)
-#' cat(sites.str)
+#' sites_str <- vecprint(sites)
+#' cat(sites_str)
 #'
 #' temp <- c(1, 5, 21:25, 33:37)
-#' sites.str <- vecprint(sites[temp])
+#' sites_str <- vecprint(sites[temp])
 #' warning(paste("\nThe following site ID values were removed from the
-#'   analysis:\n", sites.str, sep=""))
-#'
-#' @export
-################################################################################
+#'   analysis:\n", sites_str, sep = ""))
+#' @noRd
+###############################################################################
 
-vecprint <- function(x, n.char = 78) {
+vecprint <- function(x, n_char = 78) {
+  x <- as.character(x)
+  n <- length(x)
+  nc <- nchar(x)
 
-   x <- as.character(x)
-   n <- length(x)
-   nc <- nchar(x)
-
-   i <- 1
-   j <- 1
-   nc.sum <- 0
-   x.str <- character()
-   while(j <= n) {
-      if((nc.sum + nc[j]) <= n.char) {
-         nc.sum <- nc.sum + nc[j] + 2
-         j <- j+1
+  i <- 1
+  j <- 1
+  nc_sum <- 0
+  x_str <- character()
+  while (j <= n) {
+    if ((nc_sum + nc[j]) <= n_char) {
+      nc_sum <- nc_sum + nc[j] + 2
+      j <- j + 1
+    } else {
+      if (i == j) {
+        x_str <- paste(x_str, x[j], "\n")
       } else {
-         if(i == j) {
-            x.str <- paste(x.str, x[j], "\n")
-         } else {
-            j <- j-1
-            x.str <- paste(x.str, paste(x[i:j], collapse=", "), "\n")
-         }
-         j <- j+1
-         i <- j
-         nc.sum <- 0
+        j <- j - 1
+        x_str <- paste(x_str, paste(x[i:j], collapse = ", "), "\n")
       }
-   }
-   if(i < j) {
-      j <- j-1
-      x.str <- paste(x.str, paste(x[i:j], collapse=", "), "\n")
-   }
+      j <- j + 1
+      i <- j
+      nc_sum <- 0
+    }
+  }
+  if (i < j) {
+    j <- j - 1
+    x_str <- paste(x_str, paste(x[i:j], collapse = ", "), "\n")
+  }
 
-   x.str
+  x_str
 }
-

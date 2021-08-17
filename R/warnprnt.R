@@ -1,46 +1,60 @@
-################################################################################
-# Function: warnprnt
+###############################################################################
+# Function: warnprnt (exported)
 # Programmer: Tom Kincaid
-# Date: September 19, 2005
-# Revised: April 17, 2014
+# Date: June 18, 2020
 #
-#' Internal Function: Print the Warnings Data Frame
+#' Print grts, irs, and analysis function warnings
 #'
-#' This function prints the warnings data frame.
+#' This function prints the warnings messages from the \code{grts()}, \code{irs()},
+#'   and analysis functions.
 #'
-#' @param warn.df Data frame that contains warning messages.  The default is
-#'   "warn.df", which is the name given to the warnings data frame created by
+#' @param warn_df Data frame that contains warning messages.  The default is
+#'   \code{"warn_df"}, which is the name given to the warnings data frame created by
 #'   functions in the spsurvey package.
 #'
 #' @param m Vector of indices for warning messages that are to be printed. The
 #'   default is a vector containing the integers from 1 through the number of
-#'   rows in warn.df, which will print all warning messages in the data frame.
+#'   rows in \code{warn_df}, which will print all warning messages in the data frame.
 #'
-#' @return Invisible return.  Prints warnings.
+#' @return Printed warnings.
 #'
-#' @author Tom Kincaid \email{Kincaid.Tom@epa.gov}
+#' @author Tom Kincaid \email{Kincaid.Tom@@epa.gov}
 #'
 #' @export
-################################################################################
+###############################################################################
 
-warnprnt <- function(warn.df=get("warn.df", envir = .GlobalEnv),
-   m = 1:nrow(warn.df)) {
+warnprnt <- function(warn_df = get("warn_df", envir = .GlobalEnv),
+                     m = 1:nrow(warn_df)) {
 
-   for(i in m) {
-      cat(paste("Warning Message", i, "\n"))
-      cat(paste("Function:", warn.df$func[i], "\n"))
-      if(!is.na(warn.df$subpoptype[i]))
-         cat(paste("Population Type:", warn.df$subpoptype[i], "\n"))
-      if(!is.na(warn.df$subpop[i]))
-         cat(paste("Subpopulation:", warn.df$subpop[i], "\n"))
-      if(!is.na(warn.df$indicator[i]))
-         cat(paste("Indicator:", warn.df$indicator[i], "\n"))
-      if(!is.na(warn.df$stratum[i]))
-         cat(paste("Stratum:", warn.df$stratum[i], "\n"))
-      cat(paste("Warning:", warn.df$warning[i]))
-      cat(paste("Action:", warn.df$action[i], "\n"))
-   }
+  # old front code in warndsgn
+  # for (i in m) {
+  #   cat(paste(
+  #     "Message", i, ": Stratum:", warn_df$stratum[i],
+  #     "Function: ", warn_df$func[i], "\n"
+  #   ))
+  #   cat(paste("     ", warn_df$warning[i], "\n"))
+  # }
 
-   invisible(NULL)
+  for (i in m) {
+    cat(paste0("Warning Message ", i, ":\n"))
+    # cat(paste("Function:", warn_df$func[i], "\n")) # removed function name output
+    if (sum(!is.null(warn_df$subpoptype[i]), is.na(warn_df$subpoptype[i]))) {
+      cat(paste("Population Type:", warn_df$subpoptype[i], "\n"))
+    }
+    if (sum(!is.null(warn_df$subpop[i]), is.na(warn_df$subpop[i]))) {
+      cat(paste("Subpopulation:", warn_df$subpop[i], "\n"))
+    }
+    if (sum(!is.null(warn_df$indicator[i]), is.na(warn_df$indicator[i]))) {
+      cat(paste("Indicator:", warn_df$indicator[i], "\n"))
+    }
+    if (sum(!is.null(warn_df$stratum[i]), is.na(warn_df$stratum[i]))) {
+      cat(paste("Stratum:", warn_df$stratum[i], "\n"))
+    }
+    cat(paste("Warning:", warn_df$warning[i]))
+    if (sum(!is.null(warn_df$action[i]), is.na(warn_df$action[i]))) {
+      cat(paste("Action:", warn_df$action[i], "\n"))
+    }
+  }
+
+  invisible(NULL)
 }
-

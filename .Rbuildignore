@@ -1,9 +1,6 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
-^notes$
-^release$
-^vignettes_plots$
-^vignettes_prep$
-^\.travis\.yml$
 ^CRAN-RELEASE$
 ^cran-comments.md$
+^doc$
+^Meta$

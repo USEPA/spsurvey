@@ -2,20 +2,28 @@
 % Please edit documentation in R/revisit_bibd.R
 \name{revisit_bibd}
 \alias{revisit_bibd}
-\title{Create a Balanced Incomplete Block Panel Revisit Design}
+\title{Create a balanced incomplete block panel revisit design}
 \usage{
-revisit_bibd(n.period, n.pnl, n.visit, nsamp, panel_name = "BIB",
-  begin = 1, skip = 1, iter = 30)
+revisit_bibd(
+  n_period,
+  n_pnl,
+  n_visit,
+  nsamp,
+  panel_name = "BIB",
+  begin = 1,
+  skip = 1,
+  iter = 30
+)
 }
 \arguments{
-\item{n.period}{Number of time periods for the survey design. Typically,
+\item{n_period}{Number of time periods for the survey design. Typically,
 number of periods if sampling occurs once per period or number of months if
 sampling occurs once per month. (v, number of varieties/treatments in BIBD
 terms)}
 
-\item{n.pnl}{Number of panels (b, number of blocks in BIBD terms)}
+\item{n_pnl}{Number of panels (b, number of blocks in BIBD terms)}
 
-\item{n.visit}{Number of time periods to be visited in a panel (k, block
+\item{n_visit}{Number of time periods to be visited in a panel (k, block
 size in BIBD terms)}
 
 \item{nsamp}{Number of samples in each panel.}
@@ -26,10 +34,10 @@ size in BIBD terms)}
 period.}
 
 \item{skip}{Number of sampling occasions to skip between planned sampling
-periods, e.g., sampling will occur only every 5 periods if skip = 5.}
+periods, e.g., sampling will occur only every 5 periods if \code{skip = 5}.}
 
 \item{iter}{Maximum number of iterations in search for D-optimal
-Generallized Youden Design.}
+Generalized Youden Design.}
 }
 \value{
 A two-dimensional array of sample sizes to be sampled for each panel
@@ -44,15 +52,14 @@ design.  Based on algorithmic idea by Cook and Nachtsheim (1989) and
 implemented by Robert Wheeler.
 }
 \details{
-The function uses find.BIB function from crossdes package to
+The function uses \code{find.BIB} function from crossdes package to
 search for a D-optimal block design.  crossdes uses package AlgDesign
 to search balanced incomplete block designs.
 }
 \examples{
 # Balanced incomplete block design with 20 sample occasions, 20 panels,
 # 3 visits to each unit, and 20 units in each panel.
-revisit_bibd(n.period = 20, n.pnl = 20, n.visit = 3, nsamp = 20)
-
+revisit_bibd(n_period = 20, n_pnl = 20, n_visit = 3, nsamp = 20)
 }
 \references{
 Cook R. D.  and C. Nachtsheim. (1989). Computer-aided blocking of factorial
@@ -60,16 +67,11 @@ Cook R. D.  and C. Nachtsheim. (1989). Computer-aided blocking of factorial
 }
 \seealso{
 \describe{
-    \item{\code{\link{revisit_dsgn}}}{create a panel revisit design}
-    \item{\code{\link{revisit_rand}}}{create a revisit design with random
+    \item{\code{\link{revisit_dsgn}}}{to create a panel revisit design}
+    \item{\code{\link{revisit_rand}}}{to create a panel revisit design with random
       assignment to panels and time periods}
-    \item{\code{\link{panel_summary}}}{summarize characteristics of a revisit
-      panel design}
-    \item{\code{\link{power.dsgn}}}{power calculation for multiple panel
-      designs}
-    \item{\code{\link{cov.panel.dsgn}}}{covariance matrix for a panel design}
-    \item{\code{\link{plot_powerpaneldesign}}}{plot power curves for panel
-      designs}
+    \item{\code{\link{summary.paneldesign}}}{ to summarize characteristics of a
+      panel revisit design}
   }
 }
 \author{

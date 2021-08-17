@@ -1,5 +1,5 @@
-################################################################################
-# Function: uniqueID
+###############################################################################
+# Function: uniqueID (not exported)
 # Programmer: Tom Kincaid
 # Date: February 23, 2004
 # Last Revised: June 27, 2005
@@ -14,35 +14,37 @@
 #'
 #' @return Vector of unique site IDs.
 #'
-#' @author Tom Kincaid \email{Kincaid.Tom@epa.gov}
+#' @author Tom Kincaid \email{Kincaid.Tom@@epa.gov}
 #'
-#' @export
-################################################################################
+#' @noRd
+###############################################################################
 
 uniqueID <- function(siteID) {
 
-# If siteID is a factor, convert the input vector to character data
+  # If siteID is a factor, convert the input vector to character data
 
-   factor.ind <- FALSE
-   if(is.factor(siteID)) {
-      siteID <- as.character(siteID)
-      factor.ind <- TRUE
-   }
+  factor.ind <- FALSE
+  if (is.factor(siteID)) {
+    siteID <- as.character(siteID)
+    factor.ind <- TRUE
+  }
 
-# Assign new site IDs
+  # Assign new site IDs
 
-   for(id in unique(siteID)) {
-      temp <- siteID == id
-      if(sum(temp) > 1)
-         siteID[temp] <- paste(siteID[temp], 1:sum(temp), sep=".")
-   }
+  for (id in unique(siteID)) {
+    temp <- siteID == id
+    if (sum(temp) > 1) {
+      siteID[temp] <- paste(siteID[temp], 1:sum(temp), sep = ".")
+    }
+  }
 
-# If siteID is a factor, convert the result to a factor
+  # If siteID is a factor, convert the result to a factor
 
-   if(factor.ind)
-      siteID <- as.factor(siteID)
+  if (factor.ind) {
+    siteID <- as.factor(siteID)
+  }
 
-# Return the vector of site IDs
+  # Return the vector of site IDs
 
-   siteID
+  siteID
 }

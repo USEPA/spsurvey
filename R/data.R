@@ -1,16 +1,103 @@
-#' New England Lakes
+#' New England Lakes data
 #'
-#' A simple features (sf) point data.frame of 6121 lakes that was created 
-#' from a shapefile of lakes in the southern New England region of the U.S. 
-#' containing the area category in hectares and coordinates. The variables are as follows:
+#' An \code{sf} point object of 200 lakes in the Northeastern
+#' United States.
 #'
-#' @format A data frame with 6121 rows and 5 variables:
+#' @format An \code{sf} object with 200 rows and 6 variables:
 #' \describe{
-#'   \item{xcoord}{x coordinate in meters in Albers (1832073 - 2136098)}
-#'   \item{ycoord}{y coordinate in meters in Albers (2218907 - 2474343)}
-#'   \item{State}{state lake point is in (CT, MA, RI)}
-#'   \item{Area_Cat}{lake surface area category in hectares ((0,1],(1,5],
-#'   (10,50],(5,10],(50,500], (500,1e+04])}
-#'   \item{geometry}{simple features geometry list-column}
+#'   \item{\code{AREA}}{ Lake area in hectares.}
+#'   \item{\code{AREA_CAT}}{ Lake area categories based on a hectare cutoff.}
+#'   \item{\code{ELEV}}{ Elevation in meters.}
+#'   \item{\code{ELEV_CAT}}{ Elevation categories based on a meter cutoff.}
+#'   \item{\code{LEGACY}}{ Legacy site indicator.}
+#'   \item{\code{geometry}}{ Point geometry using a NAD83 / Conus Albers
+#'     projection (EPSG: 5070).}
 #' }
-"NE_lakes"
+"NE_Lakes"
+
+#' Illinois River data
+#'
+#' An (\code{sf}) multilinestring object of 244 segments of the
+#' Illinois River in Arkansas and Oklahoma.
+#'
+#' @format An \code{sf} multilinestring object object with 244 rows and 2
+#' variables:
+#' \describe{
+#'   \item{\code{STATE_NAME}}{ State name.}
+#'   \item{\code{geometry}}{ Multilinestring geometry using a NAD83 / Conus Albers
+#'     projection (EPSG: 5070).}
+#' }
+"Illinois_River"
+
+#' Illinois River legacy data
+#'
+#' An (\code{sf}) point object of legacy sites for  the Illinois
+#' River data.
+#'
+#' @format An \code{sf} point object object with 5 rows and 2
+#' variables:
+#' \describe{
+#'   \item{\code{STATE_NAME}}{ State name.}
+#'   \item{\code{geometry}}{ Point geometry using a NAD83 / Conus Albers
+#'     projection (EPSG: 5070).}
+#' }
+"Illinois_River_Legacy"
+
+#' Lake Ontario data
+#'
+#' An \code{sf} multipolygon object of 187 polygons consisting
+#' of shoreline segments in Lake Ontario.
+#'
+#' @format An \code{sf} multipolygon object with 187 rows and 5 variables:
+#' \describe{
+#'   \item{\code{COUNTRY}}{ Country.}
+#'   \item{\code{RSRC_CLASS}}{ Bay class.}
+#'   \item{\code{PSTL_CODE}}{ Postal code.}
+#'   \item{\code{AREA_SQKM}}{ Area in square kilometers}
+#'   \item{\code{geometry}}{ Multipolygon geometry using a NAD83 / Conus Albers
+#'     projection (EPSG: 5070).}
+#' }
+"Lake_Ontario"
+
+#' NLA PNW data
+#'
+#' An \code{sf} point object of 96 lakes in the Pacific Northwest Region of the United
+#' States during the year 2017, from a subset of the Environmental
+#' Protection Agency's "National Lakes Assessment."
+#'
+#' @format An \code{sf} point object with 96 rows and 9 variables:
+#' \describe{
+#'   \item{\code{SITE_ID}}{ A unique lake identifier.}
+#'   \item{\code{WEIGHT}}{ The sampling design weight.}
+#'   \item{\code{URBAN}}{ Urban category.}
+#'   \item{\code{STATE}}{ State name.}
+#'   \item{\code{BMMI}}{ Benthic MMI value.}
+#'   \item{\code{BMMI_COND}}{ Benthic MMI condition categories.}
+#'   \item{\code{PHOS_COND}}{ Phosphorus condition categories.}
+#'   \item{\code{NITR_COND}}{ Nitrogen condition categories.}
+#'   \item{\code{geometry}}{ Point geometry using a NAD83 / Conus Albers
+#'     projection (EPSG: 5070).}
+#' }
+"NLA_PNW"
+
+#' NRSA EPA7 data
+#'
+#' An \code{sf} point object of 353 stream segments in the Central
+#' United States during the years 2008 and 2013, from a subset of the Environmental
+#' Protection Agency's "National Rivers and Streams Assessment."
+#'
+#' @format A data frame with 353 rows and 10 variables:
+#' \describe{
+#'   \item{\code{SITE_ID}}{ A unique site identifier.}
+#'   \item{\code{YEAR}}{ Year of design cycle.}
+#'   \item{\code{WEIGHT}}{ Sampling design weights.}
+#'   \item{\code{ECOREGION}}{ Ecoregion.}
+#'   \item{\code{STATE}}{ State name.}
+#'   \item{\code{BMMI}}{ Benthic MMI value.}
+#'   \item{\code{BMMI_COND}}{ Benthic MMI categories.}
+#'   \item{\code{PHOS_COND}}{ Phosphorus condition categories.}
+#'   \item{\code{NITR_COND}}{ Nitrogen condition categories.}
+#'   \item{\code{geometry}}{ Point geometry using a NAD83 / Conus Albers
+#'     projection (EPSG: 5070).}
+#' }
+"NRSA_EPA7"
