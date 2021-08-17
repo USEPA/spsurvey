@@ -47,7 +47,7 @@ There are three additional vignettes in spsurvey:
 2. Selecting Spatially Balanced Probability Samples: Use the `grts()` function to implement the Generalized Random Tessellation Stratified (GRTS) algorithm (Stevens and Olsen, 2004) to select spatially balanced probability samples.
 3. Analyzing Probability Samples: Use several analysis functions to analyze probability samples
 
-These vignettes cover some of the core functions in spsurvey and the core arguments within those functions. These vignettes do not cover all of the functions in spsurvey or all of the arguments within the core functions. To learn more about features of spsurvey that are not covered in these vignettes, we encourage you read spsurvey's documentation. Interactive help files for a particular function are available by running `?function_name` after loading spsurvey. For example, to learn more about the `grts()` function, run `?grts`.
+These vignettes cover some of the core functions in spsurvey and the core arguments within those functions. These vignettes do not cover all of the functions in spsurvey or all of the arguments within the core functions. To learn more about features of spsurvey that are not covered in these vignettes, we encourage you to read spsurvey's documentation. Interactive help files for a particular function are available by running `?function_name` after loading spsurvey. For example, to learn more about the `grts()` function, run `?grts`.
 
 # Installing a Previous Version of spsurvey
 

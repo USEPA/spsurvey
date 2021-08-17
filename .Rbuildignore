@@ -2,3 +2,5 @@
 ^\.Rproj\.user$
 ^CRAN-RELEASE$
 ^cran-comments.md$
+^doc$
+^Meta$

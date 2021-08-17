@@ -28,16 +28,16 @@ knitr::opts_chunk$set(
 
 The `summary()` and `plot()` functions in spsurvey are used to summarize and visualize sample frames, samples, and design frames. Both functions use a formula argument specifying the variables to be summarized or visualized. These functions behave differently for one-sided and two-sided formulas. To learn more about formulas in R, run `?formula`. Only the core functionality of `summary()` and `plot()` will be covered in this vignette, so to learn more about these functions, run `?summary` and `?plot`.
 
-The `plot()` function in spsurvey is built on the `plot()` function in the sf package. spsurvey's `plot()` function accommodates all the arguments in sf's `plot()` function and adds a few additional features.  To learn more about the `plot()` function in sf, run `?plot.sf()`. 
+The `plot()` function in `spsurvey` is built on the `plot()` function in the `sf` package. `spsurvey`'s `plot()` function accommodates all the arguments in sf's `plot()` function and adds a few additional features.  To learn more about the `plot()` function in sf, run `?plot.sf()`. 
 
-Before proceeding with the rest of the vignette, load spsurvey by running
+Before proceeding with the rest of the vignette, load `spsurvey` by running
 ```{r}
 library(spsurvey)
 ```
 
 # Sample Frames
 
-The sample frame contains all units that may be selected in the sample. Summarizing and visualizing the sample frame is often helpful to better understand your data and inform sampling options like stratification and unequal inclusion probabilities. The `NE_Lakes` data in spsurvey is a sample frame that contains lakes from the Northeastern United States. There are three variables in `NE_Lakes` you will summarize and visualize:
+The sample frame contains all units that may be selected in the sample. Summarizing and visualizing the sample frame is often helpful to better understand your data and inform sampling options like stratification and unequal inclusion probabilities. The `NE_Lakes` data in `spsurvey` is a sample frame that contains lakes from the Northeastern United States. There are three variables in `NE_Lakes` you will summarize and visualize:
 
 1. `AREA_CAT`: lake area categories (small and large)
 2. `ELEV`: lake elevation
@@ -127,23 +127,24 @@ There are three arguments in `plot()` used to adjust graphical parameters:
     
 The `var_args` and `varlevel_args` arguments take lists whose names match variable names in the formula. For `varlevel_args`, each list element must have an entry called `levels` that matches the variable's levels. The following example combines all three graphical parameter adjustment arguments:
 ```{r}
-list1 <- list(main = "my new title", pal = rainbow)
-list2 <- list(levels = c("small", "large"), pch = c(4, 19))
+list1 <- list(main = "Elevation Categories", pal = rainbow)
+list2 <- list(main = "Area Categories")
+list3 <- list(levels = c("small", "large"), pch = c(4, 19))
 plot(
   NE_Lakes,
   formula = ~ ELEV_CAT + AREA_CAT,
-  var_args = list(ELEV_CAT = list1), 
-  varlevel_args = list(AREA_CAT = list2),
+  var_args = list(ELEV_CAT = list1, AREA_CAT = list2),
+  varlevel_args = list(AREA_CAT = list3),
   cex = 0.75,
   key.width = lcm(3)
 )
 ```
 
-`var_args` uses `list1` to give the `AREA_CAT` visualization a new title and color palette; `varlevel_args` uses `list2` to give the `ELEV_CAT` visualization different shapes for the small and large levels; and `...` uses `cex = 0.75` to reduce the size of all points and `key.width` to adjust legend spacing. 
+`var_args` uses `list1` and `list2` to give the `ELEV_CAT` visualization a new title and color palette and `AREA_CAT` a new title; `varlevel_args` uses `list2` to give the `AREA_CAT` visualization different shapes for the small and large levels; and `...` uses `cex = 0.75` to reduce the size of all points and `key.width` to adjust legend spacing. 
 
 If a two-sided formula is used, it is possible to adjust graphical parameters for all levels of a left-hand side variable and all levels of a right-hand side variable when a sublist matching the structure of `varlevel_args` is used as an argument to `var_args`:
 ```{r}
-sublist <- list(AREA_CAT = list2)
+sublist <- list(AREA_CAT = list3)
 plot(
   NE_Lakes,
   formula = AREA_CAT ~ ELEV_CAT,
@@ -195,9 +196,9 @@ plot(eqprob, formula = siteuse ~ AREA_CAT, key.width = lcm(3))
 
 # Design Frames
 
-Design frames are data frames or sf objects that contained observed data. These are the objects used in spsurvey's analysis functions. spsurvey's `summary()` and `plot()` functions are available for design frames. Design frames are summarized and visualized almost exactly like sample frames, the main difference being that design frames are a bit more flexible than sample frames because design frames are not required to be `sf` objects.
+Design frames are data frames or `sf` objects that contain observed data. These are the objects used in `spsurvey`'s analysis functions. `spsurvey`'s `summary()` and `plot()` functions are available for design frames. Design frames are summarized and visualized almost exactly like sample frames, the main difference being that design frames are a bit more flexible than sample frames because design frames are not required to be `sf` objects.
 
-The `NLA_PNW` data in spsurvey is a design frame that contains lakes from California, Oregon, and Washington. There are two variables in `NLA_PNW` you will summarize and visualize:
+The `NLA_PNW` data in `spsurvey` is a design frame that contains lakes from California, Oregon, and Washington. There are two variables in `NLA_PNW` you will summarize and visualize:
 
 1. `NITR_COND` : Nitrogen content categories (good, fair, and poor)
 2. `BMMI` : Benthic macroinvertebrate multi-metric index
@@ -208,4 +209,4 @@ summary(NLA_PNW, formula = ~ NITR_COND + BMMI)
 plot(NLA_PNW, formula = ~ NITR_COND + BMMI, key.width = lcm(3))
 ```
 
-Visualizing design frames that are not sf objects requires specification of coordinates and a crs to `plot()` using the `xcoord`, `ycoord`, and `crs` arguments.
+Visualizing design frames that are not `sf` objects requires specification of coordinates and a `crs` to `plot()` using the `xcoord`, `ycoord`, and `crs` arguments.
