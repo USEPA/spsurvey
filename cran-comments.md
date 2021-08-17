@@ -51,3 +51,8 @@ only 0.39 MB, well below the 1MB suggested limit for manuals. In short, it is my
 warning in `devtools::check()` (and NOTE in rhub builds) does not accurately
 reflect the size of the final PDF manual installed upon package build.
 
+## Downstream dependencies
+
+I have let the authors of packages that import and suggest spsurvey know that we 
+are releasing a major update.
+

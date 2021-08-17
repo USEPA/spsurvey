@@ -28,16 +28,16 @@ knitr::opts_chunk$set(
 
 The `summary()` and `plot()` functions in spsurvey are used to summarize and visualize sample frames, samples, and design frames. Both functions use a formula argument specifying the variables to be summarized or visualized. These functions behave differently for one-sided and two-sided formulas. To learn more about formulas in R, run `?formula`. Only the core functionality of `summary()` and `plot()` will be covered in this vignette, so to learn more about these functions, run `?summary` and `?plot`.
 
-The `plot()` function in `spsurvey` is built on the `plot()` function in the `sf` package. `spsurvey`'s `plot()` function accommodates all the arguments in sf's `plot()` function and adds a few additional features.  To learn more about the `plot()` function in sf, run `?plot.sf()`. 
+The `plot()` function in spsurvey is built on the `plot()` function in the `sf` package. spsurvey's `plot()` function accommodates all the arguments in sf's `plot()` function and adds a few additional features.  To learn more about the `plot()` function in sf, run `?plot.sf()`. 
 
-Before proceeding with the rest of the vignette, load `spsurvey` by running
+Before proceeding with the rest of the vignette, load spsurvey by running
 ```{r}
 library(spsurvey)
 ```
 
 # Sample Frames
 
-The sample frame contains all units that may be selected in the sample. Summarizing and visualizing the sample frame is often helpful to better understand your data and inform sampling options like stratification and unequal inclusion probabilities. The `NE_Lakes` data in `spsurvey` is a sample frame that contains lakes from the Northeastern United States. There are three variables in `NE_Lakes` you will summarize and visualize:
+The sample frame contains all units that may be selected in the sample. Summarizing and visualizing the sample frame is often helpful to better understand your data and inform sampling options like stratification and unequal inclusion probabilities. The `NE_Lakes` data in spsurvey is a sample frame that contains lakes from the Northeastern United States. There are three variables in `NE_Lakes` you will summarize and visualize:
 
 1. `AREA_CAT`: lake area categories (small and large)
 2. `ELEV`: lake elevation
@@ -196,9 +196,9 @@ plot(eqprob, formula = siteuse ~ AREA_CAT, key.width = lcm(3))
 
 # Design Frames
 
-Design frames are data frames or `sf` objects that contain observed data. These are the objects used in `spsurvey`'s analysis functions. `spsurvey`'s `summary()` and `plot()` functions are available for design frames. Design frames are summarized and visualized almost exactly like sample frames, the main difference being that design frames are a bit more flexible than sample frames because design frames are not required to be `sf` objects.
+Design frames are data frames or `sf` objects that contain observed data. These are the objects used in spsurvey's analysis functions. spsurvey's `summary()` and `plot()` functions are available for design frames. Design frames are summarized and visualized almost exactly like sample frames, the main difference being that design frames are a bit more flexible than sample frames because design frames are not required to be `sf` objects.
 
-The `NLA_PNW` data in `spsurvey` is a design frame that contains lakes from California, Oregon, and Washington. There are two variables in `NLA_PNW` you will summarize and visualize:
+The `NLA_PNW` data in spsurvey is a design frame that contains lakes from California, Oregon, and Washington. There are two variables in `NLA_PNW` you will summarize and visualize:
 
 1. `NITR_COND` : Nitrogen content categories (good, fair, and poor)
 2. `BMMI` : Benthic macroinvertebrate multi-metric index

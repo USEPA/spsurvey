@@ -44,7 +44,7 @@ library(spsurvey)
 There are three additional vignettes in spsurvey:
 
 1. Summarizing and Visualizing Data: Use the `summary()` and `plot()` functions to summarize and visualize sample frames and samples
-2. Selecting Spatially Balanced Probability Samples: Use the `grts()` function to implement the Generalized Random Tessellation Stratified (GRTS) algorithm (Stevens and Olsen, 2004) to select spatially balanced probability samples.
+2. Spatially Balanced Probability Samples: Use the `grts()` function to implement the Generalized Random Tessellation Stratified (GRTS) algorithm (Stevens and Olsen, 2004) to select spatially balanced probability samples.
 3. Analyzing Probability Samples: Use several analysis functions to analyze probability samples
 
 These vignettes cover some of the core functions in spsurvey and the core arguments within those functions. These vignettes do not cover all of the functions in spsurvey or all of the arguments within the core functions. To learn more about features of spsurvey that are not covered in these vignettes, we encourage you to read spsurvey's documentation. Interactive help files for a particular function are available by running `?function_name` after loading spsurvey. For example, to learn more about the `grts()` function, run `?grts`.
@@ -65,7 +65,7 @@ To work with spatial data and `sf` objects, you must have a basic understanding 
 
 CRSs in R have traditionally been stored using EPSG codes or `proj4string` values. This meant that in order to transform your coordinates from one CRS to another, you needed two EPSG codes or `proj4string` values, one for each CRS. Recent updates to R's handling of spatial data [follow GDAL and PROJ](https://www.r-spatial.org/r/2020/03/17/wkt.html), and CRSs in `sf` objects are stored in R as lists with two components: `input`, which contains information regarding the EPSG code and proj4string; and `wkt`, an open geospatial standard format. For more information on CRSs and EPSG codes, see https://r-spatial.github.io/sf/index.html, Pebesma (2018), and Lovelace et al. (2019). To search for various coordinate reference systems and EPSG codes, visit https://spatialreference.org or https://epsg.io/ .
 
-It is crucial that your `sf` object contains an appropriate CRS. If the CRS is not specified correctly, you may get misleading results. `spsurvey` will use the coordinates from your `sf` object, so it is your responsibility to make sure they have the correct CRS.
+It is crucial that your `sf` object contains an appropriate CRS. If the CRS is not specified correctly, you may get misleading results. spsurvey will use the coordinates from your `sf` object, so it is your responsibility to make sure they have the correct CRS.
 
 # References
 
