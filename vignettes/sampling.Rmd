@@ -1,5 +1,5 @@
 ---
-title: "Spatially Balanced Probability Samples"
+title: "Spatially Balanced Probability Sampling"
 author: "Michael Dumelle, Tony Olsen, Tom Kincaid, and Marc Weber"
 output: 
   html_document:
@@ -12,7 +12,7 @@ output:
       smooth_scroll: no
     toc_depth: 2
 vignette: >
-  %\VignetteIndexEntry{Spatially Balanced Sampling}
+  %\VignetteIndexEntry{Spatially Balanced Probability Sampling}
   %\VignetteEngine{knitr::rmarkdown}
   \usepackage[utf8]{inputenc}
 ---

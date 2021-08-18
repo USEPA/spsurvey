@@ -1,5 +1,5 @@
 ---
-title: "Summarizing and Visualizing Data"
+title: "Summarizing and Visualizing Sample Frames, Samples, and Design Frames"
 author: "Michael Dumelle, Tony Olsen, Tom Kincaid, and Marc Weber"
 output: 
   html_document:
@@ -12,7 +12,7 @@ output:
       smooth_scroll: no
     toc_depth: 2
 vignette: >
-  %\VignetteIndexEntry{Summarizing and Visualizing Data}
+  %\VignetteIndexEntry{Summarizing and Visualizing Sample Frames, Samples, and Design Frames}
   %\VignetteEngine{knitr::rmarkdown}
   \usepackage[utf8]{inputenc}
 ---
