@@ -2,9 +2,9 @@
 
 ## Major Updates
 
-* Syntax for the `grts()` (Generalized Random Tessellation Stratified Designs) and the `irs()` (Independent Random Samling Designs) functions has been significantly simplified. These functions now require the sample frame be an `sf` object.  
+* Syntax for the `grts()` (Generalized Random Tessellation Stratified Designs) and the `irs()` (Independent Random Sampling Designs) functions has been significantly simplified. These functions now require the sample frame be an `sf` object.  
 
-* The `grts()` and `irs()` functions now accomodate legacy (or historical) sites, a minimum distance between sites, and two approaches for selecting replacement sites (reverse heirarchical ordering and nearest neighbor).
+* The `grts()` and `irs()` functions now accommodate legacy (or historical) sites, a minimum distance between sites, and two approaches for selecting replacement sites (reverse hierarchical ordering and nearest neighbor).
 
 * Syntax for the analysis functions (`*_analysis()`) has been significantly simplified. 
 
