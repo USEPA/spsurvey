@@ -134,11 +134,15 @@
 #'
 #' @param DesignID A character string indicating the naming structure for each
 #'   site's identifier selected in the sample, which is included as a variable in the
-#'   sf object in the function's output.
+#'   sf object in the function's output. Default is "Site".
 #'
 #' @param SiteBegin A character string indicating the first number to use to match
-#'   with \code{DesignID} while creating each site's identifier selected in the sample. Successive
-#'   sites are given successive integers. The default starting number is \code{1}.
+#'   with \code{DesignID} while creating each site's identifier selected in the sample. 
+#'   Successive sites are given successive integers. The default starting number 
+#'   is \code{1} and the number of digits is equal to number of digits in 
+#'   \code{nbase + nover}.
+#'   For example, if \code{nbase} is 50 and \code{nover} is 0, then the default 
+#'   site identifiers are \code{Site-01} to \code{Site-50} 
 #'
 #'
 #' @return A list with five elements:
