@@ -4,10 +4,11 @@
 # Date: May 5, 2021
 # Revised: May 6, 2021 to correct an error when specifying argument type_cdf for
 #          function cdf_plot
+# Revised: August 31, 2021 to improve documentation
 #
-#' Plot cumulative distribution functions (CDFs) and output to a pdf
+#' Create a PDF file containing cumulative distribution functions (CDF) plots
 #'
-#' This function creates a pdf file containing CDF plots.  Input data for the
+#' This function creates a PDF file containing CDF plots.  Input data for the
 #' plots is provided by a data frame utilizing the same structure as the data
 #' frame named "CDF" that is included in the output object produced by function
 #' \code{cont_analysis}.  Plots are produced for every combination of Type of
@@ -17,12 +18,13 @@
 #'
 #' @param cdfest Data frame utilizing the same structure as the data frame
 #'   named "CDF" that is included in the output object produced by function
-#'   cont.analysis.
+#'   \code{cont_analysis}.
 #'
-#' @param units_cdf Indicator for the type of units in which the CDF is
-#'   plotted, where "Percent" means the plot is in terms of percent of the
-#'   population, and "Units" means the plot is in terms of units of the
-#'   population.  The default is "Percent".
+#' @param units_cdf Indicator for the label utilized for the left side y-axis
+#'   and the values used for the left side y-axis tick marks, where "Percent"
+#'   means the label and values are in terms of percent of the population, and
+#'   "Units" means the label and values are in terms of units (count, length,
+#'   or area) of the population.  The default is "Percent".
 #'
 #' @param ind_type Character vector consisting of the values "Continuous" or
 #'   "Ordinal" that controls the type of CDF plot for each indicator.  The
@@ -37,13 +39,23 @@
 #'   indicator. If this argument equals NULL, then indicator names are used as
 #'   the labels. The default is NULL.
 #'
-#' @param ylbl Character string providing the y-axis label.  The default is
+#' @param ylbl Character string providing the left side y-axis label.  If
+#'   argument units_cdf equals "Units", a value should be provided for this
+#'   argument.  Otherwise, the label will be "Percent".  The default is
 #'   "Percent".
 #'
-#' @param ylbl_r Character string providing the label for the right side
-#'   y-axis, where NULL means a label is not created, and "Same" means the label
-#'   is the same as the left side label (i.e., argument ylbl).  The default is
-#'   NULL.
+#' @param ylbl_r Character string providing the label for the right side y-axis
+#'   (and, hence, determining the values used for the right side y-axis tick
+#'   marks), where NULL means a right side y-axis is not created.  If this
+#'   argument equals "Same", the right side y-axis will have the same label and
+#'   tick mark values as the left side y-axis.  If this argument equals a
+#'   character string other than "Same", the right side y-axis label will be the
+#'   value provided for argument ylbl_r, and the right side y-axis tick mark
+#'   values will be determined by the choice not utilized for argument
+#'   units_cdf, which means that the default value of argument units_cdf (i.e.,
+#'   "Percent") will result in the right side y-axis tick mark values being
+#'   expressed  in terms of units of the population (i.e., count, length, or
+#'   area).  The default is NULL.
 #'
 #' @param legloc Indicator for location of the plot legend, where "BR" means
 #'   bottom right, "BL" means bottom left, "TR" means top right, and "TL" means
@@ -70,8 +82,9 @@
 #'
 #' @seealso
 #'   \describe{
-#'   \item{\code{\link{cdf_plot}}}{ for visualizing cumulative distribution functions (CDFs)}
-#'   \item{\code{\link{cont_cdftest}}}{ for CDF hypothesis testing}
+#'   \item{\code{\link{cdf_plot}}}{for plotting a cumulative distribution
+#'     function (CDF)}
+#'   \item{\code{\link{cont_cdftest}}}{for CDF hypothesis testing}
 #'   }
 #'
 #' @author Tom Kincaid \email{Kincaid.Tom@@epa.gov}
@@ -107,10 +120,12 @@
 #' @export
 ################################################################################
 
-cont_cdfplot <- function(pdffile = "cdf2x2.pdf", cdfest, units_cdf = "Percent",
-                         ind_type = rep("Continuous", nind), logx = rep("", nind), xlbl = NULL,
-                         ylbl = "Percent", ylbl_r = NULL, legloc = "BR", cdf_page = 4, width = 10,
-                         height = 8, confcut = 5, cex.main = 1.2, ...) {
+cont_cdfplot <- function(
+  pdffile = "cdf2x2.pdf", cdfest, units_cdf = "Percent",
+  ind_type = rep("Continuous", nind), logx = rep("", nind), xlbl = NULL,
+  ylbl = "Percent", ylbl_r = NULL, legloc = "BR", cdf_page = 4, width = 10,
+  height = 8, confcut = 5, cex.main = 1.2, ...
+) {
 
   # Open the PDF file
 
@@ -161,14 +176,13 @@ cont_cdfplot <- function(pdffile = "cdf2x2.pdf", cdfest, units_cdf = "Percent",
       temp <- match(unique(cdfest$Indicator[tstsub]), indnames)
       for (kin in temp) {
         tstind <- tstsub & cdfest$Indicator == indnames[kin]
-        cdf_plot(cdfest[tstind, ],
-          units_cdf = units_cdf, type_cdf = ind_type[kin],
-          logx = logx[kin], xlbl = xlbl[indnames[kin]], ylbl = ylbl, ylbl_r = ylbl_r,
-          figlab = paste(typenames[itype], " - ", subnames[jsub], ": ",
-            indnames[kin],
-            sep = ""
-          ), legloc = legloc, confcut = confcut,
-          conflev = conflev, cex.main = cex.main, ...
+        cdf_plot(
+          cdfest[tstind, ], units_cdf = units_cdf, type_cdf = ind_type[kin],
+          logx = logx[kin], xlbl = xlbl[indnames[kin]], ylbl = ylbl,
+          ylbl_r = ylbl_r, figlab = paste0(typenames[itype], " - ",
+            subnames[jsub], ": ", indnames[kin]),
+          legloc = legloc, confcut = confcut, conflev = conflev,
+          cex.main = cex.main, ...
         )
       }
     }
@@ -182,6 +196,8 @@ cont_cdfplot <- function(pdffile = "cdf2x2.pdf", cdfest, units_cdf = "Percent",
   # Close the PDF file
 
   graphics.off()
+
+  # Return an invisible NULL object
 
   invisible(NULL)
 }
