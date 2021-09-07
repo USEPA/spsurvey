@@ -14,10 +14,10 @@
 #' requiring a minimum distance between sites, and selecting replacement sites.
 #'
 #' @inheritParams grts
-#' 
-#' @details Note that \code{n_base} is the number of sites that is used to calculate 
+#'
+#' @details Note that \code{n_base} is the number of sites that is used to calculate
 #'   the weights which typically are the number of sites that will be used for population
-#'   estimates. When a panel design is implemented, \code{n_base} typically is the 
+#'   estimates. When a panel design is implemented, \code{n_base} typically is the
 #'   number of sites in all panels that will be sampled in the same temporal period.
 #'   It is not the total number of sites in all panels. The sum of \code{n_base} and
 #'   \code{n_over} is equal to the total number of sites to be visited for all panels plus
@@ -214,8 +214,18 @@ irs <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = N
     } else {
       legacy_sites$stratum <- as.character(legacy_sites[[legacy_stratum_var]])
     }
-    if (!is.null(caty_var)) legacy_sites$caty <- as.character(legacy_sites[[caty_var]])
-    if (!is.null(aux_var)) legacy_sites$aux <- legacy_sites[[aux_var]]
+    if (!is.null(caty_var)) {
+      if (is.null(legacy_caty_var)) {
+        legacy_caty_var <- caty_var
+      }
+      legacy_sites$caty <- as.character(legacy_sites[[legacy_caty_var]])
+    }
+    if (!is.null(aux_var)) {
+      if (is.null(legacy_aux_var)) {
+        legacy_aux_var <- aux_var
+      }
+      legacy_sites$aux <- as.character(legacy_sites[[legacy_aux_var]])
+    }
     if (is.null(legacy_var)) {
       legacy_sites$legacy <- TRUE
       legacy_var <- "legacy"
