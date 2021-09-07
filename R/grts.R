@@ -144,6 +144,13 @@
 #'   For example, if \code{nbase} is 50 and \code{nover} is 0, then the default
 #'   site identifiers are \code{Site-01} to \code{Site-50}
 #'
+#' @details Note that \code{n_base} is the number of sites that is used to calculate 
+#'   the weights which typically are the number of sites that will be used for population
+#'   estimates. When a panel design is implemented, \code{n_base} typically is the 
+#'   number of sites in all panels that will be sampled in the same temporal period.
+#'   It is not the total number of sites in all panels. The sum of \code{n_base} and
+#'   \code{n_over} is equal to the total number of sites to be visited for all panels plus
+#'   any replacement sites that may be required.
 #'
 #' @return A list with five elements:
 #'   \itemize{
