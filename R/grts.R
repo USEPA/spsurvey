@@ -137,12 +137,12 @@
 #'   sf object in the function's output. Default is "Site".
 #'
 #' @param SiteBegin A character string indicating the first number to use to match
-#'   with \code{DesignID} while creating each site's identifier selected in the sample. 
-#'   Successive sites are given successive integers. The default starting number 
-#'   is \code{1} and the number of digits is equal to number of digits in 
+#'   with \code{DesignID} while creating each site's identifier selected in the sample.
+#'   Successive sites are given successive integers. The default starting number
+#'   is \code{1} and the number of digits is equal to number of digits in
 #'   \code{nbase + nover}.
-#'   For example, if \code{nbase} is 50 and \code{nover} is 0, then the default 
-#'   site identifiers are \code{Site-01} to \code{Site-50} 
+#'   For example, if \code{nbase} is 50 and \code{nover} is 0, then the default
+#'   site identifiers are \code{Site-01} to \code{Site-50}
 #'
 #'
 #' @return A list with five elements:
@@ -237,7 +237,8 @@
 ################################################################################
 grts <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = NULL,
                  caty_n = NULL, aux_var = NULL, legacy_var = NULL,
-                 legacy_sites = NULL, legacy_stratum_var = NULL, mindis = NULL,
+                 legacy_sites = NULL, legacy_stratum_var = NULL,
+                 legacy_caty_var = NULL, legacy_aux_var = NULL, mindis = NULL,
                  maxtry = 10, n_over = NULL, n_near = NULL, wgt_units = NULL,
                  pt_density = NULL, DesignID = "Site", SiteBegin = 1) {
   if (inherits(sframe, c("tbl_df", "tbl"))) { # identify if tibble class elements are present
@@ -344,8 +345,18 @@ grts <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = 
       }
       legacy_sites$stratum <- as.character(legacy_sites[[legacy_stratum_var]])
     }
-    if (!is.null(caty_var)) legacy_sites$caty <- as.character(legacy_sites[[caty_var]])
-    if (!is.null(aux_var)) legacy_sites$aux <- legacy_sites[[aux_var]]
+    if (!is.null(caty_var)) {
+      if (is.null(legacy_caty_var)) {
+        legacy_caty_var <- caty_var
+      }
+      legacy_sites$caty <- as.character(legacy_sites[[legacy_caty_var]])
+    }
+    if (!is.null(aux_var)) {
+      if (is.null(legacy_aux_var)) {
+        legacy_aux_var <- aux_var
+      }
+      legacy_sites$aux <- as.character(legacy_sites[[legacy_aux_var]])
+    }
     if (is.null(legacy_var)) {
       legacy_sites$legacy <- TRUE
       legacy_var <- "legacy"
