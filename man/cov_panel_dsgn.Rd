@@ -60,7 +60,7 @@ provision for unit correlation and period autocorrelation.
 Covariance structure accounts for the panel design and the four
   variance components: unit variation, period variation, unit by period
   interaction variation and index (or residual) variation. Uses the model
-  structure defined by Urquhart.
+  structure defined by Urquhart 2012.
 
   If \code{nrepeats} is \code{NULL}, then no units sampled more than once in a specific
   panel, period combination) aned then unit by period and index variances are

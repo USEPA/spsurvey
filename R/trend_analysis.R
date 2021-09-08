@@ -37,7 +37,7 @@
 #' and \code{"ycoord"}, respectively, and the geometry column is dropped from
 #' the object.
 #'
-#' @param dframe Data frame containing survey design variables, response
+#' @param dframe Data frame or \code{sf} object containing survey design variables, response
 #'   variables, and subpopulation (domain) variables.
 #'
 #' @param vars_cat Vector composed of character values that identify the
@@ -140,7 +140,7 @@
 #'   named vector containing one more than the number of clusters in the sample,
 #'   where the first item in the vector specifies the number of clusters in the
 #'   population and each subsequent item specifies the number of stage two units
-#'   for the cluster.  The name for the first item in the vector is arbitrry.
+#'   for the cluster.  The name for the first item in the vector is arbitrary.
 #'   Subsequent names in the vector identify clusters and must match the cluster
 #'   IDs.  For a stratified design, the object is a named list of vectors, where
 #'   names must match the strata IDs.  For each stratum, the format of the
@@ -323,7 +323,7 @@
 #'     \item{Indicator}{response variable}
 #'     \item{Trend_Estimate}{trend estimate}
 #'     \item{Trend_Std_Error}{trend standard error}
-#'     \item{"Trend_LCBxxPct"}{trend xx\% (default 95\%) lower confidence bound}
+#'     \item{Trend_LCBxxPct}{trend xx\% (default 95\%) lower confidence bound}
 #'     \item{Trend_UCBxxPct}{trend xx\% (default 95\%) upper confidence bound}
 #'     \item{Trend_p_Value}{trend p-value}
 #'     \item{Intercept_Estimate}{intercept estimate}
@@ -344,7 +344,7 @@
 #'     \item{Indicator}{response variable}
 #'     \item{Trend_Estimate}{trend estimate}
 #'     \item{Trend_Std_Error}{trend standard error}
-#'     \item{"Trend_LCBxxPct"}{trend xx\% (default 95\%) lower confidence bound}
+#'     \item{Trend_LCBxxPct}{trend xx\% (default 95\%) lower confidence bound}
 #'     \item{Trend_UCBxxPct}{trend xx\% (default 95\%) upper confidence bound}
 #'     \item{Trend_p_Value}{trend p-value}
 #'     \item{Intercept_Estimate}{intercept estimate}

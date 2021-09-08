@@ -12,6 +12,7 @@
 #' probabilities proportional to a positive auxiliary variable. Several additional
 #' sampling options are included, such as including legacy (historical) sites,
 #' requiring a minimum distance between sites, and selecting replacement sites.
+#' For technical details, see Stevens and Olsen (2003).
 #'
 #'
 #' @param sframe The sample frame as an \code{sf} object. The coordinate
@@ -82,9 +83,23 @@
 #' @param legacy_stratum_var A character string containing the name of the column from
 #'   \code{legacy_sites} that identifies stratum membership for each element of \code{legacy_sites}.
 #'   This argument is required when the design is stratified and its levels
-#'   must be contained in the levels of \code{stratum_var}. The default value of \code{legacy_stratum_var}
+#'   must be contained in the levels of the \code{stratum_var} variable. The default value of \code{legacy_stratum_var}
 #'   is \code{stratum_var}, so \code{legacy_stratum_var} need only be specified explicitly when
 #'   the name of the stratification variable in \code{legacy_sites} differs from \code{stratum_var}.
+#'
+#' @param legacy_caty_var A character string containing the name of the column from
+#'   \code{legacy_sites} that identifies the unequal probability variable for each element of \code{legacy_sites}.
+#'   This argument is required when the design uses unequal selection probabilities and its categories
+#'   must be contained in the levels of the \code{caty_var} variable. The default value of \code{legacy_caty_var}
+#'   is \code{caty_var}, so \code{legacy_caty_var} need only be specified explicitly when
+#'   the name of the unequal probability variable in \code{legacy_sites} differs from \code{caty_var}.
+#'
+#' @param legacy_aux_var A character string containing the name of the column from
+#'   \code{legacy_sites} that identifies the proportional probability variable for each element of \code{legacy_sites}.
+#'   This argument is required when the design uses proportional selection probabilities and the values of the
+#'   \code{legacy_aux_var} variable must be positive. The
+#'   default value of \code{legacy_aux_var} is \code{aux_var}, so \code{legacy_aux_var} need only be specified explicitly
+#'   when the name of the proportional probability variable in \code{legacy_sites} differs from \code{aux_var}.
 #'
 #' @param mindis A numeric value indicating the desired minimum distance between sampled
 #'   sites. If design is stratified, then mindis is applied separately for each stratum.
@@ -133,7 +148,8 @@
 #'   times the sample size requested.
 #'
 #' @param DesignID A character string indicating the naming structure for each
-#'   site's identifier selected in the sample, which is included as a variable in the
+#'   site's identifier selected in the sample, which is matched with \code{SiteBegin} and
+#'   included as a variable in the
 #'   sf object in the function's output. Default is "Site".
 #'
 #' @param SiteBegin A character string indicating the first number to use to match
@@ -144,11 +160,11 @@
 #'   For example, if \code{nbase} is 50 and \code{nover} is 0, then the default
 #'   site identifiers are \code{Site-01} to \code{Site-50}
 #'
-#' @details Note that \code{n_base} is the number of sites that is used to calculate 
-#'   the weights which typically are the number of sites that will be used for population
-#'   estimates. When a panel design is implemented, \code{n_base} typically is the 
-#'   number of sites in all panels that will be sampled in the same temporal period.
-#'   It is not the total number of sites in all panels. The sum of \code{n_base} and
+#' @details \code{n_base} is the number of sites used to calculate
+#'   the sampling weights, which is typically the number of sites that will be used for population
+#'   estimates. When a panel design is implemented, \code{n_base} is typically the
+#'   number of sites in all panels that will be sampled in the same temporal period --
+#'   \code{n_base} is not the total number of sites in all panels. The sum of \code{n_base} and
 #'   \code{n_over} is equal to the total number of sites to be visited for all panels plus
 #'   any replacement sites that may be required.
 #'

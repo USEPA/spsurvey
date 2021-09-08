@@ -21,7 +21,7 @@
 #'   consecutive time periods sample units will be sampled, followed by number
 #'   of consecutive time periods skipped, and then repeated as necessary. \code{pnl_n}
 #'   - number of panels in the sublist, and \code{start_option} - option for starting
-#'   the \code{revisit_dsgn} (\code{None}, \code{Partial_Begin}, or \code{Partial_End}) 
+#'   the \code{revisit_dsgn} (\code{None}, \code{Partial_Begin}, or \code{Partial_End})
 #'   which must be the same a \code{pnl_dsgn}. Three basic panel
 #'   structures are possible: a) if \code{pnl_dsgn} ends in \code{0}, then the sample units
 #'   are visited on all subsequent time periods, b) if \code{pnl_dsgn} ends in \code{NA}, then
@@ -52,7 +52,7 @@
 #'   If the last even position is \code{NA}, the panels follow a rotating panel
 #'   structure. For example, \code{pnl_dsgn = c(1, NA)} designates that sample units in
 #'   a panel will be visited once and then never again, [1-n] in McDonald's
-#'   notation. pnl_dsgn = \code{c(1, 4, 1, NA)} designates that sample units in a panel
+#'   notation. \code{pnl_dsgn =c(1, 4, 1, NA)} designates that sample units in a panel
 #'   will be visited once, then not sampled on next four time periods, then
 #'   sampled again once at the next time period and then never sampled again,
 #'   [1-4-1-n] in McDonald/s notation.
@@ -64,7 +64,7 @@
 #'   periods, and that cycle repeated until end of the number of time periods,
 #'   [1-4] in McDonald's notation. \code{pnl_dsgn = c(2, 3, 1, 4)} designates that the
 #'   cycle has sample units in a panel being visited during two consecutive time
-#'   periods, not sampled for three consecutive time periods, sampled for one time 
+#'   periods, not sampled for three consecutive time periods, sampled for one time
 #'   period and then not sampled on next four time periods, and the cycle is
 #'   repeated until end of the number of time periods, [2-3-1-4] in McDonald's
 #'   notation.

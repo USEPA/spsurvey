@@ -43,7 +43,7 @@ x-axises for total percent per period and associated change in mean.
 Default is \code{"period"}.  Note that \code{xaxis_type} controls how the input for
 \code{"period"} and \code{"trend"} parameters is used.}
 
-\item{comp_type}{Character value equal to \code{"design"} or \code{"Indicator"} which
+\item{comp_type}{Character value equal to \code{"design"} or \code{"indicator"} which
 designates the type of power curve comparison that will occur on a single
 plot.  If \code{comp_type = "design"}, then on a single plot of power curves all
 panel designs specified in \code{"dsgns"} are plotted for a single indicator,

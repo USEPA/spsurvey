@@ -4,17 +4,19 @@
 # Date: January 22, 2021
 #' Create an dframe object
 #'
-#' @description \code{dframe} gives data frames, \code{sp} objects, and \code{sf}
-#' objects class \code{dframe} to be used
-#' spsurvey's \code{summary()} and \code{plot()} generics. \code{sp} objects are coerced to \code{sf}
-#' objects prior to giving class \code{dframe}.
+#' @description \code{dframe()} is used before summarizing or visualizing
+#'   data that has been collected (this function need not be run before calling any analysis functions).
+#'   \code{dframe()} gives data frames, \code{sp} objects, and \code{sf}
+#'   objects class \code{dframe}. \code{sp} objects are coerced to \code{sf}
+#'   objects prior to giving class \code{dframe}.
 #'
 #' @param object An \code{sp} or \code{sf} object.
 #'
 #' @param ... Additional arguments to \code{st_as_sf()} if converting an \code{sp}
 #' object to an \code{sf} and \code{dframe} object.
 #'
-#' @return A \code{dframe} object
+#' @return A \code{dframe} object that can be used by
+#' spsurvey's \code{summary()} and \code{plot()} generics.
 #'
 #' @seealso
 #'   \describe{
@@ -27,8 +29,10 @@
 #' @export
 #'
 #' @examples
-#' data("NE_Lakes")
-#' NE_Lakes <- dframe(NE_Lakes)
+#' data("NLA_PNW")
+#' NLA_PNW <- dframe(NLA_PNW)
+#' summary(NLA_PNW, formula = ~ BMMI_COND)
+#' plot(NLA_PNW, formula = ~ BMMI_COND)
 dframe <- function(object, ...) {
   if (inherits(object, "dframe")) {
     new_dframe <- structure(object, class = c("dframe", setdiff(class(object), "dframe")))

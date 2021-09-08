@@ -28,7 +28,7 @@ cat_analysis(
 )
 }
 \arguments{
-\item{dframe}{Data frame containing survey design variables, response
+\item{dframe}{Data frame or \code{sf} object containing survey design variables, response
 variables, and subpopulation (domain) variables.}
 
 \item{vars}{Vector composed of character values that identify the
@@ -106,7 +106,7 @@ variable in the \code{dframe} data frame.  The default value is \code{NULL}.}
   named vector containing one more than the number of clusters in the sample,
   where the first item in the vector specifies the number of clusters in the
   population and each subsequent item specifies the number of stage two units
-  for the cluster.  The name for the first item in the vector is arbitrry.
+  for the cluster.  The name for the first item in the vector is arbitrary.
   Subsequent names in the vector identify clusters and must match the cluster
   IDs.  For a stratified design, the object is a named list of vectors, where
   names must match the strata IDs.  For each stratum, the format of the
@@ -135,6 +135,7 @@ variable in the \code{dframe} data frame.  The default value is \code{NULL}.}
     Cluster_4 = 125,
     Cluster_5 = 75)
   }
+
   Example fpc for a two-stage stratified survey design:
 
   \verb{fpc <- list(
