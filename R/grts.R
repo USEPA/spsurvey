@@ -578,7 +578,7 @@ grts <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = 
 
   dsgn_names_extra <- c(dsgn_names, "xcoord", "ycoord", "idpts")
 
-    # sites_legacy
+  # sites_legacy
   if (!is.null(sites_legacy)) {
     if (sf_type != "sf_point") {
       add_names <- dsgn_names[dsgn_names %in% names(sites_legacy)]
@@ -593,6 +593,11 @@ grts <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = 
         names(legacy_sites_temp)[-temp_geometry_col] <- paste("legacy_sites", names(legacy_sites_temp)[-temp_geometry_col], sep = "_")
         sites_legacy <- st_join(sites_legacy, legacy_sites_temp, join = st_nearest_feature)
         sites_legacy <- subset(sites_legacy, select = c(add_names, legacy_sites_names_good[-legacy_sites_geometry_col], names(legacy_sites_temp)))
+        for (i in names(sites_legacy)) {
+          if (i %in% c("legacy_sites_xcoord", "legacy_sites_ycoord", "legacy_sites_idpts")) {
+            names(sites_legacy)[which(names(sites_legacy) == i)] <- substring(i, first = 14)
+          }
+        }
       }
     }
     if (sf_type == "sf_point") {
@@ -609,6 +614,11 @@ grts <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = 
         sites_legacy <- st_join(sites_legacy, sframe_temp, join = st_nearest_feature)
         sites_legacy <- subset(sites_legacy,
                                select = c(add_names, sframe_names_good[-sframe_geometry_col], names(sframe_temp)))
+        for (i in names(sites_legacy)) {
+          if (i %in% c("sframe_xcoord", "sframe_ycoord", "sframe_idpts")) {
+            names(sites_legacy)[which(names(sites_legacy) == i)] <- substring(i, first = 8)
+          }
+        }
       }
     }
   }
@@ -628,6 +638,11 @@ grts <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = 
       names(sframe_temp)[-temp_geometry_col] <- paste("sframe", names(sframe_temp)[-temp_geometry_col], sep = "_")
       sites_base <- st_join(sites_base, sframe_temp, join = st_nearest_feature)
       sites_base <- subset(sites_base, select = c(add_names, sframe_names_good[-sframe_geometry_col], names(sframe_temp)))
+      for (i in names(sites_base)) {
+        if (i %in% c("sframe_xcoord", "sframe_ycoord", "sframe_idpts")) {
+          names(sites_base)[which(names(sites_base) == i)] <- substring(i, first = 8)
+        }
+      }
     }
   }
 
@@ -645,6 +660,11 @@ grts <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = 
       names(sframe_temp)[-temp_geometry_col] <- paste("sframe", names(sframe_temp)[-temp_geometry_col], sep = "_")
       sites_over <- st_join(sites_over, sframe_temp, join = st_nearest_feature)
       sites_over <- subset(sites_over, select = c(add_names, sframe_names_good[-sframe_geometry_col], names(sframe_temp)))
+      for (i in names(sites_over)) {
+        if (i %in% c("sframe_xcoord", "sframe_ycoord", "sframe_idpts")) {
+          names(sites_over)[which(names(sites_over) == i)] <- substring(i, first = 8)
+        }
+      }
     }
   }
 
@@ -662,6 +682,11 @@ grts <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = 
       names(sframe_temp)[-temp_geometry_col] <- paste("sframe", names(sframe_temp)[-temp_geometry_col], sep = "_")
       sites_near <- st_join(sites_near, sframe_temp, join = st_nearest_feature)
       sites_near <- subset(sites_near, select = c(add_names, sframe_names_good[-sframe_geometry_col], names(sframe_temp)))
+      for (i in names(sites_near)) {
+        if (i %in% c("sframe_xcoord", "sframe_ycoord", "sframe_idpts")) {
+          names(sites_near)[which(names(sites_near) == i)] <- substring(i, first = 8)
+        }
+      }
     }
   }
 
