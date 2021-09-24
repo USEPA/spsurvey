@@ -8,7 +8,6 @@ change_analysis(
   dframe,
   vars_cat = NULL,
   vars_cont = NULL,
-  vars_nondetect = NULL,
   test = "mean",
   subpops = NULL,
   surveyID = "surveyID",
@@ -34,7 +33,7 @@ change_analysis(
 )
 }
 \arguments{
-\item{dframe}{Data frame or \code{sf} object containing survey design variables, response
+\item{dframe}{Data frame containing survey design variables, response
 variables, and subpopulation (domain) variables.}
 
 \item{vars_cat}{Vector composed of character values that identify the
@@ -44,18 +43,6 @@ default is \code{NULL}.}
 \item{vars_cont}{Vector composed of character values that identify the
 names of continuous response variables in the dframe data frame.  The
 default is \code{NULL}.}
-
-\item{vars_nondetect}{Vector composed of character values that identify the
-names of logical variables in the \code{dframe} data frame specifying the
-presence of not detected (nondetect) values for response variables.  The
-order of the values for this argument must match the order of the values
-for the \code{vars} argument. Each logical variable specifies the detection
-status for the corresponding values of a response variable, where
-\code{TRUE} equals not detected, and \code{FALSE} equals detected.  If a
-response variable does not include any nondetect values, then the name for
-the corresponding logical variable may be set equal to \code{NULL}.  If
-this argument equals \code{NULL}, then none of the response variables
-contain nondetect values.  The default is \code{NULL}.}
 
 \item{test}{Character string or character vector providing the location
 measure(s) to use for change estimation for continuous variables.  The
@@ -152,7 +139,7 @@ variable in the \code{dframe} data frame.  The default value is \code{NULL}.}
   named vector containing one more than the number of clusters in the sample,
   where the first item in the vector specifies the number of clusters in the
   population and each subsequent item specifies the number of stage two units
-  for the cluster.  The name for the first item in the vector is arbitrary.
+  for the cluster.  The name for the first item in the vector is arbitrry.
   Subsequent names in the vector identify clusters and must match the cluster
   IDs.  For a stratified design, the object is a named list of vectors, where
   names must match the strata IDs.  For each stratum, the format of the
@@ -201,22 +188,31 @@ variable in the \code{dframe} data frame.  The default value is \code{NULL}.}
       Cluster_5 = 125))
   }}
 
-\item{popsize}{Object that provides values for the population argument of
-  the \code{calibrate} or \code{postStratify} functions in the survey package.  For the
-  \code{calibrate} function, the object is a named list, where the names
-  identify factor variables in the \code{dframe} data frame.  Each element
-  of the list is a named vector containing the population total for each
-  level of the associated factor variable.  For the \code{postStratify}
-  function, the object is either a data frame, table, or xtabs
-  object that provides the population total for all combinations of selected
-  factor varaibles in the \code{dframe} data frame.  If a data frame is used
-  for \code{popsize}, the variable containing population totals must be the
-  last variable in the data frame.  If a table is used for \code{popsize},
-  the table must have named \code{dimnames} where the names identify factor
-  variables in the \code{dframe} data frame.  If the popsize argument is
-  equal to \code{NULL}, then neither calibration nor post-stratification is
-  performed.  The default value is
-  \code{NULL}.
+\item{popsize}{Object that provides values for the population argument of the
+  \code{calibrate} or \code{postStratify} functions in the survey package. If
+  a value is provided for popsize, then either the \code{calibrate} or
+  \code{postStratify} function is used to modify the survey design object
+  that is required by functions in the survey package.  Whether to use the
+  \code{calibrate} or \code{postStratify} function is dictated by the format
+  of popsize, which is discussed below.  Post-stratification adjusts the
+  sampling and replicate weights so that the joint distribution of a set of
+  post-stratifying variables matches the known population joint distribution.
+  Calibration, generalized raking, or GREG estimators generalize
+  post-stratification and raking by calibrating a sample to the marginal
+  totals of variables in a linear regression model. For the \code{calibrate}
+  function, the object is a named list, where the names identify factor
+  variables in the \code{dframe} data frame.  Each element of the list is a
+  named vector containing the population total for each level of the
+  associated factor variable.  For the \code{postStratify} function, the
+  object is either a data frame, table, or xtabs object that provides the
+  population total for all combinations of selected factor variables in the
+  \code{dframe} data frame.  If a data frame is used for \code{popsize}, the
+  variable containing population totals must be the last variable in the data
+  frame.  If a table is used for \code{popsize}, the table must have named
+  \code{dimnames} where the names identify factor variables in the
+  \code{dframe} data frame.  If the popsize argument is equal to \code{NULL},
+  then neither calibration nor post-stratification is performed.  The default
+  value is \code{NULL}.
 
   Example popsize for calibration:
 
@@ -250,8 +246,9 @@ variable in the \code{dframe} data frame.  The default value is \code{NULL}.}
     data = MySurveyFrame)}}
 
 \item{vartype}{Character value providing the choice of the variance
-estimator, where \code{"Local"} indicates the local mean estimator and \code{"SRS"} indicates the
-simple random sampling estimator.  The default value is \code{"Local"}.}
+estimator, where \code{"Local"} indicates the local mean estimator and
+\code{"SRS"} indicates the simple random sampling estimator.  The default
+value is \code{"Local"}.}
 
 \item{jointprob}{Character value providing the choice of joint inclusion
 probability approximation for use with Horvitz-Thompson and Yates-Grundy
@@ -279,10 +276,11 @@ List of change estimates composed of three items:
 \description{
 This function organizes input and output for estimation of change between two
 probability surveys.  The input data argument can be either a data frame or a
-simple features (\code{sf}) object.  If an \code{sf} object is used, coordinates are
-extracted from the geometry column in the object, arguments \code{xcoord} and
-\code{ycoord} are assigned values \code{"xcoord"} and \code{"ycoord"},
-respectively, and the geometry column is dropped from the object.
+simple features (\code{sf}) object.  If an \code{sf} object is used,
+coordinates are extracted from the geometry column in the object, arguments
+\code{xcoord} and \code{ycoord} are assigned values \code{"xcoord"} and
+\code{"ycoord"}, respectively, and the geometry column is dropped from the
+object.
 }
 \examples{
 # Categorical variable example for three resource classes
