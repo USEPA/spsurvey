@@ -2,7 +2,7 @@
 % Please edit documentation in R/trend_analysis.R
 \name{trend_analysis}
 \alias{trend_analysis}
-\title{Estimation of trend across time for a series of probability surveys}
+\title{Estimation of Trend across Time for a Series of Probability Surveys}
 \usage{
 trend_analysis(
   dframe,
@@ -10,7 +10,9 @@ trend_analysis(
   vars_cont = NULL,
   subpops = NULL,
   model_cat = "SLR",
-  model_cont = "PO",
+  cat_rhs = NULL,
+  model_cont = "LMM",
+  cont_rhs = NULL,
   siteID = "siteID",
   yearID = "year",
   weight = "weight",
@@ -34,12 +36,15 @@ trend_analysis(
 )
 }
 \arguments{
-\item{dframe}{Data frame or \code{sf} object containing survey design variables, response
+\item{dframe}{Data frame containing survey design variables, response
 variables, and subpopulation (domain) variables.}
 
-\item{vars_cat}{Vector composed of character values that identify the
-names of categorical response variables in the \code{dframe} data frame.
-The default value is \code{NULL}.}
+\item{vars_cat}{Vector composed of character values that identify the names
+of categorical response variables in the \code{dframe} data frame. If
+argument \code{model_cat} equals "GLMM", the categorical variables in the
+\code{dframe} data frame must be factors each of which has two levels,
+where the second level will be assumed to specify "success".  The default
+value is \code{NULL}.}
 
 \item{vars_cont}{Vector composed of character values that identify the
 names of continuous response variables in the \code{dframe} data frame.
@@ -54,14 +59,25 @@ default value is \code{NULL}.}
 
 \item{model_cat}{Character value identifying the analytical procedure used
 for trend estimation for categorical variables.  The choices are:
-\code{"SLR"} (simple linear regression) and \code{"WLR"} (weighted linear
-regression).  The default value is \code{"SLR"}.}
+\code{"SLR"} (simple linear regression), \code{"WLR"} (weighted linear
+regression), and \code{"GLMM"} (generalized linear mixed-effects model).
+The default value is \code{"SLR"}.}
+
+\item{cat_rhs}{Character value specifying the right hand side of the formula
+for a generalized linear mixed-effects model.  If a value is not provided,
+the argument is assigned a value that specifies the Piepho and Ogutu (2002)
+model.  The default value is \code{NULL}.}
 
 \item{model_cont}{Character value identifying the analytical procedure used
-for trend estimation for continuous variables.  The choices are: \code{"SLR"}
-(simple linear regression), \code{"WLR"} (weighted linear regression), and
-\code{"PO"} (the regression model of Piepho and Ogutu (2002)).  The default
-value is \code{"PO"}.}
+for trend estimation for continuous variables.  The choices are:
+\code{"SLR"} (simple linear regression), \code{"WLR"} (weighted linear
+regression), and \code{"LMM"} (linear mixed-effects model).  The default
+value is \code{"LMM"}.}
+
+\item{cont_rhs}{Character value specifying the right hand side of the
+formula for a linear mixed-effects model.  If a value is not provided, the
+argument is assigned a value that specifies the Piepho and Ogutu (2002)
+model.  The default value is \code{NULL}.}
 
 \item{siteID}{Character value providing name of the site ID variable in
 the \code{dframe} data frame.  If repeat visit sites are present, the site
@@ -112,8 +128,8 @@ required for calculation of the local mean variance estimator.  The default
 value is \code{NULL}.}
 
 \item{sizeweight}{Logical value that indicates whether size weights should be
-used during estimation, where \code{TRUE} uses size weights and
-\code{FALSE} does not use size weights. To employ size weights for a
+used during estimation, where \code{TRUE} = use size weights and
+\code{FALSE} = do not use size weights. To employ size weights for a
 single-stage sample, a value must be supplied for argument weight.  To
 employ size weights for a two-stage sample, values must be supplied for
 arguments \code{weight} and \code{weight1}. The default value is
@@ -137,7 +153,7 @@ variable in the \code{dframe} data frame.  The default value is
   named vector containing one more than the number of clusters in the sample,
   where the first item in the vector specifies the number of clusters in the
   population and each subsequent item specifies the number of stage two units
-  for the cluster.  The name for the first item in the vector is arbitrary.
+  for the cluster.  The name for the first item in the vector is arbitrry.
   Subsequent names in the vector identify clusters and must match the cluster
   IDs.  For a stratified design, the object is a named list of vectors, where
   names must match the strata IDs.  For each stratum, the format of the
@@ -186,22 +202,31 @@ variable in the \code{dframe} data frame.  The default value is
       Cluster_5 = 125))
   }}
 
-\item{popsize}{Object that provides values for the population argument of
-  the \code{calibrate} or \code{postStratify} functions in the survey package.  For the
-  \code{calibrate} function, the object is a named list, where the names
-  identify factor variables in the \code{dframe} data frame.  Each element
-  of the list is a named vector containing the population total for each
-  level of the associated factor variable.  For the \code{postStratify}
-  function, the object is either a data frame, table, or xtabs
-  object that provides the population total for all combinations of selected
-  factor varaibles in the \code{dframe} data frame.  If a data frame is used
-  for \code{popsize}, the variable containing population totals must be the
-  last variable in the data frame.  If a table is used for \code{popsize},
-  the table must have named \code{dimnames} where the names identify factor
-  variables in the \code{dframe} data frame.  If the popsize argument is
-  equal to \code{NULL}, then neither calibration nor post-stratification is
-  performed.  The default value is
-  \code{NULL}.
+\item{popsize}{Object that provides values for the population argument of the
+  \code{calibrate} or \code{postStratify} functions in the survey package. If
+  a value is provided for popsize, then either the \code{calibrate} or
+  \code{postStratify} function is used to modify the survey design object
+  that is required by functions in the survey package.  Whether to use the
+  \code{calibrate} or \code{postStratify} function is dictated by the format
+  of popsize, which is discussed below.  Post-stratification adjusts the
+  sampling and replicate weights so that the joint distribution of a set of
+  post-stratifying variables matches the known population joint distribution.
+  Calibration, generalized raking, or GREG estimators generalize
+  post-stratification and raking by calibrating a sample to the marginal
+  totals of variables in a linear regression model. For the \code{calibrate}
+  function, the object is a named list, where the names identify factor
+  variables in the \code{dframe} data frame.  Each element of the list is a
+  named vector containing the population total for each level of the
+  associated factor variable.  For the \code{postStratify} function, the
+  object is either a data frame, table, or xtabs object that provides the
+  population total for all combinations of selected factor variables in the
+  \code{dframe} data frame.  If a data frame is used for \code{popsize}, the
+  variable containing population totals must be the last variable in the data
+  frame.  If a table is used for \code{popsize}, the table must have named
+  \code{dimnames} where the names identify factor variables in the
+  \code{dframe} data frame.  If the popsize argument is equal to \code{NULL},
+  then neither calibration nor post-stratification is performed.  The default
+  value is \code{NULL}.
 
   Example popsize for calibration:
 
@@ -236,7 +261,7 @@ variable in the \code{dframe} data frame.  The default value is
 
 \item{invprboot}{Logical value that indicates whether the inverse probability
 bootstrap procedure is used to calculate trend parameter estimates.  This
-bootstrap procedure is only available for the PO model for continuous
+bootstrap procedure is only available for the "LMM" option for continuous
 variables.  Inverse probability references the survey design weights, which
 are the inverse of the sample inclusion probabilities.  The default value
 is \code{TRUE}.}
@@ -245,15 +270,15 @@ is \code{TRUE}.}
 default is \code{1000}.}
 
 \item{vartype}{Character value providing choice of the variance estimator,
-where \code{"Local"} indicates the local mean estimator, \code{"SRS"} indicates the simple
-random sampling estimator, \code{"HT"} indicates the Horvitz-Thompson estimator,
-and \code{"YG"} indicates the Yates-Grundy estimator.  The default value is
+where \code{"Local"} = the local mean estimator, \code{"SRS"} = the simple
+random sampling estimator, \code{"HT"} = the Horvitz-Thompson estimator,
+and \code{"YG"} = the Yates-Grundy estimator.  The default value is
 \code{"Local"}.}
 
 \item{jointprob}{Character value providing choice of joint inclusion
 probability approximation for use with Horvitz-Thompson and Yates-Grundy
 variance estimators, where \code{"overton"} indicates the Overton
-approximation, \code{"hr"} indicates the Hartley-Rao approximation, and
+approximation, \code{"hr"} indicates the Hartley_Rao approximation, and
 \code{"brewer"} equals the Brewer approximation.  The default value is
 \code{"overton"}.}
 
@@ -266,13 +291,13 @@ List composed of two data frames containing trend estimates for all
   variables.  For categorical variables, trend estimates are calculated for
   each category of the variable.  The two data frames in the output list are:
   \describe{
-    \item{\code{catsum}}{data frame containing trend estimates for categorical
-      variables}
-    \item{\code{contsum}}{data frame containing trend estimates for continuous
-      variables}
-  }
+    \item{\code{catsum}}{data frame containing trend estimates for
+      categorical variables}
+    \item{\code{contsum}}{data frame containing trend
+      estimates for continuous variables}
+   }
 
-  For the SLR and WLR models, the data frame contains the following
+  For the SLR and WLR model options, the data frame contains the following
   variables:
   \describe{
     \item{Type}{subpopulation (domain) name}
@@ -294,7 +319,10 @@ List composed of two data frames containing trend estimates for all
     \item{Adj_R_Squared}{adjusted R-squared value}
   }
 
-  For the PO model, the data frame contains the following variables:
+  For the GLMM and LMM model options, contents of the data frames will vary
+  depending on the model specified by arguments \code{cat_rhs} and
+  \code{cont_rhs}.  For the default PO model, the data frame contains the
+  following variables:
   \describe{
     \item{Type}{subpopulation (domain) name}
     \item{Subpopulation}{subpopulation name within a domain}
@@ -322,13 +350,16 @@ List composed of two data frames containing trend estimates for all
 \description{
 This function organizes input and output for estimation of trend across time
 for a series of probability surveys, where trend is estimated using the
-analytical procedure identified by the model arguments.  The current choices
-for model are: (1) simple linear regression, (2) weighted linear regression,
-and (3) the Piepho and Ogutu (2002) model.  The input data argument can be
-either a data frame or a simple features (sf) object.  If an sf object is
-used, \code{xcoord} and \code{ycoord} are assigned values \code{"xcoord"}
-and \code{"ycoord"}, respectively, and the geometry column is dropped from
-the object.
+analytical procedure identified by the model arguments.  For categorical
+data, the choices for the \code{model_cat} argument are: (1) simple linear
+regression, (2) weighted linear regression, and (3) generalized linear
+mixed-effects model. For continuous data, the choices for the
+\code{model_cont} argument are: (1) simple linear regression, (2) weighted
+linear regression, and (3)  linear mixed-effects model.  The input data
+argument can be either a data frame or a simple features (sf) object. If an
+sf object is used, \code{xcoord} and \code{ycoord} are assigned values
+\code{"xcoord"} and \code{"ycoord"}, respectively, and the geometry column is
+dropped from the object.
 }
 \section{Details}{
 
@@ -344,37 +375,69 @@ approximation, (2) the Hartley-Rao approximation, and (3) the Brewer
 approximation.  The \code{lm} function in the stats package is used to fit a
 linear model using a \code{formula} argument that specifies the proportion or
 mean estimates as the response variable and years as the regressor variable.
-For fitting the model, the \code{yearID} variable from the \code{dframe}
+For fitting the SLR model, the \code{yearID} variable from the \code{dframe}
 argument is modified by subtracting the minimum value of years from all
 values of the variable.  Parameter estimates are extracted from the object
 returned by the \code{lm} function.  For the weighted linear regression (WLR)
 model, the process is the same as the SLR model except that the inverse of
 the variances of the proportion or mean estimates is used as the
-\code{weights} argument in the call to the \code{lm} function.  For the
-Piepho and Ogutu (PO) model, the \code{lmer} function in the lme4 package is
-used to fit a linear mixed-effects model for trend across years.  The model
-includes fixed effects for intercept and trend (slope) and random effects for
-intercept and trend for individual sites, where the \code{siteID} variable
-from the \code{dframe} argument identifies sites.  Correlation between the
-random effects for site intercepts and site trends is included in the model.
-Finally, the PO model contains random effects for year variance and residual
-variance. If argument \code{invprboot} is \code{FALSE}, parameter estimates
-are extracted from the object returned by the \code{lmer} function.  If
-argument \code{invprboot} is \code{TRUE}, the \code{boot} function in the
-boot package is used to generate bootstrap replicates using a function named
-\code{bootfcn} as the \code{statistic} argument passed to the \code{boot}
-function.  For each bootstrap replicate, \code{bootfcn} calls the \code{lmer}
-function using the PO model.  Survey design weights identified by the
-\code{weight} argument for the \code{trend_analysis} function are passed as
-the \code{weights} argument for the \code{boot} function, which specifies
-importance weights.  Using the survey design weights as the \code{weights}
-argument ensures that bootstrap replicates are representative of the survey
-population.  Parameter estimates are calculated using the object returned by
-the \code{boot} function.
+\code{weights} argument in the call to the \code{lm} function.  For the LMM
+option, the \code{lmer} function in the lme4 package is used to fit a linear
+mixed-effects model for trend across years.  For both the GLMM and LMM
+options, the default Piepho and Ogutu (PO) model includes fixed effects for
+intercept and trend (slope) and random effects for intercept and trend for
+individual sites, where the \code{siteID} variable from the \code{dframe}
+argument identifies sites.  Correlation between the random effects for site
+intercepts and site trends is included in the model. Finally, the PO model
+contains random effects for year variance and residual variance. For the GLMM
+and LMM options, arguments \code{cat_rhs} and \code{cont_rhs}, respectively,
+can be used to specify the right hand side of the model formula. Internally,
+a variable named \code{Wyear} is created that is useful for specifying the
+\code{cat_rhs} and \code{cont_rhs} arguments.  The \code{Wyear} variable is
+created by subtracting the minimum value of the \code{yearID} variable from
+all values of the variable.  If argument \code{invprboot} is \code{FALSE},
+parameter estimates are extracted from the object returned by the \code{lmer}
+function. If argument \code{invprboot} is \code{TRUE}, the \code{boot}
+function in the boot package is used to generate bootstrap replicates using a
+function named \code{bootfcn} as the \code{statistic} argument passed to the
+\code{boot} function.  For each bootstrap replicate, \code{bootfcn} calls the
+\code{glmer} or \code{lmer} function, as appropriate, using the specified
+model.  Survey design weights identified by the \code{weight} argument for
+the \code{trend_analysis} function are passed as the \code{weights} argument
+for the \code{boot} function, which specifies importance weights.  Using the
+survey design weights as the \code{weights} argument ensures that bootstrap
+replicates are representative of the survey population.  Parameter estimates
+are calculated using the object returned by the \code{boot} function.
+}
+
+\section{Other Functions Required}{
+
+  \describe{
+    \item{\code{\link{boot}}}{conduct bootstrap resampling}
+    \item{\code{bootfcn}}{calculates trend parameter estimates using
+      bootstrap replicates and the lmer function}
+    \item{\code{\link{calibrate}}}{conduct calibration for survey data}
+    \item{\code{category_est}}{calculate category proportion and total
+      estimates}
+    \item{\code{\link{glmer}}}{fits a generalized linear mixed-effects model}
+    \item{\code{input_check}}{check input values for errors,
+      consistency, and compatibility with analytical functions}
+    \item{\code{\link{lm}}}{fits a linear model}
+    \item{\code{\link{lmer}}}{fits a linear mixed-effects model}
+    \item{\code{mean_est}}{calculates mean estimates}
+    \item{\code{\link{postStratify}}}{conduct post-stratification for survey
+      data}
+    \item{\code{survey_design}}{creates a survey design object}
+    \item{\code{uniqueID}}{creates unique site IDs by appending a
+      unique number to each occurrence of a site ID}
+    \item{\code{vecprint}}{takes an input vector and outputs a
+      character string with line breaks inserted}
+  }
 }
 
 \examples{
-# Categorical variable example for three resource classes
+# Example using a categorical variable with three resource classes and a
+# continuous variable
 mydframe <- data.frame(
   siteID = rep(paste0("Site", 1:40), rep(5, 40)),
   yearID = rep(seq(2000, 2020, by = 5), 40),
@@ -402,10 +465,11 @@ trend_analysis(
   xcoord = "xcoord",
   ycoord = "ycoord"
 )
+
 }
 \seealso{
 \describe{
-  \item{\code{\link{change_analysis}}}{ for change analysis}
+  \item{\code{\link{change_analysis}}}{for change analysis}
   }
 }
 \author{

@@ -3,6 +3,7 @@
 # Programmer: Tom Kincaid
 # Date: July 12, 2021
 # Revised: July 28, 2021 to improve documentation
+# Revised: September 9, 2021 to revise the documentation for argument popsize
 #
 #' Risk difference analysis for probability survey data
 #'
@@ -13,8 +14,9 @@
 #' object, arguments xcoord and ycoord are assigned values "xcoord" and
 #' "ycoord", respectively, and the geometry column is dropped from the object.
 #'
-#' @param dframe Data frame or \code{sf} object containing survey design variables, response
-#'   variables, stressor variables, and subpopulation (domain) variables.
+#' @param dframe Data frame or \code{sf} object containing survey design
+#'   variables, response variables, stressor variables, and subpopulation
+#'   (domain) variables.
 #'
 #' @param vars_response Vector composed of character values that identify the
 #'   names of response variables in the \code{dframe} data frame. Each response
@@ -176,21 +178,31 @@
 #'       Cluster_5 = 125))
 #'   }
 #'
-#' @param popsize Object that provides values for the population argument of
-#'   the \code{calibrate} or \code{postStratify} functions in the survey package.  For the
-#'   \code{calibrate} function, the object is a named list, where the names
-#'   identify factor variables in the \code{dframe} data frame.  Each element
-#'   of the list is a named vector containing the population total for each
-#'   level of the associated factor variable.  For the \code{postStratify}
-#'   function, the object is either a data frame, table, or xtabs
-#'   object that provides the population total for all combinations of selected
-#'   factor varaibles in the \code{dframe} data frame.  If a data frame is used
-#'   for \code{popsize}, the variable containing population totals must be the
-#'   last variable in the data frame.  If a table is used for \code{popsize},
-#'   the table must have named \code{dimnames} where the names identify factor
-#'   variables in the \code{dframe} data frame.  If the popsize argument is
-#'   equal to \code{NULL}, then neither calibration nor post-stratification is
-#'   performed.  The default value is \code{NULL}.
+#' @param popsize Object that provides values for the population argument of the
+#'   \code{calibrate} or \code{postStratify} functions in the survey package. If
+#'   a value is provided for popsize, then either the \code{calibrate} or
+#'   \code{postStratify} function is used to modify the survey design object
+#'   that is required by functions in the survey package.  Whether to use the
+#'   \code{calibrate} or \code{postStratify} function is dictated by the format
+#'   of popsize, which is discussed below.  Post-stratification adjusts the
+#'   sampling and replicate weights so that the joint distribution of a set of
+#'   post-stratifying variables matches the known population joint distribution.
+#'   Calibration, generalized raking, or GREG estimators generalize
+#'   post-stratification and raking by calibrating a sample to the marginal
+#'   totals of variables in a linear regression model. For the \code{calibrate}
+#'   function, the object is a named list, where the names identify factor
+#'   variables in the \code{dframe} data frame.  Each element of the list is a
+#'   named vector containing the population total for each level of the
+#'   associated factor variable.  For the \code{postStratify} function, the
+#'   object is either a data frame, table, or xtabs object that provides the
+#'   population total for all combinations of selected factor variables in the
+#'   \code{dframe} data frame.  If a data frame is used for \code{popsize}, the
+#'   variable containing population totals must be the last variable in the data
+#'   frame.  If a table is used for \code{popsize}, the table must have named
+#'   \code{dimnames} where the names identify factor variables in the
+#'   \code{dframe} data frame.  If the popsize argument is equal to \code{NULL},
+#'   then neither calibration nor post-stratification is performed.  The default
+#'   value is \code{NULL}.
 #'
 #'   Example popsize for calibration:
 #'
@@ -289,12 +301,14 @@
 #' @export
 ################################################################################
 
-diffrisk_analysis <- function(dframe, vars_response, vars_stressor, response_levels = NULL,
-                              stressor_levels = NULL, subpops = NULL, siteID = "siteID", weight = "weight",
-                              xcoord = NULL, ycoord = NULL, stratumID = NULL, clusterID = NULL,
-                              weight1 = NULL, xcoord1 = NULL, ycoord1 = NULL, sizeweight = FALSE,
-                              sweight = NULL, sweight1 = NULL, fpc = NULL, popsize = NULL,
-                              vartype = "Local", conf = 95) {
+diffrisk_analysis <- function(
+  dframe, vars_response, vars_stressor, response_levels = NULL,
+  stressor_levels = NULL, subpops = NULL, siteID = "siteID", weight = "weight",
+  xcoord = NULL, ycoord = NULL, stratumID = NULL, clusterID = NULL,
+  weight1 = NULL, xcoord1 = NULL, ycoord1 = NULL, sizeweight = FALSE,
+  sweight = NULL, sweight1 = NULL, fpc = NULL, popsize = NULL,
+  vartype = "Local", conf = 95
+) {
 
   # Create a vector for error messages
 

@@ -12,6 +12,8 @@
 #          of mean estimates
 # Revised: July 23, 2021 to terminate analysis of response variables that
 #          contain only missing values in one of the surveys
+# Revised: September 9, 2021 to remove argument vartype from the call list for
+#          function percentile_est
 #
 #' Estimate Change between Two Surveys
 #'
@@ -1376,8 +1378,8 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
         # Calculate estimate for all sites from survey one
 
         pctest_1 <- percentile_est(NULL, dframe_1, itype, isubpop, 1, ivar,
-          design_1, design_names, var_nondetect, vartype, conf, mult,
-          pctval = c(50), warn_ind, warn_df
+          design_1, design_names, var_nondetect, conf, mult, pctval = c(50),
+          warn_ind, warn_df
         )
         warn_ind <- pctest_1$warn_ind
         warn_df <- pctest_1$warn_df
@@ -1385,8 +1387,8 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
         # Calculate estimate for all sites from survey two
 
         pctest_2 <- percentile_est(NULL, dframe_2, itype, isubpop, 1, ivar,
-          design_2, design_names, var_nondetect, vartype, conf, mult,
-          pctval = c(50), warn_ind, warn_df
+          design_2, design_names, var_nondetect, conf, mult, pctval = c(50),
+          warn_ind, warn_df
         )
         warn_ind <- pctest_2$warn_ind
         warn_df <- pctest_2$warn_df
@@ -1804,11 +1806,11 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
                       ycoord1[stratum_i], vartype, warn_ind, warn_df, warn_vec
                     )
                   } else {
-                    temp <- changevar_total(catvar_levels, z1, z2, wgt[stratum_i],
-                      xcoord[stratum_i], ycoord[stratum_i], revisitwgt, size1,
-                      size2, stratum_ind, stratum_levels[i], cluster_ind,
-                      vartype = vartype, warn_ind = warn_ind, warn_df = warn_df,
-                      warn_vec = warn_vec
+                    temp <- changevar_total(catvar_levels, z1, z2,
+                      wgt[stratum_i], xcoord[stratum_i], ycoord[stratum_i],
+                      revisitwgt, size1, size2, stratum_ind, stratum_levels[i],
+                      cluster_ind, vartype = vartype, warn_ind = warn_ind,
+                      warn_df = warn_df, warn_vec = warn_vec
                     )
                   }
                   correst <- temp$rslt
@@ -1870,16 +1872,15 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
 
               if (cluster_ind) {
                 temp <- changevar_prop(
-                  catvar_levels, z1, z2, wgt2, xcoord, ycoord,
-                  revisitwgt, prop1, prop2, stratum_ind, NULL, cluster_ind,
-                  clusterID, wgt1, xcoord1, ycoord1, vartype, warn_ind, warn_df,
-                  warn_vec
+                  catvar_levels, z1, z2, wgt2, xcoord, ycoord, revisitwgt,
+                  prop1, prop2, stratum_ind, NULL, cluster_ind, clusterID, wgt1,
+                  xcoord1, ycoord1, vartype, warn_ind, warn_df, warn_vec
                 )
               } else {
-                temp <- changevar_prop(catvar_levels, z1, z2, wgt, xcoord, ycoord,
-                  revisitwgt, prop1, prop2, stratum_ind, NULL, cluster_ind,
-                  vartype = vartype, warn_ind = warn_ind, warn_df = warn_df,
-                  warn_vec = warn_vec
+                temp <- changevar_prop(catvar_levels, z1, z2, wgt, xcoord,
+                  ycoord, revisitwgt, prop1, prop2, stratum_ind, NULL,
+                  cluster_ind, vartype = vartype, warn_ind = warn_ind,
+                  warn_df = warn_df, warn_vec = warn_vec
                 )
               }
               rslt_P <- temp$rslt
@@ -1904,8 +1905,8 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
                 temp <- changevar_total(
                   catvar_levels, z1, z2, wgt, xcoord, ycoord, revisitwgt, size1,
                   size2, stratum_ind, NULL, cluster_ind,
-                  vartype = vartype,
-                  warn_ind = warn_ind, warn_df = warn_df, warn_vec = warn_vec
+                  vartype = vartype, warn_ind = warn_ind, warn_df = warn_df,
+                  warn_vec = warn_vec
                 )
               }
               rslt_U <- temp$rslt
