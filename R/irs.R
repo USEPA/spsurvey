@@ -310,6 +310,19 @@ irs <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = N
     }
   }
 
+  # mindis
+  if (!is.null(mindis)) {
+    if (is.list(mindis)) {
+      dsgn$mindis <- mindis
+    } else {
+      tmp <- lapply(stratum, function(x, mindis) {
+        x <- mindis
+      }, mindis)
+      names(tmp) <- stratum
+      dsgn$mindis <- tmp
+    }
+  }
+
   # legacy_option
   if (legacy_option == TRUE) {
     tmp <- sapply(stratum, function(x, legacy_option) {

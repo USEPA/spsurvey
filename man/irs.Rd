@@ -115,8 +115,13 @@ default value of \code{legacy_aux_var} is \code{aux_var}, so \code{legacy_aux_va
 when the name of the proportional probability variable in \code{legacy_sites} differs from \code{aux_var}.}
 
 \item{mindis}{A numeric value indicating the desired minimum distance between sampled
-sites. If design is stratified, then mindis is applied separately for each stratum.
-The units of \code{mindis} must match the units in \code{sframe}.}
+sites. If the design is stratified and \code{mindis} is an numeric value, the minimum
+distance is applied to all strata. If the design is stratified and different minimum distances
+are desired among strata,then \code{mindis}
+is a list whose names match the names of \code{n_base} and whose and values
+are the minimum distance for the corresponding stratum.  If a minimum distance is not desired
+for a particular stratum, then the corresponding value in \code{mindis} should be \code{NULL}.
+The units of \code{mindis} must represent the units in \code{sframe}.}
 
 \item{maxtry}{The number of maximum attempts to apply the minimum distance algorithm to obtain
 the desired minimum distance between sites. Each iteration takes roughly as long as the

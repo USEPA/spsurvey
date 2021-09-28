@@ -102,8 +102,13 @@
 #'   when the name of the proportional probability variable in \code{legacy_sites} differs from \code{aux_var}.
 #'
 #' @param mindis A numeric value indicating the desired minimum distance between sampled
-#'   sites. If design is stratified, then mindis is applied separately for each stratum.
-#'   The units of \code{mindis} must match the units in \code{sframe}.
+#'   sites. If the design is stratified and \code{mindis} is an numeric value, the minimum
+#'   distance is applied to all strata. If the design is stratified and different minimum distances
+#'   are desired among strata,then \code{mindis}
+#'   is a list whose names match the names of \code{n_base} and whose and values
+#'   are the minimum distance for the corresponding stratum.  If a minimum distance is not desired
+#'   for a particular stratum, then the corresponding value in \code{mindis} should be \code{NULL}.
+#'   The units of \code{mindis} must represent the units in \code{sframe}.
 #'
 #' @param maxtry The number of maximum attempts to apply the minimum distance algorithm to obtain
 #'   the desired minimum distance between sites. Each iteration takes roughly as long as the
@@ -465,11 +470,24 @@ grts <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = 
     if (is.list(n_near)) {
       dsgn$n_near <- n_near
     } else {
-      tmp <- sapply(stratum, function(x, n_near) {
+      tmp <- lapply(stratum, function(x, n_near) {
         x <- n_near
       }, n_near)
       names(tmp) <- stratum
       dsgn$n_near <- tmp
+    }
+  }
+
+  # mindis
+  if (!is.null(mindis)) {
+    if (is.list(mindis)) {
+      dsgn$mindis <- mindis
+    } else {
+      tmp <- lapply(stratum, function(x, mindis) {
+        x <- mindis
+      }, mindis)
+      names(tmp) <- stratum
+      dsgn$mindis <- tmp
     }
   }
 
