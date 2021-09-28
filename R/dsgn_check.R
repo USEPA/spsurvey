@@ -324,9 +324,9 @@ dsgn_check <- function(sframe, sf_type, legacy_sites, legacy_option, stratum, se
 
   # check n_near
   if (!is.null(n_near)) {
-    if (!(any(n_near %in% 1:10))) {
+    if (!(all(unlist(n_near) %in% 1:10))) {
       stop_ind <- TRUE
-      stop_mess <- paste0("n_near must be from 1 to 10.\n")
+      stop_mess <- paste0("values of n_near must be from 1 to 10.\n")
       stop_df <- rbind(stop_df, data.frame(func = I("n_near"), I(stop_mess)))
     }
   }

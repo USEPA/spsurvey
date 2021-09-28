@@ -299,11 +299,15 @@ irs <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = N
 
   # n_near
   if (!is.null(n_near)) {
-    tmp <- sapply(stratum, function(x, n_near) {
-      x <- n_near
-    }, n_near)
-    names(tmp) <- stratum
-    dsgn$n_near <- tmp
+    if (is.list(n_near)) {
+      dsgn$n_near <- n_near
+    } else {
+      tmp <- sapply(stratum, function(x, n_near) {
+        x <- n_near
+      }, n_near)
+      names(tmp) <- stratum
+      dsgn$n_near <- tmp
+    }
   }
 
   # legacy_option

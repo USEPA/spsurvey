@@ -20,7 +20,7 @@
 #'
 #' @param n_base The base sample size required. If the design is unstratified,
 #'   this is a single numeric value. If the design is stratified, this is a named
-#'   vector whose names represent each stratum and whose values represent each
+#'   vector or list whose names represent each stratum and whose values represent each
 #'   stratum's sample size. These names must match the values of the stratification
 #'   variable represented by \code{stratum_var}.
 #'
@@ -118,19 +118,29 @@
 #'   then \code{n_over} is a named character vector whose names match the levels of
 #'   \code{caty_var} and whose values are the expected rho replacement sample sizes for each
 #'   level. If the design is stratified and \code{seltype} is \code{"equal"} or \code{"proportional"},
-#'   \code{n_over} is a named vector whose names match the names of \code{n_base} and whose values
-#'   indicate the number of rho replacement sites for each stratum. If the design is stratified and
+#'   \code{n_over} is a list whose names match the names of \code{n_base} and whose values
+#'   indicate the number of rho replacement sites for each stratum. If replacement sites are not desired for a particular stratum, then the corresponding value in \code{n_over} should be \code{NULL}. If the design is stratified and
 #'   \code{seltype} is \code{"unequal"}, \code{n_over} changes based on whether the expected
 #'   rho replacement sample sizes change among strata. If \code{n_over} does not change among strata, \code{n_over}
 #'   is a named vector whose names match the names of \code{caty_var} and whose values are the expected rho replacement
 #'   sample sizes to be used for each stratum. If \code{n_over} changes among strata, \code{n_over} is a
-#'   list where each element represents a stratum in \code{n_base}.
-#'   The order of the strata in this list must match the order of the strata in \code{n_base}.
+#'   list whose names match the names of \code{n_base} and whose values
+#'   indicate the number of rho replacement sites for each stratum.
 #'   Each stratum's list element is a named vector whose names represent each level of \code{caty_var} and whose values represent each
-#'   level's expected rho replacement sample sizes (within the stratum).
+#'   level's expected rho replacement sample sizes (within the stratum). If replacement sites are not desired for a particular stratum, then the corresponding value in \code{n_over} should be \code{NULL}.
 #'
-#' @param n_near An integer from \code{1} to \code{10} specifying the number of
-#'   nearest neighbor replacement sites to be selected for each base site. For
+#' @param n_near If the design is unstratified, \code{n_near} is integer from \code{1}
+#'   to \code{10} specifying the number of
+#'   nearest neighbor replacement sites to be selected for each base site. If the design
+#'   is stratified but the same number of nearest neighbor replacement sites is desired
+#'   for each stratum,  \code{n_near} is integer from \code{1}
+#'   to \code{10} specifying the number of
+#'   nearest neighbor replacement sites to be selected for each base site. If the design is
+#'   unstratified and a different number of nearest neighbor replacement sites is
+#'   desired for each stratum, \code{n_near} is a list whose names represent strata and whose
+#'   values is integer from \code{1}
+#'   to \code{10} specifying the number of
+#'   nearest neighbor replacement sites to be selected for each base site in the stratum. If replacement sites are not desired for a particular stratum, then the corresponding value in \code{n_over} should be \code{NULL}. For
 #'   infinite sample frames, the distance between a site and its nearest neighbor
 #'   depends on \code{pt_density}.
 #'
@@ -452,11 +462,15 @@ grts <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = 
 
   # n_near
   if (!is.null(n_near)) {
-    tmp <- sapply(stratum, function(x, n_near) {
-      x <- n_near
-    }, n_near)
-    names(tmp) <- stratum
-    dsgn$n_near <- tmp
+    if (is.list(n_near)) {
+      dsgn$n_near <- n_near
+    } else {
+      tmp <- sapply(stratum, function(x, n_near) {
+        x <- n_near
+      }, n_near)
+      names(tmp) <- stratum
+      dsgn$n_near <- tmp
+    }
   }
 
   # legacy_option
