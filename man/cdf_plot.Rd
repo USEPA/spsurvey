@@ -17,7 +17,7 @@ cdf_plot(
   ylab_r = NULL,
   main = NULL,
   legloc = NULL,
-  confcut = 5,
+  confcut = 0,
   conflev = 95,
   cex.main = 1.2,
   cex.legend = 1,
@@ -85,14 +85,14 @@ area).  The default is NULL.}
 NULL.}
 
 \item{legloc}{Indicator for location of the plot legend, where "BR" means
-bottom right, "BL" means bottom left, "TR" means top right, and "TL" means
-top left.  The default is "BR".}
+bottom right, "BL" means bottom left, "TR" means top right, "TL" means
+top left, and NULL means no legend.  The default is NULL.}
 
 \item{confcut}{Numeric value that controls plotting confidence limits at
 the CDF extremes.  Confidence limits for CDF values (percent scale) less
 than confcut or greater than 100 minus confcut are not plotted.  A value of
 zero means confidence limits are plotted for the complete range of the CDF.
-The default is 5.}
+The default is 0.}
 
 \item{conflev}{Numeric value of the confidence level used for confidence
 limits. The default is 95.}

@@ -13,11 +13,11 @@ cont_cdfplot(
   xlab = NULL,
   ylab = NULL,
   ylab_r = NULL,
-  legloc = "BR",
+  legloc = NULL,
   cdf_page = 4,
   width = 10,
   height = 8,
-  confcut = 5,
+  confcut = 0,
   cex.main = 1.2,
   cex.legend = 1,
   ...
@@ -68,8 +68,8 @@ expressed  in terms of units of the population (i.e., count, length, or
 area).  The default is NULL.}
 
 \item{legloc}{Indicator for location of the plot legend, where "BR" means
-bottom right, "BL" means bottom left, "TR" means top right, and "TL" means
-top left.  The default is "BR".}
+bottom right, "BL" means bottom left, "TR" means top right, "TL" means
+top left, and NULL means no legend.  The default is NULL.}
 
 \item{cdf_page}{Number of CDF plots on each page, which must be chosen from
 the values: 1, 2, 4, or 6.  The default is 4.}
@@ -82,7 +82,7 @@ the values: 1, 2, 4, or 6.  The default is 4.}
 the CDF extremes.  Confidence limits for CDF values (percent scale) less
 than confcut or greater than 100 minus confcut are not plotted.  A value of
 zero means confidence limits are plotted for the complete range of the CDF.
-The default is 5.}
+The default is 0.}
 
 \item{cex.main}{Expansion factor for the plot title.  The default is 1.2.}
 

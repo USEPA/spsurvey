@@ -71,15 +71,15 @@
 #' @param main Character string providing the plot title.  The default is
 #'   NULL.
 #'
-#' @param legloc  Indicator for location of the plot legend, where "BR" means
-#'   bottom right, "BL" means bottom left, "TR" means top right, and "TL" means
-#'   top left.  The default is "BR".
+#' @param legloc Indicator for location of the plot legend, where "BR" means
+#'   bottom right, "BL" means bottom left, "TR" means top right, "TL" means
+#'   top left, and NULL means no legend.  The default is NULL.
 #'
 #' @param confcut Numeric value that controls plotting confidence limits at
 #'   the CDF extremes.  Confidence limits for CDF values (percent scale) less
 #'   than confcut or greater than 100 minus confcut are not plotted.  A value of
 #'   zero means confidence limits are plotted for the complete range of the CDF.
-#'   The default is 5.
+#'   The default is 0.
 #'
 #' @param conflev Numeric value of the confidence level used for confidence
 #'   limits. The default is 95.
@@ -146,7 +146,7 @@ cdf_plot <- function(
   cdfest, var = NULL, subpop = NULL, subpop_level = NULL,
   units_cdf = "Percent", type_cdf = "Continuous", log = "",
   xlab = NULL, ylab = NULL, ylab_r = NULL, main = NULL, legloc = NULL,
-  confcut = 5, conflev = 95, cex.main = 1.2, cex.legend = 1, ...
+  confcut = 0, conflev = 95, cex.main = 1.2, cex.legend = 1, ...
 ) {
 
   # Set graphical parameter values
