@@ -26,7 +26,8 @@ cont_analysis(
   jointprob = "overton",
   conf = 95,
   pctval = c(5, 10, 25, 50, 75, 90, 95),
-  statistics = c("cdf", "pct", "mean")
+  statistics = c("cdf", "pct", "mean"),
+  All_Sites = FALSE
 )
 }
 \arguments{
@@ -240,6 +241,14 @@ estimated.  The default set is: \code{c(5, 10, 25, 50, 75, 90, 95)}.}
 estimates, and \code{"mean"} specifies mean estimates.  Any combination of
 the three choices may be provided by the user.  The defalt value is
 \code{c("cdf", "pct", "mean")}.}
+
+\item{All_Sites}{A logical variable used when \code{subpops} is not
+\code{NULL}. If \code{All_Sites} is \code{TRUE}, then alongside the
+subpopulation output, output for all sites (ignoring subpopulations) is
+returned for each variable in \code{vars}. If \code{All_Sites} is
+\code{FALSE}, then alongside the subpopulation output, output for all sites
+(ignoring subpopulations) is not returned for each variable in \code{vars}.
+The default is \code{FALSE}.}
 }
 \value{
 A list composed of one, two, or three data frames that contain

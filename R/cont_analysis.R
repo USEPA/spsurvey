@@ -249,6 +249,14 @@
 #'   the three choices may be provided by the user.  The defalt value is
 #'   \code{c("cdf", "pct", "mean")}.
 #'
+#' @param All_Sites A logical variable used when \code{subpops} is not
+#'   \code{NULL}. If \code{All_Sites} is \code{TRUE}, then alongside the
+#'   subpopulation output, output for all sites (ignoring subpopulations) is
+#'   returned for each variable in \code{vars}. If \code{All_Sites} is
+#'   \code{FALSE}, then alongside the subpopulation output, output for all sites
+#'   (ignoring subpopulations) is not returned for each variable in \code{vars}.
+#'   The default is \code{FALSE}.
+#'
 #' @return A list composed of one, two, or three data frames that contain
 #'   population estimates for all combinations of subpopulations, categories
 #'   within each subpopulation, and response variables, where the number of data
@@ -302,7 +310,8 @@ cont_analysis <- function(
   weight1 = NULL, xcoord1 = NULL, ycoord1 = NULL, sizeweight = FALSE,
   sweight = NULL, sweight1 = NULL, fpc = NULL, popsize = NULL,
   vartype = "Local", jointprob = "overton", conf = 95,
-  pctval = c(5, 10, 25, 50, 75, 90, 95), statistics = c("cdf", "pct", "mean")
+  pctval = c(5, 10, 25, 50, 75, 90, 95), statistics = c("cdf", "pct", "mean"),
+  All_Sites = FALSE
 ) {
 
   # Assign NULL to vars_nondetect
@@ -450,6 +459,17 @@ cont_analysis <- function(
 
   if (is.null(subpops)) {
     subpops <- "All_Sites"
+    dframe$All_Sites <- "All Sites"
+    dframe$All_Sites <- factor(dframe$All_Sites)
+  }
+
+  # If the user wants information for all sites together in addition to the
+  # subpops, add the value "All_Sites" to the subpops argument and create a
+  # factor named "All_Sites" in the dframe data frame that takes the value
+  # "All Sites"
+
+  if (!is.null(subpops) && All_Sites) {
+    subpops <- c(subpops, "All_Sites")
     dframe$All_Sites <- "All Sites"
     dframe$All_Sites <- factor(dframe$All_Sites)
   }

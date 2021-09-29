@@ -24,7 +24,8 @@ cat_analysis(
   popsize = NULL,
   vartype = "Local",
   jointprob = "overton",
-  conf = 95
+  conf = 95,
+  All_Sites = FALSE
 )
 }
 \arguments{
@@ -224,6 +225,14 @@ approximation, \code{"hr"} indicates the Hartley-Rao approximation, and
 
 \item{conf}{Numeric value providing the confidence level.  The default value
 is \code{95}.}
+
+\item{All_Sites}{A logical variable used when \code{subpops} is not
+\code{NULL}. If \code{All_Sites} is \code{TRUE}, then alongside the
+subpopulation output, output for all sites (ignoring subpopulations) is
+returned for each variable in \code{vars}. If \code{All_Sites} is
+\code{FALSE}, then alongside the subpopulation output, output for all sites
+(ignoring subpopulations) is not returned for each variable in \code{vars}.
+The default is \code{FALSE}.}
 }
 \value{
 A data frame of population estimates for all combinations of

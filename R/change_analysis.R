@@ -270,6 +270,14 @@
 #' @param conf Numeric value providing the confidence level.  The default value
 #'   is \code{95}.
 #'
+#' @param All_Sites A logical variable used when \code{subpops} is not
+#'   \code{NULL}. If \code{All_Sites} is \code{TRUE}, then alongside the
+#'   subpopulation output, output for all sites (ignoring subpopulations) is
+#'   returned for each variable in \code{vars}. If \code{All_Sites} is
+#'   \code{FALSE}, then alongside the subpopulation output, output for all sites
+#'   (ignoring subpopulations) is not returned for each variable in \code{vars}.
+#'   The default is \code{FALSE}.
+#'
 #' @return List of change estimates composed of three items:
 #'   (1) \code{catsum} contains change estimates for categorical variables,
 #'   (2) \code{contsum_mean} contains estimates for continuous variables using
@@ -321,7 +329,7 @@ change_analysis <- function(
   stratumID = NULL, clusterID = NULL, weight1 = NULL, xcoord1 = NULL,
   ycoord1 = NULL, sizeweight = FALSE, sweight = NULL,  sweight1 = NULL,
   fpc = NULL, popsize = NULL, vartype = "Local", jointprob = "overton",
-  conf = 95
+  conf = 95, All_Sites = FALSE
 ) {
 
   # Assign NULL to vars_nondetect
@@ -596,6 +604,17 @@ change_analysis <- function(
 
   if (is.null(subpops)) {
     subpops <- "All_Sites"
+    dframe$All_Sites <- "All Sites"
+    dframe$All_Sites <- factor(dframe$All_Sites)
+  }
+
+  # If the user wants information for all sites together in addition to the
+  # subpops, add the value "All_Sites" to the subpops argument and create a
+  # factor named "All_Sites" in the dframe data frame that takes the value
+  # "All Sites"
+
+  if (!is.null(subpops) && All_Sites) {
+    subpops <- c(subpops, "All_Sites")
     dframe$All_Sites <- "All Sites"
     dframe$All_Sites <- factor(dframe$All_Sites)
   }
