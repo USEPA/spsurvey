@@ -244,10 +244,10 @@
 #'   estimated.  The default set is: \code{c(5, 10, 25, 50, 75, 90, 95)}.
 #'
 #' @param statistics Character vector specifying desired estimates, where
-#'   \code{"cdf"} specifies CDF estimates, \code{"pct"} specifies percentile
-#'   estimates, and \code{"mean"} specifies mean estimates.  Any combination of
+#'   \code{"CDF"} specifies CDF estimates, \code{"Pct"} specifies percentile
+#'   estimates, and \code{"Mean"} specifies mean estimates.  Any combination of
 #'   the three choices may be provided by the user.  The defalt value is
-#'   \code{c("cdf", "pct", "mean")}.
+#'   \code{c("CDF", "Pct", "Mean")}.
 #'
 #' @param All_Sites A logical variable used when \code{subpops} is not
 #'   \code{NULL}. If \code{All_Sites} is \code{TRUE}, then alongside the
@@ -299,7 +299,7 @@
 #' cont_analysis(dframe,
 #'   vars = myvars, subpops = mysubpops, siteID = "siteID",
 #'   weight = "wgt", xcoord = "xcoord", ycoord = "ycoord",
-#'   stratumID = "stratum", popsize = mypopsize, statistics = "mean"
+#'   stratumID = "stratum", popsize = mypopsize, statistics = "Mean"
 #' )
 #' @export
 ################################################################################
@@ -310,7 +310,7 @@ cont_analysis <- function(
   weight1 = NULL, xcoord1 = NULL, ycoord1 = NULL, sizeweight = FALSE,
   sweight = NULL, sweight1 = NULL, fpc = NULL, popsize = NULL,
   vartype = "Local", jointprob = "overton", conf = 95,
-  pctval = c(5, 10, 25, 50, 75, 90, 95), statistics = c("cdf", "pct", "mean"),
+  pctval = c(5, 10, 25, 50, 75, 90, 95), statistics = c("CDF", "Pct", "Mean"),
   All_Sites = FALSE
 ) {
 
@@ -501,16 +501,10 @@ cont_analysis <- function(
     msg <- "Argument statistics must contain character values.\n"
     error_vec <- c(error_vec, msg)
   } else {
-    tst <- "CDF" %in% statistics
-    statistics[tst] <- "cdf"
-    tst <- "Pct" %in% statistics
-    statistics[tst] <- "pct"
-    tst <- "Mean" %in% statistics
-    statistics[tst] <- "mean"
-    tst <- statistics %in% c("cdf", "pct", "mean")
+    tst <- statistics %in% c("CDF", "Pct", "Mean")
     if (any(!tst)) {
       error_ind <- TRUE
-      msg <- "Argument statistics must contain only the values: 'cdf', 'pct', and 'mean'.\n"
+      msg <- "Argument statistics must contain only the values: 'CDF', 'Pct', and 'Mean'.\n"
       error_vec <- c(error_vec, msg)
     }
   }
@@ -647,7 +641,7 @@ cont_analysis <- function(
 
       # Calculate CDF estimates
 
-      if ("cdf" %in% statistics) {
+      if ("CDF" %in% statistics) {
         temp <- cdf_est(
           contsum$CDF, dframe, itype, lev_itype, nlev_itype, ivar, design,
           design_names, vars_nondetect[indx], vartype, conf, mult, warn_ind,
@@ -660,7 +654,7 @@ cont_analysis <- function(
 
       # Calculate percentile estimates
 
-      if ("pct" %in% statistics) {
+      if ("Pct" %in% statistics) {
         temp <- percentile_est(
           contsum$Pct, dframe, itype, lev_itype, nlev_itype, ivar, design,
           design_names, vars_nondetect[indx], conf, mult, pctval,warn_ind,
@@ -673,7 +667,7 @@ cont_analysis <- function(
 
       # Calculate mean estimates
 
-      if ("mean" %in% statistics) {
+      if ("Mean" %in% statistics) {
         temp <- mean_est(
           contsum$Mean, dframe, itype, lev_itype, nlev_itype, ivar, design,
           design_names, vars_nondetect[indx], vartype, conf, mult, warn_ind,

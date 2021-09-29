@@ -26,7 +26,7 @@ cont_analysis(
   jointprob = "overton",
   conf = 95,
   pctval = c(5, 10, 25, 50, 75, 90, 95),
-  statistics = c("cdf", "pct", "mean"),
+  statistics = c("CDF", "Pct", "Mean"),
   All_Sites = FALSE
 )
 }
@@ -237,10 +237,10 @@ is \code{95}.}
 estimated.  The default set is: \code{c(5, 10, 25, 50, 75, 90, 95)}.}
 
 \item{statistics}{Character vector specifying desired estimates, where
-\code{"cdf"} specifies CDF estimates, \code{"pct"} specifies percentile
-estimates, and \code{"mean"} specifies mean estimates.  Any combination of
+\code{"CDF"} specifies CDF estimates, \code{"Pct"} specifies percentile
+estimates, and \code{"Mean"} specifies mean estimates.  Any combination of
 the three choices may be provided by the user.  The defalt value is
-\code{c("cdf", "pct", "mean")}.}
+\code{c("CDF", "Pct", "Mean")}.}
 
 \item{All_Sites}{A logical variable used when \code{subpops} is not
 \code{NULL}. If \code{All_Sites} is \code{TRUE}, then alongside the
@@ -293,7 +293,7 @@ mypopsize <- data.frame(
 cont_analysis(dframe,
   vars = myvars, subpops = mysubpops, siteID = "siteID",
   weight = "wgt", xcoord = "xcoord", ycoord = "ycoord",
-  stratumID = "stratum", popsize = mypopsize, statistics = "mean"
+  stratumID = "stratum", popsize = mypopsize, statistics = "Mean"
 )
 }
 \seealso{
