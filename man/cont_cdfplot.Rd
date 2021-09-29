@@ -9,16 +9,17 @@ cont_cdfplot(
   cdfest,
   units_cdf = "Percent",
   ind_type = rep("Continuous", nind),
-  logx = rep("", nind),
-  xlbl = NULL,
-  ylbl = "Percent",
-  ylbl_r = NULL,
+  log = rep("", nind),
+  xlab = NULL,
+  ylab = NULL,
+  ylab_r = NULL,
   legloc = "BR",
   cdf_page = 4,
   width = 10,
   height = 8,
   confcut = 5,
   cex.main = 1.2,
+  cex.legend = 1,
   ...
 )
 }
@@ -39,27 +40,27 @@ or area) of the population.  The default is "Percent".}
 "Ordinal" that controls the type of CDF plot for each indicator.  The
 default is "Continuous" for every indicator.}
 
-\item{logx}{Character vector consisting of the values "" or "x" that
+\item{log}{Character vector consisting of the values "" or "x" that
 controls whether the x axis uses the original scale ("") or the base 10
 logarithmic scale ("x") for each indicator.  The default is "" for every
 indicator.}
 
-\item{xlbl}{Character vector consisting of the x-axis label for each
+\item{xlab}{Character vector consisting of the x-axis label for each
 indicator. If this argument equals NULL, then indicator names are used as
 the labels. The default is NULL.}
 
-\item{ylbl}{Character string providing the left side y-axis label.  If
+\item{ylab}{Character string providing the left side y-axis label.  If
 argument units_cdf equals "Units", a value should be provided for this
 argument.  Otherwise, the label will be "Percent".  The default is
 "Percent".}
 
-\item{ylbl_r}{Character string providing the label for the right side y-axis
+\item{ylab_r}{Character string providing the label for the right side y-axis
 (and, hence, determining the values used for the right side y-axis tick
 marks), where NULL means a right side y-axis is not created.  If this
 argument equals "Same", the right side y-axis will have the same label and
 tick mark values as the left side y-axis.  If this argument equals a
 character string other than "Same", the right side y-axis label will be the
-value provided for argument ylbl_r, and the right side y-axis tick mark
+value provided for argument ylab_r, and the right side y-axis tick mark
 values will be determined by the choice not utilized for argument
 units_cdf, which means that the default value of argument units_cdf (i.e.,
 "Percent") will result in the right side y-axis tick mark values being
@@ -84,6 +85,8 @@ zero means confidence limits are plotted for the complete range of the CDF.
 The default is 5.}
 
 \item{cex.main}{Expansion factor for the plot title.  The default is 1.2.}
+
+\item{cex.legend}{Expansion factor for the legend title. The default is 1.}
 
 \item{...}{Additional arguments passed to the \code{cdf_plot} function.}
 }
@@ -120,7 +123,7 @@ myanalysis <- cont_analysis(dframe,
   stratumID = "stratum", popsize = mypopsize
 )
 \dontrun{
-cont_cdfplot("myanalysis.pdf", myanalysis$CDF, ylbl_r = "Stream Length (km)")
+cont_cdfplot("myanalysis.pdf", myanalysis$CDF, ylab_r = "Stream Length (km)")
 }
 
 }
