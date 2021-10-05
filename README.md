@@ -15,7 +15,7 @@ You can install the released version from CRAN using:
 
 ```r
 # install from CRAN
-install.packages('spsurvey')
+install.packages("spsurvey")
 library(spsurvey)
 ```
 
@@ -23,27 +23,25 @@ You can install development version of`spsurvey` from GitHub with the following:
 
 ```r
 # requires devtools to install
-install.packages('devtools')
-library(devtools)
+install.packages("devtools")
 
 # install from repository
-install_github('USEPA/spsurvey')
+devtools::install_github("USEPA/spsurvey")
 library(spsurvey)
 ```
 
 To install from GitHub with package vignettes:
 ```r
-library(devtools)
-install_github('USEPA/spsurvey', build_vignettes=TRUE)
+devtools::install_github("USEPA/spsurvey", build_vignettes=TRUE)
 library(spsurvey)
 ```
 
 ## Example
-An overview of the spsurvey package is provided in the users guide that is included with the package.  The documentation includes a number of vignettes for the design and analysis of survey designs for point (finite), linear, and areal spatial features.
+An overview of the spsurvey package is provided in the users guide that is included with the package.  The documentation includes a number of vignettes for spatial survey designand analysis of point (finite), linear (infinite), and areal (infinite) resources.
 
 ## Citation
 ```r
-citation(package = 'spsurvey')
+citation(package = "spsurvey")
 ```
 
 ```
@@ -71,4 +69,4 @@ The United States Environmental Protection Agency (EPA) GitHub project code is p
 
 ### License
 
-This project is licensed under the GNU General Public License, [GPL-2](https://cran.r-project.org/web/licenses/GPL-2).  
+This project is licensed under the GNU General Public License, [GPL-3](https://cran.r-project.org/web/licenses/GPL-3).  
