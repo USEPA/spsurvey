@@ -409,29 +409,6 @@
 #'     \item{AIC}{generalized Akaike Information Criterion}
 #'   }
 #'
-#' @section Other Functions Required:
-#'   \describe{
-#'     \item{\code{\link{boot}}}{conduct bootstrap resampling}
-#'     \item{\code{bootfcn}}{calculates trend parameter estimates using
-#'       bootstrap replicates and the lmer function}
-#'     \item{\code{\link{calibrate}}}{conduct calibration for survey data}
-#'     \item{\code{category_est}}{calculate category proportion and total
-#'       estimates}
-#'     \item{\code{\link{glmer}}}{fits a generalized linear mixed-effects model}
-#'     \item{\code{input_check}}{check input values for errors,
-#'       consistency, and compatibility with analytical functions}
-#'     \item{\code{\link{lm}}}{fits a linear model}
-#'     \item{\code{\link{lmer}}}{fits a linear mixed-effects model}
-#'     \item{\code{mean_est}}{calculates mean estimates}
-#'     \item{\code{\link{postStratify}}}{conduct post-stratification for survey
-#'       data}
-#'     \item{\code{survey_design}}{creates a survey design object}
-#'     \item{\code{uniqueID}}{creates unique site IDs by appending a
-#'       unique number to each occurrence of a site ID}
-#'     \item{\code{vecprint}}{takes an input vector and outputs a
-#'       character string with line breaks inserted}
-#'   }
-#'
 #' @author Tom Kincaid \email{Kincaid.Tom@epa.gov}
 #'
 #' @keywords survey

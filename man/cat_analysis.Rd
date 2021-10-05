@@ -183,6 +183,7 @@ variable in the \code{dframe} data frame.  The default value is \code{NULL}.}
   value is \code{NULL}.
 
   Example popsize for calibration:
+
   \verb{popsize <- list(
     Ecoregion = c(
       East = 750,
@@ -192,7 +193,9 @@ variable in the \code{dframe} data frame.  The default value is \code{NULL}.}
       Streams = 1150,
       Rivers = 350))
   }
+
   Example popsize for post-stratification using a data frame:
+
   \verb{popsize <- data.frame(
     Ecoregion = rep(c("East", "Central", "West"),
       rep(2, 3)),
