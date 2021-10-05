@@ -77,8 +77,8 @@
 #'
 #' @param legacy_sites If \code{sframe} is a \code{LINESTRING}, \code{MULTILINESTRING},
 #'   \code{POLYGON}, or \code{MULTIPOLYGON} geometry (an infinite sample frame),
-#'   \code{legacy_sites} is an sf object with a \code{POINT} geometry representing the
-#'   legacy sites.
+#'   \code{legacy_sites} is an sf object with a \code{POINT} or \code{MULTIPOINT}
+#'   geometry representing the legacy sites.
 #'
 #' @param legacy_stratum_var A character string containing the name of the column from
 #'   \code{legacy_sites} that identifies stratum membership for each element of \code{legacy_sites}.
