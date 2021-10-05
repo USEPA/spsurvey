@@ -5,3 +5,5 @@
 ^doc$
 ^Meta$
 ^\.github$
+^LICENSE\.md$
+^NEWS.md$
