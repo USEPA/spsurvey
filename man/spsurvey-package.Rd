@@ -7,21 +7,24 @@
 \title{spsurvey: Spatial Survey Design and Analysis}
 \description{
 The spsurvey package provides functions for spatial survey design and analysis.
-To select spatially balanced probability samples, spsurvey implements the
-Generalized Random Tessellation Stratified (GRTS) algorithm.  The GRTS algorithm
-can be applied to finite resources (point geometries) and infinite resources
-(linear and polygon / areal geometries) and flexibly accommodates a diverse set
-of sampling design features, including stratification, unequal inclusion
-probabilities, proportional (to size) inclusion probabilities, legacy
-(historical) sites, a minimum distance between sites, and two options for
-replacement sites (reverse hierarchical order and nearest neighbor). To analyze
-probability samples, spsurvey implements a wide range of analysis functions
-that cover categorical variable analysis, continuous variable analysis,
-attributable risk analysis, risk difference analysis, relative risk analysis,
-change analysis, and trend analysis. spsurvey can also be used to summarize and
-visualize data, select samples that are not spatially balanced, compute
-spatial balance metrics, study cumulative distribution functions, select
-panel samples, and more.
+  To select spatially balanced probability samples, spsurvey implements the
+  Generalized Random Tessellation Stratified (GRTS) algorithm.  The GRTS algorithm
+  can be applied to finite resources (point geometries) and infinite resources
+  (linear and polygon / areal geometries) and flexibly accommodates a diverse set
+  of sampling design features, including stratification, unequal inclusion
+  probabilities, proportional (to size) inclusion probabilities, legacy
+  (historical) sites, a minimum distance between sites, and two options for
+  replacement sites (reverse hierarchical order and nearest neighbor). To analyze
+  probability samples, spsurvey implements a wide range of analysis functions
+  that cover categorical variable analysis, continuous variable analysis,
+  attributable risk analysis, risk difference analysis, relative risk analysis,
+  change analysis, and trend analysis. spsurvey can also be used to summarize and
+  visualize data, select samples that are not spatially balanced, compute
+  spatial balance metrics, study cumulative distribution functions, select
+  panel samples, and more. This R package has been reviewed in accordance
+  with U.S. Environmental Protection Agency policy and approved for publication.
+  Mention of trade names or commercial products does not constitute endorsement or
+  recommendation for use.
 }
 \seealso{
 Useful links:
