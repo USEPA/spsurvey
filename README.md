@@ -7,7 +7,7 @@
 
 # spsurvey
 
-`spsurvey` is comprised of functions which implement algorithms for design and analysis of probability surveys.  The functions are tailored for Generalized Random Tessellation Stratified survey designs.
+spsurvey is an R package for spatial survey design and analysis.  Spatially balanced sampled are selected using the Generalized Random Tessellation Stratified (algorithm) via the `grts()` function. Functions also exist to perform categorical variable analysis, continuous variable analysis, relative risk analysis, attributable risk analysis, risk difference analysis, change analysis, and trend analysis.
 
 ## Installation
 
@@ -37,7 +37,7 @@ library(spsurvey)
 ```
 
 ## Example
-An overview of the spsurvey package is provided in the users guide that is included with the package.  The documentation includes a number of vignettes for spatial survey designand analysis of point (finite), linear (infinite), and areal (infinite) resources.
+An overview of spsurvey is provided through the package's vignettes. These can be viewed by running `vignette(package = "spsurvey")` after installing spsurvey from CRAN or from GitHub (when `build_vignettes = TRUE`). Further detail is contained in the package's documentation manual.
 
 ## Citation
 ```r
