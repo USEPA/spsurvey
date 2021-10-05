@@ -26,180 +26,224 @@ knitr::opts_chunk$set(
 )
 ```
 
-After selecting a probability sample, population parameters (e.g. means and totals) can be estimated using spsurvey's analysis functions. We focus mainly on using the `NLA_PNW` data to introduce some of these analysis options. The `NLA_PNW` data contains response variables measured at several lakes in the Pacific Northwest Region of the United States. There are six variables in `NLA_PNW` used throughout this vignette:
+# Introduction
+
+After a sample is selected, population parameters (e.g. means and totals) can be estimated using spsurvey's analysis functions. We focus mainly on using the `NLA_PNW` data to introduce some of these analysis options. The `NLA_PNW` data contains response variables measured at several lakes in the Pacific Northwest Region of the United States. There are six variables in `NLA_PNW` used throughout this vignette:
 
 * `SITE_ID`: a unique site identifier
-* `WEIGHT`: the sampling design weights
-* `NITR_COND`: nitrogen condition categories (`Good`, `Fair`, and `Poor`)
+* `WEIGHT`: the sampling weights
 * `URBAN`: urban land categories (`Urban` and `Non-Urban`)
 * `STATE`: state (with levels `California`, `Oregon`, and `Washington`)
 * `BMMI`: benthic macroinvertebrate multi-metric index
+* `BMMI_COND`: benthic macroinvertebrate multi-metric index condition categories (`Good` and `Poor`)
+* `PHOS_COND`: phosphorous condition categories (`Good` and `Poor`)
+* `NITR_COND`: nitrogen condition categories (`Good`, `Fair`, and `Poor`)
 
-Before proceeding, we load spsurvey:
+Before proceeding, load spsurvey by running
 ```{r}
 library(spsurvey)
 ```
 
 # Categorical Variable Analysis
 
-Categorical variables are analyzed in spsurvey using the `cat_analysis()` function. The `cat_analysis()` function estimates the proportion of observations and the total extent (number of units, length or area) that belongs to each level of the categorical variable. Several useful pieces of output are returned by `cat_analysis()`, including estimates, standard errors, margins of error, and confidence intervals. The `.P` suffix correspond to estimates of proportions for each category, while the `.U` estimates correspond to estimates of number of units, length or area for each category. 
+Categorical variables are analyzed in spsurvey using the `cat_analysis()` function. The `cat_analysis()` function estimates the proportion of observations and the total extent (e.g. number of units, total length, or total area) that belongs to each level of the categorical variable. Several useful pieces of output are returned by `cat_analysis()`, including estimates, standard errors, margins of error, and confidence intervals. The outout contains columns with a `.P` and `.U` suffixes. The `.P` suffix corresponds to estimates of proportions for each category, while the `.U` suffix corresponds to estimates of extent for each category. 
 
 ## Unstratified Analysis
 
 To estimate the proportion of total lakes in each nitrogen condition category and the total number of lakes in each nitrogen condition category, run
 ```{r}
-ests <- cat_analysis(
+cat_ests <- cat_analysis(
   NLA_PNW,
   siteID = "SITE_ID",
   vars = "NITR_COND",
   weight = "WEIGHT"
 )
-ests
+cat_ests
 ```
-The estimate of the proportion of lakes in `Good` condition is 51.35% with a 95% confidence interval of (36.8%, 65.9%), while the estimate of the total number of lakes in `Good` condition is 5484 lakes with a 95% confidence interval of (3089, 7882). In each case, the estimated standard error and margin of error is given.
+The estimate of the proportion of lakes in `Good` condition is 51.35% with a 95% confidence interval of (36.8%, 65.9%), while the estimate of the total number of lakes in `Good` condition is 5484 lakes with a 95% confidence interval of (3086, 7882). In each case, the estimated standard error and margin of error is given. The confidence level can be changed using the `conf` argument. If more than one categorical variable is of interest,  then `vars` can be a vector of variables.
 
-Sometimes the goal is to estimate proportions and totals separately for subsets of the population -- these subsets are known as subpopulations. To estimate the proportion of total lakes in each nitrogen condition category and the total number of lakes in each nitrogen condition category separately for `Urban` and `Non-Urban` lakes, run
+Sometimes the goal is to estimate proportions and totals separately for different subsets of the population -- these subsets are called subpopulations. To estimate the proportion of total lakes in each nitrogen condition category and the total number of lakes in each nitrogen condition category separately for `California`, `Oregon`, and `Washington` lakes, run
 ```{r}
-subpop_ests <- cat_analysis(
+cat_ests_sp <- cat_analysis(
   NLA_PNW,
   siteID = "SITE_ID",
   vars = "NITR_COND",
   weight = "WEIGHT",
-  subpop = "URBAN"
+  subpop = "STATE"
 )
-subpop_ests
+cat_ests_sp
 ```
-If more than one type of subpopulation is of interest,  then `subpop` can be a vector of the subpopulation variables.
+If more than one type of subpopulation is of interest,  then `subpop` can be a vector of subpopulation variables. Output for all sites (ignoring subpopulations) can be presented alongside the subpopulations output using the `All_Sites` argument:
+```{r}
+cat_ests_sp <- cat_analysis(
+  NLA_PNW,
+  siteID = "SITE_ID",
+  vars = "NITR_COND",
+  weight = "WEIGHT",
+  subpop = "STATE",
+  All_Sites = TRUE
+)
+cat_ests_sp
+```
+
 
 ## Stratified Analysis
 
-To estimate the proportion of total lakes in each nitrogen condition category and the total number of lakes in each nitrogen condition category for a design stratified by state, run
+To estimate the proportion of total lakes in each nitrogen condition category and the total number of lakes in each nitrogen condition category for a sample stratified by whether the lake is classified as `Urban` or `Non-Urban` (via the `URBAN` variable in `NLA_PNW`), run
 ```{r}
-strat_ests <- cat_analysis(
+strat_cat_ests <- cat_analysis(
   NLA_PNW,
   siteID = "SITE_ID",
   vars = "NITR_COND",
   weight = "WEIGHT",
-  stratumID = "STATE"
+  stratumID = "URBAN"
 )
-strat_ests
+strat_cat_ests
 ```
-Notice that the stratified design's standard errors are smaller than the unstratified design's standard errors.
 
-To then compute these estimates separately for `Urban` and `Non-Urban` lakes, run
+To then compute these estimates separately for `California`, `Oregon`, and `Washington`, run
 ```{r}
-strat_subpop_ests <- cat_analysis(
+strat_cat_ests_sp <- cat_analysis(
   NLA_PNW,
   siteID = "SITE_ID",
   vars = "NITR_COND",
   weight = "WEIGHT",
-  stratumID = "STATE",
-  subpop = "URBAN"
+  stratumID = "URBAN",
+  subpop = "STATE"
 )
-strat_subpop_ests
+strat_cat_ests_sp
 ```
 
 # Continuous Variable Analysis
 
-Continuous variables are analyzed in spsurvey using the `cont_analysis()` function. The `cont_analysis()` function estimates cumulative distribution functions, quantiles, and means of continuous variables. By default, all these quantities are estimated, though the type of estimates returned is controlled using the `statistics` argument. For the quantities requiring estimation, several useful pieces of output are returned by `cont_analysis()`, including estimates, standard errors, margins of error, and confidence intervals. 
+Continuous variables are analyzed in spsurvey using the `cont_analysis()` function. The `cont_analysis()` function estimates cumulative distribution functions (CDFs), percentiles, and means of continuous variables. By default, all these quantities are estimated, though the type of estimates returned is controlled using the `statistics` argument. For the quantities requiring estimation, several useful pieces of output are returned by `cont_analysis()`, including estimates, standard errors, margins of error, and confidence intervals. The `.P` suffix corresponds to estimates of proportions for each variable, while the `.U` suffix corresponds to estimates of extent for each variable.
 
 ## Unstratified Analysis
 
-To estimate quantiles and means of `BMMI`, run
+To estimate the cumulative distribution function (CDF), select percentiles, and means of `BMMI`, run
 ```{r}
-ests <- cont_analysis(
+cont_ests <- cont_analysis(
   NLA_PNW,
   siteID = "SITE_ID",
   vars = "BMMI",
-  weight = "WEIGHT",
-  statistics = c("pct", "mean")
+  weight = "WEIGHT"
 )
-ests
 ```
 
-To estimate quantiles and means of `BMMI` separately `Urban` and `Non-Urban` lakes
+To view the output for the mean estimates, run
 ```{r}
-subpop_ests <- cont_analysis(
+cont_ests$Mean
+```
+
+Similarly, the CDF and select percentile estimates can be viewed (omitted here) by running
+```{r, eval = FALSE}
+cont_ests$CDF
+cont_ests$Pct
+```
+
+To visualize the CDF estimates, run
+```{r}
+cdf_plot(cont_ests$CDF)
+```
+
+The solid line indicates the CDF estimates and the dashed lines indicate lower and upper 95% confidence interval bounds for the CDF estimates.
+
+To estimate quantiles and means of `BMMI` separately for each state, run
+```{r}
+cont_ests_sp <- cont_analysis(
   NLA_PNW,
   siteID = "SITE_ID",
   vars = "BMMI",
   weight = "WEIGHT",
-  subpop = "URBAN",
-  statistics = c("pct", "mean")
+  subpop = "STATE"
 )
-subpop_ests
+```
+
+To view the output for the mean estimates, run
+```{r}
+cont_ests_sp$Mean
 ```
 
 
 ## Stratified Analysis
 
-To estimate quantiles and means of `BMMI` for a design stratified by state, run
+To estimate quantiles and means of `BMMI` for a design stratified by `URBAN` category, run
 ```{r}
-strat_ests <- cont_analysis(
+strat_cont_ests <- cont_analysis(
   NLA_PNW,
   siteID = "SITE_ID",
   vars = "BMMI",
   weight = "WEIGHT",
-  stratumID = "STATE",
-  statistics = c("pct", "mean")
+  stratumID = "URBAN"
 )
-strat_ests
 ```
 
-To then compute these estimates separately for `Urban` and `Non-Urban` lakes, run
+To view the mean output, run
 ```{r}
-strat_subpop_ests <- cont_analysis(
+strat_cont_ests$Mean
+```
+
+To then compute these estimates separately for each state, run
+```{r}
+strat_cont_ests_sp <- cont_analysis(
   NLA_PNW,
   siteID = "SITE_ID",
   vars = "BMMI",
   weight = "WEIGHT",
-  stratumID = "STATE",
-  subpop = "URBAN",
-  statistics = c("pct", "mean")
+  stratumID = "URBAN",
+  subpop = "STATE",
 )
-strat_subpop_ests
+```
+
+To view the mean output, run
+```{r}
+strat_cont_ests_sp$Mean
 ```
 
 # Additonal Analysis Approaches
 
-Alongside the `cat_analysis()` and `cont_analysis()` functions, spsurvey offers analysis functions for estimating attributable risk, relative risk, risk difference, change, and trend. Attributable risk analysis, relative risk analysis, and risk difference analysis capture attributable risk, relative risk, and risk difference, respectively, of environmental resources being in poor condition after exposure to a stressor. Attributable risk analysis is performed using the `attrisk_analysis()` function, relative risk analysis is performed using the `relrisk_analysis()` function, and risk difference analysis is performed using the `riskdiff_analysis()` function. Change and trend analysis capture the behavior of environmental resources between two probability samples, while trend analysis generalizes this approach to include multiple probability samples. Often, change and trend analyses are performed to study an environmental resources through time.  Change analysis is performed using the `change_analysis()` function, and trend analysis is performed using the `trend_analysis()` function. The `attrisk_analysis()`, `relrisk_analysis()`, `change_analysis()` and `trend_analysis()` functions all share very similar syntax to the `cat_analysis()` and `cont_analysis()` functions.
+Alongside the `cat_analysis()` and `cont_analysis()` functions, spsurvey offers functions for estimating attributable risk, relative risk, risk difference, change, and trend. Attributable risk analysis, relative risk analysis, and risk difference analysis capture attributable risk, relative risk, and risk difference, respectively, of environmental resources being in poor condition after exposure to a stressor. Attributable risk analysis is performed using the `attrisk_analysis()` function, relative risk analysis is performed using the `relrisk_analysis()` function, and risk difference analysis is performed using the `riskdiff_analysis()` function. Change and trend analysis capture the behavior of environmental resources between two samples, while trend analysis generalizes this approach to include more than two samples. Often, change and trend analyses are performed to study an environmental resource through time.  Change analysis is performed using the `change_analysis()` function, and trend analysis is performed using the `trend_analysis()` function. The `attrisk_analysis()`, `relrisk_analysis()`, `riskdiff_analysis()`, `change_analysis()` and `trend_analysis()` functions all share very similar syntax to the `cat_analysis()` and `cont_analysis()` functions.
 
-## Attributable Risk, Relative Risk, and Risk Difference
+## Attributable Risk, Relative Risk, and Risk Difference Analysis
 
-The attributable risk is defined as $1 -  \frac{P(Response = Poor | Stressor = Good)}{P(Response = Poor)}$, where $P(\cdot)$ is a probability. The attributable risk measures the proportion of the response variable in poor condition that could be eliminated if the stressor was always in good condition. To estimate the attributable risk of benthic macroinvertebrates with a phosphorous condition stressor, run
+The attributable risk is defined as 
+$$1 -  \frac{P(Response = Poor | Stressor = Good)}{P(Response = Poor)},$$
+where $P(\cdot)$ is a probability and $P(\cdot | \cdot)$ is a conditional probability. The attributable risk measures the proportion of the response variable in poor condition that could be eliminated if the stressor was always in good condition. To estimate the attributable risk of benthic macroinvertebrates with a phosphorous condition stressor, run
 ```{r}
-attrisk <- attrisk_analysis(
+attrisk_ests <- attrisk_analysis(
   NLA_PNW, 
   siteID = "SITE_ID",
   vars_response = "BMMI_COND",
   vars_stressor = "PHOS_COND",
   weight = "WEIGHT"
 )
-attrisk
+attrisk_ests
 ```
 
-The relative risk is defined as $\frac{P(Response = Poor | Stressor = Poor)}{P(Response = Poor | Stressor = Good)}$, which measures the risk of the response variable being in poor condition relative to the stressor. To estimate the relative risk of benthic macroinvertebrates being in poor condition with a phosphorous condition category stressor, run
+The relative risk is defined as 
+$$\frac{P(Response = Poor | Stressor = Poor)}{P(Response = Poor | Stressor = Good)},$$ which measures the risk of the response variable being in poor condition relative to the stressor's condition. To estimate the relative risk of benthic macroinvertebrates being in poor condition with a phosphorous condition category stressor, run
 ```{r}
-relrisk <- relrisk_analysis(
+relrisk_ests <- relrisk_analysis(
   NLA_PNW, 
   siteID = "SITE_ID",
   vars_response = "BMMI_COND",
   vars_stressor = "PHOS_COND",
   weight = "WEIGHT"
 )
-relrisk
+relrisk_ests
 ```
 
-The risk difference is defined as $P(Response = Poor | Stressor = Poor) - P(Response = Poor | Stressor = Good)$, which measures the difference is risks of the variable being in poor condition between the stressor being in poor condition and the stressor being in good condition. To estimate the risk difference of benthic macroinvertebrates with a phosphorous condition category stressor, run
+The risk difference is defined as 
+$$P(Response = Poor | Stressor = Poor) - P(Response = Poor | Stressor = Good),$$ which measures the risk of the response variable being in poor condition differenced by the stressor's condition. To estimate the risk difference of benthic macroinvertebrates being in poor condition with a phosphorous condition category stressor, run
 ```{r}
-riskdiff <- diffrisk_analysis(
+riskdiff_ests <- diffrisk_analysis(
   NLA_PNW, 
   siteID = "SITE_ID",
   vars_response = "BMMI_COND",
   vars_stressor = "PHOS_COND",
   weight = "WEIGHT"
 )
-riskdiff
+riskdiff_ests
 ```
 
 The default levels of `vars_response` and `vars_stressor` are `"Poor"` (event occurs) and `"Good"` (event does not occur), though this can be changed using the `response_levels` and `stressor_levels` arguments, respectively. Similar to `cat_analysis()` and `cont_analysis()` from the previous sections, subpopulations and stratification are incorporated using `subpops` and `stratumID`, respectively. For more on attributable and relative risk in an environmental resource context, see Van Sickle and Paulsen (2008).
@@ -214,9 +258,9 @@ To demonstrate change analysis, we use the `NRSA_EPA7` data. The `NRSA_EPA7` dat
 * `BMMI`: benthic macroinvertebrate multi-metric index
 * `YEAR`: probability sample (survey) year
 
-To estimate the change between time points for `BMMI` (a continuous variable) and `NITR_COND`, run
+To estimate the change between time points for `BMMI` (a continuous variable) and `NITR_COND` (a categorical variable), run
 ```{r}
-change <- change_analysis(
+change_ests <- change_analysis(
   NRSA_EPA7,
   siteID = "SITE_ID",
   vars_cont = "BMMI",
@@ -224,15 +268,17 @@ change <- change_analysis(
   surveyID = "YEAR",
   weight = "WEIGHT"
 )
-change
+change_ests
 ```
-The `surveyID` argument is the variable in the data that indicates the probability sample (`YEAR` in the previous example).
+The `surveyID` argument is the variable in the data distinguishing the different samples (`YEAR` in the previous example).
 
-Trend analysis generalizes change analysis to multiple probability samples. Though we omit an example here, the arguments to `trend_analysis()` are very similar to the arguments for `change_analysis()`. One difference is that `trend_analysis()` contains arguments that specify which statistical model to apply to the estimates from each probability sample.
+Trend analysis generalizes change analysis to more than two samples. Though we omit an example here, the arguments to `trend_analysis()` are very similar to the arguments for `change_analysis()`. One difference is that `trend_analysis()` contains arguments that specify which statistical model to apply to the estimates from each sample.
 
 # Variance Estimation
 
-The default variance parameter estimator in spsurvey is the local neighborhood variance estimator (Stevens and Olsen, 2003). The local neighborhood variance estimator incorporates spatial locations by weighting nearby observations more heavily when estimating the variance. Because it incorporates spatial locations, the local neighborhood variance estimate tends to be smaller than variance estimates from approaches ignoring spatial locations. Several additional variance estimation options are available in spsurvey's analysis functions through the `vartype` and `jointprob` arguments.
+The default variance parameter estimator in spsurvey is the local neighborhood variance estimator (Stevens and Olsen, 2003). The local neighborhood variance estimator incorporates the spatial locations of sites into the variance estimation process. Becaues it incorporates spatial locations, the local neighborhood variance estimate tends to be smaller than variance estimates that ignore spatial locations. The local neighborhood variance estimator requires x-coordinates and y-coordinates of the sites. When the data are an `sf` object, the coordinates from the data's geometry are used. When the data are just a data frame, x-coordinates and y-coordinates must be provided using the `xcoord` and `ycoord` arguments, respectively, of the analysis function being used.
+
+Several additional variance estimation options are available in spsurvey's analysis functions through the `vartype` and `jointprob` arguments.
 
 # References
 
