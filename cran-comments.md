@@ -40,7 +40,7 @@ https://builder.r-hub.io/status/BUILD-ID
 * `rhub::check(platform = "macos-highsierra-release-cran")`
     * Platform: macOS 10.13.6 High Sierra, R-release, CRAN's setup
         * Status: SUCCESS (NOTE related to manual PDF size see next section)
-        * Build ID: spsurvey_5.0.0.tar.gz-5ab4f28b53fb4a1298922583cc89e433
+        * Build ID: spsurvey_5.0.0.tar.gz-0cdd8e47922c4e12aa555a0cda8a2c7c
         
 ## R CMD check results
 
