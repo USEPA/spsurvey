@@ -13,17 +13,21 @@ dframe(object, ...)
 object to an \code{sf} and \code{dframe} object.}
 }
 \value{
-A \code{dframe} object
+A \code{dframe} object that can be used by
+spsurvey's \code{summary()} and \code{plot()} generics.
 }
 \description{
-\code{dframe} gives data frames, \code{sp} objects, and \code{sf}
-objects class \code{dframe} to be used
-spsurvey's \code{summary()} and \code{plot()} generics. \code{sp} objects are coerced to \code{sf}
-objects prior to giving class \code{dframe}.
+\code{dframe()} is used before summarizing or visualizing
+  data that has been collected (this function need not be run before calling any analysis functions).
+  \code{dframe()} gives data frames, \code{sp} objects, and \code{sf}
+  objects class \code{dframe}. \code{sp} objects are coerced to \code{sf}
+  objects prior to giving class \code{dframe}.
 }
 \examples{
-data("NE_Lakes")
-NE_Lakes <- dframe(NE_Lakes)
+data("NLA_PNW")
+NLA_PNW <- dframe(NLA_PNW)
+summary(NLA_PNW, formula = ~ BMMI_COND)
+plot(NLA_PNW, formula = ~ BMMI_COND)
 }
 \seealso{
 \describe{

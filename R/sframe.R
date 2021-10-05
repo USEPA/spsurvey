@@ -4,16 +4,19 @@
 # Date: January 22, 2021
 #' Create an sframe object
 #'
-#' @description \code{sframe()} gives \code{sp} and \code{sf} objects class \code{"sframe"} to be used
-#' in spsurvey's \code{summary()} and \code{plot()} generics. \code{sp} objects are coerced to \code{sf}
-#' objects prior to giving class \code{sframe}.
+#' @description \code{sframe()} is used before summarizing or visualizing sample frames
+#' (this function need not be run before calling \code{grts()} or \code{irs()}).
+#'   \code{sframe()} gives \code{sp} and \code{sf} objects class \code{"sframe"}.
+#'   \code{sp} objects are coerced to \code{sf}
+#'   objects prior to giving class \code{sframe}.
 #'
 #' @param object For \code{sframe}, an \code{sp} or \code{sf} object.
 #'
 #' @param ... Additional arguments to \code{st_as_sf()} when using \code{sframe()}
 #' to convert an \code{sp} object to an \code{sf} and \code{sframe} object.
 #'
-#' @return An \code{sframe} object.
+#' @return A \code{sframe} object that can be used by
+#' spsurvey's \code{summary()} and \code{plot()} generics.
 #'
 #' @author Michael Dumelle \email{Dumelle.Michael@@epa.gov}
 #'
@@ -27,6 +30,8 @@
 #' @examples
 #' data("NE_Lakes")
 #' NE_Lakes <- sframe(NE_Lakes)
+#' summary(NE_Lakes, formula = ~ ELEV_CAT)
+#' plot(NE_Lakes, formula = ~ ELEV_CAT)
 sframe <- function(object, ...) {
   if (inherits(object, "sframe")) {
     new_sframe <- structure(object, class = c("sframe", setdiff(class(object), "sframe")))

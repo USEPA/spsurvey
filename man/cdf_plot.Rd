@@ -6,79 +6,113 @@
 \usage{
 cdf_plot(
   cdfest,
+  var = NULL,
+  subpop = NULL,
+  subpop_level = NULL,
   units_cdf = "Percent",
   type_cdf = "Continuous",
-  logx = "",
-  xlbl = NULL,
-  ylbl = "Percent",
-  ylbl_r = NULL,
-  figlab = NULL,
-  legloc = "BR",
-  confcut = 5,
+  log = "",
+  xlab = NULL,
+  ylab = NULL,
+  ylab_r = NULL,
+  main = NULL,
+  legloc = NULL,
+  confcut = 0,
   conflev = 95,
   cex.main = 1.2,
+  cex.legend = 1,
   ...
 )
 }
 \arguments{
-\item{cdfest}{Data frame utilizing the same structure as the data frame
-named "CDF" that is included in the output object produced by function
-cont.analysis.  The data frame must contain only a single cdf estimate.}
+\item{cdfest}{Data frame utilizing the structure of the data frame named
+"CDF" that is included in the output object produced by function
+\code{cont_analysis}.  The data frame must only contain data for a single
+cdf estimate.}
 
-\item{units_cdf}{Indicator for the type of units in which the CDF is
-plotted, where "Percent" means the plot is in terms of percent of the
-population, and "Units" means the plot is in terms of units of the
-population.  The default is "Percent".}
+\item{var}{If \code{cdfest} has multiple variables in the "Indicator" column,
+then \code{var} is the single variable to be plotted. The default is
+\code{NULL}, which assumes that only one variable is in the "Indicator"
+column of \code{cdfest}.}
+
+\item{subpop}{If \code{cdfest} has multiple variables in the "Type" column,
+then \code{subpop} is the single variable to be plotted. The default is
+\code{NULL}, which assumes that only one variable is in the "Type"
+column of \code{cdfest}.}
+
+\item{subpop_level}{If \code{cdfest} has multiple levels of \code{subpop}
+in the "Subpopulation" column,
+then \code{subpop_level} is the single level to be plotted. The default is
+\code{NULL}, which assumes that only one level is in the "Subpopulation"
+column of \code{cdfest}.}
+
+\item{units_cdf}{Indicator for the label utilized for the left side y-axis
+and the values used for the left side y-axis tick marks, where "Percent"
+means the label and values are in terms of percent of the population, and
+"Units" means the label and values are in terms of units (count, length,
+or area) of the population.  The default is "Percent".}
 
 \item{type_cdf}{Character string consisting of the value "Continuous" or
-"Ordinal" that controls the type of CDF plot for each indicator.  The
-default is "Continuous".}
+"Ordinal" that controls the type of CDF plot.  The default is "Continuous".}
 
-\item{logx}{Character string consisting of the value "" or "x" that
+\item{log}{Character string consisting of the value "" or "x" that
 controls whether the x axis uses the original scale ("") or the base 10
 logarithmic scale ("x").  The default is "".}
 
-\item{xlbl}{Character string providing the x-axis label.  If this argument
+\item{xlab}{Character string providing the x-axis label.  If this argument
 equals NULL, then the indicator name is used as the label.  The default is
 NULL.}
 
-\item{ylbl}{Character string providing the y-axis label.  The default is
+\item{ylab}{Character string providing the left side y-axis label.  If
+argument units_cdf equals "Units", a value should be provided for this
+argument.  Otherwise, the label will be "Percent".  The default is
 "Percent".}
 
-\item{ylbl_r}{Character string providing the label for the right side
-y-axis, where NULL means a label is not created, and "Same" means the label
-is the same as the left side label (i.e., argument ylbl).  The default is
-NULL.}
+\item{ylab_r}{Character string providing the label for the right side y-axis
+(and, hence, determining the values used for the right side y-axis tick
+marks), where NULL means a right side y-axis is not created.  If this
+argument equals "Same", the right side y-axis will have the same label and
+tick mark values as the left side y-axis.  If this argument equals a
+character string other than "Same", the right side y-axis label will be the
+value provided for argument ylab_r, and the right side y-axis tick mark
+values will be determined by the choice not utilized for argument
+units_cdf, which means that the default value of argument units_cdf (i.e.,
+"Percent") will result in the right side y-axis tick mark values being
+expressed  in terms of units of the population (i.e., count, length, or
+area).  The default is NULL.}
 
-\item{figlab}{Character string providing the plot title.  The default is
+\item{main}{Character string providing the plot title.  The default is
 NULL.}
 
 \item{legloc}{Indicator for location of the plot legend, where "BR" means
-bottom right, "BL" means bottom left, "TR" means top right, and "TL" means
-top left.  The default is "BR".}
+bottom right, "BL" means bottom left, "TR" means top right, "TL" means
+top left, and NULL means no legend.  The default is NULL.}
 
 \item{confcut}{Numeric value that controls plotting confidence limits at
 the CDF extremes.  Confidence limits for CDF values (percent scale) less
 than confcut or greater than 100 minus confcut are not plotted.  A value of
 zero means confidence limits are plotted for the complete range of the CDF.
-The default is 5.}
+The default is 0.}
 
 \item{conflev}{Numeric value of the confidence level used for confidence
 limits. The default is 95.}
 
 \item{cex.main}{Expansion factor for the plot title.  The default is 1.2.}
 
-\item{...}{Additional arguments passed to the plot function.}
+\item{cex.legend}{Expansion factor for the legend title. The default is 1.}
+
+\item{...}{Additional arguments passed to the \code{plot.default} function
+(aside from those already used and \code{ylim}).}
 }
 \value{
 A plot of the CDF and its associated confidence limits.
 }
 \description{
 This function creates a CDF plot.  Input data for the plots is provided by a
-data frame utilizing the same structure as the data frame named "CDF" that is
-included in the output object produced by function cont.analysis, but the
-data frame includes only the values for a single CDF.  Confidence limits for
-the CDF also are plotted.
+data frame utilizing the structure of the data frame named "CDF" that is
+included in the output object produced by function \code{cont_analysis}, but
+the data frame includes only the values for a single CDF.  Confidence limits
+for the CDF also are plotted.
 }
 \examples{
 dframe <- data.frame(
@@ -106,20 +140,21 @@ keep <- with(myanalysis$CDF, Type == "Resource_Class" &
   Subpopulation == "Good")
 par(mfrow = c(2, 1))
 cdf_plot(myanalysis$CDF[keep, ],
-  xlbl = "ContVar",
-  ylbl = "Percent of Stream Length", ylbl_r = "Stream Length (km)",
-  figlab = "Estimates for Resource Class: Good"
+  xlab = "ContVar",
+  ylab = "Percent of Stream Length", ylab_r = "Stream Length (km)",
+  main = "Estimates for Resource Class: Good"
 )
 cdf_plot(myanalysis$CDF[keep, ],
-  xlbl = "ContVar",
-  ylbl = "Percent of Stream Length", ylbl_r = "Same",
-  figlab = "Estimates for Resource Class: Good"
+  xlab = "ContVar",
+  ylab = "Percent of Stream Length", ylab_r = "Same",
+  main = "Estimates for Resource Class: Good"
 )
 }
 \seealso{
 \describe{
-  \item{\code{\link{cont_cdfplot}}}{ for making CDF plots output to pdfs}
-  \item{\code{\link{cont_cdftest}}}{ for CDF hypothesis testing}
+  \item{\code{\link{cont_cdfplot}}}{for creating a PDF file containing CDF
+    plots}
+  \item{\code{\link{cont_cdftest}}}{for CDF hypothesis testing}
   }
 }
 \author{

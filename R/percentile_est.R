@@ -6,11 +6,17 @@
 #          factor with the local mean variance estimator
 # Revised: June 11, 2021 to eliminate estimating means, which will be performed
 #          by a new function named mean_est
+# Revised: September 9, 2021 to remove argument vartype, which is not used
+# Revised: September 17 2021 to set argument ties equal to "rounded" when
+#          calling function oldsvyquantile in order to ensure backward
+#          compatability with spsurvey prior to version 5.0.0
 #
 #' Percentile Estimates for Probability Survey Data
 #'
-#' This function calculates percentile estimates using the \code{oldsvyquantile()} function
-#' in the survey package (\code{svyquantile()} on survey version pre 4.1-1.  Upper and lower confidence bounds also are estimated.
+#' This function calculates percentile estimates using the
+#' \code{oldsvyquantile()} function in the survey package (\code{svyquantile()}
+#' on survey version pre 4.1-1).  Upper and lower confidence bounds also are
+#' estimated.
 #'
 #' @param pctsum Data frame containing estimates.
 #'
@@ -37,13 +43,6 @@
 #' @param var_nondetect Character value that identifies the name of a logical
 #'   variable in the \code{dframe} data frame specifying the presence of not
 #'   detected (nondetect) values for the response variable.
-#'
-#' @param vartype Character value providing the choice of the variance
-#'   estimator, where "Local" = the local mean estimator, \code{"SRS"} = the
-#'   simple random sampling estimator, \code{"HT"} = the Horvitz-Thompson
-#'   estimator, and \code{"YG"} = the Yates-Grundy estimator.  The default value
-#'   is \code{"Local"}.
-#'
 #'
 #' @param conf Numeric value for the confidence level.
 #'
@@ -75,8 +74,8 @@
 ################################################################################
 
 percentile_est <- function(pctsum, dframe, itype, lev_itype, nlev_itype, ivar,
-                           design, design_names, var_nondetect, vartype, conf,
-                           mult, pctval, warn_ind, warn_df) {
+                           design, design_names, var_nondetect, conf, mult,
+                           pctval, warn_ind, warn_df) {
 
   # Assign a value to the function name variable
 
@@ -116,7 +115,7 @@ percentile_est <- function(pctsum, dframe, itype, lev_itype, nlev_itype, ivar,
         options(warn = -1)
         rslt_svy <- oldsvyquantile(make.formula(ivar),
           design = subset(design, tst), quantiles = pctval / 100,
-          alpha = (100 - conf) / 100, ci = TRUE, na.rm = TRUE
+          alpha = (100 - conf) / 100, ci = TRUE, na.rm = TRUE, ties = "rounded"
         )
         options(warn = 0)
         pctest <- rslt_svy$quantiles
@@ -152,8 +151,9 @@ percentile_est <- function(pctsum, dframe, itype, lev_itype, nlev_itype, ivar,
         levs <- (1:nlev_itype)[subpop_ind]
         options(warn = -1)
         rslt_svy <- svyby(make.formula(ivar), make.formula(itype),
-          design = subset(design, tst), oldsvyquantile, quantiles = pctval / 100,
-          alpha = (100 - conf) / 100, ci = TRUE, na.rm = TRUE
+          design = subset(design, tst), oldsvyquantile,
+          quantiles = pctval / 100, alpha = (100 - conf) / 100, ci = TRUE,
+          na.rm = TRUE, ties = "rounded"
         )
         options(warn = 0)
         j <- 1

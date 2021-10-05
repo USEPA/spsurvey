@@ -4,6 +4,8 @@
 # Date: July 23, 2020
 # Revised: May 25 2021 to eliminate use of the finite population correction
 #          factor with the local mean variance estimator
+# Revised: September 15 2021 to correct errors that occur when using the
+#          svymean and svytotal functions to estimate CDFs
 #
 #' Cumulative Distribution Function Estimate for Probability Survey Data
 #'
@@ -107,9 +109,12 @@ cdf_est <- function(cdfsum, dframe, itype, lev_itype, nlev_itype, ivar, design,
     # estimates, and confidence bound estimates for each combination of
     # subpopulation and response variable for the case where nondetects are not
     # present
+    # Note: A small value (1e-10) is added to each element in the cdfval object
+    #       in order to force the svymean function to produce estimates that
+    #       match the estimates produced by the svycdf function
 
     tst <- !is.na(dframe[, itype])
-    cdfval <- sort(unique(dframe[!is.na(dframe[, ivar]), ivar]))
+    cdfval <- sort(unique(dframe[!is.na(dframe[, ivar]), ivar])) + 1e-10
     ncdfval <- length(cdfval)
     if (nlev_itype == 1) {
       rslt_svy <- lapply(cdfval, function(x) {

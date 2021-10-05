@@ -28,15 +28,20 @@
 #          mean estimates
 # Revised: July 23, 2021 to eliminate analysis of subpopulation categories that
 #          contain only missing values in one of the surveys
-#
+# Revised: September 9, 2021 to remove argument vars_nondetect since currently
+#          it is not used and to revise the documentation for argument popsize
+## Revised: September 14, 2021 to correct an error that can occur when checking
+##          that subpopulation variables contain only missing values
+
 #' Estimation of change between two probability surveys
 #'
 #' This function organizes input and output for estimation of change between two
 #' probability surveys.  The input data argument can be either a data frame or a
-#' simple features (\code{sf}) object.  If an \code{sf} object is used, coordinates are
-#' extracted from the geometry column in the object, arguments \code{xcoord} and
-#' \code{ycoord} are assigned values \code{"xcoord"} and \code{"ycoord"},
-#' respectively, and the geometry column is dropped from the object.
+#' simple features (\code{sf}) object.  If an \code{sf} object is used,
+#' coordinates are extracted from the geometry column in the object, arguments
+#' \code{xcoord} and \code{ycoord} are assigned values \code{"xcoord"} and
+#' \code{"ycoord"}, respectively, and the geometry column is dropped from the
+#' object.
 #'
 #' @param dframe Data frame containing survey design variables, response
 #'   variables, and subpopulation (domain) variables.
@@ -48,18 +53,6 @@
 #' @param vars_cont Vector composed of character values that identify the
 #'   names of continuous response variables in the dframe data frame.  The
 #'   default is \code{NULL}.
-#'
-#' @param vars_nondetect Vector composed of character values that identify the
-#'   names of logical variables in the \code{dframe} data frame specifying the
-#'   presence of not detected (nondetect) values for response variables.  The
-#'   order of the values for this argument must match the order of the values
-#'   for the \code{vars} argument. Each logical variable specifies the detection
-#'   status for the corresponding values of a response variable, where
-#'   \code{TRUE} equals not detected, and \code{FALSE} equals detected.  If a
-#'   response variable does not include any nondetect values, then the name for
-#'   the corresponding logical variable may be set equal to \code{NULL}.  If
-#'   this argument equals \code{NULL}, then none of the response variables
-#'   contain nondetect values.  The default is \code{NULL}.
 #'
 #' @param test Character string or character vector providing the location
 #'   measure(s) to use for change estimation for continuous variables.  The
@@ -205,22 +198,31 @@
 #'       Cluster_5 = 125))
 #'   }
 #'
-#' @param popsize Object that provides values for the population argument of
-#'   the \code{calibrate} or \code{postStratify} functions in the survey package.  For the
-#'   \code{calibrate} function, the object is a named list, where the names
-#'   identify factor variables in the \code{dframe} data frame.  Each element
-#'   of the list is a named vector containing the population total for each
-#'   level of the associated factor variable.  For the \code{postStratify}
-#'   function, the object is either a data frame, table, or xtabs
-#'   object that provides the population total for all combinations of selected
-#'   factor varaibles in the \code{dframe} data frame.  If a data frame is used
-#'   for \code{popsize}, the variable containing population totals must be the
-#'   last variable in the data frame.  If a table is used for \code{popsize},
-#'   the table must have named \code{dimnames} where the names identify factor
-#'   variables in the \code{dframe} data frame.  If the popsize argument is
-#'   equal to \code{NULL}, then neither calibration nor post-stratification is
-#'   performed.  The default value is
-#'   \code{NULL}.
+#' @param popsize Object that provides values for the population argument of the
+#'   \code{calibrate} or \code{postStratify} functions in the survey package. If
+#'   a value is provided for popsize, then either the \code{calibrate} or
+#'   \code{postStratify} function is used to modify the survey design object
+#'   that is required by functions in the survey package.  Whether to use the
+#'   \code{calibrate} or \code{postStratify} function is dictated by the format
+#'   of popsize, which is discussed below.  Post-stratification adjusts the
+#'   sampling and replicate weights so that the joint distribution of a set of
+#'   post-stratifying variables matches the known population joint distribution.
+#'   Calibration, generalized raking, or GREG estimators generalize
+#'   post-stratification and raking by calibrating a sample to the marginal
+#'   totals of variables in a linear regression model. For the \code{calibrate}
+#'   function, the object is a named list, where the names identify factor
+#'   variables in the \code{dframe} data frame.  Each element of the list is a
+#'   named vector containing the population total for each level of the
+#'   associated factor variable.  For the \code{postStratify} function, the
+#'   object is either a data frame, table, or xtabs object that provides the
+#'   population total for all combinations of selected factor variables in the
+#'   \code{dframe} data frame.  If a data frame is used for \code{popsize}, the
+#'   variable containing population totals must be the last variable in the data
+#'   frame.  If a table is used for \code{popsize}, the table must have named
+#'   \code{dimnames} where the names identify factor variables in the
+#'   \code{dframe} data frame.  If the popsize argument is equal to \code{NULL},
+#'   then neither calibration nor post-stratification is performed.  The default
+#'   value is \code{NULL}.
 #'
 #'   Example popsize for calibration:
 #'
@@ -254,8 +256,9 @@
 #'     data = MySurveyFrame)}
 #'
 #' @param vartype Character value providing the choice of the variance
-#'   estimator, where \code{"Local"} indicates the local mean estimator and \code{"SRS"} indicates the
-#'   simple random sampling estimator.  The default value is \code{"Local"}.
+#'   estimator, where \code{"Local"} indicates the local mean estimator and
+#'   \code{"SRS"} indicates the simple random sampling estimator.  The default
+#'   value is \code{"Local"}.
 #'
 #' @param jointprob Character value providing the choice of joint inclusion
 #'   probability approximation for use with Horvitz-Thompson and Yates-Grundy
@@ -266,6 +269,14 @@
 #'
 #' @param conf Numeric value providing the confidence level.  The default value
 #'   is \code{95}.
+#'
+#' @param All_Sites A logical variable used when \code{subpops} is not
+#'   \code{NULL}. If \code{All_Sites} is \code{TRUE}, then alongside the
+#'   subpopulation output, output for all sites (ignoring subpopulations) is
+#'   returned for each variable in \code{vars}. If \code{All_Sites} is
+#'   \code{FALSE}, then alongside the subpopulation output, output for all sites
+#'   (ignoring subpopulations) is not returned for each variable in \code{vars}.
+#'   The default is \code{FALSE}.
 #'
 #' @return List of change estimates composed of three items:
 #'   (1) \code{catsum} contains change estimates for categorical variables,
@@ -311,13 +322,19 @@
 #' @export
 ################################################################################
 
-change_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL, vars_nondetect = NULL,
-                            test = "mean", subpops = NULL, surveyID = "surveyID", survey_names = NULL,
-                            siteID = "siteID", weight = "weight", revisitwgt = FALSE, xcoord = NULL,
-                            ycoord = NULL, stratumID = NULL, clusterID = NULL, weight1 = NULL,
-                            xcoord1 = NULL, ycoord1 = NULL, sizeweight = FALSE, sweight = NULL,
-                            sweight1 = NULL, fpc = NULL, popsize = NULL, vartype = "Local",
-                            jointprob = "overton", conf = 95) {
+change_analysis <- function(
+  dframe, vars_cat = NULL, vars_cont = NULL, test = "mean", subpops = NULL,
+  surveyID = "surveyID", survey_names = NULL, siteID = "siteID",
+  weight = "weight", revisitwgt = FALSE, xcoord = NULL, ycoord = NULL,
+  stratumID = NULL, clusterID = NULL, weight1 = NULL, xcoord1 = NULL,
+  ycoord1 = NULL, sizeweight = FALSE, sweight = NULL,  sweight1 = NULL,
+  fpc = NULL, popsize = NULL, vartype = "Local", jointprob = "overton",
+  conf = 95, All_Sites = FALSE
+) {
+
+  # Assign NULL to vars_nondetect
+
+  vars_nondetect <-  NULL
 
   # Create a vector for error messages
 
@@ -591,6 +608,17 @@ change_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL, vars_nond
     dframe$All_Sites <- factor(dframe$All_Sites)
   }
 
+  # If the user wants information for all sites together in addition to the
+  # subpops, add the value "All_Sites" to the subpops argument and create a
+  # factor named "All_Sites" in the dframe data frame that takes the value
+  # "All Sites"
+
+  if (!is.null(subpops) && All_Sites) {
+    subpops <- c(subpops, "All_Sites")
+    dframe$All_Sites <- "All Sites"
+    dframe$All_Sites <- factor(dframe$All_Sites)
+  }
+
   # For each subpopulation variable, check whether all values for either survey
   # are missing
 
@@ -613,7 +641,7 @@ change_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL, vars_nond
 
       temp <- NULL
       for (v in subpops) {
-        for (lv in unique(dframe[, v])) {
+        for (lv in levels(dframe[, v])) {
           tst1 <- dframe[survey_1, v] == lv
           tst2 <- dframe[survey_2, v] == lv
           if (all(is.na(dframe[survey_1, v][tst1])) |
@@ -796,9 +824,9 @@ change_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL, vars_nond
 
         for (isubpop in lev_itype) {
 
-          # Calculate change estimates, standard error estimates, and confidence bound
-          # estimates for each combination of subpopulation, response variable, and level
-          # of the subpopulation
+          # Calculate change estimates, standard error estimates, and confidence
+          # bound estimates for each combination of subpopulation, response
+          # variable, and level of the subpopulation
 
           temp <- change_est(
             resp_ind = "cat", survey_names, changesum,
@@ -842,9 +870,9 @@ change_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL, vars_nond
 
         for (isubpop in lev_itype) {
 
-          # Calculate change estimates, standard error estimates, and confidence bound
-          # estimates for each combination of subpopulation, response variable, and level
-          # of the subpopulation
+          # Calculate change estimates, standard error estimates, and confidence
+          # bound estimates for each combination of subpopulation, response
+          # variable, and level of the subpopulation
 
           indx <- match(ivar, vars_cont)
           temp <- change_est(

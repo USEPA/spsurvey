@@ -15,6 +15,8 @@ irs(
   legacy_var = NULL,
   legacy_sites = NULL,
   legacy_stratum_var = NULL,
+  legacy_caty_var = NULL,
+  legacy_aux_var = NULL,
   mindis = NULL,
   maxtry = 10,
   n_over = NULL,
@@ -31,7 +33,7 @@ system for \code{sframe} must be one where distance for coordinates is meaningfu
 
 \item{n_base}{The base sample size required. If the design is unstratified,
 this is a single numeric value. If the design is stratified, this is a named
-vector whose names represent each stratum and whose values represent each
+vector or list whose names represent each stratum and whose values represent each
 stratum's sample size. These names must match the values of the stratification
 variable represented by \code{stratum_var}.}
 
@@ -88,19 +90,38 @@ act as a legacy site identifier. For non-legacy sites, the values of the
 
 \item{legacy_sites}{If \code{sframe} is a \code{LINESTRING}, \code{MULTILINESTRING},
 \code{POLYGON}, or \code{MULTIPOLYGON} geometry (an infinite sample frame),
-\code{legacy_sites} is an sf object with a \code{POINT} geometry representing the
-legacy sites.}
+\code{legacy_sites} is an sf object with a \code{POINT} or \code{MULTIPOINT}
+geometry representing the legacy sites.}
 
 \item{legacy_stratum_var}{A character string containing the name of the column from
 \code{legacy_sites} that identifies stratum membership for each element of \code{legacy_sites}.
 This argument is required when the design is stratified and its levels
-must be contained in the levels of \code{stratum_var}. The default value of \code{legacy_stratum_var}
+must be contained in the levels of the \code{stratum_var} variable. The default value of \code{legacy_stratum_var}
 is \code{stratum_var}, so \code{legacy_stratum_var} need only be specified explicitly when
 the name of the stratification variable in \code{legacy_sites} differs from \code{stratum_var}.}
 
+\item{legacy_caty_var}{A character string containing the name of the column from
+\code{legacy_sites} that identifies the unequal probability variable for each element of \code{legacy_sites}.
+This argument is required when the design uses unequal selection probabilities and its categories
+must be contained in the levels of the \code{caty_var} variable. The default value of \code{legacy_caty_var}
+is \code{caty_var}, so \code{legacy_caty_var} need only be specified explicitly when
+the name of the unequal probability variable in \code{legacy_sites} differs from \code{caty_var}.}
+
+\item{legacy_aux_var}{A character string containing the name of the column from
+\code{legacy_sites} that identifies the proportional probability variable for each element of \code{legacy_sites}.
+This argument is required when the design uses proportional selection probabilities and the values of the
+\code{legacy_aux_var} variable must be positive. The
+default value of \code{legacy_aux_var} is \code{aux_var}, so \code{legacy_aux_var} need only be specified explicitly
+when the name of the proportional probability variable in \code{legacy_sites} differs from \code{aux_var}.}
+
 \item{mindis}{A numeric value indicating the desired minimum distance between sampled
-sites. If design is stratified, then mindis is applied separately for each stratum.
-The units of \code{mindis} must match the units in \code{sframe}.}
+sites. If the design is stratified and \code{mindis} is an numeric value, the minimum
+distance is applied to all strata. If the design is stratified and different minimum distances
+are desired among strata,then \code{mindis}
+is a list whose names match the names of \code{n_base} and whose and values
+are the minimum distance for the corresponding stratum.  If a minimum distance is not desired
+for a particular stratum, then the corresponding value in \code{mindis} should be \code{NULL}.
+The units of \code{mindis} must represent the units in \code{sframe}.}
 
 \item{maxtry}{The number of maximum attempts to apply the minimum distance algorithm to obtain
 the desired minimum distance between sites. Each iteration takes roughly as long as the
@@ -115,19 +136,29 @@ ordered (rho) replacement sites desired.  If the design is unstratified and \cod
 then \code{n_over} is a named character vector whose names match the levels of
 \code{caty_var} and whose values are the expected rho replacement sample sizes for each
 level. If the design is stratified and \code{seltype} is \code{"equal"} or \code{"proportional"},
-\code{n_over} is a named vector whose names match the names of \code{n_base} and whose values
-indicate the number of rho replacement sites for each stratum. If the design is stratified and
+\code{n_over} is a list whose names match the names of \code{n_base} and whose values
+indicate the number of rho replacement sites for each stratum. If replacement sites are not desired for a particular stratum, then the corresponding value in \code{n_over} should be \code{NULL}. If the design is stratified and
 \code{seltype} is \code{"unequal"}, \code{n_over} changes based on whether the expected
 rho replacement sample sizes change among strata. If \code{n_over} does not change among strata, \code{n_over}
 is a named vector whose names match the names of \code{caty_var} and whose values are the expected rho replacement
 sample sizes to be used for each stratum. If \code{n_over} changes among strata, \code{n_over} is a
-list where each element represents a stratum in \code{n_base}.
-The order of the strata in this list must match the order of the strata in \code{n_base}.
+list whose names match the names of \code{n_base} and whose values
+indicate the number of rho replacement sites for each stratum.
 Each stratum's list element is a named vector whose names represent each level of \code{caty_var} and whose values represent each
-level's expected rho replacement sample sizes (within the stratum).}
+level's expected rho replacement sample sizes (within the stratum). If replacement sites are not desired for a particular stratum, then the corresponding value in \code{n_over} should be \code{NULL}.}
 
-\item{n_near}{An integer from \code{1} to \code{10} specifying the number of
-nearest neighbor replacement sites to be selected for each base site. For
+\item{n_near}{If the design is unstratified, \code{n_near} is integer from \code{1}
+to \code{10} specifying the number of
+nearest neighbor replacement sites to be selected for each base site. If the design
+is stratified but the same number of nearest neighbor replacement sites is desired
+for each stratum,  \code{n_near} is integer from \code{1}
+to \code{10} specifying the number of
+nearest neighbor replacement sites to be selected for each base site. If the design is
+unstratified and a different number of nearest neighbor replacement sites is
+desired for each stratum, \code{n_near} is a list whose names represent strata and whose
+values is integer from \code{1}
+to \code{10} specifying the number of
+nearest neighbor replacement sites to be selected for each base site in the stratum. If replacement sites are not desired for a particular stratum, then the corresponding value in \code{n_over} should be \code{NULL}. For
 infinite sample frames, the distance between a site and its nearest neighbor
 depends on \code{pt_density}.}
 
@@ -145,12 +176,17 @@ such that the number of finite points used in the approximation equals 10
 times the sample size requested.}
 
 \item{DesignID}{A character string indicating the naming structure for each
-site's identifier selected in the sample, which is included as a variable in the
-sf object in the function's output.}
+site's identifier selected in the sample, which is matched with \code{SiteBegin} and
+included as a variable in the
+sf object in the function's output. Default is "Site".}
 
 \item{SiteBegin}{A character string indicating the first number to use to match
-with \code{DesignID} while creating each site's identifier selected in the sample. Successive
-sites are given successive integers. The default starting number is \code{1}.}
+with \code{DesignID} while creating each site's identifier selected in the sample.
+Successive sites are given successive integers. The default starting number
+is \code{1} and the number of digits is equal to number of digits in
+\code{nbase + nover}.
+For example, if \code{nbase} is 50 and \code{nover} is 0, then the default
+site identifiers are \code{Site-01} to \code{Site-50}}
 }
 \value{
 A list with five elements:
@@ -232,6 +268,15 @@ inclusion probabilities according to a categorical variable, and inclusion
 probabilities proportional to a positive auxiliary variable. Several additional
 sampling options are included, such as including legacy (historical) sites,
 requiring a minimum distance between sites, and selecting replacement sites.
+}
+\details{
+Note that \code{n_base} is the number of sites that is used to calculate
+  the weights which typically are the number of sites that will be used for population
+  estimates. When a panel design is implemented, \code{n_base} typically is the
+  number of sites in all panels that will be sampled in the same temporal period.
+  It is not the total number of sites in all panels. The sum of \code{n_base} and
+  \code{n_over} is equal to the total number of sites to be visited for all panels plus
+  any replacement sites that may be required.
 }
 \examples{
 sample <- irs(NE_Lakes, n_base = 100)

@@ -2,23 +2,24 @@
 % Please edit documentation in R/cont_cdfplot.R
 \name{cont_cdfplot}
 \alias{cont_cdfplot}
-\title{Plot cumulative distribution functions (CDFs) and output to a pdf}
+\title{Create a PDF file containing cumulative distribution functions (CDF) plots}
 \usage{
 cont_cdfplot(
   pdffile = "cdf2x2.pdf",
   cdfest,
   units_cdf = "Percent",
   ind_type = rep("Continuous", nind),
-  logx = rep("", nind),
-  xlbl = NULL,
-  ylbl = "Percent",
-  ylbl_r = NULL,
-  legloc = "BR",
+  log = rep("", nind),
+  xlab = NULL,
+  ylab = NULL,
+  ylab_r = NULL,
+  legloc = NULL,
   cdf_page = 4,
   width = 10,
   height = 8,
-  confcut = 5,
+  confcut = 0,
   cex.main = 1.2,
+  cex.legend = 1,
   ...
 )
 }
@@ -27,37 +28,48 @@ cont_cdfplot(
 
 \item{cdfest}{Data frame utilizing the same structure as the data frame
 named "CDF" that is included in the output object produced by function
-cont.analysis.}
+\code{cont_analysis}.}
 
-\item{units_cdf}{Indicator for the type of units in which the CDF is
-plotted, where "Percent" means the plot is in terms of percent of the
-population, and "Units" means the plot is in terms of units of the
-population.  The default is "Percent".}
+\item{units_cdf}{Indicator for the label utilized for the left side y-axis
+and the values used for the left side y-axis tick marks, where "Percent"
+means the label and values are in terms of percent of the population, and
+"Units" means the label and values are in terms of units (count, length,
+or area) of the population.  The default is "Percent".}
 
 \item{ind_type}{Character vector consisting of the values "Continuous" or
 "Ordinal" that controls the type of CDF plot for each indicator.  The
 default is "Continuous" for every indicator.}
 
-\item{logx}{Character vector consisting of the values "" or "x" that
+\item{log}{Character vector consisting of the values "" or "x" that
 controls whether the x axis uses the original scale ("") or the base 10
 logarithmic scale ("x") for each indicator.  The default is "" for every
 indicator.}
 
-\item{xlbl}{Character vector consisting of the x-axis label for each
+\item{xlab}{Character vector consisting of the x-axis label for each
 indicator. If this argument equals NULL, then indicator names are used as
 the labels. The default is NULL.}
 
-\item{ylbl}{Character string providing the y-axis label.  The default is
+\item{ylab}{Character string providing the left side y-axis label.  If
+argument units_cdf equals "Units", a value should be provided for this
+argument.  Otherwise, the label will be "Percent".  The default is
 "Percent".}
 
-\item{ylbl_r}{Character string providing the label for the right side
-y-axis, where NULL means a label is not created, and "Same" means the label
-is the same as the left side label (i.e., argument ylbl).  The default is
-NULL.}
+\item{ylab_r}{Character string providing the label for the right side y-axis
+(and, hence, determining the values used for the right side y-axis tick
+marks), where NULL means a right side y-axis is not created.  If this
+argument equals "Same", the right side y-axis will have the same label and
+tick mark values as the left side y-axis.  If this argument equals a
+character string other than "Same", the right side y-axis label will be the
+value provided for argument ylab_r, and the right side y-axis tick mark
+values will be determined by the choice not utilized for argument
+units_cdf, which means that the default value of argument units_cdf (i.e.,
+"Percent") will result in the right side y-axis tick mark values being
+expressed  in terms of units of the population (i.e., count, length, or
+area).  The default is NULL.}
 
 \item{legloc}{Indicator for location of the plot legend, where "BR" means
-bottom right, "BL" means bottom left, "TR" means top right, and "TL" means
-top left.  The default is "BR".}
+bottom right, "BL" means bottom left, "TR" means top right, "TL" means
+top left, and NULL means no legend.  The default is NULL.}
 
 \item{cdf_page}{Number of CDF plots on each page, which must be chosen from
 the values: 1, 2, 4, or 6.  The default is 4.}
@@ -70,9 +82,11 @@ the values: 1, 2, 4, or 6.  The default is 4.}
 the CDF extremes.  Confidence limits for CDF values (percent scale) less
 than confcut or greater than 100 minus confcut are not plotted.  A value of
 zero means confidence limits are plotted for the complete range of the CDF.
-The default is 5.}
+The default is 0.}
 
 \item{cex.main}{Expansion factor for the plot title.  The default is 1.2.}
+
+\item{cex.legend}{Expansion factor for the legend title. The default is 1.}
 
 \item{...}{Additional arguments passed to the \code{cdf_plot} function.}
 }
@@ -80,7 +94,7 @@ The default is 5.}
 A PDF file containing the CDF plots.
 }
 \description{
-This function creates a pdf file containing CDF plots.  Input data for the
+This function creates a PDF file containing CDF plots.  Input data for the
 plots is provided by a data frame utilizing the same structure as the data
 frame named "CDF" that is included in the output object produced by function
 \code{cont_analysis}.  Plots are produced for every combination of Type of
@@ -109,14 +123,15 @@ myanalysis <- cont_analysis(dframe,
   stratumID = "stratum", popsize = mypopsize
 )
 \dontrun{
-cont_cdfplot("myanalysis.pdf", myanalysis$CDF, ylbl_r = "Stream Length (km)")
+cont_cdfplot("myanalysis.pdf", myanalysis$CDF, ylab_r = "Stream Length (km)")
 }
 
 }
 \seealso{
 \describe{
-  \item{\code{\link{cdf_plot}}}{ for visualizing cumulative distribution functions (CDFs)}
-  \item{\code{\link{cont_cdftest}}}{ for CDF hypothesis testing}
+  \item{\code{\link{cdf_plot}}}{for plotting a cumulative distribution
+    function (CDF)}
+  \item{\code{\link{cont_cdftest}}}{for CDF hypothesis testing}
   }
 }
 \author{

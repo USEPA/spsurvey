@@ -233,7 +233,7 @@ grts_stratum <- function(stratum, dsgn, sframe, sf_type, wgt_units = NULL, pt_de
   }
 
   # select sites if no minimum distance between sites
-  if (is.null(dsgn[["mindis"]])) {
+  if (is.null(dsgn[["mindis"]][[stratum]])) {
     sites <- sftmp[get_address(sftmp$xcoord, sftmp$ycoord, rand = TRUE), ]
     s <- UPpivotal(sites$ip)
     sites <- sites[round(s) == 1, ]
@@ -243,8 +243,8 @@ grts_stratum <- function(stratum, dsgn, sframe, sf_type, wgt_units = NULL, pt_de
     sites <- list(sites = sites, warn_ind = warn_ind, warn_df = warn_df)
   }
   # If minimum distance between sites, select sites
-  if (!is.null(dsgn[["mindis"]])) {
-    sites <- grtspts_mindis(dsgn[["mindis"]], sftmp,
+  if (!is.null(dsgn[["mindis"]][[stratum]])) {
+    sites <- grtspts_mindis(dsgn[["mindis"]][[stratum]], sftmp,
       samplesize = n_total,
       stratum = stratum, maxtry = maxtry, legacy_option = legacy_option,
       legacy_var = dsgn[["legacy_var"]],

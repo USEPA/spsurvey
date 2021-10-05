@@ -7,7 +7,6 @@
 cont_analysis(
   dframe,
   vars,
-  vars_nondetect = NULL,
   subpops = NULL,
   siteID = "siteID",
   weight = "weight",
@@ -27,7 +26,8 @@ cont_analysis(
   jointprob = "overton",
   conf = 95,
   pctval = c(5, 10, 25, 50, 75, 90, 95),
-  statistics = c("cdf", "pct", "mean")
+  statistics = c("CDF", "Pct", "Mean"),
+  All_Sites = FALSE
 )
 }
 \arguments{
@@ -36,18 +36,6 @@ variables, and subpopulation (domain) variables.}
 
 \item{vars}{Vector composed of character values that identify the
 names of response variables in the \code{dframe} data frame.}
-
-\item{vars_nondetect}{Vector composed of character values that identify the
-names of logical variables in the \code{dframe} data frame specifying the
-presence of not detected (nondetect) values for response variables.  The
-order of the values for this argument must match the order of the values
-for the \code{vars} argument. Each logical variable specifies the detection
-status for the corresponding values of a response variable, where
-\code{TRUE} equals not detected, and \code{FALSE} equals detected.  If a
-response variable does not include any nondetect values, then the name for
-the corresponding logical variable may be set equal to \code{NULL}.  If
-this argument equals \code{NULL}, then none of the response variables
-contain nondetect values.  The default is \code{NULL}.}
 
 \item{subpops}{Vector composed of character values that identify the
 names of subpopulation (domain) variables in the \code{dframe} data frame.
@@ -172,22 +160,31 @@ variable in the \code{dframe} data frame.  The default value is
       Cluster_5 = 125))
   }}
 
-\item{popsize}{Object that provides values for the population argument of
-  the \code{calibrate} or \code{postStratify} functions in the survey package.  For the
-  \code{calibrate} function, the object is a named list, where the names
-  identify factor variables in the \code{dframe} data frame.  Each element
-  of the list is a named vector containing the population total for each
-  level of the associated factor variable.  For the \code{postStratify}
-  function, the object is either a data frame, table, or xtabs
-  object that provides the population total for all combinations of selected
-  factor varaibles in the \code{dframe} data frame.  If a data frame is used
-  for \code{popsize}, the variable containing population totals must be the
-  last variable in the data frame.  If a table is used for \code{popsize},
-  the table must have named \code{dimnames} where the names identify factor
-  variables in the \code{dframe} data frame.  If the popsize argument is
-  equal to \code{NULL}, then neither calibration nor post-stratification is
-  performed.  The default value is
-  \code{NULL}.
+\item{popsize}{Object that provides values for the population argument of the
+  \code{calibrate} or \code{postStratify} functions in the survey package. If
+  a value is provided for popsize, then either the \code{calibrate} or
+  \code{postStratify} function is used to modify the survey design object
+  that is required by functions in the survey package.  Whether to use the
+  \code{calibrate} or \code{postStratify} function is dictated by the format
+  of popsize, which is discussed below.  Post-stratification adjusts the
+  sampling and replicate weights so that the joint distribution of a set of
+  post-stratifying variables matches the known population joint distribution.
+  Calibration, generalized raking, or GREG estimators generalize
+  post-stratification and raking by calibrating a sample to the marginal
+  totals of variables in a linear regression model. For the \code{calibrate}
+  function, the object is a named list, where the names identify factor
+  variables in the \code{dframe} data frame.  Each element of the list is a
+  named vector containing the population total for each level of the
+  associated factor variable.  For the \code{postStratify} function, the
+  object is either a data frame, table, or xtabs object that provides the
+  population total for all combinations of selected factor variables in the
+  \code{dframe} data frame.  If a data frame is used for \code{popsize}, the
+  variable containing population totals must be the last variable in the data
+  frame.  If a table is used for \code{popsize}, the table must have named
+  \code{dimnames} where the names identify factor variables in the
+  \code{dframe} data frame.  If the popsize argument is equal to \code{NULL},
+  then neither calibration nor post-stratification is performed.  The default
+  value is \code{NULL}.
 
   Example popsize for calibration:
 
@@ -221,10 +218,10 @@ variable in the \code{dframe} data frame.  The default value is
     data = MySurveyFrame)}}
 
 \item{vartype}{Character value providing the choice of the variance
-estimator, where \code{"Local"} indicates the local mean estimator, \code{"SRS"} indicates the
-simple random sampling estimator, \code{"HT"} indicates the Horvitz-Thompson
-estimator, and \code{"YG"} indicates the Yates-Grundy estimator.  The default value
-is \code{"Local"}.}
+estimator, where \code{"Local"} indicates the local mean estimator,
+\code{"SRS"} indicates the simple random sampling estimator, \code{"HT"}
+indicates the Horvitz-Thompson estimator, and \code{"YG"} indicates the
+Yates-Grundy estimator.  The default value is \code{"Local"}.}
 
 \item{jointprob}{Character value providing the choice of joint inclusion
 probability approximation for use with Horvitz-Thompson and Yates-Grundy
@@ -240,10 +237,18 @@ is \code{95}.}
 estimated.  The default set is: \code{c(5, 10, 25, 50, 75, 90, 95)}.}
 
 \item{statistics}{Character vector specifying desired estimates, where
-\code{"cdf"} specifies CDF estimates, \code{"pct"} specifies percentile
-estimates, and \code{"mean"} specifies mean estimates.  Any combination of
+\code{"CDF"} specifies CDF estimates, \code{"Pct"} specifies percentile
+estimates, and \code{"Mean"} specifies mean estimates.  Any combination of
 the three choices may be provided by the user.  The defalt value is
-\code{c("cdf", "pct", "mean")}.}
+\code{c("CDF", "Pct", "Mean")}.}
+
+\item{All_Sites}{A logical variable used when \code{subpops} is not
+\code{NULL}. If \code{All_Sites} is \code{TRUE}, then alongside the
+subpopulation output, output for all sites (ignoring subpopulations) is
+returned for each variable in \code{vars}. If \code{All_Sites} is
+\code{FALSE}, then alongside the subpopulation output, output for all sites
+(ignoring subpopulations) is not returned for each variable in \code{vars}.
+The default is \code{FALSE}.}
 }
 \value{
 A list composed of one, two, or three data frames that contain
@@ -262,11 +267,11 @@ A list composed of one, two, or three data frames that contain
 \description{
 This function organizes input and output for analysis of continuous data
 generated by a probability survey.  The input data argument can be either a
-data frame or a simple features (\code{sf}) object.  If an \code{sf} object is used,
-coordinates are extracted from the geometry column in the object, arguments
-\code{xcoord} and \code{ycoord} are assigned values \code{"xcoord"} and
-\code{"ycoord"}, respectively, and the geometry column is dropped from the
-object.
+data frame or a simple features (\code{sf}) object.  If an \code{sf} object
+is used, coordinates are extracted from the geometry column in the object,
+arguments \code{xcoord} and \code{ycoord} are assigned values \code{"xcoord"}
+and \code{"ycoord"}, respectively, and the geometry column is dropped from
+the object.
 }
 \examples{
 dframe <- data.frame(
@@ -288,7 +293,7 @@ mypopsize <- data.frame(
 cont_analysis(dframe,
   vars = myvars, subpops = mysubpops, siteID = "siteID",
   weight = "wgt", xcoord = "xcoord", ycoord = "ycoord",
-  stratumID = "stratum", popsize = mypopsize, statistics = "mean"
+  stratumID = "stratum", popsize = mypopsize, statistics = "Mean"
 )
 }
 \seealso{

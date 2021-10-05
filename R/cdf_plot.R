@@ -2,63 +2,94 @@
 # Function: cdf_plot (exported)
 # Programmer Tom Kincaid
 # Date: May 5, 2021
+# Revised: August 31, 2021 to improve documentation
 #'
 #' Plot a cumulative distribution function (CDF)
 #'
 #' This function creates a CDF plot.  Input data for the plots is provided by a
-#' data frame utilizing the same structure as the data frame named "CDF" that is
-#' included in the output object produced by function cont.analysis, but the
-#' data frame includes only the values for a single CDF.  Confidence limits for
-#' the CDF also are plotted.
+#' data frame utilizing the structure of the data frame named "CDF" that is
+#' included in the output object produced by function \code{cont_analysis}, but
+#' the data frame includes only the values for a single CDF.  Confidence limits
+#' for the CDF also are plotted.
 #'
-#' @param cdfest Data frame utilizing the same structure as the data frame
-#'   named "CDF" that is included in the output object produced by function
-#'   cont.analysis.  The data frame must contain only a single cdf estimate.
+#' @param cdfest Data frame utilizing the structure of the data frame named
+#'   "CDF" that is included in the output object produced by function
+#'   \code{cont_analysis}.  The data frame must only contain data for a single
+#'   cdf estimate.
 #'
-#' @param units_cdf Indicator for the type of units in which the CDF is
-#'   plotted, where "Percent" means the plot is in terms of percent of the
-#'   population, and "Units" means the plot is in terms of units of the
-#'   population.  The default is "Percent".
+#' @param var If \code{cdfest} has multiple variables in the "Indicator" column,
+#'   then \code{var} is the single variable to be plotted. The default is
+#'   \code{NULL}, which assumes that only one variable is in the "Indicator"
+#'   column of \code{cdfest}.
+#'
+#' @param subpop If \code{cdfest} has multiple variables in the "Type" column,
+#'   then \code{subpop} is the single variable to be plotted. The default is
+#'   \code{NULL}, which assumes that only one variable is in the "Type"
+#'   column of \code{cdfest}.
+#'
+#' @param subpop_level If \code{cdfest} has multiple levels of \code{subpop}
+#'   in the "Subpopulation" column,
+#'   then \code{subpop_level} is the single level to be plotted. The default is
+#'   \code{NULL}, which assumes that only one level is in the "Subpopulation"
+#'   column of \code{cdfest}.
+#'
+#' @param units_cdf Indicator for the label utilized for the left side y-axis
+#'   and the values used for the left side y-axis tick marks, where "Percent"
+#'   means the label and values are in terms of percent of the population, and
+#'   "Units" means the label and values are in terms of units (count, length,
+#'   or area) of the population.  The default is "Percent".
 #'
 #' @param type_cdf Character string consisting of the value "Continuous" or
-#'   "Ordinal" that controls the type of CDF plot for each indicator.  The
-#'   default is "Continuous".
+#'   "Ordinal" that controls the type of CDF plot.  The default is "Continuous".
 #'
-#' @param logx Character string consisting of the value "" or "x" that
+#' @param log Character string consisting of the value "" or "x" that
 #'   controls whether the x axis uses the original scale ("") or the base 10
 #'   logarithmic scale ("x").  The default is "".
 #'
-#' @param xlbl Character string providing the x-axis label.  If this argument
+#' @param xlab Character string providing the x-axis label.  If this argument
 #'   equals NULL, then the indicator name is used as the label.  The default is
 #'   NULL.
 #'
-#' @param ylbl Character string providing the y-axis label.  The default is
+#' @param ylab Character string providing the left side y-axis label.  If
+#'   argument units_cdf equals "Units", a value should be provided for this
+#'   argument.  Otherwise, the label will be "Percent".  The default is
 #'   "Percent".
 #'
-#' @param ylbl_r Character string providing the label for the right side
-#'   y-axis, where NULL means a label is not created, and "Same" means the label
-#'   is the same as the left side label (i.e., argument ylbl).  The default is
+#' @param ylab_r Character string providing the label for the right side y-axis
+#'   (and, hence, determining the values used for the right side y-axis tick
+#'   marks), where NULL means a right side y-axis is not created.  If this
+#'   argument equals "Same", the right side y-axis will have the same label and
+#'   tick mark values as the left side y-axis.  If this argument equals a
+#'   character string other than "Same", the right side y-axis label will be the
+#'   value provided for argument ylab_r, and the right side y-axis tick mark
+#'   values will be determined by the choice not utilized for argument
+#'   units_cdf, which means that the default value of argument units_cdf (i.e.,
+#'   "Percent") will result in the right side y-axis tick mark values being
+#'   expressed  in terms of units of the population (i.e., count, length, or
+#'   area).  The default is NULL.
+#'
+#' @param main Character string providing the plot title.  The default is
 #'   NULL.
 #'
-#' @param figlab Character string providing the plot title.  The default is
-#'   NULL.
-#'
-#' @param legloc  Indicator for location of the plot legend, where "BR" means
-#'   bottom right, "BL" means bottom left, "TR" means top right, and "TL" means
-#'   top left.  The default is "BR".
+#' @param legloc Indicator for location of the plot legend, where "BR" means
+#'   bottom right, "BL" means bottom left, "TR" means top right, "TL" means
+#'   top left, and NULL means no legend.  The default is NULL.
 #'
 #' @param confcut Numeric value that controls plotting confidence limits at
 #'   the CDF extremes.  Confidence limits for CDF values (percent scale) less
 #'   than confcut or greater than 100 minus confcut are not plotted.  A value of
 #'   zero means confidence limits are plotted for the complete range of the CDF.
-#'   The default is 5.
+#'   The default is 0.
 #'
 #' @param conflev Numeric value of the confidence level used for confidence
 #'   limits. The default is 95.
 #'
 #' @param cex.main Expansion factor for the plot title.  The default is 1.2.
 #'
-#' @param  ... Additional arguments passed to the plot function.
+#' @param cex.legend Expansion factor for the legend title. The default is 1.
+#'
+#' @param  ... Additional arguments passed to the \code{plot.default} function
+#'   (aside from those already used and \code{ylim}).
 #'
 #' @return A plot of the CDF and its associated confidence limits.
 #'
@@ -66,8 +97,9 @@
 #'
 #' @seealso
 #'   \describe{
-#'   \item{\code{\link{cont_cdfplot}}}{ for making CDF plots output to pdfs}
-#'   \item{\code{\link{cont_cdftest}}}{ for CDF hypothesis testing}
+#'   \item{\code{\link{cont_cdfplot}}}{for creating a PDF file containing CDF
+#'     plots}
+#'   \item{\code{\link{cont_cdftest}}}{for CDF hypothesis testing}
 #'   }
 #'
 #' @keywords survey
@@ -98,25 +130,40 @@
 #'   Subpopulation == "Good")
 #' par(mfrow = c(2, 1))
 #' cdf_plot(myanalysis$CDF[keep, ],
-#'   xlbl = "ContVar",
-#'   ylbl = "Percent of Stream Length", ylbl_r = "Stream Length (km)",
-#'   figlab = "Estimates for Resource Class: Good"
+#'   xlab = "ContVar",
+#'   ylab = "Percent of Stream Length", ylab_r = "Stream Length (km)",
+#'   main = "Estimates for Resource Class: Good"
 #' )
 #' cdf_plot(myanalysis$CDF[keep, ],
-#'   xlbl = "ContVar",
-#'   ylbl = "Percent of Stream Length", ylbl_r = "Same",
-#'   figlab = "Estimates for Resource Class: Good"
+#'   xlab = "ContVar",
+#'   ylab = "Percent of Stream Length", ylab_r = "Same",
+#'   main = "Estimates for Resource Class: Good"
 #' )
 #' @export
 ################################################################################
 
-cdf_plot <- function(cdfest, units_cdf = "Percent", type_cdf = "Continuous",
-                     logx = "", xlbl = NULL, ylbl = "Percent", ylbl_r = NULL, figlab = NULL,
-                     legloc = "BR", confcut = 5, conflev = 95, cex.main = 1.2, ...) {
+cdf_plot <- function(
+  cdfest, var = NULL, subpop = NULL, subpop_level = NULL,
+  units_cdf = "Percent", type_cdf = "Continuous", log = "",
+  xlab = NULL, ylab = NULL, ylab_r = NULL, main = NULL, legloc = NULL,
+  confcut = 0, conflev = 95, cex.main = 1.2, cex.legend = 1, ...
+) {
 
   # Set graphical parameter values
 
   op <- par(mgp = c(1.7, 0.6, 0), mar = c(3, 3, 2, 4) + 0.1)
+
+  # Subset the data if required
+  if (!is.null(var)) {
+    cdfest <- cdfest[cdfest$Indicator == var, ]
+  }
+
+  if (!is.null(subpop)) {
+    cdfest <- cdfest[cdfest$Type == subpop, ]
+  }
+  if (!is.null(subpop_level)) {
+    cdfest <- cdfest[cdfest$Subpopulation == subpop_level, ]
+  }
 
   # Create the data frame of values to be plotted and set the y-axis limits
   # The data frame structure follows: column 1: x-axis values
@@ -150,12 +197,32 @@ cdf_plot <- function(cdfest, units_cdf = "Percent", type_cdf = "Continuous",
     ylimit <- ylimit[c(1, length(ylimit))]
   }
 
+  # Set default value for xlab
+  if (is.null(xlab)) {
+    if (!is.null(var)) {
+      xlab <- var
+    } else if ("Indicator" %in% names(cdfest)) {
+      xlab <- unique(cdfest[["Indicator"]])
+    } else {
+      xlab <- NULL
+    }
+  }
+
+  # Set default value for ylab
+  if (is.null(ylab)) {
+    if (units_cdf == "Percent") {
+      ylab <- "Percent"
+    } else if (units_cdf == "Units") {
+      ylab <- "Units"
+    }
+  }
+
   # Plot the CDF for a continuous indicator
 
   if (type_cdf == "Continuous") {
     plot(cdfdata[, 1], cdfdata[, 2],
-      type = "l", ylim = ylimit, xlab = xlbl, ylab = ylbl,
-      log = logx, ...
+      type = "l", ylim = ylimit, xlab = xlab, ylab = ylab,
+      log = log, ...
     )
 
     # Plot confidence limits
@@ -170,11 +237,12 @@ cdf_plot <- function(cdfest, units_cdf = "Percent", type_cdf = "Continuous",
   } else if (type_cdf == "Ordinal") {
     x <- rep(cdfdata[, 1], each = 2)[-1]
     y <- rep(cdfdata[, 2], each = 2)
-    tmp <- cbind(matrix(c(x, x[length(x)]), ncol = 2, byrow = TRUE), rep(NA, nrow(cdfdata)))
+    tmp <- cbind(matrix(c(x, x[length(x)]), ncol = 2, byrow = TRUE),
+      rep(NA, nrow(cdfdata)))
     x <- as.vector(t(tmp))
     tmp <- cbind(matrix(y, ncol = 2, byrow = TRUE), rep(NA, nrow(cdfdata)))
     y <- as.vector(t(tmp))
-    plot(x, y, type = "l", ylim = ylimit, xlab = xlbl, ylab = ylbl, ...)
+    plot(x, y, type = "l", ylim = ylimit, xlab = xlab, ylab = ylab, ...)
 
     # Plot confidence limits
 
@@ -204,50 +272,54 @@ cdf_plot <- function(cdfest, units_cdf = "Percent", type_cdf = "Continuous",
 
   # Create the plot title
 
-  title(figlab, line = 1, cex.main = cex.main)
+  title(main, line = 1, cex.main = cex.main)
 
   # Create the plot legend
 
-  rx <- range(par("usr")[1:2], cdfdata[, 1])
-  ry <- range(par("usr")[3:4], cdfdata[, 2])
-  if (legloc == "BR") {
-    xjust <- 1
-    yjust <- 0
-    legx <- rx[2]
-    legy <- ry[1]
-  } else if (legloc == "BL") {
-    xjust <- 0
-    yjust <- 0
-    legx <- rx[1]
-    legy <- ry[1]
-  } else if (legloc == "TR") {
-    xjust <- 1
-    yjust <- 1
-    legx <- rx[2]
-    legy <- ry[2]
-  } else if (legloc == "TL") {
-    xjust <- 0
-    yjust <- 1
-    legx <- rx[1]
-    legy <- ry[2]
+  if (!is.null(legloc)) {
+    rx <- range(par("usr")[1:2], cdfdata[, 1])
+    ry <- range(par("usr")[3:4], cdfdata[, 2])
+    if (legloc == "BR") {
+      xjust <- 1
+      yjust <- 0
+      legx <- rx[2]
+      legy <- ry[1]
+    } else if (legloc == "BL") {
+      xjust <- 0
+      yjust <- 0
+      legx <- rx[1]
+      legy <- ry[1]
+    } else if (legloc == "TR") {
+      xjust <- 1
+      yjust <- 1
+      legx <- rx[2]
+      legy <- ry[2]
+    } else if (legloc == "TL") {
+      xjust <- 0
+      yjust <- 1
+      legx <- rx[1]
+      legy <- ry[2]
+    }
+    legend(
+      x = legx, y = legy, xjust = xjust, yjust = yjust,
+      legend = c("CDF Estimate", paste(conflev, "% Confidence Limits", sep = "")),
+      lty = c(1, 3), lwd = c(1, 1.5), bty = "n", cex = cex.legend
+    )
   }
-  legend(
-    x = legx, y = legy, xjust = xjust, yjust = yjust,
-    legend = c("CDF Estimate", paste(conflev, "% Confidence Limits", sep = "")),
-    lty = c(1, 3), lwd = c(1, 1.5), bty = "n", cex = 1
-  )
 
-  # If requested, create the right side y-axis labels
 
-  if (!is.null(ylbl_r)) {
+  # If requested, create the right side y-axis label and the values printed at
+  # the right side y-axis tick marks
+
+  if (!is.null(ylab_r)) {
     yl.lab <- seq(par("yaxp")[1], par("yaxp")[2], len = par("yaxp")[3] + 1)
-    if (ylbl_r == "Same") {
+    if (ylab_r == "Same") {
       axis(side = 4, at = yl.lab, labels = yl.lab)
-      mtext(ylbl, side = 4, line = 2, cex = par("cex"))
+      mtext(ylab, side = 4, line = 2, cex = par("cex"))
     } else {
       yr.lab <- interp_axis(yl.lab, cdfdata[, 2], cdfdata[, 5])
       axis(side = 4, at = yl.lab, labels = as.character(round(yr.lab)))
-      mtext(ylbl_r, side = 4, line = 2, cex = par("cex"))
+      mtext(ylab_r, side = 4, line = 2, cex = par("cex"))
     }
   }
 

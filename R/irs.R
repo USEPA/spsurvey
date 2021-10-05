@@ -15,6 +15,14 @@
 #'
 #' @inheritParams grts
 #'
+#' @details Note that \code{n_base} is the number of sites that is used to calculate
+#'   the weights which typically are the number of sites that will be used for population
+#'   estimates. When a panel design is implemented, \code{n_base} typically is the
+#'   number of sites in all panels that will be sampled in the same temporal period.
+#'   It is not the total number of sites in all panels. The sum of \code{n_base} and
+#'   \code{n_over} is equal to the total number of sites to be visited for all panels plus
+#'   any replacement sites that may be required.
+#'
 #' @return A list with five elements:
 #'   \itemize{
 #'     \item \code{sites_legacy} An sf object containing legacy sites. This is
@@ -104,7 +112,8 @@
 
 irs <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = NULL,
                 caty_n = NULL, aux_var = NULL, legacy_var = NULL,
-                legacy_sites = NULL, legacy_stratum_var = NULL, mindis = NULL,
+                legacy_sites = NULL, legacy_stratum_var = NULL,
+                legacy_caty_var = NULL, legacy_aux_var = NULL, mindis = NULL,
                 maxtry = 10, n_over = NULL, n_near = NULL, wgt_units = NULL,
                 pt_density = NULL, DesignID = "Site", SiteBegin = 1) {
   if (inherits(sframe, c("tbl_df", "tbl"))) { # identify if tibble class elements are present
@@ -177,6 +186,11 @@ irs <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = N
   # preserve original sframe names
   sframe_names <- names(sframe)
 
+  # preserve original legacy_sites names if needed
+  if (!is.null(legacy_sites)) {
+    legacy_sites_names <- names(legacy_sites)
+  }
+
   ## Create variables in sample frame if needed.
   # Create unique sample frame ID values
   sframe$id <- 1:nrow(sframe)
@@ -206,8 +220,18 @@ irs <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = N
     } else {
       legacy_sites$stratum <- as.character(legacy_sites[[legacy_stratum_var]])
     }
-    if (!is.null(caty_var)) legacy_sites$caty <- as.character(legacy_sites[[caty_var]])
-    if (!is.null(aux_var)) legacy_sites$aux <- legacy_sites[[aux_var]]
+    if (!is.null(caty_var)) {
+      if (is.null(legacy_caty_var)) {
+        legacy_caty_var <- caty_var
+      }
+      legacy_sites$caty <- as.character(legacy_sites[[legacy_caty_var]])
+    }
+    if (!is.null(aux_var)) {
+      if (is.null(legacy_aux_var)) {
+        legacy_aux_var <- aux_var
+      }
+      legacy_sites$aux <- as.character(legacy_sites[[legacy_aux_var]])
+    }
     if (is.null(legacy_var)) {
       legacy_sites$legacy <- TRUE
       legacy_var <- "legacy"
@@ -275,11 +299,28 @@ irs <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = N
 
   # n_near
   if (!is.null(n_near)) {
-    tmp <- sapply(stratum, function(x, n_near) {
-      x <- n_near
-    }, n_near)
-    names(tmp) <- stratum
-    dsgn$n_near <- tmp
+    if (is.list(n_near)) {
+      dsgn$n_near <- n_near
+    } else {
+      tmp <- sapply(stratum, function(x, n_near) {
+        x <- n_near
+      }, n_near)
+      names(tmp) <- stratum
+      dsgn$n_near <- tmp
+    }
+  }
+
+  # mindis
+  if (!is.null(mindis)) {
+    if (is.list(mindis)) {
+      dsgn$mindis <- mindis
+    } else {
+      tmp <- lapply(stratum, function(x, mindis) {
+        x <- mindis
+      }, mindis)
+      names(tmp) <- stratum
+      dsgn$mindis <- tmp
+    }
   }
 
   # legacy_option
@@ -395,19 +436,57 @@ irs <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = N
 
   # reorder sf object variables by first specifying design names excluding unique
   # feature ID id and idpts as they are internal
+  # reorder sf object variables by first specifying design names excluding unique
+  # feature ID id and idpts as they are internal
   dsgn_names <- c(
     "siteID", "siteuse", "replsite", "lon_WGS84", "lat_WGS84",
     "stratum", "wgt", "ip", "caty", "aux"
   )
+
+  dsgn_names_extra <- c(dsgn_names, "xcoord", "ycoord", "idpts")
+
   # sites_legacy
   if (!is.null(sites_legacy)) {
     if (sf_type != "sf_point") {
       add_names <- dsgn_names[dsgn_names %in% names(sites_legacy)]
-      sites_legacy <- subset(sites_legacy, select = c(add_names, legacy_names))
+      legacy_sites_names_good <- legacy_sites_names[!legacy_sites_names %in% dsgn_names_extra]
+      if (all(legacy_sites_names %in% legacy_sites_names_good)) {
+        sites_legacy <- subset(sites_legacy, select = c(add_names, legacy_sites_names))
+      } else {
+        legacy_sites_names_bad <- legacy_sites_names[legacy_sites_names %in% dsgn_names_extra]
+        legacy_sites_temp <- legacy_sites[, legacy_sites_names_bad, drop = FALSE]
+        temp_geometry_col <- which(names(legacy_sites_temp) == attr(sites_legacy, "sf_column"))
+        legacy_sites_geometry_col <- which(names(legacy_sites) == attr(sites_legacy, "sf_column"))
+        names(legacy_sites_temp)[-temp_geometry_col] <- paste("legacy_sites", names(legacy_sites_temp)[-temp_geometry_col], sep = "_")
+        sites_legacy <- st_join(sites_legacy, legacy_sites_temp, join = st_nearest_feature)
+        sites_legacy <- subset(sites_legacy, select = c(add_names, legacy_sites_names_good[-legacy_sites_geometry_col], names(legacy_sites_temp)))
+        for (i in names(sites_legacy)) {
+          if (i %in% c("legacy_sites_xcoord", "legacy_sites_ycoord", "legacy_sites_idpts")) {
+            names(sites_legacy)[which(names(sites_legacy) == i)] <- substring(i, first = 14)
+          }
+        }
+      }
     }
     if (sf_type == "sf_point") {
       add_names <- dsgn_names[dsgn_names %in% names(sites_legacy)]
-      sites_legacy <- subset(sites_legacy, select = c(add_names, sframe_names))
+      sframe_names_good <- sframe_names[!sframe_names %in% dsgn_names_extra]
+      if (all(sframe_names %in% sframe_names_good)) {
+        sites_legacy <- subset(sites_legacy, select = c(add_names, sframe_names))
+      } else {
+        sframe_names_bad <- sframe_names[sframe_names %in% dsgn_names_extra]
+        sframe_temp <- sframe[, sframe_names_bad, drop = FALSE]
+        temp_geometry_col <- which(names(sframe_temp) == attr(sites_legacy, "sf_column"))
+        sframe_geometry_col <- which(names(sframe) == attr(sites_legacy, "sf_column"))
+        names(sframe_temp)[-temp_geometry_col] <- paste("sframe", names(sframe_temp)[-temp_geometry_col], sep = "_")
+        sites_legacy <- st_join(sites_legacy, sframe_temp, join = st_nearest_feature)
+        sites_legacy <- subset(sites_legacy,
+                               select = c(add_names, sframe_names_good[-sframe_geometry_col], names(sframe_temp)))
+        for (i in names(sites_legacy)) {
+          if (i %in% c("sframe_xcoord", "sframe_ycoord", "sframe_idpts")) {
+            names(sites_legacy)[which(names(sites_legacy) == i)] <- substring(i, first = 8)
+          }
+        }
+      }
     }
   }
 
@@ -415,23 +494,67 @@ irs <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = N
   # check what design variables are present in sf objects and add if missing
   if (!is.null(sites_base)) {
     add_names <- dsgn_names[dsgn_names %in% names(sites_base)]
-    sites_base <- subset(sites_base, select = c(add_names, sframe_names))
+    sframe_names_good <- sframe_names[!sframe_names %in% dsgn_names_extra]
+    if (all(sframe_names %in% sframe_names_good)) {
+      sites_base <- subset(sites_base, select = c(add_names, sframe_names))
+    } else {
+      sframe_names_bad <- sframe_names[sframe_names %in% dsgn_names_extra]
+      sframe_temp <- sframe[, sframe_names_bad, drop = FALSE]
+      temp_geometry_col <- which(names(sframe_temp) == attr(sites_base, "sf_column"))
+      sframe_geometry_col <- which(names(sframe) == attr(sites_base, "sf_column"))
+      names(sframe_temp)[-temp_geometry_col] <- paste("sframe", names(sframe_temp)[-temp_geometry_col], sep = "_")
+      sites_base <- st_join(sites_base, sframe_temp, join = st_nearest_feature)
+      sites_base <- subset(sites_base, select = c(add_names, sframe_names_good[-sframe_geometry_col], names(sframe_temp)))
+      for (i in names(sites_base)) {
+        if (i %in% c("sframe_xcoord", "sframe_ycoord", "sframe_idpts")) {
+          names(sites_base)[which(names(sites_base) == i)] <- substring(i, first = 8)
+        }
+      }
+    }
   }
 
   # sites_over
   if (!is.null(sites_over)) {
     add_names <- dsgn_names[dsgn_names %in% names(sites_over)]
-    sites_over <- subset(sites_over,
-      select = c(add_names, sframe_names)
-    )
+    sframe_names_good <- sframe_names[!sframe_names %in% dsgn_names_extra]
+    if (all(sframe_names %in% sframe_names_good)) {
+      sites_over <- subset(sites_over, select = c(add_names, sframe_names))
+    } else {
+      sframe_names_bad <- sframe_names[sframe_names %in% dsgn_names_extra]
+      sframe_temp <- sframe[, sframe_names_bad, drop = FALSE]
+      temp_geometry_col <- which(names(sframe_temp) == attr(sites_over, "sf_column"))
+      sframe_geometry_col <- which(names(sframe) == attr(sites_over, "sf_column"))
+      names(sframe_temp)[-temp_geometry_col] <- paste("sframe", names(sframe_temp)[-temp_geometry_col], sep = "_")
+      sites_over <- st_join(sites_over, sframe_temp, join = st_nearest_feature)
+      sites_over <- subset(sites_over, select = c(add_names, sframe_names_good[-sframe_geometry_col], names(sframe_temp)))
+      for (i in names(sites_over)) {
+        if (i %in% c("sframe_xcoord", "sframe_ycoord", "sframe_idpts")) {
+          names(sites_over)[which(names(sites_over) == i)] <- substring(i, first = 8)
+        }
+      }
+    }
   }
 
   # sites_near
   if (!is.null(sites_near)) {
     add_names <- dsgn_names[dsgn_names %in% names(sites_near)]
-    sites_near <- subset(sites_near,
-      select = c(add_names, sframe_names)
-    )
+    sframe_names_good <- sframe_names[!sframe_names %in% dsgn_names_extra]
+    if (all(sframe_names %in% sframe_names_good)) {
+      sites_near <- subset(sites_near, select = c(add_names, sframe_names))
+    } else {
+      sframe_names_bad <- sframe_names[sframe_names %in% dsgn_names_extra]
+      sframe_temp <- sframe[, sframe_names_bad, drop = FALSE]
+      temp_geometry_col <- which(names(sframe_temp) == attr(sites_near, "sf_column"))
+      sframe_geometry_col <- which(names(sframe) == attr(sites_near, "sf_column"))
+      names(sframe_temp)[-temp_geometry_col] <- paste("sframe", names(sframe_temp)[-temp_geometry_col], sep = "_")
+      sites_near <- st_join(sites_near, sframe_temp, join = st_nearest_feature)
+      sites_near <- subset(sites_near, select = c(add_names, sframe_names_good[-sframe_geometry_col], names(sframe_temp)))
+      for (i in names(sites_near)) {
+        if (i %in% c("sframe_xcoord", "sframe_ycoord", "sframe_idpts")) {
+          names(sites_near)[which(names(sites_near) == i)] <- substring(i, first = 8)
+        }
+      }
+    }
   }
 
   # add function call to dsgn list

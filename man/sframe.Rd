@@ -13,16 +13,21 @@ sframe(object, ...)
 to convert an \code{sp} object to an \code{sf} and \code{sframe} object.}
 }
 \value{
-An \code{sframe} object.
+A \code{sframe} object that can be used by
+spsurvey's \code{summary()} and \code{plot()} generics.
 }
 \description{
-\code{sframe()} gives \code{sp} and \code{sf} objects class \code{"sframe"} to be used
-in spsurvey's \code{summary()} and \code{plot()} generics. \code{sp} objects are coerced to \code{sf}
-objects prior to giving class \code{sframe}.
+\code{sframe()} is used before summarizing or visualizing sample frames
+(this function need not be run before calling \code{grts()} or \code{irs()}).
+  \code{sframe()} gives \code{sp} and \code{sf} objects class \code{"sframe"}.
+  \code{sp} objects are coerced to \code{sf}
+  objects prior to giving class \code{sframe}.
 }
 \examples{
 data("NE_Lakes")
 NE_Lakes <- sframe(NE_Lakes)
+summary(NE_Lakes, formula = ~ ELEV_CAT)
+plot(NE_Lakes, formula = ~ ELEV_CAT)
 }
 \seealso{
 \describe{

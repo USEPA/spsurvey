@@ -12,6 +12,7 @@
 #' probabilities proportional to a positive auxiliary variable. Several additional
 #' sampling options are included, such as including legacy (historical) sites,
 #' requiring a minimum distance between sites, and selecting replacement sites.
+#' For technical details, see Stevens and Olsen (2003).
 #'
 #'
 #' @param sframe The sample frame as an \code{sf} object. The coordinate
@@ -19,7 +20,7 @@
 #'
 #' @param n_base The base sample size required. If the design is unstratified,
 #'   this is a single numeric value. If the design is stratified, this is a named
-#'   vector whose names represent each stratum and whose values represent each
+#'   vector or list whose names represent each stratum and whose values represent each
 #'   stratum's sample size. These names must match the values of the stratification
 #'   variable represented by \code{stratum_var}.
 #'
@@ -76,19 +77,38 @@
 #'
 #' @param legacy_sites If \code{sframe} is a \code{LINESTRING}, \code{MULTILINESTRING},
 #'   \code{POLYGON}, or \code{MULTIPOLYGON} geometry (an infinite sample frame),
-#'   \code{legacy_sites} is an sf object with a \code{POINT} geometry representing the
-#'   legacy sites.
+#'   \code{legacy_sites} is an sf object with a \code{POINT} or \code{MULTIPOINT}
+#'   geometry representing the legacy sites.
 #'
 #' @param legacy_stratum_var A character string containing the name of the column from
 #'   \code{legacy_sites} that identifies stratum membership for each element of \code{legacy_sites}.
 #'   This argument is required when the design is stratified and its levels
-#'   must be contained in the levels of \code{stratum_var}. The default value of \code{legacy_stratum_var}
+#'   must be contained in the levels of the \code{stratum_var} variable. The default value of \code{legacy_stratum_var}
 #'   is \code{stratum_var}, so \code{legacy_stratum_var} need only be specified explicitly when
 #'   the name of the stratification variable in \code{legacy_sites} differs from \code{stratum_var}.
 #'
+#' @param legacy_caty_var A character string containing the name of the column from
+#'   \code{legacy_sites} that identifies the unequal probability variable for each element of \code{legacy_sites}.
+#'   This argument is required when the design uses unequal selection probabilities and its categories
+#'   must be contained in the levels of the \code{caty_var} variable. The default value of \code{legacy_caty_var}
+#'   is \code{caty_var}, so \code{legacy_caty_var} need only be specified explicitly when
+#'   the name of the unequal probability variable in \code{legacy_sites} differs from \code{caty_var}.
+#'
+#' @param legacy_aux_var A character string containing the name of the column from
+#'   \code{legacy_sites} that identifies the proportional probability variable for each element of \code{legacy_sites}.
+#'   This argument is required when the design uses proportional selection probabilities and the values of the
+#'   \code{legacy_aux_var} variable must be positive. The
+#'   default value of \code{legacy_aux_var} is \code{aux_var}, so \code{legacy_aux_var} need only be specified explicitly
+#'   when the name of the proportional probability variable in \code{legacy_sites} differs from \code{aux_var}.
+#'
 #' @param mindis A numeric value indicating the desired minimum distance between sampled
-#'   sites. If design is stratified, then mindis is applied separately for each stratum.
-#'   The units of \code{mindis} must match the units in \code{sframe}.
+#'   sites. If the design is stratified and \code{mindis} is an numeric value, the minimum
+#'   distance is applied to all strata. If the design is stratified and different minimum distances
+#'   are desired among strata,then \code{mindis}
+#'   is a list whose names match the names of \code{n_base} and whose and values
+#'   are the minimum distance for the corresponding stratum.  If a minimum distance is not desired
+#'   for a particular stratum, then the corresponding value in \code{mindis} should be \code{NULL}.
+#'   The units of \code{mindis} must represent the units in \code{sframe}.
 #'
 #' @param maxtry The number of maximum attempts to apply the minimum distance algorithm to obtain
 #'   the desired minimum distance between sites. Each iteration takes roughly as long as the
@@ -103,19 +123,29 @@
 #'   then \code{n_over} is a named character vector whose names match the levels of
 #'   \code{caty_var} and whose values are the expected rho replacement sample sizes for each
 #'   level. If the design is stratified and \code{seltype} is \code{"equal"} or \code{"proportional"},
-#'   \code{n_over} is a named vector whose names match the names of \code{n_base} and whose values
-#'   indicate the number of rho replacement sites for each stratum. If the design is stratified and
+#'   \code{n_over} is a list whose names match the names of \code{n_base} and whose values
+#'   indicate the number of rho replacement sites for each stratum. If replacement sites are not desired for a particular stratum, then the corresponding value in \code{n_over} should be \code{NULL}. If the design is stratified and
 #'   \code{seltype} is \code{"unequal"}, \code{n_over} changes based on whether the expected
 #'   rho replacement sample sizes change among strata. If \code{n_over} does not change among strata, \code{n_over}
 #'   is a named vector whose names match the names of \code{caty_var} and whose values are the expected rho replacement
 #'   sample sizes to be used for each stratum. If \code{n_over} changes among strata, \code{n_over} is a
-#'   list where each element represents a stratum in \code{n_base}.
-#'   The order of the strata in this list must match the order of the strata in \code{n_base}.
+#'   list whose names match the names of \code{n_base} and whose values
+#'   indicate the number of rho replacement sites for each stratum.
 #'   Each stratum's list element is a named vector whose names represent each level of \code{caty_var} and whose values represent each
-#'   level's expected rho replacement sample sizes (within the stratum).
+#'   level's expected rho replacement sample sizes (within the stratum). If replacement sites are not desired for a particular stratum, then the corresponding value in \code{n_over} should be \code{NULL}.
 #'
-#' @param n_near An integer from \code{1} to \code{10} specifying the number of
-#'   nearest neighbor replacement sites to be selected for each base site. For
+#' @param n_near If the design is unstratified, \code{n_near} is integer from \code{1}
+#'   to \code{10} specifying the number of
+#'   nearest neighbor replacement sites to be selected for each base site. If the design
+#'   is stratified but the same number of nearest neighbor replacement sites is desired
+#'   for each stratum,  \code{n_near} is integer from \code{1}
+#'   to \code{10} specifying the number of
+#'   nearest neighbor replacement sites to be selected for each base site. If the design is
+#'   unstratified and a different number of nearest neighbor replacement sites is
+#'   desired for each stratum, \code{n_near} is a list whose names represent strata and whose
+#'   values is integer from \code{1}
+#'   to \code{10} specifying the number of
+#'   nearest neighbor replacement sites to be selected for each base site in the stratum. If replacement sites are not desired for a particular stratum, then the corresponding value in \code{n_over} should be \code{NULL}. For
 #'   infinite sample frames, the distance between a site and its nearest neighbor
 #'   depends on \code{pt_density}.
 #'
@@ -133,13 +163,25 @@
 #'   times the sample size requested.
 #'
 #' @param DesignID A character string indicating the naming structure for each
-#'   site's identifier selected in the sample, which is included as a variable in the
-#'   sf object in the function's output.
+#'   site's identifier selected in the sample, which is matched with \code{SiteBegin} and
+#'   included as a variable in the
+#'   sf object in the function's output. Default is "Site".
 #'
 #' @param SiteBegin A character string indicating the first number to use to match
-#'   with \code{DesignID} while creating each site's identifier selected in the sample. Successive
-#'   sites are given successive integers. The default starting number is \code{1}.
+#'   with \code{DesignID} while creating each site's identifier selected in the sample.
+#'   Successive sites are given successive integers. The default starting number
+#'   is \code{1} and the number of digits is equal to number of digits in
+#'   \code{nbase + nover}.
+#'   For example, if \code{nbase} is 50 and \code{nover} is 0, then the default
+#'   site identifiers are \code{Site-01} to \code{Site-50}
 #'
+#' @details \code{n_base} is the number of sites used to calculate
+#'   the sampling weights, which is typically the number of sites that will be used for population
+#'   estimates. When a panel design is implemented, \code{n_base} is typically the
+#'   number of sites in all panels that will be sampled in the same temporal period --
+#'   \code{n_base} is not the total number of sites in all panels. The sum of \code{n_base} and
+#'   \code{n_over} is equal to the total number of sites to be visited for all panels plus
+#'   any replacement sites that may be required.
 #'
 #' @return A list with five elements:
 #'   \itemize{
@@ -233,7 +275,8 @@
 ################################################################################
 grts <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = NULL,
                  caty_n = NULL, aux_var = NULL, legacy_var = NULL,
-                 legacy_sites = NULL, legacy_stratum_var = NULL, mindis = NULL,
+                 legacy_sites = NULL, legacy_stratum_var = NULL,
+                 legacy_caty_var = NULL, legacy_aux_var = NULL, mindis = NULL,
                  maxtry = 10, n_over = NULL, n_near = NULL, wgt_units = NULL,
                  pt_density = NULL, DesignID = "Site", SiteBegin = 1) {
   if (inherits(sframe, c("tbl_df", "tbl"))) { # identify if tibble class elements are present
@@ -308,6 +351,11 @@ grts <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = 
   # preserve original sframe names
   sframe_names <- names(sframe)
 
+  # preserve original legacy_sites names if needed
+  if (!is.null(legacy_sites)) {
+    legacy_sites_names <- names(legacy_sites)
+  }
+
   ## Create variables in sample frame if needed.
   # Create unique sample frame ID values
   sframe$id <- 1:nrow(sframe)
@@ -340,8 +388,18 @@ grts <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = 
       }
       legacy_sites$stratum <- as.character(legacy_sites[[legacy_stratum_var]])
     }
-    if (!is.null(caty_var)) legacy_sites$caty <- as.character(legacy_sites[[caty_var]])
-    if (!is.null(aux_var)) legacy_sites$aux <- legacy_sites[[aux_var]]
+    if (!is.null(caty_var)) {
+      if (is.null(legacy_caty_var)) {
+        legacy_caty_var <- caty_var
+      }
+      legacy_sites$caty <- as.character(legacy_sites[[legacy_caty_var]])
+    }
+    if (!is.null(aux_var)) {
+      if (is.null(legacy_aux_var)) {
+        legacy_aux_var <- aux_var
+      }
+      legacy_sites$aux <- as.character(legacy_sites[[legacy_aux_var]])
+    }
     if (is.null(legacy_var)) {
       legacy_sites$legacy <- TRUE
       legacy_var <- "legacy"
@@ -409,11 +467,28 @@ grts <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = 
 
   # n_near
   if (!is.null(n_near)) {
-    tmp <- sapply(stratum, function(x, n_near) {
-      x <- n_near
-    }, n_near)
-    names(tmp) <- stratum
-    dsgn$n_near <- tmp
+    if (is.list(n_near)) {
+      dsgn$n_near <- n_near
+    } else {
+      tmp <- lapply(stratum, function(x, n_near) {
+        x <- n_near
+      }, n_near)
+      names(tmp) <- stratum
+      dsgn$n_near <- tmp
+    }
+  }
+
+  # mindis
+  if (!is.null(mindis)) {
+    if (is.list(mindis)) {
+      dsgn$mindis <- mindis
+    } else {
+      tmp <- lapply(stratum, function(x, mindis) {
+        x <- mindis
+      }, mindis)
+      names(tmp) <- stratum
+      dsgn$mindis <- tmp
+    }
   }
 
   # legacy_option
@@ -532,15 +607,51 @@ grts <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = 
     "siteID", "siteuse", "replsite", "lon_WGS84", "lat_WGS84",
     "stratum", "wgt", "ip", "caty", "aux"
   )
+
+  dsgn_names_extra <- c(dsgn_names, "xcoord", "ycoord", "idpts")
+
   # sites_legacy
   if (!is.null(sites_legacy)) {
     if (sf_type != "sf_point") {
       add_names <- dsgn_names[dsgn_names %in% names(sites_legacy)]
-      sites_legacy <- subset(sites_legacy, select = c(add_names, legacy_names))
+      legacy_sites_names_good <- legacy_sites_names[!legacy_sites_names %in% dsgn_names_extra]
+      if (all(legacy_sites_names %in% legacy_sites_names_good)) {
+        sites_legacy <- subset(sites_legacy, select = c(add_names, legacy_sites_names))
+      } else {
+        legacy_sites_names_bad <- legacy_sites_names[legacy_sites_names %in% dsgn_names_extra]
+        legacy_sites_temp <- legacy_sites[, legacy_sites_names_bad, drop = FALSE]
+        temp_geometry_col <- which(names(legacy_sites_temp) == attr(sites_legacy, "sf_column"))
+        legacy_sites_geometry_col <- which(names(legacy_sites) == attr(sites_legacy, "sf_column"))
+        names(legacy_sites_temp)[-temp_geometry_col] <- paste("legacy_sites", names(legacy_sites_temp)[-temp_geometry_col], sep = "_")
+        sites_legacy <- st_join(sites_legacy, legacy_sites_temp, join = st_nearest_feature)
+        sites_legacy <- subset(sites_legacy, select = c(add_names, legacy_sites_names_good[-legacy_sites_geometry_col], names(legacy_sites_temp)))
+        for (i in names(sites_legacy)) {
+          if (i %in% c("legacy_sites_xcoord", "legacy_sites_ycoord", "legacy_sites_idpts")) {
+            names(sites_legacy)[which(names(sites_legacy) == i)] <- substring(i, first = 14)
+          }
+        }
+      }
     }
     if (sf_type == "sf_point") {
       add_names <- dsgn_names[dsgn_names %in% names(sites_legacy)]
-      sites_legacy <- subset(sites_legacy, select = c(add_names, sframe_names))
+      sframe_names_good <- sframe_names[!sframe_names %in% dsgn_names_extra]
+      if (all(sframe_names %in% sframe_names_good)) {
+        sites_legacy <- subset(sites_legacy, select = c(add_names, sframe_names))
+      } else {
+        sframe_names_bad <- sframe_names[sframe_names %in% dsgn_names_extra]
+        sframe_temp <- sframe[, sframe_names_bad, drop = FALSE]
+        temp_geometry_col <- which(names(sframe_temp) == attr(sites_legacy, "sf_column"))
+        sframe_geometry_col <- which(names(sframe) == attr(sites_legacy, "sf_column"))
+        names(sframe_temp)[-temp_geometry_col] <- paste("sframe", names(sframe_temp)[-temp_geometry_col], sep = "_")
+        sites_legacy <- st_join(sites_legacy, sframe_temp, join = st_nearest_feature)
+        sites_legacy <- subset(sites_legacy,
+                               select = c(add_names, sframe_names_good[-sframe_geometry_col], names(sframe_temp)))
+        for (i in names(sites_legacy)) {
+          if (i %in% c("sframe_xcoord", "sframe_ycoord", "sframe_idpts")) {
+            names(sites_legacy)[which(names(sites_legacy) == i)] <- substring(i, first = 8)
+          }
+        }
+      }
     }
   }
 
@@ -548,23 +659,67 @@ grts <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = 
   # check what design variables are present in sf objects and add if missing
   if (!is.null(sites_base)) {
     add_names <- dsgn_names[dsgn_names %in% names(sites_base)]
-    sites_base <- subset(sites_base, select = c(add_names, sframe_names))
+    sframe_names_good <- sframe_names[!sframe_names %in% dsgn_names_extra]
+    if (all(sframe_names %in% sframe_names_good)) {
+      sites_base <- subset(sites_base, select = c(add_names, sframe_names))
+    } else {
+      sframe_names_bad <- sframe_names[sframe_names %in% dsgn_names_extra]
+      sframe_temp <- sframe[, sframe_names_bad, drop = FALSE]
+      temp_geometry_col <- which(names(sframe_temp) == attr(sites_base, "sf_column"))
+      sframe_geometry_col <- which(names(sframe) == attr(sites_base, "sf_column"))
+      names(sframe_temp)[-temp_geometry_col] <- paste("sframe", names(sframe_temp)[-temp_geometry_col], sep = "_")
+      sites_base <- st_join(sites_base, sframe_temp, join = st_nearest_feature)
+      sites_base <- subset(sites_base, select = c(add_names, sframe_names_good[-sframe_geometry_col], names(sframe_temp)))
+      for (i in names(sites_base)) {
+        if (i %in% c("sframe_xcoord", "sframe_ycoord", "sframe_idpts")) {
+          names(sites_base)[which(names(sites_base) == i)] <- substring(i, first = 8)
+        }
+      }
+    }
   }
 
   # sites_over
   if (!is.null(sites_over)) {
     add_names <- dsgn_names[dsgn_names %in% names(sites_over)]
-    sites_over <- subset(sites_over,
-      select = c(add_names, sframe_names)
-    )
+    sframe_names_good <- sframe_names[!sframe_names %in% dsgn_names_extra]
+    if (all(sframe_names %in% sframe_names_good)) {
+      sites_over <- subset(sites_over, select = c(add_names, sframe_names))
+    } else {
+      sframe_names_bad <- sframe_names[sframe_names %in% dsgn_names_extra]
+      sframe_temp <- sframe[, sframe_names_bad, drop = FALSE]
+      temp_geometry_col <- which(names(sframe_temp) == attr(sites_over, "sf_column"))
+      sframe_geometry_col <- which(names(sframe) == attr(sites_over, "sf_column"))
+      names(sframe_temp)[-temp_geometry_col] <- paste("sframe", names(sframe_temp)[-temp_geometry_col], sep = "_")
+      sites_over <- st_join(sites_over, sframe_temp, join = st_nearest_feature)
+      sites_over <- subset(sites_over, select = c(add_names, sframe_names_good[-sframe_geometry_col], names(sframe_temp)))
+      for (i in names(sites_over)) {
+        if (i %in% c("sframe_xcoord", "sframe_ycoord", "sframe_idpts")) {
+          names(sites_over)[which(names(sites_over) == i)] <- substring(i, first = 8)
+        }
+      }
+    }
   }
 
   # sites_near
   if (!is.null(sites_near)) {
     add_names <- dsgn_names[dsgn_names %in% names(sites_near)]
-    sites_near <- subset(sites_near,
-      select = c(add_names, sframe_names)
-    )
+    sframe_names_good <- sframe_names[!sframe_names %in% dsgn_names_extra]
+    if (all(sframe_names %in% sframe_names_good)) {
+      sites_near <- subset(sites_near, select = c(add_names, sframe_names))
+    } else {
+      sframe_names_bad <- sframe_names[sframe_names %in% dsgn_names_extra]
+      sframe_temp <- sframe[, sframe_names_bad, drop = FALSE]
+      temp_geometry_col <- which(names(sframe_temp) == attr(sites_near, "sf_column"))
+      sframe_geometry_col <- which(names(sframe) == attr(sites_near, "sf_column"))
+      names(sframe_temp)[-temp_geometry_col] <- paste("sframe", names(sframe_temp)[-temp_geometry_col], sep = "_")
+      sites_near <- st_join(sites_near, sframe_temp, join = st_nearest_feature)
+      sites_near <- subset(sites_near, select = c(add_names, sframe_names_good[-sframe_geometry_col], names(sframe_temp)))
+      for (i in names(sites_near)) {
+        if (i %in% c("sframe_xcoord", "sframe_ycoord", "sframe_idpts")) {
+          names(sites_near)[which(names(sites_near) == i)] <- substring(i, first = 8)
+        }
+      }
+    }
   }
 
   # add function call to dsgn list
