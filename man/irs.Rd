@@ -258,6 +258,8 @@ The design sites and additional information about the design. More specifically,
       column is only returned if \code{seltype} was \code{proportional} in the
       original design.
   }
+  If any columns in \code{sframe} contain these names, those
+  will be automatically prefixed with \code{sframe_} in the \code{sites} object.
 }
 \description{
 Select a spatially balanced sample from a point (finite), linear (infinite),

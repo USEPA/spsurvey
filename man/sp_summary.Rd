@@ -8,12 +8,13 @@
 \usage{
 sp_summary(object, ...)
 
-\method{sp_summary}{default}(object, formula, onlyshow = NULL, ...)
+\method{sp_summary}{default}(object, formula = ~1, onlyshow = NULL, ...)
 
 \method{sp_summary}{spdesign}(object, formula = ~siteuse, siteuse = NULL, onlyshow = NULL, ...)
 }
 \arguments{
-\item{object}{An object to summarize. When summarizing sampling frames, an \code{sf}
+\item{object}{An object to summarize. When summarizing sampling frames,
+or analysis data, a data frame or \code{sf}
 object. When summarizing design sites, an object created by \code{grts()} or
 \code{irs()} (which has class \code{spdesign}). When summarizing analysis data,
 a data frame or an \code{sf} object.}
@@ -23,11 +24,19 @@ side of the formula is empty, the appropriate generic arguments are passed
 to \code{summary.data.frame}. If the left-hand side of the formula is provided,
 the appropriate generic arguments are passed to \code{summary.default}.}
 
-\item{formula}{A formula. Left-hand side variables can be numeric or
-categorical (or factor) and right-hand side variables can be categorical
-(or factor). Right-hand side variables that are numeric will be coerced
-to a categorical (or factor) variable. If an intercept is included in the
-right-hand side formula, the total will also be summarized.}
+\item{formula}{A formula. One-sided formulas are used to summarize the
+distribution of numeric or categorical variables. For one-sided formulas,
+variable names are placed to the right of \code{~} (a right-hand side variable).
+Two sided formulas are
+used to summarize the distribution of a left-hand side variable
+for each level of each right-hand side categorical variable in the formula.
+Note that only for two-sided formulas are numeric right-hand side variables
+coerced to a categorical variables. If an intercept
+is included as a right-hand side variable (whether the formula is one-sided or
+two-sided), the total will also be summarized. When summarizing sampling frames
+or analysis data, the default formula is \code{~ 1}. When summarizing design sites,
+\code{siteuse} should be used in the formula, and the default formula is
+\code{~ siteuse}.}
 
 \item{onlyshow}{A string indicating the single level of the single right-hand side
 variable for which a summary is requested. This argument is only used when

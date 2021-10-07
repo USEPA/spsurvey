@@ -41,13 +41,14 @@ library(spsurvey)
 
 # spsurvey Terminology
 
-There are a few terms helpful to define before we move forward with spsurvey, as these terms will be used throughout the vignettes and documentation.
+spsurvey implements a design-based approach to statistical inference, with a focus on spatial data. There are a few terms helpful to define before we move forward with spsurvey, as these terms will be used throughout the vignettes and documentation:
 
-* Survey design:
-* Sampling frame:
-* Design sites:
-* Analysis data:
-* Analysis results:
+* Survey design: All aspects of a survey from establishment of a need for data to the production of final results.
+* Sampling frame: The set of all sites (i.e. units) from which a sample is selected.
+* Sampling design: The process by which sites are selected from the sampling frame.
+* Design sites: The set of sites selected from the sampling frame according to the sampling design.
+* Analysis data: Data collected at the design sites. This includes information from the survey design such as design weights, stratification variables, subpopulation variables, etc.
+* Analysis results: The results from an appropriate statistical analysis of the analysis data.
 
 # Vignettes in spsurvey
 

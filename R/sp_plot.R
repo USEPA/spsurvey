@@ -13,20 +13,26 @@
 #' methods can supply additional arguments to \code{plot.sf()}. For more information on
 #' plotting in \code{sf}, run \code{?sf::plot.sf()}.
 #'
-#' @param object An object to plot. When plotting sampling frames, an \code{sf}
-#' object. When plotting design sites, an object created by \code{grts()} or
-#' \code{irs()} (which has class \code{spdesign}). When plotting analysis data,
-#' a data frame or an \code{sf} object.
+#' @param object An object to plot. When plotting sampling frames or analysis data,
+#' data frame or \code{sf} object. When plotting design sites, an object created by \code{grts()} or
+#' \code{irs()} (which has class \code{spdesign}).
 #'
 #' @param sframe The sampling frame (an \code{sf} object) to plot alongside design
 #' sites. This argument is only used when \code{object} corresponds to the design sites.
 #'
-#' @param formula A formula. Left-hand side variables can be numeric or
-#' categorical (or factor) and right-hand side variables can be categorical
-#' (or factor). Right-hand side variables that are numeric will be coerced to
-#' a categorical (or factor) variable. If an intercept is included in the right
-#' hand side formula, the total will also be summarized. When plotting samples,
-#' (class \code{spdesign}), \code{siteuse} will likely be desired in the formula.
+#' @param formula A formula. One-sided formulas are used to summarize the
+#' distribution of numeric or categorical variables. For one-sided formulas,
+#' variable names are placed to the right of \code{~} (a right-hand side variable).
+#' Two sided formulas are
+#' used to summarize the distribution of a left-hand side variable
+#' for each level of each right-hand side categorical variable in the formula.
+#' Note that only for two-sided formulas are numeric right-hand side variables
+#' coerced to a categorical variables. If an intercept
+#' is included as a right-hand side variable (whether the formula is one-sided or
+#' two-sided), the total will also be summarized. When plotting sampling frames
+#' or analysis data, the default formula is \code{~ 1}. When plotting design sites,
+#' \code{siteuse} should be used in the formula, and the default formula is
+#' \code{~ siteuse}.
 #'
 #' @param siteuse A character vector of site types to include when plotting design sites.
 #' It can only take on values \code{"sframe"} (sampling frame),
@@ -83,7 +89,7 @@
 #' data("NE_Lakes")
 #' sp_plot(NE_Lakes, formula = ~ELEV_CAT)
 #' sample <- grts(NE_Lakes, 30)
-#' sp_plot(sample, NE_Lakes, formula = ~siteuse)
+#' sp_plot(sample, NE_Lakes)
 #' data("NLA_PNW")
 #' sp_plot(NLA_PNW, formula = ~BMMI)
 sp_plot <- function(object, ...) {

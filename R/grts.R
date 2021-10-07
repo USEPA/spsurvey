@@ -252,6 +252,9 @@
 #'       column is only returned if \code{seltype} was \code{proportional} in the
 #'       original design.
 #'   }
+#'   If any columns in \code{sframe} contain these names, those columns
+#'   from \code{sframe} will be automatically prefixed with \code{sframe_}
+#'   in the \code{sites} object.
 #'
 #' @author Tony Olsen \email{olsen.tony@@epa.gov}
 #'

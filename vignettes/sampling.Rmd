@@ -58,7 +58,7 @@ To select an unstratified GRTS sample where each site in the sample frame has an
 eqprob <- grts(NE_Lakes, n_base = 50)
 ```
 
-The first argument to `grts()` is the sample frame. The second argument is `n_base`, which specifies the number of samples. The `sites_base` object in `eqprob` is an `sf` object and contains the original columns of `NE_Lakes` as well as a few additional columns such as a site identifier, latitude and longitude coordinates, inclusion probabilities, and sampling weights (to be used in analyses after collecting data). To visualize the sample overlain onto the sample frame, run
+The first argument to `grts()` is the sample frame. The second argument is `n_base`, which specifies the number of samples. The `sites_base` object in `eqprob` is an `sf` object and contains the original columns of `NE_Lakes` as well as a few additional columns such as a site identifier, latitude and longitude coordinates, inclusion probabilities, and survey design weights (to be used in analyses after collecting data). To visualize the sample overlain onto the sample frame, run
 ```{r}
 sp_plot(eqprob, NE_Lakes, key.width = lcm(3))
 ```

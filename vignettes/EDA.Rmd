@@ -1,5 +1,5 @@
 ---
-title: "Summarizing and Visualizing Sample Frames, Samples, and Design Frames"
+title: "Summarizing and Visualizing Sampling Frames, Design Sites, and Analysis Data"
 author: "Michael Dumelle, Tony Olsen, Tom Kincaid, and Marc Weber"
 output: 
   html_document:
@@ -12,7 +12,7 @@ output:
       smooth_scroll: no
     toc_depth: 2
 vignette: >
-  %\VignetteIndexEntry{Summarizing and Visualizing Sample Frames, Samples, and Design Frames}
+  %\VignetteIndexEntry{Summarizing and Visualizing Sampling Frames, Design Sites, and Analysis Data}
   %\VignetteEngine{knitr::rmarkdown}
   \usepackage[utf8]{inputenc}
 ---
@@ -33,13 +33,15 @@ Before getting started, load spsurvey by running
 library(spsurvey)
 ```
 
-The `sp_summary()` and `sp_plot()` functions are used to summarize and visualize sample frames, samples, and design frames in spsurvey. Both functions use a formula argument that specifies the variables to summarize or visualize. These functions behave differently for one-sided and two-sided formulas. To learn more about formulas in R, run `?formula`. Only the core functionality of `sp_summary()` and `sp_plot()` will be covered in this vignette, so to learn more about these functions, run `?sp_summary` and `?sp_plot` after loading spsurvey.
+The `sp_summary()` and `sp_plot()` functions are used to summarize and visualize sampling frames, design sites, and analysis data in spsurvey. Both functions use a formula argument that specifies the variables to summarize or visualize. These functions behave differently for one-sided and two-sided formulas. To learn more about formulas in R, run `?formula`. Only the core functionality of `sp_summary()` and `sp_plot()` will be covered in this vignette, so to learn more about these functions, run `?sp_summary` and `?sp_plot`.
 
-The `sp_plot()` function in spsurvey is built on the `sp_plot()` function in sf. spsurvey's `sp_plot()` function accommodates all the arguments in sf's `sp_plot()` function and adds a few additional features.  To learn more about the `sp_plot()` function in sf, run `?plot.sf()`. 
+The `sp_plot()` function in spsurvey is built on the `plot()` function in sf. spsurvey's `sp_plot()` function accommodates all the arguments in sf's `plot()` function and adds a few additional features.  To learn more about the `plot()` function in sf, run `?plot.sf()`. 
 
-# Sample Frames
+# Sampling Frames
 
-The sample frame contains all units that may be selected in the sample. Summarizing and visualizing the sample frame is often helpful to better understand your data and inform additional sampling options (e.g. stratification). The `NE_Lakes` data in spsurvey is a sample frame that contains lakes from the Northeastern United States. There are three variables in `NE_Lakes` you will summarize and visualize:
+The sampling frame contains all units that may be selected in the sample. Summarizing and visualizing the sampling frame is often helpful to better understand your data and inform additional sampling options (e.g. stratification). To use `sp_plot()` or `sp_summarize()`, sampling frames must either be an `sf` object or a data frame with x-coordinate, y-coordinate, and crs (coordinate reference system) information.
+
+The `NE_Lakes` data in spsurvey is a sampling frame (as an `sf` object) that contains lakes from the Northeastern United States. There are three variables in `NE_Lakes` you will use next:
 
 1. `AREA_CAT`: lake area categories (small and large)
 2. `ELEV`: lake elevation
@@ -80,7 +82,7 @@ Interactions are included using the interaction operator, `:`. The interaction o
 ```{r}
 sp_summary(NE_Lakes, formula = ~ ELEV_CAT:AREA_CAT)
 ```
-Levels of each variable are separated by `:`. For example, there are 2451 lakes that are in the low elevation category and the small area category. To visualize this interaction, run
+Levels of each variable are separated by `:`. For example, there are 86 lakes that are in the low elevation category and the small area category. To visualize this interaction, run
 ```{r}
 sp_plot(NE_Lakes, formula = ~ ELEV_CAT:AREA_CAT, key.width = lcm(3))
 ```
@@ -107,9 +109,12 @@ To visualize the distribution of `ELEV` for each level of `AREA_CAT`, run
 sp_plot(NE_Lakes, formula = ELEV ~ AREA_CAT)
 ```
 
-To only summarize or visualize a particular level of a right-hand side variable, use the `onlyshow` argument:
+To only summarize or visualize a particular level of a single right-hand side variable, use the `onlyshow` argument:
 ```{r}
 sp_summary(NE_Lakes, formula = ELEV ~ AREA_CAT, onlyshow = "small")
+```
+
+```{r}
 sp_plot(NE_Lakes, formula = ELEV ~ AREA_CAT, onlyshow = "small")
 ```
 
@@ -118,11 +123,11 @@ sp_plot(NE_Lakes, formula = ELEV ~ AREA_CAT, onlyshow = "small")
 
 There are three arguments in `sp_plot()` that can adjust graphical parameters:
 
-1. `var_args` adjusts graphical parameters for all levels of a variable 
-2. `varlevel_args` adjusts graphical parameters of each level of a variable
-3. `...` adjusts graphical parameters for all levels of all variables
+1. `var_args` adjusts graphical parameters simultaneously for all levels of a variable 
+2. `varlevel_args` adjusts graphical parameters uniquely for each level of a variable
+3. `...` adjusts graphical parameters for simultaneously for all levels of all variables
     
-The `var_args` and `varlevel_args` arguments take lists whose names match variable names in the formula. For `varlevel_args`, each list element must have an entry called `levels` that matches the variable's levels. The following example combines all three graphical parameter adjustment arguments:
+The `var_args` and `varlevel_args` arguments take lists whose names match variable names in the formula. For `varlevel_args`, each list element must have an element named `levels` that matches the variable's levels. The following example combines all three graphical parameter adjustment arguments:
 ```{r}
 list1 <- list(main = "Elevation Categories", pal = rainbow)
 list2 <- list(main = "Area Categories")
@@ -137,9 +142,9 @@ sp_plot(
 )
 ```
 
-`var_args` uses `list1` to give the `ELEV_CAT` visualization a new title and color palette and uses `list2` to give the `AREA_CAT` visualization a new title; `varlevel_args` uses `list2` to give the `AREA_CAT` visualization different shapes for the small and large levels; and `...` uses `cex = 0.75` to reduce the size of all points and uses `key.width` to adjust legend spacing. 
+`var_args` uses `list1` to give the `ELEV_CAT` visualization a new title and color palette; `var_args` uses `list2` to give the `AREA_CAT` visualization a new title; `varlevel_args` uses `list3` to give the `AREA_CAT` visualization different shapes for the small and large levels; `...` uses `cex = 0.75` to reduce the size of all points; and `...` uses `key.width` to adjust legend spacing for all visualizations. 
 
-If a two-sided formula is used, it is possible to adjust graphical parameters for each level of a left-hand side variable across alll levels of a right-hand side variable when a sublist matching the structure of `varlevel_args` is used as an argument to `var_args`. In this next example, different shapes are used for the small and large levels of `AREA_CAT` across all levels of `ELEV_CAT`:
+If a two-sided formula is used, it is possible to adjust graphical parameters left-hand side variables for all levels of a right-hand side variable. This occurs when a sublist matching the structure of `varlevel_args` is used as an argument to `var_args`. In this next example, different shapes are used for the small and large levels of `AREA_CAT` for all levels of `ELEV_CAT`:
 ```{r}
 sublist <- list(AREA_CAT = list3)
 sp_plot(
@@ -150,56 +155,68 @@ sp_plot(
 )
 ```
 
-# Samples
+# Design Sites
 
-Samples that are selected in `spsurvey` can also be summarized and visualized using `sp_summary()` and `sp_plot()`. In this section, you will use the `grts()` function to select spatially balanced samples (for more on the `grts()` function, run `vignette("sampling", "spsurvey")`). The `grts()` function does incorporate randomness, so to match your results with this output exactly you will need to set a reproducible seed by running
+Design sites (output from the `grts()` or `irs()` functions) can also be summarized and visualized using `sp_summary()` and `sp_plot()` very similarly to how sampling frames were summarized in the previous section. Soon you will use the `grts()` function to select a spatially balance sample. The `grts()` function does incorporate randomness, so to match your results with this output exactly you will need to set a reproducible seed by running
 ```{r}
 set.seed(5)
 ```
 
-To select an equal probability GRTS sample of size 50 with 10 reverse hierarchically ordered replacement sites, run
+First we will obtain some design sites: To select an equal probability GRTS sample of size 50 with 10 reverse hierarchically ordered replacement sites, run
 ```{r}
 eqprob_rho <- grts(NE_Lakes, n_base = 50, n_over = 10)
 ```
 
-Similar to `sp_summary()` and `sp_plot()` for sample frames, `sp_summary()` and `sp_plot()` for samples uses a formula. For samples, the default formula is `~ siteuse`, which returns the number of samples in each `sites` object from the output that contains the samples (`eqprob_rho`). By default, the formula is applied to all non-`NULL` `sites` objects from the output that contains the samples. In this example, those are `sites_base` (for the base sites) and `sites_over` (for the reverse hierarchically ordered replacement sites).
+Similar to `sp_summary()` and `sp_plot()` for sampling frames, `sp_summary()` and `sp_plot()` for samples uses a formula. For samples, the default formula is `~siteuse`, which summarizes or visualizes each `sites` object from the design sites (`eqprob_rho`). By default, the formula is applied to all non-`NULL` `sites` objects from the design sites. In this example, those are `sites_base` (for the base sites) and `sites_over` (for the reverse hierarchically ordered replacement sites).
 ```{r}
 sp_summary(eqprob_rho)
 ```
 
-The `sp_summary()` function is quite useful when you include `siteuse` as a left-hand side variable:
-```{r}
-sp_summary(eqprob_rho, formula = siteuse ~ AREA_CAT)
-```
 
-The `sp_plot()` function makes separate visualizations for separate `sites` objects:
 ```{r}
 sp_plot(eqprob_rho, key.width = lcm(3))
 ```
 
-The sample frame may be included as a second argument in the `sp_plot()` function 
+The sampling frame may be included as an argument to the `sp_plot()` function 
 ```{r}
 sp_plot(eqprob_rho, NE_Lakes, key.width = lcm(3))
 ```
 
-It can also be useful to visualize the sampled sites separately for each level of a categorical variable:
+The `sp_summary()` and `sp_plot()` functions are quite useful when you include `siteuse` as a left-hand side variable (`siteuse` is treated as a categorical variable), as you can summarize and visualize each `sites` object for each level of each right-hand side variable:
+```{r}
+sp_summary(eqprob_rho, formula = siteuse ~ AREA_CAT)
+```
+
 ```{r}
 sp_plot(eqprob_rho, formula = siteuse ~ AREA_CAT, key.width = lcm(3))
 ```
 
-# Design Frames
+# Analysis Data
 
-Design frames are data frames or `sf` objects that contain observed data. These are the objects used in spsurvey's analysis functions. spsurvey's `sp_summary()` and `sp_plot()` functions are available for design frames. Design frames are summarized and visualized almost exactly like sample frames -- the main difference is that design frames are a bit more flexible than sample frames because design frames do not have to be `sf` objects.
+`sp_summarize()` or `sp_plot()` work for analysis data the same way they do for sampling frames.
+The `NLA_PNW` data in spsurvey is analysis data (as an `sf` object) from lakes in California, Oregon, and Washington. There are two variables in `NLA_PNW` you use next:
 
-The `NLA_PNW` data in spsurvey is a design frame that contains lakes from California, Oregon, and Washington. There are two variables in `NLA_PNW` you will summarize and visualize:
+1. `STATE`: The state name (California, Washington, Oregon)
+2. `NITR_COND` : Nitrogen content categories (poor, fair, good)
 
-1. `NITR_COND` : Nitrogen content categories (good, fair, and poor)
-2. `BMMI` : Benthic macroinvertebrate multi-metric index
-
-You can run
+To summarize and visualize `NITR_COND` across all states, run
 ```{r}
-sp_summary(NLA_PNW, formula = ~ NITR_COND + BMMI)
-sp_plot(NLA_PNW, formula = ~ NITR_COND + BMMI, key.width = lcm(3))
+sp_summary(NLA_PNW, formula = ~ NITR_COND)
 ```
 
-Visualizing design frames that are not `sf` objects requires the use of `xcoord` and `ycoord` to specify coordinates and the use of `crs` to specify the coordinate reference system. For more on coordinate reference systems, run `vignette("start-here", "spsurvey")`.
+```{r}
+sp_plot(NLA_PNW, formula = ~ NITR_COND, key.width = lcm(3))
+```
+
+Suppose the sampling design was stratified by `STATE`. To summarize and visualize `NITR_COND` by `STATE`, run
+```{r}
+sp_summary(NLA_PNW, formula = NITR_COND ~ STATE)
+```
+
+```{r, eval = FALSE}
+sp_plot(NLA_PNW, formula = NITR_COND ~ STATE, key.width = lcm(3))
+```
+
+```{r, echo = FALSE}
+sp_plot(NLA_PNW, formula = NITR_COND ~ STATE, key.width = lcm(3), key.pos = 4)
+```

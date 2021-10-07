@@ -31,7 +31,7 @@ knitr::opts_chunk$set(
 After a sample is selected, population parameters (e.g. means and totals) can be estimated using spsurvey's analysis functions. We focus mainly on using the `NLA_PNW` data to introduce some of these analysis options. The `NLA_PNW` data contains response variables measured at several lakes in the Pacific Northwest Region of the United States. There are six variables in `NLA_PNW` used throughout this vignette:
 
 * `SITE_ID`: a unique site identifier
-* `WEIGHT`: the sampling weights
+* `WEIGHT`: the survey design weights
 * `URBAN`: urban land categories (`Urban` and `Non-Urban`)
 * `STATE`: state (with levels `California`, `Oregon`, and `Washington`)
 * `BMMI`: benthic macroinvertebrate multi-metric index
@@ -253,7 +253,7 @@ The default levels of `vars_response` and `vars_stressor` are `"Poor"` (event oc
 To demonstrate change analysis, we use the `NRSA_EPA7` data. The `NRSA_EPA7` data contains several variables, five of which we use next:
 
 * `SITE_ID`: a unique site identifier
-* `WEIGHT`: the sampling design weights
+* `WEIGHT`: the survey design weights
 * `NITR_COND`: nitrogen condition category (`Good`, `Fair`, and `Poor`)
 * `BMMI`: benthic macroinvertebrate multi-metric index
 * `YEAR`: probability sample (survey) year
