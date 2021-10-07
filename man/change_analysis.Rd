@@ -34,15 +34,15 @@ change_analysis(
 )
 }
 \arguments{
-\item{dframe}{Data frame containing survey design variables, response
+\item{dframe}{The analysis data. A data frame containing survey design variables, response
 variables, and subpopulation (domain) variables.}
 
 \item{vars_cat}{Vector composed of character values that identify the
-names of categorical response variables in the dframe data frame.  The
+names of categorical response variables in \code{dframe}.  The
 default is \code{NULL}.}
 
 \item{vars_cont}{Vector composed of character values that identify the
-names of continuous response variables in the dframe data frame.  The
+names of continuous response variables in \code{dframe}.  The
 default is \code{NULL}.}
 
 \item{test}{Character string or character vector providing the location
@@ -51,14 +51,14 @@ choices are \code{"mean"}, \code{"median"}, or \code{c("mean", "median")}.
 The default is \code{"mean"}.}
 
 \item{subpops}{Vector composed of character values that identify the
-names of subpopulation (domain) variables in the \code{dframe} data frame.
+names of subpopulation (domain) variables in \code{dframe}.
 If a value is not provided, the value \code{"All_Sites"} is assigned to the
 subpops argument and a factor variable named \code{"All_Sites"} that takes
-the value \code{"All Sites"} is added to the \code{dframe} data frame.  The
+the value \code{"All Sites"} is added to \code{dframe}.  The
 default value is \code{NULL}.}
 
 \item{surveyID}{Character value providing name of the survey ID variable in
-the \code{dframe} data frame.  The default value is \code{"surveyID"}.}
+\code{dframe}.  The default value is \code{"surveyID"}.}
 
 \item{survey_names}{Character vector of length two that provides the survey
 names contained in the \code{surveyID} variable in the \code{dframe} data
@@ -68,11 +68,11 @@ survey, respectively.  If a value is not provided, unique values of the
 The default is \code{NULL}.}
 
 \item{siteID}{Character value providing name of the site ID variable in
-the \code{dframe} data frame.  For a two-stage sample, the site ID variable
+\code{dframe}.  For a two-stage sample, the site ID variable
 identifies stage two site IDs.  The default value is \code{"siteID"}.}
 
 \item{weight}{Character value providing name of the survey design weight
-variable in the \code{dframe} data frame.  For a two-stage sample, the
+variable in \code{dframe}.  For a two-stage sample, the
 weight variable identifies stage two weights.  The default value is
 \code{"weight"}.}
 
@@ -85,34 +85,34 @@ equal weights when calculating the covariance component of the change
 estimate standard error.  The default is \code{FALSE}.}
 
 \item{xcoord}{Character value providing name of the x-coordinate variable in
-the \code{dframe} data frame.  For a two-stage sample, the x-coordinate
+\code{dframe}.  For a two-stage sample, the x-coordinate
 variable identifies stage two x-coordinates.  Note that x-coordinates are
 required for calculation of the local mean variance estimator.  The default
 value is \code{NULL}.}
 
 \item{ycoord}{Character value providing name of the y-coordinate variable in
-the \code{dframe} data frame.  For a two-stage sample, the y-coordinate
+\code{dframe}.  For a two-stage sample, the y-coordinate
 variable identifies stage two y-coordinates.  Note that y-coordinates are
 required for calculation of the local mean variance estimator.  The default
 value is \code{NULL}.}
 
 \item{stratumID}{Character value providing name of the stratum ID variable in
-the \code{dframe} data frame.  The default value is \code{NULL}.}
+\code{dframe}.  The default value is \code{NULL}.}
 
 \item{clusterID}{Character value providing the name of the cluster
-(stage one) ID variable in the \code{dframe} data frame.  Note that cluster
+(stage one) ID variable in \code{dframe}.  Note that cluster
 IDs are required for a two-stage sample.  The default value is \code{NULL}.}
 
 \item{weight1}{Character value providing name of the stage one weight
-variable in the \code{dframe} data frame.  The default value is \code{NULL}.}
+variable in \code{dframe}.  The default value is \code{NULL}.}
 
 \item{xcoord1}{Character value providing the name of the stage one
-x-coordinate variable in the \code{dframe} data frame.  Note that x
+x-coordinate variable in \code{dframe}.  Note that x
 coordinates are required for calculation of the local mean variance
 estimator.  The default value is \code{NULL}.}
 
 \item{ycoord1}{Character value providing the name of the stage one
-y-coordinate variable in the \code{dframe} data frame.  Note that
+y-coordinate variable in \code{dframe}.  Note that
 y-coordinates are required for calculation of the local mean variance
 estimator.  The default value is \code{NULL}.}
 
@@ -124,12 +124,12 @@ employ size weights for a two-stage sample, values must be supplied for
 arguments \code{weight} and \code{weight1}. The default value is \code{FALSE}.}
 
 \item{sweight}{Character value providing the name of the size weight variable
-in the \code{dframe} data frame.  For a two-stage sample, the size weight
+in \code{dframe}.  For a two-stage sample, the size weight
 variable identifies stage two size weights.  The default value is
 \code{NULL}.}
 
 \item{sweight1}{Character value providing name of the stage one size weight
-variable in the \code{dframe} data frame.  The default value is \code{NULL}.}
+variable in \code{dframe}.  The default value is \code{NULL}.}
 
 \item{fpc}{Object that specifies values required for calculation of the
   finite population correction factor used during variance estimation. The
@@ -202,7 +202,7 @@ variable in the \code{dframe} data frame.  The default value is \code{NULL}.}
   post-stratification and raking by calibrating a sample to the marginal
   totals of variables in a linear regression model. For the \code{calibrate}
   function, the object is a named list, where the names identify factor
-  variables in the \code{dframe} data frame.  Each element of the list is a
+  variables in \code{dframe}.  Each element of the list is a
   named vector containing the population total for each level of the
   associated factor variable.  For the \code{postStratify} function, the
   object is either a data frame, table, or xtabs object that provides the
@@ -284,12 +284,12 @@ List of change estimates composed of three items:
 }
 \description{
 This function organizes input and output for estimation of change between two
-probability surveys.  The input data argument can be either a data frame or a
-simple features (\code{sf}) object.  If an \code{sf} object is used,
-coordinates are extracted from the geometry column in the object, arguments
-\code{xcoord} and \code{ycoord} are assigned values \code{"xcoord"} and
-\code{"ycoord"}, respectively, and the geometry column is dropped from the
-object.
+probability surveys.  The analysis data,
+\code{dframe}, can be either a data frame or a simple features (\code{sf}) object.  If an
+\code{sf} object is used, coordinates are extracted from the geometry column in the
+object, arguments \code{xcoord} and \code{ycoord} are assigned values
+\code{"xcoord"} and \code{"ycoord"}, respectively, and the geometry column is
+dropped from the object.
 }
 \examples{
 # Categorical variable example for three resource classes

@@ -5,7 +5,7 @@
 #' Select a generalized random tessellation stratified (GRTS) sample
 #'
 #' Select a spatially balanced sample from a point (finite), linear (infinite),
-#' or polygon / areal (infinite) sample frame using the Generalized Random Tessellation
+#' or polygon / areal (infinite) sampling frame using the Generalized Random Tessellation
 #' Stratified (GRTS) algorithm. The GRTS algorithm accommodates unstratified and
 #' stratified designs and allows for equal inclusion probabilities, unequal
 #' inclusion probabilities according to a categorical variable, and inclusion
@@ -15,7 +15,7 @@
 #' For technical details, see Stevens and Olsen (2003).
 #'
 #'
-#' @param sframe The sample frame as an \code{sf} object. The coordinate
+#' @param sframe The sampling frame as an \code{sf} object. The coordinate
 #'   system for \code{sframe} must be one where distance for coordinates is meaningful.
 #'
 #' @param n_base The base sample size required. If the design is unstratified,
@@ -68,7 +68,7 @@
 #'   inclusion probabilities are proportional to the values of the auxiliary variable.
 #'   Larger values of the auxiliary variable result in higher inclusion probabilities.
 #'
-#' @param legacy_var If \code{sframe} is a \code{POINT} or \code{MULTIPOINT} geometry (a finite sample frame),
+#' @param legacy_var If \code{sframe} is a \code{POINT} or \code{MULTIPOINT} geometry (a finite sampling frame),
 #'   \code{legacy_var} is a character string containing the name of the column
 #'   from \code{sframe} that represents the legacy site variable. For legacy sites, the values of the
 #'   \code{legacy_var} column in \code{sframe} must contain character strings that
@@ -76,7 +76,7 @@
 #'   \code{legacy_var} column in \code{sframe} must be \code{NA}.
 #'
 #' @param legacy_sites If \code{sframe} is a \code{LINESTRING}, \code{MULTILINESTRING},
-#'   \code{POLYGON}, or \code{MULTIPOLYGON} geometry (an infinite sample frame),
+#'   \code{POLYGON}, or \code{MULTIPOLYGON} geometry (an infinite sampling frame),
 #'   \code{legacy_sites} is an sf object with a \code{POINT} or \code{MULTIPOINT}
 #'   geometry representing the legacy sites.
 #'
@@ -146,7 +146,7 @@
 #'   values is integer from \code{1}
 #'   to \code{10} specifying the number of
 #'   nearest neighbor replacement sites to be selected for each base site in the stratum. If replacement sites are not desired for a particular stratum, then the corresponding value in \code{n_over} should be \code{NULL}. For
-#'   infinite sample frames, the distance between a site and its nearest neighbor
+#'   infinite sampling frames, the distance between a site and its nearest neighbor
 #'   depends on \code{pt_density}.
 #'
 #' @param wgt_units The units used to compute the survey design weights. These
@@ -154,11 +154,11 @@
 #'   the units package. The default units match the units of the sf object.
 #'
 #' @param pt_density A numeric value controlling the density of the GRTS approximation
-#'   for infinite sample frames. The GRTS approximation for infinite sample
+#'   for infinite sampling frames. The GRTS approximation for infinite sample
 #'   frames vastly improves computational efficiency by generating many finite points and
 #'   selecting a sample from the points. \code{pt_density} represents the density
 #'   of finite points per unit to use in the approximation (and the units match
-#'   the units of the sample frame. The default is a density
+#'   the units of the sampling frame. The default is a density
 #'   such that the number of finite points used in the approximation equals 10
 #'   times the sample size requested.
 #'
@@ -183,7 +183,7 @@
 #'   \code{n_over} is equal to the total number of sites to be visited for all panels plus
 #'   any replacement sites that may be required.
 #'
-#' @return A list with five elements:
+#' @return The design sites and additional information about the design. More specifically, a list with five elements:
 #'   \itemize{
 #'     \item \code{sites_legacy} An sf object containing legacy sites. This is
 #'       \code{NULL} if legacy sites were not included in the sample.
@@ -255,8 +255,6 @@
 #'
 #' @author Tony Olsen \email{olsen.tony@@epa.gov}
 #'
-#' @keywords survey design
-#'
 #' @seealso
 #'   \describe{
 #'     \item{\code{\link{irs}}}{ to select a sample that is not spatially balanced}
@@ -309,7 +307,7 @@ grts <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = 
     sframe <- st_zm(sframe)
   }
 
-  # Determine type of sample frame: point, line, polygon
+  # Determine type of sampling frame: point, line, polygon
   if (all(temp %in% c("POINT", "MULTIPOINT"))) sf_type <- "sf_point"
   if (all(temp %in% c("LINESTRING", "MULTILINESTRING"))) sf_type <- "sf_linear"
   if (all(temp %in% c("POLYGON", "MULTIPOLYGON"))) sf_type <- "sf_area"
@@ -356,8 +354,8 @@ grts <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = 
     legacy_sites_names <- names(legacy_sites)
   }
 
-  ## Create variables in sample frame if needed.
-  # Create unique sample frame ID values
+  ## Create variables in sampling frame if needed.
+  # Create unique sampling frame ID values
   sframe$id <- 1:nrow(sframe)
 
   # Assign stratum variable or create it if design not stratified and variable not provided.
@@ -370,7 +368,7 @@ grts <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = 
     sframe$stratum <- as.character(sframe[[stratum_var]])
   }
 
-  # set caty, aux and legacy variables in sample frame if needed
+  # set caty, aux and legacy variables in sampling frame if needed
   if (!is.null(caty_var)) sframe$caty <- as.character(sframe[[caty_var]])
   if (!is.null(aux_var)) sframe$aux <- sframe[[aux_var]]
   if (!is.null(legacy_var)) sframe$legacy <- sframe[[legacy_var]]

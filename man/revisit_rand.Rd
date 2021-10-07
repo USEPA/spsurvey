@@ -79,7 +79,7 @@ revisit_rand(
     \item{\code{\link{revisit_bibd}}}{create a balanced incomplete block
       panel revisit design}
     \item{\code{\link{revisit_dsgn}}}{create a panel revisit design}
-    \item{\code{\link{summary.paneldesign}}}{ to summarize characteristics of a
+    \item{\code{\link{pd_summary}}}{ to summarize characteristics of a
       panel revisit design}
   }
 }

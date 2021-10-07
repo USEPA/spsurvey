@@ -38,31 +38,32 @@
 #' regression, (2) weighted linear regression, and (3) generalized linear
 #' mixed-effects model. For continuous data, the choices for the
 #' \code{model_cont} argument are: (1) simple linear regression, (2) weighted
-#' linear regression, and (3)  linear mixed-effects model.  The input data
-#' argument can be either a data frame or a simple features (sf) object. If an
-#' sf object is used, \code{xcoord} and \code{ycoord} are assigned values
+#' linear regression, and (3)  linear mixed-effects model.  The analysis data,
+#' \code{dframe}, can be either a data frame or a simple features (\code{sf}) object.  If an
+#' \code{sf} object is used, coordinates are extracted from the geometry column in the
+#' object, arguments \code{xcoord} and \code{ycoord} are assigned values
 #' \code{"xcoord"} and \code{"ycoord"}, respectively, and the geometry column is
 #' dropped from the object.
 #'
-#' @param dframe Data frame containing survey design variables, response
+#' @param dframe The analysis data. A data frame containing survey design variables, response
 #'   variables, and subpopulation (domain) variables.
 #'
 #' @param vars_cat Vector composed of character values that identify the names
-#'   of categorical response variables in the \code{dframe} data frame. If
+#'   of categorical response variables in \code{dframe}. If
 #'   argument \code{model_cat} equals "GLMM", the categorical variables in the
 #'   \code{dframe} data frame must be factors each of which has two levels,
 #'   where the second level will be assumed to specify "success".  The default
 #'   value is \code{NULL}.
 #'
 #' @param vars_cont Vector composed of character values that identify the
-#'   names of continuous response variables in the \code{dframe} data frame.
+#'   names of continuous response variables in \code{dframe}.
 #'   The default value is \code{NULL}.
 #'
 #' @param subpops Vector composed of character values that identify the
-#'   names of subpopulation (domain) variables in the \code{dframe} data frame.
+#'   names of subpopulation (domain) variables in \code{dframe}.
 #'   If a value is not provided, the value \code{"All_Sites"} is assigned to the
 #'   subpops argument and a factor variable named \code{"All_Sites"} that takes
-#'   the value \code{"All Sites"} is added to the \code{dframe} data frame.  The
+#'   the value \code{"All Sites"} is added to \code{dframe}.  The
 #'   default value is \code{NULL}.
 #'
 #' @param model_cat Character value identifying the analytical procedure used
@@ -88,50 +89,50 @@
 #'   model.  The default value is \code{NULL}.
 #'
 #' @param siteID Character value providing name of the site ID variable in
-#'   the \code{dframe} data frame.  If repeat visit sites are present, the site
+#'   \code{dframe}.  If repeat visit sites are present, the site
 #'   ID value for each revisit site will be the same for each survey.  For a
 #'   two-stage sample, the site ID variable identifies stage two site IDs.  The
 #'   default value is \code{"siteID"}.
 #'
 #' @param yearID Character value providing name of the time period variable in
-#'   the \code{dframe} data frame, which must be numeric and will be forced to
+#'   \code{dframe}, which must be numeric and will be forced to
 #'   numeric if it is not.  The default assumption is that the time period
 #'   variable is years.  The default value is \code{"year"}.
 #'
 #' @param weight Character value providing name of the survey design weight
-#'   variable in the \code{dframe} data frame.  For a two-stage sample, the
+#'   variable in \code{dframe}.  For a two-stage sample, the
 #'   weight variable identifies stage two weights.  The default value is
 #'   \code{"weight"}.
 #'
 #' @param xcoord Character value providing name of the x-coordinate variable in
-#'   the \code{dframe} data frame.  For a two-stage sample, the x-coordinate
+#'   \code{dframe}.  For a two-stage sample, the x-coordinate
 #'   variable identifies stage two x-coordinates.  Note that x-coordinates are
 #'   required  for calculation of the local mean variance estimator.  The
 #'   default value is \code{NULL}.
 #'
 #' @param ycoord Character value providing name of the y-coordinate variable in
-#'   the \code{dframe} data frame.  For a two-stage sample, the y-coordinate
+#'   \code{dframe}.  For a two-stage sample, the y-coordinate
 #'   variable identifies stage two y-coordinates.  Note that y-coordinates are
 #'   required for calculation of the local mean variance estimator.  The default
 #'   value is \code{NULL}.
 #'
 #' @param stratumID Character value providing name of the stratum ID variable in
-#'   the \code{dframe} data frame.  The default value is \code{NULL}.
+#'   \code{dframe}.  The default value is \code{NULL}.
 #'
 #' @param clusterID Character value providing name of the cluster (stage one) ID
-#'   variable in the \code{dframe} data frame.  Note that cluster IDs are
+#'   variable in \code{dframe}.  Note that cluster IDs are
 #'   required for a two-stage sample.  The default value is \code{NULL}.
 #'
 #' @param weight1 Character value providing name of the stage one weight
-#'   variable in the \code{dframe} data frame.  The default value is \code{NULL}.
+#'   variable in \code{dframe}.  The default value is \code{NULL}.
 #'
 #' @param xcoord1 Character value providing name of the stage one x-coordinate
-#'   variable in the \code{dframe} data frame.  Note that x-coordinates are
+#'   variable in \code{dframe}.  Note that x-coordinates are
 #'   required for calculation of the local mean variance estimator.  The default
 #'   value is \code{NULL}.
 #'
 #' @param ycoord1 Character value providing name of the stage one y-coordinate
-#'   variable in the \code{dframe} data frame.  Note that y-coordinates are
+#'   variable in \code{dframe}.  Note that y-coordinates are
 #'   required for calculation of the local mean variance estimator.  The default
 #'   value is \code{NULL}.
 #'
@@ -144,12 +145,12 @@
 #'   \code{FALSE}.
 #'
 #' @param sweight Character value providing name of the size weight variable in
-#'   the \code{dframe} data frame.  For a two-stage sample, the size weight
+#'   \code{dframe}.  For a two-stage sample, the size weight
 #'   variable identifies stage two size weights.  The default value is
 #'   \code{NULL}.
 #'
 #' @param sweight1 Character value providing name of the stage one size weight
-#'   variable in the \code{dframe} data frame.  The default value is
+#'   variable in \code{dframe}.  The default value is
 #'   \code{NULL}.
 #'
 #' @param fpc Object that specifies values required for calculation of the
@@ -223,7 +224,7 @@
 #'   post-stratification and raking by calibrating a sample to the marginal
 #'   totals of variables in a linear regression model. For the \code{calibrate}
 #'   function, the object is a named list, where the names identify factor
-#'   variables in the \code{dframe} data frame.  Each element of the list is a
+#'   variables in \code{dframe}.  Each element of the list is a
 #'   named vector containing the population total for each level of the
 #'   associated factor variable.  For the \code{postStratify} function, the
 #'   object is either a data frame, table, or xtabs object that provides the
@@ -348,7 +349,7 @@
 #' replicates are representative of the survey population.  Parameter estimates
 #' are calculated using the object returned by the \code{boot} function.
 #'
-#' @return List composed of two data frames containing trend estimates for all
+#' @return The analysis results. A list composed of two data frames containing trend estimates for all
 #'   combinations of population Types, subpopulations within Types, and response
 #'   variables.  For categorical variables, trend estimates are calculated for
 #'   each category of the variable.  The two data frames in the output list are:

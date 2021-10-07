@@ -166,7 +166,7 @@ McDonald, T. (2003). Review of environmental monitoring methods: survey
       panel revisit design}
     \item{\code{\link{revisit_rand}}}{to create a revisit design with random
       assignment to panels and time periods}
-    \item{\code{\link{summary.paneldesign}}}{ to summarize characteristics of a
+    \item{\code{\link{pd_summary}}}{ to summarize characteristics of a
       panel revisit design}
   }
 }

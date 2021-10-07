@@ -33,9 +33,9 @@ Before getting started, load spsurvey by running
 library(spsurvey)
 ```
 
-The `summary()` and `plot()` functions are used to summarize and visualize sample frames, samples, and design frames in spsurvey. Both functions use a formula argument that specifies the variables to summarize or visualize. These functions behave differently for one-sided and two-sided formulas. To learn more about formulas in R, run `?formula`. Only the core functionality of `summary()` and `plot()` will be covered in this vignette, so to learn more about these functions, run `?summary` and `?plot` after loading spsurvey.
+The `sp_summary()` and `sp_plot()` functions are used to summarize and visualize sample frames, samples, and design frames in spsurvey. Both functions use a formula argument that specifies the variables to summarize or visualize. These functions behave differently for one-sided and two-sided formulas. To learn more about formulas in R, run `?formula`. Only the core functionality of `sp_summary()` and `sp_plot()` will be covered in this vignette, so to learn more about these functions, run `?sp_summary` and `?sp_plot` after loading spsurvey.
 
-The `plot()` function in spsurvey is built on the `plot()` function in sf. spsurvey's `plot()` function accommodates all the arguments in sf's `plot()` function and adds a few additional features.  To learn more about the `plot()` function in sf, run `?plot.sf()`. 
+The `sp_plot()` function in spsurvey is built on the `sp_plot()` function in sf. spsurvey's `sp_plot()` function accommodates all the arguments in sf's `sp_plot()` function and adds a few additional features.  To learn more about the `sp_plot()` function in sf, run `?plot.sf()`. 
 
 # Sample Frames
 
@@ -45,49 +45,44 @@ The sample frame contains all units that may be selected in the sample. Summariz
 2. `ELEV`: lake elevation
 3. `ELEV_CAT`: lake elevation categories (low and high)
 
-The `summary()` and `plot()` functions in spsurvey require your sample frame to be an `sframe` object. To turn `NE_Lakes` into an `sframe` object, use the `sframe()` function:
-```{r}
-NE_Lakes <- sframe(NE_Lakes)
-```
-
 ## One-sided formulas
 
 One-sided formulas are used to summarize and visualize the distributions of variables. The variables of interest should be placed on the right-hand side of the formula. To summarize the distribution of `ELEV` (a numeric variable), run
 ```{r}
-summary(NE_Lakes, formula = ~ ELEV)
+sp_summary(NE_Lakes, formula = ~ ELEV)
 ```
 The output contains two columns: `total` and `ELEV`. The `total` column returns the total number of lakes, functioning as an "intercept" to the formula (it can by removed by supplying `- 1` to the formula). The `ELEV` column returns a numerical summary of lake elevation. To visualize `ELEV`, run
 ```{r}
-plot(NE_Lakes, formula = ~ ELEV)
+sp_plot(NE_Lakes, formula = ~ ELEV)
 ```
 
 To summarize the distribution of `ELEV_CAT` (a categorical variable), run
 ```{r}
-summary(NE_Lakes, formula = ~ ELEV_CAT)
+sp_summary(NE_Lakes, formula = ~ ELEV_CAT)
 ```
 The `ELEV_CAT` column returns the number of lakes in each elevation category. To visualize `ELEV_CAT`, run
 ```{r}
-plot(NE_Lakes, formula = ~ ELEV_CAT, key.width = lcm(3))
+sp_plot(NE_Lakes, formula = ~ ELEV_CAT, key.width = lcm(3))
 ```
 
-The `key.width` argument extends the plot's margin to fit the legend text nicely within the plot. The plot's default title is the `formula` argument, though this is changed using the `main` argument to `plot()`.
+The `key.width` argument extends the plot's margin to fit the legend text nicely within the plot. The plot's default title is the `formula` argument, though this is changed using the `main` argument to `sp_plot()`.
 
-The formula used by `summary()` and `plot()` is quite flexible. Additional variables are included using `+`:
+The formula used by `sp_summary()` and `sp_plot()` is quite flexible. Additional variables are included using `+`:
 ```{r}
-summary(NE_Lakes, formula = ~ ELEV_CAT + AREA_CAT)
+sp_summary(NE_Lakes, formula = ~ ELEV_CAT + AREA_CAT)
 ```
-The `plot()` function returns two plots -- one for `ELEV_CAT` and another for `AREA_CAT`:
+The `sp_plot()` function returns two plots -- one for `ELEV_CAT` and another for `AREA_CAT`:
 ```{r}
-plot(NE_Lakes, formula = ~ ELEV_CAT + AREA_CAT, key.width = lcm(3))
+sp_plot(NE_Lakes, formula = ~ ELEV_CAT + AREA_CAT, key.width = lcm(3))
 ```
 
 Interactions are included using the interaction operator, `:`. The interaction operator returns the interaction between variables and is most useful when used with categorical variables. To summarize the interaction between `ELEV_CAT` and `AREA_CAT`, run
 ```{r}
-summary(NE_Lakes, formula = ~ ELEV_CAT:AREA_CAT)
+sp_summary(NE_Lakes, formula = ~ ELEV_CAT:AREA_CAT)
 ```
 Levels of each variable are separated by `:`. For example, there are 2451 lakes that are in the low elevation category and the small area category. To visualize this interaction, run
 ```{r}
-plot(NE_Lakes, formula = ~ ELEV_CAT:AREA_CAT, key.width = lcm(3))
+sp_plot(NE_Lakes, formula = ~ ELEV_CAT:AREA_CAT, key.width = lcm(3))
 ```
 
 The formula accommodates the `*` operator, which combines the `+` and `:` operators. For example, `ELEV_CAT*AREA_CAT` is shorthand for `ELEV_CAT + AREA_CAT + ELEV_CAT:AREA_CAT`. The formula also accommodates the `.` operator, which is shorthand for all variables separated by `+`.
@@ -96,32 +91,32 @@ The formula accommodates the `*` operator, which combines the `+` and `:` operat
 
 Two-sided formulas are used to summarize the distribution of a left-hand side variable for each level of each right-hand side variable. To summarize the distribution of `ELEV_CAT` for each level of `AREA_CAT`, run
 ```{r}
-summary(NE_Lakes, formula = ELEV_CAT ~ AREA_CAT)
+sp_summary(NE_Lakes, formula = ELEV_CAT ~ AREA_CAT)
 ```
 To visualize the distribution of `ELEV_CAT` for each level of `AREA_CAT`, run
 ```{r}
-plot(NE_Lakes, formula = ELEV_CAT ~ AREA_CAT, key.width = lcm(3))
+sp_plot(NE_Lakes, formula = ELEV_CAT ~ AREA_CAT, key.width = lcm(3))
 ```
 
 To summarize the distribution of `ELEV` for each level of `AREA_CAT`, run
 ```{r}
-summary(NE_Lakes, formula = ELEV ~ AREA_CAT)
+sp_summary(NE_Lakes, formula = ELEV ~ AREA_CAT)
 ```
 To visualize the distribution of `ELEV` for each level of `AREA_CAT`, run
 ```{r}
-plot(NE_Lakes, formula = ELEV ~ AREA_CAT)
+sp_plot(NE_Lakes, formula = ELEV ~ AREA_CAT)
 ```
 
 To only summarize or visualize a particular level of a right-hand side variable, use the `onlyshow` argument:
 ```{r}
-summary(NE_Lakes, formula = ELEV ~ AREA_CAT, onlyshow = "small")
-plot(NE_Lakes, formula = ELEV ~ AREA_CAT, onlyshow = "small")
+sp_summary(NE_Lakes, formula = ELEV ~ AREA_CAT, onlyshow = "small")
+sp_plot(NE_Lakes, formula = ELEV ~ AREA_CAT, onlyshow = "small")
 ```
 
 
 ## Adjusting graphical parameters
 
-There are three arguments in `plot()` that can adjust graphical parameters:
+There are three arguments in `sp_plot()` that can adjust graphical parameters:
 
 1. `var_args` adjusts graphical parameters for all levels of a variable 
 2. `varlevel_args` adjusts graphical parameters of each level of a variable
@@ -132,7 +127,7 @@ The `var_args` and `varlevel_args` arguments take lists whose names match variab
 list1 <- list(main = "Elevation Categories", pal = rainbow)
 list2 <- list(main = "Area Categories")
 list3 <- list(levels = c("small", "large"), pch = c(4, 19))
-plot(
+sp_plot(
   NE_Lakes,
   formula = ~ ELEV_CAT + AREA_CAT,
   var_args = list(ELEV_CAT = list1, AREA_CAT = list2),
@@ -147,7 +142,7 @@ plot(
 If a two-sided formula is used, it is possible to adjust graphical parameters for each level of a left-hand side variable across alll levels of a right-hand side variable when a sublist matching the structure of `varlevel_args` is used as an argument to `var_args`. In this next example, different shapes are used for the small and large levels of `AREA_CAT` across all levels of `ELEV_CAT`:
 ```{r}
 sublist <- list(AREA_CAT = list3)
-plot(
+sp_plot(
   NE_Lakes,
   formula = AREA_CAT ~ ELEV_CAT,
   var_args = list(ELEV_CAT = sublist),
@@ -157,7 +152,7 @@ plot(
 
 # Samples
 
-Samples that are selected in `spsurvey` can also be summarized and visualized using `summary()` and `plot()`. In this section, you will use the `grts()` function to select spatially balanced samples (for more on the `grts()` function, run `vignette("sampling", "spsurvey")`). The `grts()` function does incorporate randomness, so to match your results with this output exactly you will need to set a reproducible seed by running
+Samples that are selected in `spsurvey` can also be summarized and visualized using `sp_summary()` and `sp_plot()`. In this section, you will use the `grts()` function to select spatially balanced samples (for more on the `grts()` function, run `vignette("sampling", "spsurvey")`). The `grts()` function does incorporate randomness, so to match your results with this output exactly you will need to set a reproducible seed by running
 ```{r}
 set.seed(5)
 ```
@@ -167,49 +162,44 @@ To select an equal probability GRTS sample of size 50 with 10 reverse hierarchic
 eqprob_rho <- grts(NE_Lakes, n_base = 50, n_over = 10)
 ```
 
-Similar to `summary()` and `plot()` for sample frames, `summary()` and `plot()` for samples uses a formula. For samples, the default formula is `~ siteuse`, which returns the number of samples in each `sites` object from the output that contains the samples (`eqprob_rho`). By default, the formula is applied to all non-`NULL` `sites` objects from the output that contains the samples. In this example, those are `sites_base` (for the base sites) and `sites_over` (for the reverse hierarchically ordered replacement sites).
+Similar to `sp_summary()` and `sp_plot()` for sample frames, `sp_summary()` and `sp_plot()` for samples uses a formula. For samples, the default formula is `~ siteuse`, which returns the number of samples in each `sites` object from the output that contains the samples (`eqprob_rho`). By default, the formula is applied to all non-`NULL` `sites` objects from the output that contains the samples. In this example, those are `sites_base` (for the base sites) and `sites_over` (for the reverse hierarchically ordered replacement sites).
 ```{r}
-summary(eqprob_rho)
+sp_summary(eqprob_rho)
 ```
 
-The `summary()` function is quite useful when you include `siteuse` as a left-hand side variable:
+The `sp_summary()` function is quite useful when you include `siteuse` as a left-hand side variable:
 ```{r}
-summary(eqprob_rho, formula = siteuse ~ AREA_CAT)
+sp_summary(eqprob_rho, formula = siteuse ~ AREA_CAT)
 ```
 
-The `plot()` function makes separate visualizations for separate `sites` objects:
+The `sp_plot()` function makes separate visualizations for separate `sites` objects:
 ```{r}
-plot(eqprob_rho, key.width = lcm(3))
+sp_plot(eqprob_rho, key.width = lcm(3))
 ```
 
-The sample frame may be included as a second argument in the `plot()` function 
+The sample frame may be included as a second argument in the `sp_plot()` function 
 ```{r}
-plot(eqprob_rho, NE_Lakes, key.width = lcm(3))
+sp_plot(eqprob_rho, NE_Lakes, key.width = lcm(3))
 ```
 
 It can also be useful to visualize the sampled sites separately for each level of a categorical variable:
 ```{r}
-plot(eqprob_rho, formula = siteuse ~ AREA_CAT, key.width = lcm(3))
+sp_plot(eqprob_rho, formula = siteuse ~ AREA_CAT, key.width = lcm(3))
 ```
 
 # Design Frames
 
-Design frames are data frames or `sf` objects that contain observed data. These are the objects used in spsurvey's analysis functions. spsurvey's `summary()` and `plot()` functions are available for design frames. Design frames are summarized and visualized almost exactly like sample frames -- the main difference is that design frames are a bit more flexible than sample frames because design frames do not have to be `sf` objects.
+Design frames are data frames or `sf` objects that contain observed data. These are the objects used in spsurvey's analysis functions. spsurvey's `sp_summary()` and `sp_plot()` functions are available for design frames. Design frames are summarized and visualized almost exactly like sample frames -- the main difference is that design frames are a bit more flexible than sample frames because design frames do not have to be `sf` objects.
 
 The `NLA_PNW` data in spsurvey is a design frame that contains lakes from California, Oregon, and Washington. There are two variables in `NLA_PNW` you will summarize and visualize:
 
 1. `NITR_COND` : Nitrogen content categories (good, fair, and poor)
 2. `BMMI` : Benthic macroinvertebrate multi-metric index
 
-Before using `summary()` and `plot()` for design frames, turn your data into a `dframe` object by running
+You can run
 ```{r}
-NLA_PNW <- dframe(NLA_PNW)
-```
-
-Then you can run
-```{r}
-summary(NLA_PNW, formula = ~ NITR_COND + BMMI)
-plot(NLA_PNW, formula = ~ NITR_COND + BMMI, key.width = lcm(3))
+sp_summary(NLA_PNW, formula = ~ NITR_COND + BMMI)
+sp_plot(NLA_PNW, formula = ~ NITR_COND + BMMI, key.width = lcm(3))
 ```
 
 Visualizing design frames that are not `sf` objects requires the use of `xcoord` and `ycoord` to specify coordinates and the use of `crs` to specify the coordinate reference system. For more on coordinate reference systems, run `vignette("start-here", "spsurvey")`.

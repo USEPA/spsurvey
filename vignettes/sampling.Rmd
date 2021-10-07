@@ -60,7 +60,7 @@ eqprob <- grts(NE_Lakes, n_base = 50)
 
 The first argument to `grts()` is the sample frame. The second argument is `n_base`, which specifies the number of samples. The `sites_base` object in `eqprob` is an `sf` object and contains the original columns of `NE_Lakes` as well as a few additional columns such as a site identifier, latitude and longitude coordinates, inclusion probabilities, and sampling weights (to be used in analyses after collecting data). To visualize the sample overlain onto the sample frame, run
 ```{r}
-plot(eqprob, NE_Lakes, key.width = lcm(3))
+sp_plot(eqprob, NE_Lakes, key.width = lcm(3))
 ```
 
 The `key.width` argument extends the plot's margin to fit the legend text nicely within the plot. For more on summarizing and visualizing samples in spsurvey, run `vignette("EDA", "spsurvey")`.
@@ -108,7 +108,7 @@ strat_eqprob <- grts(NE_Lakes, n_base = strata_n, stratum_var = "ELEV_CAT")
 
 To visualize the sample overlain onto the sample frame (separately for each stratum), run
 ```{r}
-plot(
+sp_plot(
   strat_eqprob,
   formula = siteuse ~ ELEV_CAT,
   NE_Lakes,
@@ -158,10 +158,10 @@ legacy <- grts(NE_Lakes, n_base = 50, legacy_var = "LEGACY")
 
 To visualize the legacy and base sites together, run
 ```{r}
-plot(legacy, key.width = lcm(3))
+sp_plot(legacy, key.width = lcm(3))
 ```
 
-These points can be overlain onto the sample frame by including `NE_Lakes` in the `plot()` command.
+These points can be overlain onto the sample frame by including `NE_Lakes` in the `sp_plot()` command.
 
 For infinite populations, a separate `sf` object that contains the legacy sites (as `POINT` or `MULTIPOINT` geometries) must be provided to `grts()` using the `legacy_sites` argument. An example is provided in [Infinite Population Sampling]
 
@@ -199,7 +199,7 @@ rho_replace <- grts(NE_Lakes, n_base = 50, n_over = 25)
 
 To visualize the base sites and reverse hierarchically ordered replacement sites, run
 ```{r}
-plot(rho_replace, key.width = lcm(3))
+sp_plot(rho_replace, key.width = lcm(3))
 ```
 
 When stratifying, `n_over` will apply to both strata if it is a single value. It is possible to set stratum-specific reverse hierarchical ordering requirements by running
@@ -241,7 +241,7 @@ eqprob_irs <- irs(NE_Lakes, n_base = 50)
 
 To visualize the IRS sample, run
 ```{r}
-plot(eqprob_irs, NE_Lakes, key.width = lcm(3))
+sp_plot(eqprob_irs, NE_Lakes, key.width = lcm(3))
 ```
 
 Notice how this IRS sample appears less spread out than the unstratified GRTS sample with equal inclusion probabilities.
@@ -257,15 +257,15 @@ strat_eqprob_irs <- irs(NE_Lakes, n_base = strata_n, stratum_var = "ELEV_CAT")
 
 So far this vignette has broadly mentioned spatial balance, but we have not yet discussed how to empirically measure spatial balance. Stevens and Olsen (2004) proposed measuring spatial balance using Voroni polygons. A Voroni polygon for a sampled site contains all sites in the sample frame closer to this sampled site than any other sampled site. The Voroni polygons (for each sampled site) are combined with a loss function, or metric, that measures spatial balance. Several spatial balance metrics are available in spsurvey. The default is Pielou's evenness index. Pielou's evenness index ranges from 0 (perfect spatial balance) to 1 (a complete lack of spatial balance). Larger values of the Pielou's evenness index indicate worse spatial balance. To measure the spatial balance of the unstratified GRTS and IRS samples with equal inclusion probabilities, run
 ```{r}
-spbalance(eqprob$sites_base, NE_Lakes) # grts
-spbalance(eqprob_irs$sites_base, NE_Lakes) # irs
+sp_balance(eqprob$sites_base, NE_Lakes) # grts
+sp_balance(eqprob_irs$sites_base, NE_Lakes) # irs
 ```
 The GRTS sample is more spatially balanced than the IRS sample.
 
 In a stratified sample, spatial balance is calculated separately for each stratum:
 ```{r}
-spbalance(strat_eqprob$sites_base, NE_Lakes, stratum_var = "ELEV_CAT") # grts
-spbalance(strat_eqprob_irs$sites_base, NE_Lakes, stratum_var = "ELEV_CAT") # irs
+sp_balance(strat_eqprob$sites_base, NE_Lakes, stratum_var = "ELEV_CAT") # grts
+sp_balance(strat_eqprob_irs$sites_base, NE_Lakes, stratum_var = "ELEV_CAT") # irs
 ```
 The GRTS sample is more spatially balanced than the IRS sample for both strata.
 
@@ -278,7 +278,7 @@ eqprob <- grts(Illinois_River, n_base = 50)
 
 To visualize the sample overlain onto the sample frame, run
 ```{r}
-plot(eqprob, Illinois_River, key.width = lcm(3))
+sp_plot(eqprob, Illinois_River, key.width = lcm(3))
 ```
 
 To accommodate legacy sites in infinite population sampling, an `sf` object containing the legacy sites as `POINT` geometries must be provided to the `legacy_sites` argument:
@@ -293,14 +293,14 @@ eqprob <- grts(Lake_Ontario, n_base = 50)
 
 To visualize the sample overlain onto the sample frame (with closed circles for the sample sites), run
 ```{r}
-plot(eqprob, Lake_Ontario, pch = 19, key.width = lcm(3))
+sp_plot(eqprob, Lake_Ontario, pch = 19, key.width = lcm(3))
 ```
 
 # Binding and Writing Samples
 
-To bind `sites_legacy`, `sites_base`, `sites_over`, `sites_near` (four separate `sf` objects) into a single `sf` object, use `sprbind()`. For example, to combine the base and reverse hierarchically ordered replacement sites from `rho_replace` into a single `sf` object, run 
+To bind `sites_legacy`, `sites_base`, `sites_over`, `sites_near` (four separate `sf` objects) into a single `sf` object, use `sp_rbind()`. For example, to combine the base and reverse hierarchically ordered replacement sites from `rho_replace` into a single `sf` object, run 
 ```{r}
-combined <- sprbind(rho_replace)
+combined <- sp_rbind(rho_replace)
 ```
 
 Then it is straightforward to write out a single `sf` object using a function like `sf::write_sf()`. For example, to save the combined `sf` object as a shapefile named `"file_name.shp"` at the location on your machine called `"file_path"`, run

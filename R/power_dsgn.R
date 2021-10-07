@@ -104,7 +104,7 @@
 #'
 #' @seealso
 #'   \itemize{
-#'     \item{\code{\link{plot.powerpaneldesign}}}{ to plot power curves for
+#'     \item{\code{\link{ppd_plot}}}{ to plot power curves for
 #'       panel designs}
 #'   }
 #'

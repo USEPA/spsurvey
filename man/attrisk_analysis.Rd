@@ -31,18 +31,19 @@ attrisk_analysis(
 )
 }
 \arguments{
-\item{dframe}{Data frame or \code{sf} object containing survey design
+\item{dframe}{The data to be analyzed (analysis data). A data frame or
+\code{sf} object containing survey design
 variables, response variables, stressor variables, and subpopulation
 (domain) variables.}
 
 \item{vars_response}{Vector composed of character values that identify the
-names of response variables in the \code{dframe} data frame. Each response
+names of response variables in \code{dframe}. Each response
 variable must have two category values (levels), where one level is
 associated with poor condition and the other level is associated with good
 condition.}
 
 \item{vars_stressor}{Vector composed of character values that identify the
-names of stressor variables in the \code{dframe} data frame. Each stressor
+names of stressor variables in \code{dframe}. Each stressor
 variable must have two category values (levels), where one level is
 associated with poor condition and the other level is associated with good
 condition.}
@@ -72,10 +73,10 @@ argument and that uses values in the \code{vars_stressor} argument as names
 for the list.  The default value is NULL.}
 
 \item{subpops}{Vector composed of character values that identify the
-names of subpopulation (domain) variables in the \code{dframe} data frame.
+names of subpopulation (domain) variables in \code{dframe}.
 If a value is not provided, the value \code{"All_Sites"} is assigned to the
 subpops argument and a factor variable named \code{"All_Sites"} that takes
-the value \code{"All Sites"} is added to the \code{dframe} data frame.  The
+the value \code{"All Sites"} is added to \code{dframe}.  The
 default value is \code{NULL}.}
 
 \item{siteID}{Character value providing the name of the site ID variable in
@@ -83,7 +84,7 @@ the \code{dframe} data frame.  For a two-stage sample, the site ID variable
 identifies stage two site IDs.  The default value is \code{"siteID"}.}
 
 \item{weight}{Character value providing the name of the survey design weight
-variable in the \code{dframe} data frame.  For a two-stage sample, the
+variable in \code{dframe}.  For a two-stage sample, the
 weight variable identifies stage two weights.  The default value is
 \code{"weight"}.}
 
@@ -100,24 +101,24 @@ required for calculation of the local mean variance estimator.  The default
 value is \code{NULL}.}
 
 \item{stratumID}{Character value providing the name of the stratum ID
-variable in the \code{dframe} data frame.  The default value is
+variable in \code{dframe}.  The default value is
 \code{NULL}.}
 
 \item{clusterID}{Character value providing the name of the cluster
-(stage one) ID variable in the \code{dframe} data frame.  Note that cluster
+(stage one) ID variable in \code{dframe}.  Note that cluster
 IDs are required for a two-stage sample.  The default value is \code{NULL}.}
 
 \item{weight1}{Character value providing the name of the stage one weight
-variable in the \code{dframe} data frame.  The default value is
+variable in \code{dframe}.  The default value is
 \code{NULL}.}
 
 \item{xcoord1}{Character value providing the name of the stage one
-x-coordinate variable in the \code{dframe} data frame.  Note that x
+x-coordinate variable in \code{dframe}.  Note that x
 coordinates are required for calculation of the local mean variance
 estimator.  The default value is \code{NULL}.}
 
 \item{ycoord1}{Character value providing the name of the stage one
-y-coordinate variable in the \code{dframe} data frame.  Note that
+y-coordinate variable in \code{dframe}.  Note that
 y-coordinates are required for calculation of the local mean variance
 estimator.  The default value is \code{NULL}.}
 
@@ -130,12 +131,12 @@ arguments \code{weight} and \code{weight1}. The default value is
 \code{FALSE}.}
 
 \item{sweight}{Character value providing the name of the size weight variable
-in the \code{dframe} data frame.  For a two-stage sample, the size weight
+in \code{dframe}.  For a two-stage sample, the size weight
 variable identifies stage two size weights.  The default value is
 \code{NULL}.}
 
 \item{sweight1}{Character value providing the name of the stage one size
-weight variable in the \code{dframe} data frame.  The default value is
+weight variable in \code{dframe}.  The default value is
 \code{NULL}.}
 
 \item{fpc}{Object that specifies values required for calculation of the
@@ -209,7 +210,7 @@ weight variable in the \code{dframe} data frame.  The default value is
   post-stratification and raking by calibrating a sample to the marginal
   totals of variables in a linear regression model. For the \code{calibrate}
   function, the object is a named list, where the names identify factor
-  variables in the \code{dframe} data frame.  Each element of the list is a
+  variables in \code{dframe}.  Each element of the list is a
   named vector containing the population total for each level of the
   associated factor variable.  For the \code{postStratify} function, the
   object is either a data frame, table, or xtabs object that provides the
@@ -269,7 +270,7 @@ returned for each variable in \code{vars}. If \code{All_Sites} is
 The default is \code{FALSE}.}
 }
 \value{
-Data frame of population estimates for all combinations of
+The analysis results. A data frame of population estimates for all combinations of
   subpopulations, categories within each subpopulation, response variables,
   and categories within each response variable.  Estimates are provided for
   proportion and size of the population plus standard error, margin of
@@ -277,9 +278,9 @@ Data frame of population estimates for all combinations of
 }
 \description{
 This function organizes input and output for attributable risk analysis of
-categorical data generated by a probability survey.  The input data argument,
-dframe, can be either a data frame or a simple features (sf) object.  If an
-sf object is used, coordinates are extracted from the geometry column in the
+categorical data generated by a probability survey.  The analysis data,
+\code{dframe}, can be either a data frame or a simple features (\code{sf}) object.  If an
+\code{sf} object is used, coordinates are extracted from the geometry column in the
 object, arguments \code{xcoord} and \code{ycoord} are assigned values
 \code{"xcoord"} and \code{"ycoord"}, respectively, and the geometry column is
 dropped from the object.

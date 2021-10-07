@@ -1,5 +1,5 @@
 ###############################################################################
-# Function: spbalance (exported)
+# Function: sp_balance (exported)
 # Programmer: Michael Dumelle
 # Date: December 03, 2020
 # Last Revised: December 03, 2020
@@ -7,14 +7,14 @@
 #' Calculate spatial balance metrics
 #'
 #' This function computes the spatial balance of a design with respect
-#' to the sample frame (\code{sframe}) using Dirichlet Tesselations, measuring the
+#' to the sampling frame (\code{sframe}) using Dirichlet Tesselations, measuring the
 #' extent to which a object is a miniature of \code{sframe}. This function is
 #' applicable for unstratified or stratified designs with equal selection
 #' probabilities.
 #'
-#' @param object An \code{sf} object containig the sampled sites.
+#' @param object An \code{sf} object containing the sampled sites.
 #'
-#' @param sframe An \code{sframe} or \code{sf} object containing the sample frame.
+#' @param sframe An \code{sframe} or \code{sf} object containing the sampling frame.
 #'
 #' @param stratum_var The name of the stratum variable in \code{object}
 #' and \code{sframe}. If \code{NULL} (the default), no strata is assumed.
@@ -63,11 +63,11 @@
 #'
 #' @examples
 #' sample <- grts(NE_Lakes, 30)
-#' spbalance(sample$sites_base, NE_Lakes)
+#' sp_balance(sample$sites_base, NE_Lakes)
 #' strata_n <- c(low = 25, high = 30)
 #' sample_strat <- grts(NE_Lakes, n_base = strata_n, stratum_var = "ELEV_CAT")
-#' spbalance(sample_strat$sites_base, NE_Lakes, stratum_var = "ELEV_CAT", metric = "rmse")
-spbalance <- function(object, sframe, stratum_var = NULL, ip = NULL, metrics = "pielou", extents = FALSE) {
+#' sp_balance(sample_strat$sites_base, NE_Lakes, stratum_var = "ELEV_CAT", metric = "rmse")
+sp_balance <- function(object, sframe, stratum_var = NULL, ip = NULL, metrics = "pielou", extents = FALSE) {
   if (is.null(stratum_var)) {
     object$stratum_var <- "None"
     sframe$stratum_var <- "None"
@@ -94,7 +94,7 @@ spbalance <- function(object, sframe, stratum_var = NULL, ip = NULL, metrics = "
   object_split <- split(object, object[[stratum_var["object"]]])
   sframe_split <- split(sframe, sframe[[stratum_var["sframe"]]])
 
-  output <- lapply(object_levels, function(x) calculate_spbalance(object_split[[x]], sframe_split[[x]], ip, metrics, extents))
+  output <- lapply(object_levels, function(x) calculate_sp_balance(object_split[[x]], sframe_split[[x]], ip, metrics, extents))
   names(output) <- object_levels
   metrics_dfs <- lapply(object_levels, function(x) cbind(stratum = x, data.frame(metric = metrics, value = output[[x]]$values)))
   metrics <- do.call("rbind", metrics_dfs)
@@ -112,7 +112,7 @@ spbalance <- function(object, sframe, stratum_var = NULL, ip = NULL, metrics = "
   }
 }
 
-calculate_spbalance <- function(object_split, sframe_split, ip, metrics, extents) {
+calculate_sp_balance <- function(object_split, sframe_split, ip, metrics, extents) {
   # need to calculate the density of each row in sframe_split
   if (all(st_geometry_type(sframe_split) %in% c("POINT", "MULTIPOINT"))) {
     sframe_split$dens <- 1
@@ -122,7 +122,7 @@ calculate_spbalance <- function(object_split, sframe_split, ip, metrics, extents
     sframe_split$dens <- as.numeric(st_area(sframe_split))
   }
 
-  # these inclusion probabilities must be provided for the entire sample frame
+  # these inclusion probabilities must be provided for the entire sampling frame
   if (is.null(ip)) {
     sframe_split$ip <- nrow(object_split) * (sframe_split$dens / sum(sframe_split$dens))
   } else {

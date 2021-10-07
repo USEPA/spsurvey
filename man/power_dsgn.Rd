@@ -135,7 +135,7 @@ Urquhart, N. S., W. S. Overton, et al. (1993) Comparing sampling designs
 }
 \seealso{
 \itemize{
-    \item{\code{\link{plot.powerpaneldesign}}}{ to plot power curves for
+    \item{\code{\link{ppd_plot}}}{ to plot power curves for
       panel designs}
   }
 }
