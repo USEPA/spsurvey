@@ -29,14 +29,14 @@
 #          linear mixed-effects model and to allow use of generalized linear
 #          mixed-effects models for categorical data
 #
-#' Estimation of Trend across Time for a Series of Probability Surveys
+#' Trend analysis
 #'
 #' This function organizes input and output for estimation of trend across time
-#' for a series of probability surveys, where trend is estimated using the
+#' for a series of samples (for categorical and continuous variables). Trend is estimated using the
 #' analytical procedure identified by the model arguments.  For categorical
-#' data, the choices for the \code{model_cat} argument are: (1) simple linear
+#' variables, the choices for the \code{model_cat} argument are: (1) simple linear
 #' regression, (2) weighted linear regression, and (3) generalized linear
-#' mixed-effects model. For continuous data, the choices for the
+#' mixed-effects model. For continuous variables, the choices for the
 #' \code{model_cont} argument are: (1) simple linear regression, (2) weighted
 #' linear regression, and (3)  linear mixed-effects model.  The analysis data,
 #' \code{dframe}, can be either a data frame or a simple features (\code{sf}) object.  If an

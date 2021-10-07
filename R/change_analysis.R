@@ -33,10 +33,10 @@
 ## Revised: September 14, 2021 to correct an error that can occur when checking
 ##          that subpopulation variables contain only missing values
 
-#' Estimation of change between two probability surveys
+#' Change analysis
 #'
-#' This function organizes input and output for estimation of change between two
-#' probability surveys.  The analysis data,
+#' This function organizes input and output for the estimation of change between two
+#' samples (for categorical and continuous variables).  The analysis data,
 #' \code{dframe}, can be either a data frame or a simple features (\code{sf}) object.  If an
 #' \code{sf} object is used, coordinates are extracted from the geometry column in the
 #' object, arguments \code{xcoord} and \code{ycoord} are assigned values
