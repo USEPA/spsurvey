@@ -49,7 +49,7 @@
 #'   the \code{dframe} data frame.  For a two-stage sample, the site ID variable
 #'   identifies stage two site IDs.  The default value is \code{"siteID"}.
 #'
-#' @param weight Character value providing name of the survey design weight
+#' @param weight Character value providing name of the design weight
 #'   variable in \code{dframe}.  For a two-stage sample, the
 #'   weight variable identifies stage two weights.  The default value is
 #'   \code{"weight"}.
@@ -57,13 +57,17 @@
 #' @param xcoord Character value providing name of the x-coordinate variable in
 #'   the \code{dframe} data frame.  For a two-stage sample, the x-coordinate
 #'   variable identifies stage two x-coordinates.  Note that x-coordinates are
-#'   required for calculation of the local mean variance estimator.  The default
+#'   required for calculation of the local mean variance estimator.  If \code{dframe}
+#'   is an \code{sf} object, this argument is not required (as the geometry column
+#'   in \code{dframe} is used to find the x-coordinate). The default
 #'   value is \code{NULL}.
 #'
 #' @param ycoord Character value providing name of the y-coordinate variable in
 #'   the \code{dframe} data frame.  For a two-stage sample, the y-coordinate
 #'   variable identifies stage two y-coordinates.  Note that y-coordinates are
-#'   required for calculation of the local mean variance estimator.  The default
+#'   required for calculation of the local mean variance estimator.  If \code{dframe}
+#'   is an \code{sf} object, this argument is not required (as the geometry column
+#'   in \code{dframe} is used to find the y-coordinate). The default
 #'   value is \code{NULL}.
 #'
 #' @param stratumID Character value providing name of the stratum ID variable in

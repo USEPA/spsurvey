@@ -35,8 +35,9 @@
 #'   which must be one of following: \code{"equal"} for equal inclusion probabilities;
 #'   \code{"unequal"} for unequal inclusion probabilities according to a categorical
 #'   variable specified by \code{caty_var}; and \code{"proportional"} for inclusion
-#'   probabilities proportional to a positive auxiliary variable. If the design is
-#'   unstratified, \code{seltype} is a single character vector. If the design is stratified, \code{seltype} is a named vector
+#'   probabilities proportional to a positive auxiliary variable specified by
+#'   \code{aux_var}. If the design is unstratified, \code{seltype} is a single
+#'   character vector. If the design is stratified, \code{seltype} is a named vector
 #'   whose names represent each stratum and whose values represent each stratum's
 #'   inclusion probability type. \code{seltype}'s default value tries to match the
 #'   intended inclusion probability type: If \code{caty_var} and \code{aux_var} are

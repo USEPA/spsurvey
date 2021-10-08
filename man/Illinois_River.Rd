@@ -5,11 +5,10 @@
 \alias{Illinois_River}
 \title{Illinois River data}
 \format{
-An \code{sf} multilinestring object object with 244 rows and 2
-variables:
+244 rows and 2 variables:
 \describe{
   \item{\code{STATE_NAME}}{ State name.}
-  \item{\code{geometry}}{ Multilinestring geometry using the NAD83 / Conus Albers
+  \item{\code{geometry}}{ MULTILINESTRING geometry using the NAD83 / Conus Albers
     coordinate reference system (EPSG: 5070).}
 }
 }
@@ -17,7 +16,7 @@ variables:
 Illinois_River
 }
 \description{
-An (\code{sf}) multilinestring object of 244 segments of the
+An (\code{sf}) MULTILINESTRING object of 244 segments of the
 Illinois River in Arkansas and Oklahoma.
 }
 \keyword{datasets}

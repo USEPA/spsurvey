@@ -7,7 +7,7 @@
 sp_rbind(object, siteuse = NULL)
 }
 \arguments{
-\item{object}{The design sites (output from \code{grts()} or \code{irs()})}
+\item{object}{The design sites (output from \code{grts()} or \code{irs()}).}
 
 \item{siteuse}{A character vector of site types to return. Can contain
 \code{"Legacy"} (for legacy sites), \code{"Base"} (for base sites),
@@ -23,8 +23,8 @@ A single \code{sf} object containing all requested design sites.
 This function row binds the \code{sites_legacy}, \code{sites_base},
 \code{sites_over}, and \code{sites_near} objects from a GRTS or IRS sample
 into a single \code{sf} object. This function is most useful when a single
-\code{sf} object is desired; e.g. writing the sites to a single shape file the
-\code{st_write} function in the sf package.
+\code{sf} object that contains all design sites is desired
+(e.g. writing out a single shapefile using \code{sf::write_sf()}).
 }
 \examples{
 sample <- grts(NE_Lakes, 50, n_over = 10)

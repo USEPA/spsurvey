@@ -2,7 +2,7 @@
 % Please edit documentation in R/stopprnt.R
 \name{stopprnt}
 \alias{stopprnt}
-\title{Print grts and irs errors.}
+\title{Print grts() and irs() errors.}
 \usage{
 stopprnt(stop_df = get("stop_df", envir = .GlobalEnv), m = 1:nrow(stop_df))
 }

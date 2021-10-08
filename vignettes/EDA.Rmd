@@ -1,6 +1,6 @@
 ---
 title: "Summarizing and Visualizing Sampling Frames, Design Sites, and Analysis Data"
-author: "Michael Dumelle, Tony Olsen, Tom Kincaid, and Marc Weber"
+author: "Michael Dumelle, Tom Kincaid, Anthony Olsen, and Marc Weber"
 output: 
   html_document:
     theme: flatly
@@ -28,7 +28,7 @@ knitr::opts_chunk$set(
 
 # Introduction 
 
-Before getting started, load spsurvey by running
+Before proceeding, we load spsurvey by running
 ```{r}
 library(spsurvey)
 ```
@@ -39,17 +39,17 @@ The `sp_plot()` function in spsurvey is built on the `plot()` function in sf. sp
 
 # Sampling frames
 
-The sampling frame contains all units that may be selected in the sample. Summarizing and visualizing the sampling frame is often helpful to better understand your data and inform additional sampling options (e.g. stratification). To use `sp_plot()` or `sp_summarize()`, sampling frames must either be an `sf` object or a data frame with x-coordinate, y-coordinate, and crs (coordinate reference system) information.
+Summarizing and visualizing the sampling frame is often helpful to better understand your data and inform additional survey design options (e.g. stratification). To use `sp_plot()` or `sp_summarize()`, sampling frames must either be an `sf` object or a data frame with x-coordinates, y-coordinates, and a crs (coordinate reference system).
 
 The `NE_Lakes` data in spsurvey is a sampling frame (as an `sf` object) that contains lakes from the Northeastern United States. There are three variables in `NE_Lakes` you will use next:
 
 1. `AREA_CAT`: lake area categories (small and large)
-2. `ELEV`: lake elevation
+2. `ELEV`: lake elevation (a continuous variable)
 3. `ELEV_CAT`: lake elevation categories (low and high)
 
 ## One-sided formulas
 
-One-sided formulas are used to summarize and visualize the distributions of variables. The variables of interest should be placed on the right-hand side of the formula. To summarize the distribution of `ELEV` (a numeric variable), run
+One-sided formulas are used to summarize and visualize the distributions of variables. The variables of interest should be placed on the right-hand side of the formula. To summarize the distribution of `ELEV`, run
 ```{r}
 sp_summary(NE_Lakes, formula = ~ ELEV)
 ```
@@ -58,7 +58,7 @@ The output contains two columns: `total` and `ELEV`. The `total` column returns 
 sp_plot(NE_Lakes, formula = ~ ELEV)
 ```
 
-To summarize the distribution of `ELEV_CAT` (a categorical variable), run
+To summarize the distribution of `ELEV_CAT`, run
 ```{r}
 sp_summary(NE_Lakes, formula = ~ ELEV_CAT)
 ```
@@ -91,16 +91,7 @@ The formula accommodates the `*` operator, which combines the `+` and `:` operat
 
 ## Two-sided formulas
 
-Two-sided formulas are used to summarize the distribution of a left-hand side variable for each level of each right-hand side variable. To summarize the distribution of `ELEV_CAT` for each level of `AREA_CAT`, run
-```{r}
-sp_summary(NE_Lakes, formula = ELEV_CAT ~ AREA_CAT)
-```
-To visualize the distribution of `ELEV_CAT` for each level of `AREA_CAT`, run
-```{r}
-sp_plot(NE_Lakes, formula = ELEV_CAT ~ AREA_CAT, key.width = lcm(3))
-```
-
-To summarize the distribution of `ELEV` for each level of `AREA_CAT`, run
+Two-sided formulas are used to summarize the distribution of a left-hand side variable for each level of each right-hand side variable. To summarize the distribution of `ELEV` for each level of `AREA_CAT`, run
 ```{r}
 sp_summary(NE_Lakes, formula = ELEV ~ AREA_CAT)
 ```
@@ -118,6 +109,14 @@ sp_summary(NE_Lakes, formula = ELEV ~ AREA_CAT, onlyshow = "small")
 sp_plot(NE_Lakes, formula = ELEV ~ AREA_CAT, onlyshow = "small")
 ```
 
+To summarize the distribution of `ELEV_CAT` for each level of `AREA_CAT`, run
+```{r}
+sp_summary(NE_Lakes, formula = ELEV_CAT ~ AREA_CAT)
+```
+To visualize the distribution of `ELEV_CAT` for each level of `AREA_CAT`, run
+```{r}
+sp_plot(NE_Lakes, formula = ELEV_CAT ~ AREA_CAT, key.width = lcm(3))
+```
 
 ## Adjusting graphical parameters
 
@@ -144,7 +143,7 @@ sp_plot(
 
 `var_args` uses `list1` to give the `ELEV_CAT` visualization a new title and color palette; `var_args` uses `list2` to give the `AREA_CAT` visualization a new title; `varlevel_args` uses `list3` to give the `AREA_CAT` visualization different shapes for the small and large levels; `...` uses `cex = 0.75` to reduce the size of all points; and `...` uses `key.width` to adjust legend spacing for all visualizations. 
 
-If a two-sided formula is used, it is possible to adjust graphical parameters left-hand side variables for all levels of a right-hand side variable. This occurs when a sublist matching the structure of `varlevel_args` is used as an argument to `var_args`. In this next example, different shapes are used for the small and large levels of `AREA_CAT` for all levels of `ELEV_CAT`:
+If a two-sided formula is used, it is possible to adjust graphical parameters left-hand side variable for all levels of a right-hand side variable. This occurs when a sublist matching the structure of `varlevel_args` is used as an argument to `var_args`. In this next example, different shapes are used for the small and large levels of `AREA_CAT` for all levels of `ELEV_CAT`:
 ```{r}
 sublist <- list(AREA_CAT = list3)
 sp_plot(
@@ -157,7 +156,7 @@ sp_plot(
 
 # Design sites
 
-Design sites (output from the `grts()` or `irs()` functions) can also be summarized and visualized using `sp_summary()` and `sp_plot()` very similarly to how sampling frames were summarized in the previous section. Soon you will use the `grts()` function to select a spatially balance sample. The `grts()` function does incorporate randomness, so to match your results with this output exactly you will need to set a reproducible seed by running
+Design sites (output from the `grts()` or `irs()` functions) can also be summarized and visualized using `sp_summary()` and `sp_plot()` very similar to how sampling frames were summarized and visualized in the previous section. Soon you will use the `grts()` function to select a spatially balance sample. The `grts()` function does incorporate randomness, so to match your results with this output exactly you will need to set a reproducible seed by running
 ```{r}
 set.seed(5)
 ```
@@ -167,7 +166,7 @@ First we will obtain some design sites: To select an equal probability GRTS samp
 eqprob_rho <- grts(NE_Lakes, n_base = 50, n_over = 10)
 ```
 
-Similar to `sp_summary()` and `sp_plot()` for sampling frames, `sp_summary()` and `sp_plot()` for samples uses a formula. For samples, the default formula is `~siteuse`, which summarizes or visualizes each `sites` object from the design sites (`eqprob_rho`). By default, the formula is applied to all non-`NULL` `sites` objects from the design sites. In this example, those are `sites_base` (for the base sites) and `sites_over` (for the reverse hierarchically ordered replacement sites).
+Similar to `sp_summary()` and `sp_plot()` for sampling frames, `sp_summary()` and `sp_plot()` for design sites uses a formula. The default formula is `~siteuse`, which summarizes or visualizes each `sites` object of the design sites (in this example, `eqprob_rho`). By default, the formula is applied to all non-`NULL` `sites` objects (in this example, those are `sites_base` (for the base sites) and `sites_over` (for the reverse hierarchically ordered replacement sites).
 ```{r}
 sp_summary(eqprob_rho)
 ```
@@ -177,12 +176,12 @@ sp_summary(eqprob_rho)
 sp_plot(eqprob_rho, key.width = lcm(3))
 ```
 
-The sampling frame may be included as an argument to the `sp_plot()` function 
+The sampling frame may be included as an argument to the `sp_plot()` function:
 ```{r}
 sp_plot(eqprob_rho, NE_Lakes, key.width = lcm(3))
 ```
 
-The `sp_summary()` and `sp_plot()` functions are quite useful when you include `siteuse` as a left-hand side variable (`siteuse` is treated as a categorical variable), as you can summarize and visualize each `sites` object for each level of each right-hand side variable:
+When you include `siteuse` as a left-hand side variable (`siteuse` is treated as a categorical variable), you can summarize and visualize each `sites` object for each level of each right-hand side variable:
 ```{r}
 sp_summary(eqprob_rho, formula = siteuse ~ AREA_CAT)
 ```
@@ -191,13 +190,22 @@ sp_summary(eqprob_rho, formula = siteuse ~ AREA_CAT)
 sp_plot(eqprob_rho, formula = siteuse ~ AREA_CAT, key.width = lcm(3))
 ```
 
+You can also summarize and visualize a left-hand side variable for each level of `siteuse`:
+```{r}
+sp_summary(eqprob_rho, formula = ELEV ~ siteuse)
+```
+
+```{r}
+sp_plot(eqprob_rho, formula = ELEV ~ siteuse, key.width = lcm(3))
+```
+
 # Analysis data
 
-`sp_summarize()` or `sp_plot()` work for analysis data the same way they do for sampling frames.
-The `NLA_PNW` analysis data in spsurvey is analysis data (as an `sf` object) from lakes in California, Oregon, and Washington. There are two variables in `NLA_PNW` you use next:
+`sp_summarize()` and `sp_plot()` work for analysis data the same way they do for sampling frames.
+The `NLA_PNW` analysis data in spsurvey is analysis data (as an `sf` object) from lakes in California, Oregon, and Washington. There are two variables in `NLA_PNW` you will use next:
 
 1. `STATE`: state name (`California`, `Washington`, and `Oregon`)
-2. `NITR_COND` : Nitrogen content categories (`Poor`, `Fair`, and `Good`)
+2. `NITR_COND` : nitrogen content categories (`Poor`, `Fair`, and `Good`)
 
 To summarize and visualize `NITR_COND` across all states, run
 ```{r}

@@ -5,11 +5,10 @@
 \alias{Illinois_River_Legacy}
 \title{Illinois River legacy data}
 \format{
-An \code{sf} point object object with 5 rows and 2
-variables:
+5 rows and 2 variables:
 \describe{
   \item{\code{STATE_NAME}}{ State name.}
-  \item{\code{geometry}}{ Point geometry using the NAD83 / Conus Albers
+  \item{\code{geometry}}{ POINT geometry using the NAD83 / Conus Albers
     coordinate reference system (EPSG: 5070).}
 }
 }
@@ -17,7 +16,7 @@ variables:
 Illinois_River_Legacy
 }
 \description{
-An (\code{sf}) point object of legacy sites for  the Illinois
+An (\code{sf}) POINT object of legacy sites for  the Illinois
 River data.
 }
 \keyword{datasets}

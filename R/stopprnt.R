@@ -3,7 +3,7 @@
 # Programmer: Tony Olsen
 # Date: January 22, 2021
 #
-#' Print grts and irs errors.
+#' Print grts() and irs() errors.
 #'
 #' This function prints the error messages vector in the \code{grts}
 #' and \code{irs} functions.

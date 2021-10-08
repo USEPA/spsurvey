@@ -5,7 +5,7 @@
 \alias{NRSA_EPA7}
 \title{NRSA EPA7 data}
 \format{
-A data frame with 353 rows and 10 variables:
+353 rows and 10 variables:
 \describe{
   \item{\code{SITE_ID}}{ A unique site identifier.}
   \item{\code{YEAR}}{ Year of design cycle.}
@@ -16,7 +16,7 @@ A data frame with 353 rows and 10 variables:
   \item{\code{BMMI_COND}}{ Benthic MMI categories.}
   \item{\code{PHOS_COND}}{ Phosphorus condition categories.}
   \item{\code{NITR_COND}}{ Nitrogen condition categories.}
-  \item{\code{geometry}}{ Point geometry using the NAD83 / Conus Albers
+  \item{\code{geometry}}{ POINT geometry using the NAD83 / Conus Albers
     coordinate reference system (EPSG: 5070).}
 }
 }
@@ -24,7 +24,7 @@ A data frame with 353 rows and 10 variables:
 NRSA_EPA7
 }
 \description{
-An \code{sf} point object of 353 stream segments in the Central
+An \code{sf} POINT object of 353 stream segments in the Central
 United States during the years 2008 and 2013, from a subset of the Environmental
 Protection Agency's "National Rivers and Streams Assessment."
 }

@@ -5,7 +5,7 @@
 \alias{NLA_PNW}
 \title{NLA PNW data}
 \format{
-An \code{sf} point object with 96 rows and 9 variables:
+96 rows and 9 variables:
 \describe{
   \item{\code{SITE_ID}}{ A unique lake identifier.}
   \item{\code{WEIGHT}}{ The sampling design weight.}
@@ -15,7 +15,7 @@ An \code{sf} point object with 96 rows and 9 variables:
   \item{\code{BMMI_COND}}{ Benthic MMI condition categories.}
   \item{\code{PHOS_COND}}{ Phosphorus condition categories.}
   \item{\code{NITR_COND}}{ Nitrogen condition categories.}
-  \item{\code{geometry}}{ Point geometry using the NAD83 / Conus Albers
+  \item{\code{geometry}}{ POINT geometry using the NAD83 / Conus Albers
     coordinate reference system (EPSG: 5070).}
 }
 }
@@ -23,7 +23,7 @@ An \code{sf} point object with 96 rows and 9 variables:
 NLA_PNW
 }
 \description{
-An \code{sf} point object of 96 lakes in the Pacific Northwest Region of the United
+An \code{sf} POINT object of 96 lakes in the Pacific Northwest Region of the United
 States during the year 2017, from a subset of the Environmental
 Protection Agency's "National Lakes Assessment."
 }

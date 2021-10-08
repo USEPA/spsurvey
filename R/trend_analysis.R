@@ -100,7 +100,7 @@
 #'   numeric if it is not.  The default assumption is that the time period
 #'   variable is years.  The default value is \code{"year"}.
 #'
-#' @param weight Character value providing name of the survey design weight
+#' @param weight Character value providing name of the design weight
 #'   variable in \code{dframe}.  For a two-stage sample, the
 #'   weight variable identifies stage two weights.  The default value is
 #'   \code{"weight"}.
@@ -108,13 +108,17 @@
 #' @param xcoord Character value providing name of the x-coordinate variable in
 #'   \code{dframe}.  For a two-stage sample, the x-coordinate
 #'   variable identifies stage two x-coordinates.  Note that x-coordinates are
-#'   required  for calculation of the local mean variance estimator.  The
+#'   required  for calculation of the local mean variance estimator.  If \code{dframe}
+#'   is an \code{sf} object, this argument is not required (as the geometry column
+#'   in \code{dframe} is used to find the x-coordinate). The
 #'   default value is \code{NULL}.
 #'
 #' @param ycoord Character value providing name of the y-coordinate variable in
 #'   \code{dframe}.  For a two-stage sample, the y-coordinate
 #'   variable identifies stage two y-coordinates.  Note that y-coordinates are
-#'   required for calculation of the local mean variance estimator.  The default
+#'   required for calculation of the local mean variance estimator.  If \code{dframe}
+#'   is an \code{sf} object, this argument is not required (as the geometry column
+#'   in \code{dframe} is used to find the y-coordinate). The default
 #'   value is \code{NULL}.
 #'
 #' @param stratumID Character value providing name of the stratum ID variable in
@@ -272,7 +276,7 @@
 #' @param invprboot Logical value that indicates whether the inverse probability
 #'   bootstrap procedure is used to calculate trend parameter estimates.  This
 #'   bootstrap procedure is only available for the "LMM" option for continuous
-#'   variables.  Inverse probability references the survey design weights, which
+#'   variables.  Inverse probability references the design weights, which
 #'   are the inverse of the sample inclusion probabilities.  The default value
 #'   is \code{TRUE}.
 #'
@@ -343,10 +347,10 @@
 #' function named \code{bootfcn} as the \code{statistic} argument passed to the
 #' \code{boot} function.  For each bootstrap replicate, \code{bootfcn} calls the
 #' \code{glmer} or \code{lmer} function, as appropriate, using the specified
-#' model.  Survey design weights identified by the \code{weight} argument for
+#' model.  design weights identified by the \code{weight} argument for
 #' the \code{trend_analysis} function are passed as the \code{weights} argument
 #' for the \code{boot} function, which specifies importance weights.  Using the
-#' survey design weights as the \code{weights} argument ensures that bootstrap
+#' design weights as the \code{weights} argument ensures that bootstrap
 #' replicates are representative of the survey population.  Parameter estimates
 #' are calculated using the object returned by the \code{boot} function.
 #'

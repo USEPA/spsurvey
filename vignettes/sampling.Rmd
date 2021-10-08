@@ -1,6 +1,6 @@
 ---
 title: "Spatially Balanced Sampling"
-author: "Michael Dumelle, Tony Olsen, Tom Kincaid, and Marc Weber"
+author: "Michael Dumelle, Tom Kincaid, Anthony Olsen, and Marc Weber"
 output: 
   html_document:
     theme: flatly
@@ -34,16 +34,16 @@ The Generalized Random Tessellation Stratified (GRTS) algorithm (Stevens and Ols
 2. `sites_base`: sites included in the base (main) sample that are not legacy sites
 3. `sites_over`: replacement sites obtained using reverse hierarchical ordering (see [Reverse hierarchical ordering])
 4. `sites_near`: replacement sites obtained using nearest neighbor (see [Nearest neighbor])
-5. `design`: a list with specific details about the sampling design
+5. `design`: a list detailing the sampling design
     
-The `NE_Lakes` sampling frame in spsurvey is used in this vignette to introduce spatially balanced sampling via the GRTS algorithm. `NE_Lakes` is a finite sampling frame and contains lakes (treated as a whole) from the Northeastern United States. There are four variables in `NE_Lakes` used in this vignette:
+We use the `NE_Lakes` sampling frame in spsurvey to introduce spatially balanced sampling via the GRTS algorithm. `NE_Lakes` is a finite sampling frame and contains lakes (treated as a whole) from the Northeastern United States. There are four variables in `NE_Lakes` you will throughout this vignette:
 
 1. `AREA`: lake area in hectares
 2. `AREA_CAT`: lake area categories (small and large)
 3. `ELEV_CAT`: lake elevation categories (low and high)
 4. `LEGACY`: a legacy site indicator
 
-Before proceeding, we load spsurvey and set a reproducible seed:
+Before proceeding, we load spsurvey and set a reproducible seed by running
 ```{r}
 library(spsurvey)
 set.seed(5)
@@ -53,7 +53,7 @@ set.seed(5)
 
 ## Equal inclusion probabilities
 
-To select an unstratified GRTS sample where each site in the sampling frame has an equal probability of being included in the sample (inclusion probability), run
+To select an unstratified GRTS sample where each site in the sampling frame has an equal probability of selection (i.e. inclusion probability), run
 ```{r}
 eqprob <- grts(NE_Lakes, n_base = 50)
 ```
@@ -78,7 +78,7 @@ uneqprob <- grts(
 )
 ```
 
-`caty_var` is the unequal inclusion probability variable (`"AREA_CAT"` in `NE_Lakes`), and `caty_n` is a vector whose names are the levels in `caty_var` and values are the expected sample sizes. In this sample, inclusion probabilities are adjusted so that on average, there are 40 small lakes and 10 large lakes selected. 
+`caty_var` is the unequal inclusion probability variable (`"AREA_CAT"` in `NE_Lakes`), and `caty_n` is a vector whose names are the levels in `caty_var` and whose values are the expected sample sizes in each category (the sum of these expected samples sizes must equal `n_base`). In this sample, inclusion probabilities are adjusted so that on average, there are 40 small lakes and 10 large lakes selected. 
 
 ## Proportional inclusion probabilities
 
@@ -91,20 +91,20 @@ propprob <- grts(
 )
 ```
 
-`aux_var` is the proportional probability variable (`"AREA"` in `NE_Lakes`). Proportional (to size) inclusion probabilities are useful because they can increase the precision of estimates when the response variable is positively correlated with the proportional probability variable.
+`aux_var` is the proportional probability (auxiliary) variable (`"AREA"` in `NE_Lakes`). Proportional (to size) inclusion probabilities are useful because they can increase the precision of estimates when the response variable is positively correlated with the proportional probability variable.
 
 # Stratified sampling
 
-Stratified sampling designs partition the sampling frame into distinct groups called strata and select sites within each stratum independently of other strata. Stratified sampling is useful from a practical perspective because it allows for stratum-specific sample sizes and implementation practices (e.g. each region may have different sampling protocols). Stratified sampling is useful from a statistical perspective because they generally yield more precise estimates than estimates from unstratified sampling.
+Stratified sampling designs partition the sampling frame into distinct groups called strata and sites are selected within each stratum independently of other strata. Stratified sampling is useful from a practical perspective because it allows for stratum-specific sample sizes and implementation practices (e.g. each stratum may have different sampling protocols). Stratified sampling is useful from a statistical perspective because estimates from stratified samples tend to be more precise than estimates from unstratified samples.
 
 ## Equal inclusion probabilities
 
-To select a sample stratified by elevation category with equal inclusion probabilities within each stratum, run
+To select a sample stratified by elevation category with equal inclusion probabilities in each stratum, run
 ```{r}
 strata_n <- c(low = 25, high = 15)
 strat_eqprob <- grts(NE_Lakes, n_base = strata_n, stratum_var = "ELEV_CAT")
 ```
-`strata_n` is a named vector whose names represent the strata and whose values represent strata-specific sample sizes, and `stratum_var` is the stratification variable in `NE_Lakes`.
+`strata_n` is a named vector whose names represent the strata and whose values represent strata-specific sample sizes, and `stratum_var` is the stratification variable (`ELEV_CAT` in `NE_Lakes`).
 
 To visualize the design sites overlain onto the sampling frame (separately for each stratum), run
 ```{r}
@@ -137,7 +137,7 @@ strat_uneqprob <- grts(
 
 ## Proportional inclusion probabilities
 
-To select a sample stratified by elevation category with probabilities proportional lake area, run
+To select a sample stratified by elevation category with probabilities proportional to lake area, run
 ```{r}
 strat_propprob <- grts(
   NE_Lakes,
@@ -151,7 +151,7 @@ strat_propprob <- grts(
 
 ## Legacy sampling
 
-Legacy (historical) sites are sites that have been selected from a previous sampling design and should be always be included in the current sample. spsurvey accommodates legacy sites for finite populations slightly differently than for infinite populations. For finite populations, a variable in the sampling frame must be included that indicates whether or not a site is a legacy site: 
+Legacy (historical) sites are sites that were selected in a previous sampling design and should be always be included in the current sample. spsurvey accommodates legacy sites for finite populations slightly differently than for infinite populations. For finite populations, a variable in the sampling frame must be included that indicates whether or not a site is a legacy site: 
 ```{r}
 legacy <- grts(NE_Lakes, n_base = 50, legacy_var = "LEGACY")
 ```
@@ -167,14 +167,14 @@ For infinite populations, a separate `sf` object that contains the legacy sites 
 
 ## Minimum distance sampling
 
-Though the GRTS algorithm selects spatially balanced samples, the algorithm can select sites that are closer together than a user may desire. To enforce a minimum distance between design sites, run
+Though the GRTS algorithm selects spatially balanced samples, the algorithm can select sites that are closer together than you may desire. To enforce a minimum distance between sites, run
 ```{r}
 mindis <- grts(NE_Lakes, n_base = 50, mindis = 1600)
 ```
 
 Here we have specified that sites be no closer together than 1600 meters (meters are the units of the `sf` object). In some situations, the `grts()` function  will fail to enforce the minimum distance requirement for all sites. When this occurs, the function will enforce the requirement for as many sites as possible and then return a warning.
 
-When stratifying, `mindis` will apply to both strata if it is a single value. It is possible to set stratum-specific minimum distance requirements by running
+When stratifying, `mindis` will apply to all strata if it is a single value. It is possible to set stratum-specific minimum distance requirements by storing them in a named list (the names must match the strata):
 ```{r}
 mindis_list <- list(low = 1400, high = 1000)
 strat_mindis <- grts(
@@ -202,7 +202,7 @@ To visualize the base sites and reverse hierarchically ordered replacement sites
 sp_plot(rho_replace, key.width = lcm(3))
 ```
 
-When stratifying, `n_over` will apply to both strata if it is a single value. It is possible to set stratum-specific reverse hierarchical ordering requirements by running
+When stratifying, `n_over` will apply to all strata if it is a single value. It is possible to set stratum-specific reverse hierarchical ordering requirements by storing them in a named list (the names must match the strata):
 ```{r}
 over_list <- list(low = 2, high = 5)
 strat_rho_replace <- grts(
@@ -221,7 +221,7 @@ nn_replace <- grts(NE_Lakes, n_base = 50, n_near = 1)
 ```
 `n_base` indicates the desired sample size, and `n_near` indicates the number of replacement sites for each base site. For `n_near = 1`, each site in the base sample has a replacement site associated with it -- this replacement site is the closest site (measured by Euclidean distance) to the base site (within a stratum).
 
-When stratifying, `n_near` will apply to both strata if it is a single value. It is possible to set stratum-specific nearest neighbor requirements by running
+When stratifying, `n_near` will apply to all strata if it is a single value. It is possible to set stratum-specific nearest neighbor requirements by storing them in a named list (the names must match the strata):
 ```{r}
 near_list <- list(low = 1, high = 2)
 strat_nn_replace <- grts(
@@ -239,14 +239,14 @@ If you do not want to select spatially balanced samples, use spsurvey's `irs()` 
 eqprob_irs <- irs(NE_Lakes, n_base = 50)
 ```
 
-To visualize the IRS design sites, run
+To visualize the design sites, run
 ```{r}
 sp_plot(eqprob_irs, NE_Lakes, key.width = lcm(3))
 ```
 
 Notice how these IRS design sites appear less spread out than the design sites from the unstratified GRTS sample with equal inclusion probabilities.
 
-To select an IRS sample stratified by elevation category with equal inclusion probabilities within each stratum, run
+To select an IRS sample stratified by elevation category with equal inclusion probabilities in each stratum, run
 ```{r}
 strata_n <- c(low = 25, high = 15)
 strat_eqprob_irs <- irs(NE_Lakes, n_base = strata_n, stratum_var = "ELEV_CAT")
@@ -254,7 +254,7 @@ strat_eqprob_irs <- irs(NE_Lakes, n_base = strata_n, stratum_var = "ELEV_CAT")
 
 # Measuring spatial balance
 
-So far we have talked generally about spatial balance but not how to measure it. Stevens and Olsen (2004) proposed measuring spatial balance using Voroni polygons. A design site's Voroni contains all sites in the sampling frame closer to this design site than any other design site. These Voroni polygons are combined with each site's inclusion probability and loss metric to measure spatial balance. 
+So far we have talked generally about spatial balance but not about how to measure it. Stevens and Olsen (2004) proposed measuring spatial balance using Voroni polygons. A design site's Voroni polygon contains all sites in the sampling frame closer to this design site than any other design site. To measure spatial balance, these Voroni polygons are combined with the inclusion probabilities of all sites in the sampling frame and a loss metric. 
 
 Several spatial balance metrics are available in spsurvey. The default is Pielou's evenness index. Pielou's evenness index ranges from 0 (perfect spatial balance) to 1 (a complete lack of spatial balance). Larger values of the Pielou's evenness index indicate worse spatial balance. To measure the spatial balance of the unstratified GRTS and IRS samples with equal inclusion probabilities, run
 ```{r}
@@ -272,7 +272,7 @@ The GRTS design sites are more spatially balanced than the IRS design sites in b
 
 # Infinite population sampling
 
-Though this vignette used a finite population to illustrate the sampling options available in spsurvey, the same commands are used for sampling from infinite populations. The `Illinois_River` `sf` object in spsurvey is a linear resource and the `Lake_Ontario` `sf` object in spsurvey is an areal resource -- both are examples of infinite populations. To select a GRTS sample with equal inclusion probabilities from `Illinois_River`, run
+Though this vignette used a finite population (`NE_Lakes`) to illustrate the sampling options available in spsurvey, the same commands are used to sample from infinite populations. The `Illinois_River` `sf` object in spsurvey is a linear resource and the `Lake_Ontario` `sf` object in spsurvey is an areal resource -- both are examples of infinite populations. To select a GRTS sample with equal inclusion probabilities from `Illinois_River`, run
 ```{r}
 eqprob <- grts(Illinois_River, n_base = 50)
 ```

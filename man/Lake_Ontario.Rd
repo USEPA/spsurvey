@@ -5,13 +5,13 @@
 \alias{Lake_Ontario}
 \title{Lake Ontario data}
 \format{
-An \code{sf} multipolygon object with 187 rows and 5 variables:
+187 rows and 5 variables:
 \describe{
   \item{\code{COUNTRY}}{ Country.}
   \item{\code{RSRC_CLASS}}{ Bay class.}
   \item{\code{PSTL_CODE}}{ Postal code.}
   \item{\code{AREA_SQKM}}{ Area in square kilometers}
-  \item{\code{geometry}}{ Multipolygon geometry using the NAD83 / Conus Albers
+  \item{\code{geometry}}{ MULTIPOLYGON geometry using the NAD83 / Conus Albers
     coordinate reference system (EPSG: 5070).}
 }
 }
@@ -19,7 +19,7 @@ An \code{sf} multipolygon object with 187 rows and 5 variables:
 Lake_Ontario
 }
 \description{
-An \code{sf} multipolygon object of 187 polygons consisting
+An \code{sf} MULTIPOLYGON object of 187 polygons consisting
 of shoreline segments in Lake Ontario.
 }
 \keyword{datasets}

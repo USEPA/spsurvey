@@ -5,7 +5,7 @@
 \alias{NE_Lakes_df}
 \title{New England Lakes data (as a data frame)}
 \format{
-An data frame with 200 rows and 7 variables:
+200 rows and 7 variables:
 \describe{
   \item{\code{AREA}}{ Lake area in hectares.}
   \item{\code{AREA_CAT}}{ Lake area categories based on a hectare cutoff.}
@@ -13,9 +13,9 @@ An data frame with 200 rows and 7 variables:
   \item{\code{ELEV_CAT}}{ Elevation categories based on a meter cutoff.}
   \item{\code{LEGACY}}{ Legacy site indicator.}
   \item{\code{XCOORD}}{ x-coordinate using the WGS 84 coordinate reference system
-    (EPSG: 5070)}
+    (EPSG: 4326)}
   \item{\code{YCOORD}}{ y-coordinate using WGS 84 coordinate reference system
-    (EPSG: 5070)}
+    (EPSG: 4326)}
 }
 }
 \usage{

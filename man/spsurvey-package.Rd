@@ -31,6 +31,7 @@ spsurvey implements a design-based approach to statistical inference,
 Useful links:
 \itemize{
   \item \url{https://github.com/USEPA/spsurvey}
+  \item Report bugs at \url{https://github.com/USEPA/spsurvey/issues}
 }
 
 }

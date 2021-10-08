@@ -38,7 +38,7 @@
 #'
 #' @param siteuse A character vector indicating the design sites
 #' for which summaries are requested in \code{object}. Defaults to computing summaries for
-#' each non-\code{NULL} \code{site_*} list in \code{object}.
+#' each non-\code{NULL} \code{sites_*} list in \code{object}.
 #'
 #' @param ... Additional arguments to pass to \code{sp_summary()}. If the left-hand
 #' side of the formula is empty, the appropriate generic arguments are passed

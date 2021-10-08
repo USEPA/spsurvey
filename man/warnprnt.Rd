@@ -2,7 +2,7 @@
 % Please edit documentation in R/warnprnt.R
 \name{warnprnt}
 \alias{warnprnt}
-\title{Print grts, irs, and analysis function warnings}
+\title{Print grts(), irs()), and analysis function warnings}
 \usage{
 warnprnt(warn_df = get("warn_df", envir = .GlobalEnv), m = 1:nrow(warn_df))
 }

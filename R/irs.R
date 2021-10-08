@@ -5,8 +5,8 @@
 #' Select an independent random sample (IRS)
 #'
 #' Select a sample that is not spatially balanced from a point (finite), linear (infinite),
-#' or polygon / areal (infinite) sampling frame using the Generalized Random Tessellation
-#' Stratified (GRTS) algorithm. The GRTS algorithm accommodates unstratified and
+#' or polygon / areal (infinite) sampling frame using the Independent Random Sampling (IRS) algorithm.
+#' The IRS algorithm accommodates unstratified and
 #' stratified designs and allows for equal inclusion probabilities, unequal
 #' inclusion probabilities according to a categorical variable, and inclusion
 #' probabilities proportional to a positive auxiliary variable. Several additional

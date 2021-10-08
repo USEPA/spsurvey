@@ -3,7 +3,7 @@
 # Programmer: Tom Kincaid
 # Date: June 18, 2020
 #
-#' Print grts, irs, and analysis function warnings
+#' Print grts(), irs()), and analysis function warnings
 #'
 #' This function prints the warnings messages from the \code{grts()}, \code{irs()},
 #'   and analysis functions.
