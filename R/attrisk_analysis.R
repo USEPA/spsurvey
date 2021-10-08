@@ -35,7 +35,7 @@
 #' \code{"xcoord"} and \code{"ycoord"}, respectively, and the geometry column is
 #' dropped from the object.
 #'
-#' @param dframe The data to be analyzed (analysis data). A data frame or
+#' @param dframe Data to be analyzed (analysis data). A data frame or
 #'   \code{sf} object containing survey design
 #'   variables, response variables, stressor variables, and subpopulation
 #'   (domain) variables.

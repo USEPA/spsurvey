@@ -45,7 +45,8 @@
 #' \code{"xcoord"} and \code{"ycoord"}, respectively, and the geometry column is
 #' dropped from the object.
 #'
-#' @param dframe The analysis data. A data frame containing survey design variables, response
+#' @param dframe Data to be analyzed (analysis data). A data frame or
+#'   \code{sf} object containing survey design variables, response
 #'   variables, and subpopulation (domain) variables.
 #'
 #' @param vars_cat Vector composed of character values that identify the names

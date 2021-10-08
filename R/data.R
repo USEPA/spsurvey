@@ -15,6 +15,25 @@
 #' }
 "NE_Lakes"
 
+#' New England Lakes data (as a data frame)
+#'
+#' An data frame of 200 lakes in the Northeastern
+#' United States.
+#'
+#' @format An data frame with 200 rows and 7 variables:
+#' \describe{
+#'   \item{\code{AREA}}{ Lake area in hectares.}
+#'   \item{\code{AREA_CAT}}{ Lake area categories based on a hectare cutoff.}
+#'   \item{\code{ELEV}}{ Elevation in meters.}
+#'   \item{\code{ELEV_CAT}}{ Elevation categories based on a meter cutoff.}
+#'   \item{\code{LEGACY}}{ Legacy site indicator.}
+#'   \item{\code{XCOORD}}{ x-coordinate using a NAD83 / Conus Albers
+#'     projection (EPSG: 5070)}
+#'   \item{\code{YCOORD}}{ y-coordinate using a NAD83 / Conus Albers
+#'     projection (EPSG: 5070)}
+#' }
+"NE_Lakes_df"
+
 #' Illinois River data
 #'
 #' An (\code{sf}) multilinestring object of 244 segments of the

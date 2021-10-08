@@ -1,4 +1,4 @@
-#' spsurvey: Spatial Survey Design and Analysis
+#' spsurvey: Spatial Sampling Design and Analysis
 #'
 #' spsurvey implements a design-based approach to statistical inference,
 #'   with a focus on spatial data.

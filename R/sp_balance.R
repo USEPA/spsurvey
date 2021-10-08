@@ -6,15 +6,14 @@
 #
 #' Calculate spatial balance metrics
 #'
-#' This function computes the spatial balance of a design with respect
-#' to the sampling frame (\code{sframe}) using Dirichlet Tesselations, measuring the
-#' extent to which a object is a miniature of \code{sframe}. This function is
-#' applicable for unstratified or stratified designs with equal selection
-#' probabilities.
+#' This function measures the spatial balance (with respect to the
+#' sampling frame) of design sites using
+#' Voroni polygons (Dirichlet tessellations).
 #'
-#' @param object An \code{sf} object containing the sampled sites.
+#' @param object An \code{sf} object containing some design sites.
 #'
-#' @param sframe An \code{sframe} or \code{sf} object containing the sampling frame.
+#' @param sframe The sampling frame as an \code{sf} object. The coordinate
+#'   system for \code{sframe} must be one where distance for coordinates is meaningful.
 #'
 #' @param stratum_var The name of the stratum variable in \code{object}
 #' and \code{sframe}. If \code{NULL} (the default), no strata is assumed.
@@ -23,7 +22,7 @@
 #' a two-dimensional character vector is provided, one element must be
 #' named "object" and corresponds to the name of the stratum variable
 #' in \code{object}, while the other element must be named "sframe" and
-#' correponds to the name of the stratum variable in \code{sframe}.
+#' corresponds to the name of the stratum variable in \code{sframe}.
 #'
 #' @param ip Inclusion probabilities associated with each row of \code{sframe}.
 #' If these are not provided, an equal probability design is assumed (within
@@ -49,11 +48,11 @@
 #'   All spatial balance metrics have a lower bound of zero, which indicates perfect
 #'   spatial balance. As the metric value increases, the spatial balance decreases.
 #'
-#' @param extents Should the total extent within each Dirichlet
-#' tessellation be returned? Defaults to \code{FALSE}.
+#' @param extents Should the extent (total units) within each Voroni polygon
+#'   be returned? Defaults to \code{FALSE}.
 #'
 #' @return A data frame with columns providing the stratum (\code{stratum}),
-#'  spatial balance metric (\code{metric}), and spatial balance (\code{value}).
+#'   spatial balance metric (\code{metric}), and spatial balance (\code{value}).
 #'
 #' @importFrom stats median
 #'
