@@ -2,7 +2,7 @@
 % Please edit documentation in R/change_analysis.R
 \name{change_analysis}
 \alias{change_analysis}
-\title{Estimation of change between two probability surveys}
+\title{Change analysis}
 \usage{
 change_analysis(
   dframe,
@@ -258,7 +258,7 @@ approximation, \code{"hr"} indicates the Hartley-Rao approximation, and
 \code{"brewer"} equals the Brewer approximation.  The default value is
 \code{"overton"}.}
 
-\item{conf}{Numeric value providing the confidence level.  The default value
+\item{conf}{Numeric value providing the Gaussian-based confidence level.  The default value
 is \code{95}.}
 
 \item{All_Sites}{A logical variable used when \code{subpops} is not
@@ -283,8 +283,8 @@ List of change estimates composed of three items:
   interval estimates.
 }
 \description{
-This function organizes input and output for estimation of change between two
-probability surveys.  The analysis data,
+This function organizes input and output for the estimation of change between two
+samples (for categorical and continuous variables).  The analysis data,
 \code{dframe}, can be either a data frame or a simple features (\code{sf}) object.  If an
 \code{sf} object is used, coordinates are extracted from the geometry column in the
 object, arguments \code{xcoord} and \code{ycoord} are assigned values

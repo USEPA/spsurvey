@@ -270,15 +270,26 @@ change_ests <- change_analysis(
   surveyID = "YEAR",
   weight = "WEIGHT"
 )
-change_ests
 ```
 The `surveyID` argument is the variable in the data distinguishing the different samples (`YEAR` in the previous example).
+
+To view the analysis results for `NITR_COND` (the categorical variable), run
+```{r}
+change_ests$catsum
+```
+Estimates are provided for the difference between the time points and for each of the two time points (the `_1` and `_2` suffixes).
+
+To view the analysis results for `BMMI` (the continuous variable), run
+```{r}
+change_ests$contsum_mean
+```
+Though we don't show an example here, the median can be estimated using the `test` argument to `change_anlaysis()`.
 
 Trend analysis generalizes change analysis to more than two samples. Though we omit an example here, the arguments to `trend_analysis()` are very similar to the arguments for `change_analysis()`. One difference is that `trend_analysis()` contains arguments that specify which statistical model to apply to the estimates from each sample.
 
 # Variance Estimation
 
-The default variance parameter estimator in spsurvey is the local neighborhood variance estimator (Stevens and Olsen, 2003). The local neighborhood variance estimator incorporates the spatial locations of sites into the variance estimation process. Becaues it incorporates spatial locations, the local neighborhood variance estimate tends to be smaller than variance estimates that ignore spatial locations. The local neighborhood variance estimator requires x-coordinates and y-coordinates of the sites. When the data are an `sf` object, the coordinates from the data's geometry are used. When the data are just a data frame, x-coordinates and y-coordinates must be provided using the `xcoord` and `ycoord` arguments, respectively, of the analysis function being used.
+The default variance parameter estimator in spsurvey is the local neighborhood variance estimator (Stevens and Olsen, 2003). The local neighborhood variance estimator incorporates the spatial locations of design sites into the variance estimation process. Because it incorporates spatial locations, the local neighborhood variance estimate tends to be smaller than variance estimates that ignore spatial locations. The local neighborhood variance estimator requires x-coordinates and y-coordinates (using an appropriate coordinate reference system) of the design sites. When the analysis data is an `sf` object, the coordinates from the data's geometry are used. When the analysis data is just a data frame, x-coordinates and y-coordinates (using an appropriate coordinate reference system) must be provided using the `xcoord` and `ycoord` arguments, respectively, of the analysis function being used.
 
 Several additional variance estimation options are available in spsurvey's analysis functions through the `vartype` and `jointprob` arguments.
 

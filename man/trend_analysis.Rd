@@ -2,7 +2,7 @@
 % Please edit documentation in R/trend_analysis.R
 \name{trend_analysis}
 \alias{trend_analysis}
-\title{Estimation of Trend across Time for a Series of Probability Surveys}
+\title{Trend analysis}
 \usage{
 trend_analysis(
   dframe,
@@ -283,7 +283,7 @@ approximation, \code{"hr"} indicates the Hartley_Rao approximation, and
 \code{"brewer"} equals the Brewer approximation.  The default value is
 \code{"overton"}.}
 
-\item{conf}{Numeric value for the confidence level.  The default is
+\item{conf}{Numeric value for the Gaussian-based confidence level.  The default is
 \code{95}.}
 
 \item{All_Sites}{A logical variable used when \code{subpops} is not
@@ -358,11 +358,11 @@ The analysis results. A list composed of two data frames containing trend estima
 }
 \description{
 This function organizes input and output for estimation of trend across time
-for a series of probability surveys, where trend is estimated using the
+for a series of samples (for categorical and continuous variables). Trend is estimated using the
 analytical procedure identified by the model arguments.  For categorical
-data, the choices for the \code{model_cat} argument are: (1) simple linear
+variables, the choices for the \code{model_cat} argument are: (1) simple linear
 regression, (2) weighted linear regression, and (3) generalized linear
-mixed-effects model. For continuous data, the choices for the
+mixed-effects model. For continuous variables, the choices for the
 \code{model_cont} argument are: (1) simple linear regression, (2) weighted
 linear regression, and (3)  linear mixed-effects model.  The analysis data,
 \code{dframe}, can be either a data frame or a simple features (\code{sf}) object.  If an
