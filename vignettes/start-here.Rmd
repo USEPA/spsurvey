@@ -68,10 +68,10 @@ The spsurvey version 5.0 update implemented many significant changes to existing
 
 The sampling functions in spsurvey require your data is an `sf` object. An `sf` object, shorthand for a "simple features" object, is an R object with a unique structure used to conveniently store spatial data. `sf` objects are constructed using the sf package (Pebesma, 2018). The sf package is loaded and installed alongside the spsurvey package, so you do not need to run `install.packages("sf")` or `library(sf)` to access the sf package if spsurvey is already installed and loaded. For more on the sf package, see [here](https://r-spatial.github.io/sf/index.html).
 
-Next we discuss three ways to construct sf objects in R. The first is to read a shapefile directly into R using `sf::st_read()` or `sf::read_sf()`. The second is to use the `sf::st_sf()` function or the `sf::st_as_sf()` function to combine an appropriate R object (most commonly a data frame) and an appropriate geometry object into an `sf` object. We can turn `NE_Lakes_df`, a data frame in spsurvey that contains variables and coordinates for lakes in the Northeastern United States, into an `sf` object named `NE_Lakes` by running
+Next we discuss three ways to construct sf objects in R. The first is to read a shapefile directly into R using `sf::st_read()` or `sf::read_sf()`. The second is to use the `sf::st_sf()` function or the `sf::st_as_sf()` function to combine an appropriate R object (most commonly a data frame) and an appropriate geometry object into an `sf` object. To illustrate one approach for turning a data frame into an `sf` object, we start `NE_Lakes_df`, a data frame in spsurvey that contains variables and geographic coordinates (latitude and longitude coordinates) for lakes in the Northeastern United States. To turn `NE_Lakes_df` into `NE_Lakes_geo`, an `sf` with geographic coordinates, run
 ```{r}
-NE_Lakes <- st_as_sf(NE_Lakes_df, coords = c("XCOORD", "YCOORD"), crs = 5070)
-NE_Lakes
+NE_Lakes_geo <- st_as_sf(NE_Lakes_df, coords = c("XCOORD", "YCOORD"), crs = 4326)
+NE_Lakes_geo
 ```
 
 The `coords` argument to `st_as_sf` specifies the columns in `NE_Lakes_df` that are the x-coordinates and y-coordinates. The `crs` argument specifies the coordinate reference system, which we discuss in more detail next.
@@ -79,24 +79,17 @@ The `coords` argument to `st_as_sf` specifies the columns in `NE_Lakes_df` that 
 
 # Coordinate reference systems
 
-Spatial data and `sf` objects rely on coordinate reference systems. A coordinate reference system (CRS) provides a structure by which to identify unique locations on the Earth's surface. CRSs are either geographic or projected. A geographic CRS uses longitude (east-west direction) and latitude (north-south direction) coordinates to represent location with respect to a specific ellipsoid or spheroid surface. Geographic CRSs are measured in degrees, *not units like meters or feet* -- this has important consequence. For example, a one degree difference in latitude is different at different longitudes. Projected CRSs are measured in standard Cartesian coordinates with respect to a flat surface. They have x and y locations, an origin, and a unit of measurement (like meters or feet). 
+Spatial data and `sf` objects rely on coordinate reference systems. A coordinate reference system (CRS) provides a structure by which to identify unique locations on the Earth's surface. CRSs are either geographic or projected. A geographic CRS uses longitude (east-west direction) and latitude (north-south direction) coordinates to represent location with respect to a specific ellipsoid or spheroid surface. Geographic CRSs are measured in degrees, *not units like meters or feet* -- this has important consequence. For example, a one degree difference in latitude is different at different longitudes. Projected CRSs are measured in standard Cartesian coordinates with respect to a flat surface. They have x and y locations, an origin, and a unit of measurement (like meters or feet).
 
-CRSs in R have traditionally been stored using EPSG codes or `proj4string` values. This meant that in order to transform your coordinates from one CRS to another, you needed two EPSG codes or `proj4string` values, one for each CRS. Recent updates to R's handling of spatial data follow GDAL and PROJ (more information available [here](https://www.r-spatial.org/r/2020/03/17/wkt.html)), and CRSs in `sf` objects are stored in R as lists with two components: `input`, which contains information regarding the EPSG code and proj4string; and `wkt`, an open geospatial standard format. For more information on CRSs and EPSG codes, see Pebesma (2018) and Lovelace et al. (2019). To search for various coordinate reference systems and EPSG codes, see [here](https://spatialreference.org) and [here](https://epsg.io/).
-
-spsurvey will use the coordinates from your `sf` object, so it is your responsibility to make sure the `sf` object has an appropriate CRS. If the CRS is not specified correctly, you may get misleading results.
-
-You can move between coordinate systems using `sf::st_transform()`. For example, we can transform from projected to geographic (latitude and longitude) coordinates  in `NE_Lakes`by running
-```{r}
-NE_Lakes_geo <- st_transform(NE_Lakes, crs = 4326)
-NE_Lakes_geo
-```
-
-Then we can transform back to projected coordinates by running
+You can move between coordinate systems using `sf::st_transform()`. We can transform `NE_Lakes_geo`, which uses geographic coordinates, to `NE_Lakes`, which uses projected coordinates, by running
 ```{r}
 NE_Lakes <- st_transform(NE_Lakes, crs = 5070)
 NE_Lakes
 ```
 
+CRSs in R have traditionally been stored using EPSG codes or `proj4string` values. This meant that in order to transform your coordinates from one CRS to another, you needed two EPSG codes or `proj4string` values, one for each CRS. Recent updates to R's handling of spatial data follow GDAL and PROJ (more information available [here](https://www.r-spatial.org/r/2020/03/17/wkt.html)), and CRSs in `sf` objects are stored in R as lists with two components: `input`, which contains information regarding the EPSG code and proj4string; and `wkt`, an open geospatial standard format. For more information on CRSs and EPSG codes, see Pebesma (2018) and Lovelace et al. (2019). To search for various coordinate reference systems and EPSG codes, see [here](https://spatialreference.org) and [here](https://epsg.io/).
+
+spsurvey will use the coordinates from your `sf` object, so it is your responsibility to make sure the `sf` object has an appropriate CRS. If the CRS is not specified correctly, you may get misleading results.
 
 # References
 

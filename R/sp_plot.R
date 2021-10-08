@@ -44,13 +44,13 @@
 #' in \code{x} and \code{y} with plot order \code{"sframe"}, \code{"Legacy"},
 #' \code{"Base"}, \code{"Over"}, \code{"Near"}.
 #'
-#' @param var_args A named list. The name of each list corresponds to a
+#' @param var_args A named list. The name of each list element corresponds to a
 #' right-hand side variable in \code{formula}. Values in the list are composed of
 #' graphical arguments that are to be passed to \strong{every} level of the
 #' variable.
 #'
-#' @param varlevel_args A named list. The name of each list corresponds to a
-#' right-hand side variable in \code{formula}. The first name of each sublist
+#' @param varlevel_args A named list. The name of each list element corresponds to a
+#' right-hand side variable in \code{formula}. The first name of each sublist element
 #' should be \code{"levels"} and contain all levels of the variable. Subsequent
 #' names correspond to graphical arguments that are to be passed to
 #' the specified levels (in order). Values must be specified

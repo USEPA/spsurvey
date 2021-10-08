@@ -27,10 +27,10 @@
 #'   \item{\code{ELEV}}{ Elevation in meters.}
 #'   \item{\code{ELEV_CAT}}{ Elevation categories based on a meter cutoff.}
 #'   \item{\code{LEGACY}}{ Legacy site indicator.}
-#'   \item{\code{XCOORD}}{ x-coordinate using a NAD83 / Conus Albers
-#'     projection (EPSG: 5070)}
-#'   \item{\code{YCOORD}}{ y-coordinate using a NAD83 / Conus Albers
-#'     projection (EPSG: 5070)}
+#'   \item{\code{XCOORD}}{ x-coordinate using WGS 84
+#'     (EPSG: 5070)}
+#'   \item{\code{YCOORD}}{ y-coordinate using WGS 84
+#'     (EPSG: 5070)}
 #' }
 "NE_Lakes_df"
 
