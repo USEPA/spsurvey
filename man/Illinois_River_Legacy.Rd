@@ -9,8 +9,8 @@ An \code{sf} point object object with 5 rows and 2
 variables:
 \describe{
   \item{\code{STATE_NAME}}{ State name.}
-  \item{\code{geometry}}{ Point geometry using a NAD83 / Conus Albers
-    projection (EPSG: 5070).}
+  \item{\code{geometry}}{ Point geometry using the NAD83 / Conus Albers
+    coordinate reference system (EPSG: 5070).}
 }
 }
 \usage{

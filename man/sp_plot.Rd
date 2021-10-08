@@ -65,13 +65,13 @@ or analysis data, the default formula is \code{~ 1}. When plotting design sites,
 \item{crs}{Projection code for \code{xcoord} and \code{ycoord} (only
 required if \code{object} is not an \code{sf} object)}
 
-\item{var_args}{A named list. The name of each list corresponds to a
+\item{var_args}{A named list. The name of each list element corresponds to a
 right-hand side variable in \code{formula}. Values in the list are composed of
 graphical arguments that are to be passed to \strong{every} level of the
 variable.}
 
-\item{varlevel_args}{A named list. The name of each list corresponds to a
-right-hand side variable in \code{formula}. The first name of each sublist
+\item{varlevel_args}{A named list. The name of each list element corresponds to a
+right-hand side variable in \code{formula}. The first name of each sublist element
 should be \code{"levels"} and contain all levels of the variable. Subsequent
 names correspond to graphical arguments that are to be passed to
 the specified levels (in order). Values must be specified

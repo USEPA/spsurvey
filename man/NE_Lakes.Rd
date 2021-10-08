@@ -12,8 +12,8 @@ An \code{sf} object with 200 rows and 6 variables:
   \item{\code{ELEV}}{ Elevation in meters.}
   \item{\code{ELEV_CAT}}{ Elevation categories based on a meter cutoff.}
   \item{\code{LEGACY}}{ Legacy site indicator.}
-  \item{\code{geometry}}{ Point geometry using a NAD83 / Conus Albers
-    projection (EPSG: 5070).}
+  \item{\code{geometry}}{ Point geometry using the NAD83 / Conus Albers
+    coordinate reference system (EPSG: 5070).}
 }
 }
 \usage{

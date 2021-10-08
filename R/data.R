@@ -10,8 +10,8 @@
 #'   \item{\code{ELEV}}{ Elevation in meters.}
 #'   \item{\code{ELEV_CAT}}{ Elevation categories based on a meter cutoff.}
 #'   \item{\code{LEGACY}}{ Legacy site indicator.}
-#'   \item{\code{geometry}}{ Point geometry using a NAD83 / Conus Albers
-#'     projection (EPSG: 5070).}
+#'   \item{\code{geometry}}{ Point geometry using the NAD83 / Conus Albers
+#'     coordinate reference system (EPSG: 5070).}
 #' }
 "NE_Lakes"
 
@@ -27,9 +27,9 @@
 #'   \item{\code{ELEV}}{ Elevation in meters.}
 #'   \item{\code{ELEV_CAT}}{ Elevation categories based on a meter cutoff.}
 #'   \item{\code{LEGACY}}{ Legacy site indicator.}
-#'   \item{\code{XCOORD}}{ x-coordinate using WGS 84
+#'   \item{\code{XCOORD}}{ x-coordinate using the WGS 84 coordinate reference system
 #'     (EPSG: 5070)}
-#'   \item{\code{YCOORD}}{ y-coordinate using WGS 84
+#'   \item{\code{YCOORD}}{ y-coordinate using WGS 84 coordinate reference system
 #'     (EPSG: 5070)}
 #' }
 "NE_Lakes_df"
@@ -43,8 +43,8 @@
 #' variables:
 #' \describe{
 #'   \item{\code{STATE_NAME}}{ State name.}
-#'   \item{\code{geometry}}{ Multilinestring geometry using a NAD83 / Conus Albers
-#'     projection (EPSG: 5070).}
+#'   \item{\code{geometry}}{ Multilinestring geometry using the NAD83 / Conus Albers
+#'     coordinate reference system (EPSG: 5070).}
 #' }
 "Illinois_River"
 
@@ -57,8 +57,8 @@
 #' variables:
 #' \describe{
 #'   \item{\code{STATE_NAME}}{ State name.}
-#'   \item{\code{geometry}}{ Point geometry using a NAD83 / Conus Albers
-#'     projection (EPSG: 5070).}
+#'   \item{\code{geometry}}{ Point geometry using the NAD83 / Conus Albers
+#'     coordinate reference system (EPSG: 5070).}
 #' }
 "Illinois_River_Legacy"
 
@@ -73,8 +73,8 @@
 #'   \item{\code{RSRC_CLASS}}{ Bay class.}
 #'   \item{\code{PSTL_CODE}}{ Postal code.}
 #'   \item{\code{AREA_SQKM}}{ Area in square kilometers}
-#'   \item{\code{geometry}}{ Multipolygon geometry using a NAD83 / Conus Albers
-#'     projection (EPSG: 5070).}
+#'   \item{\code{geometry}}{ Multipolygon geometry using the NAD83 / Conus Albers
+#'     coordinate reference system (EPSG: 5070).}
 #' }
 "Lake_Ontario"
 
@@ -94,8 +94,8 @@
 #'   \item{\code{BMMI_COND}}{ Benthic MMI condition categories.}
 #'   \item{\code{PHOS_COND}}{ Phosphorus condition categories.}
 #'   \item{\code{NITR_COND}}{ Nitrogen condition categories.}
-#'   \item{\code{geometry}}{ Point geometry using a NAD83 / Conus Albers
-#'     projection (EPSG: 5070).}
+#'   \item{\code{geometry}}{ Point geometry using the NAD83 / Conus Albers
+#'     coordinate reference system (EPSG: 5070).}
 #' }
 "NLA_PNW"
 
@@ -116,7 +116,7 @@
 #'   \item{\code{BMMI_COND}}{ Benthic MMI categories.}
 #'   \item{\code{PHOS_COND}}{ Phosphorus condition categories.}
 #'   \item{\code{NITR_COND}}{ Nitrogen condition categories.}
-#'   \item{\code{geometry}}{ Point geometry using a NAD83 / Conus Albers
-#'     projection (EPSG: 5070).}
+#'   \item{\code{geometry}}{ Point geometry using the NAD83 / Conus Albers
+#'     coordinate reference system (EPSG: 5070).}
 #' }
 "NRSA_EPA7"

@@ -11,8 +11,8 @@ An \code{sf} multipolygon object with 187 rows and 5 variables:
   \item{\code{RSRC_CLASS}}{ Bay class.}
   \item{\code{PSTL_CODE}}{ Postal code.}
   \item{\code{AREA_SQKM}}{ Area in square kilometers}
-  \item{\code{geometry}}{ Multipolygon geometry using a NAD83 / Conus Albers
-    projection (EPSG: 5070).}
+  \item{\code{geometry}}{ Multipolygon geometry using the NAD83 / Conus Albers
+    coordinate reference system (EPSG: 5070).}
 }
 }
 \usage{

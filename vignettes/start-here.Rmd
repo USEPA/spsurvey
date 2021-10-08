@@ -81,7 +81,7 @@ The `coords` argument to `st_as_sf` specifies the columns in `NE_Lakes_df` that 
 
 Spatial data and `sf` objects rely on coordinate reference systems. A coordinate reference system (CRS) provides a structure by which to identify unique locations on the Earth's surface. CRSs are either geographic or projected. A geographic CRS uses longitude (east-west direction) and latitude (north-south direction) coordinates to represent location with respect to a specific ellipsoid or spheroid surface. Geographic CRSs are measured in degrees, *not units like meters or feet* -- this has important consequence. For example, a one degree difference in latitude is different at different longitudes. Projected CRSs are measured in standard Cartesian coordinates with respect to a flat surface. They have x and y locations, an origin, and a unit of measurement (like meters or feet).
 
-You can move between coordinate systems using `sf::st_transform()`. We can transform `NE_Lakes_geo`, which uses geographic coordinates, to `NE_Lakes`, which uses projected coordinates, by running
+You can move between coordinate systems using `sf::st_transform()`. For example, we can transform `NE_Lakes_geo` (which uses geographic coordinates) to `NE_Lakes` (which uses projected coordinates) by running
 ```{r}
 NE_Lakes <- st_transform(NE_Lakes, crs = 5070)
 NE_Lakes

@@ -15,8 +15,8 @@ An \code{sf} point object with 96 rows and 9 variables:
   \item{\code{BMMI_COND}}{ Benthic MMI condition categories.}
   \item{\code{PHOS_COND}}{ Phosphorus condition categories.}
   \item{\code{NITR_COND}}{ Nitrogen condition categories.}
-  \item{\code{geometry}}{ Point geometry using a NAD83 / Conus Albers
-    projection (EPSG: 5070).}
+  \item{\code{geometry}}{ Point geometry using the NAD83 / Conus Albers
+    coordinate reference system (EPSG: 5070).}
 }
 }
 \usage{
