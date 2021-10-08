@@ -2,7 +2,7 @@
 % Please edit documentation in R/cont_analysis.R
 \name{cont_analysis}
 \alias{cont_analysis}
-\title{Continuous data analysis for probability survey data}
+\title{Continuous variable analysis}
 \usage{
 cont_analysis(
   dframe,
@@ -31,14 +31,15 @@ cont_analysis(
 )
 }
 \arguments{
-\item{dframe}{Data frame containing survey design variables, response
-variables, and subpopulation (domain) variables.}
+\item{dframe}{Data to be analyzed (analysis data). A data frame or
+\code{sf} object containing survey design
+variables, response variables, and subpopulation (domain) variables.}
 
 \item{vars}{Vector composed of character values that identify the
-names of response variables in the \code{dframe} data frame.}
+names of response variables in \code{dframe}.}
 
 \item{subpops}{Vector composed of character values that identify the
-names of subpopulation (domain) variables in the \code{dframe} data frame.
+names of subpopulation (domain) variables in \code{dframe}.
 If a value is not provided, the value \code{"All_Sites"} is assigned to the
 subpops argument and a factor variable named \code{"All_Sites"} that takes
 the value \code{"All Sites"} is added to the \code{dframe} data frame.  The
@@ -49,7 +50,7 @@ the \code{dframe} data frame.  For a two-stage sample, the site ID variable
 identifies stage two site IDs.  The default value is \code{"siteID"}.}
 
 \item{weight}{Character value providing name of the survey design weight
-variable in the \code{dframe} data frame.  For a two-stage sample, the
+variable in \code{dframe}.  For a two-stage sample, the
 weight variable identifies stage two weights.  The default value is
 \code{"weight"}.}
 
@@ -69,19 +70,19 @@ value is \code{NULL}.}
 the \code{dframe} data frame.  The default value is \code{NULL}.}
 
 \item{clusterID}{Character value providing the name of the cluster
-(stage one) ID variable in the \code{dframe} data frame.  Note that cluster
+(stage one) ID variable in \code{dframe}.  Note that cluster
 IDs are required for a two-stage sample.  The default value is \code{NULL}.}
 
 \item{weight1}{Character value providing name of the stage one weight
-variable in the \code{dframe} data frame.  The default value is \code{NULL}.}
+variable in \code{dframe}.  The default value is \code{NULL}.}
 
 \item{xcoord1}{Character value providing the name of the stage one
-x-coordinate variable in the \code{dframe} data frame.  Note that x
+x-coordinate variable in \code{dframe}.  Note that x
 coordinates are required for calculation of the local mean variance
 estimator.  The default value is \code{NULL}.}
 
 \item{ycoord1}{Character value providing the name of the stage one
-y-coordinate variable in the \code{dframe} data frame.  Note that
+y-coordinate variable in \code{dframe}.  Note that
 y-coordinates are required for calculation of the local mean variance
 estimator.  The default value is \code{NULL}.}
 
@@ -90,17 +91,15 @@ used during estimation, where \code{TRUE} uses size weights and
 \code{FALSE} does not use size weights. To employ size weights for a
 single-stage sample, a value must be supplied for argument weight.  To
 employ size weights for a two-stage sample, values must be supplied for
-arguments \code{weight} and \code{weight1}. The default value is
-\code{FALSE}.}
+arguments \code{weight} and \code{weight1}. The default value is \code{FALSE}.}
 
 \item{sweight}{Character value providing the name of the size weight variable
-in the \code{dframe} data frame.  For a two-stage sample, the size weight
+in \code{dframe}.  For a two-stage sample, the size weight
 variable identifies stage two size weights.  The default value is
 \code{NULL}.}
 
 \item{sweight1}{Character value providing name of the stage one size weight
-variable in the \code{dframe} data frame.  The default value is
-\code{NULL}.}
+variable in \code{dframe}.  The default value is \code{NULL}.}
 
 \item{fpc}{Object that specifies values required for calculation of the
   finite population correction factor used during variance estimation. The
@@ -111,7 +110,7 @@ variable in the \code{dframe} data frame.  The default value is
   named vector containing one more than the number of clusters in the sample,
   where the first item in the vector specifies the number of clusters in the
   population and each subsequent item specifies the number of stage two units
-  for the cluster.  The name for the first item in the vector is arbitrry.
+  for the cluster.  The name for the first item in the vector is arbitrary.
   Subsequent names in the vector identify clusters and must match the cluster
   IDs.  For a stratified design, the object is a named list of vectors, where
   names must match the strata IDs.  For each stratum, the format of the
@@ -173,7 +172,7 @@ variable in the \code{dframe} data frame.  The default value is
   post-stratification and raking by calibrating a sample to the marginal
   totals of variables in a linear regression model. For the \code{calibrate}
   function, the object is a named list, where the names identify factor
-  variables in the \code{dframe} data frame.  Each element of the list is a
+  variables in \code{dframe}.  Each element of the list is a
   named vector containing the population total for each level of the
   associated factor variable.  For the \code{postStratify} function, the
   object is either a data frame, table, or xtabs object that provides the
@@ -230,7 +229,7 @@ approximation, \code{"hr"} indicates the Hartley-Rao approximation, and
 \code{"brewer"} equals the Brewer approximation.  The default value is
 \code{"overton"}.}
 
-\item{conf}{Numeric value providing the confidence level.  The default value
+\item{conf}{Numeric value providing the Gaussian-based confidence level.  The default value
 is \code{95}.}
 
 \item{pctval}{Vector of the set of values at which percentiles are
@@ -251,7 +250,7 @@ returned for each variable in \code{vars}. If \code{All_Sites} is
 The default is \code{FALSE}.}
 }
 \value{
-A list composed of one, two, or three data frames that contain
+The analysis results. A list composed of one, two, or three data frames that contain
   population estimates for all combinations of subpopulations, categories
   within each subpopulation, and response variables, where the number of data
   frames is determined by argument statistics.  Estimates are provided for
@@ -265,13 +264,13 @@ A list composed of one, two, or three data frames that contain
   }
 }
 \description{
-This function organizes input and output for analysis of continuous data
-generated by a probability survey.  The input data argument can be either a
-data frame or a simple features (\code{sf}) object.  If an \code{sf} object
-is used, coordinates are extracted from the geometry column in the object,
-arguments \code{xcoord} and \code{ycoord} are assigned values \code{"xcoord"}
-and \code{"ycoord"}, respectively, and the geometry column is dropped from
-the object.
+This function organizes input and output for the analysis of continuous variables.
+The analysis data,
+\code{dframe}, can be either a data frame or a simple features (\code{sf}) object.  If an
+\code{sf} object is used, coordinates are extracted from the geometry column in the
+object, arguments \code{xcoord} and \code{ycoord} are assigned values
+\code{"xcoord"} and \code{"ycoord"}, respectively, and the geometry column is
+dropped from the object.
 }
 \examples{
 dframe <- data.frame(

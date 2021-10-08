@@ -70,7 +70,7 @@ Cook R. D.  and C. Nachtsheim. (1989). Computer-aided blocking of factorial
     \item{\code{\link{revisit_dsgn}}}{to create a panel revisit design}
     \item{\code{\link{revisit_rand}}}{to create a panel revisit design with random
       assignment to panels and time periods}
-    \item{\code{\link{summary.paneldesign}}}{ to summarize characteristics of a
+    \item{\code{\link{pd_summary}}}{ to summarize characteristics of a
       panel revisit design}
   }
 }

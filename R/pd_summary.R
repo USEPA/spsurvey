@@ -1,5 +1,5 @@
 ###############################################################################
-# Function: panel_summary (exported)
+# Function: pd_summary (exported)
 # Programmer: Tony Olsen
 # Date: March 14, 2019
 #'
@@ -56,13 +56,17 @@
 #'   n = 60, pnl_dsgn = c(1, 4),
 #'   pnl_n = NA, start_option = "None"
 #' )), begin = 1)
-#' summary(sa_dsgn)
+#' pd_summary(sa_dsgn)
 #' # Add visit design where first panel is sampled twice at every time period
 #' sa_visit <- sa_dsgn
 #' sa_visit[sa_visit > 0] <- 1
 #' sa_visit[1, sa_visit[1, ] > 0] <- 2
-#' summary(sa_dsgn, sa_visit)
-summary.paneldesign <- function(object, visitdsgn = NULL, ...) {
+#' pd_summary(sa_dsgn, sa_visit)
+pd_summary <- function(object, visitdsgn = NULL, ...) {
+  if (!inherits(object, "paneldesign")) {
+    stop("object must be output from spsurvey::revisit_bibd(),
+         spsurvey::revisit_dsgn(), or spsurvey::revisit_rand()")
+  }
   paneldsgn <- object
   n_pan <- dim(paneldsgn)[1]
   n_period <- dim(paneldsgn)[2]

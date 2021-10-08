@@ -6,7 +6,7 @@
 #' \code{sf} object is desired; e.g. writing the sites to a single shape file the
 #' \code{st_write} function in the sf package.
 #'
-#' @param object A sample from \code{grts()} or \code{irs()}
+#' @param object The design sites (output from \code{grts()} or \code{irs()})
 #'
 #' @param siteuse A character vector of site types to return. Can contain
 #' \code{"Legacy"} (for legacy sites), \code{"Base"} (for base sites),
@@ -15,7 +15,7 @@
 #' returns all non-\code{NULL} output from \code{object$sites_legacy},
 #' \code{object$sites_base}, \code{object$sites_over}, and \code{object$sites_near}.
 #'
-#' @return A single \code{sf} object containing rows for the requested sites.
+#' @return A single \code{sf} object containing all requested design sites.
 #'
 #' @author Michael Dumelle \email{Dumelle.Michael@@epa.gov}
 #'
@@ -23,11 +23,11 @@
 #'
 #' @examples
 #' sample <- grts(NE_Lakes, 50, n_over = 10)
-#' sample <- sprbind(sample)
+#' sample <- sp_rbind(sample)
 #' \dontrun{
-#' st_write(sample, "mypath/sample.shp")
+#' write_sf(sample, "mypath/sample.shp")
 #' }
-sprbind <- function(object, siteuse = NULL) {
+sp_rbind <- function(object, siteuse = NULL) {
   if (!inherits(object, "spdesign")) {
     stop("object must be output from grts() or irs()")
   } else {

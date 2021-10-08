@@ -1,5 +1,5 @@
 ###############################################################################
-# Function: plot.powerpaneldesign (exported)
+# Function: ppd_plot (exported)
 # Programmer: Tony Olsen
 # Date: March 14, 2019
 #
@@ -13,12 +13,10 @@
 #' period/change and design/indicator.  Input must be be of class
 #' powerpaneldesign and is normally the output of function power_dsgn.
 #'
-#' @param x  List object of class \code{powerpaneldesign}. Object provides
+#' @param object  List object of class \code{powerpaneldesign}. Object provides
 #'   power calculated for a set of panel designs, set of indicators, set of
 #'   trend values, and set of alpha values. Expect input as list as output from
 #'   function \code{power_dsgn}.
-#'
-#' @param y \code{NULL} argument.
 #'
 #' @param plot_type   Default is \code{"standard"} which plots standard power curve. If
 #'   equal to \code{"relative"}, then plot power of one panel design compared to one or
@@ -132,20 +130,23 @@
 #'   ), nrepeats = NULL,
 #'   trend_type = "mean", trend = c(1.0, 2.0), alpha = 0.05
 #' )
-#' plot(Power_tst)
-#' plot(Power_tst, dsgns = c("F60", "R60N"))
-#' plot(Power_tst, dsgns = c("F60", "R60N"), trend = 1.0)
-#' plot(Power_tst,
+#' ppd_plot(Power_tst)
+#' ppd_plot(Power_tst, dsgns = c("F60", "R60N"))
+#' ppd_plot(Power_tst, dsgns = c("F60", "R60N"), trend = 1.0)
+#' ppd_plot(Power_tst,
 #'   plot_type = "relative", comp_type = "design",
 #'   trend_type = "mean", trend = c(1, 2), dsgns = c("R60N", "F60"),
 #'   indicator = "Variable_Name"
 #' )
 #' @export
 ###############################################################################
-plot.powerpaneldesign <- function(x, y = NULL, plot_type = "standard",
+ppd_plot <- function(object, plot_type = "standard",
                                   trend_type = "mean", xaxis_type = "period", comp_type = "design",
                                   dsgns = NULL, indicator = NULL, trend = NULL, period = NULL, alpha = NULL, ...) {
-  dsgnpower <- x
+  if (!inherits(object, "powerpaneldesign")) {
+    stop("object must be output from spsurvey::power_dsgn()")
+  }
+  dsgnpower <- object
   # preserve current plot parameters
   oldpar <- par(mar = c(5.1, 4.1, 0.1, 0.1), oma = c(0, 0.1, 2.1, 0.1), xpd = TRUE)
 
@@ -284,8 +285,8 @@ plot.powerpaneldesign <- function(x, y = NULL, plot_type = "standard",
 
               # set up initial plot area,  xaxis and yaxis
               plot(xset, seq(0, 1, length = length(xset)),
-                ylim = c(0, 1), xlim = c(period_min, period_max),
-                ylab = "", xlab = "", type = "n", axes = F
+                   ylim = c(0, 1), xlim = c(period_min, period_max),
+                   ylab = "", xlab = "", type = "n", axes = F
               )
               axis(side = 1, line = -0.75, at = xset, labels = xset, adj = 0.5, font = 3, cex = 1)
               axis(
@@ -334,8 +335,8 @@ plot.powerpaneldesign <- function(x, y = NULL, plot_type = "standard",
               xlabel <- paste("Trend: %/period; Total % and Mean at Period ", period_plot[i], sep = "")
               # set up initial plot area,  xaxis and yaxis
               plot(xset, seq(0, 1, length = length(xset)),
-                ylim = c(0, 1), xlim = c(xmin, xmax),
-                ylab = "", xlab = "", type = "n", axes = F
+                   ylim = c(0, 1), xlim = c(xmin, xmax),
+                   ylab = "", xlab = "", type = "n", axes = F
               )
               axis(side = 1, line = -1, at = xset, labels = round(xset, 2), adj = 0.5, font = 3, cex = 1)
               axis(
@@ -396,8 +397,8 @@ plot.powerpaneldesign <- function(x, y = NULL, plot_type = "standard",
 
               # set up initial plot area,  xaxis and yaxis
               plot(xset, seq(0, 1, length = length(xset)),
-                ylim = c(0, 1), xlim = c(period_min, period_max),
-                ylab = "", xlab = "", type = "n", axes = F
+                   ylim = c(0, 1), xlim = c(period_min, period_max),
+                   ylab = "", xlab = "", type = "n", axes = F
               )
               axis(side = 1, line = -0.75, at = xset, labels = xset, adj = 0.5, font = 3, cex = 1)
               axis(
@@ -450,8 +451,8 @@ plot.powerpaneldesign <- function(x, y = NULL, plot_type = "standard",
               }
               # set up initial plot area,  xaxis and yaxis
               plot(xset, seq(0, 1, length = length(xset)),
-                ylim = c(0, 1), xlim = c(xmin, xmax),
-                ylab = "", xlab = "", type = "n", axes = F
+                   ylim = c(0, 1), xlim = c(xmin, xmax),
+                   ylab = "", xlab = "", type = "n", axes = F
               )
               axis(side = 1, line = -1, at = xset, labels = round(xset, 2), adj = 0.5, font = 3, cex = 1)
               axis(
@@ -532,8 +533,8 @@ plot.powerpaneldesign <- function(x, y = NULL, plot_type = "standard",
               xset <- seq(period_min, by = 1, to = period_max)
               # set up initial plot area,  xaxis and yaxis
               plot(xset, seq(0, 1, length = length(xset)),
-                ylim = c(ylow, 1), xlim = c(period_min, period_max),
-                ylab = "", xlab = "", type = "n", axes = F
+                   ylim = c(ylow, 1), xlim = c(period_min, period_max),
+                   ylab = "", xlab = "", type = "n", axes = F
               )
               axis(side = 1, line = -0.75, at = xset, labels = xset, adj = 0.5, font = 3, cex = 1)
               axis(
@@ -553,8 +554,8 @@ plot.powerpaneldesign <- function(x, y = NULL, plot_type = "standard",
               text(period_min, 0.86, font = 3, cex = .8, adj = 0, paste0("Indicator = ", ind_plot[k]))
               # legend for panel design power plotted
               legend(period_min, 0.82, c(dsgn_plot[1], dsgn_plot),
-                lty = c(1, 1:n_dsgn),
-                col = c("blue", rep("black", length(dsgn_plot))), lwd = 2, seg.len = 5, bty = "n"
+                     lty = c(1, 1:n_dsgn),
+                     col = c("blue", rep("black", length(dsgn_plot))), lwd = 2, seg.len = 5, bty = "n"
               )
 
               # find panel_base power and plot power curve
@@ -608,8 +609,8 @@ plot.powerpaneldesign <- function(x, y = NULL, plot_type = "standard",
               xlabel <- paste("Trend: %/Period; Total % and Mean at Period ", period_plot[i], sep = "")
               # set up initial plot area,  xaxis and yaxis
               plot(xset, seq(0, 1, length = length(xset)),
-                ylim = c(ylow, 1), xlim = c(xmin, xmax),
-                ylab = "", xlab = "", type = "n", axes = F
+                   ylim = c(ylow, 1), xlim = c(xmin, xmax),
+                   ylab = "", xlab = "", type = "n", axes = F
               )
               axis(side = 1, line = -1, at = xset, labels = round(xset, 2), adj = 0.5, font = 3, cex = 1)
               axis(
@@ -637,8 +638,8 @@ plot.powerpaneldesign <- function(x, y = NULL, plot_type = "standard",
               text(xmin, 0.86, font = 3, cex = .8, adj = 0, paste0("Indicator = ", ind_plot[k]))
               # legend for panel design power plotted
               legend(xmin, 0.82, c(dsgn_plot[1], dsgn_plot),
-                lty = c(1, 1:n_dsgn),
-                col = c("blue", rep("black", length(dsgn_plot))), lwd = 2, seg.len = 5, bty = "n"
+                     lty = c(1, 1:n_dsgn),
+                     col = c("blue", rep("black", length(dsgn_plot))), lwd = 2, seg.len = 5, bty = "n"
               )
 
               # find panel_base power and plot power curve
@@ -692,8 +693,8 @@ plot.powerpaneldesign <- function(x, y = NULL, plot_type = "standard",
               xset <- seq(period_min, by = 1, to = period_max)
               # set up initial plot area,  xaxis and yaxis
               plot(xset, seq(0, 1, length = length(xset)),
-                ylim = c(ylow, 1), xlim = c(period_min, period_max),
-                ylab = "", xlab = "", type = "n", axes = F
+                   ylim = c(ylow, 1), xlim = c(period_min, period_max),
+                   ylab = "", xlab = "", type = "n", axes = F
               )
               axis(side = 1, line = -0.75, at = xset, labels = xset, adj = 0.5, font = 3, cex = 1)
               axis(
@@ -713,8 +714,8 @@ plot.powerpaneldesign <- function(x, y = NULL, plot_type = "standard",
               text(period_min, 0.86, font = 3, cex = .8, adj = 0, paste0("Panel Design = ", dsgn_plot[k]))
               # legend for panel design power plotted
               legend(period_min, 0.82, c(ind_plot[1], ind_plot),
-                lty = c(1, 1:n_ind),
-                col = c("blue", rep("black", length(ind_plot))), lwd = 2, seg.len = 5, bty = "n"
+                     lty = c(1, 1:n_ind),
+                     col = c("blue", rep("black", length(ind_plot))), lwd = 2, seg.len = 5, bty = "n"
               )
 
               # find panel_base power and plot power curve
@@ -767,8 +768,8 @@ plot.powerpaneldesign <- function(x, y = NULL, plot_type = "standard",
               xlabel <- paste("Trend: %/Period; Total % at Period ", period_plot[i], sep = "")
               # set up initial plot area,  xaxis and yaxis
               plot(xset, seq(0, 1, length = length(xset)),
-                ylim = c(ylow, 1), xlim = c(xmin, xmax),
-                ylab = "", xlab = "", type = "n", axes = F
+                   ylim = c(ylow, 1), xlim = c(xmin, xmax),
+                   ylab = "", xlab = "", type = "n", axes = F
               )
               axis(side = 1, line = -1, at = xset, labels = round(xset, 2), adj = 0.5, font = 3, cex = 1)
               axis(
@@ -792,8 +793,8 @@ plot.powerpaneldesign <- function(x, y = NULL, plot_type = "standard",
               text(xmin, 0.86, font = 3, cex = .8, adj = 0, paste0("Panel Design = ", dsgn_plot[k]))
               # legend for indicator power plotted
               legend(xmin, 0.82, c(ind_plot[1], ind_plot),
-                lty = c(1, 1:n_ind),
-                col = c("blue", rep("black", length(ind_plot))), lwd = 2, seg.len = 5, bty = "n"
+                     lty = c(1, 1:n_ind),
+                     col = c("blue", rep("black", length(ind_plot))), lwd = 2, seg.len = 5, bty = "n"
               )
 
               # find panel_base power and plot power curve

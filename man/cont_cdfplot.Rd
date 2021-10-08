@@ -26,9 +26,8 @@ cont_cdfplot(
 \arguments{
 \item{pdffile}{Name of the PDF file.  The default is "cdf2x2.pdf".}
 
-\item{cdfest}{Data frame utilizing the same structure as the data frame
-named "CDF" that is included in the output object produced by function
-\code{cont_analysis}.}
+\item{cdfest}{Data frame with the same structure as the "CDF"
+output from  \code{cont_analysis}.}
 
 \item{units_cdf}{Indicator for the label utilized for the left side y-axis
 and the values used for the left side y-axis tick marks, where "Percent"
@@ -95,10 +94,10 @@ A PDF file containing the CDF plots.
 }
 \description{
 This function creates a PDF file containing CDF plots.  Input data for the
-plots is provided by a data frame utilizing the same structure as the data
-frame named "CDF" that is included in the output object produced by function
-\code{cont_analysis}.  Plots are produced for every combination of Type of
-population, subpopulation within Type, and indicator.
+plots is provided by a data frame with the same structure as the "CDF"
+output from  \code{cont_analysis}.  Plots are produced for every combination of \code{Type} of
+population, \code{Subpopulation} within \code{Type}, and \code{Indicator} (every combination
+of subpopulations, subpopulation levels, and variables).
 }
 \examples{
 dframe <- data.frame(

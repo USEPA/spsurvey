@@ -28,14 +28,16 @@ grts(
 )
 }
 \arguments{
-\item{sframe}{The sample frame as an \code{sf} object. The coordinate
+\item{sframe}{The sampling frame as an \code{sf} object. The coordinate
 system for \code{sframe} must be one where distance for coordinates is meaningful.}
 
 \item{n_base}{The base sample size required. If the design is unstratified,
 this is a single numeric value. If the design is stratified, this is a named
 vector or list whose names represent each stratum and whose values represent each
 stratum's sample size. These names must match the values of the stratification
-variable represented by \code{stratum_var}.}
+variable represented by \code{stratum_var}. Legacy sites are considered part
+of the base sample, so the value for \code{n_base} should be equal to the number
+of legacy sites plus the number of desired non-legacy sites.}
 
 \item{stratum_var}{A character string containing the name of the column from
 \code{sframe} that identifies stratum membership for each element in the frame.
@@ -81,17 +83,22 @@ variable (auxiliary variable). This auxiliary variable must be positive, and the
 inclusion probabilities are proportional to the values of the auxiliary variable.
 Larger values of the auxiliary variable result in higher inclusion probabilities.}
 
-\item{legacy_var}{If \code{sframe} is a \code{POINT} or \code{MULTIPOINT} geometry (a finite sample frame),
+\item{legacy_var}{If \code{sframe} is a \code{POINT} or \code{MULTIPOINT}
+geometry (i.e. a finite sampling frame),
 \code{legacy_var} is a character string containing the name of the column
 from \code{sframe} that represents the legacy site variable. For legacy sites, the values of the
 \code{legacy_var} column in \code{sframe} must contain character strings that
 act as a legacy site identifier. For non-legacy sites, the values of the
-\code{legacy_var} column in \code{sframe} must be \code{NA}.}
+\code{legacy_var} column in \code{sframe} must be \code{NA}. spsurvey assumes
+that the legacy sites were selected from a previous sampling design that
+incorporated randomness into the sampling design.}
 
 \item{legacy_sites}{If \code{sframe} is a \code{LINESTRING}, \code{MULTILINESTRING},
-\code{POLYGON}, or \code{MULTIPOLYGON} geometry (an infinite sample frame),
+\code{POLYGON}, or \code{MULTIPOLYGON} geometry (an infinite sampling frame),
 \code{legacy_sites} is an sf object with a \code{POINT} or \code{MULTIPOINT}
-geometry representing the legacy sites.}
+geometry representing the legacy sites. spsurvey assumes that
+the legacy sites were selected from a previous sampling design that
+incorporated randomness into site selection.}
 
 \item{legacy_stratum_var}{A character string containing the name of the column from
 \code{legacy_sites} that identifies stratum membership for each element of \code{legacy_sites}.
@@ -159,7 +166,7 @@ desired for each stratum, \code{n_near} is a list whose names represent strata a
 values is integer from \code{1}
 to \code{10} specifying the number of
 nearest neighbor replacement sites to be selected for each base site in the stratum. If replacement sites are not desired for a particular stratum, then the corresponding value in \code{n_over} should be \code{NULL}. For
-infinite sample frames, the distance between a site and its nearest neighbor
+infinite sampling frames, the distance between a site and its nearest neighbor
 depends on \code{pt_density}.}
 
 \item{wgt_units}{The units used to compute the survey design weights. These
@@ -167,11 +174,11 @@ units must be standard units as defined by the \code{set_units()} function in
 the units package. The default units match the units of the sf object.}
 
 \item{pt_density}{A numeric value controlling the density of the GRTS approximation
-for infinite sample frames. The GRTS approximation for infinite sample
+for infinite sampling frames. The GRTS approximation for infinite sample
 frames vastly improves computational efficiency by generating many finite points and
 selecting a sample from the points. \code{pt_density} represents the density
 of finite points per unit to use in the approximation (and the units match
-the units of the sample frame. The default is a density
+the units of the sampling frame. The default is a density
 such that the number of finite points used in the approximation equals 10
 times the sample size requested.}
 
@@ -189,7 +196,7 @@ For example, if \code{nbase} is 50 and \code{nover} is 0, then the default
 site identifiers are \code{Site-01} to \code{Site-50}}
 }
 \value{
-A list with five elements:
+The design sites and additional information about the design. More specifically, a list with five elements:
   \itemize{
     \item \code{sites_legacy} An sf object containing legacy sites. This is
       \code{NULL} if legacy sites were not included in the sample.
@@ -258,10 +265,13 @@ A list with five elements:
       column is only returned if \code{seltype} was \code{proportional} in the
       original design.
   }
+  If any columns in \code{sframe} contain these names, those columns
+  from \code{sframe} will be automatically prefixed with \code{sframe_}
+  in the \code{sites} object.
 }
 \description{
 Select a spatially balanced sample from a point (finite), linear (infinite),
-or polygon / areal (infinite) sample frame using the Generalized Random Tessellation
+or polygon / areal (infinite) sampling frame using the Generalized Random Tessellation
 Stratified (GRTS) algorithm. The GRTS algorithm accommodates unstratified and
 stratified designs and allows for equal inclusion probabilities, unequal
 inclusion probabilities according to a categorical variable, and inclusion
@@ -297,5 +307,3 @@ of natural resources. \emph{Journal of the american Statistical association}, 99
 \author{
 Tony Olsen \email{olsen.tony@epa.gov}
 }
-\keyword{design}
-\keyword{survey}

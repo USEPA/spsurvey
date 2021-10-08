@@ -1,14 +1,7 @@
-context("plot")
+context("sp_plot")
 
 # set reproducible seed (as there are random components here)
 set.seed(5)
-
-#################################################
-########### sframe
-#################################################
-
-# make NE_Lakes an sframe object
-NE_Lakes <- sframe(NE_Lakes)
 
 #--------------------------------------
 #-------- one sided formula
@@ -16,23 +9,23 @@ NE_Lakes <- sframe(NE_Lakes)
 
 # one sided formulas
 test_that("one sided formulas work", {
-  expect_error(plot(NE_Lakes, formula = ~1), NA)
-  expect_error(plot(NE_Lakes, formula = ~ELEV_CAT), NA)
-  expect_error(plot(NE_Lakes, formula = ~ELEV_CAT, fix_bbox = FALSE), NA)
-  expect_error(plot(NE_Lakes, formula = ~ ELEV_CAT:AREA_CAT), NA)
-  expect_error(plot(NE_Lakes, formula = ~ELEV), NA)
+  expect_error(sp_plot(NE_Lakes, formula = ~1), NA)
+  expect_error(sp_plot(NE_Lakes, formula = ~ELEV_CAT), NA)
+  expect_error(sp_plot(NE_Lakes, formula = ~ELEV_CAT, fix_bbox = FALSE), NA)
+  expect_error(sp_plot(NE_Lakes, formula = ~ ELEV_CAT:AREA_CAT), NA)
+  expect_error(sp_plot(NE_Lakes, formula = ~ELEV), NA)
 })
 
 # changing graphical parameters
 test_that("one sided formulas work", {
-  expect_error(plot(NE_Lakes, formula = ~ELEV_CAT, pch = 19), NA)
+  expect_error(sp_plot(NE_Lakes, formula = ~ELEV_CAT, pch = 19), NA)
   var_args <- list(ELEV_CAT = list(main = "maintest"))
-  expect_error(plot(NE_Lakes, formula = ~ELEV_CAT, var_args = var_args), NA)
+  expect_error(sp_plot(NE_Lakes, formula = ~ELEV_CAT, var_args = var_args), NA)
   varlevel_args <- list(ELEV_CAT = list(levels = c("low", "high"), cex = c(1, NA)))
-  expect_error(plot(NE_Lakes, formula = ~ELEV_CAT, varlevel_args = varlevel_args), NA)
+  expect_error(sp_plot(NE_Lakes, formula = ~ELEV_CAT, varlevel_args = varlevel_args), NA)
   varlevel_args <- list(ELEV_CAT = list(levels = c("low", "high"), cex = c(1, 2)))
-  expect_error(plot(NE_Lakes, formula = ~ELEV_CAT, varlevel_args = varlevel_args), NA)
-  expect_error(plot(NE_Lakes,
+  expect_error(sp_plot(NE_Lakes, formula = ~ELEV_CAT, varlevel_args = varlevel_args), NA)
+  expect_error(sp_plot(NE_Lakes,
     formula = ~ELEV_CAT,
     varlevel_args = varlevel_args, var_args = var_args, pch = 19
   ), NA)
@@ -45,14 +38,14 @@ test_that("one sided formulas work", {
 
 # two sided formulas
 test_that("two sided formulas work", {
-  expect_error(plot(NE_Lakes, formula = ELEV ~ 1), NA)
-  expect_error(plot(NE_Lakes, formula = ELEV ~ AREA_CAT, onlyshow = "small"), NA)
+  expect_error(sp_plot(NE_Lakes, formula = ELEV ~ 1), NA)
+  expect_error(sp_plot(NE_Lakes, formula = ELEV ~ AREA_CAT, onlyshow = "small"), NA)
 })
 
 # changing graphical parameters
 test_that("two sided formulas work", {
   var_args <- list(AREA_CAT = list(ELEV_CAT = list(levels = c("low", "high"), pch = c(1, 19))))
-  expect_error(plot(NE_Lakes, formula = ELEV_CAT ~ AREA_CAT, var_args = var_args, onlyshow = "large"), NA)
+  expect_error(sp_plot(NE_Lakes, formula = ELEV_CAT ~ AREA_CAT, var_args = var_args, onlyshow = "large"), NA)
 })
 
 
@@ -75,26 +68,26 @@ eqprob_strat <- grts(NE_Lakes, n_base = n_base_strat, stratum_var = "ELEV_CAT")
 #-------- without sframe
 #--------------------------------------
 
-# test plotting works
-test_that("plotting works", {
-  expect_error(plot(eqprob, formula = ~siteuse), NA)
-  expect_error(plot(eqprob_legacy, formula = ~siteuse), NA)
-  expect_error(plot(eqprob_rho, formula = ~siteuse), NA)
-  expect_error(plot(eqprob_nn, formula = ~siteuse), NA)
-  expect_error(plot(eqprob_nn, formula = ~siteuse, siteuse = c("Base")), NA)
-  expect_error(plot(eqprob_strat, formula = siteuse ~ stratum, onlyshow = "low"), NA)
+# test sp_plot works
+test_that("sp_plot works", {
+  expect_error(sp_plot(eqprob, formula = ~siteuse), NA)
+  expect_error(sp_plot(eqprob_legacy, formula = ~siteuse), NA)
+  expect_error(sp_plot(eqprob_rho, formula = ~siteuse), NA)
+  expect_error(sp_plot(eqprob_nn, formula = ~siteuse), NA)
+  expect_error(sp_plot(eqprob_nn, formula = ~siteuse, siteuse = c("Base")), NA)
+  expect_error(sp_plot(eqprob_strat, formula = siteuse ~ stratum, onlyshow = "low"), NA)
 })
 
 # graphical paraemters
-test_that("plotting works", {
+test_that("sp_plot works", {
   var_args <- list(siteuse = list(main = "maintest"))
   varlevel_args <- list(siteuse = list(levels = c("Base", "Over"), pch = c(1, 19)))
-  expect_error(plot(eqprob_rho,
+  expect_error(sp_plot(eqprob_rho,
     formula = ~siteuse,
     varlevel_args = varlevel_args, var_args = var_args, cex = 0.5
   ), NA)
   var_args <- list(ELEV_CAT = list(siteuse = list(levels = c("Base", "Over"), pch = c(1, 19))))
-  expect_error(plot(eqprob_rho,
+  expect_error(sp_plot(eqprob_rho,
     formula = siteuse ~ ELEV_CAT,
     var_args = var_args, onlyshow = "low", cex = 0.5
   ), NA)
@@ -104,39 +97,30 @@ test_that("plotting works", {
 #-------- with sframe
 #--------------------------------------
 
-# test plotting works
-test_that("plotting works", {
-  expect_error(plot(eqprob, NE_Lakes, formula = ~siteuse), NA)
-  expect_error(plot(eqprob_legacy, NE_Lakes, formula = ~siteuse), NA)
-  expect_error(plot(eqprob_rho, NE_Lakes, formula = ~siteuse), NA)
-  expect_error(plot(eqprob_nn, NE_Lakes, formula = ~siteuse), NA)
-  expect_error(plot(eqprob_nn, NE_Lakes, formula = ~siteuse, siteuse = c("Base")), NA)
-  expect_error(plot(eqprob_strat, NE_Lakes, formula = siteuse ~ ELEV_CAT, onlyshow = "low"), NA)
+# test sp_plot works
+test_that("sp_plot works", {
+  expect_error(sp_plot(eqprob, NE_Lakes, formula = ~siteuse), NA)
+  expect_error(sp_plot(eqprob_legacy, NE_Lakes, formula = ~siteuse), NA)
+  expect_error(sp_plot(eqprob_rho, NE_Lakes, formula = ~siteuse), NA)
+  expect_error(sp_plot(eqprob_nn, NE_Lakes, formula = ~siteuse), NA)
+  expect_error(sp_plot(eqprob_nn, NE_Lakes, formula = ~siteuse, siteuse = c("Base")), NA)
+  expect_error(sp_plot(eqprob_strat, NE_Lakes, formula = siteuse ~ ELEV_CAT, onlyshow = "low"), NA)
 })
 
 # graphical parameters
-test_that("plotting works", {
+test_that("sp_plot works", {
   var_args <- list(siteuse = list(main = "maintest"))
   varlevel_args <- list(siteuse = list(levels = c("Base", "Over"), pch = c(1, 19)))
-  expect_error(plot(eqprob_rho, NE_Lakes,
+  expect_error(sp_plot(eqprob_rho, NE_Lakes,
     formula = ~siteuse,
     varlevel_args = varlevel_args, var_args = var_args, cex = 0.5
   ), NA)
   var_args <- list(ELEV_CAT = list(siteuse = list(levels = c("Base"), pch = c(19))))
-  expect_error(plot(eqprob_rho, NE_Lakes,
+  expect_error(sp_plot(eqprob_rho, NE_Lakes,
     formula = siteuse ~ ELEV_CAT,
     var_args = var_args, onlyshow = "low", siteuse = c("Base"), cex = 1
   ), NA)
 })
-
-#################################################
-########### dframe
-#################################################
-
-# turn to sf object
-NE_Lakes <- sframe_to_sf(NE_Lakes)
-# turn to dframe object
-NE_Lakes <- dframe(NE_Lakes)
 
 #--------------------------------------
 #-------- one sided formula
@@ -144,23 +128,23 @@ NE_Lakes <- dframe(NE_Lakes)
 
 # one sided formulas
 test_that("one sided formulas work", {
-  expect_error(plot(NE_Lakes, formula = ~1), NA)
-  expect_error(plot(NE_Lakes, formula = ~ELEV_CAT), NA)
-  expect_error(plot(NE_Lakes, formula = ~ELEV_CAT, fix_bbox = FALSE), NA)
-  expect_error(plot(NE_Lakes, formula = ~ ELEV_CAT:AREA_CAT), NA)
-  expect_error(plot(NE_Lakes, formula = ~ELEV), NA)
+  expect_error(sp_plot(NE_Lakes, formula = ~1), NA)
+  expect_error(sp_plot(NE_Lakes, formula = ~ELEV_CAT), NA)
+  expect_error(sp_plot(NE_Lakes, formula = ~ELEV_CAT, fix_bbox = FALSE), NA)
+  expect_error(sp_plot(NE_Lakes, formula = ~ ELEV_CAT:AREA_CAT), NA)
+  expect_error(sp_plot(NE_Lakes, formula = ~ELEV), NA)
 })
 
 # changing graphical parameters
 test_that("one sided formulas work", {
-  expect_error(plot(NE_Lakes, formula = ~ELEV_CAT, pch = 19), NA)
+  expect_error(sp_plot(NE_Lakes, formula = ~ELEV_CAT, pch = 19), NA)
   var_args <- list(ELEV_CAT = list(main = "maintest"))
-  expect_error(plot(NE_Lakes, formula = ~ELEV_CAT, var_args = var_args), NA)
+  expect_error(sp_plot(NE_Lakes, formula = ~ELEV_CAT, var_args = var_args), NA)
   varlevel_args <- list(ELEV_CAT = list(levels = c("low", "high"), cex = c(1, NA)))
-  expect_error(plot(NE_Lakes, formula = ~ELEV_CAT, varlevel_args = varlevel_args), NA)
+  expect_error(sp_plot(NE_Lakes, formula = ~ELEV_CAT, varlevel_args = varlevel_args), NA)
   varlevel_args <- list(ELEV_CAT = list(levels = c("low", "high"), cex = c(1, 2)))
-  expect_error(plot(NE_Lakes, formula = ~ELEV_CAT, varlevel_args = varlevel_args), NA)
-  expect_error(plot(NE_Lakes,
+  expect_error(sp_plot(NE_Lakes, formula = ~ELEV_CAT, varlevel_args = varlevel_args), NA)
+  expect_error(sp_plot(NE_Lakes,
     formula = ~ELEV_CAT,
     varlevel_args = varlevel_args, var_args = var_args, pch = 19
   ), NA)
@@ -173,12 +157,12 @@ test_that("one sided formulas work", {
 
 # two sided formulas
 test_that("two sided formulas work", {
-  expect_error(plot(NE_Lakes, formula = ELEV ~ 1), NA)
-  expect_error(plot(NE_Lakes, formula = ELEV ~ AREA_CAT, onlyshow = "small"), NA)
+  expect_error(sp_plot(NE_Lakes, formula = ELEV ~ 1), NA)
+  expect_error(sp_plot(NE_Lakes, formula = ELEV ~ AREA_CAT, onlyshow = "small"), NA)
 })
 
 # changing graphical parameters
 test_that("two sided formulas work", {
   var_args <- list(AREA_CAT = list(ELEV_CAT = list(levels = c("low", "high"), pch = c(1, 19))))
-  expect_error(plot(NE_Lakes, formula = ELEV_CAT ~ AREA_CAT, var_args = var_args, onlyshow = "large"), NA)
+  expect_error(sp_plot(NE_Lakes, formula = ELEV_CAT ~ AREA_CAT, var_args = var_args, onlyshow = "large"), NA)
 })

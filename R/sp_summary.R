@@ -1,36 +1,46 @@
 ###############################################################################
-# Function: summary.sframe and summary.design (exported)
+# Function: sp_summary functions (exported)
 # Programmers: Michael Dumelle
 # Date: January 22, 2021
-#' Summarize sample frames, samples, and design frames.
+#' Summarize sampling frames, design sites, and analysis data.
 #'
 #' @description
-#' \code{summary()} summarizes sample frames, samples or design objects, depending on
-#' which is provided. The right-hand of the
+#' \code{sp_summary()} summarizes sampling frames, design sites, and analysis data. The right-hand of the
 #' formula specifies the variables (or factors) to
 #' summarize by. If the left-hand side of the formula is empty, the
 #' summary will be of the distributions of the right-hand side variables. If the left-hand side
 #' of the formula contains a variable, the summary will be of the left-hand size variable
 #' for each level of each right-hand side variable.
 #'
-#' @param object A sample frame object having class \code{sframe} or a design object
-#'  output from \code{grts()} or \code{irs()} having class \code{design}.
+#' @param object An object to summarize. When summarizing sampling frames,
+#' or analysis data, a data frame or \code{sf}
+#' object. When summarizing design sites, an object created by \code{grts()} or
+#' \code{irs()} (which has class \code{spdesign}). When summarizing analysis data,
+#' a data frame or an \code{sf} object.
 #'
-#' @param formula A formula. Left-hand side variables can be numeric or
-#' categorical (or factor) and right-hand side variables can be categorical
-#' (or factor). Right-hand side variables that are numeric will be coerced
-#' to a categorical (or factor) variable. If an intercept is included in the
-#' right-hand side formula, the total will also be summarized.
+#' @param formula A formula. One-sided formulas are used to summarize the
+#' distribution of numeric or categorical variables. For one-sided formulas,
+#' variable names are placed to the right of \code{~} (a right-hand side variable).
+#' Two sided formulas are
+#' used to summarize the distribution of a left-hand side variable
+#' for each level of each right-hand side categorical variable in the formula.
+#' Note that only for two-sided formulas are numeric right-hand side variables
+#' coerced to a categorical variables. If an intercept
+#' is included as a right-hand side variable (whether the formula is one-sided or
+#' two-sided), the total will also be summarized. When summarizing sampling frames
+#' or analysis data, the default formula is \code{~ 1}. When summarizing design sites,
+#' \code{siteuse} should be used in the formula, and the default formula is
+#' \code{~ siteuse}.
 #'
 #' @param onlyshow A string indicating the single level of the single right-hand side
 #' variable for which a summary is requested. This argument is only used when
 #' a single right-hand side variable is provided.
 #'
-#' @param siteuse A character vector indicating the \code{design} sites
+#' @param siteuse A character vector indicating the design sites
 #' for which summaries are requested in \code{object}. Defaults to computing summaries for
 #' each non-\code{NULL} \code{site_*} list in \code{object}.
 #'
-#' @param ... Additional arguments to pass to \code{summary()}. If the left-hand
+#' @param ... Additional arguments to pass to \code{sp_summary()}. If the left-hand
 #' side of the formula is empty, the appropriate generic arguments are passed
 #' to \code{summary.data.frame}. If the left-hand side of the formula is provided,
 #' the appropriate generic arguments are passed to \code{summary.default}.
@@ -42,21 +52,26 @@
 #' summaries (numeric left-hand side) or tables (categorical or factor left
 #' hand side) is returned for each right-hand side variable.
 #'
-#' @name summary
-#'
-#' @method summary sframe
+#' @name sp_summary
 #'
 #' @author Michael Dumelle \email{Dumelle.Michael@@epa.gov}
 #'
 #' @export
 #'
 #' @examples
-#' NE_Lakes <- sframe(NE_Lakes)
-#' summary(NE_Lakes, ELEV ~ 1)
-#' summary(NE_Lakes, ~ ELEV_CAT * AREA_CAT)
+#' data("NE_Lakes")
+#' sp_summary(NE_Lakes, ELEV ~ 1)
+#' sp_summary(NE_Lakes, ~ ELEV_CAT * AREA_CAT)
 #' sample <- grts(NE_Lakes, 100)
-#' summary(sample, ~ ELEV_CAT * AREA_CAT)
-summary.sframe <- function(object, formula, onlyshow = NULL, ...) {
+#' sp_summary(sample, ~ ELEV_CAT * AREA_CAT)
+sp_summary <- function(object, ...) {
+  UseMethod("sp_summary", object)
+}
+
+#' @name sp_summary
+#' @method sp_summary default
+#' @export
+sp_summary.default <- function(object, formula = ~1, onlyshow = NULL, ...) {
   # making formlist (utils.R)
   formlist <- make_formlist(formula, onlyshow, object)
   # making varsf (utils.R)
@@ -80,23 +95,16 @@ summary.sframe <- function(object, formula, onlyshow = NULL, ...) {
   }
 }
 
-#' @name summary
-#' @method summary dframe
+#' @name sp_summary
+#' @method sp_summary spdesign
 #' @export
-summary.dframe <- function(object, formula, onlyshow = NULL, ...) {
-  summary.sframe(object, formula, onlyshow, ...)
-}
-
-#' @name summary
-#' @method summary spdesign
-#' @export
-summary.spdesign <- function(object, formula = ~siteuse, onlyshow = NULL, siteuse = NULL, ...) {
+sp_summary.spdesign <- function(object, formula = ~siteuse, siteuse = NULL, onlyshow = NULL, ...) {
   if ((is.null(siteuse) & (!is.null(object$sites_near))) | "Near" %in% siteuse) {
     object$sites_near$siteuse <- "Near"
   }
 
   # bind
-  object <- sprbind(object, siteuse)
+  object <- sp_rbind(object, siteuse)
 
   if (is.null(siteuse)) {
     fac_levels <- c("Legacy", "Base", "Near", "Over")
@@ -106,7 +114,7 @@ summary.spdesign <- function(object, formula = ~siteuse, onlyshow = NULL, siteus
     object$siteuse <- factor(object$siteuse, levels = siteuse)
   }
 
-  output <- summary.sframe(object, formula, onlyshow, ...)
+  output <- sp_summary.default(object, formula, onlyshow, ...)
   output
 }
 

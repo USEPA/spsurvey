@@ -4,98 +4,16 @@
 # Date: January 22, 2022
 #' Select an independent random sample (IRS)
 #'
-#' Select a spatially balanced sample from a point (finite), linear (infinite),
-#' or polygon / areal (infinite) sample frame using the Independent Random Sampling
-#' (IRS) algorithm. The IRS algorithm accommodates unstratified and
+#' Select a sample that is not spatially balanced from a point (finite), linear (infinite),
+#' or polygon / areal (infinite) sampling frame using the Generalized Random Tessellation
+#' Stratified (GRTS) algorithm. The GRTS algorithm accommodates unstratified and
 #' stratified designs and allows for equal inclusion probabilities, unequal
 #' inclusion probabilities according to a categorical variable, and inclusion
 #' probabilities proportional to a positive auxiliary variable. Several additional
 #' sampling options are included, such as including legacy (historical) sites,
 #' requiring a minimum distance between sites, and selecting replacement sites.
 #'
-#' @inheritParams grts
-#'
-#' @details Note that \code{n_base} is the number of sites that is used to calculate
-#'   the weights which typically are the number of sites that will be used for population
-#'   estimates. When a panel design is implemented, \code{n_base} typically is the
-#'   number of sites in all panels that will be sampled in the same temporal period.
-#'   It is not the total number of sites in all panels. The sum of \code{n_base} and
-#'   \code{n_over} is equal to the total number of sites to be visited for all panels plus
-#'   any replacement sites that may be required.
-#'
-#' @return A list with five elements:
-#'   \itemize{
-#'     \item \code{sites_legacy} An sf object containing legacy sites. This is
-#'       \code{NULL} if legacy sites were not included in the sample.
-#'     \item \code{sites_base} An sf object containing the base sites.
-#'     \item \code{sites_over} An sf object containing the reverse hierarchically
-#'       ordered replacement sites. This is \code{NULL} if no reverse hierarchically
-#'       ordered replacement sites were included in the sample.
-#'     \item \code{sites_near} An sf object containing the nearest neighbor
-#'       replacement sites. This is \code{NULL} if no nearest neighbor replacement
-#'       sites were included in the sample.
-#'     \item \code{design} A list documenting the specifications of this design.
-#'       This can be checked to verify your design ran as intended.
-#'       \itemize{
-#'         \item \code{Call} The original function call.
-#'         \item \code{stratum} The unique strata. This equals \code{"None"} if
-#'           the design was unstratified.
-#'         \item \code{n_base} The base sample size per stratum.
-#'         \item \code{seltype} The selection type per stratum.
-#'         \item \code{caty_n} The expected sample sizes for each level of the
-#'           unequal probability grouping variable per stratum. This equals
-#'           \code{NULL} when \code{seltype} is not \code{"unequal"}.
-#'         \item \code{legacy} A logical variable indicating whether legacy sites
-#'           were included in the sample.
-#'         \item \code{mindis} The minimum distance requirement desired. This
-#'           equals \code{NULL} if there was no minimum distance requirement.
-#'         \item \code{n_over} The reverse hierarchically ordered replacement
-#'           site sample sizes per stratum. If \code{seltype} is \code{unequal},
-#'           this represents the expected sample sizes. This is \code{NULL}
-#'           if no reverse hierarchically ordered replacement sites were included
-#'           in the sample.
-#'         \item \code{n_near} The number of nearest neighbor replacement sites
-#'           desired. This is \code{NULL} if no nearest neighbor replacement
-#'           sites were included in the sample.
-#'         \item \code{aux} The auxiliary proportional probability variable. This
-#'           column is only returned if \code{seltype} was \code{proportional} in the
-#'           original design.
-#'       }
-#'   }
-#'   When non-\code{NULL}, the \code{sites_legacy}, \code{sites_base},
-#'   \code{sites_over}, and \code{sites_near} objects contain the original columns
-#'   in \code{sframe} and include a few additional columns. These additional columns
-#'   are
-#'   \itemize{
-#'     \item \code{siteID} A site identifier (as named using the \code{DesignID}
-#'       and \code{SiteBegin} arguments to \code{grts()}).
-#'     \item \code{siteuse} Whether the site is a legacy site (\code{Legacy}), base
-#'       site (\code{Base}), reverse hierarchically ordered replacement site
-#'       (\code{Over}), or nearest neighbor replacement site (\code{Near}).
-#'     \item \code{replsite} The replacement site ordering. \code{replsite} is
-#'       \code{None} if the site is not a replacement site, \code{Next} if it is
-#'       the next reverse hierarchically ordered replacement site to use, or
-#'       \code{Near_}, where the word following \code{_} indicates the ordering of sites closest to
-#'       the originally sampled site.
-#'     \item \code{lon_WGS84} Longitude coordinates using the WGS84 coordinate
-#'       system (EPSG:4326).
-#'     \item \code{lat_WGS84} Latitude coordinates using the WGS84 coordinate
-#'       system (EPSG:4326).
-#'     \item \code{stratum} A stratum indicator. \code{stratum} is \code{None}
-#'       if the design was unstratified. If the design was \code{stratified},
-#'       \code{stratum} indicates the stratum.
-#'     \item \code{wgt} The survey design weight.
-#'     \item \code{ip} The site's original inclusion probability (the reciprocal)
-#'       of (\code{wgt}).
-#'     \item \code{caty} An unequal probability grouping indicator. \code{caty}
-#'       is \code{None} if the design did not use unequal inclusion probabilities.
-#'       If the design did use unequal inclusion probabilities, \code{caty}
-#'       indicates the unequal probability level.
-#'   }
-#'
-#' @author Tony Olsen \email{olsen.tony@@epa.gov}
-#'
-#' @keywords survey design
+#' @inherit grts params details return author
 #'
 #' @seealso
 #'   \describe{
