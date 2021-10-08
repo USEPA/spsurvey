@@ -26,7 +26,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-# Installing and Loading spsurvey
+# Installing and loading spsurvey
 
 If this is your first time using the spsurvey package, run
 ```{r, eval = FALSE}
@@ -39,14 +39,14 @@ After the spsurvey package is installed, load it into R each new R session by ru
 library(spsurvey)
 ```
 
-# spsurvey Terminology
+# spsurvey terminology
 
 spsurvey implements a design-based approach to statistical inference, with a focus on spatial data. There are a few terms helpful to define before we move forward with spsurvey, as these terms will be used throughout the vignettes and documentation:
 
 * Survey design: All aspects of a survey from establishment of a need for data to the production of final results.
 * Sampling frame: The set of all sites (i.e. units) from which a sample is selected.
 * Sampling design: The process by which sites are selected from the sampling frame.
-* Design sites: The set of sites selected from the sampling frame according to the sampling design.
+* Design sites: The set of sites selected from the sampling frame according to the sampling design. Sometimes the term "sample" is used to refer to a collection of design sites (e.g. the term "GRTS sample" more formally means "the collection of design sites selected using the GRTS algorithm according to the sampling design").
 * Analysis data: Data collected at the design sites. This includes information from the survey design such as design weights, stratification variables, subpopulation variables, etc.
 * Analysis results: The results from an appropriate statistical analysis of the analysis data.
 
@@ -60,7 +60,7 @@ There are three additional vignettes in spsurvey:
 
 These vignettes cover some of the core functions (and arguments within those functions) in spsurvey. To learn more about features of spsurvey that are not covered in these vignettes, we encourage you to read spsurvey's documentation. Interactive help files for a particular function are available by running `?function_name` after loading spsurvey. For example, to learn more about the `grts()` function, run `?grts`.
 
-# Installing a Previous Version of spsurvey
+# Installing a previous version of spsurvey
 
 The spsurvey version 5.0 update implemented many significant changes to existing functions. As a result, some of your old code may not run properly while using version 5.0. Though we recommend adapting your code to work with the version 5.0, you may also install a previous version of spsurvey. For information regarding the installation of previous version of R packages, please see the RStudio support page [here](https://support.rstudio.com/hc/en-us/articles/219949047-Installing-older-versions-of-packages). Additionally, old versions of spsurvey are also available for download in the release tags section of our GitHub repository [here](https://github.com/USEPA/spsurvey/releases).
 
@@ -70,7 +70,7 @@ The sampling functions in spsurvey require your data is an `sf` object. An `sf` 
 
 Next we discuss three ways to construct sf objects in R. The first is to read a shapefile directly into R using `st_read()` or `read_sf()`. The second is to use the `st_sf()` function or the `st_as_sf()` function to combine an appropriate R object (most commonly a data frame) and an appropriate geometry object into an `sf` object. The third only applies if your data is an `sp` object --  you can use the `sframe()` function in spsurvey to convert your `sp` object to an `sf` object. For more information regarding `sf` objects, see Pebesma (2018) and Lovelace et al. (2019). 
 
-# Coordinate Reference Systems
+# Coordinate reference systems
 
 Spatial data and `sf` objects rely on coordinate reference systems. A coordinate reference system (CRS) provides a structure by which to identify unique locations on the Earth's surface. CRSs are either geographic or projected. A geographic CRS uses longitude (east-west direction) and latitude (north-south direction) coordinates to represent location with respect to a specific ellipsoid or spheroid surface. Geographic CRSs are measured in degrees, *not units like meters or feet* -- this has important consequence. For example, a one degree difference in latitude is different at different longitudes. Projected CRSs are measured in standard Cartesian coordinates with respect to a flat surface. They have x and y locations, an origin, and a unit of measurement (like meters or feet). 
 

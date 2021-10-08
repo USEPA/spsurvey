@@ -37,7 +37,7 @@ The `sp_summary()` and `sp_plot()` functions are used to summarize and visualize
 
 The `sp_plot()` function in spsurvey is built on the `plot()` function in sf. spsurvey's `sp_plot()` function accommodates all the arguments in sf's `plot()` function and adds a few additional features.  To learn more about the `plot()` function in sf, run `?plot.sf()`. 
 
-# Sampling Frames
+# Sampling frames
 
 The sampling frame contains all units that may be selected in the sample. Summarizing and visualizing the sampling frame is often helpful to better understand your data and inform additional sampling options (e.g. stratification). To use `sp_plot()` or `sp_summarize()`, sampling frames must either be an `sf` object or a data frame with x-coordinate, y-coordinate, and crs (coordinate reference system) information.
 
@@ -155,7 +155,7 @@ sp_plot(
 )
 ```
 
-# Design Sites
+# Design sites
 
 Design sites (output from the `grts()` or `irs()` functions) can also be summarized and visualized using `sp_summary()` and `sp_plot()` very similarly to how sampling frames were summarized in the previous section. Soon you will use the `grts()` function to select a spatially balance sample. The `grts()` function does incorporate randomness, so to match your results with this output exactly you will need to set a reproducible seed by running
 ```{r}
@@ -191,13 +191,13 @@ sp_summary(eqprob_rho, formula = siteuse ~ AREA_CAT)
 sp_plot(eqprob_rho, formula = siteuse ~ AREA_CAT, key.width = lcm(3))
 ```
 
-# Analysis Data
+# Analysis data
 
 `sp_summarize()` or `sp_plot()` work for analysis data the same way they do for sampling frames.
-The `NLA_PNW` data in spsurvey is analysis data (as an `sf` object) from lakes in California, Oregon, and Washington. There are two variables in `NLA_PNW` you use next:
+The `NLA_PNW` analysis data in spsurvey is analysis data (as an `sf` object) from lakes in California, Oregon, and Washington. There are two variables in `NLA_PNW` you use next:
 
-1. `STATE`: The state name (California, Washington, Oregon)
-2. `NITR_COND` : Nitrogen content categories (poor, fair, good)
+1. `STATE`: state name (`California`, `Washington`, and `Oregon`)
+2. `NITR_COND` : Nitrogen content categories (`Poor`, `Fair`, and `Good`)
 
 To summarize and visualize `NITR_COND` across all states, run
 ```{r}

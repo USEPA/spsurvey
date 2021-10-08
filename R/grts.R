@@ -22,7 +22,9 @@
 #'   this is a single numeric value. If the design is stratified, this is a named
 #'   vector or list whose names represent each stratum and whose values represent each
 #'   stratum's sample size. These names must match the values of the stratification
-#'   variable represented by \code{stratum_var}.
+#'   variable represented by \code{stratum_var}. Legacy sites are considered part
+#'   of the base sample, so the value for \code{n_base} should be equal to the number
+#'   of legacy sites plus the number of desired non-legacy sites.
 #'
 #' @param stratum_var A character string containing the name of the column from
 #'   \code{sframe} that identifies stratum membership for each element in the frame.
@@ -68,17 +70,22 @@
 #'   inclusion probabilities are proportional to the values of the auxiliary variable.
 #'   Larger values of the auxiliary variable result in higher inclusion probabilities.
 #'
-#' @param legacy_var If \code{sframe} is a \code{POINT} or \code{MULTIPOINT} geometry (a finite sampling frame),
+#' @param legacy_var If \code{sframe} is a \code{POINT} or \code{MULTIPOINT}
+#'   geometry (a finite sampling frame),
 #'   \code{legacy_var} is a character string containing the name of the column
 #'   from \code{sframe} that represents the legacy site variable. For legacy sites, the values of the
 #'   \code{legacy_var} column in \code{sframe} must contain character strings that
 #'   act as a legacy site identifier. For non-legacy sites, the values of the
-#'   \code{legacy_var} column in \code{sframe} must be \code{NA}.
+#'   \code{legacy_var} column in \code{sframe} must be \code{NA}. spsurvey assumes
+#'   that the legacy sites were selected from a previous sampling design that
+#'   incorporated randomness into site selection.
 #'
 #' @param legacy_sites If \code{sframe} is a \code{LINESTRING}, \code{MULTILINESTRING},
 #'   \code{POLYGON}, or \code{MULTIPOLYGON} geometry (an infinite sampling frame),
 #'   \code{legacy_sites} is an sf object with a \code{POINT} or \code{MULTIPOINT}
-#'   geometry representing the legacy sites.
+#'   geometry representing the legacy sites. spsurvey assumes that
+#'   the legacy sites were selected from a previous sampling design that
+#'   incorporated randomness into site selection.
 #'
 #' @param legacy_stratum_var A character string containing the name of the column from
 #'   \code{legacy_sites} that identifies stratum membership for each element of \code{legacy_sites}.

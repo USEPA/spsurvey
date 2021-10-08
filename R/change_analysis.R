@@ -267,7 +267,7 @@
 #'   \code{"brewer"} equals the Brewer approximation.  The default value is
 #'   \code{"overton"}.
 #'
-#' @param conf Numeric value providing the confidence level.  The default value
+#' @param conf Numeric value providing the Gaussian-based confidence level.  The default value
 #'   is \code{95}.
 #'
 #' @param All_Sites A logical variable used when \code{subpops} is not
