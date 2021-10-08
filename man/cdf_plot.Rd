@@ -25,10 +25,8 @@ cdf_plot(
 )
 }
 \arguments{
-\item{cdfest}{Data frame utilizing the structure of the data frame named
-"CDF" that is included in the output object produced by function
-\code{cont_analysis}.  The data frame must only contain data for a single
-cdf estimate.}
+\item{cdfest}{Data frame with the same structure as the "CDF" output from
+\code{cont_analysis}.}
 
 \item{var}{If \code{cdfest} has multiple variables in the "Indicator" column,
 then \code{var} is the single variable to be plotted. The default is
@@ -105,14 +103,12 @@ limits. The default is 95.}
 (aside from those already used and \code{ylim}).}
 }
 \value{
-A plot of the CDF and its associated confidence limits.
+A plot of a variable's CDF estimates associated confidence limits.
 }
 \description{
 This function creates a CDF plot.  Input data for the plots is provided by a
-data frame utilizing the structure of the data frame named "CDF" that is
-included in the output object produced by function \code{cont_analysis}, but
-the data frame includes only the values for a single CDF.  Confidence limits
-for the CDF also are plotted.
+data frame with the same structure as the "CDF" output from  \code{cont_analysis}.
+Confidence limits for the CDF also are plotted.
 }
 \examples{
 dframe <- data.frame(

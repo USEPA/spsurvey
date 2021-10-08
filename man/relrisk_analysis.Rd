@@ -31,7 +31,7 @@ relrisk_analysis(
 )
 }
 \arguments{
-\item{dframe}{The data to be analyzed (analysis data). A data frame or
+\item{dframe}{Data to be analyzed (analysis data). A data frame or
 \code{sf} object containing survey design
 variables, response variables, stressor variables, and subpopulation
 (domain) variables.}

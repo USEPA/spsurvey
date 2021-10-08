@@ -37,7 +37,8 @@ trend_analysis(
 )
 }
 \arguments{
-\item{dframe}{The analysis data. A data frame containing survey design variables, response
+\item{dframe}{Data to be analyzed (analysis data). A data frame or
+\code{sf} object containing survey design variables, response
 variables, and subpopulation (domain) variables.}
 
 \item{vars_cat}{Vector composed of character values that identify the names

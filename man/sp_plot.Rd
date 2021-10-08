@@ -37,7 +37,7 @@ sp_plot(object, ...)
 }
 \arguments{
 \item{object}{An object to plot. When plotting sampling frames or analysis data,
-data frame or \code{sf} object. When plotting design sites, an object created by \code{grts()} or
+a data frame or \code{sf} object. When plotting design sites, an object created by \code{grts()} or
 \code{irs()} (which has class \code{spdesign}).}
 
 \item{...}{Additional arguments to pass to \code{plot.sf()}.}

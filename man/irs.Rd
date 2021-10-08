@@ -84,14 +84,14 @@ inclusion probabilities are proportional to the values of the auxiliary variable
 Larger values of the auxiliary variable result in higher inclusion probabilities.}
 
 \item{legacy_var}{If \code{sframe} is a \code{POINT} or \code{MULTIPOINT}
-geometry (a finite sampling frame),
+geometry (i.e. a finite sampling frame),
 \code{legacy_var} is a character string containing the name of the column
 from \code{sframe} that represents the legacy site variable. For legacy sites, the values of the
 \code{legacy_var} column in \code{sframe} must contain character strings that
 act as a legacy site identifier. For non-legacy sites, the values of the
 \code{legacy_var} column in \code{sframe} must be \code{NA}. spsurvey assumes
 that the legacy sites were selected from a previous sampling design that
-incorporated randomness into site selection.}
+incorporated randomness into the sampling design.}
 
 \item{legacy_sites}{If \code{sframe} is a \code{LINESTRING}, \code{MULTILINESTRING},
 \code{POLYGON}, or \code{MULTIPOLYGON} geometry (an infinite sampling frame),
@@ -270,9 +270,9 @@ The design sites and additional information about the design. More specifically,
   in the \code{sites} object.
 }
 \description{
-Select a spatially balanced sample from a point (finite), linear (infinite),
-or polygon / areal (infinite) sample frame using the Independent Random Sampling
-(IRS) algorithm. The IRS algorithm accommodates unstratified and
+Select a sample that is not spatially balanced from a point (finite), linear (infinite),
+or polygon / areal (infinite) sampling frame using the Generalized Random Tessellation
+Stratified (GRTS) algorithm. The GRTS algorithm accommodates unstratified and
 stratified designs and allows for equal inclusion probabilities, unequal
 inclusion probabilities according to a categorical variable, and inclusion
 probabilities proportional to a positive auxiliary variable. Several additional

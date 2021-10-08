@@ -85,7 +85,7 @@ CRSs in R have traditionally been stored using EPSG codes or `proj4string` value
 
 spsurvey will use the coordinates from your `sf` object, so it is your responsibility to make sure the `sf` object has an appropriate CRS. If the CRS is not specified correctly, you may get misleading results.
 
-You can move between coordinate systems using `sf::st_transform()`. For example, we can transform from projected to geographic coordinates (latitude and longitude) in `NE_Lakes`by running
+You can move between coordinate systems using `sf::st_transform()`. For example, we can transform from projected to geographic (latitude and longitude) coordinates  in `NE_Lakes`by running
 ```{r}
 NE_Lakes_geo <- st_transform(NE_Lakes, crs = 4326)
 NE_Lakes_geo

@@ -84,14 +84,14 @@ inclusion probabilities are proportional to the values of the auxiliary variable
 Larger values of the auxiliary variable result in higher inclusion probabilities.}
 
 \item{legacy_var}{If \code{sframe} is a \code{POINT} or \code{MULTIPOINT}
-geometry (a finite sampling frame),
+geometry (i.e. a finite sampling frame),
 \code{legacy_var} is a character string containing the name of the column
 from \code{sframe} that represents the legacy site variable. For legacy sites, the values of the
 \code{legacy_var} column in \code{sframe} must contain character strings that
 act as a legacy site identifier. For non-legacy sites, the values of the
 \code{legacy_var} column in \code{sframe} must be \code{NA}. spsurvey assumes
 that the legacy sites were selected from a previous sampling design that
-incorporated randomness into site selection.}
+incorporated randomness into the sampling design.}
 
 \item{legacy_sites}{If \code{sframe} is a \code{LINESTRING}, \code{MULTILINESTRING},
 \code{POLYGON}, or \code{MULTIPOLYGON} geometry (an infinite sampling frame),

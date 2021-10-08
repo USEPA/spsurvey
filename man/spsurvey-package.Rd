@@ -4,7 +4,7 @@
 \name{spsurvey-package}
 \alias{spsurvey}
 \alias{spsurvey-package}
-\title{spsurvey: Spatial Survey Design and Analysis}
+\title{spsurvey: Spatial Sampling Design and Analysis}
 \description{
 spsurvey implements a design-based approach to statistical inference,
   with a focus on spatial data.

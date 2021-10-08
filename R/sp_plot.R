@@ -14,7 +14,7 @@
 #' plotting in \code{sf}, run \code{?sf::plot.sf()}.
 #'
 #' @param object An object to plot. When plotting sampling frames or analysis data,
-#' data frame or \code{sf} object. When plotting design sites, an object created by \code{grts()} or
+#' a data frame or \code{sf} object. When plotting design sites, an object created by \code{grts()} or
 #' \code{irs()} (which has class \code{spdesign}).
 #'
 #' @param sframe The sampling frame (an \code{sf} object) to plot alongside design
