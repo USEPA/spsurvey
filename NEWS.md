@@ -12,9 +12,9 @@
 
 * Trend analysis is now available using the `trend_analysis()` function.
 
-* The `sp_summary()` is available to summarize sampling frames, design sites, and analysis data.
+* The `sp_summary()` function is now available to summarize sampling frames, design sites, and analysis data.
 
-* The `sp_plot()` function is available to visualize sampling frames, design sites, and analysis data.
+* The `sp_plot()` function is now available to visualize sampling frames, design sites, and analysis data.
 
 ## Minor Updates
 

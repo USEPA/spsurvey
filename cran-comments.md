@@ -41,6 +41,12 @@ new functions were added.
         * Status: SUCCESS (NOTE related to manual PDF size see next section)
         * Build ID: https://builder.r-hub.io/status/spsurvey_5.0.0.tar.gz-1bba837e167b4ae5b111ad5ac445a936
         
+* GitHub actions (`usethis::use_github_action_check_standard()` also available [here](https://github.com/r-lib/actions/blob/master/examples/check-standard.yaml))
+    * Platform: windows-latest (release), macOS-latest (release), ubuntu-20.04 (release), ubundo-20.04 (devel)
+    * Build ID: GitHub actions R-CMD-check results for spsurvey are available [here](https://github.com/USEPA/spsurvey/actions/workflows/R-CMD-check.yaml). This push corresponds to 
+    R-CMD-check 22 (news and cran comment updates) on October 15, 2021.
+
+        
 ## R CMD check results
 
 Here is the output from `devtools::check(manual = TRUE)` on R Version 4.1.0,
