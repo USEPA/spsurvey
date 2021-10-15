@@ -6,41 +6,40 @@ new functions were added.
 -------
 
 ## Test environments
-* Tests run on October 05, 2021 (rhub version 1.1.1)
+* Tests run on October 15, 2021 (rhub version 1.1.1)
 
-* Build reports can be viewed through the URL
-https://builder.r-hub.io/status/BUILD-ID
+* Build reports can be viewed through their hyperlinked Build ID URLs
 
 * `rhub::check_for_cran()`
     * Platform: Windows Server 2008 R2 SP1, R-devel, 32/64 bit
         * Status: success (NOTE related to manual PDF size -- see next section)
-        * Build ID: spsurvey_5.0.0.tar.gz-8c25d5077fb146e4a1827f84dce01010
+        * Build ID: https://builder.r-hub.io/status/spsurvey_5.0.0.tar.gz-2835f96162ea4b4fa9f946614b80775c
     * Platform: Fedora Linux, R-devel, clang, gfortran
         * Status: success (NOTE related to manual PDF size -- see next section)
-        * Build ID: spsurvey_5.0.0.tar.gz-ce7f0efd0e274071b46d4922639c6330
+        * Build ID: https://builder.r-hub.io/status/spsurvey_5.0.0.tar.gz-3e7a8d16eba44f46befc13a83b2680a6
     * Platform: Ubuntu Linux 20.04.1 LTS, R-release, GCC
         * Status: SUCCESS (NOTE related to manual PDF size see next section)
-        * Build ID: spsurvey_5.0.0.tar.gz-b72631e93cca4d31a343c66ce57e8c3d
+        * Build ID: https://builder.r-hub.io/status/spsurvey_5.0.0.tar.gz-cbb896af25454f17a7eaf4aac0d72d76
         
 * `rhub::check_on_windows()`
     * Platform: Windows Server 2008 R2 SP1, R-release, 32/64 bit
         * success (NOTE related to manual PDF size -- see next section)
-        * BUild ID: spsurvey_5.0.0.tar.gz-4ecfbae06897473f986d363642fd8a62
+        * Build ID: https://builder.r-hub.io/status/spsurvey_5.0.0.tar.gz-2c912c5200234b0e9f2d296457564757
         
 * `rhub::check_on_linux()`
     * Platform: Debian Linux, R-release, GCC
         * success (NOTE related to manual PDF size -- see next section)
-        * BUild ID: spsurvey_5.0.0.tar.gz-9b45d3ede2a84d67bd0fdee13d197f07
+        * Build ID: https://builder.r-hub.io/status/spsurvey_5.0.0.tar.gz-ee578c071fb14bf982b487bfa4c07b89
         
 * `rhub::check_on_ubuntu()`
     * Platform: Ubuntu Linux 20.04.1 LTS, R-release, GCC
         * success (NOTE related to manual PDF size -- see next section)
-        * BUild ID: spsurvey_5.0.0.tar.gz-eedffb8a0361405faa9c86fd7eda5570
+        * Build ID: https://builder.r-hub.io/status/spsurvey_5.0.0.tar.gz-921468a2297d4721a23c49fddae151d0
         
 * `rhub::check(platform = "macos-highsierra-release-cran")`
     * Platform: macOS 10.13.6 High Sierra, R-release, CRAN's setup
         * Status: SUCCESS (NOTE related to manual PDF size see next section)
-        * Build ID: spsurvey_5.0.0.tar.gz-0cdd8e47922c4e12aa555a0cda8a2c7c
+        * Build ID: https://builder.r-hub.io/status/spsurvey_5.0.0.tar.gz-1bba837e167b4ae5b111ad5ac445a936
         
 ## R CMD check results
 
@@ -49,10 +48,10 @@ devtools version 2.4.2, and Windows 10 x64 operating system
 
 0 errors | 1 warnings | 0 notes
 
-The warning: "WARNING `qpdf` is needed for checks on size reduction of PDFs". I
+The warning: "WARNING qpdf is needed for checks on size reduction of PDFs". I
 believe some compression happens while building the manual that is not recognized
 in `devtools::check()`, as the `NOTE`s from rhub suggest the PDF size is approximately 
-5.2 MB, but upon building the manual with `build_manual()`, the actual file size is
+5.3 MB, but upon building the manual with `build_manual()`, the actual file size is
 only 0.39 MB, well below the 1MB suggested limit for manuals. In short, it is my understanding that this
 warning in `devtools::check()` (and `NOTE` in rhub builds) does not accurately
 reflect the size of the final PDF manual installed upon package build.

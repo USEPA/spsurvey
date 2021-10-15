@@ -248,13 +248,13 @@ dsgn_check <- function(sframe, sf_type, legacy_sites, legacy_option, stratum, se
     stop_mess <- paste0("Sample size must be integers greater than 0.")
     stop_df <- rbind(stop_df, data.frame(func = I("n_base"), I(stop_mess)))
   }
-  
+
   # check total sample size?
   if (length(stratum) > 1) {
-     if (any(sapply(stratum, function(x) n_base[x] > NROW(sframe[sframe[[stratum_var]] == x, , drop = FALSE])))) {
-        stop_ind <- TRUE
-        stop_mess <- paste0("Each stratum must have a sample size no larger than the number of rows in 'sframe' representing that stratum")
-        stop_df <- rbind(stop_df, data.frame(func = I("n_base"), I(stop_mess)))
+    if (any(sapply(stratum, function(x) n_base[x] > NROW(sframe[sframe[[stratum_var]] == x, , drop = FALSE])))) {
+      stop_ind <- TRUE
+      stop_mess <- paste0("Each stratum must have a sample size no larger than the number of rows in 'sframe' representing that stratum")
+      stop_df <- rbind(stop_df, data.frame(func = I("n_base"), I(stop_mess)))
     }
   } else {
     if (n_base > NROW(sframe)) {
@@ -340,7 +340,7 @@ dsgn_check <- function(sframe, sf_type, legacy_sites, legacy_option, stratum, se
       }
     }
   }
-  
+
   # check total sample size for n_over
   if (!is.null(n_over)) {
     if (length(stratum) > 1) {
@@ -374,7 +374,7 @@ dsgn_check <- function(sframe, sf_type, legacy_sites, legacy_option, stratum, se
       stop_df <- rbind(stop_df, data.frame(func = I("n_near"), I(stop_mess)))
     }
   }
-  
+
   ### If any issues, write out stop_df and then stop
   if (stop_ind) {
     names(stop_df) <- c("Design Input", "Error Message")

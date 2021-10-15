@@ -71,19 +71,7 @@
 #'   inclusion probabilities are proportional to the values of the auxiliary variable.
 #'   Larger values of the auxiliary variable result in higher inclusion probabilities.
 #'
-#' @param legacy_var If \code{sframe} is a \code{POINT} or \code{MULTIPOINT}
-#'   geometry (i.e. a finite sampling frame),
-#'   \code{legacy_var} is a character string containing the name of the column
-#'   from \code{sframe} that represents the legacy site variable. For legacy sites, the values of the
-#'   \code{legacy_var} column in \code{sframe} must contain character strings that
-#'   act as a legacy site identifier. For non-legacy sites, the values of the
-#'   \code{legacy_var} column in \code{sframe} must be \code{NA}. spsurvey assumes
-#'   that the legacy sites were selected from a previous sampling design that
-#'   incorporated randomness into site selection.
-#'
-#' @param legacy_sites If \code{sframe} is a \code{LINESTRING}, \code{MULTILINESTRING},
-#'   \code{POLYGON}, or \code{MULTIPOLYGON} geometry (an infinite sampling frame),
-#'   \code{legacy_sites} is an sf object with a \code{POINT} or \code{MULTIPOINT}
+#' @param legacy_sites An sf object with a \code{POINT} or \code{MULTIPOINT}
 #'   geometry representing the legacy sites. spsurvey assumes that
 #'   the legacy sites were selected from a previous sampling design that
 #'   incorporated randomness into site selection.
@@ -109,13 +97,27 @@
 #'   default value of \code{legacy_aux_var} is \code{aux_var}, so \code{legacy_aux_var} need only be specified explicitly
 #'   when the name of the proportional probability variable in \code{legacy_sites} differs from \code{aux_var}.
 #'
+#' @param legacy_var This argument can be used instead of \code{legacy_sites}
+#'   when \code{sframe} is a \code{POINT} or \code{MULTIPOINT}
+#'   geometry (i.e. a finite sampling frame),
+#'   When \code{legacy_var} is used, it is a character string containing the name of the column
+#'   from \code{sframe} that represents whether each site is a legacy site. For
+#'   legacy sites, the values of the \code{legacy_var} must contain character strings that
+#'   act as a legacy site identifier. For non-legacy sites, the values of the
+#'   \code{legacy_var} column must be \code{NA}. Using this approach,
+#'   \code{legacy_stratum_var}, \code{legacy_caty_var}, and \code{legacy_aux_var}
+#'   are not required and should not be used (because \code{legacy_var} represents a column
+#'   in \code{sframe}). spsurvey assumes that the legacy sites were selected from
+#'   a previous sampling design that
+#'   incorporated randomness into site selection.
+#'
 #' @param mindis A numeric value indicating the desired minimum distance between sampled
 #'   sites. If the sampling design is stratified and \code{mindis} is an numeric value, the minimum
 #'   distance is applied to all strata. If the sampling design is stratified and different minimum distances
 #'   are desired among strata, then \code{mindis}
 #'   is a list whose names match the names of \code{n_base} and whose and values
 #'   are the minimum distance for the corresponding stratum.  If a minimum distance is not desired
-#'   for a particular stratum, then the corresponding value in \code{mindis} should be \code{NULL} or \code{0}.
+#'   for a particular stratum, then the corresponding value in \code{mindis} should be \code{0} or \code{NULL} (which is equivalent to \code{0}).
 #'   The units of \code{mindis} must represent the units in \code{sframe}.
 #'
 #' @param maxtry The number of maximum attempts to apply the minimum distance algorithm to obtain
@@ -137,7 +139,7 @@
 #'   rho replacement sample sizes change among strata. If \code{n_over} does not change among strata, \code{n_over}
 #'   is a named vector whose names match the names of \code{caty_var} and whose values are the expected rho replacement
 #'   sample sizes to be used for each stratum. If \code{n_over} changes among strata, \code{n_over} is a
-#'   list whose names match the names of \code{n_base} and whose values are each named vectors with names for each level of \code{caty_var} and values representing the expected rho replacement sample sizes (within the stratum) for each level of \code{caty_var}. If replacement sites are not desired for a particular stratum, then the corresponding value in \code{n_over} should be \code{NULL} or \code{0}.
+#'   list whose names match the names of \code{n_base} and whose values are each named vectors with names for each level of \code{caty_var} and values representing the expected rho replacement sample sizes (within the stratum) for each level of \code{caty_var}. If replacement sites are not desired for a particular stratum, then the corresponding value in \code{n_over} should be \code{0} or \code{NULL} (which is equivalent to \code{0}).
 #'
 #' @param n_near If the sampling design is unstratified, \code{n_near} is integer from \code{1}
 #'   to \code{10} specifying the number of
@@ -150,7 +152,7 @@
 #'   desired for each stratum, \code{n_near} is a list whose names represent strata and whose
 #'   values is integer from \code{1}
 #'   to \code{10} specifying the number of
-#'   nearest neighbor replacement sites to be selected for each base site in the stratum. If replacement sites are not desired for a particular stratum, then the corresponding value in \code{n_over} should be \code{NULL} or \code{0}. For
+#'   nearest neighbor replacement sites to be selected for each base site in the stratum. If replacement sites are not desired for a particular stratum, then the corresponding value in \code{n_over} should be \code{0} or \code{NULL} (which is equivalent to \code{0}). For
 #'   infinite sampling frames, the distance between a site and its nearest neighbor
 #'   depends on \code{pt_density}.
 #'
@@ -460,7 +462,7 @@ grts <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = 
   # n_over
   if (!is.null(n_over)) {
     if (is.list(n_over)) {
-      n_over <- lapply(n_over, function(x) if(all(x == 0)) NULL else x)
+      n_over <- lapply(n_over, function(x) if (all(x == 0)) NULL else x)
       dsgn$n_over <- n_over
     } else {
       tmp <- lapply(stratum, function(x, n_over) {
@@ -474,7 +476,7 @@ grts <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = 
   # n_near
   if (!is.null(n_near)) {
     if (is.list(n_near)) {
-      n_near <- lapply(n_near, function(x) if(all(x == 0)) NULL else x)
+      n_near <- lapply(n_near, function(x) if (all(x == 0)) NULL else x)
       dsgn$n_near <- n_near
     } else {
       tmp <- lapply(stratum, function(x, n_near) {
@@ -488,7 +490,7 @@ grts <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = 
   # mindis
   if (!is.null(mindis)) {
     if (is.list(mindis)) {
-      mindis <- lapply(mindis, function(x) if(all(x == 0)) NULL else x)
+      mindis <- lapply(mindis, function(x) if (all(x == 0)) NULL else x)
       dsgn$mindis <- mindis
     } else {
       tmp <- lapply(stratum, function(x, mindis) {

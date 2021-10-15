@@ -52,7 +52,7 @@ strata).}
   All spatial balance metrics have a lower bound of zero, which indicates perfect
   spatial balance. As the metric value increases, the spatial balance decreases.}
 
-\item{extents}{Should the extent (total units) within each Voroni polygon
+\item{extents}{Should the extent (total units) within each Voronoi polygon
 be returned? Defaults to \code{FALSE}.}
 }
 \value{
@@ -62,7 +62,7 @@ A data frame with columns providing the stratum (\code{stratum}),
 \description{
 This function measures the spatial balance (with respect to the
 sampling frame) of design sites using
-Voroni polygons (Dirichlet tessellations).
+Voronoi polygons (Dirichlet tessellations).
 }
 \examples{
 sample <- grts(NE_Lakes, 30)

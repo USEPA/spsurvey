@@ -208,7 +208,7 @@ irs <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = N
   # n_over
   if (!is.null(n_over)) {
     if (is.list(n_over)) {
-      n_over <- lapply(n_over, function(x) if(all(x == 0)) NULL else x)
+      n_over <- lapply(n_over, function(x) if (all(x == 0)) NULL else x)
       dsgn$n_over <- n_over
     } else {
       tmp <- lapply(stratum, function(x, n_over) {
@@ -218,11 +218,11 @@ irs <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = N
       dsgn$n_over <- tmp
     }
   }
-  
+
   # n_near
   if (!is.null(n_near)) {
     if (is.list(n_near)) {
-      n_near <- lapply(n_near, function(x) if(all(x == 0)) NULL else x)
+      n_near <- lapply(n_near, function(x) if (all(x == 0)) NULL else x)
       dsgn$n_near <- n_near
     } else {
       tmp <- lapply(stratum, function(x, n_near) {
@@ -232,11 +232,11 @@ irs <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = N
       dsgn$n_near <- tmp
     }
   }
-  
+
   # mindis
   if (!is.null(mindis)) {
     if (is.list(mindis)) {
-      mindis <- lapply(mindis, function(x) if(all(x == 0)) NULL else x)
+      mindis <- lapply(mindis, function(x) if (all(x == 0)) NULL else x)
       dsgn$mindis <- mindis
     } else {
       tmp <- lapply(stratum, function(x, mindis) {

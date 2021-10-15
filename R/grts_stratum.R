@@ -82,7 +82,7 @@ grts_stratum <- function(stratum, dsgn, sframe, sf_type, wgt_units = NULL, pt_de
 
   # subset sframe to stratum
   sftmp <- sframe[sframe$stratum == stratum, , drop = FALSE]
-  
+
   # find legacy site number for points if legacy_var provided
   if (legacy_option == TRUE & is.null(legacy_sites)) {
     n_legacy <- sum(!is.na(sftmp$legacy))
@@ -115,7 +115,7 @@ grts_stratum <- function(stratum, dsgn, sframe, sf_type, wgt_units = NULL, pt_de
       pt_density <- ((n_base + n_over + n_near) * popmatch) / stratum_len
     }
     n_size <- as.integer(pt_density * stratum_len)
-    sfpts <- st_sample(sftmp, size = n_size, type = "regular")
+    sfpts <- st_sample(sftmp, size = n_size, type = "regular", exact = TRUE)
     sfpts <- st_as_sf(as.data.frame(sfpts), crs = st_crs(sftmp))
     sfpts <- st_cast(sfpts, to = "POINT")
     # drop features with no points
@@ -145,7 +145,7 @@ grts_stratum <- function(stratum, dsgn, sframe, sf_type, wgt_units = NULL, pt_de
       pt_density <- ((n_base + n_over + n_near) * popmatch) / stratum_area
     }
     n_size <- as.integer(pt_density * stratum_area)
-    sfpts <- st_sample(sftmp, size = n_size, type = "hexagonal")
+    sfpts <- st_sample(sftmp, size = n_size, type = "hexagonal", exact = TRUE)
     sfpts <- st_as_sf(as.data.frame(sfpts), crs = st_crs(sftmp))
     sfpts <- st_cast(sfpts, to = "POINT")
     # drop features with no points
@@ -337,12 +337,12 @@ grts_stratum <- function(stratum, dsgn, sframe, sf_type, wgt_units = NULL, pt_de
     sites_over <- sites[["sites"]][(n_base - n_legacy + 1):(n_total - n_legacy), ]
     sites_over$siteuse <- "Over"
   }
-  
+
   # if no legacy sites match in strata then put in appropriate column
   if (legacy_option == TRUE & n_legacy == 0) {
     sites_base$legacy <- FALSE
   }
-  
+
   # create list for output and return result
   rslts <- list(
     sites_base = sites_base, sites_legacy = sites_legacy,

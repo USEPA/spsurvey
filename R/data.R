@@ -17,7 +17,7 @@
 #' New England Lakes legacy data
 #'
 #' An \code{sf} POINT object of 5 legacy sites for the NE Lakes data
-#' 
+#'
 #' @format 5 rows and 5 variables:
 #' \describe{
 #'   \item{\code{AREA}}{ Lake area in hectares.}

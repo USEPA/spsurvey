@@ -1,5 +1,5 @@
 ---
-title: "Analyzing Probability Samples"
+title: "Analyzing Data"
 author: "Michael Dumelle, Tom Kincaid, Anthony Olsen, and Marc Weber"
 output: 
   html_document:
@@ -12,7 +12,7 @@ output:
       smooth_scroll: no
     toc_depth: 2
 vignette: >
-  %\VignetteIndexEntry{Analyzing Probability Samples}
+  %\VignetteIndexEntry{Analyzing Data}
   %\VignetteEngine{knitr::rmarkdown}
   \usepackage[utf8]{inputenc}
 ---
@@ -26,9 +26,14 @@ knitr::opts_chunk$set(
 )
 ```
 
+If you have yet not read the "Start Here" vignette, please do so by running
+```{r, eval = FALSE}
+vignette("start-here", "spsurvey")
+```
+
 # Introduction
 
-spsurvey's analysis functions are used to analyze data in a variety of contexts. We focus mainly on using the `NLA_PNW` analysis data to introduce some of these analysis functions. The `NLA_PNW` data contains response variables measured at several lakes in the Pacific Northwest Region (PNW) of the United States. There are several variables in `NLA_PNW` used throughout this vignette:
+spsurvey's analysis functions are used to analyze data in a variety of contexts. We focus mainly on using the `NLA_PNW` analysis data to introduce some of these analysis functions. The `NLA_PNW` data contains response variables measured at several lakes in the Pacific Northwest Region (PNW) of the United States. There are several variables in `NLA_PNW` you will use throughout this vignette:
 
 * `SITE_ID`: a unique site identifier
 * `WEIGHT`: the design weights
@@ -238,21 +243,21 @@ relrisk_ests
 The risk difference is defined as 
 $$P(Response = Poor | Stressor = Poor) - P(Response = Poor | Stressor = Good),$$ which measures the risk of the response variable being in poor condition differenced by the stressor's condition. To estimate the risk difference of benthic macroinvertebrates being in poor condition with a phosphorous condition category stressor, run
 ```{r}
-riskdiff_ests <- diffrisk_analysis(
+diffrisk_ests <- diffrisk_analysis(
   NLA_PNW, 
   siteID = "SITE_ID",
   vars_response = "BMMI_COND",
   vars_stressor = "PHOS_COND",
   weight = "WEIGHT"
 )
-riskdiff_ests
+diffrisk_ests
 ```
 
 By default, the levels of the variables in `vars_response` and `vars_stressor` are assumed to equal `"Poor"` (event occurs) or `"Good"` (event does not occur). If those default levels do not match the levels of the variables in `vars_response` and `vars_stressor`, the levels of `vars_response` and `vars_stressor` must be explicitly stated using the `response_levels` and `stressor_levels` arguments, respectively. Similar to `cat_analysis()` and `cont_analysis()` from the previous sections, subpopulations and stratification are incorporated using `subpops` and `stratumID`, respectively. For more on attributable and relative risk in an environmental resource context, see Van Sickle and Paulsen (2008).
 
 ## Change and Trend Analysis
 
-To demonstrate change analysis, we use the `NRSA_EPA7` data. There are several variables in `NRSA_EPA7` used next:
+To demonstrate change analysis, we use the `NRSA_EPA7` data. There are several variables in `NRSA_EPA7` you will use next:
 
 * `SITE_ID`: a unique site identifier
 * `WEIGHT`: the survey design weights

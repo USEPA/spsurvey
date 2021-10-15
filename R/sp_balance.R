@@ -8,7 +8,7 @@
 #'
 #' This function measures the spatial balance (with respect to the
 #' sampling frame) of design sites using
-#' Voroni polygons (Dirichlet tessellations).
+#' Voronoi polygons (Dirichlet tessellations).
 #'
 #' @param object An \code{sf} object containing some design sites.
 #'
@@ -48,7 +48,7 @@
 #'   All spatial balance metrics have a lower bound of zero, which indicates perfect
 #'   spatial balance. As the metric value increases, the spatial balance decreases.
 #'
-#' @param extents Should the extent (total units) within each Voroni polygon
+#' @param extents Should the extent (total units) within each Voronoi polygon
 #'   be returned? Defaults to \code{FALSE}.
 #'
 #' @return A data frame with columns providing the stratum (\code{stratum}),
@@ -67,6 +67,10 @@
 #' sample_strat <- grts(NE_Lakes, n_base = strata_n, stratum_var = "ELEV_CAT")
 #' sp_balance(sample_strat$sites_base, NE_Lakes, stratum_var = "ELEV_CAT", metric = "rmse")
 sp_balance <- function(object, sframe, stratum_var = NULL, ip = NULL, metrics = "pielou", extents = FALSE) {
+  if (inherits(object, "spdesign")) {
+    stop("object must be an sf object. If object is output from grts() or irs(), instead 1) use object$sites_legacy, object$sites_base, object$sites_over, or object$sites_near; or 2) use sp_rbind().")
+  }
+
   if (is.null(stratum_var)) {
     object$stratum_var <- "None"
     sframe$stratum_var <- "None"
