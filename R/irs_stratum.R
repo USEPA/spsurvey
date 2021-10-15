@@ -51,9 +51,14 @@ irs_stratum <- function(stratum, dsgn, sframe, sf_type, wgt_units = NULL, pt_den
 
   # subset sframe to stratum
   sftmp <- sframe[sframe$stratum == stratum, , drop = FALSE]
+  
+  # find legacy site number for points if legacy_var provided
+  if (legacy_option == TRUE & is.null(legacy_sites)) {
+    n_legacy <- sum(!is.na(sftmp$legacy))
+  }
 
   # subset legacy_sites to stratum if present for linear and area option
-  if (legacy_option == TRUE & sf_type != "sf_point") {
+  if (legacy_option == TRUE & (sf_type != "sf_point" | ((sf_type == "sf_point") & !is.null(legacy_sites)))) {
     legtmp <- legacy_sites[legacy_sites$stratum == stratum, , drop = FALSE]
     n_legacy <- nrow(legtmp)
   }
@@ -128,7 +133,7 @@ irs_stratum <- function(stratum, dsgn, sframe, sf_type, wgt_units = NULL, pt_den
   Nstratum <- nrow(sftmp)
 
   # Determine if legacy sites are to be included for stratum design
-  if (legacy_option == TRUE & sf_type != "sf_point") {
+  if (legacy_option == TRUE & n_legacy > 0 & (sf_type != "sf_point" | ((sf_type == "sf_point") & !is.null(legacy_sites)))) {
     tmp <- legtmp
     addtmp <- setdiff(names(tmp), names(sftmp))
     addleg <- setdiff(names(sftmp), names(tmp))
@@ -140,7 +145,7 @@ irs_stratum <- function(stratum, dsgn, sframe, sf_type, wgt_units = NULL, pt_den
   }
 
   # set legacy that is NA to FALSE
-  if (legacy_option == TRUE) {
+  if (legacy_option == TRUE & n_legacy > 0) {
     sftmp$legacy <- ifelse(is.na(sftmp$legacy), FALSE, TRUE)
     tmp <- sftmp[sftmp$legacy == TRUE, , drop = FALSE]
     n_legacy <- nrow(tmp)
@@ -193,7 +198,7 @@ irs_stratum <- function(stratum, dsgn, sframe, sf_type, wgt_units = NULL, pt_den
 
   # If legacy sites, adjust inclusion probabilities to use
   # legacy inclusion probabilities
-  if (legacy_option == TRUE) {
+  if (legacy_option == TRUE & n_legacy > 0) {
     sftmp$ip <- grtspts_ipleg(sftmp$ip_init, sftmp$legacy == TRUE)
     # accumulate warning messages if any
     if (ip$warn_ind) {
@@ -252,7 +257,7 @@ irs_stratum <- function(stratum, dsgn, sframe, sf_type, wgt_units = NULL, pt_den
   }
 
   # Select replacement sites if n_near not NULL when have legacy sites
-  if (legacy_option == TRUE) {
+  if (legacy_option == TRUE & n_legacy > 0) {
     if (!is.null(dsgn[["n_near"]][[stratum]])) {
       keep <- sites[["sites"]][sites[["sites"]]$legacy == FALSE, "idpts", drop = TRUE]
       sites_near <- replace_near(dsgn[["n_near"]][[stratum]],
@@ -289,9 +294,8 @@ irs_stratum <- function(stratum, dsgn, sframe, sf_type, wgt_units = NULL, pt_den
 
   # Split sites to have separate sites_base, sites_legacy and sites_over
   # save legacy sites if any and reduce sites_base to non legacy sites
-  n_legacy <- 0
   sites_legacy <- NULL
-  if (legacy_option == TRUE) {
+  if (legacy_option == TRUE & n_legacy > 0) {
     sites_legacy <- sites[["sites"]][sites[["sites"]]$legacy == TRUE, ]
     sites[["sites"]] <- sites[["sites"]][sites[["sites"]]$legacy == FALSE, ]
     n_legacy <- nrow(sites_legacy)
@@ -308,6 +312,11 @@ irs_stratum <- function(stratum, dsgn, sframe, sf_type, wgt_units = NULL, pt_den
   if (n_over != 0) {
     sites_over <- sites[["sites"]][(n_base - n_legacy + 1):(n_total - n_legacy), ]
     sites_over$siteuse <- "Over"
+  }
+  
+  # if no legacy sites match in strata then put in appropriate column
+  if (legacy_option == TRUE & n_legacy == 0) {
+    sites_base$legacy <- FALSE
   }
 
   # create list for output and return result

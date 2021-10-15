@@ -454,18 +454,16 @@
 #'   xcoord = "xcoord",
 #'   ycoord = "ycoord"
 #' )
-#'
 #' @export
 ################################################################################
 
-trend_analysis <- function(
-  dframe, vars_cat = NULL, vars_cont = NULL, subpops = NULL, model_cat = "SLR",
-  cat_rhs =  NULL, model_cont = "LMM", cont_rhs =  NULL, siteID = "siteID",
-  yearID = "year", weight = "weight", xcoord = NULL, ycoord = NULL,
-  stratumID = NULL, clusterID = NULL, weight1 = NULL, xcoord1 = NULL,
-  ycoord1 = NULL, sizeweight = FALSE, sweight = NULL, sweight1 = NULL,
-  fpc = NULL, popsize = NULL, invprboot = TRUE, nboot = 1000, vartype = "Local",
-  jointprob = "overton", conf = 95, All_Sites = FALSE) {
+trend_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL, subpops = NULL, model_cat = "SLR",
+                           cat_rhs = NULL, model_cont = "LMM", cont_rhs = NULL, siteID = "siteID",
+                           yearID = "year", weight = "weight", xcoord = NULL, ycoord = NULL,
+                           stratumID = NULL, clusterID = NULL, weight1 = NULL, xcoord1 = NULL,
+                           ycoord1 = NULL, sizeweight = FALSE, sweight = NULL, sweight1 = NULL,
+                           fpc = NULL, popsize = NULL, invprboot = TRUE, nboot = 1000, vartype = "Local",
+                           jointprob = "overton", conf = 95, All_Sites = FALSE) {
 
   # Create a vector for error messages
 
@@ -480,7 +478,7 @@ trend_analysis <- function(
 
   # Ensure that the dframe argument was provided
 
-  if(missing(dframe)) {
+  if (missing(dframe)) {
     stop("\nThe dframe argument must be provided.\n")
   }
 
@@ -542,24 +540,26 @@ trend_analysis <- function(
   # Ensure that the dframe data frame contains the time period identifier
   # variable and ensure that the variable is numeric
 
-  if(!(yearID %in% names(dframe))) {
+  if (!(yearID %in% names(dframe))) {
     error_ind <- TRUE
     msg <- paste0("The name provided for the yearID argument, \"", yearID, "\", does not occur among \nthe names for the dframe data frame.\n")
     error_vec <- c(error_vec, msg)
   } else {
-    if(!is.numeric(dframe[, yearID])) {
+    if (!is.numeric(dframe[, yearID])) {
       warn_ind <- TRUE
       warn <- paste0("The variable in the dframe data frame identified by argument yearID, \"", yearID, "\", was coerced \nto class numeric.\n")
       act <- "Variable coerced to class numeric\n"
-      warn_df <- rbind(warn_df, data.frame(func=I(fname), subpoptype=NA,
-        subpop=NA, indicator=NA, stratum=NA,  warning=I(warn), action=I(act)))
+      warn_df <- rbind(warn_df, data.frame(
+        func = I(fname), subpoptype = NA,
+        subpop = NA, indicator = NA, stratum = NA, warning = I(warn), action = I(act)
+      ))
       dframe[, yearID] <- as.numeric(dframe[, yearID])
     }
   }
 
   # Ensure that the dframe data frame contains the survey weight variable
 
-  if(!(weight %in% names(dframe))) {
+  if (!(weight %in% names(dframe))) {
     error_ind <- TRUE
     msg <- paste0("The name provided for the weight argument, \"", weight, "\", does not occur among \nthe names for the dframe data frame.\n")
     error_vec <- c(error_vec, msg)
@@ -576,7 +576,7 @@ trend_analysis <- function(
   } else {
     fpcfactor_ind <- TRUE
     if (is.null(clusterID)) {
-      fpcsize = "fpcsize"
+      fpcsize <- "fpcsize"
       Ncluster <- NULL
       stage1size <- NULL
     } else {
@@ -602,13 +602,14 @@ trend_analysis <- function(
     sweight1 = sweight1,
     fpcsize = fpcsize,
     Ncluster = Ncluster,
-    stage1size = stage1size)
+    stage1size = stage1size
+  )
 
   # Ensure that a value was provided for at least one of the vars_cat
   # (categoroical response variable names) or vars_cont (continuous response
   # variable names) arguments
 
-  if(missing(vars_cat) & missing(vars_cont)) {
+  if (missing(vars_cat) & missing(vars_cont)) {
     error_ind <- TRUE
     msg <- "A value must be provided for at least one of the vars_cat (categoroical response \nvariable names) or vars_cont (continuous response variable names) arguments.\n"
     error_vec <- c(error_vec, msg)
@@ -618,7 +619,7 @@ trend_analysis <- function(
   # assign the value "All_Sites" to the subpops argument and create a factor
   # named "All_Sites" in the dframe data frame that takes the value "All Sites"
 
-  if(is.null(subpops)) {
+  if (is.null(subpops)) {
     subpops <- "All_Sites"
     dframe$All_Sites <- "All Sites"
     dframe$All_Sites <- factor(dframe$All_Sites)
@@ -637,13 +638,13 @@ trend_analysis <- function(
 
   # Ensure that arguments model_cat and model_cont contain valid values
 
-  if(!(model_cat %in% c("SLR", "WLR", "GLMM"))) {
+  if (!(model_cat %in% c("SLR", "WLR", "GLMM"))) {
     error_ind <- TRUE
     msg <- paste0("The value provided for argument model_cat, \"", model_cat, "\", is not a valid value.\n")
     error_vec <- c(error_vec, msg)
   }
 
-  if(!(model_cont %in% c("SLR", "WLR", "LMM"))) {
+  if (!(model_cont %in% c("SLR", "WLR", "LMM"))) {
     error_ind <- TRUE
     msg <- paste0("The value provided for argument model_cont, \"", model_cont, "\", is not a valid value.\n")
     error_vec <- c(error_vec, msg)
@@ -652,22 +653,24 @@ trend_analysis <- function(
   # As necessary, assign a value to the cat_rhs and cont_rhs arguments
 
   PO_ind_cat <- FALSE
-  if(model_cat == "GLMM" & is.null(cat_rhs)) {
+  if (model_cat == "GLMM" & is.null(cat_rhs)) {
     PO_ind_cat <- TRUE
     cat_rhs <- paste0("Wyear + (1 + Wyear | ", siteID, ") + (1 | ", yearID, ")")
   }
   PO_ind_cont <- FALSE
-  if(model_cont == "LMM" & is.null(cont_rhs)) {
+  if (model_cont == "LMM" & is.null(cont_rhs)) {
     PO_ind_cont <- TRUE
-    cont_rhs <- paste0("Wyear + (1 + Wyear | ", siteID, ") + (1 | ", yearID,
-      ")")
+    cont_rhs <- paste0(
+      "Wyear + (1 + Wyear | ", siteID, ") + (1 | ", yearID,
+      ")"
+    )
   }
 
   # As necessary, to ensure that the input_check function does not produce an
   # invalid error message, assign "SRS" to argument vartype
 
-  if(is.null(vars_cat) & model_cont == "LMM" |
-     !is.null(vars_cat) & model_cat == "GLMM" & model_cont == "LMM") {
+  if (is.null(vars_cat) & model_cont == "LMM" |
+    !is.null(vars_cat) & model_cat == "GLMM" & model_cont == "LMM") {
     vartype <- "SRS"
   }
 
@@ -675,7 +678,8 @@ trend_analysis <- function(
 
   temp <- input_check(dframe, design_names, vars_cat, vars_cont, NULL, NULL,
     subpops, sizeweight, fpc, popsize, vartype, jointprob, conf,
-    error_ind = error_ind, error_vec = error_vec)
+    error_ind = error_ind, error_vec = error_vec
+  )
   dframe <- temp$dframe
   vars <- temp$vars_cat
   subpops <- temp$subpops
@@ -688,7 +692,7 @@ trend_analysis <- function(
   # As necessary, ensure that variables identified by the vars_cat argument
   # contain two levels
 
-  if(!is.null(vars_cat) & model_cat == "GLMM") {
+  if (!is.null(vars_cat) & model_cat == "GLMM") {
     tst <- logical(length(vars_cat))
     for (i in 1:length(vars_cat)) {
       tst[i] <- length(levels(dframe[, vars_cat[i]])) != 2
@@ -704,17 +708,17 @@ trend_analysis <- function(
   # As necessary, output a message indicating that error messages were generated
   # during execution of the program
 
-  if(error_ind) {
+  if (error_ind) {
     error_vec <<- error_vec
-    if(length(error_vec) == 1) {
+    if (length(error_vec) == 1) {
       cat("During execution of the program, an error message was generated.  The error \nmessage is stored in a vector named 'error_vec'.  Enter the following command \nto view the error message: errorprnt()\n")
     } else {
       cat(paste("During execution of the program,", length(error_vec), "error messages were generated.  The error \nmessages are stored in a vector named 'error_vec'.  Enter the following \ncommand to view the error messages: errorprnt()\n"))
     }
 
-    if(warn_ind) {
+    if (warn_ind) {
       warn_df <<- warn_df
-      if(nrow(warn_df) == 1) {
+      if (nrow(warn_df) == 1) {
         cat("During execution of the program, a warning message was generated.  The warning \nmessage is stored in a data frame named 'warn_df'.  Enter the following command \nto view the warning message: warnprnt()\n")
       } else {
         cat(paste("During execution of the program,", nrow(warn_df), "warning messages were generated.  The warning \nmessages are stored in a data frame named 'warn_df'.  Enter the following \ncommand to view the warning messages: warnprnt() \nTo view a subset of the warning messages (say, messages number 1, 3, and 5), \nenter the following command: warnprnt(m=c(1,3,5))\n"))
@@ -729,24 +733,26 @@ trend_analysis <- function(
 
   # For a stratified sample, remove strata that contain a single site
 
-  if(stratum_ind) {
+  if (stratum_ind) {
     dframe[, stratumID] <- factor(dframe[, stratumID])
     stratum_levels <- levels(dframe[, stratumID])
     nstrata <- length(stratum_levels)
     ind <- FALSE
-    for(i in 1:nstrata) {
+    for (i in 1:nstrata) {
       tst <- dframe[, stratumID] == stratum_levels[i]
-      if(sum(tst) == 1) {
+      if (sum(tst) == 1) {
         warn_ind <- TRUE
         warn <- paste0("The stratum named \"", stratum_levels[i], "\" contains a single value and was removed from the analysis.\n")
         act <- "Stratum was removed from the analysis.\n"
-        warn_df <- rbind(warn_df, data.frame(func=I(fname), subpoptype=NA,
-          subpop=NA, indicator=NA, stratum=NA, warning=I(warn), action=I(act)))
-        dframe <- dframe[!tst,]
+        warn_df <- rbind(warn_df, data.frame(
+          func = I(fname), subpoptype = NA,
+          subpop = NA, indicator = NA, stratum = NA, warning = I(warn), action = I(act)
+        ))
+        dframe <- dframe[!tst, ]
         ind <- TRUE
       }
     }
-    if(ind) {
+    if (ind) {
       dframe[, stratumID] <- factor(dframe[, stratumID])
       stratum_levels <- levels(dframe[, stratumID])
       nstrata <- length(stratum_levels)
@@ -768,9 +774,9 @@ trend_analysis <- function(
   # If popsize is not equal to NULL, then call either the postStratify or
   # calibrate function, as appropriate
 
-  if(!is.null(popsize)) {
-    if(all(class(popsize) %in% c("data.frame", "table", "xtabs"))) {
-      if("data.frame" %in% class(popsize)) {
+  if (!is.null(popsize)) {
+    if (all(class(popsize) %in% c("data.frame", "table", "xtabs"))) {
+      if ("data.frame" %in% class(popsize)) {
         pnames <- names(popsize)[-ncol(popsize)]
       } else {
         pnames <- names(dimnames(popsize))
@@ -780,13 +786,13 @@ trend_analysis <- function(
       cnames <- cal_names(make.formula(names(popsize)), design)
       pop.totals <- numeric(length(cnames))
       names(pop.totals) <- cnames
-      pop.totals[1] <-sum(popsize[[1]])
+      pop.totals[1] <- sum(popsize[[1]])
       k <- 2
-      for(i in names(popsize)) {
+      for (i in names(popsize)) {
         temp <- popsize[[i]]
-        for(j in 2:length(temp)) {
-          pop.totals[k] <-temp[j]
-          k <- k+1
+        for (j in 2:length(temp)) {
+          pop.totals[k] <- temp[j]
+          k <- k + 1
         }
       }
       design <- calibrate(design, make.formula(cnames), pop.totals)
@@ -807,8 +813,8 @@ trend_analysis <- function(
 
   # If invprboot equals TRUE, then assign the bootstrap weights
 
-  if(invprboot == TRUE) {
-    if(cluster_ind) {
+  if (invprboot == TRUE) {
+    if (cluster_ind) {
       bootwgt <- dframe$wgt1 * dframe$wgt2
     } else {
       bootwgt <- dframe$wgt
@@ -823,7 +829,7 @@ trend_analysis <- function(
 
   # Assign the confidence bound multiplier
 
-  mult  <- qnorm(0.5 + (conf/100)/2)
+  mult <- qnorm(0.5 + (conf / 100) / 2)
 
   # Create the output object
 
@@ -833,11 +839,11 @@ trend_analysis <- function(
   # Begin the section for categorical response variables
   #
 
-  if(!is.null(vars_cat)) {
+  if (!is.null(vars_cat)) {
 
     # Assign values to the site ID variable in the dframe data frame
 
-    if(model_cat %in% c("SLR", "WLR")) {
+    if (model_cat %in% c("SLR", "WLR")) {
       dframe[, siteID] <- dframe$siteID_unique
     } else {
       dframe[, siteID] <- dframe$siteID_orginal
@@ -845,26 +851,24 @@ trend_analysis <- function(
 
     # Loop through all subpopulations (domains)
 
-    for(itype in subpops) {
-
+    for (itype in subpops) {
       lev_itype <- levels(dframe[, itype])
       nlev_itype <- length(lev_itype)
 
       # Loop through all  response variables
 
-      for(ivar in vars_cat) {
-
+      for (ivar in vars_cat) {
         lev_ivar <- levels(dframe[, ivar])
         nlev_ivar <- length(lev_ivar)
 
         # Loop through all levels of a subpopulation
 
-        for(isubpop in lev_itype) {
+        for (isubpop in lev_itype) {
 
           # Section for the simple linear regression and weighted linear
           # regression models
 
-          if(model_cat %in% c("SLR", "WLR")) {
+          if (model_cat %in% c("SLR", "WLR")) {
 
             # Determine the set of years for this subpopulation
 
@@ -880,7 +884,7 @@ trend_analysis <- function(
 
             # Loop through all time periods for this subpopulation
 
-            for(iyear in 1:nyears) {
+            for (iyear in 1:nyears) {
 
               # Select sites in a year for this subpopulation
 
@@ -889,13 +893,13 @@ trend_analysis <- function(
 
               # Determine whether the time period for this subpopulation is empty
 
-              if(all(is.na(dframe[subpop_ind, ivar]))) {
+              if (all(is.na(dframe[subpop_ind, ivar]))) {
                 warn_ind <- TRUE
                 warn <- paste0("Year ", years[iyear], " of Subpopulation \"", isubpop, "\" of population type \"", itype, "\" for indicator\n \"", ivar, "\" contains no data.\n")
                 act <- "None.\n"
                 warn_df <- rbind(warn_df, data.frame(
-                  func=I(fname), subpoptype=I(itype), subpop=I(isubpop),
-                  indicator=I(ivar), stratum=NA,  warning=I(warn), action=I(act)
+                  func = I(fname), subpoptype = I(itype), subpop = I(isubpop),
+                  indicator = I(ivar), stratum = NA, warning = I(warn), action = I(act)
                 ))
                 next
               }
@@ -903,13 +907,13 @@ trend_analysis <- function(
               # Determine whether the subpopulation contains a single value
 
               tst <- !is.na(dframe[subpop_ind, ivar])
-              if(sum(tst) == 1) {
+              if (sum(tst) == 1) {
                 warn_ind <- TRUE
                 warn <- paste0("Year ", years[iyear], " of Subpopulation \"", isubpop, "\" of population type \"", itype, "\" for indicator\n \"", ivar, "\" contains a single value.\n")
                 act <- "None.\n"
                 warn_df <- rbind(warn_df, data.frame(
-                  func=I(fname), subpoptype=I(itype), subpop=I(isubpop),
-                  indicator=I(ivar), stratum=NA,  warning=I(warn), action=I(act)
+                  func = I(fname), subpoptype = I(itype), subpop = I(isubpop),
+                  indicator = I(ivar), stratum = NA, warning = I(warn), action = I(act)
                 ))
                 next
               }
@@ -918,9 +922,11 @@ trend_analysis <- function(
 
               tempdf <- subset(dframe, subpop_ind)
               templev <- levels(tempdf[, ivar])
-              temp <- category_est(NULL, tempdf, itype, isubpop, 1, ivar, templev,
+              temp <- category_est(
+                NULL, tempdf, itype, isubpop, 1, ivar, templev,
                 length(templev), subset(design, subpop_ind), design_names,
-                vartype, conf, mult, warn_ind, warn_df)
+                vartype, conf, mult, warn_ind, warn_df
+              )
               temp_cat <- temp$catsum
               warn_ind <- temp$warn_ind
               warn_df <- temp$warn_df
@@ -928,8 +934,8 @@ trend_analysis <- function(
               # Assign the category estimate and variance estimate for each trend
               # category
 
-              for(icat in 1:nlev_ivar) {
-                if(lev_ivar[icat] %in% temp_cat$Category) {
+              for (icat in 1:nlev_ivar) {
+                if (lev_ivar[icat] %in% temp_cat$Category) {
                   tst <- temp_cat$Category == lev_ivar[icat]
                   catest[icat, iyear] <- temp_cat$Estimate.P[tst]
                   varest[icat, iyear] <- (temp_cat$StdError.P[tst])^2
@@ -940,40 +946,40 @@ trend_analysis <- function(
               }
 
               # End of the loop for years
-
             }
 
             # Perform linear regression and assign results
 
-            for(icat in 1:nlev_ivar) {
-              tst <- !is.na(catest[icat,])
-              if(all(tst == FALSE)) {
+            for (icat in 1:nlev_ivar) {
+              tst <- !is.na(catest[icat, ])
+              if (all(tst == FALSE)) {
                 warn_ind <- TRUE
                 warn <- paste0("Subpopulation \"", isubpop, "\" of population type \"", itype, "\" for indicator \"", ivar, "\" \ncontains no data for the \"", lev_ivar[icat], "\" category.\n")
                 act <- "None.\n"
                 warn_df <- rbind(warn_df, data.frame(
-                  func=I(fname), subpoptype=I(itype), subpop=I(isubpop),
-                  indicator=I(ivar), stratum=NA,  warning=I(warn), action=I(act)
+                  func = I(fname), subpoptype = I(itype), subpop = I(isubpop),
+                  indicator = I(ivar), stratum = NA, warning = I(warn), action = I(act)
                 ))
                 next
-              } else if(sum(tst) < 3) {
+              } else if (sum(tst) < 3) {
                 warn_ind <- TRUE
                 warn <- paste0("Subpopulation \"", isubpop, "\" of population type \"", itype, "\" for indicator \"", ivar, "\" \ncontains less than three years of data for the \"", lev_ivar[icat], "\" category.\n")
                 act <- "None.\n"
                 warn_df <- rbind(warn_df, data.frame(
-                  func=I(fname), subpoptype=I(itype), subpop=I(isubpop),
-                  indicator=I(ivar), stratum=NA,  warning=I(warn), action=I(act)
+                  func = I(fname), subpoptype = I(itype), subpop = I(isubpop),
+                  indicator = I(ivar), stratum = NA, warning = I(warn), action = I(act)
                 ))
                 next
               }
-              if(model_cat == "SLR" ) {
+              if (model_cat == "SLR") {
                 regest <- lm(catest[icat, tst] ~ years[tst])
               } else {
                 regest <- lm(catest[icat, tst] ~ years[tst],
-                  weights = 1 / varest[icat, tst])
+                  weights = 1 / varest[icat, tst]
+                )
               }
               coeff <- summary(regest)$coefficients
-              cint <- confint(regest, level = conf/100)
+              cint <- confint(regest, level = conf / 100)
               trend <- coeff[, "Estimate"][2]
               t_stderror <- coeff[, "Std. Error"][2]
               t_lcb <- cint["years[tst]", ][1]
@@ -992,29 +998,31 @@ trend_analysis <- function(
               trendsum$catsum <- rbind(trendsum$catsum, data.frame(
                 itype, isubpop, ivar, lev_ivar[icat], trend, t_stderror, t_lcb,
                 t_ucb, t_pval, intercept, i_stderror, i_lcb, i_ucb, i_pval, rsq,
-                adjrsq))
+                adjrsq
+              ))
             }
 
-          # Section for a generalized linear mixed-effects model
-
-          } else if(invprboot == TRUE) {
+            # Section for a generalized linear mixed-effects model
+          } else if (invprboot == TRUE) {
 
             # Fit the model
 
-            if(stratum_ind) {
-              eval(parse(text = paste0("regest <- glmer(", ivar, " ~ ",
+            if (stratum_ind) {
+              eval(parse(text = paste0(
+                "regest <- glmer(", ivar, " ~ ",
                 cat_rhs, " + ", stratumID, ", data = dframe",
                 ", family = binomial",
                 ", control = glmerControl(check.nobs.vs.nRE = 'warning'",
-                  ", check.conv.singular = lme4::.makeCC(action = 'warning',",
-                  " tol = formals(lme4::isSingular)$tol)))"
+                ", check.conv.singular = lme4::.makeCC(action = 'warning',",
+                " tol = formals(lme4::isSingular)$tol)))"
               )))
             } else {
-              eval(parse(text = paste0("regest <- glmer(", ivar, " ~ ",
+              eval(parse(text = paste0(
+                "regest <- glmer(", ivar, " ~ ",
                 cat_rhs, ", data = dframe, family = binomial",
                 ", control = glmerControl(check.nobs.vs.nRE = 'warning'",
-                  ", check.conv.singular = lme4::.makeCC(action = 'warning',",
-                  " tol = formals(lme4::isSingular)$tol)))"
+                ", check.conv.singular = lme4::.makeCC(action = 'warning',",
+                " tol = formals(lme4::isSingular)$tol)))"
               )))
             }
 
@@ -1022,8 +1030,10 @@ trend_analysis <- function(
             # data frame
 
             coeff <- summary(regest)$coefficients
-            cint <- confint(regest, parm = "beta_", level = conf/100,
-              method = "Wald")
+            cint <- confint(regest,
+              parm = "beta_", level = conf / 100,
+              method = "Wald"
+            )
             pval <- coeff[, "Pr(>|z|)"]
             fixed <- matrix(0, 5, nrow(coeff))
             fixed[1, ] <- coeff[, "Estimate"]
@@ -1033,8 +1043,8 @@ trend_analysis <- function(
             fixed[5, ] <- pval
             vcor <- as.data.frame(VarCorr(regest))
             varcomp <- vector("numeric", nrow(vcor) + sum(!is.na(vcor$vars)))
-            for(i in 1:length(varcomp)) {
-              if(is.na(vcor$var2[i])) {
+            for (i in 1:length(varcomp)) {
+              if (is.na(vcor$var2[i])) {
                 varcomp[i] <- vcor$vcov[i]
               } else {
                 varcomp[i] <- vcor$sdcor[i]
@@ -1044,13 +1054,16 @@ trend_analysis <- function(
 
             # Call the bootstrap function
 
-            if(stratum_ind) {
+            if (stratum_ind) {
               bootest <- boot(dframe, bootfcn, nboot,
                 strata = dframe[, stratumID], weights = bootwgt,
-                model = model_cat, ivar = ivar, rhs = cat_rhs, conf = conf)
+                model = model_cat, ivar = ivar, rhs = cat_rhs, conf = conf
+              )
             } else {
-              bootest <- boot(dframe, bootfcn, nboot, weights = bootwgt,
-                model = model_cat, ivar = ivar, rhs = cat_rhs, conf = conf)
+              bootest <- boot(dframe, bootfcn, nboot,
+                weights = bootwgt,
+                model = model_cat, ivar = ivar, rhs = cat_rhs, conf = conf
+              )
             }
 
             # Calculate bootstrap estimates
@@ -1060,34 +1073,38 @@ trend_analysis <- function(
             # Assign estimates for the response variable to a data frame
 
             trendsum$catsum <- rbind(trendsum$catsum, data.frame(t(c(
-              itype, isubpop, ivar, estimates))))
-
+              itype, isubpop, ivar, estimates
+            ))))
           } else {
 
             # Fit the model
 
-            if(stratum_ind) {
-              eval(parse(text = paste0("regest <- glmer(", ivar, " ~ ",
+            if (stratum_ind) {
+              eval(parse(text = paste0(
+                "regest <- glmer(", ivar, " ~ ",
                 cat_rhs, " + ", stratumID, ", data = dframe",
                 ", family = binomial",
                 ", control = glmerControl(check.nobs.vs.nRE = 'warning'",
-                  ", check.conv.singular = lme4::.makeCC(action = 'warning',",
-                  " tol = formals(lme4::isSingular)$tol)))"
+                ", check.conv.singular = lme4::.makeCC(action = 'warning',",
+                " tol = formals(lme4::isSingular)$tol)))"
               )))
             } else {
-              eval(parse(text = paste0("regest <- glmer(", ivar, " ~ ",
+              eval(parse(text = paste0(
+                "regest <- glmer(", ivar, " ~ ",
                 cat_rhs, ", data = dframe, family = binomial",
                 ", control = glmerControl(check.nobs.vs.nRE = 'warning'",
-                  ", check.conv.singular = lme4::.makeCC(action = 'warning',",
-                  " tol = formals(lme4::isSingular)$tol)))"
+                ", check.conv.singular = lme4::.makeCC(action = 'warning',",
+                " tol = formals(lme4::isSingular)$tol)))"
               )))
             }
 
             # Calculate estimates
 
             coeff <- summary(regest)$coefficients
-            cint <- confint(regest, parm = "beta_", level = conf/100,
-              method = "Wald")
+            cint <- confint(regest,
+              parm = "beta_", level = conf / 100,
+              method = "Wald"
+            )
             pval <- coeff[, "Pr(>|z|)"]
             fixed <- matrix(0, 5, nrow(coeff))
             fixed[1, ] <- coeff[, "Estimate"]
@@ -1097,8 +1114,8 @@ trend_analysis <- function(
             fixed[5, ] <- pval
             vcor <- as.data.frame(VarCorr(regest))
             varcomp <- vector("numeric", nrow(vcor) + sum(!is.na(vcor$vars)))
-            for(i in 1:length(varcomp)) {
-              if(is.na(vcor$var2[i])) {
+            for (i in 1:length(varcomp)) {
+              if (is.na(vcor$var2[i])) {
                 varcomp[i] <- vcor$vcov[i]
               } else {
                 varcomp[i] <- vcor$sdcor[i]
@@ -1106,10 +1123,12 @@ trend_analysis <- function(
             }
             varcomp <- c(varcomp, 1.0)
             AIC <- extractAIC(regest)[2]
-            if(attr(terms(regest), "intercept") == 1) {
-              if(ncol(fixed) > 2) {
-                estimates <- c(fixed[, 2],
-                  as.vector(fixed[, c(1, 3:ncol(fixed))]), varcomp, AIC)
+            if (attr(terms(regest), "intercept") == 1) {
+              if (ncol(fixed) > 2) {
+                estimates <- c(
+                  fixed[, 2],
+                  as.vector(fixed[, c(1, 3:ncol(fixed))]), varcomp, AIC
+                )
               } else {
                 estimates <- c(fixed[, 2], fixed[, 1], varcomp, AIC)
               }
@@ -1120,35 +1139,31 @@ trend_analysis <- function(
             # Assign estimates for the response variable to a data frame
 
             trendsum$catsum <- rbind(trendsum$catsum, data.frame(t(c(
-              itype, isubpop, ivar, estimates))))
-
+              itype, isubpop, ivar, estimates
+            ))))
           }
 
           # End of the loop for levels of a subpopulation
-
         }
 
         # End of the loop for response variables
-
       }
 
       # End of the loop for subpopulations
-
     }
 
     # End of the section for categorical response variables
-
   }
 
   #
   # Begin the section for continuous response variables
   #
 
-  if(!is.null(vars_cont)) {
+  if (!is.null(vars_cont)) {
 
     # Assign values to the site ID variable in the dframe data frame
 
-    if(model_cont %in% c("SLR", "WLR")) {
+    if (model_cont %in% c("SLR", "WLR")) {
       dframe[, siteID] <- dframe$siteID_unique
     } else {
       dframe[, siteID] <- dframe$siteID_orginal
@@ -1156,23 +1171,22 @@ trend_analysis <- function(
 
     # Loop through all subpopulations (domains)
 
-    for(itype in subpops) {
-
+    for (itype in subpops) {
       lev_itype <- levels(dframe[, itype])
       nlev_itype <- length(lev_itype)
 
       # Loop through all  response variables
 
-      for(ivar in vars_cont) {
+      for (ivar in vars_cont) {
 
         # Loop through all levels of a subpopulation
 
-        for(isubpop in lev_itype) {
+        for (isubpop in lev_itype) {
 
           # Section for the simple linear regression and weighted linear
           # regression models
 
-          if(model_cont %in% c("SLR", "WLR")) {
+          if (model_cont %in% c("SLR", "WLR")) {
 
             # Determine the set of years for this subpopulation
 
@@ -1188,7 +1202,7 @@ trend_analysis <- function(
 
             # Loop through all time periods for this subpopulation
 
-            for(iyear in 1:nyears) {
+            for (iyear in 1:nyears) {
 
               # Select sites in a year for this subpopulation
 
@@ -1198,13 +1212,13 @@ trend_analysis <- function(
               # Determine whether the time period for this subpopulation is
               # empty
 
-              if(all(is.na(dframe[subpop_ind, ivar]))) {
+              if (all(is.na(dframe[subpop_ind, ivar]))) {
                 warn_ind <- TRUE
                 warn <- paste0("Year ", years[iyear], " of Subpopulation \"", isubpop, "\" of population type \"", itype, "\" for indicator\n \"", ivar, "\" contains no data.\n")
                 act <- "None.\n"
                 warn_df <- rbind(warn_df, data.frame(
-                  func=I(fname), subpoptype=I(itype), subpop=I(isubpop),
-                  indicator=I(ivar), stratum=NA,  warning=I(warn), action=I(act)
+                  func = I(fname), subpoptype = I(itype), subpop = I(isubpop),
+                  indicator = I(ivar), stratum = NA, warning = I(warn), action = I(act)
                 ))
                 next
               }
@@ -1212,13 +1226,13 @@ trend_analysis <- function(
               # Determine whether the subpopulation contains a single value
 
               tst <- !is.na(dframe[subpop_ind, ivar])
-              if(sum(tst) == 1) {
+              if (sum(tst) == 1) {
                 warn_ind <- TRUE
                 warn <- paste0("Year ", years[iyear], " of Subpopulation \"", isubpop, "\" of population type \"", itype, "\" for indicator\n \"", ivar, "\" contains a single value.\n")
                 act <- "None.\n"
                 warn_df <- rbind(warn_df, data.frame(
-                  func=I(fname), subpoptype=I(itype), subpop=I(isubpop),
-                  indicator=I(ivar), stratum=NA,  warning=I(warn), action=I(act)
+                  func = I(fname), subpoptype = I(itype), subpop = I(isubpop),
+                  indicator = I(ivar), stratum = NA, warning = I(warn), action = I(act)
                 ))
                 next
               }
@@ -1240,18 +1254,17 @@ trend_analysis <- function(
               varest[iyear] <- (temp_cont$StdError)^2
 
               # End of the loop for years
-
             }
 
             # Perform linear regression and assign results
 
-            if(model_cont == "SLR" ) {
+            if (model_cont == "SLR") {
               regest <- lm(contest ~ years)
             } else {
               regest <- lm(contest ~ years, weights = 1 / varest)
             }
             coeff <- summary(regest)$coefficients
-            cint <- confint(regest, level = conf/100)
+            cint <- confint(regest, level = conf / 100)
             trend <- coeff[, "Estimate"][2]
             t_stderror <- coeff[, "Std. Error"][2]
             t_lcb <- cint["years", ][1]
@@ -1275,25 +1288,26 @@ trend_analysis <- function(
               )
             )
 
-          # Section for a linear mixed-effects model
-
-          } else if(invprboot == TRUE) {
+            # Section for a linear mixed-effects model
+          } else if (invprboot == TRUE) {
 
             # Fit the model
 
-            if(stratum_ind) {
-              eval(parse(text = paste0("regest <- lmer(", ivar, " ~ ",
+            if (stratum_ind) {
+              eval(parse(text = paste0(
+                "regest <- lmer(", ivar, " ~ ",
                 cont_rhs, " + ", stratumID, ", data = dframe",
                 ", control = lmerControl(check.nobs.vs.nRE = 'warning'",
-                  ", check.conv.singular = lme4::.makeCC(action = 'warning',",
-                  " tol = formals(lme4::isSingular)$tol)))"
+                ", check.conv.singular = lme4::.makeCC(action = 'warning',",
+                " tol = formals(lme4::isSingular)$tol)))"
               )))
             } else {
-              eval(parse(text = paste0("regest <- lmer(", ivar, " ~ ",
+              eval(parse(text = paste0(
+                "regest <- lmer(", ivar, " ~ ",
                 cont_rhs, ", data = dframe",
                 ", control = lmerControl(check.nobs.vs.nRE = 'warning'",
-                  ", check.conv.singular = lme4::.makeCC(action = 'warning',",
-                  " tol = formals(lme4::isSingular)$tol)))"
+                ", check.conv.singular = lme4::.makeCC(action = 'warning',",
+                " tol = formals(lme4::isSingular)$tol)))"
               )))
             }
 
@@ -1301,8 +1315,10 @@ trend_analysis <- function(
             # data frame
 
             coeff <- summary(regest)$coefficients
-            cint <- confint(regest, parm = "beta_", level = conf/100,
-              method = "Wald")
+            cint <- confint(regest,
+              parm = "beta_", level = conf / 100,
+              method = "Wald"
+            )
             dfval <- df.residual(regest)
             tvalue <- coeff[, "t value"]
             pval <- 2 * (1 - pt(abs(tvalue), dfval))
@@ -1314,8 +1330,8 @@ trend_analysis <- function(
             fixed[5, ] <- pval
             vcor <- as.data.frame(VarCorr(regest))
             varcomp <- vector("numeric", nrow(vcor))
-            for(i in 1:length(varcomp)) {
-              if(is.na(vcor$var2[i])) {
+            for (i in 1:length(varcomp)) {
+              if (is.na(vcor$var2[i])) {
                 varcomp[i] <- vcor$vcov[i]
               } else {
                 varcomp[i] <- vcor$sdcor[i]
@@ -1324,13 +1340,16 @@ trend_analysis <- function(
 
             # Call the bootstrap function
 
-            if(stratum_ind) {
+            if (stratum_ind) {
               bootest <- boot(dframe, bootfcn, nboot,
                 strata = dframe[, stratumID], weights = bootwgt,
-                model = model_cont, ivar = ivar, rhs = cont_rhs, conf = conf)
+                model = model_cont, ivar = ivar, rhs = cont_rhs, conf = conf
+              )
             } else {
-              bootest <- boot(dframe, bootfcn, nboot, weights = bootwgt,
-                model = model_cont, ivar = ivar, rhs = cont_rhs, conf = conf)
+              bootest <- boot(dframe, bootfcn, nboot,
+                weights = bootwgt,
+                model = model_cont, ivar = ivar, rhs = cont_rhs, conf = conf
+              )
             }
 
             # Calculate bootstrap estimates
@@ -1342,35 +1361,38 @@ trend_analysis <- function(
             trendsum$contsum <- rbind(
               trendsum$contsum,
               data.frame(t(c(
-                itype, isubpop, ivar, estimates))
-              )
+                itype, isubpop, ivar, estimates
+              )))
             )
-
           } else {
 
             # Fit the model
 
-            if(stratum_ind) {
-              eval(parse(text = paste0("regest <- lmer(", ivar, " ~ ",
+            if (stratum_ind) {
+              eval(parse(text = paste0(
+                "regest <- lmer(", ivar, " ~ ",
                 cont_rhs, " + ", stratumID, ", data = dframe",
                 ", control = lmerControl(check.nobs.vs.nRE = 'warning'",
-                  ", check.conv.singular = lme4::.makeCC(action = 'warning',",
-                  " tol = formals(lme4::isSingular)$tol)))"
+                ", check.conv.singular = lme4::.makeCC(action = 'warning',",
+                " tol = formals(lme4::isSingular)$tol)))"
               )))
             } else {
-              eval(parse(text = paste0("regest <- lmer(", ivar, " ~ ",
+              eval(parse(text = paste0(
+                "regest <- lmer(", ivar, " ~ ",
                 cont_rhs, ", data = dframe",
                 ", control = lmerControl(check.nobs.vs.nRE = 'warning'",
-                  ", check.conv.singular = lme4::.makeCC(action = 'warning',",
-                  " tol = formals(lme4::isSingular)$tol)))"
+                ", check.conv.singular = lme4::.makeCC(action = 'warning',",
+                " tol = formals(lme4::isSingular)$tol)))"
               )))
             }
 
             # Calculate estimates
 
             coeff <- summary(regest)$coefficients
-            cint <- confint(regest, parm = "beta_", level = conf/100,
-              method = "Wald")
+            cint <- confint(regest,
+              parm = "beta_", level = conf / 100,
+              method = "Wald"
+            )
             dfval <- df.residual(regest)
             tvalue <- coeff[, "t value"]
             pval <- 2 * (1 - pt(abs(tvalue), dfval))
@@ -1382,18 +1404,20 @@ trend_analysis <- function(
             fixed[5, ] <- pval
             vcor <- as.data.frame(VarCorr(regest))
             varcomp <- vector("numeric", nrow(vcor))
-            for(i in 1:length(varcomp)) {
-              if(is.na(vcor$var2[i])) {
+            for (i in 1:length(varcomp)) {
+              if (is.na(vcor$var2[i])) {
                 varcomp[i] <- vcor$vcov[i]
               } else {
                 varcomp[i] <- vcor$sdcor[i]
               }
             }
             AIC <- extractAIC(regest)[2]
-            if(attr(terms(regest), "intercept") == 1) {
-              if(ncol(fixed) > 2) {
-                estimates <- c(fixed[, 2],
-                  as.vector(fixed[, c(1, 3:ncol(fixed))]), varcomp, AIC)
+            if (attr(terms(regest), "intercept") == 1) {
+              if (ncol(fixed) > 2) {
+                estimates <- c(
+                  fixed[, 2],
+                  as.vector(fixed[, c(1, 3:ncol(fixed))]), varcomp, AIC
+                )
               } else {
                 estimates <- c(fixed[, 2], fixed[, 1], varcomp, AIC)
               }
@@ -1406,228 +1430,293 @@ trend_analysis <- function(
             trendsum$contsum <- rbind(
               trendsum$contsum,
               data.frame(t(c(
-                itype, isubpop, ivar, estimates))
-              )
+                itype, isubpop, ivar, estimates
+              )))
             )
-
           }
 
           # End of the loop for levels of a subpopulation
-
         }
 
         # End of the loop for response variables
-
       }
 
       # End of the loop for subpopulations
-
     }
 
     # End of the section for continuous response variables
-
   }
 
   # Assign row names and column names to the output data frames
 
-  if(!is.null(trendsum$catsum)) {
+  if (!is.null(trendsum$catsum)) {
     nrows <- nrow(trendsum$catsum)
-    if(model_cat %in% c("SLR", "WLR")) {
-      dimnames(trendsum$catsum) <- list(1:nrows, c("Type", "Subpopulation",
+    if (model_cat %in% c("SLR", "WLR")) {
+      dimnames(trendsum$catsum) <- list(1:nrows, c(
+        "Type", "Subpopulation",
         "Indicator", "Category", "Trend_Estimate", "Trend_Std_Error",
         paste0("Trend_LCB", conf, "Pct"), paste0("Trend_UCB", conf, "Pct"),
         "Trend_p_Value", "Intercept_Estimate", "Intercept_Std_Error",
-        paste0("Intercept_LCB", conf, "Pct"), paste0("Intercept_UCB", conf,
-        "Pct"), "Intercept_p_Value", "R_Squared", "Adj_R_Squared"))
+        paste0("Intercept_LCB", conf, "Pct"), paste0(
+          "Intercept_UCB", conf,
+          "Pct"
+        ), "Intercept_p_Value", "R_Squared", "Adj_R_Squared"
+      ))
     } else {
-      if(PO_ind_cat == TRUE) {
-        dimnames(trendsum$catsum) <- list(1:nrows, c("Type", "Subpopulation",
-          "Indicator", "Trend_Estimate", "Trend_Std_Error", paste0("Trend_LCB",
-            conf, "Pct"), paste0("Trend_UCB", conf, "Pct"), "Trend_p_Value",
-          "Intercept_Estimate", "Intercept_Std_Error", paste0("Intercept_LCB",
-            conf, "Pct"), paste0("Intercept_UCB", conf, "Pct"),
+      if (PO_ind_cat == TRUE) {
+        dimnames(trendsum$catsum) <- list(1:nrows, c(
+          "Type", "Subpopulation",
+          "Indicator", "Trend_Estimate", "Trend_Std_Error", paste0(
+            "Trend_LCB",
+            conf, "Pct"
+          ), paste0("Trend_UCB", conf, "Pct"), "Trend_p_Value",
+          "Intercept_Estimate", "Intercept_Std_Error", paste0(
+            "Intercept_LCB",
+            conf, "Pct"
+          ), paste0("Intercept_UCB", conf, "Pct"),
           "Intercept_p_Value", "Var_SiteID_Int", "Var_SiteID_Trend",
-          "Corr_SiteID_Int_Trend", "Var_YearID", "Var_Residual", "AIC"))
-      } else if(attr(terms(regest), "intercept") == 1) {
+          "Corr_SiteID_Int_Trend", "Var_YearID", "Var_Residual", "AIC"
+        ))
+      } else if (attr(terms(regest), "intercept") == 1) {
         fixed_names <- NULL
-        if(ncol(fixed) > 2) {
+        if (ncol(fixed) > 2) {
           fnames <- rownames(coeff)
-          for(i in 3:ncol(fixed)) {
+          for (i in 3:ncol(fixed)) {
             temp <- fnames[i]
-            fixed_names <- c(fixed_names, paste0(temp, "_Estimate"),
+            fixed_names <- c(
+              fixed_names, paste0(temp, "_Estimate"),
               paste0(temp, "_Std_Error"), paste0(temp, "_LCB", conf, "Pct"),
-              paste0(temp, "_UCB", conf, "Pct"), paste0(temp, "_p_Value"))
+              paste0(temp, "_UCB", conf, "Pct"), paste0(temp, "_p_Value")
+            )
           }
         }
         varcomp_names <- NULL
         vnames <- vcor$grp
-        for(i in 1:nrow(vcor)) {
-          if(is.na(vcor$var2[i])) {
-            if(vcor$var1[i] %in% "(Intercept)") {
+        for (i in 1:nrow(vcor)) {
+          if (is.na(vcor$var2[i])) {
+            if (vcor$var1[i] %in% "(Intercept)") {
               varcomp_names <- c(varcomp_names, paste("Var", vnames[i],
-                "Int", sep="_"))
+                "Int",
+                sep = "_"
+              ))
             } else {
               varcomp_names <- c(varcomp_names, paste("Var", vnames[i],
-                vcor$var1[i], sep="_"))
+                vcor$var1[i],
+                sep = "_"
+              ))
             }
           } else {
-            if(vcor$var1[i] %in% "(Intercept)") {
-              varcomp_names <- c(varcomp_names,
-                paste("Corr", vnames[i], "Int", vcor$var2[i], sep="_"))
+            if (vcor$var1[i] %in% "(Intercept)") {
+              varcomp_names <- c(
+                varcomp_names,
+                paste("Corr", vnames[i], "Int", vcor$var2[i], sep = "_")
+              )
             } else {
               varcomp_names <- c(varcomp_names, paste("Corr", vnames[1],
-                vcor$var1[i], vcor$var2[i], sep="_"))
+                vcor$var1[i], vcor$var2[i],
+                sep = "_"
+              ))
             }
           }
         }
         varcomp_names <- gsub("Wyear", "Trend", varcomp_names)
-        dimnames(trendsum$catsum) <- list(1:nrows, c("Type", "Subpopulation",
+        dimnames(trendsum$catsum) <- list(1:nrows, c(
+          "Type", "Subpopulation",
           "Indicator", "Trend_Estimate", "Trend_Std_Error",
           paste0("Trend_LCB", conf, "Pct"),
           paste0("Trend_UCB", conf, "Pct"), "Trend_p_Value",
           "Intercept_Estimate", "Intercept_Std_Error",
           paste0("Intercept_LCB", conf, "Pct"),
           paste0("Intercept_UCB", conf, "Pct"), "Intercept_p_Value",
-          fixed_names, varcomp_names, "Var_Residual", "AIC"))
+          fixed_names, varcomp_names, "Var_Residual", "AIC"
+        ))
       } else {
         fixed_names <- NULL
-        if(ncol(fixed) > 1) {
+        if (ncol(fixed) > 1) {
           fnames <- rownames(coeff)
-          for(i in 2:ncol(fixed)) {
+          for (i in 2:ncol(fixed)) {
             temp <- fnames[i]
-            fixed_names <- c(fixed_names, paste0(temp, "_Estimate"),
+            fixed_names <- c(
+              fixed_names, paste0(temp, "_Estimate"),
               paste0(temp, "_Std_Error"), paste0(temp, "_LCB", conf, "Pct"),
-              paste0(temp, "_UCB", conf, "Pct"), paste0(temp, "_p_Value"))
+              paste0(temp, "_UCB", conf, "Pct"), paste0(temp, "_p_Value")
+            )
           }
         }
         varcomp_names <- NULL
         vnames <- vcor$grp
-        for(i in 1:nrow(vcor)) {
-          if(is.na(vcor$var2[i])) {
-            if(vcor$var1[i] %in% "(Intercept)") {
+        for (i in 1:nrow(vcor)) {
+          if (is.na(vcor$var2[i])) {
+            if (vcor$var1[i] %in% "(Intercept)") {
               varcomp_names <- c(varcomp_names, paste("Var", vnames[i],
-                "Int", sep="_"))
+                "Int",
+                sep = "_"
+              ))
             } else {
               varcomp_names <- c(varcomp_names, paste("Var", vnames[i],
-                vcor$var1[i], sep="_"))
+                vcor$var1[i],
+                sep = "_"
+              ))
             }
           } else {
-            if(vcor$var1[i] %in% "(Intercept)") {
-              varcomp_names <- c(varcomp_names,
-                paste("Corr", vnames[i], "Int", vcor$var2[i], sep="_"))
+            if (vcor$var1[i] %in% "(Intercept)") {
+              varcomp_names <- c(
+                varcomp_names,
+                paste("Corr", vnames[i], "Int", vcor$var2[i], sep = "_")
+              )
             } else {
               varcomp_names <- c(varcomp_names, paste("Corr", vnames[1],
-                vcor$var1[i], vcor$var2[i], sep="_"))
+                vcor$var1[i], vcor$var2[i],
+                sep = "_"
+              ))
             }
           }
         }
         varcomp_names <- gsub("Wyear", "Trend", varcomp_names)
-        dimnames(trendsum$catsum) <- list(1:nrows, c("Type", "Subpopulation",
+        dimnames(trendsum$catsum) <- list(1:nrows, c(
+          "Type", "Subpopulation",
           "Indicator", "Trend_Estimate", "Trend_Std_Error",
           paste0("Trend_LCB", conf, "Pct"),
           paste0("Trend_UCB", conf, "Pct"), "Trend_p_Value",
-          fixed_names, varcomp_names, "Var_Residual", "AIC"))
+          fixed_names, varcomp_names, "Var_Residual", "AIC"
+        ))
       }
     }
   }
 
-  if(!is.null(trendsum$contsum)) {
+  if (!is.null(trendsum$contsum)) {
     nrows <- nrow(trendsum$contsum)
-    if(model_cont %in% c("SLR", "WLR")) {
-      dimnames(trendsum$contsum) <- list(1:nrows, c("Type", "Subpopulation",
-        "Indicator", "Trend_Estimate", "Trend_Std_Error", paste0("Trend_LCB",
-          conf, "Pct"), paste0("Trend_UCB", conf, "Pct"), "Trend_p_Value",
-        "Intercept_Estimate", "Intercept_Std_Error", paste0("Intercept_LCB",
-          conf, "Pct"), paste0("Intercept_UCB", conf, "Pct"),
-        "Intercept_p_Value", "R_Squared", "Adj_R_Squared"))
+    if (model_cont %in% c("SLR", "WLR")) {
+      dimnames(trendsum$contsum) <- list(1:nrows, c(
+        "Type", "Subpopulation",
+        "Indicator", "Trend_Estimate", "Trend_Std_Error", paste0(
+          "Trend_LCB",
+          conf, "Pct"
+        ), paste0("Trend_UCB", conf, "Pct"), "Trend_p_Value",
+        "Intercept_Estimate", "Intercept_Std_Error", paste0(
+          "Intercept_LCB",
+          conf, "Pct"
+        ), paste0("Intercept_UCB", conf, "Pct"),
+        "Intercept_p_Value", "R_Squared", "Adj_R_Squared"
+      ))
     } else {
-      if(PO_ind_cont == TRUE) {
-        dimnames(trendsum$contsum) <- list(1:nrows, c("Type", "Subpopulation",
-          "Indicator", "Trend_Estimate", "Trend_Std_Error", paste0("Trend_LCB",
-            conf, "Pct"), paste0("Trend_UCB", conf, "Pct"), "Trend_p_Value",
-          "Intercept_Estimate", "Intercept_Std_Error", paste0("Intercept_LCB",
-            conf, "Pct"), paste0("Intercept_UCB", conf, "Pct"),
+      if (PO_ind_cont == TRUE) {
+        dimnames(trendsum$contsum) <- list(1:nrows, c(
+          "Type", "Subpopulation",
+          "Indicator", "Trend_Estimate", "Trend_Std_Error", paste0(
+            "Trend_LCB",
+            conf, "Pct"
+          ), paste0("Trend_UCB", conf, "Pct"), "Trend_p_Value",
+          "Intercept_Estimate", "Intercept_Std_Error", paste0(
+            "Intercept_LCB",
+            conf, "Pct"
+          ), paste0("Intercept_UCB", conf, "Pct"),
           "Intercept_p_Value", "Var_SiteID_Int", "Var_SiteID_Trend",
-          "Corr_SiteID_Int_Trend", "Var_YearID", "Var_Residual", "AIC"))
-      } else if(attr(terms(regest), "intercept") == 1) {
+          "Corr_SiteID_Int_Trend", "Var_YearID", "Var_Residual", "AIC"
+        ))
+      } else if (attr(terms(regest), "intercept") == 1) {
         fixed_names <- NULL
-        if(ncol(fixed) > 2) {
+        if (ncol(fixed) > 2) {
           fnames <- rownames(coeff)
-          for(i in 3:ncol(fixed)) {
+          for (i in 3:ncol(fixed)) {
             temp <- fnames[i]
-            fixed_names <- c(fixed_names, paste0(temp, "_Estimate"),
+            fixed_names <- c(
+              fixed_names, paste0(temp, "_Estimate"),
               paste0(temp, "_Std_Error"), paste0(temp, "_LCB", conf, "Pct"),
-              paste0(temp, "_UCB", conf, "Pct"), paste0(temp, "_p_Value"))
+              paste0(temp, "_UCB", conf, "Pct"), paste0(temp, "_p_Value")
+            )
           }
         }
         varcomp_names <- NULL
         vnames <- vcor$grp
-        for(i in 1:(nrow(vcor) - 1)) {
-          if(is.na(vcor$var2[i])) {
-            if(vcor$var1[i] %in% "(Intercept)") {
+        for (i in 1:(nrow(vcor) - 1)) {
+          if (is.na(vcor$var2[i])) {
+            if (vcor$var1[i] %in% "(Intercept)") {
               varcomp_names <- c(varcomp_names, paste("Var", vnames[i],
-                "Int", sep="_"))
+                "Int",
+                sep = "_"
+              ))
             } else {
               varcomp_names <- c(varcomp_names, paste("Var", vnames[i],
-                vcor$var1[i], sep="_"))
+                vcor$var1[i],
+                sep = "_"
+              ))
             }
           } else {
-            if(vcor$var1[i] %in% "(Intercept)") {
-              varcomp_names <- c(varcomp_names,
-                paste("Corr", vnames[i], "Int", vcor$var2[i], sep="_"))
+            if (vcor$var1[i] %in% "(Intercept)") {
+              varcomp_names <- c(
+                varcomp_names,
+                paste("Corr", vnames[i], "Int", vcor$var2[i], sep = "_")
+              )
             } else {
               varcomp_names <- c(varcomp_names, paste("Corr", vnames[1],
-                vcor$var1[i], vcor$var2[i], sep="_"))
+                vcor$var1[i], vcor$var2[i],
+                sep = "_"
+              ))
             }
           }
         }
         varcomp_names <- gsub("Wyear", "Trend", varcomp_names)
-        dimnames(trendsum$contsum) <- list(1:nrows, c("Type", "Subpopulation",
+        dimnames(trendsum$contsum) <- list(1:nrows, c(
+          "Type", "Subpopulation",
           "Indicator", "Trend_Estimate", "Trend_Std_Error",
           paste0("Trend_LCB", conf, "Pct"),
           paste0("Trend_UCB", conf, "Pct"), "Trend_p_Value",
           "Intercept_Estimate", "Intercept_Std_Error",
           paste0("Intercept_LCB", conf, "Pct"),
           paste0("Intercept_UCB", conf, "Pct"), "Intercept_p_Value",
-          fixed_names, varcomp_names, "Var_Residual", "AIC"))
+          fixed_names, varcomp_names, "Var_Residual", "AIC"
+        ))
       } else {
         fixed_names <- NULL
-        if(ncol(fixed) > 1) {
+        if (ncol(fixed) > 1) {
           fnames <- rownames(coeff)
-          for(i in 2:ncol(fixed)) {
+          for (i in 2:ncol(fixed)) {
             temp <- fnames[i]
-            fixed_names <- c(fixed_names, paste0(temp, "_Estimate"),
+            fixed_names <- c(
+              fixed_names, paste0(temp, "_Estimate"),
               paste0(temp, "_Std_Error"), paste0(temp, "_LCB", conf, "Pct"),
-              paste0(temp, "_UCB", conf, "Pct"), paste0(temp, "_p_Value"))
+              paste0(temp, "_UCB", conf, "Pct"), paste0(temp, "_p_Value")
+            )
           }
         }
         varcomp_names <- NULL
         vnames <- vcor$grp
-        for(i in 1:(nrow(vcor) - 1)) {
-          if(is.na(vcor$var2[i])) {
-            if(vcor$var1[i] %in% "(Intercept)") {
+        for (i in 1:(nrow(vcor) - 1)) {
+          if (is.na(vcor$var2[i])) {
+            if (vcor$var1[i] %in% "(Intercept)") {
               varcomp_names <- c(varcomp_names, paste("Var", vnames[i],
-                "Int", sep="_"))
+                "Int",
+                sep = "_"
+              ))
             } else {
               varcomp_names <- c(varcomp_names, paste("Var", vnames[i],
-                vcor$var1[i], sep="_"))
+                vcor$var1[i],
+                sep = "_"
+              ))
             }
           } else {
-            if(vcor$var1[i] %in% "(Intercept)") {
-              varcomp_names <- c(varcomp_names,
-                paste("Corr", vnames[i], "Int", vcor$var2[i], sep="_"))
+            if (vcor$var1[i] %in% "(Intercept)") {
+              varcomp_names <- c(
+                varcomp_names,
+                paste("Corr", vnames[i], "Int", vcor$var2[i], sep = "_")
+              )
             } else {
               varcomp_names <- c(varcomp_names, paste("Corr", vnames[1],
-                vcor$var1[i], vcor$var2[i], sep="_"))
+                vcor$var1[i], vcor$var2[i],
+                sep = "_"
+              ))
             }
           }
         }
         varcomp_names <- gsub("Wyear", "Trend", varcomp_names)
-        dimnames(trendsum$contsum) <- list(1:nrows, c("Type", "Subpopulation",
+        dimnames(trendsum$contsum) <- list(1:nrows, c(
+          "Type", "Subpopulation",
           "Indicator", "Trend_Estimate", "Trend_Std_Error",
           paste0("Trend_LCB", conf, "Pct"),
           paste0("Trend_UCB", conf, "Pct"), "Trend_p_Value",
-          fixed_names, varcomp_names, "Var_Residual", "AIC"))
+          fixed_names, varcomp_names, "Var_Residual", "AIC"
+        ))
       }
     }
   }
@@ -1635,12 +1724,13 @@ trend_analysis <- function(
   # As necessary, output a message indicating that warning messages were
   # generated during execution of the program
 
-  if(warn_ind) {
+  if (warn_ind) {
     warn_df <<- warn_df
-    if(nrow(warn_df) == 1)
+    if (nrow(warn_df) == 1) {
       cat("During execution of the program, a warning message was generated.  The warning \nmessage is stored in a data frame named 'warn_df'.  Enter the following command \nto view the warning message: warnprnt()\n")
-    else
+    } else {
       cat(paste("During execution of the program,", nrow(warn_df), "warning messages were generated.  The warning \nmessages are stored in a data frame named 'warn_df'.  Enter the following \ncommand to view the warning messages: warnprnt() \nTo view a subset of the warning messages (say, messages number 1, 3, and 5), \nenter the following command: warnprnt(m=c(1,3,5))\n"))
+    }
   }
 
   # Return the output object

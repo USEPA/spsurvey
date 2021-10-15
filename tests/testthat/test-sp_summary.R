@@ -80,13 +80,13 @@ test_that("one sided formulas work", {
 
 # maxsum works operator works
 test_that("one sided formulas work", {
-  output <- sp_summary(NE_Lakes, formula = ~LEGACY, maxsum = 4)
+  output <- sp_summary(NE_Lakes, formula = ~AREA_CAT, maxsum = 1)
   expect_true(exists("output"))
-  expect_equal(length(output[, 2]), 4)
+  expect_equal(length(output[, 2]), 1)
 
-  output <- sp_summary(NE_Lakes, formula = ~LEGACY)
+  output <- sp_summary(NE_Lakes, formula = ~AREA_CAT)
   expect_true(exists("output"))
-  expect_equal(length(output[, 2]), 6)
+  expect_equal(length(output[, 2]), 2)
 })
 
 #--------------------------------------
@@ -121,7 +121,7 @@ test_that("two sided formulas work", {
 
 n_base <- 50
 eqprob <- grts(NE_Lakes, n_base = n_base)
-eqprob_legacy <- grts(NE_Lakes, n_base = n_base, legacy_var = "LEGACY")
+eqprob_legacy <- grts(NE_Lakes, n_base = n_base, legacy_sites = NE_Lakes_Legacy)
 n_over <- 5
 eqprob_rho <- grts(NE_Lakes, n_base = n_base, n_over = n_over)
 n_near <- 1
@@ -258,116 +258,4 @@ test_that("one sided formulas work", {
   expect_equal(NROW(output[[1]]), 1)
   expect_equal(NCOL(output[[2]]), 1)
   expect_equal(NROW(output[[2]]), length(unique(eqprob_strat$sites_base$stratum)))
-})
-
-#--------------------------------------
-#-------- one sided formula
-#--------------------------------------
-
-# intercept only formula
-test_that("one sided formulas work", {
-  output <- sp_summary(NE_Lakes, formula = ~1)
-  expect_true(exists("output"))
-  expect_equal(NCOL(output), 1)
-  expect_equal(length(output[, 1]), 1)
-})
-
-# single categorical variable
-test_that("one sided formulas work", {
-  output <- sp_summary(NE_Lakes, formula = ~ELEV_CAT)
-  expect_true(exists("output"))
-  expect_equal(NCOL(output), 2)
-  expect_equal(length(output[, 2]), length(unique(NE_Lakes$ELEV_CAT)))
-})
-
-# single categorical variable removing intercept
-test_that("one sided formulas work", {
-  output <- sp_summary(NE_Lakes, formula = ~ ELEV_CAT - 1)
-  expect_true(exists("output"))
-  expect_equal(NCOL(output), 1)
-  expect_equal(length(output[, 1]), length(unique(NE_Lakes$ELEV_CAT)))
-})
-
-# two categorical variables
-test_that("one sided formulas work", {
-  output <- sp_summary(NE_Lakes, formula = ~ ELEV_CAT + AREA_CAT)
-  expect_true(exists("output"))
-  expect_equal(NCOL(output), 3)
-  expect_equal(length(output[, 2]), length(unique(NE_Lakes$ELEV_CAT)))
-  expect_equal(length(output[, 3]), length(unique(NE_Lakes$AREA_CAT)))
-})
-
-# interaction between two categorical variables
-test_that("one sided formulas work", {
-  output <- sp_summary(NE_Lakes, formula = ~ ELEV_CAT:AREA_CAT)
-  expect_true(exists("output"))
-  expect_equal(NCOL(output), 2)
-  expect_equal(length(output[, 2]), length(unique(NE_Lakes$ELEV_CAT)) * length(unique(NE_Lakes$AREA_CAT)))
-})
-
-# onlyshow for interaction between two categorical variables
-test_that("one sided formulas work", {
-  output <- sp_summary(NE_Lakes, formula = ~ ELEV_CAT:AREA_CAT, onlyshow = "low:small")
-  expect_true(exists("output"))
-  expect_equal(NCOL(output), 1)
-  expect_equal(length(output[, 1]), 1)
-})
-
-# single categorical variable
-test_that("one sided formulas work", {
-  output <- sp_summary(NE_Lakes, formula = ~ELEV)
-  expect_true(exists("output"))
-  expect_equal(NCOL(output), 2)
-  expect_equal(length(output[, 2]), 6) # 5 number summary plus mean
-})
-
-# * interaction operator works
-test_that("one sided formulas work", {
-  output <- sp_summary(NE_Lakes, formula = ~ ELEV_CAT * AREA_CAT)
-  expect_true(exists("output"))
-  expect_equal(NCOL(output), 4)
-})
-
-# . interaction operator works
-test_that("one sided formulas work", {
-  output <- sp_summary(NE_Lakes, formula = ~.)
-  expect_true(exists("output"))
-  expect_equal(NCOL(output), NCOL(NE_Lakes)) # our summary removes geometry but includes total
-})
-
-# maxsum works operator works
-test_that("one sided formulas work", {
-  output <- sp_summary(NE_Lakes, formula = ~LEGACY, maxsum = 4)
-  expect_true(exists("output"))
-  expect_equal(length(output[, 2]), 4)
-
-  output <- sp_summary(NE_Lakes, formula = ~LEGACY)
-  expect_true(exists("output"))
-  expect_equal(length(output[, 2]), 6)
-})
-
-#--------------------------------------
-#-------- two sided formula
-#--------------------------------------
-
-# numeric left hand side variable
-test_that("two sided formulas work", {
-  output <- sp_summary(NE_Lakes, formula = AREA ~ ELEV_CAT)
-  expect_true(exists("output"))
-  expect_equal(NROW(output), 2)
-  expect_equal(NCOL(output[[1]]), 6)
-  expect_equal(NROW(output[[1]]), 1)
-  expect_equal(NCOL(output[[2]]), 6)
-  expect_equal(NROW(output[[2]]), length(unique(NE_Lakes$ELEV_CAT)))
-})
-
-# numeric right hand side variable
-test_that("two sided formulas work", {
-  output <- sp_summary(NE_Lakes, formula = AREA_CAT ~ ELEV_CAT)
-  expect_true(exists("output"))
-  expect_equal(NROW(output), 2)
-  expect_equal(NCOL(output[[1]]), length(unique(NE_Lakes$AREA_CAT)))
-  expect_equal(NROW(output[[1]]), 1)
-  expect_equal(NCOL(output[[2]]), length(unique(NE_Lakes$AREA_CAT)))
-  expect_equal(NROW(output[[2]]), length(unique(NE_Lakes$ELEV_CAT)))
 })

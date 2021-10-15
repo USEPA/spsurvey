@@ -327,19 +327,17 @@
 #' @export
 ################################################################################
 
-change_analysis <- function(
-  dframe, vars_cat = NULL, vars_cont = NULL, test = "mean", subpops = NULL,
-  surveyID = "surveyID", survey_names = NULL, siteID = "siteID",
-  weight = "weight", revisitwgt = FALSE, xcoord = NULL, ycoord = NULL,
-  stratumID = NULL, clusterID = NULL, weight1 = NULL, xcoord1 = NULL,
-  ycoord1 = NULL, sizeweight = FALSE, sweight = NULL,  sweight1 = NULL,
-  fpc = NULL, popsize = NULL, vartype = "Local", jointprob = "overton",
-  conf = 95, All_Sites = FALSE
-) {
+change_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL, test = "mean", subpops = NULL,
+                            surveyID = "surveyID", survey_names = NULL, siteID = "siteID",
+                            weight = "weight", revisitwgt = FALSE, xcoord = NULL, ycoord = NULL,
+                            stratumID = NULL, clusterID = NULL, weight1 = NULL, xcoord1 = NULL,
+                            ycoord1 = NULL, sizeweight = FALSE, sweight = NULL, sweight1 = NULL,
+                            fpc = NULL, popsize = NULL, vartype = "Local", jointprob = "overton",
+                            conf = 95, All_Sites = FALSE) {
 
   # Assign NULL to vars_nondetect
 
-  vars_nondetect <-  NULL
+  vars_nondetect <- NULL
 
   # Create a vector for error messages
 

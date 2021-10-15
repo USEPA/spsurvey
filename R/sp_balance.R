@@ -102,9 +102,10 @@ sp_balance <- function(object, sframe, stratum_var = NULL, ip = NULL, metrics = 
   if (extents) {
     extent_sf_split <- lapply(names(output), function(x) {
       object_split[[x]]$extent <- output[[x]]$extent
-      object_split[[x]][c("stratum", "extent")]
+      object_split[[x]][c(stratum_var["object"], "extent")]
     })
     extents <- do.call("rbind", extent_sf_split)
+    names(extents)[[which(names(extents) == stratum_var["object"])]] <- "stratum"
     return(list(metrics = metrics, extents = extents))
   } else {
     return(metrics)
@@ -147,12 +148,15 @@ calculate_sp_balance <- function(object_split, sframe_split, ip, metrics, extent
 
   # spatial balance with respect to the sframe
   tiles <- tile.list(deldir(x = samp_xcoord, y = samp_ycoord, rw = pop_bbox))
-
   ## using lapply instead of a loop
   sftess <- lapply(tiles, get_sftess)
   sftess <- st_sfc(sftess, crs = st_crs(sframe_split))
   sftess <- st_sf(poly = 1:n, geometry = sftess)
-  sftess <- suppressWarnings(st_intersection(st_make_valid(sframe_split), sftess))
+  # next part required because st_intersection won't include points if they are on the
+  # exact boundary of a polygon (Voronoi polygon has this occur when a site is along the
+  # bounding box)
+  buffer_dist <- (pop_bbox["xmax"] - pop_bbox["xmin"]) * (pop_bbox["ymax"] - pop_bbox["ymin"]) / 1e12
+  sftess <- suppressWarnings(st_intersection(st_make_valid(sframe_split), st_buffer(sftess, buffer_dist)))
 
 
   # scaling the inclusion probabilities by the amount of the geometry
@@ -163,6 +167,7 @@ calculate_sp_balance <- function(object_split, sframe_split, ip, metrics, extent
   # for points, sframe geometry must be point or multipoint
   if (all(st_geometry_type(sframe_split) %in% c("POINT", "MULTIPOINT"))) {
     ## storing a dummy variable to index counts by
+    sftess$polydens <- 1
     sftess$adjip <- sftess$ip
   } else if (all(st_geometry_type(sframe_split) %in% c("LINESTRING", "MULTILINESTRING"))) {
     sftess$polydens <- as.numeric(st_length(sftess))

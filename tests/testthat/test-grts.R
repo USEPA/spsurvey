@@ -209,8 +209,8 @@ test_that("algorithm executes", {
 # legacy sites, unstratified, equal probability
 test_that("algorithm executes", {
   n_base <- 50
-  n_legacy <- sum(!is.na(NE_Lakes$LEGACY))
-  grts_output <- grts(NE_Lakes, n_base = n_base, seltype = "equal", legacy_var = "LEGACY")
+  n_legacy <- NROW(NE_Lakes_Legacy)
+  grts_output <- grts(NE_Lakes, n_base = n_base, seltype = "equal", legacy_sites = NE_Lakes_Legacy)
   expect_true(exists("grts_output"))
   expect_equal(NROW(grts_output$sites_legacy), n_legacy)
   expect_equal(NROW(grts_output$sites_base), n_base - n_legacy)
@@ -225,10 +225,11 @@ test_that("algorithm executes", {
 # legacy sites, stratified, equal probability
 test_that("algorithm executes", {
   n_base <- c(low = 20, high = 30)
-  n_legacy <- sum(!is.na(NE_Lakes$LEGACY))
+  n_legacy <- NROW(NE_Lakes_Legacy)
   grts_output <- grts(NE_Lakes,
     n_base = n_base, seltype = "equal",
-    stratum_var = "ELEV_CAT", legacy_var = "LEGACY"
+    stratum_var = "ELEV_CAT", legacy_sites = NE_Lakes_Legacy,
+    legacy_stratum_var = "ELEV_CAT"
   )
   expect_true(exists("grts_output"))
   expect_equal(NROW(grts_output$sites_legacy), n_legacy)
@@ -255,10 +256,11 @@ test_that("algorithm executes", {
 test_that("algorithm executes", {
   n_base <- 50
   caty_n <- c(small = 24, large = 26)
-  n_legacy <- sum(!is.na(NE_Lakes$LEGACY))
+  n_legacy <- NROW(NE_Lakes_Legacy)
   grts_output <- grts(NE_Lakes,
     n_base = n_base, seltype = "unequal",
-    caty_var = "AREA_CAT", caty_n = caty_n, legacy_var = "LEGACY"
+    caty_var = "AREA_CAT", caty_n = caty_n, legacy_sites = NE_Lakes_Legacy,
+    legacy_caty_var = "AREA_CAT"
   )
   expect_true(exists("grts_output"))
   expect_equal(NROW(grts_output$sites_legacy), n_legacy)
@@ -274,10 +276,11 @@ test_that("algorithm executes", {
 # legacy sites, proportional probability
 test_that("algorithm executes", {
   n_base <- 50
-  n_legacy <- sum(!is.na(NE_Lakes$LEGACY))
+  n_legacy <- NROW(NE_Lakes_Legacy)
   grts_output <- grts(NE_Lakes,
     n_base = n_base, seltype = "proportional",
-    aux_var = "AREA", legacy_var = "LEGACY"
+    aux_var = "AREA", legacy_sites = NE_Lakes_Legacy,
+    legacy_aux_var = "AREA"
   )
   expect_true(exists("grts_output"))
   expect_equal(NROW(grts_output$sites_legacy), n_legacy)
@@ -286,6 +289,25 @@ test_that("algorithm executes", {
   expect_equal(NROW(grts_output$sites_near), 0)
   expect_equal(NCOL(grts_output$sites_legacy), col_out + 1)
   expect_equal(NCOL(grts_output$sites_base), col_out + 1)
+  expect_equal(NCOL(grts_output$sites_over), 1)
+  expect_equal(NCOL(grts_output$sites_near), 1)
+})
+
+# legacy sites, unstratified, equal probability -- old method
+test_that("algorithm executes", {
+  n_base <- 50
+  n_legacy <- NROW(NE_Lakes_Legacy)
+  NE_Lakes$LEGACY <- NA
+  NE_Lakes_Legacy$LEGACY <- paste0("LEGACY-SITES-", 1:5)
+  NE_Lakes_bind <- rbind(NE_Lakes_Legacy, NE_Lakes)
+  grts_output <- grts(NE_Lakes_bind, n_base = n_base, seltype = "equal", legacy_var = "LEGACY")
+  expect_true(exists("grts_output"))
+  expect_equal(NROW(grts_output$sites_legacy), n_legacy)
+  expect_equal(NROW(grts_output$sites_base), n_base - n_legacy)
+  expect_equal(NROW(grts_output$sites_over), 0)
+  expect_equal(NROW(grts_output$sites_near), 0)
+  expect_equal(NCOL(grts_output$sites_legacy), col_out + 1) # as legacy variable added
+  expect_equal(NCOL(grts_output$sites_base), col_out + 1) # as legacy variable added
   expect_equal(NCOL(grts_output$sites_over), 1)
   expect_equal(NCOL(grts_output$sites_near), 1)
 })
@@ -372,8 +394,8 @@ test_that("algorithm executes", {
 test_that("algorithm executes", {
   n_base <- 50
   caty_n <- c(small = 24, large = 26)
-  n_over <- 10
   caty_n_over <- c(small = 5, large = 5)
+  n_over <- sum(caty_n_over)
   grts_output <- grts(NE_Lakes,
     n_base = n_base, seltype = "unequal",
     caty_var = "AREA_CAT", caty_n = caty_n, n_over = caty_n_over
@@ -522,12 +544,12 @@ test_that("algorithm executes", {
 #--------------------------------------
 
 test_that("algorithm executes", {
-  n_legacy <- sum(!is.na(NE_Lakes$LEGACY))
+  n_legacy <- NROW(NE_Lakes_Legacy)
   n_base <- 50
   n_over <- 5
   n_near <- 2
   NE_Lakes$siteID <- seq_len(nrow(NE_Lakes))
-  grts_output <- grts(NE_Lakes, n_base = n_base, seltype = "equal", legacy_var = "LEGACY", n_over = n_over, n_near = n_near)
+  grts_output <- grts(NE_Lakes, n_base = n_base, seltype = "equal", legacy_sites = NE_Lakes_Legacy, n_over = n_over, n_near = n_near)
   expect_true(exists("grts_output"))
   expect_equal(NROW(grts_output$sites_legacy), n_legacy)
   expect_equal(NROW(grts_output$sites_base), n_base - n_legacy)

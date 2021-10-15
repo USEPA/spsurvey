@@ -121,12 +121,10 @@
 #' @export
 ################################################################################
 
-cont_cdfplot <- function(
-  pdffile = "cdf2x2.pdf", cdfest, units_cdf = "Percent",
-  ind_type = rep("Continuous", nind), log = rep("", nind), xlab = NULL,
-  ylab = NULL, ylab_r = NULL, legloc = NULL, cdf_page = 4, width = 10,
-  height = 8, confcut = 0, cex.main = 1.2, cex.legend = 1, ...
-) {
+cont_cdfplot <- function(pdffile = "cdf2x2.pdf", cdfest, units_cdf = "Percent",
+                         ind_type = rep("Continuous", nind), log = rep("", nind), xlab = NULL,
+                         ylab = NULL, ylab_r = NULL, legloc = NULL, cdf_page = 4, width = 10,
+                         height = 8, confcut = 0, cex.main = 1.2, cex.legend = 1, ...) {
 
   # Open the PDF file
 
@@ -178,10 +176,13 @@ cont_cdfplot <- function(
       for (kin in temp) {
         tstind <- tstsub & cdfest$Indicator == indnames[kin]
         cdf_plot(
-          cdfest[tstind, ], units_cdf = units_cdf, type_cdf = ind_type[kin],
+          cdfest[tstind, ],
+          units_cdf = units_cdf, type_cdf = ind_type[kin],
           log = log[kin], xlab = xlab[indnames[kin]], ylab = ylab,
-          ylab_r = ylab_r, main = paste0(typenames[itype], " - ",
-            subnames[jsub], ": ", indnames[kin]),
+          ylab_r = ylab_r, main = paste0(
+            typenames[itype], " - ",
+            subnames[jsub], ": ", indnames[kin]
+          ),
           legloc = legloc, confcut = confcut, conflev = conflev,
           cex.main = cex.main, cex.legend = cex.legend, ...
         )

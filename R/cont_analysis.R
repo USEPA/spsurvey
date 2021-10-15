@@ -96,19 +96,17 @@
 #' @export
 ################################################################################
 
-cont_analysis <- function(
-  dframe, vars, subpops = NULL, siteID = "siteID", weight = "weight",
-  xcoord = NULL, ycoord = NULL, stratumID = NULL, clusterID = NULL,
-  weight1 = NULL, xcoord1 = NULL, ycoord1 = NULL, sizeweight = FALSE,
-  sweight = NULL, sweight1 = NULL, fpc = NULL, popsize = NULL,
-  vartype = "Local", jointprob = "overton", conf = 95,
-  pctval = c(5, 10, 25, 50, 75, 90, 95), statistics = c("CDF", "Pct", "Mean"),
-  All_Sites = FALSE
-) {
+cont_analysis <- function(dframe, vars, subpops = NULL, siteID = "siteID", weight = "weight",
+                          xcoord = NULL, ycoord = NULL, stratumID = NULL, clusterID = NULL,
+                          weight1 = NULL, xcoord1 = NULL, ycoord1 = NULL, sizeweight = FALSE,
+                          sweight = NULL, sweight1 = NULL, fpc = NULL, popsize = NULL,
+                          vartype = "Local", jointprob = "overton", conf = 95,
+                          pctval = c(5, 10, 25, 50, 75, 90, 95), statistics = c("CDF", "Pct", "Mean"),
+                          All_Sites = FALSE) {
 
   # Assign NULL to vars_nondetect
 
-  vars_nondetect <-  NULL
+  vars_nondetect <- NULL
 
   # Create a vector for error messages
 
@@ -449,7 +447,7 @@ cont_analysis <- function(
       if ("Pct" %in% statistics) {
         temp <- percentile_est(
           contsum$Pct, dframe, itype, lev_itype, nlev_itype, ivar, design,
-          design_names, vars_nondetect[indx], conf, mult, pctval,warn_ind,
+          design_names, vars_nondetect[indx], conf, mult, pctval, warn_ind,
           warn_df
         )
         contsum$Pct <- temp$pctsum

@@ -76,7 +76,7 @@ should be \code{"levels"} and contain all levels of the particular right-hand si
 names correspond to graphical arguments that are to be passed to
 the specified levels (in order) of the right-hand side variable. Values for each
 graphical argument must be specified for each level of the right-hand side variable,
-but applicable sf defaults will be matched by inputting the value \code{NA}. 
+but applicable sf defaults will be matched by inputting the value \code{NA}.
 To see all graphical arguments available, run \code{?plot.sf}}
 
 \item{geom}{Should separate geometries for each level of the right-hand

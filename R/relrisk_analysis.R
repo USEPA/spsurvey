@@ -92,14 +92,12 @@
 #' @export
 ################################################################################
 
-relrisk_analysis <- function(
-  dframe, vars_response, vars_stressor, response_levels = NULL,
-  stressor_levels = NULL, subpops = NULL, siteID = "siteID", weight = "weight",
-  xcoord = NULL, ycoord = NULL, stratumID = NULL, clusterID = NULL,
-  weight1 = NULL, xcoord1 = NULL, ycoord1 = NULL, sizeweight = FALSE,
-  sweight = NULL, sweight1 = NULL, fpc = NULL, popsize = NULL,
-  vartype = "Local", conf = 95, All_Sites = FALSE
-) {
+relrisk_analysis <- function(dframe, vars_response, vars_stressor, response_levels = NULL,
+                             stressor_levels = NULL, subpops = NULL, siteID = "siteID", weight = "weight",
+                             xcoord = NULL, ycoord = NULL, stratumID = NULL, clusterID = NULL,
+                             weight1 = NULL, xcoord1 = NULL, ycoord1 = NULL, sizeweight = FALSE,
+                             sweight = NULL, sweight1 = NULL, fpc = NULL, popsize = NULL,
+                             vartype = "Local", conf = 95, All_Sites = FALSE) {
 
   # Create a vector for error messages
 

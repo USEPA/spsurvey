@@ -16,7 +16,7 @@
 Illinois_River_Legacy
 }
 \description{
-An (\code{sf}) POINT object of legacy sites for  the Illinois
+An (\code{sf}) POINT object of legacy sites for the Illinois
 River data.
 }
 \keyword{datasets}

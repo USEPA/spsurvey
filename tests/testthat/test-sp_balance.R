@@ -10,7 +10,7 @@ test_that("sp_balance works unstrat", {
   expect_equal(NROW(spb_eqprob), 1)
   expect_equal(NCOL(spb_eqprob), 3)
   spb_eqprob <- sp_balance(eqprob$sites_base, NE_Lakes,
-                           metrics = c("pielou", "simpsons", "rmse", "mse", "mae", "medae", "chisq")
+    metrics = c("pielou", "simpsons", "rmse", "mse", "mae", "medae", "chisq")
   )
   expect_equal(NROW(spb_eqprob), 7)
   expect_equal(NCOL(spb_eqprob), 3)
@@ -26,8 +26,8 @@ test_that("sp_balance works unstrat custom ip", {
   expect_equal(NROW(spb_eqprob), 1)
   expect_equal(NCOL(spb_eqprob), 3)
   spb_eqprob <- sp_balance(eqprob$sites_base, NE_Lakes,
-                           metrics = c("pielou", "simpsons", "rmse", "mse", "mae", "medae", "chisq"),
-                           ip = "ip"
+    metrics = c("pielou", "simpsons", "rmse", "mse", "mae", "medae", "chisq"),
+    ip = "ip"
   )
   expect_equal(NROW(spb_eqprob), 7)
   expect_equal(NCOL(spb_eqprob), 3)

@@ -4,10 +4,10 @@
 # Date: January 22, 2022
 #' Select an independent random sample (IRS)
 #'
-#' Select a sample that is not spatially balanced from a point (finite), linear (infinite),
-#' or polygon / areal (infinite) sampling frame using the Independent Random Sampling (IRS) algorithm.
+#' Select a sample that is not spatially balanced from a point (finite), linear / linestring (infinite),
+#' or areal / polygon (infinite) sampling frame using the Independent Random Sampling (IRS) algorithm.
 #' The IRS algorithm accommodates unstratified and
-#' stratified designs and allows for equal inclusion probabilities, unequal
+#' stratified sampling designs and allows for equal inclusion probabilities, unequal
 #' inclusion probabilities according to a categorical variable, and inclusion
 #' probabilities proportional to a positive auxiliary variable. Several additional
 #' sampling options are included, such as including legacy (historical) sites,
@@ -130,12 +130,15 @@ irs <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = N
 
   # set stratum, caty, aux and legacy variables in legacy_sites if needed
   # add idpts to legacy_sites
-  if (legacy_option == TRUE & sf_type != "sf_point") {
+  if (legacy_option == TRUE & (sf_type != "sf_point" | ((sf_type == "sf_point") & !is.null(legacy_sites)))) {
     legacy_names <- names(legacy_sites)
     legacy_sites$idpts <- 1:nrow(legacy_sites)
     if (stratum[1] == "None") {
       legacy_sites$stratum <- "None"
     } else {
+      if (is.null(legacy_stratum_var)) {
+        legacy_stratum_var <- stratum_var
+      }
       legacy_sites$stratum <- as.character(legacy_sites[[legacy_stratum_var]])
     }
     if (!is.null(caty_var)) {
@@ -148,7 +151,7 @@ irs <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = N
       if (is.null(legacy_aux_var)) {
         legacy_aux_var <- aux_var
       }
-      legacy_sites$aux <- as.character(legacy_sites[[legacy_aux_var]])
+      legacy_sites$aux <- legacy_sites[[legacy_aux_var]]
     }
     if (is.null(legacy_var)) {
       legacy_sites$legacy <- TRUE
@@ -205,6 +208,7 @@ irs <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = N
   # n_over
   if (!is.null(n_over)) {
     if (is.list(n_over)) {
+      n_over <- lapply(n_over, function(x) if(all(x == 0)) NULL else x)
       dsgn$n_over <- n_over
     } else {
       tmp <- lapply(stratum, function(x, n_over) {
@@ -214,23 +218,25 @@ irs <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = N
       dsgn$n_over <- tmp
     }
   }
-
+  
   # n_near
   if (!is.null(n_near)) {
     if (is.list(n_near)) {
+      n_near <- lapply(n_near, function(x) if(all(x == 0)) NULL else x)
       dsgn$n_near <- n_near
     } else {
-      tmp <- sapply(stratum, function(x, n_near) {
+      tmp <- lapply(stratum, function(x, n_near) {
         x <- n_near
       }, n_near)
       names(tmp) <- stratum
       dsgn$n_near <- tmp
     }
   }
-
+  
   # mindis
   if (!is.null(mindis)) {
     if (is.list(mindis)) {
+      mindis <- lapply(mindis, function(x) if(all(x == 0)) NULL else x)
       dsgn$mindis <- mindis
     } else {
       tmp <- lapply(stratum, function(x, mindis) {
@@ -398,7 +404,8 @@ irs <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = N
         names(sframe_temp)[-temp_geometry_col] <- paste("sframe", names(sframe_temp)[-temp_geometry_col], sep = "_")
         sites_legacy <- st_join(sites_legacy, sframe_temp, join = st_nearest_feature)
         sites_legacy <- subset(sites_legacy,
-                               select = c(add_names, sframe_names_good[-sframe_geometry_col], names(sframe_temp)))
+          select = c(add_names, sframe_names_good[-sframe_geometry_col], names(sframe_temp))
+        )
         for (i in names(sites_legacy)) {
           if (i %in% c("sframe_xcoord", "sframe_ycoord", "sframe_idpts")) {
             names(sites_legacy)[which(names(sites_legacy) == i)] <- substring(i, first = 8)

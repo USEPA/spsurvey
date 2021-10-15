@@ -5,7 +5,7 @@
 #'   Spatially balanced samples are selected using the
 #'   Generalized Random Tessellation Stratified (GRTS) algorithm.
 #'   The GRTS algorithm can be applied to finite resources (point geometries) and
-#'   infinite resources (linear and polygon / areal geometries) and flexibly
+#'   infinite resources (linear / linestring and areal / polygon geometries) and flexibly
 #'   accommodates a diverse set of sampling design features, including
 #'   stratification, unequal inclusion probabilities, proportional (to size)
 #'   inclusion probabilities, legacy (historical) sites, a minimum distance between
@@ -15,7 +15,8 @@
 #'   variable analysis, attributable risk analysis, risk difference analysis, relative
 #'   risk analysis, change analysis, and trend analysis. spsurvey can also be used to
 #'   summarize objects, visualize objects, select samples that are not spatially balanced,
-#'   select panel samples, measure the amount of spatial balance in a sample, and more.
+#'   select panel samples, measure the amount of spatial balance in a sample,
+#'   adjust design weights, and more.
 #'   This R package has been reviewed in accordance
 #'   with U.S. Environmental Protection Agency policy and approved for publication.
 #'   Mention of trade names or commercial products does not constitute endorsement or

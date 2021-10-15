@@ -455,7 +455,6 @@ trend_analysis(
   xcoord = "xcoord",
   ycoord = "ycoord"
 )
-
 }
 \seealso{
 \describe{

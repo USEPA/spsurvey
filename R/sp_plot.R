@@ -55,7 +55,7 @@
 #' names correspond to graphical arguments that are to be passed to
 #' the specified levels (in order) of the right-hand side variable. Values for each
 #' graphical argument must be specified for each level of the right-hand side variable,
-#' but applicable sf defaults will be matched by inputting the value \code{NA}. 
+#' but applicable sf defaults will be matched by inputting the value \code{NA}.
 #' To see all graphical arguments available, run \code{?plot.sf}
 #'
 #' @param geom Should separate geometries for each level of the right-hand
@@ -267,7 +267,7 @@ sp_plot.default <- function(object, formula = ~1, xcoord, ycoord, crs,
         if (!is.null(var_args)) {
           var_args_list <- make_var_args_list(varsf, var_args)
           var_args_split <- split(as.data.frame(var_args_list[[formlist$varlabels]][[formlist$response]],
-                                                stringsAsFactors = FALSE
+            stringsAsFactors = FALSE
           ), varsf[[formlist$varlabels]])
           var_args_split <- var_args_split[[formlist$onlyshow]]
         } else {

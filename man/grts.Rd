@@ -31,8 +31,8 @@ grts(
 \item{sframe}{The sampling frame as an \code{sf} object. The coordinate
 system for \code{sframe} must be one where distance for coordinates is meaningful.}
 
-\item{n_base}{The base sample size required. If the design is unstratified,
-this is a single numeric value. If the design is stratified, this is a named
+\item{n_base}{The base sample size required. If the sampling design is unstratified,
+this is a single numeric value. If the sampling design is stratified, this is a named
 vector or list whose names represent each stratum and whose values represent each
 stratum's sample size. These names must match the values of the stratification
 variable represented by \code{stratum_var}. Legacy sites are considered part
@@ -40,8 +40,8 @@ of the base sample, so the value for \code{n_base} should be equal to the number
 of legacy sites plus the number of desired non-legacy sites.}
 
 \item{stratum_var}{A character string containing the name of the column from
-\code{sframe} that identifies stratum membership for each element in the frame.
-If stratum equals \code{NULL}, the design is unstratified and all elements in \code{sframe}
+\code{sframe} that identifies stratum membership for each element in \code{sframe}.
+If stratum equals \code{NULL}, the sampling design is unstratified and all elements in \code{sframe}
 are eligible to be selected in the sample. The default is \code{NULL}.}
 
 \item{seltype}{A character string or vector indicating the inclusion probability type,
@@ -49,8 +49,8 @@ which must be one of following: \code{"equal"} for equal inclusion probabilities
 \code{"unequal"} for unequal inclusion probabilities according to a categorical
 variable specified by \code{caty_var}; and \code{"proportional"} for inclusion
 probabilities proportional to a positive auxiliary variable specified by
-\code{aux_var}. If the design is unstratified, \code{seltype} is a single
-character vector. If the design is stratified, \code{seltype} is a named vector
+\code{aux_var}. If the sampling design is unstratified, \code{seltype} is a single
+character vector. If the sampling design is stratified, \code{seltype} is a named vector
 whose names represent each stratum and whose values represent each stratum's
 inclusion probability type. \code{seltype}'s default value tries to match the
 intended inclusion probability type: If \code{caty_var} and \code{aux_var} are
@@ -62,16 +62,16 @@ is \code{"proportional"}.}
 \code{sframe} that represents the unequal probability variable.}
 
 \item{caty_n}{A character vector indicating the expected sample size for each
-level of \code{caty_var}, the unequal probability variable. If the design
+level of \code{caty_var}, the unequal probability variable. If the sampling design
 is unstratified, \code{caty_n} is a named vector whose names represent each
 level of \code{caty_var} and whose values represent each level's expected
-sample size. The sum of \code{caty_n} must equal \code{n_base}. If the design
+sample size. The sum of \code{caty_n} must equal \code{n_base}. If the sampling design
 is stratified and the expected sample sizes are the same among strata, \code{caty_n} is
 a named vector whose names represent represent each
 level of \code{caty_var} and whose values represent each level's expected
 sample size -- these expected sample sizes are applied to all strata. The sum of
 \code{caty_n} must equal each stratum's value in \code{n_base}.
-If the design is stratified and the expected sample sizes differ among strata,
+If the sampling design is stratified and the expected sample sizes differ among strata,
 \code{caty_n} is a list where each element  is named as a stratum in \code{n_base}.
 Each stratum's list element is a named vector whose
 names represent each level of \code{caty_var} and whose values represent each
@@ -92,7 +92,7 @@ from \code{sframe} that represents the legacy site variable. For legacy sites, t
 act as a legacy site identifier. For non-legacy sites, the values of the
 \code{legacy_var} column in \code{sframe} must be \code{NA}. spsurvey assumes
 that the legacy sites were selected from a previous sampling design that
-incorporated randomness into the sampling design.}
+incorporated randomness into site selection.}
 
 \item{legacy_sites}{If \code{sframe} is a \code{LINESTRING}, \code{MULTILINESTRING},
 \code{POLYGON}, or \code{MULTIPOLYGON} geometry (an infinite sampling frame),
@@ -103,32 +103,32 @@ incorporated randomness into site selection.}
 
 \item{legacy_stratum_var}{A character string containing the name of the column from
 \code{legacy_sites} that identifies stratum membership for each element of \code{legacy_sites}.
-This argument is required when the design is stratified and its levels
+This argument is required when the sampling design is stratified and its levels
 must be contained in the levels of the \code{stratum_var} variable. The default value of \code{legacy_stratum_var}
 is \code{stratum_var}, so \code{legacy_stratum_var} need only be specified explicitly when
 the name of the stratification variable in \code{legacy_sites} differs from \code{stratum_var}.}
 
 \item{legacy_caty_var}{A character string containing the name of the column from
 \code{legacy_sites} that identifies the unequal probability variable for each element of \code{legacy_sites}.
-This argument is required when the design uses unequal selection probabilities and its categories
+This argument is required when the sampling design uses unequal selection probabilities and its categories
 must be contained in the levels of the \code{caty_var} variable. The default value of \code{legacy_caty_var}
 is \code{caty_var}, so \code{legacy_caty_var} need only be specified explicitly when
 the name of the unequal probability variable in \code{legacy_sites} differs from \code{caty_var}.}
 
 \item{legacy_aux_var}{A character string containing the name of the column from
 \code{legacy_sites} that identifies the proportional probability variable for each element of \code{legacy_sites}.
-This argument is required when the design uses proportional selection probabilities and the values of the
+This argument is required when the sampling design uses proportional selection probabilities and the values of the
 \code{legacy_aux_var} variable must be positive. The
 default value of \code{legacy_aux_var} is \code{aux_var}, so \code{legacy_aux_var} need only be specified explicitly
 when the name of the proportional probability variable in \code{legacy_sites} differs from \code{aux_var}.}
 
 \item{mindis}{A numeric value indicating the desired minimum distance between sampled
-sites. If the design is stratified and \code{mindis} is an numeric value, the minimum
-distance is applied to all strata. If the design is stratified and different minimum distances
-are desired among strata,then \code{mindis}
+sites. If the sampling design is stratified and \code{mindis} is an numeric value, the minimum
+distance is applied to all strata. If the sampling design is stratified and different minimum distances
+are desired among strata, then \code{mindis}
 is a list whose names match the names of \code{n_base} and whose and values
 are the minimum distance for the corresponding stratum.  If a minimum distance is not desired
-for a particular stratum, then the corresponding value in \code{mindis} should be \code{NULL}.
+for a particular stratum, then the corresponding value in \code{mindis} should be \code{NULL} or \code{0}.
 The units of \code{mindis} must represent the units in \code{sframe}.}
 
 \item{maxtry}{The number of maximum attempts to apply the minimum distance algorithm to obtain
@@ -138,39 +138,36 @@ sites satisfying the minimum distance requirement as the previous iteration. The
 when the minimum distance requirement is met or there are \code{maxtry} iterations.
 The default number of maximum iterations is \code{10}.}
 
-\item{n_over}{If the design is unstratified and \code{seltype} is \code{"equal"} or \code{"proportional"},
+\item{n_over}{If the sampling design is unstratified and \code{seltype} is \code{"equal"} or \code{"proportional"},
 \code{n_over} is an integer specifying the number of reverse hierarchically
-ordered (rho) replacement sites desired.  If the design is unstratified and \code{seltype} is \code{"unequal"},
+ordered (rho) replacement sites desired.  If the sampling design is unstratified and \code{seltype} is \code{"unequal"},
 then \code{n_over} is a named character vector whose names match the levels of
 \code{caty_var} and whose values are the expected rho replacement sample sizes for each
-level. If the design is stratified and \code{seltype} is \code{"equal"} or \code{"proportional"},
+level. If the sampling design is stratified and \code{seltype} is \code{"equal"} or \code{"proportional"},
 \code{n_over} is a list whose names match the names of \code{n_base} and whose values
-indicate the number of rho replacement sites for each stratum. If replacement sites are not desired for a particular stratum, then the corresponding value in \code{n_over} should be \code{NULL}. If the design is stratified and
+indicate the number of rho replacement sites for each stratum. If replacement sites are not desired for a particular stratum, then the corresponding value in \code{n_over} should be \code{NULL}. If the sampling design is stratified and
 \code{seltype} is \code{"unequal"}, \code{n_over} changes based on whether the expected
 rho replacement sample sizes change among strata. If \code{n_over} does not change among strata, \code{n_over}
 is a named vector whose names match the names of \code{caty_var} and whose values are the expected rho replacement
 sample sizes to be used for each stratum. If \code{n_over} changes among strata, \code{n_over} is a
-list whose names match the names of \code{n_base} and whose values
-indicate the number of rho replacement sites for each stratum.
-Each stratum's list element is a named vector whose names represent each level of \code{caty_var} and whose values represent each
-level's expected rho replacement sample sizes (within the stratum). If replacement sites are not desired for a particular stratum, then the corresponding value in \code{n_over} should be \code{NULL}.}
+list whose names match the names of \code{n_base} and whose values are each named vectors with names for each level of \code{caty_var} and values representing the expected rho replacement sample sizes (within the stratum) for each level of \code{caty_var}. If replacement sites are not desired for a particular stratum, then the corresponding value in \code{n_over} should be \code{NULL} or \code{0}.}
 
-\item{n_near}{If the design is unstratified, \code{n_near} is integer from \code{1}
+\item{n_near}{If the sampling design is unstratified, \code{n_near} is integer from \code{1}
 to \code{10} specifying the number of
-nearest neighbor replacement sites to be selected for each base site. If the design
+nearest neighbor replacement sites to be selected for each base site. If the sampling design
 is stratified but the same number of nearest neighbor replacement sites is desired
 for each stratum,  \code{n_near} is integer from \code{1}
 to \code{10} specifying the number of
-nearest neighbor replacement sites to be selected for each base site. If the design is
+nearest neighbor replacement sites to be selected for each base site. If the sampling design is
 unstratified and a different number of nearest neighbor replacement sites is
 desired for each stratum, \code{n_near} is a list whose names represent strata and whose
 values is integer from \code{1}
 to \code{10} specifying the number of
-nearest neighbor replacement sites to be selected for each base site in the stratum. If replacement sites are not desired for a particular stratum, then the corresponding value in \code{n_over} should be \code{NULL}. For
+nearest neighbor replacement sites to be selected for each base site in the stratum. If replacement sites are not desired for a particular stratum, then the corresponding value in \code{n_over} should be \code{NULL} or \code{0}. For
 infinite sampling frames, the distance between a site and its nearest neighbor
 depends on \code{pt_density}.}
 
-\item{wgt_units}{The units used to compute the survey design weights. These
+\item{wgt_units}{The units used to compute the design weights. These
 units must be standard units as defined by the \code{set_units()} function in
 the units package. The default units match the units of the sf object.}
 
@@ -178,8 +175,8 @@ the units package. The default units match the units of the sf object.}
 for infinite sampling frames. The GRTS approximation for infinite sample
 frames vastly improves computational efficiency by generating many finite points and
 selecting a sample from the points. \code{pt_density} represents the density
-of finite points per unit to use in the approximation (and the units match
-the units of the sampling frame. The default is a density
+of finite points per unit to use in the approximation (the units should match
+the units of the sampling frame). The default is a density
 such that the number of finite points used in the approximation equals 10
 times the sample size requested.}
 
@@ -197,23 +194,24 @@ For example, if \code{nbase} is 50 and \code{nover} is 0, then the default
 site identifiers are \code{Site-01} to \code{Site-50}}
 }
 \value{
-The design sites and additional information about the design. More specifically, a list with five elements:
+The sampling design sites and additional information about the sampling design. More specifically, it is, a list with five elements:
   \itemize{
     \item \code{sites_legacy} An sf object containing legacy sites. This is
       \code{NULL} if legacy sites were not included in the sample.
-    \item \code{sites_base} An sf object containing the base sites.
+    \item \code{sites_base} An sf object containing the base sites. This is \code{NULL}
+    if \code{n_base} equals the number of legacy sites.
     \item \code{sites_over} An sf object containing the reverse hierarchically
       ordered replacement sites. This is \code{NULL} if no reverse hierarchically
       ordered replacement sites were included in the sample.
     \item \code{sites_near} An sf object containing the nearest neighbor
       replacement sites. This is \code{NULL} if no nearest neighbor replacement
       sites were included in the sample.
-    \item \code{design} A list documenting the specifications of this design.
-      This can be checked to verify your design ran as intended.
+    \item \code{design} A list documenting the specifications of this sampling design.
+      This can be checked to verify your sampling design ran as intended.
       \itemize{
         \item \code{Call} The original function call.
         \item \code{stratum} The unique strata. This equals \code{"None"} if
-          the design was unstratified.
+          the sampling design was unstratified.
         \item \code{n_base} The base sample size per stratum.
         \item \code{seltype} The selection type per stratum.
         \item \code{caty_n} The expected sample sizes for each level of the
@@ -222,15 +220,14 @@ The design sites and additional information about the design. More specifically,
         \item \code{legacy} A logical variable indicating whether legacy sites
           were included in the sample.
         \item \code{mindis} The minimum distance requirement desired. This
-          equals \code{NULL} if there was no minimum distance requirement.
+          is \code{NULL} when no minimum distance requirement was applied.
         \item \code{n_over} The reverse hierarchically ordered replacement
           site sample sizes per stratum. If \code{seltype} is \code{unequal},
           this represents the expected sample sizes. This is \code{NULL}
-          if no reverse hierarchically ordered replacement sites were included
-          in the sample.
+          when no reverse hierarchically ordered replacement sites were selected.
         \item \code{n_near} The number of nearest neighbor replacement sites
-          desired. This is \code{NULL} if no nearest neighbor replacement
-          sites were included in the sample.
+          desired. This is \code{NULL} when no nearest neighbor replacement
+          sites were selected.
       }
   }
   When non-\code{NULL}, the \code{sites_legacy}, \code{sites_base},
@@ -253,38 +250,37 @@ The design sites and additional information about the design. More specifically,
     \item \code{lat_WGS84} Latitude coordinates using the WGS84 coordinate
       system (EPSG:4326).
     \item \code{stratum} A stratum indicator. \code{stratum} is \code{None}
-      if the design was unstratified. If the design was \code{stratified},
+      if the sampling design was unstratified. If the sampling design was \code{stratified},
       \code{stratum} indicates the stratum.
-    \item \code{wgt} The survey design weight.
+    \item \code{wgt} The design weight.
     \item \code{ip} The site's original inclusion probability (the reciprocal)
       of (\code{wgt}).
     \item \code{caty} An unequal probability grouping indicator. \code{caty}
-      is \code{None} if the design did not use unequal inclusion probabilities.
-      If the design did use unequal inclusion probabilities, \code{caty}
+      is \code{None} if the sampling design did not use unequal inclusion probabilities.
+      If the sampling design did use unequal inclusion probabilities, \code{caty}
       indicates the unequal probability level.
     \item \code{aux} The auxiliary proportional probability variable. This
       column is only returned if \code{seltype} was \code{proportional} in the
-      original design.
+      original sampling design.
   }
   If any columns in \code{sframe} contain these names, those columns
   from \code{sframe} will be automatically prefixed with \code{sframe_}
   in the \code{sites} object.
 }
 \description{
-Select a spatially balanced sample from a point (finite), linear (infinite),
-or polygon / areal (infinite) sampling frame using the Generalized Random Tessellation
+Select a spatially balanced sample from a point (finite), linear / linestring (infinite),
+or areal / polygon (infinite) sampling frame using the Generalized Random Tessellation
 Stratified (GRTS) algorithm. The GRTS algorithm accommodates unstratified and
-stratified designs and allows for equal inclusion probabilities, unequal
+stratified sampling designs and allows for equal inclusion probabilities, unequal
 inclusion probabilities according to a categorical variable, and inclusion
 probabilities proportional to a positive auxiliary variable. Several additional
 sampling options are included, such as including legacy (historical) sites,
 requiring a minimum distance between sites, and selecting replacement sites.
-For technical details, see Stevens and Olsen (2003).
+For technical details, see Stevens and Olsen (2004).
 }
 \details{
 \code{n_base} is the number of sites used to calculate
-  the sampling weights, which is typically the number of sites that will be used for population
-  estimates. When a panel design is implemented, \code{n_base} is typically the
+  the design weights, which is typically the number of sites used in an analysis. When a panel sampling design is implemented, \code{n_base} is typically the
   number of sites in all panels that will be sampled in the same temporal period --
   \code{n_base} is not the total number of sites in all panels. The sum of \code{n_base} and
   \code{n_over} is equal to the total number of sites to be visited for all panels plus

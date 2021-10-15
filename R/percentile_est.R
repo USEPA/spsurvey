@@ -10,6 +10,9 @@
 # Revised: September 17 2021 to set argument ties equal to "rounded" when
 #          calling function oldsvyquantile in order to ensure backward
 #          compatability with spsurvey prior to version 5.0.0
+# Revised: October 12, 2021 to correct an error that occurs when assigning
+#          results for the case where one or both subpopulations contain a
+#          single value
 #
 #' Percentile Estimates for Probability Survey Data
 #'
@@ -197,7 +200,7 @@ percentile_est <- function(pctsum, dframe, itype, lev_itype, nlev_itype, ivar,
         Indicator = ivar,
         Statistic = paste0(pctval, "Pct"),
         nResp = nresp,
-        Estimate = pctest[1, ],
+        Estimate = pctest[1],
         StdError = stderr,
         MarginofError = mult * stderr,
         LCB = lbound,

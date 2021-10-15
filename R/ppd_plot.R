@@ -141,8 +141,8 @@
 #' @export
 ###############################################################################
 ppd_plot <- function(object, plot_type = "standard",
-                                  trend_type = "mean", xaxis_type = "period", comp_type = "design",
-                                  dsgns = NULL, indicator = NULL, trend = NULL, period = NULL, alpha = NULL, ...) {
+                     trend_type = "mean", xaxis_type = "period", comp_type = "design",
+                     dsgns = NULL, indicator = NULL, trend = NULL, period = NULL, alpha = NULL, ...) {
   if (!inherits(object, "powerpaneldesign")) {
     stop("object must be output from spsurvey::power_dsgn()")
   }
@@ -285,8 +285,8 @@ ppd_plot <- function(object, plot_type = "standard",
 
               # set up initial plot area,  xaxis and yaxis
               plot(xset, seq(0, 1, length = length(xset)),
-                   ylim = c(0, 1), xlim = c(period_min, period_max),
-                   ylab = "", xlab = "", type = "n", axes = F
+                ylim = c(0, 1), xlim = c(period_min, period_max),
+                ylab = "", xlab = "", type = "n", axes = F
               )
               axis(side = 1, line = -0.75, at = xset, labels = xset, adj = 0.5, font = 3, cex = 1)
               axis(
@@ -335,8 +335,8 @@ ppd_plot <- function(object, plot_type = "standard",
               xlabel <- paste("Trend: %/period; Total % and Mean at Period ", period_plot[i], sep = "")
               # set up initial plot area,  xaxis and yaxis
               plot(xset, seq(0, 1, length = length(xset)),
-                   ylim = c(0, 1), xlim = c(xmin, xmax),
-                   ylab = "", xlab = "", type = "n", axes = F
+                ylim = c(0, 1), xlim = c(xmin, xmax),
+                ylab = "", xlab = "", type = "n", axes = F
               )
               axis(side = 1, line = -1, at = xset, labels = round(xset, 2), adj = 0.5, font = 3, cex = 1)
               axis(
@@ -397,8 +397,8 @@ ppd_plot <- function(object, plot_type = "standard",
 
               # set up initial plot area,  xaxis and yaxis
               plot(xset, seq(0, 1, length = length(xset)),
-                   ylim = c(0, 1), xlim = c(period_min, period_max),
-                   ylab = "", xlab = "", type = "n", axes = F
+                ylim = c(0, 1), xlim = c(period_min, period_max),
+                ylab = "", xlab = "", type = "n", axes = F
               )
               axis(side = 1, line = -0.75, at = xset, labels = xset, adj = 0.5, font = 3, cex = 1)
               axis(
@@ -451,8 +451,8 @@ ppd_plot <- function(object, plot_type = "standard",
               }
               # set up initial plot area,  xaxis and yaxis
               plot(xset, seq(0, 1, length = length(xset)),
-                   ylim = c(0, 1), xlim = c(xmin, xmax),
-                   ylab = "", xlab = "", type = "n", axes = F
+                ylim = c(0, 1), xlim = c(xmin, xmax),
+                ylab = "", xlab = "", type = "n", axes = F
               )
               axis(side = 1, line = -1, at = xset, labels = round(xset, 2), adj = 0.5, font = 3, cex = 1)
               axis(
@@ -533,8 +533,8 @@ ppd_plot <- function(object, plot_type = "standard",
               xset <- seq(period_min, by = 1, to = period_max)
               # set up initial plot area,  xaxis and yaxis
               plot(xset, seq(0, 1, length = length(xset)),
-                   ylim = c(ylow, 1), xlim = c(period_min, period_max),
-                   ylab = "", xlab = "", type = "n", axes = F
+                ylim = c(ylow, 1), xlim = c(period_min, period_max),
+                ylab = "", xlab = "", type = "n", axes = F
               )
               axis(side = 1, line = -0.75, at = xset, labels = xset, adj = 0.5, font = 3, cex = 1)
               axis(
@@ -554,8 +554,8 @@ ppd_plot <- function(object, plot_type = "standard",
               text(period_min, 0.86, font = 3, cex = .8, adj = 0, paste0("Indicator = ", ind_plot[k]))
               # legend for panel design power plotted
               legend(period_min, 0.82, c(dsgn_plot[1], dsgn_plot),
-                     lty = c(1, 1:n_dsgn),
-                     col = c("blue", rep("black", length(dsgn_plot))), lwd = 2, seg.len = 5, bty = "n"
+                lty = c(1, 1:n_dsgn),
+                col = c("blue", rep("black", length(dsgn_plot))), lwd = 2, seg.len = 5, bty = "n"
               )
 
               # find panel_base power and plot power curve
@@ -609,8 +609,8 @@ ppd_plot <- function(object, plot_type = "standard",
               xlabel <- paste("Trend: %/Period; Total % and Mean at Period ", period_plot[i], sep = "")
               # set up initial plot area,  xaxis and yaxis
               plot(xset, seq(0, 1, length = length(xset)),
-                   ylim = c(ylow, 1), xlim = c(xmin, xmax),
-                   ylab = "", xlab = "", type = "n", axes = F
+                ylim = c(ylow, 1), xlim = c(xmin, xmax),
+                ylab = "", xlab = "", type = "n", axes = F
               )
               axis(side = 1, line = -1, at = xset, labels = round(xset, 2), adj = 0.5, font = 3, cex = 1)
               axis(
@@ -638,8 +638,8 @@ ppd_plot <- function(object, plot_type = "standard",
               text(xmin, 0.86, font = 3, cex = .8, adj = 0, paste0("Indicator = ", ind_plot[k]))
               # legend for panel design power plotted
               legend(xmin, 0.82, c(dsgn_plot[1], dsgn_plot),
-                     lty = c(1, 1:n_dsgn),
-                     col = c("blue", rep("black", length(dsgn_plot))), lwd = 2, seg.len = 5, bty = "n"
+                lty = c(1, 1:n_dsgn),
+                col = c("blue", rep("black", length(dsgn_plot))), lwd = 2, seg.len = 5, bty = "n"
               )
 
               # find panel_base power and plot power curve
@@ -693,8 +693,8 @@ ppd_plot <- function(object, plot_type = "standard",
               xset <- seq(period_min, by = 1, to = period_max)
               # set up initial plot area,  xaxis and yaxis
               plot(xset, seq(0, 1, length = length(xset)),
-                   ylim = c(ylow, 1), xlim = c(period_min, period_max),
-                   ylab = "", xlab = "", type = "n", axes = F
+                ylim = c(ylow, 1), xlim = c(period_min, period_max),
+                ylab = "", xlab = "", type = "n", axes = F
               )
               axis(side = 1, line = -0.75, at = xset, labels = xset, adj = 0.5, font = 3, cex = 1)
               axis(
@@ -714,8 +714,8 @@ ppd_plot <- function(object, plot_type = "standard",
               text(period_min, 0.86, font = 3, cex = .8, adj = 0, paste0("Panel Design = ", dsgn_plot[k]))
               # legend for panel design power plotted
               legend(period_min, 0.82, c(ind_plot[1], ind_plot),
-                     lty = c(1, 1:n_ind),
-                     col = c("blue", rep("black", length(ind_plot))), lwd = 2, seg.len = 5, bty = "n"
+                lty = c(1, 1:n_ind),
+                col = c("blue", rep("black", length(ind_plot))), lwd = 2, seg.len = 5, bty = "n"
               )
 
               # find panel_base power and plot power curve
@@ -768,8 +768,8 @@ ppd_plot <- function(object, plot_type = "standard",
               xlabel <- paste("Trend: %/Period; Total % at Period ", period_plot[i], sep = "")
               # set up initial plot area,  xaxis and yaxis
               plot(xset, seq(0, 1, length = length(xset)),
-                   ylim = c(ylow, 1), xlim = c(xmin, xmax),
-                   ylab = "", xlab = "", type = "n", axes = F
+                ylim = c(ylow, 1), xlim = c(xmin, xmax),
+                ylab = "", xlab = "", type = "n", axes = F
               )
               axis(side = 1, line = -1, at = xset, labels = round(xset, 2), adj = 0.5, font = 3, cex = 1)
               axis(
@@ -793,8 +793,8 @@ ppd_plot <- function(object, plot_type = "standard",
               text(xmin, 0.86, font = 3, cex = .8, adj = 0, paste0("Panel Design = ", dsgn_plot[k]))
               # legend for indicator power plotted
               legend(xmin, 0.82, c(ind_plot[1], ind_plot),
-                     lty = c(1, 1:n_ind),
-                     col = c("blue", rep("black", length(ind_plot))), lwd = 2, seg.len = 5, bty = "n"
+                lty = c(1, 1:n_ind),
+                col = c("blue", rep("black", length(ind_plot))), lwd = 2, seg.len = 5, bty = "n"
               )
 
               # find panel_base power and plot power curve

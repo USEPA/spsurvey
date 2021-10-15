@@ -138,12 +138,10 @@
 #' @export
 ################################################################################
 
-cdf_plot <- function(
-  cdfest, var = NULL, subpop = NULL, subpop_level = NULL,
-  units_cdf = "Percent", type_cdf = "Continuous", log = "",
-  xlab = NULL, ylab = NULL, ylab_r = NULL, main = NULL, legloc = NULL,
-  confcut = 0, conflev = 95, cex.main = 1.2, cex.legend = 1, ...
-) {
+cdf_plot <- function(cdfest, var = NULL, subpop = NULL, subpop_level = NULL,
+                     units_cdf = "Percent", type_cdf = "Continuous", log = "",
+                     xlab = NULL, ylab = NULL, ylab_r = NULL, main = NULL, legloc = NULL,
+                     confcut = 0, conflev = 95, cex.main = 1.2, cex.legend = 1, ...) {
 
   # Set graphical parameter values
 
@@ -233,8 +231,10 @@ cdf_plot <- function(
   } else if (type_cdf == "Ordinal") {
     x <- rep(cdfdata[, 1], each = 2)[-1]
     y <- rep(cdfdata[, 2], each = 2)
-    tmp <- cbind(matrix(c(x, x[length(x)]), ncol = 2, byrow = TRUE),
-      rep(NA, nrow(cdfdata)))
+    tmp <- cbind(
+      matrix(c(x, x[length(x)]), ncol = 2, byrow = TRUE),
+      rep(NA, nrow(cdfdata))
+    )
     x <- as.vector(t(tmp))
     tmp <- cbind(matrix(y, ncol = 2, byrow = TRUE), rep(NA, nrow(cdfdata)))
     y <- as.vector(t(tmp))

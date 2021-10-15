@@ -5,13 +5,12 @@
 \alias{NE_Lakes}
 \title{New England Lakes data}
 \format{
-200 rows and 6 variables:
+195 rows and 5 variables:
 \describe{
   \item{\code{AREA}}{ Lake area in hectares.}
   \item{\code{AREA_CAT}}{ Lake area categories based on a hectare cutoff.}
   \item{\code{ELEV}}{ Elevation in meters.}
   \item{\code{ELEV_CAT}}{ Elevation categories based on a meter cutoff.}
-  \item{\code{LEGACY}}{ Legacy site indicator.}
   \item{\code{geometry}}{ POINT geometry using the NAD83 / Conus Albers
     coordinate reference system (EPSG: 5070).}
 }
@@ -20,7 +19,7 @@
 NE_Lakes
 }
 \description{
-An \code{sf} POINT object of 200 lakes in the Northeastern
+An \code{sf} POINT object of 195 lakes in the Northeastern
 United States.
 }
 \keyword{datasets}

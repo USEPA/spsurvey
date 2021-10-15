@@ -1,32 +1,45 @@
 #' New England Lakes data
 #'
-#' An \code{sf} POINT object of 200 lakes in the Northeastern
+#' An \code{sf} POINT object of 195 lakes in the Northeastern
 #' United States.
 #'
-#' @format 200 rows and 6 variables:
+#' @format 195 rows and 5 variables:
 #' \describe{
 #'   \item{\code{AREA}}{ Lake area in hectares.}
 #'   \item{\code{AREA_CAT}}{ Lake area categories based on a hectare cutoff.}
 #'   \item{\code{ELEV}}{ Elevation in meters.}
 #'   \item{\code{ELEV_CAT}}{ Elevation categories based on a meter cutoff.}
-#'   \item{\code{LEGACY}}{ Legacy site indicator.}
 #'   \item{\code{geometry}}{ POINT geometry using the NAD83 / Conus Albers
 #'     coordinate reference system (EPSG: 5070).}
 #' }
 "NE_Lakes"
 
-#' New England Lakes data (as a data frame)
+#' New England Lakes legacy data
 #'
-#' An data frame of 200 lakes in the Northeastern
-#' United States.
-#'
-#' @format 200 rows and 7 variables:
+#' An \code{sf} POINT object of 5 legacy sites for the NE Lakes data
+#' 
+#' @format 5 rows and 5 variables:
 #' \describe{
 #'   \item{\code{AREA}}{ Lake area in hectares.}
 #'   \item{\code{AREA_CAT}}{ Lake area categories based on a hectare cutoff.}
 #'   \item{\code{ELEV}}{ Elevation in meters.}
 #'   \item{\code{ELEV_CAT}}{ Elevation categories based on a meter cutoff.}
-#'   \item{\code{LEGACY}}{ Legacy site indicator.}
+#'   \item{\code{geometry}}{ POINT geometry using the NAD83 / Conus Albers
+#'     coordinate reference system (EPSG: 5070).}
+#' }
+"NE_Lakes_Legacy"
+
+#' New England Lakes data (as a data frame)
+#'
+#' An data frame of 195 lakes in the Northeastern
+#' United States.
+#'
+#' @format 195 rows and 6 variables:
+#' \describe{
+#'   \item{\code{AREA}}{ Lake area in hectares.}
+#'   \item{\code{AREA_CAT}}{ Lake area categories based on a hectare cutoff.}
+#'   \item{\code{ELEV}}{ Elevation in meters.}
+#'   \item{\code{ELEV_CAT}}{ Elevation categories based on a meter cutoff.}
 #'   \item{\code{XCOORD}}{ x-coordinate using the WGS 84 coordinate reference system
 #'     (EPSG: 4326)}
 #'   \item{\code{YCOORD}}{ y-coordinate using WGS 84 coordinate reference system
@@ -49,7 +62,7 @@
 
 #' Illinois River legacy data
 #'
-#' An (\code{sf}) POINT object of legacy sites for  the Illinois
+#' An (\code{sf}) POINT object of legacy sites for the Illinois
 #' River data.
 #'
 #' @format 5 rows and 2 variables:

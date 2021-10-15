@@ -284,13 +284,11 @@
 #' @export
 ################################################################################
 
-cat_analysis <- function(
-  dframe, vars, subpops = NULL, siteID = "siteID", weight = "weight",
-  xcoord = NULL, ycoord = NULL, stratumID = NULL, clusterID = NULL,
-  weight1 = NULL, xcoord1 = NULL, ycoord1 = NULL, sizeweight = FALSE,
-  sweight = NULL, sweight1 = NULL, fpc = NULL, popsize = NULL,
-  vartype = "Local", jointprob = "overton", conf = 95, All_Sites = FALSE
-) {
+cat_analysis <- function(dframe, vars, subpops = NULL, siteID = "siteID", weight = "weight",
+                         xcoord = NULL, ycoord = NULL, stratumID = NULL, clusterID = NULL,
+                         weight1 = NULL, xcoord1 = NULL, ycoord1 = NULL, sizeweight = FALSE,
+                         sweight = NULL, sweight1 = NULL, fpc = NULL, popsize = NULL,
+                         vartype = "Local", jointprob = "overton", conf = 95, All_Sites = FALSE) {
 
   # Create a vector for error messages
 
