@@ -62,9 +62,9 @@ vignette("sampling", "spsurvey") # for spatially balanced sampling
 vignette("analysis", "spsurvey") # for analyzing data
 ```
 
-To view the vignettes in a web format, visit [here](https://cran.r-project.org/web/packages/spsurvey/index.html).
+To view the vignettes in a web format, visit [here](https://cran.r-project.org/package=spsurvey).
 
-Further detail regarding spsurvey is contained in the package's documentation manual available for download [here](https://cran.r-project.org/web/packages/spsurvey/index.html).
+Further detail regarding spsurvey is contained in the package's documentation manual available for download [here](https://cran.r-project.org/package=spsurvey).
 
 
 ## Citation

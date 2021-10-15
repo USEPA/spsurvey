@@ -71,7 +71,7 @@ There are three additional vignettes in spsurvey:
     * Use several analysis functions to analyze data
     * To view this vignette, run `vignette("analysis", "spsurvey")`.
 
-These vignettes cover some of the core functions (and arguments within those functions) in spsurvey. To learn more about features of spsurvey that are not covered in these vignettes, we encourage you to read spsurvey's documentation available for download [here](https://cran.r-project.org/web/packages/spsurvey/index.html). Help files for a particular function are viewable by running `?function_name` after loading spsurvey. For example, to learn more about the `grts()` function, run `?grts`.
+These vignettes cover some of the core functions (and arguments within those functions) in spsurvey. To learn more about features of spsurvey that are not covered in these vignettes, we encourage you to read spsurvey's documentation available for download [here](https://cran.r-project.org/package=spsurvey). Help files for a particular function are viewable by running `?function_name` after loading spsurvey. For example, to learn more about the `grts()` function, run `?grts`.
 
 # Installing a previous version of spsurvey
 
@@ -79,7 +79,7 @@ The version 5.0.0 update to spsurvey implemented many significant changes to exi
 
 # `sf` objects
 
-The sampling functions in spsurvey (`grts()` and `irs()`) require that your sampling frame is an `sf` object. An `sf` object (shorthand for a "simple features" object) is an R object with a unique structure used to conveniently store spatial data. `sf` objects are constructed using the sf package (Pebesma, 2018). The sf package is loaded and installed alongside the spsurvey package, so you do not need to run `install.packages("sf")` or `library(sf)` to access the sf package if spsurvey is already installed and loaded. For more on the sf package, see [here](https://r-spatial.github.io/sf/index.html).
+The sampling functions in spsurvey (`grts()` and `irs()`) require that your sampling frame is an `sf` object. An `sf` object (shorthand for a "simple features" object) is an R object with a unique structure used to conveniently store spatial data. `sf` objects are constructed using the sf package (Pebesma, 2018). The sf package is loaded and installed alongside the spsurvey package, so you do not need to run `install.packages("sf")` or `library(sf)` to access the sf package if spsurvey is already installed and loaded. For more on the sf package, see [here](https://cran.r-project.org/package=sf).
 
 Next we discuss a few ways to construct `sf` objects in R. The first is to read a shapefile directly into R using `sf::read_sf()`. The second is to use the `sf::st_sf()` function or the `sf::st_as_sf()` function to combine an appropriate R object (most commonly a data frame) and an appropriate geometry object into an `sf` object. To illustrate one approach for turning a data frame into an `sf` object, we start with `NE_Lakes_df`, a data frame in spsurvey that contains variables and geographic coordinates (latitude and longitude coordinates) for lakes in the Northeastern United States. To turn `NE_Lakes_df` into `NE_Lakes_geo`, an `sf` object with geographic coordinates, run
 ```{r}
@@ -100,7 +100,7 @@ NE_Lakes <- st_transform(NE_Lakes, crs = 5070)
 NE_Lakes
 ```
 
-CRSs in R have traditionally been stored using EPSG codes or `proj4string` values. This meant that in order to transform your coordinates from one CRS to another, you needed two EPSG codes or `proj4string` values, one for each CRS. Recent updates to R's handling of spatial data follow GDAL and PROJ (more information available [here](https://www.r-spatial.org/r/2020/03/17/wkt.html)), and CRSs in `sf` objects are stored in R as lists with two components: `input`, which contains information regarding the EPSG code and `proj4string`; and `wkt`, an open geospatial standard format. For more information on CRSs and EPSG codes, see Pebesma (2018) and Lovelace et al. (2019). To search for various CRSs and EPSG codes, see [here](https://epsg.io/) and [here](https://spatialreference.org).
+CRSs in R have traditionally been stored using EPSG codes or `proj4string` values. This meant that in order to transform your coordinates from one CRS to another, you needed two EPSG codes or `proj4string` values, one for each CRS. Recent updates to R's handling of spatial data follow GDAL and PROJ (more information available [here](https://r-spatial.org/r/2020/03/17/wkt.html)), and CRSs in `sf` objects are stored in R as lists with two components: `input`, which contains information regarding the EPSG code and `proj4string`; and `wkt`, an open geospatial standard format. For more information on CRSs and EPSG codes, see Pebesma (2018) and Lovelace et al. (2019). To search for various CRSs and EPSG codes, see [here](https://epsg.io/) and [here](https://spatialreference.org).
 
 spsurvey will use the CRS from your `sf` object, so it is your responsibility to make sure the `sf` object has an appropriate CRS. If the CRS is not specified correctly, you may get misleading results.
 
