@@ -114,12 +114,14 @@ methods can supply additional arguments to \code{plot.sf()}. For more informatio
 plotting in \code{sf}, run \code{?sf::plot.sf()}.
 }
 \examples{
+\dontrun{
 data("NE_Lakes")
 sp_plot(NE_Lakes, formula = ~ELEV_CAT)
 sample <- grts(NE_Lakes, 30)
 sp_plot(sample, NE_Lakes)
 data("NLA_PNW")
 sp_plot(NLA_PNW, formula = ~BMMI)
+}
 }
 \author{
 Michael Dumelle \email{Dumelle.Michael@epa.gov}

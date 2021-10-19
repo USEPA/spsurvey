@@ -87,12 +87,14 @@
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' data("NE_Lakes")
 #' sp_plot(NE_Lakes, formula = ~ELEV_CAT)
 #' sample <- grts(NE_Lakes, 30)
 #' sp_plot(sample, NE_Lakes)
 #' data("NLA_PNW")
 #' sp_plot(NLA_PNW, formula = ~BMMI)
+#' }
 sp_plot <- function(object, ...) {
   UseMethod("sp_plot", object)
 }
@@ -103,6 +105,12 @@ sp_plot <- function(object, ...) {
 sp_plot.default <- function(object, formula = ~1, xcoord, ycoord, crs,
                             var_args = NULL, varlevel_args = NULL,
                             geom = FALSE, onlyshow = NULL, fix_bbox = TRUE, ...) {
+
+  # find system info
+  on_solaris <- Sys.info()[["sysname"]] == "SunOS"
+  if (on_solaris) {
+    stop("sp_plot() is not supported on Solaris.")
+  }
 
   # coerce to sf
   if (!inherits(object, "sf")) {
@@ -290,6 +298,13 @@ sp_plot.default <- function(object, formula = ~1, xcoord, ycoord, crs,
 sp_plot.spdesign <- function(object, sframe = NULL, formula = ~siteuse, siteuse = NULL,
                              var_args = NULL, varlevel_args = NULL, geom = FALSE, onlyshow = NULL,
                              fix_bbox = TRUE, ...) {
+
+  # find system info
+  on_solaris <- Sys.info()[["sysname"]] == "SunOS"
+  if (on_solaris) {
+    stop("sp_plot() is not supported on Solaris.")
+  }
+
   if ((is.null(siteuse) & (!is.null(object$sites_near))) | "Near" %in% siteuse) {
     object$sites_near$siteuse <- "Near"
   }

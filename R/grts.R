@@ -274,10 +274,12 @@
 #' of natural resources. \emph{Journal of the american Statistical association}, 99(465), 262-278.
 #'
 #' @examples
+#' \dontrun{
 #' sample <- grts(NE_Lakes, n_base = 100)
 #' strata_n <- c(low = 25, high = 30)
 #' sample_strat <- grts(NE_Lakes, n_base = strata_n, stratum_var = "ELEV_CAT")
 #' sample_over <- grts(NE_Lakes, n_base = 30, n_over = 5)
+#' }
 #' @export
 ################################################################################
 grts <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = NULL,

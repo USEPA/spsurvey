@@ -63,11 +63,13 @@ of the formula contains a variable, the summary will be of the left-hand size va
 for each level of each right-hand side variable.
 }
 \examples{
+\dontrun{
 data("NE_Lakes")
 sp_summary(NE_Lakes, ELEV ~ 1)
 sp_summary(NE_Lakes, ~ ELEV_CAT * AREA_CAT)
 sample <- grts(NE_Lakes, 100)
 sp_summary(sample, ~ ELEV_CAT * AREA_CAT)
+}
 }
 \author{
 Michael Dumelle \email{Dumelle.Michael@epa.gov}

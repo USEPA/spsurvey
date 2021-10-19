@@ -1,3 +1,9 @@
+# spsurvey 5.0.1 (2021-10-18)
+
+## Bug fix
+
+* Addressed Solaris performance problems.
+
 # spsurvey 5.0.0 (2021-10-15)
 
 ## Major Updates

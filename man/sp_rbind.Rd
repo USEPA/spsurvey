@@ -27,9 +27,9 @@ into a single \code{sf} object. This function is most useful when a single
 (e.g. writing out a single shapefile using \code{sf::write_sf()}).
 }
 \examples{
+\dontrun{
 sample <- grts(NE_Lakes, 50, n_over = 10)
 sample <- sp_rbind(sample)
-\dontrun{
 write_sf(sample, "mypath/sample.shp")
 }
 }

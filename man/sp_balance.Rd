@@ -65,11 +65,13 @@ sampling frame) of design sites using
 Voronoi polygons (Dirichlet tessellations).
 }
 \examples{
+\dontrun{
 sample <- grts(NE_Lakes, 30)
 sp_balance(sample$sites_base, NE_Lakes)
 strata_n <- c(low = 25, high = 30)
 sample_strat <- grts(NE_Lakes, n_base = strata_n, stratum_var = "ELEV_CAT")
 sp_balance(sample_strat$sites_base, NE_Lakes, stratum_var = "ELEV_CAT", metric = "rmse")
+}
 }
 \author{
 Michael Dumelle \email{Dumelle.Michael@epa.gov}

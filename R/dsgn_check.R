@@ -347,20 +347,20 @@ dsgn_check <- function(sframe, sf_type, legacy_sites, legacy_option, stratum, se
       if (is.list(n_over)) {
         if (any(sapply(stratum, function(x) (n_base[[x]] + ifelse(is.null(n_over[[x]]), 0, sum(n_over[[x]]))) > NROW(sframe[sframe[[stratum_var]] == x, , drop = FALSE])))) {
           stop_ind <- TRUE
-          stop_mess <- paste0("For each stratum, the sum of the base sites and 'Over' replacement sites must be no larger than the number of rows in 'sframe' representing that stratum")
+          stop_mess <- paste0("For each stratum, the sum of the base sites and 'Over' replacement sites must be no larger than the number of rows in 'sframe' representing that stratum.")
           stop_df <- rbind(stop_df, data.frame(func = I("n_base + n_over"), I(stop_mess)))
         }
       } else {
         if (any(sapply(stratum, function(x) (n_base[[x]] + sum(n_over)) > NROW(sframe[sframe[[stratum_var]] == x, , drop = FALSE])))) {
           stop_ind <- TRUE
-          stop_mess <- paste0("For each stratum, the sum of the base sites and 'Over' replacement sites must be no larger than the number of rows in 'sframe' representing that stratum")
+          stop_mess <- paste0("For each stratum, the sum of the base sites and 'Over' replacement sites must be no larger than the number of rows in 'sframe' representing that stratum.")
           stop_df <- rbind(stop_df, data.frame(func = I("n_base + n_over"), I(stop_mess)))
         }
       }
     } else {
       if ((n_base + sum(n_over)) > NROW(sframe)) {
         stop_ind <- TRUE
-        stop_mess <- paste0("The sum of the base sites and 'Over' replacement sites must be no larger than the number of rows in 'sframe'")
+        stop_mess <- paste0("The sum of the base sites and 'Over' replacement sites must be no larger than the number of rows in 'sframe'.")
         stop_df <- rbind(stop_df, data.frame(func = I("n_base + n_over"), I(stop_mess)))
       }
     }
@@ -373,6 +373,14 @@ dsgn_check <- function(sframe, sf_type, legacy_sites, legacy_option, stratum, se
       stop_mess <- paste0("values of n_near must be from 1 to 10.\n")
       stop_df <- rbind(stop_df, data.frame(func = I("n_near"), I(stop_mess)))
     }
+  }
+
+  # find system info
+  on_solaris <- Sys.info()[["sysname"]] == "SunOS"
+  if (on_solaris) {
+    stop_ind <- TRUE
+    stop_mess <- paste0("grts() and irs() are not supported on Solaris.")
+    stop_df <- rbind(stop_df, data.frame(func = I("Solaris"), I(stop_mess)))
   }
 
   ### If any issues, write out stop_df and then stop

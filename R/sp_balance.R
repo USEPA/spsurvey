@@ -61,14 +61,22 @@
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' sample <- grts(NE_Lakes, 30)
 #' sp_balance(sample$sites_base, NE_Lakes)
 #' strata_n <- c(low = 25, high = 30)
 #' sample_strat <- grts(NE_Lakes, n_base = strata_n, stratum_var = "ELEV_CAT")
 #' sp_balance(sample_strat$sites_base, NE_Lakes, stratum_var = "ELEV_CAT", metric = "rmse")
+#' }
 sp_balance <- function(object, sframe, stratum_var = NULL, ip = NULL, metrics = "pielou", extents = FALSE) {
   if (inherits(object, "spdesign")) {
     stop("object must be an sf object. If object is output from grts() or irs(), instead 1) use object$sites_legacy, object$sites_base, object$sites_over, or object$sites_near; or 2) use sp_rbind().")
+  }
+
+  # find system info
+  on_solaris <- Sys.info()[["sysname"]] == "SunOS"
+  if (on_solaris) {
+    stop("sp_balance() is not supported on Solaris.")
   }
 
   if (is.null(stratum_var)) {

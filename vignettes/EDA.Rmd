@@ -1,5 +1,5 @@
 ---
-title: "Exploratory Data Analysis: Summarizing and Visualizing Sampling Frames, Design Sites, and Analysis Data"
+title: "Summarizing and Visualizing Sampling Frames, Design Sites, and Analysis Data"
 author: "Michael Dumelle, Tom Kincaid, Anthony Olsen, and Marc Weber"
 output: 
   html_document:
@@ -12,7 +12,7 @@ output:
       smooth_scroll: no
     toc_depth: 2
 vignette: >
-  %\VignetteIndexEntry{EDA}
+  %\VignetteIndexEntry{Summaries and Visualizations}
   %\VignetteEngine{knitr::rmarkdown}
   \usepackage[utf8]{inputenc}
 ---

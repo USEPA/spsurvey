@@ -21,13 +21,14 @@
 #'  }
 #'
 #' @examples
+#' \dontrun{
 #' sample <- irs(NE_Lakes, n_base = 100)
 #' strata_n <- c(low = 25, high = 30)
 #' sample_strat <- irs(NE_Lakes, n_base = strata_n, stratum_var = "ELEV_CAT")
 #' sample_over <- irs(NE_Lakes, n_base = 30, n_over = 5)
+#' }
 #' @export
 ###############################################################################
-
 irs <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = NULL,
                 caty_n = NULL, aux_var = NULL, legacy_var = NULL,
                 legacy_sites = NULL, legacy_stratum_var = NULL,

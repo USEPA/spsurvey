@@ -59,11 +59,13 @@
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' data("NE_Lakes")
 #' sp_summary(NE_Lakes, ELEV ~ 1)
 #' sp_summary(NE_Lakes, ~ ELEV_CAT * AREA_CAT)
 #' sample <- grts(NE_Lakes, 100)
 #' sp_summary(sample, ~ ELEV_CAT * AREA_CAT)
+#' }
 sp_summary <- function(object, ...) {
   UseMethod("sp_summary", object)
 }
@@ -72,6 +74,13 @@ sp_summary <- function(object, ...) {
 #' @method sp_summary default
 #' @export
 sp_summary.default <- function(object, formula = ~1, onlyshow = NULL, ...) {
+
+  # find system info
+  on_solaris <- Sys.info()[["sysname"]] == "SunOS"
+  if (on_solaris) {
+    stop("sp_summary() is not supported on Solaris.")
+  }
+
   # making formlist (utils.R)
   formlist <- make_formlist(formula, onlyshow, object)
   # making varsf (utils.R)

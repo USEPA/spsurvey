@@ -22,9 +22,9 @@
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' sample <- grts(NE_Lakes, 50, n_over = 10)
 #' sample <- sp_rbind(sample)
-#' \dontrun{
 #' write_sf(sample, "mypath/sample.shp")
 #' }
 sp_rbind <- function(object, siteuse = NULL) {

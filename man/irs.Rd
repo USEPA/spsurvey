@@ -288,10 +288,12 @@ requiring a minimum distance between sites, and selecting replacement sites.
   any replacement sites that may be required.
 }
 \examples{
+\dontrun{
 sample <- irs(NE_Lakes, n_base = 100)
 strata_n <- c(low = 25, high = 30)
 sample_strat <- irs(NE_Lakes, n_base = strata_n, stratum_var = "ELEV_CAT")
 sample_over <- irs(NE_Lakes, n_base = 30, n_over = 5)
+}
 }
 \seealso{
 \describe{
