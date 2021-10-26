@@ -5,8 +5,8 @@ citEntry(
    title="spsurvey: Spatial Sampling Design and Analysis",
    author="Michael Dumelle, Thomas M. Kincaid, Anthony R. Olsen, and Marc H. Weber",
    year=2021,
-   note="R package version 5.0.1",
+   note="R package version 5.1.0",
    textVersion=paste("Dumelle, Michael., Kincaid, T. M., Olsen, A. R., and Weber, M. H. (2021).",
                      "spsurvey: Spatial Sampling Design and Analysis.",
-                     "R package version 5.0.1.")
+                     "R package version 5.1.0.")
 )
