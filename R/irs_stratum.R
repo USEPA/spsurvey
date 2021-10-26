@@ -213,6 +213,8 @@ irs_stratum <- function(stratum, dsgn, sframe, sf_type, wgt_units = NULL, pt_den
     if (nrow(sftmp) <= n_total) {
       samp.id <- sftmp$idpts
     } else {
+      # randomly shuffle site order
+      sftmp <- sftmp[sample(1:nrow(sftmp)), ]
       s <- UPpivotal(sftmp$ip)
       samp.id <- sftmp$idpts[round(s) == 1]
     }
@@ -224,7 +226,7 @@ irs_stratum <- function(stratum, dsgn, sframe, sf_type, wgt_units = NULL, pt_den
   }
   # If minimum distance between sites, select sites
   if (!is.null(dsgn[["mindis"]][[stratum]])) {
-    sites <- grtspts_mindis(dsgn[["mindis"]][[stratum]], sftmp,
+    sites <- irspts_mindis(dsgn[["mindis"]][[stratum]], sftmp,
       samplesize = n_total,
       stratum = stratum, maxtry = maxtry, legacy_option = legacy_option,
       legacy_var = dsgn[["legacy_var"]],

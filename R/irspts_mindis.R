@@ -25,7 +25,10 @@ irspts_mindis <- function(mindis, sframe, samplesize, stratum, maxtry = 10,
   if (nrow(sframe) <= samplesize) {
     samp_id <- sframe$idpts
   } else {
-    samp_id <- sample(sframe$idpts, samplesize, prob = sframe$ip)
+    # randomly shuffle site order
+    sframe <- sframe[sample(1:nrow(sframe)), ]
+    s <- UPpivotal(sframe$ip)
+    samp_id <- sframe$idpts[round(s) == 1]
   }
   # extract sites from sample frame
   sites <- sframe[sframe$idpts %in% samp_id, ]
