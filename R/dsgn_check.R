@@ -249,18 +249,20 @@ dsgn_check <- function(sframe, sf_type, legacy_sites, legacy_option, stratum, se
     stop_df <- rbind(stop_df, data.frame(func = I("n_base"), I(stop_mess)))
   }
 
-  # check total sample size?
-  if (length(stratum) > 1) {
-    if (any(sapply(stratum, function(x) n_base[x] > NROW(sframe[sframe[[stratum_var]] == x, , drop = FALSE])))) {
-      stop_ind <- TRUE
-      stop_mess <- paste0("Each stratum must have a sample size no larger than the number of rows in 'sframe' representing that stratum")
-      stop_df <- rbind(stop_df, data.frame(func = I("n_base"), I(stop_mess)))
-    }
-  } else {
-    if (n_base > NROW(sframe)) {
-      stop_ind <- TRUE
-      stop_mess <- paste0("Sample size must be no larger than the number of rows in 'sframe'")
-      stop_df <- rbind(stop_df, data.frame(func = I("n_base"), I(stop_mess)))
+  # check total sample size
+  if (sf_type == "point") {
+    if (length(stratum) > 1) {
+      if (any(sapply(stratum, function(x) n_base[x] > NROW(sframe[sframe[[stratum_var]] == x, , drop = FALSE])))) {
+        stop_ind <- TRUE
+        stop_mess <- paste0("Each stratum must have a sample size no larger than the number of rows in 'sframe' representing that stratum")
+        stop_df <- rbind(stop_df, data.frame(func = I("n_base"), I(stop_mess)))
+      }
+    } else {
+      if (n_base > NROW(sframe)) {
+        stop_ind <- TRUE
+        stop_mess <- paste0("Sample size must be no larger than the number of rows in 'sframe'")
+        stop_df <- rbind(stop_df, data.frame(func = I("n_base"), I(stop_mess)))
+      }
     }
   }
 
