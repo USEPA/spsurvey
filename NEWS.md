@@ -1,3 +1,16 @@
+# spsurvey 5.1.0 (xxxx-xx-xx)
+
+## Minor updates
+
+* Added a `Total` option to the `statistics` argument in `cont_analysis()`.
+* Added `localmean_weight()`, `localmean_var()` and `localmean_cov()` to compute the local neighborhood variance estimator outside of the `*_analysis()` functions
+
+## Bug fixes
+
+* Fixed a bug in `irs()` that made the algorithm sensitive to the ordering of the input data.
+* Fixed a bug in percentile estimation from `cont_analysis()` that incorrectly copied estimate values.
+* Fixed a bug in `grts()` and `irs()` that prevented sampling from infinite frames for certain sample size requirements
+
 # spsurvey 5.0.1 (2021-10-18)
 
 ## Bug fix
