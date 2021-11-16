@@ -20,7 +20,7 @@
 #'
 #' @keywords survey
 #'
-#' @noRd
+#' @export
 ###############################################################################
 
 localmean_var <- function(z, weight_1st) {
