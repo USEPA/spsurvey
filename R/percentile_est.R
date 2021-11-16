@@ -11,8 +11,9 @@
 #          calling function oldsvyquantile in order to ensure backward
 #          compatability with spsurvey prior to version 5.0.0
 # Revised: October 12, 2021 to correct an error that occurs when assigning
-#          results for the case where one or both subpopulations contain a
-#          single value
+#          results for the case where a subpopulation contain a single value
+# Revised: October 25, 2021 to correct an error that occurs when assigning
+#          results for the case where a domain contains a single subpopulation
 #
 #' Percentile Estimates for Probability Survey Data
 #'
@@ -187,7 +188,9 @@ percentile_est <- function(pctsum, dframe, itype, lev_itype, nlev_itype, ivar,
       }
     }
   } else {
+
     # To be implemented
+
   }
 
   # Assign identifiers and estimates to the pctsum data frame
@@ -200,7 +203,7 @@ percentile_est <- function(pctsum, dframe, itype, lev_itype, nlev_itype, ivar,
         Indicator = ivar,
         Statistic = paste0(pctval, "Pct"),
         nResp = nresp,
-        Estimate = pctest[1],
+        Estimate = pctest[1:npctval],
         StdError = stderr,
         MarginofError = mult * stderr,
         LCB = lbound,
@@ -223,7 +226,9 @@ percentile_est <- function(pctsum, dframe, itype, lev_itype, nlev_itype, ivar,
       }
     }
   } else {
+
     # To be implemented
+
   }
 
   # Return the pctsum data frame, the warn_ind logical value, and the warn_df
