@@ -98,7 +98,19 @@ dsgn_check <- function(sframe, sf_type, legacy_sites, legacy_option, stratum, se
   # Create a data frame for stop messages
   stop_ind <- FALSE
   stop_df <- NULL
-
+  
+  # check that coordinates are NA or geographic
+  if (is.na(st_crs(sframe))) {
+    stop_ind <- TRUE
+    stop_mess <- "The coordinate reference system (crs) for sframe is NA. The coordinate reference system should instead use projected coordinates."
+    stop_df <- rbind(stop_df, data.frame(func = I("sframe"), I(stop_mess)))
+    
+  } else if (st_is_longlat(sframe)){
+    stop_ind <- TRUE
+    stop_mess <- "The coordinate reference system (crs) for sframe uses geographic coordinates. The coordinate reference system should instead use projected coordinates."
+    stop_df <- rbind(stop_df, data.frame(func = I("sframe"), I(stop_mess)))
+  }
+  
   # check that sframe has required variables for stratum, caty, aux and legacy
   # If stratum_var is provided, does the attribute exist in sframe
   if (!is.null(stratum_var)) {
