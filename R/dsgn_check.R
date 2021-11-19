@@ -153,7 +153,7 @@ dsgn_check <- function(sframe, sf_type, legacy_sites, legacy_option, stratum, se
   }
 
   # If legacy_var is provided, does the attribute exist in sframe
-  if (sf_type == "point" & !is.null(legacy_var)) {
+  if (sf_type == "sf_point" & !is.null(legacy_var)) {
     if (match(legacy_var, names(sframe), nomatch = 0) == 0) {
       stop_ind <- TRUE
       stop_mess <- "The value provided for the variable identifying legacy sites does not exist as a variable in sframe."
@@ -162,7 +162,7 @@ dsgn_check <- function(sframe, sf_type, legacy_sites, legacy_option, stratum, se
   }
 
   ### Check legacy_sites sf object if present
-  if (sf_type %in% c("linear", "area")) {
+  if (sf_type %in% c("sf_linear", "sf_area") & !is.null(legacy_sites)) {
     # check that legacy_sites has required variables for stratum, caty, aux and legacy
     # If stratum_var is provided, does the attribute exist
     if (!is.null(stratum_var)) {
@@ -262,7 +262,7 @@ dsgn_check <- function(sframe, sf_type, legacy_sites, legacy_option, stratum, se
   }
 
   # check total sample size
-  if (sf_type == "point") {
+  if (sf_type == "sf_point") {
     if (length(stratum) > 1) {
       if (any(sapply(stratum, function(x) n_base[x] > NROW(sframe[sframe[[stratum_var]] == x, , drop = FALSE])))) {
         stop_ind <- TRUE
@@ -356,26 +356,28 @@ dsgn_check <- function(sframe, sf_type, legacy_sites, legacy_option, stratum, se
   }
 
   # check total sample size for n_over
-  if (!is.null(n_over)) {
-    if (length(stratum) > 1) {
-      if (is.list(n_over)) {
-        if (any(sapply(stratum, function(x) (n_base[[x]] + ifelse(is.null(n_over[[x]]), 0, sum(n_over[[x]]))) > NROW(sframe[sframe[[stratum_var]] == x, , drop = FALSE])))) {
-          stop_ind <- TRUE
-          stop_mess <- paste0("For each stratum, the sum of the base sites and 'Over' replacement sites must be no larger than the number of rows in 'sframe' representing that stratum.")
-          stop_df <- rbind(stop_df, data.frame(func = I("n_base + n_over"), I(stop_mess)))
+  if (sf_type == "sf_point") {
+    if (!is.null(n_over)) {
+      if (length(stratum) > 1) {
+        if (is.list(n_over)) {
+          if (any(sapply(stratum, function(x) (n_base[[x]] + ifelse(is.null(n_over[[x]]), 0, sum(n_over[[x]]))) > NROW(sframe[sframe[[stratum_var]] == x, , drop = FALSE])))) {
+            stop_ind <- TRUE
+            stop_mess <- paste0("For each stratum, the sum of the base sites and 'Over' replacement sites must be no larger than the number of rows in 'sframe' representing that stratum.")
+            stop_df <- rbind(stop_df, data.frame(func = I("n_base + n_over"), I(stop_mess)))
+          }
+        } else {
+          if (any(sapply(stratum, function(x) (n_base[[x]] + sum(n_over)) > NROW(sframe[sframe[[stratum_var]] == x, , drop = FALSE])))) {
+            stop_ind <- TRUE
+            stop_mess <- paste0("For each stratum, the sum of the base sites and 'Over' replacement sites must be no larger than the number of rows in 'sframe' representing that stratum.")
+            stop_df <- rbind(stop_df, data.frame(func = I("n_base + n_over"), I(stop_mess)))
+          }
         }
       } else {
-        if (any(sapply(stratum, function(x) (n_base[[x]] + sum(n_over)) > NROW(sframe[sframe[[stratum_var]] == x, , drop = FALSE])))) {
+        if ((n_base + sum(n_over)) > NROW(sframe)) {
           stop_ind <- TRUE
-          stop_mess <- paste0("For each stratum, the sum of the base sites and 'Over' replacement sites must be no larger than the number of rows in 'sframe' representing that stratum.")
+          stop_mess <- paste0("The sum of the base sites and 'Over' replacement sites must be no larger than the number of rows in 'sframe'.")
           stop_df <- rbind(stop_df, data.frame(func = I("n_base + n_over"), I(stop_mess)))
         }
-      }
-    } else {
-      if ((n_base + sum(n_over)) > NROW(sframe)) {
-        stop_ind <- TRUE
-        stop_mess <- paste0("The sum of the base sites and 'Over' replacement sites must be no larger than the number of rows in 'sframe'.")
-        stop_df <- rbind(stop_df, data.frame(func = I("n_base + n_over"), I(stop_mess)))
       }
     }
   }
