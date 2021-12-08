@@ -102,12 +102,12 @@ dsgn_check <- function(sframe, sf_type, legacy_sites, legacy_option, stratum, se
   # check that coordinates are NA or geographic
   if (is.na(st_crs(sframe))) {
     stop_ind <- TRUE
-    stop_mess <- "The coordinate reference system (crs) for sframe is NA. The coordinate reference system should instead use projected coordinates."
+    stop_mess <- "The coordinate reference system (crs) for sframe is NA. The coordinate reference system for sframe should instead use projected coordinates. For more information, see spsurvey's \"Start Here\" vignette by running vignette(\"start-here\", \"spsurvey\")."
     stop_df <- rbind(stop_df, data.frame(func = I("sframe"), I(stop_mess)))
     
   } else if (st_is_longlat(sframe)){
     stop_ind <- TRUE
-    stop_mess <- "The coordinate reference system (crs) for sframe uses geographic coordinates. The coordinate reference system should instead use projected coordinates."
+    stop_mess <- "The coordinate reference system (crs) for sframe uses geographic coordinates. The coordinate reference system for sframe should instead use projected coordinates. For more information, see spsurvey's \"Start Here\" vignette by running vignette(\"start-here\", \"spsurvey\")."
     stop_df <- rbind(stop_df, data.frame(func = I("sframe"), I(stop_mess)))
   }
   

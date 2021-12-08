@@ -29,7 +29,7 @@ grts(
 }
 \arguments{
 \item{sframe}{The sampling frame as an \code{sf} object. The coordinate
-system for \code{sframe} must be one where distance for coordinates is meaningful.}
+system for \code{sframe} must projected (not geographic).}
 
 \item{n_base}{The base sample size required. If the sampling design is unstratified,
 this is a single numeric value. If the sampling design is stratified, this is a named
