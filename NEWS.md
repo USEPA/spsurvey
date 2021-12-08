@@ -3,13 +3,16 @@
 ## Minor updates
 
 * Added a `Total` option to the `statistics` argument in `cont_analysis()`.
-* Added `localmean_weight()`, `localmean_var()` and `localmean_cov()` to compute the local neighborhood variance estimator outside of the `*_analysis()` functions
+* Added `localmean_weight()`, `localmean_var()` and `localmean_cov()` to compute the local neighborhood variance estimator outside of the `*_analysis()` functions.
+* Added an option to provide a bounding box vector to the `fix_bbox` argument in `sp_plot()`.
+* Added an error message to `grts() ` and `irs()` that stops the function when geographic coordinates are used.
+* Added an error message to `grts()` and `irs()` that stops the function when too many expected samples are specified for at least one level of an unequal probability variable.
 
 ## Bug fixes
 
 * Fixed a bug in `irs()` that made the algorithm sensitive to the ordering of the input data.
 * Fixed a bug in percentile estimation from `cont_analysis()` that incorrectly copied estimate values.
-* Fixed a bug in `grts()` and `irs()` that prevented sampling from infinite frames for certain sample size requirements
+* Fixed a bug in `grts()` and `irs()` that prevented sampling from infinite frames for certain sample size requirements.
 
 # spsurvey 5.0.1 (2021-10-18)
 
