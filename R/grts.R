@@ -165,9 +165,14 @@
 #'   frames vastly improves computational efficiency by generating many finite points and
 #'   selecting a sample from the points. \code{pt_density} represents the density
 #'   of finite points per unit to use in the approximation (the units should match
-#'   the units of the sampling frame). The default is a density
-#'   such that the number of finite points used in the approximation equals 10
-#'   times the sample size requested.
+#'   the units of the sampling frame). Increasing \code{pt_density} means increasing the number
+#'   of finite points used in the approximation. For example, a value of 2 means use two 
+#'   finite points every unit, while a value of 1/2 means use one finite point
+#'   every two units. The more finite points (i.e., the more accurate) in the approximation,
+#'   the larger the computational burden. The default is a density such that the number
+#'   of finite points used in the approximation equals 10 times the sample size requested. 
+#'   When used with \code{caty_n}, the unequal inclusion probabilities generated using
+#'   \code{pt_density} are approximations.
 #'
 #' @param DesignID A character string indicating the naming structure for each
 #'   site's identifier selected in the sample, which is matched with \code{SiteBegin} and

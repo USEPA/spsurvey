@@ -63,6 +63,9 @@ grtspts_ip <- function(type = "equal", n_base, Nstratum = NULL, caty = NULL,
     gsum <- table(caty)
     catmatch <- match(names(n_base), names(gsum), nomatch = 0)
     piden <- n_base / gsum[catmatch]
+    if (any(piden > 1)) {
+      stop(paste0("The number of expected samples in levels ", paste0(names(piden[piden > 1]), collapse = " and "), " from the caty_n variable exceeds the number of finite points used in the approximation specified by the pt_density argument. Consider 1) incorporating the caty_n variable into stratification instead or 2) increase the pt_density argument. Then rerun grts()."), call. = FALSE)
+    }
     ip <- rep(NA, length(caty))
     for (i in names(n_base)) {
       ip[caty == i] <- piden[i]
