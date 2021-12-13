@@ -7,6 +7,8 @@
 * Added an option to provide a bounding box vector to the `fix_bbox` argument in `sp_plot()`.
 * Added an error message to `grts() ` and `irs()` that stops the function when geographic coordinates are used.
 * Added an error message to `grts()` and `irs()` that stops the function when too many expected samples are specified for at least one level of an unequal probability variable.
+* Added a `caty_n_over` argument to `grts()` and `irs()` that makes it easier to specify reverse hierarchically ordered replacement sites for unequal probability sampling designs
+* `grts()` and `irs()` now support vector arguments to `n_over` and `n_near` (list arguments were already supported)
 
 ## Bug fixes
 
