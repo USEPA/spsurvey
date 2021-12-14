@@ -177,7 +177,7 @@ for each stratum,  \code{n_near} is integer from \code{1}
 to \code{10} specifying the number of
 nnreplacement sites to be selected for each base site. If the sampling design is
 unstratified and a different number of nn replacement sites is
-desired for each stratum, \code{n_near} is a list whose names represent strata and whose
+desired for each stratum, \code{n_near} is a vector (or list) whose names represent strata and whose
 values is integer from \code{1}
 to \code{10} specifying the number of
 nn replacement sites to be selected for each base site in the stratum. If replacement sites
