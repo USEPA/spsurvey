@@ -11,7 +11,7 @@ diffrisk_analysis(
   response_levels = NULL,
   stressor_levels = NULL,
   subpops = NULL,
-  siteID = "siteID",
+  siteID = NULL,
   weight = "weight",
   xcoord = NULL,
   ycoord = NULL,
@@ -81,7 +81,8 @@ default value is \code{NULL}.}
 
 \item{siteID}{Character value providing the name of the site ID variable in
 \code{dframe}.  For a two-stage sample, the site ID variable
-identifies stage two site IDs.  The default value is \code{"siteID"}.}
+identifies stage two site IDs.  The default value is \code{NULL}, which
+assumes that each row in \code{dframe} represents a unique site.}
 
 \item{weight}{Character value providing the name of the design weight
 variable in \code{dframe}.  For a two-stage sample, the

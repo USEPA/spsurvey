@@ -96,7 +96,7 @@
 #' @export
 ################################################################################
 
-cont_analysis <- function(dframe, vars, subpops = NULL, siteID = "siteID",
+cont_analysis <- function(dframe, vars, subpops = NULL, siteID = NULL,
                           weight = "weight", xcoord = NULL, ycoord = NULL,
                           stratumID = NULL, clusterID = NULL, weight1 = NULL,
                           xcoord1 = NULL, ycoord1 = NULL, sizeweight = FALSE,
@@ -158,6 +158,13 @@ cont_analysis <- function(dframe, vars, subpops = NULL, siteID = "siteID",
   # data frame
 
   dframe <- droplevels(dframe)
+  
+  # If no siteID is provided, set one that assumes each row is a unique site
+  
+  if (is.null(siteID)) {
+    siteID <- "siteID"
+    dframe$siteID <- paste("site", seq_len(nrow(dframe)), sep = "-")
+  }
 
   # Ensure that the dframe data frame contains the site ID variable
 

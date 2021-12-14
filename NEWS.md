@@ -1,4 +1,4 @@
-# spsurvey 5.1.0 (xxxx-xx-xx)
+# spsurvey 5.1.0 (2021-12-20)
 
 ## Minor updates
 
@@ -8,7 +8,8 @@
 * Added an error message to `grts() ` and `irs()` that stops the function when geographic coordinates are used.
 * Added an error message to `grts()` and `irs()` that stops the function when too many expected samples are specified for at least one level of an unequal probability variable.
 * Added a `caty_n_over` argument to `grts()` and `irs()` that makes it easier to specify reverse hierarchically ordered replacement sites for unequal probability sampling designs
-* `grts()` and `irs()` now support vector arguments to `n_over` and `n_near` (list arguments were already supported)
+* Added vector argument support for the `n_over` and `n_near` arguments in `grts()` and `irs()` (list arguments were already supported)
+* Added a default value for `siteID` in `attrisk_analysis()`, `cat_analysis()`, `cont_analysis()`, `diffrisk_analysis()`, and `relrisk_analysis()` that assumes each row in `dframe` represents a unique site.
 
 ## Bug fixes
 
