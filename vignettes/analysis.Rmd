@@ -207,7 +207,7 @@ To view the analysis results for the mean estimates, run
 strat_cont_ests_sp$Mean
 ```
 
-# Additonal Analysis Approaches
+# Additional Analysis Approaches
 
 Alongside the `cat_analysis()` and `cont_analysis()` functions, spsurvey offers functions for estimating attributable risk, relative risk, risk difference, change, and trend. Attributable risk analysis, relative risk analysis, and risk difference analysis quantify the attributable risk, relative risk, and risk difference, respectively, of environmental resources being in poor condition after exposure to a stressor. Attributable risk analysis is performed using the `attrisk_analysis()` function, relative risk analysis is performed using the `relrisk_analysis()` function, and risk difference analysis is performed using the `diffrisk_analysis()` function. Change and trend analysis capture the behavior of environmental resources between two samples, while trend analysis generalizes this approach to include more than two samples. Often, change and trend analyses are performed to study an environmental resource through time.  Change analysis is performed using the `change_analysis()` function, and trend analysis is performed using the `trend_analysis()` function. The `attrisk_analysis()`, `relrisk_analysis()`, `diffrisk_analysis()`, `change_analysis()` and `trend_analysis()` functions all share very similar syntax with the `cat_analysis()` and `cont_analysis()` functions.
 

@@ -48,7 +48,7 @@
 #' response variable is in poor condition given that the stressor variable is in
 #' good condition. A relative risk value equal to one indicates that the
 #' response variable is independent of the stressor variable.  Relative risk
-#' values greater than one measure the extent to which poor conditon of the
+#' values greater than one measure the extent to which poor condition of the
 #' stressor variable is associated with poor condition of the response variable.
 #'
 #' @return The analysis results. A data frame of population estimates for all combinations of

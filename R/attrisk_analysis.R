@@ -54,7 +54,7 @@
 #'
 #' @param response_levels List providing the category values (levels) for each
 #'   element in the \code{vars_response} argument.  Each element in the list
-#'   must contian two values, where the first value identifies poor condition,
+#'   must contain two values, where the first value identifies poor condition,
 #'   and the second value identifies good condition.  This argument must be
 #'   named and must be the same length as argument \code{vars_response}.  Names
 #'   for this argument must match the values in the \code{vars_response}

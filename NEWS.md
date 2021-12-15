@@ -85,7 +85,7 @@ this is reported on the CRAN results pages for fedora-clang and fedora-gcc.
 * The package no longer contains any functions written in C.  The C functions were either no longer required due to the transition to use of `sf` objects to contain the survey frame or were replaced with functions written in R.  The new R functions are: `cellWeight`, `constructAddr`, `insideAreaGridCell`, `insideLinearGridCell`, `make_grid`, `numLevels`, `pickFiniteSamplePoints`, `pickGridCells`, `pickSamplePoints`, `ranho`, and `selectFeatureID`.
 
 ## Bug fixes
-* The new R code function named `numLevels` that determines the number of hierarchical levels for a generalized random-tesselation stratified (GRTS) survey design now includes code to ensure that the maximum number of levels (which is currently 11) is not bypassed when creating a survey design.
+* The new R code function named `numLevels` that determines the number of hierarchical levels for a generalized random-tessellation stratified (GRTS) survey design now includes code to ensure that the maximum number of levels (which is currently 11) is not bypassed when creating a survey design.
 
 ## Modified function
 * Modified function `input.check` to check for missing values among the x-coordinates and y-coordinates for location.

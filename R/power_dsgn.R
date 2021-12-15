@@ -7,7 +7,7 @@
 #'
 #' Calculates the power for trend detection for one or more variables, for one
 #' or more panel designs, for one or more linear trends, and for one or more
-#' signficance levels.  The panel designs create a covarance model where the
+#' significance levels.  The panel designs create a covariance model where the
 #' model includes variance components for units, periods, the interaction of
 #' units and periods, and the residual (or index) variance.
 #'
@@ -35,7 +35,7 @@
 #'   the list is a matrix with \code{dimnames} (dimensions: number of panels (rows) by
 #'   number of periods (columns)) containing the number of units visited for
 #'   each combination of panel and period.  Dimnames for columns must be
-#'   convertable to an integer (e.g., 2016).  All designs must span the same
+#'   able to be coerced into an integer (e.g., 2016).  All designs must span the same
 #'   number of periods.  Typically, the panel designs are the output of the
 #'   function \code{revisit_dsgn}.
 #'
@@ -67,7 +67,7 @@
 #'   or negative. The default is \code{2}.
 #'
 #' @param alpha  Single value or vector of significance level for linear
-#'   trend test, alpha, Type I error, level.  The defualt is \code{0.05}.
+#'   trend test, alpha, Type I error, level.  The default is \code{0.05}.
 #'
 #' @details Calculates the power for detecting a change in the mean for
 #'   different panel design structures. The model incorporates unit, period,

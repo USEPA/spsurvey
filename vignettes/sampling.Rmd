@@ -165,7 +165,7 @@ strat_propprob <- grts(
 )
 ```
 
-# Additonal sampling options
+# Additional sampling options
 
 ## Legacy sampling
 

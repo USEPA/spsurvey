@@ -162,7 +162,7 @@
 #'   is stratified but the same number of nn replacement sites is desired
 #'   for each stratum,  \code{n_near} is integer from \code{1}
 #'   to \code{10} specifying the number of
-#'   nnreplacement sites to be selected for each base site. If the sampling design is
+#'   nn replacement sites to be selected for each base site. If the sampling design is
 #'   unstratified and a different number of nn replacement sites is
 #'   desired for each stratum, \code{n_near} is a vector (or list) whose names represent strata and whose
 #'   values is integer from \code{1}
@@ -293,7 +293,7 @@
 #'
 #' @references
 #' Stevens Jr., Don L. and Olsen, Anthony R. (2004). Spatially balanced sampling
-#' of natural resources. \emph{Journal of the american Statistical association}, 99(465), 262-278.
+#' of natural resources. \emph{Journal of the American Statistical Association}, 99(465), 262-278.
 #'
 #' @examples
 #' \dontrun{
