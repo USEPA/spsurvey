@@ -218,7 +218,7 @@ sp_plot(
 
 Design sites (output from the `grts()` or `irs()` functions) can be summarized and visualized using `sp_summary()` and `sp_plot()` very similarly to how sampling frames were summarized and visualized in the previous section. Soon you will use the `grts()` function to select a spatially balance sample. The `grts()` function does incorporate randomness, so to match your results with this output exactly you will need to set a reproducible seed by running
 ```{r}
-set.seed(5)
+set.seed(51)
 ```
 
 First we will obtain some design sites: To select an equal probability GRTS sample of size 50 with 10 reverse hierarchically ordered replacement sites, run
