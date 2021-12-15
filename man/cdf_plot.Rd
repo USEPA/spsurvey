@@ -111,6 +111,7 @@ data frame with the same structure as the "CDF" output from  \code{cont_analysis
 Confidence limits for the CDF also are plotted.
 }
 \examples{
+\dontrun{
 dframe <- data.frame(
   siteID = paste0("Site", 1:100),
   wgt = runif(100, 10, 100),
@@ -145,6 +146,7 @@ cdf_plot(myanalysis$CDF[keep, ],
   ylab = "Percent of Stream Length", ylab_r = "Same",
   main = "Estimates for Resource Class: Good"
 )
+}
 }
 \seealso{
 \describe{

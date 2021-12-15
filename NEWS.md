@@ -1,21 +1,21 @@
-# spsurvey 5.1.0 (2021-12-20)
+# spsurvey 5.1.0 (2021-12-14)
 
 ## Minor updates
 
 * Added a `Total` option to the `statistics` argument in `cont_analysis()`.
-* Added `localmean_weight()`, `localmean_var()` and `localmean_cov()` to compute the local neighborhood variance estimator outside of the `*_analysis()` functions.
+* Added `localmean_weight()`, `localmean_var()`, and `localmean_cov()` functions to compute the local neighborhood variance estimator outside of the `*_analysis()` functions.
 * Added an option to provide a bounding box vector to the `fix_bbox` argument in `sp_plot()`.
 * Added an error message to `grts() ` and `irs()` that stops the function when geographic coordinates are used.
 * Added an error message to `grts()` and `irs()` that stops the function when too many expected samples are specified for at least one level of an unequal probability variable.
-* Added a `caty_n_over` argument to `grts()` and `irs()` that makes it easier to specify reverse hierarchically ordered replacement sites for unequal probability sampling designs
-* Added vector argument support for the `n_over` and `n_near` arguments in `grts()` and `irs()` (list arguments were already supported)
+* Added a `caty_n_over` argument to `grts()` and `irs()` that makes it easier to specify reverse hierarchically ordered replacement sites for unequal probability sampling designs.
+* Added vector argument support for the `n_over` and `n_near` arguments in `grts()` and `irs()` (list arguments were already supported).
 * Added a default value for `siteID` in `attrisk_analysis()`, `cat_analysis()`, `cont_analysis()`, `diffrisk_analysis()`, and `relrisk_analysis()` that assumes each row in `dframe` represents a unique site.
 
 ## Bug fixes
 
-* Fixed a bug in `irs()` that made the algorithm sensitive to the ordering of the input data.
+* Fixed a bug in `irs()` that made the algorithm sensitive to the ordering of `sframe`.
 * Fixed a bug in percentile estimation from `cont_analysis()` that incorrectly copied estimate values.
-* Fixed a bug in `grts()` and `irs()` that prevented sampling from infinite frames for certain sample size requirements.
+* Fixed a bug in `grts()` and `irs()` that prevented sampling from `sframe` when the geometry type was `LINESTRING`, `MULTILINESTRING`, `POLYGON`, or `MULTIPOLYGON` and the number of desired samples exceeded the number of rows.
 
 # spsurvey 5.0.1 (2021-10-18)
 
