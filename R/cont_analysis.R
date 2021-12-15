@@ -158,9 +158,9 @@ cont_analysis <- function(dframe, vars, subpops = NULL, siteID = NULL,
   # data frame
 
   dframe <- droplevels(dframe)
-  
+
   # If no siteID is provided, set one that assumes each row is a unique site
-  
+
   if (is.null(siteID)) {
     siteID <- "siteID"
     dframe$siteID <- paste("site", seq_len(nrow(dframe)), sep = "-")

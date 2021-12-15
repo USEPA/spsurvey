@@ -437,11 +437,11 @@ if (on_solaris) {
     expect_equal(NCOL(irs_output$sites_over), col_out + 1)
     expect_equal(NCOL(irs_output$sites_near), 1)
   })
-  
+
   # stratification and caty_n_over
   test_that("algorithm executes", {
     n_base <- c(low = 5, high = 6)
-    stratum_var <-  "ELEV_CAT"
+    stratum_var <- "ELEV_CAT"
     caty_n <- list(low = c(small = 2, large = 3), high = c(small = 3, large = 3))
     caty_var <- "AREA_CAT"
     n_over <- c(low = 4, high = 3)
@@ -548,7 +548,7 @@ if (on_solaris) {
   # stratification and n_near
   test_that("algorithm executes", {
     n_base <- c(low = 5, high = 6)
-    stratum_var <-  "ELEV_CAT"
+    stratum_var <- "ELEV_CAT"
     n_near <- c(low = 2, high = 1)
     irs_output <- irs(NE_Lakes, n_base, stratum_var, n_near = n_near)
     expect_true(exists("irs_output"))
@@ -561,7 +561,7 @@ if (on_solaris) {
     expect_equal(NCOL(irs_output$sites_over), 1)
     expect_equal(NCOL(irs_output$sites_near), col_out)
   })
-  
+
   #--------------------------------------
   #-------- RHO and NN replacement
   #--------------------------------------
@@ -608,20 +608,20 @@ if (on_solaris) {
   #################################################
   ########### Illinois_River DATA TESTS
   #################################################
-  
+
   # number of irs columns added
   col_irs_add <- 9
-  
+
   # number of Illinois_River columns
   col_data <- NCOL(Illinois_River)
-  
+
   # number of irs columns plus Illinois_River columns
   col_out <- col_irs_add + col_data
-  
+
   #--------------------------------------
   #-------- Regular
   #--------------------------------------
-  
+
   # unstratified, equal probability
   test_that("algorithm executes", {
     n_base <- 50
@@ -636,7 +636,7 @@ if (on_solaris) {
     expect_equal(NCOL(irs_output$sites_over), 1)
     expect_equal(NCOL(irs_output$sites_near), 1)
   })
-  
+
   # unstratified, large sample size
   test_that("algorithm executes", {
     n_base <- 500
@@ -651,7 +651,7 @@ if (on_solaris) {
     expect_equal(NCOL(irs_output$sites_over), 1)
     expect_equal(NCOL(irs_output$sites_near), 1)
   })
-  
+
   # unstratified, large sample size, replacement sites
   test_that("algorithm executes", {
     n_base <- 50
@@ -667,7 +667,7 @@ if (on_solaris) {
     expect_equal(NCOL(irs_output$sites_over), col_out)
     expect_equal(NCOL(irs_output$sites_near), 1)
   })
-  
+
   # stratified, equal probability
   test_that("algorithm executes", {
     n_base <- c(Oklahoma = 20, Arkansas = 30)
@@ -690,7 +690,7 @@ if (on_solaris) {
     expect_equal(NCOL(irs_output$sites_over), 1)
     expect_equal(NCOL(irs_output$sites_near), 1)
   })
-  
+
   # stratified, equal probability
   test_that("algorithm executes", {
     n_base <- c(Oklahoma = 200, Arkansas = 300)
@@ -713,7 +713,7 @@ if (on_solaris) {
     expect_equal(NCOL(irs_output$sites_over), 1)
     expect_equal(NCOL(irs_output$sites_near), 1)
   })
-  
+
   # stratified, equal probability
   test_that("algorithm executes", {
     n_base <- c(Oklahoma = 20, Arkansas = 30)
@@ -737,11 +737,11 @@ if (on_solaris) {
     expect_equal(NCOL(irs_output$sites_over), col_out)
     expect_equal(NCOL(irs_output$sites_near), 1)
   })
-  
+
   #--------------------------------------
   #-------- Legacy
   #--------------------------------------
-  
+
   # legacy sites, unstratified, equal probability
   test_that("algorithm executes", {
     n_base <- 50
@@ -757,15 +757,15 @@ if (on_solaris) {
     expect_equal(NCOL(irs_output$sites_over), 1)
     expect_equal(NCOL(irs_output$sites_near), 1)
   })
-  
+
   # legacy sites, stratified, equal probability
   test_that("algorithm executes", {
     n_base <- c(Oklahoma = 20, Arkansas = 30)
     n_legacy <- nrow(Illinois_River_Legacy)
     irs_output <- irs(Illinois_River,
-                        n_base = n_base, seltype = "equal",
-                        stratum_var = "STATE_NAME", legacy_sites = Illinois_River_Legacy,
-                        legacy_stratum_var = "STATE_NAME"
+      n_base = n_base, seltype = "equal",
+      stratum_var = "STATE_NAME", legacy_sites = Illinois_River_Legacy,
+      legacy_stratum_var = "STATE_NAME"
     )
     expect_true(exists("irs_output"))
     expect_equal(NROW(irs_output$sites_legacy), n_legacy)
@@ -787,24 +787,24 @@ if (on_solaris) {
     expect_equal(NCOL(irs_output$sites_over), 1)
     expect_equal(NCOL(irs_output$sites_near), 1)
   })
-  
+
   #################################################
   ########### Lake_Ontario DATA TESTS
   #################################################
-  
+
   # number of irs columns added
   col_irs_add <- 9
-  
+
   # number of Lake_Ontario columns
   col_data <- NCOL(Lake_Ontario)
-  
+
   # number of irs columns plus Lake_Ontario columns
   col_out <- col_irs_add + col_data
-  
+
   #--------------------------------------
   #-------- Regular
   #--------------------------------------
-  
+
   # unstratified, equal probability
   test_that("algorithm executes", {
     n_base <- 50
@@ -819,7 +819,7 @@ if (on_solaris) {
     expect_equal(NCOL(irs_output$sites_over), 1)
     expect_equal(NCOL(irs_output$sites_near), 1)
   })
-  
+
   # unstratified, large sample size
   test_that("algorithm executes", {
     n_base <- 500
@@ -834,7 +834,7 @@ if (on_solaris) {
     expect_equal(NCOL(irs_output$sites_over), 1)
     expect_equal(NCOL(irs_output$sites_near), 1)
   })
-  
+
   # unstratified, large sample size, replacement sites
   test_that("algorithm executes", {
     n_base <- 50
@@ -850,7 +850,7 @@ if (on_solaris) {
     expect_equal(NCOL(irs_output$sites_over), col_out)
     expect_equal(NCOL(irs_output$sites_near), 1)
   })
-  
+
   # stratified, equal probability
   test_that("algorithm executes", {
     n_base <- c(CAN = 20, USA = 30)
@@ -873,7 +873,7 @@ if (on_solaris) {
     expect_equal(NCOL(irs_output$sites_over), 1)
     expect_equal(NCOL(irs_output$sites_near), 1)
   })
-  
+
   # stratified, large sample size
   test_that("algorithm executes", {
     n_base <- c(CAN = 200, USA = 300)
@@ -896,7 +896,7 @@ if (on_solaris) {
     expect_equal(NCOL(irs_output$sites_over), 1)
     expect_equal(NCOL(irs_output$sites_near), 1)
   })
-  
+
   # replacement sites
   test_that("algorithm executes", {
     n_base <- c(CAN = 200, USA = 300)
@@ -920,5 +920,4 @@ if (on_solaris) {
     expect_equal(NCOL(irs_output$sites_over), col_out)
     expect_equal(NCOL(irs_output$sites_near), 1)
   })
-  
 }

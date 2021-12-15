@@ -154,7 +154,7 @@ total_var <- function(z, wgt, x, y, stratum_ind, stratum_level, cluster_ind,
             x2_lst[[i]], y2_lst[[i]],
             1 / wgt2_lst[[i]]
           )
-          if(is.null(weight_lst)) {
+          if (is.null(weight_lst)) {
             warn_ind <- TRUE
             act <- "The simple random sampling variance estimator for an infinite population was used.\n"
             if (stratum_ind) {
@@ -210,7 +210,7 @@ total_var <- function(z, wgt, x, y, stratum_ind, stratum_level, cluster_ind,
 
     if (vartype == "Local") {
       weight_lst <- localmean_weight(x1_u, y1_u, 1 / wgt1_u)
-      if(is.null(weight_lst)) {
+      if (is.null(weight_lst)) {
         warn_ind <- TRUE
         act <- "The simple random sampling variance estimator for an infinite population was used.\n"
         if (stratum_ind) {
@@ -232,14 +232,13 @@ total_var <- function(z, wgt, x, y, stratum_ind, stratum_level, cluster_ind,
         varest <- 0
       } else {
         varest <- localmean_var(total2est * wgt1_u, weight_lst) +
-                  sum(var2est * wgt1_u)
+          sum(var2est * wgt1_u)
       }
     } else {
       varest <- 0
     }
 
     # End of section for a two-stage sample
-
   } else {
 
     # Begin the section for a single-stage sample
@@ -279,7 +278,7 @@ total_var <- function(z, wgt, x, y, stratum_ind, stratum_level, cluster_ind,
 
     if (vartype == "Local") {
       weight_lst <- localmean_weight(x, y, prb = 1 / wgt)
-      if(is.null(weight_lst)) {
+      if (is.null(weight_lst)) {
         warn_ind <- TRUE
         act <- "The simple random sampling variance estimator for an infinite population was used.\n"
         if (stratum_ind) {
@@ -307,12 +306,13 @@ total_var <- function(z, wgt, x, y, stratum_ind, stratum_level, cluster_ind,
     }
 
     # End of section for a single-stage sample
-
   }
 
   # Return the variance estimate, the warning message indicator, and the warn_df
   # data frame
 
-  list(vartype = vartype, varest = varest, warn_ind = warn_ind,
-    warn_df = warn_df)
+  list(
+    vartype = vartype, varest = varest, warn_ind = warn_ind,
+    warn_df = warn_df
+  )
 }

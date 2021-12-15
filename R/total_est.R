@@ -88,8 +88,8 @@
 ################################################################################
 
 total_est <- function(totalsum, dframe, itype, lev_itype, nlev_itype, ivar,
-                     design, design_names, var_nondetect, vartype, conf, mult,
-                     warn_ind, warn_df) {
+                      design, design_names, var_nondetect, vartype, conf, mult,
+                      warn_ind, warn_df) {
 
   # Assign a value to the function name variable
 
@@ -124,7 +124,8 @@ total_est <- function(totalsum, dframe, itype, lev_itype, nlev_itype, ivar,
         ubound <- temp
       } else {
         rslt <- svytotal(
-          make.formula(ivar), design = subset(design, tst), na.rm = TRUE
+          make.formula(ivar),
+          design = subset(design, tst), na.rm = TRUE
         )
         totalest <- rslt
         nresp <- sum(!is.na(dframe[, ivar]))
@@ -171,7 +172,8 @@ total_est <- function(totalsum, dframe, itype, lev_itype, nlev_itype, ivar,
         tst <- tst & dframe[, itype] %in% lev_itype[subpop_ind]
         levs <- (1:nlev_itype)[subpop_ind]
         rslt <- svyby(
-          make.formula(ivar), make.formula(itype), design = subset(design, tst),
+          make.formula(ivar), make.formula(itype),
+          design = subset(design, tst),
           svytotal, na.rm = TRUE
         )
         totalest[levs] <- rslt[, 2]
@@ -200,7 +202,6 @@ total_est <- function(totalsum, dframe, itype, lev_itype, nlev_itype, ivar,
   } else {
 
     # To be implemented
-
   }
 
   # Assign identifiers and estimates to the totalsum data frame
@@ -236,7 +237,6 @@ total_est <- function(totalsum, dframe, itype, lev_itype, nlev_itype, ivar,
   } else {
 
     # To be implemented
-
   }
 
   # Return the totalsum data frame, the warn_ind logical value, and the warn_df

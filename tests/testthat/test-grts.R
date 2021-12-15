@@ -437,11 +437,11 @@ if (on_solaris) {
     expect_equal(NCOL(grts_output$sites_over), col_out + 1)
     expect_equal(NCOL(grts_output$sites_near), 1)
   })
-  
+
   # stratification and caty_n_over
   test_that("algorithm executes", {
     n_base <- c(low = 5, high = 6)
-    stratum_var <-  "ELEV_CAT"
+    stratum_var <- "ELEV_CAT"
     caty_n <- list(low = c(small = 2, large = 3), high = c(small = 3, large = 3))
     caty_var <- "AREA_CAT"
     n_over <- c(low = 4, high = 3)
@@ -544,11 +544,11 @@ if (on_solaris) {
     expect_equal(NCOL(grts_output$sites_over), 1)
     expect_equal(NCOL(grts_output$sites_near), col_out + 1)
   })
-  
+
   # stratification and n_near
   test_that("algorithm executes", {
     n_base <- c(low = 5, high = 6)
-    stratum_var <-  "ELEV_CAT"
+    stratum_var <- "ELEV_CAT"
     n_near <- c(low = 2, high = 1)
     grts_output <- grts(NE_Lakes, n_base, stratum_var, n_near = n_near)
     expect_true(exists("grts_output"))
@@ -636,7 +636,7 @@ if (on_solaris) {
     expect_equal(NCOL(grts_output$sites_over), 1)
     expect_equal(NCOL(grts_output$sites_near), 1)
   })
-  
+
   # unstratified, large sample size
   test_that("algorithm executes", {
     n_base <- 500
@@ -651,7 +651,7 @@ if (on_solaris) {
     expect_equal(NCOL(grts_output$sites_over), 1)
     expect_equal(NCOL(grts_output$sites_near), 1)
   })
-  
+
   # unstratified, large sample size, replacement sites
   test_that("algorithm executes", {
     n_base <- 50
@@ -690,7 +690,7 @@ if (on_solaris) {
     expect_equal(NCOL(grts_output$sites_over), 1)
     expect_equal(NCOL(grts_output$sites_near), 1)
   })
-  
+
   # stratified, equal probability
   test_that("algorithm executes", {
     n_base <- c(Oklahoma = 200, Arkansas = 300)
@@ -713,7 +713,7 @@ if (on_solaris) {
     expect_equal(NCOL(grts_output$sites_over), 1)
     expect_equal(NCOL(grts_output$sites_near), 1)
   })
-  
+
   # stratified, equal probability
   test_that("algorithm executes", {
     n_base <- c(Oklahoma = 20, Arkansas = 30)
@@ -819,7 +819,7 @@ if (on_solaris) {
     expect_equal(NCOL(grts_output$sites_over), 1)
     expect_equal(NCOL(grts_output$sites_near), 1)
   })
-  
+
   # unstratified, large sample size
   test_that("algorithm executes", {
     n_base <- 500
@@ -834,7 +834,7 @@ if (on_solaris) {
     expect_equal(NCOL(grts_output$sites_over), 1)
     expect_equal(NCOL(grts_output$sites_near), 1)
   })
-  
+
   # unstratified, large sample size, replacement sites
   test_that("algorithm executes", {
     n_base <- 50
@@ -873,7 +873,7 @@ if (on_solaris) {
     expect_equal(NCOL(grts_output$sites_over), 1)
     expect_equal(NCOL(grts_output$sites_near), 1)
   })
-  
+
   # stratified, large sample size
   test_that("algorithm executes", {
     n_base <- c(CAN = 200, USA = 300)
@@ -896,7 +896,7 @@ if (on_solaris) {
     expect_equal(NCOL(grts_output$sites_over), 1)
     expect_equal(NCOL(grts_output$sites_near), 1)
   })
-  
+
   # replacement sites
   test_that("algorithm executes", {
     n_base <- c(CAN = 200, USA = 300)
@@ -920,5 +920,4 @@ if (on_solaris) {
     expect_equal(NCOL(grts_output$sites_over), col_out)
     expect_equal(NCOL(grts_output$sites_near), 1)
   })
-  
 }

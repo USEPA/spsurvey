@@ -225,7 +225,7 @@ irs <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = N
       dsgn$n_over <- tmp
     }
   }
-  
+
   # caty_n_over
   if (!is.null(caty_n_over)) {
     if (is.list(caty_n_over)) {
@@ -242,7 +242,7 @@ irs <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = N
       dsgn$n_over <- tmp
     }
   }
-  
+
   # n_near
   if (!is.null(n_near)) {
     if (is.list(n_near)) {

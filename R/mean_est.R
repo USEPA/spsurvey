@@ -202,7 +202,6 @@ mean_est <- function(meansum, dframe, itype, lev_itype, nlev_itype, ivar,
   } else {
 
     # To be implemented
-
   }
 
   # Assign identifiers and estimates to the meansum data frame
@@ -238,7 +237,6 @@ mean_est <- function(meansum, dframe, itype, lev_itype, nlev_itype, ivar,
   } else {
 
     # To be implemented
-
   }
 
   # Return the meansum data frame, the warn_ind logical value, and the warn_df

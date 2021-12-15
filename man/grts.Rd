@@ -142,10 +142,10 @@ when the minimum distance requirement is met or there are \code{maxtry} iteratio
 The default number of maximum iterations is \code{10}.}
 
 \item{n_over}{The number of reverse hierarchically ordered (rho) replacement sites.
- If the sampling design is unstratified, then 
+ If the sampling design is unstratified, then
  \code{n_over} is an integer specifying the number of rho replacement sites desired.
 If the sampling design is stratified,
- then \code{n_over} is a vector (or list) whose names match the names of \code{n_base} and 
+ then \code{n_over} is a vector (or list) whose names match the names of \code{n_base} and
  whose values indicate the number of rho replacement sites for each stratum.
  If replacement sites are not desired for a particular stratum, then the corresponding
  value in \code{n_over} should be \code{0} or \code{NULL} (which is equivalent to \code{0}).
@@ -156,19 +156,19 @@ If the sampling design is stratified,
  compatibility and new designs should explicitly use \code{caty_n_over} instead.}
 
 \item{caty_n_over}{The number of expected reverse hierarchically ordered (rho) replacement
-sites used when \code{seltype = "unequal"}. 
+sites used when \code{seltype = "unequal"}.
 If the sampling design is unstratified, then \code{caty_n_over} is a named vector whose names
-represent the levels of the unequal probability variable (specified by \code{caty_n}) and 
+represent the levels of the unequal probability variable (specified by \code{caty_n}) and
 whose values represent the expected rho replacement sites in each level. If the design is
-stratified, \code{caty_n_over} is a list whose names match the names of \code{n_base} and 
+stratified, \code{caty_n_over} is a list whose names match the names of \code{n_base} and
 whose values are named vectors, where each named vector has names representing the levels of
 \code{caty_n} and whose values represent the expected rho replacement sites in each
 stratum. Note that the sum of each stratum's values in \code{caty_n_over} must match
-the respective stratum's value in \code{n_over}. If the sampling design is stratified, the 
+the respective stratum's value in \code{n_over}. If the sampling design is stratified, the
 \code{n_over} is the same for each stratum, and \code{caty_n_over} should be the same in
 each stratum, \code{caty_n_over} can be a vector and will be repeated for each stratum.'}
 
-\item{n_near}{The number of nearest neighbor (nn) replacement sites. 
+\item{n_near}{The number of nearest neighbor (nn) replacement sites.
 If the sampling design is unstratified, \code{n_near} is integer from \code{1}
 to \code{10} specifying the number of
 nn replacement sites to be selected for each base site. If the sampling design
@@ -196,11 +196,11 @@ frames vastly improves computational efficiency by generating many finite points
 selecting a sample from the points. \code{pt_density} represents the density
 of finite points per unit to use in the approximation (the units should match
 the units of the sampling frame). Increasing \code{pt_density} means increasing the number
-of finite points used in the approximation. For example, a value of 2 means use two 
+of finite points used in the approximation. For example, a value of 2 means use two
 finite points every unit, while a value of 1/2 means use one finite point
 every two units. The more finite points (i.e., the more accurate) in the approximation,
 the larger the computational burden. The default is a density such that the number
-of finite points used in the approximation equals 10 times the sample size requested. 
+of finite points used in the approximation equals 10 times the sample size requested.
 When used with \code{caty_n}, the unequal inclusion probabilities generated using
 \code{pt_density} are approximations.}
 
