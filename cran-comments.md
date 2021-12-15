@@ -2,6 +2,10 @@ This is a minor update adding some minor features and addressing a few bugs from
 
 -------
 
+## Resubmission
+
+This is a resubmission. In this version, I have moved the https://www.r-spatial.org/r/2020/03/17/wkt.html URL to https://r-spatial.org/r/2020/03/17/wkt.html .
+
 ## Test environments
 
 * Tests run on December 14, 2021 (rhub version 1.1.1)
