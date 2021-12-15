@@ -20,6 +20,7 @@ grts(
   mindis = NULL,
   maxtry = 10,
   n_over = NULL,
+  caty_n_over = NULL,
   n_near = NULL,
   wgt_units = NULL,
   pt_density = NULL,
@@ -29,7 +30,7 @@ grts(
 }
 \arguments{
 \item{sframe}{The sampling frame as an \code{sf} object. The coordinate
-system for \code{sframe} must be one where distance for coordinates is meaningful.}
+system for \code{sframe} must projected (not geographic).}
 
 \item{n_base}{The base sample size required. If the sampling design is unstratified,
 this is a single numeric value. If the sampling design is stratified, this is a named
@@ -140,33 +141,49 @@ sites satisfying the minimum distance requirement as the previous iteration. The
 when the minimum distance requirement is met or there are \code{maxtry} iterations.
 The default number of maximum iterations is \code{10}.}
 
-\item{n_over}{If the sampling design is unstratified and \code{seltype} is \code{"equal"} or \code{"proportional"},
-\code{n_over} is an integer specifying the number of reverse hierarchically
-ordered (rho) replacement sites desired.  If the sampling design is unstratified and \code{seltype} is \code{"unequal"},
-then \code{n_over} is a named character vector whose names match the levels of
-\code{caty_var} and whose values are the expected rho replacement sample sizes for each
-level. If the sampling design is stratified and \code{seltype} is \code{"equal"} or \code{"proportional"},
-\code{n_over} is a list whose names match the names of \code{n_base} and whose values
-indicate the number of rho replacement sites for each stratum. If replacement sites are not desired for a particular stratum, then the corresponding value in \code{n_over} should be \code{NULL}. If the sampling design is stratified and
-\code{seltype} is \code{"unequal"}, \code{n_over} changes based on whether the expected
-rho replacement sample sizes change among strata. If \code{n_over} does not change among strata, \code{n_over}
-is a named vector whose names match the names of \code{caty_var} and whose values are the expected rho replacement
-sample sizes to be used for each stratum. If \code{n_over} changes among strata, \code{n_over} is a
-list whose names match the names of \code{n_base} and whose values are each named vectors with names for each level of \code{caty_var} and values representing the expected rho replacement sample sizes (within the stratum) for each level of \code{caty_var}. If replacement sites are not desired for a particular stratum, then the corresponding value in \code{n_over} should be \code{0} or \code{NULL} (which is equivalent to \code{0}).}
+\item{n_over}{The number of reverse hierarchically ordered (rho) replacement sites.
+ If the sampling design is unstratified, then
+ \code{n_over} is an integer specifying the number of rho replacement sites desired.
+If the sampling design is stratified,
+ then \code{n_over} is a vector (or list) whose names match the names of \code{n_base} and
+ whose values indicate the number of rho replacement sites for each stratum.
+ If replacement sites are not desired for a particular stratum, then the corresponding
+ value in \code{n_over} should be \code{0} or \code{NULL} (which is equivalent to \code{0}).
+ If the sampling design is stratified but the number of \code{n_over} sites is the same in each
+ stratum, \code{n_over} can be a vector which is used for each stratum. Note that if the
+ sampling design has unequal selection probabilities \code{seltype = "unequal"}, the contents of \code{caty_n_over}
+ for \code{n_over} and \code{caty_n_over} them omitted -- though possible, this exists to maintain backwards
+ compatibility and new designs should explicitly use \code{caty_n_over} instead.}
 
-\item{n_near}{If the sampling design is unstratified, \code{n_near} is integer from \code{1}
+\item{caty_n_over}{The number of expected reverse hierarchically ordered (rho) replacement
+sites used when \code{seltype = "unequal"}.
+If the sampling design is unstratified, then \code{caty_n_over} is a named vector whose names
+represent the levels of the unequal probability variable (specified by \code{caty_n}) and
+whose values represent the expected rho replacement sites in each level. If the design is
+stratified, \code{caty_n_over} is a list whose names match the names of \code{n_base} and
+whose values are named vectors, where each named vector has names representing the levels of
+\code{caty_n} and whose values represent the expected rho replacement sites in each
+stratum. Note that the sum of each stratum's values in \code{caty_n_over} must match
+the respective stratum's value in \code{n_over}. If the sampling design is stratified, the
+\code{n_over} is the same for each stratum, and \code{caty_n_over} should be the same in
+each stratum, \code{caty_n_over} can be a vector and will be repeated for each stratum.'}
+
+\item{n_near}{The number of nearest neighbor (nn) replacement sites.
+If the sampling design is unstratified, \code{n_near} is integer from \code{1}
 to \code{10} specifying the number of
-nearest neighbor replacement sites to be selected for each base site. If the sampling design
-is stratified but the same number of nearest neighbor replacement sites is desired
+nn replacement sites to be selected for each base site. If the sampling design
+is stratified but the same number of nn replacement sites is desired
 for each stratum,  \code{n_near} is integer from \code{1}
 to \code{10} specifying the number of
-nearest neighbor replacement sites to be selected for each base site. If the sampling design is
-unstratified and a different number of nearest neighbor replacement sites is
-desired for each stratum, \code{n_near} is a list whose names represent strata and whose
+nn replacement sites to be selected for each base site. If the sampling design is
+unstratified and a different number of nn replacement sites is
+desired for each stratum, \code{n_near} is a vector (or list) whose names represent strata and whose
 values is integer from \code{1}
 to \code{10} specifying the number of
-nearest neighbor replacement sites to be selected for each base site in the stratum. If replacement sites are not desired for a particular stratum, then the corresponding value in \code{n_over} should be \code{0} or \code{NULL} (which is equivalent to \code{0}). For
-infinite sampling frames, the distance between a site and its nearest neighbor
+nn replacement sites to be selected for each base site in the stratum. If replacement sites
+are not desired for a particular stratum, then the corresponding value in \code{n_over}
+should be \code{0} or \code{NULL} (which is equivalent to \code{0}). For
+infinite sampling frames, the distance between a site and its nn
 depends on \code{pt_density}.}
 
 \item{wgt_units}{The units used to compute the design weights. These
@@ -178,9 +195,14 @@ for infinite sampling frames. The GRTS approximation for infinite sample
 frames vastly improves computational efficiency by generating many finite points and
 selecting a sample from the points. \code{pt_density} represents the density
 of finite points per unit to use in the approximation (the units should match
-the units of the sampling frame). The default is a density
-such that the number of finite points used in the approximation equals 10
-times the sample size requested.}
+the units of the sampling frame). Increasing \code{pt_density} means increasing the number
+of finite points used in the approximation. For example, a value of 2 means use two
+finite points every unit, while a value of 1/2 means use one finite point
+every two units. The more finite points (i.e., the more accurate) in the approximation,
+the larger the computational burden. The default is a density such that the number
+of finite points used in the approximation equals 10 times the sample size requested.
+When used with \code{caty_n}, the unequal inclusion probabilities generated using
+\code{pt_density} are approximations.}
 
 \item{DesignID}{A character string indicating the naming structure for each
 site's identifier selected in the sample, which is matched with \code{SiteBegin} and
@@ -298,7 +320,7 @@ sample_over <- grts(NE_Lakes, n_base = 30, n_over = 5)
 }
 \references{
 Stevens Jr., Don L. and Olsen, Anthony R. (2004). Spatially balanced sampling
-of natural resources. \emph{Journal of the american Statistical association}, 99(465), 262-278.
+of natural resources. \emph{Journal of the American Statistical Association}, 99(465), 262-278.
 }
 \seealso{
 \describe{

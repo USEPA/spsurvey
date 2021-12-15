@@ -87,8 +87,11 @@ variable for which a summary is requested. This argument is only used when
 a single right-hand side variable is provided.}
 
 \item{fix_bbox}{Should the geometry bounding box be fixed across plots?
-Defaults to \code{TRUE}. If \code{TRUE}, the bounding box for each plot will be
-unique to its coordinates.}
+If a length-four vector with names "xmin", "ymin", "xmax", and "ymax" and values
+indicating bounding box edges, the bounding box will be fixed as \code{fix_bbox}
+across plots. If \code{TRUE}, the bounding box will be fixed across plots as the
+bounding box of \code{object}. If \code{FALSE}, the bounding box will vary across
+plots according to the unique geometry for each plot. Defaults to \code{TRUE}.}
 
 \item{sframe}{The sampling frame (an \code{sf} object) to plot alongside design
 sites. This argument is only used when \code{object} corresponds to the design sites.}

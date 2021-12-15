@@ -28,7 +28,7 @@
 #' For every response variable and every subpopulation (domain) variable,
 #' differences between CDFs are tested for every pair of subpopulations within
 #' the domain.  Data input to the function can be either a single surey or
-#' multiple surveys (two or more).  If the data contain multile surveys, then
+#' multiple surveys (two or more).  If the data contain multiple surveys, then
 #' the domain variables will reference those surveys and (potentially)
 #' subpopulations within those surveys.  The inferential procedures divide the
 #' CDFs into a discrete set of intervals (classes) and then utilize procedures
@@ -128,7 +128,7 @@
 #'   named vector containing one more than the number of clusters in the sample,
 #'   where the first item in the vector specifies the number of clusters in the
 #'   population and each subsequent item specifies the number of stage two units
-#'   for the cluster.  The name for the first item in the vector is arbitrry.
+#'   for the cluster.  The name for the first item in the vector is arbitrary.
 #'   Subsequent names in the vector identify clusters and must match the cluster
 #'   IDs.  For a stratified design, the object is a named list of vectors, where
 #'   names must match the strata IDs.  For each stratum, the format of the

@@ -47,7 +47,8 @@
 #'
 #' @param siteID Character value providing name of the site ID variable in
 #'   the \code{dframe} data frame.  For a two-stage sample, the site ID variable
-#'   identifies stage two site IDs.  The default value is \code{"siteID"}.
+#'   identifies stage two site IDs.  The default value is \code{NULL}, which
+#'   assumes that each row in \code{dframe} represents a unique site.
 #'
 #' @param weight Character value providing name of the design weight
 #'   variable in \code{dframe}.  For a two-stage sample, the
@@ -284,7 +285,7 @@
 #' @export
 ################################################################################
 
-cat_analysis <- function(dframe, vars, subpops = NULL, siteID = "siteID", weight = "weight",
+cat_analysis <- function(dframe, vars, subpops = NULL, siteID = NULL, weight = "weight",
                          xcoord = NULL, ycoord = NULL, stratumID = NULL, clusterID = NULL,
                          weight1 = NULL, xcoord1 = NULL, ycoord1 = NULL, sizeweight = FALSE,
                          sweight = NULL, sweight1 = NULL, fpc = NULL, popsize = NULL,
@@ -337,6 +338,13 @@ cat_analysis <- function(dframe, vars, subpops = NULL, siteID = "siteID", weight
   # data frame
 
   dframe <- droplevels(dframe)
+
+  # If no siteID is provided, set one that assumes each row is a unique site
+
+  if (is.null(siteID)) {
+    siteID <- "siteID"
+    dframe$siteID <- paste("site", seq_len(nrow(dframe)), sep = "-")
+  }
 
   # Ensure that the dframe data frame contains the site ID variable
 

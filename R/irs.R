@@ -33,7 +33,7 @@ irs <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = N
                 caty_n = NULL, aux_var = NULL, legacy_var = NULL,
                 legacy_sites = NULL, legacy_stratum_var = NULL,
                 legacy_caty_var = NULL, legacy_aux_var = NULL, mindis = NULL,
-                maxtry = 10, n_over = NULL, n_near = NULL, wgt_units = NULL,
+                maxtry = 10, n_over = NULL, caty_n_over = NULL, n_near = NULL, wgt_units = NULL,
                 pt_density = NULL, DesignID = "Site", SiteBegin = 1) {
   if (inherits(sframe, c("tbl_df", "tbl"))) { # identify if tibble class elements are present
     class(sframe) <- setdiff(class(sframe), c("tbl_df", "tbl"))
@@ -96,7 +96,7 @@ irs <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = N
   dsgn_check(
     sframe = sframe, sf_type = sf_type, legacy_sites = legacy_sites,
     legacy_option = legacy_option, stratum = stratum, seltype = seltype,
-    n_base = n_base, caty_n = caty_n, n_over = n_over, n_near = n_near,
+    n_base = n_base, caty_n = caty_n, n_over = n_over, caty_n_over = caty_n_over, n_near = n_near,
     stratum_var = stratum_var, caty_var = caty_var, aux_var = aux_var,
     legacy_var = legacy_var, mindis = mindis, DesignID = DesignID,
     SiteBegin = SiteBegin, maxtry = maxtry
@@ -211,10 +211,33 @@ irs <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = N
     if (is.list(n_over)) {
       n_over <- lapply(n_over, function(x) if (all(x == 0)) NULL else x)
       dsgn$n_over <- n_over
+    } else if (!is.null(names(n_over)) && all(sort(stratum) == sort(names(n_over)))) {
+      tmp <- lapply(stratum, function(x, n_over) {
+        x <- n_over[[x]]
+      }, n_over)
+      names(tmp) <- stratum
+      dsgn$n_over <- tmp
     } else {
       tmp <- lapply(stratum, function(x, n_over) {
         x <- n_over
       }, n_over)
+      names(tmp) <- stratum
+      dsgn$n_over <- tmp
+    }
+  }
+
+  # caty_n_over
+  if (!is.null(caty_n_over)) {
+    if (is.list(caty_n_over)) {
+      tmp <- lapply(stratum, function(x, caty_n_over) {
+        caty_n_over[[x]]
+      }, caty_n_over)
+      names(tmp) <- stratum
+      dsgn$n_over <- tmp
+    } else {
+      tmp <- lapply(stratum, function(x, caty_n_over) {
+        caty_n_over
+      }, caty_n_over)
       names(tmp) <- stratum
       dsgn$n_over <- tmp
     }
@@ -225,6 +248,12 @@ irs <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = N
     if (is.list(n_near)) {
       n_near <- lapply(n_near, function(x) if (all(x == 0)) NULL else x)
       dsgn$n_near <- n_near
+    } else if (!is.null(names(n_near)) && all(sort(stratum) == sort(names(n_near)))) {
+      tmp <- lapply(stratum, function(x, n_near) {
+        x <- n_near[[x]]
+      }, n_near)
+      names(tmp) <- stratum
+      dsgn$n_near <- tmp
     } else {
       tmp <- lapply(stratum, function(x, n_near) {
         x <- n_near
@@ -485,11 +514,21 @@ irs <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = N
 
   # add function call to dsgn list
   # dsgn <- c(list(Call = match.call()), dsgn)
-  dsgn <- list(
-    call = match.call(), stratum = dsgn$stratum, n_base = dsgn$n_base,
-    seltype = dsgn$seltype, caty_n = dsgn$caty_n, legacy = dsgn$legacy_option,
-    mindis = dsgn$mindis, n_over = dsgn$n_over, n_near = dsgn$n_near
-  )
+  if (is.null(caty_n_over)) {
+    dsgn <- list(
+      call = match.call(), stratum = dsgn$stratum, n_base = dsgn$n_base,
+      seltype = dsgn$seltype, caty_n = dsgn$caty_n, legacy = dsgn$legacy_option,
+      mindis = dsgn$mindis, n_over = dsgn$n_over, caty_n_over = NULL, n_near = dsgn$n_near
+    )
+  } else {
+    caty_n_over <- dsgn$n_over
+    n_over <- n_over
+    dsgn <- list(
+      call = match.call(), stratum = dsgn$stratum, n_base = dsgn$n_base,
+      seltype = dsgn$seltype, caty_n = dsgn$caty_n, legacy = dsgn$legacy_option,
+      mindis = dsgn$mindis, n_over = n_over, caty_n_over = caty_n_over, n_near = dsgn$n_near
+    )
+  }
 
   # create output list
   sites <- list(

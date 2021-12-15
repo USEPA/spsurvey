@@ -66,8 +66,11 @@
 #' a single right-hand side variable is provided.
 #'
 #' @param fix_bbox Should the geometry bounding box be fixed across plots?
-#' Defaults to \code{TRUE}. If \code{TRUE}, the bounding box for each plot will be
-#' unique to its coordinates.
+#' If a length-four vector with names "xmin", "ymin", "xmax", and "ymax" and values
+#' indicating bounding box edges, the bounding box will be fixed as \code{fix_bbox}
+#' across plots. If \code{TRUE}, the bounding box will be fixed across plots as the
+#' bounding box of \code{object}. If \code{FALSE}, the bounding box will vary across
+#' plots according to the unique geometry for each plot. Defaults to \code{TRUE}.
 #'
 #' @param xcoord Name of the x-coordinate (east-west) in \code{object} (only required if
 #' \code{object} is not an \code{sf} object).
@@ -124,6 +127,16 @@ sp_plot.default <- function(object, formula = ~1, xcoord, ycoord, crs,
 
   # storing dotlist
   dot_list <- list(...)
+
+  # fixing bbox
+  if (!is.logical(fix_bbox)) {
+    if (length(fix_bbox) == 4 && !is.null(names(fix_bbox)) && all(names(fix_bbox) %in% c("xmin", "ymin", "xmax", "ymax"))) {
+      attr(st_geometry(object), "bbox") <- fix_bbox[c("xmin", "ymin", "xmax", "ymax")]
+      fix_bbox <- TRUE # set as logical to be used later
+    } else {
+      stop("If fix_bbox is a vector, it must have length 4 with names \"xmin\", \"ymin\", \"xmax\", and \"ymax\" and values indicating bounding box edges.", call. = FALSE)
+    }
+  }
   if (fix_bbox) {
     dot_list$xlim <- st_bbox(object)[c(1, 3)]
     dot_list$ylim <- st_bbox(object)[c(2, 4)]

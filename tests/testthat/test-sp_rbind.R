@@ -21,8 +21,8 @@ if (on_solaris) {
 
   test_that("sp_rbind works legacy", {
     n_base <- 50
-    n_legacy <- sum(!is.na(NE_Lakes$LEGACY))
-    eqprob <- grts(NE_Lakes, n_base = n_base, legacy_var = "LEGACY")
+    n_legacy <- nrow(NE_Lakes_Legacy)
+    eqprob <- grts(NE_Lakes, n_base = n_base, legacy_sites = NE_Lakes_Legacy)
     eqprob_spr <- sp_rbind(eqprob)
     expect_equal(sum(eqprob_spr$siteuse == "Legacy"), n_legacy)
     expect_equal(sum(eqprob_spr$siteuse == "Base"), n_base - n_legacy)

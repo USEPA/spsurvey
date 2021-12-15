@@ -1,3 +1,22 @@
+# spsurvey 5.1.0 (2021-12-14)
+
+## Minor updates
+
+* Added a `Total` option to the `statistics` argument in `cont_analysis()`.
+* Added `localmean_weight()`, `localmean_var()`, and `localmean_cov()` functions to compute the local neighborhood variance estimator outside of the `*_analysis()` functions.
+* Added an option to provide a bounding box vector to the `fix_bbox` argument in `sp_plot()`.
+* Added an error message to `grts() ` and `irs()` that stops the function when geographic coordinates are used.
+* Added an error message to `grts()` and `irs()` that stops the function when too many expected samples are specified for at least one level of an unequal probability variable.
+* Added a `caty_n_over` argument to `grts()` and `irs()` that makes it easier to specify reverse hierarchically ordered replacement sites for unequal probability sampling designs.
+* Added vector argument support for the `n_over` and `n_near` arguments in `grts()` and `irs()` (list arguments were already supported).
+* Added a default value for `siteID` in `attrisk_analysis()`, `cat_analysis()`, `cont_analysis()`, `diffrisk_analysis()`, and `relrisk_analysis()` that assumes each row in `dframe` represents a unique site.
+
+## Bug fixes
+
+* Fixed a bug in `irs()` that made the algorithm sensitive to the ordering of `sframe`.
+* Fixed a bug in percentile estimation from `cont_analysis()` that incorrectly copied estimate values.
+* Fixed a bug in `grts()` and `irs()` that prevented sampling from `sframe` when the geometry type was `LINESTRING`, `MULTILINESTRING`, `POLYGON`, or `MULTIPOLYGON` and the number of desired samples exceeded the number of rows.
+
 # spsurvey 5.0.1 (2021-10-18)
 
 ## Bug fix
@@ -50,7 +69,7 @@ this is reported on the CRAN results pages for fedora-clang and fedora-gcc.
 
 ## Bug fix
 
-* Update test data and Description file to handle changes in `sf` and changes to `crs` described [here](https://www.r-spatial.org/r/2020/03/17/wkt.html)
+* Update test data and Description file to handle changes in `sf` and changes to `crs` described [here](https://r-spatial.org/r/2020/03/17/wkt.html)
 
 # spsurvey 4.1.1 (2019-12-12)
 
@@ -66,7 +85,7 @@ this is reported on the CRAN results pages for fedora-clang and fedora-gcc.
 * The package no longer contains any functions written in C.  The C functions were either no longer required due to the transition to use of `sf` objects to contain the survey frame or were replaced with functions written in R.  The new R functions are: `cellWeight`, `constructAddr`, `insideAreaGridCell`, `insideLinearGridCell`, `make_grid`, `numLevels`, `pickFiniteSamplePoints`, `pickGridCells`, `pickSamplePoints`, `ranho`, and `selectFeatureID`.
 
 ## Bug fixes
-* The new R code function named `numLevels` that determines the number of hierarchical levels for a generalized random-tesselation stratified (GRTS) survey design now includes code to ensure that the maximum number of levels (which is currently 11) is not bypassed when creating a survey design.
+* The new R code function named `numLevels` that determines the number of hierarchical levels for a generalized random-tessellation stratified (GRTS) survey design now includes code to ensure that the maximum number of levels (which is currently 11) is not bypassed when creating a survey design.
 
 ## Modified function
 * Modified function `input.check` to check for missing values among the x-coordinates and y-coordinates for location.

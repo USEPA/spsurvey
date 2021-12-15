@@ -27,16 +27,17 @@
 #          function percentile_est, to remove argument vars_nondetect since
 #          currently it is not used, and to revise the documentation for
 #          argument popsize
+# Revised: October 25 to include the option to calculate total estimates
 #
 #' Continuous variable analysis
 #'
-#' This function organizes input and output for the analysis of continuous variables.
-#' The analysis data,
-#' \code{dframe}, can be either a data frame or a simple features (\code{sf}) object.  If an
-#' \code{sf} object is used, coordinates are extracted from the geometry column in the
-#' object, arguments \code{xcoord} and \code{ycoord} are assigned values
-#' \code{"xcoord"} and \code{"ycoord"}, respectively, and the geometry column is
-#' dropped from the object.
+#' This function organizes input and output for the analysis of continuous
+#' variables. The analysis data, \code{dframe}, can be either a data frame or a
+#' simple features (\code{sf}) object.  If an \code{sf} object is used,
+#' coordinates are extracted from the geometry column in the object, arguments
+#' \code{xcoord} and \code{ycoord} are assigned values \code{"xcoord"} and
+#' \code{"ycoord"}, respectively, and the geometry column is dropped from the
+#' object.
 #'
 #' @inherit cat_analysis params
 #'
@@ -45,21 +46,20 @@
 #'
 #' @param statistics Character vector specifying desired estimates, where
 #'   \code{"CDF"} specifies CDF estimates, \code{"Pct"} specifies percentile
-#'   estimates, and \code{"Mean"} specifies mean estimates.  Any combination of
-#'   the three choices may be provided by the user.  The defalt value is
-#'   \code{c("CDF", "Pct", "Mean")}.
+#'   estimates, \code{"Mean"} specifies mean estimates, and "Total" specifies
+#'   total estimates.  Any combination of the four choices may be provided by
+#'   the user.  The default value is \code{c("CDF", "Pct", "Mean", "Total")}.
 #'
-#' @return The analysis results. A list composed of one, two, or three data frames that contain
-#'   population estimates for all combinations of subpopulations, categories
-#'   within each subpopulation, and response variables, where the number of data
-#'   frames is determined by argument statistics.  Estimates are provided for
-#'   proportion and total (size) of the population plus standard error, margin
-#'   of error, and confidence interval estimates.  The possible data frames in
-#'   the output list are:
+#' @return The analysis results. A list composed of one, two, three, or four
+#'   data frames that contain population estimates for all combinations of
+#'   subpopulations, categories within each subpopulation, and response
+#'   variables, where the number of data frames is determined by argument
+#'   statistics.  The possible data frames in the output list are:
 #'   \describe{
-#'     \item{\code{CDF}}{: a data frame containing the CDF estimates}
-#'     \item{\code{Pct}}{: data frame containing the percentile estimates}
-#'     \item{\code{Mean}}{: a data frame containing the mean estimates}
+#'     \item{\code{CDF}}{: a data frame containing CDF estimates}
+#'     \item{\code{Pct}}{: data frame containing percentile estimates}
+#'     \item{\code{Mean}}{: a data frame containing mean estimates}
+#'     \item{\code{Total}}{: a data frame containing total estimates}
 #'   }
 #'
 #' @author Tom Kincaid \email{Kincaid.Tom@@epa.gov}
@@ -96,12 +96,15 @@
 #' @export
 ################################################################################
 
-cont_analysis <- function(dframe, vars, subpops = NULL, siteID = "siteID", weight = "weight",
-                          xcoord = NULL, ycoord = NULL, stratumID = NULL, clusterID = NULL,
-                          weight1 = NULL, xcoord1 = NULL, ycoord1 = NULL, sizeweight = FALSE,
-                          sweight = NULL, sweight1 = NULL, fpc = NULL, popsize = NULL,
-                          vartype = "Local", jointprob = "overton", conf = 95,
-                          pctval = c(5, 10, 25, 50, 75, 90, 95), statistics = c("CDF", "Pct", "Mean"),
+cont_analysis <- function(dframe, vars, subpops = NULL, siteID = NULL,
+                          weight = "weight", xcoord = NULL, ycoord = NULL,
+                          stratumID = NULL, clusterID = NULL, weight1 = NULL,
+                          xcoord1 = NULL, ycoord1 = NULL, sizeweight = FALSE,
+                          sweight = NULL, sweight1 = NULL, fpc = NULL,
+                          popsize = NULL, vartype = "Local",
+                          jointprob = "overton", conf = 95,
+                          pctval = c(5, 10, 25, 50, 75, 90, 95),
+                          statistics = c("CDF", "Pct", "Mean", "Total"),
                           All_Sites = FALSE) {
 
   # Assign NULL to vars_nondetect
@@ -155,6 +158,13 @@ cont_analysis <- function(dframe, vars, subpops = NULL, siteID = "siteID", weigh
   # data frame
 
   dframe <- droplevels(dframe)
+
+  # If no siteID is provided, set one that assumes each row is a unique site
+
+  if (is.null(siteID)) {
+    siteID <- "siteID"
+    dframe$siteID <- paste("site", seq_len(nrow(dframe)), sep = "-")
+  }
 
   # Ensure that the dframe data frame contains the site ID variable
 
@@ -291,10 +301,10 @@ cont_analysis <- function(dframe, vars, subpops = NULL, siteID = "siteID", weigh
     msg <- "Argument statistics must contain character values.\n"
     error_vec <- c(error_vec, msg)
   } else {
-    tst <- statistics %in% c("CDF", "Pct", "Mean")
+    tst <- statistics %in% c("CDF", "Pct", "Mean", "Total")
     if (any(!tst)) {
       error_ind <- TRUE
-      msg <- "Argument statistics must contain only the values: 'CDF', 'Pct', and 'Mean'.\n"
+      msg <- "Argument statistics must contain only the values: 'CDF', 'Pct', 'Mean, and 'Total'.\n"
       error_vec <- c(error_vec, msg)
     }
   }
@@ -411,7 +421,8 @@ cont_analysis <- function(dframe, vars, subpops = NULL, siteID = "siteID", weigh
   contsum <- list(
     CDF = NULL,
     Pct = NULL,
-    Mean = NULL
+    Mean = NULL,
+    Total = NULL
   )
 
   # Assign the confidence bound multiplier
@@ -468,6 +479,19 @@ cont_analysis <- function(dframe, vars, subpops = NULL, siteID = "siteID", weigh
         warn_df <- temp$warn_df
       }
 
+      # Calculate total estimates
+
+      if ("Total" %in% statistics) {
+        temp <- total_est(
+          contsum$Total, dframe, itype, lev_itype, nlev_itype, ivar, design,
+          design_names, vars_nondetect[indx], vartype, conf, mult, warn_ind,
+          warn_df
+        )
+        contsum$Total <- temp$totalsum
+        warn_ind <- temp$warn_ind
+        warn_df <- temp$warn_df
+      }
+
       # End of the loop for response variables
     }
 
@@ -508,6 +532,13 @@ cont_analysis <- function(dframe, vars, subpops = NULL, siteID = "siteID", weigh
 
   if (!is.null(contsum$Mean)) {
     dimnames(contsum$Mean) <- list(1:nrow(contsum$Mean), c(
+      "Type", "Subpopulation", "Indicator", "nResp", "Estimate", "StdError",
+      "MarginofError", paste0("LCB", conf, "Pct"), paste0("UCB", conf, "Pct")
+    ))
+  }
+
+  if (!is.null(contsum$Total)) {
+    dimnames(contsum$Total) <- list(1:nrow(contsum$Total), c(
       "Type", "Subpopulation", "Indicator", "nResp", "Estimate", "StdError",
       "MarginofError", paste0("LCB", conf, "Pct"), paste0("UCB", conf, "Pct")
     ))

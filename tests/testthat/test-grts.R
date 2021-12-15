@@ -438,6 +438,26 @@ if (on_solaris) {
     expect_equal(NCOL(grts_output$sites_near), 1)
   })
 
+  # stratification and caty_n_over
+  test_that("algorithm executes", {
+    n_base <- c(low = 5, high = 6)
+    stratum_var <- "ELEV_CAT"
+    caty_n <- list(low = c(small = 2, large = 3), high = c(small = 3, large = 3))
+    caty_var <- "AREA_CAT"
+    n_over <- c(low = 4, high = 3)
+    caty_n_over <- list(low = c(small = 1, large = 3), high = c(small = 2, large = 1))
+    grts_output <- grts(NE_Lakes, n_base, stratum_var, caty_n = caty_n, caty_var = caty_var, n_over = n_over, caty_n_over = caty_n_over)
+    expect_true(exists("grts_output"))
+    expect_equal(NROW(grts_output$sites_legacy), 0)
+    expect_equal(NROW(grts_output$sites_base), sum(n_base))
+    expect_equal(NROW(grts_output$sites_over), sum(n_over))
+    expect_equal(NROW(grts_output$sites_near), 0)
+    expect_equal(NCOL(grts_output$sites_legacy), 1)
+    expect_equal(NCOL(grts_output$sites_base), col_out)
+    expect_equal(NCOL(grts_output$sites_over), col_out)
+    expect_equal(NCOL(grts_output$sites_near), 1)
+  })
+
   #--------------------------------------
   #-------- NN replacement
   #--------------------------------------
@@ -525,8 +545,25 @@ if (on_solaris) {
     expect_equal(NCOL(grts_output$sites_near), col_out + 1)
   })
 
+  # stratification and n_near
+  test_that("algorithm executes", {
+    n_base <- c(low = 5, high = 6)
+    stratum_var <- "ELEV_CAT"
+    n_near <- c(low = 2, high = 1)
+    grts_output <- grts(NE_Lakes, n_base, stratum_var, n_near = n_near)
+    expect_true(exists("grts_output"))
+    expect_equal(NROW(grts_output$sites_legacy), 0)
+    expect_equal(NROW(grts_output$sites_base), sum(n_base))
+    expect_equal(NROW(grts_output$sites_over), 0)
+    expect_equal(NROW(grts_output$sites_near), sum(n_base * n_near))
+    expect_equal(NCOL(grts_output$sites_legacy), 1)
+    expect_equal(NCOL(grts_output$sites_base), col_out)
+    expect_equal(NCOL(grts_output$sites_over), 1)
+    expect_equal(NCOL(grts_output$sites_near), col_out)
+  })
+
   #--------------------------------------
-  #-------- NN replacement
+  #-------- RHO and NN replacement
   #--------------------------------------
 
   # both replacement sites, unstratified
@@ -600,6 +637,37 @@ if (on_solaris) {
     expect_equal(NCOL(grts_output$sites_near), 1)
   })
 
+  # unstratified, large sample size
+  test_that("algorithm executes", {
+    n_base <- 500
+    grts_output <- grts(Illinois_River, n_base = n_base, seltype = "equal")
+    expect_true(exists("grts_output"))
+    expect_equal(NROW(grts_output$sites_legacy), 0)
+    expect_equal(NROW(grts_output$sites_base), n_base)
+    expect_equal(NROW(grts_output$sites_over), 0)
+    expect_equal(NROW(grts_output$sites_near), 0)
+    expect_equal(NCOL(grts_output$sites_legacy), 1)
+    expect_equal(NCOL(grts_output$sites_base), col_out)
+    expect_equal(NCOL(grts_output$sites_over), 1)
+    expect_equal(NCOL(grts_output$sites_near), 1)
+  })
+
+  # unstratified, large sample size, replacement sites
+  test_that("algorithm executes", {
+    n_base <- 50
+    n_over <- 200
+    grts_output <- grts(Illinois_River, n_base = n_base, n_over = n_over, seltype = "equal")
+    expect_true(exists("grts_output"))
+    expect_equal(NROW(grts_output$sites_legacy), 0)
+    expect_equal(NROW(grts_output$sites_base), n_base)
+    expect_equal(NROW(grts_output$sites_over), n_over)
+    expect_equal(NROW(grts_output$sites_near), 0)
+    expect_equal(NCOL(grts_output$sites_legacy), 1)
+    expect_equal(NCOL(grts_output$sites_base), col_out)
+    expect_equal(NCOL(grts_output$sites_over), col_out)
+    expect_equal(NCOL(grts_output$sites_near), 1)
+  })
+
   # stratified, equal probability
   test_that("algorithm executes", {
     n_base <- c(Oklahoma = 20, Arkansas = 30)
@@ -620,6 +688,53 @@ if (on_solaris) {
     expect_equal(NCOL(grts_output$sites_legacy), 1)
     expect_equal(NCOL(grts_output$sites_base), col_out)
     expect_equal(NCOL(grts_output$sites_over), 1)
+    expect_equal(NCOL(grts_output$sites_near), 1)
+  })
+
+  # stratified, equal probability
+  test_that("algorithm executes", {
+    n_base <- c(Oklahoma = 200, Arkansas = 300)
+    grts_output <- grts(Illinois_River, n_base = n_base, seltype = "equal", stratum_var = "STATE_NAME")
+    expect_true(exists("grts_output"))
+    expect_equal(NROW(grts_output$sites_legacy), 0)
+    expect_equal(
+      NROW(grts_output$sites_base[grts_output$sites_base$stratum == "Oklahoma", , drop = FALSE]),
+      n_base[["Oklahoma"]]
+    )
+    expect_equal(
+      NROW(grts_output$sites_base[grts_output$sites_base$stratum == "Arkansas", , drop = FALSE]),
+      n_base[["Arkansas"]]
+    )
+    expect_equal(NROW(grts_output$sites_base), sum(n_base))
+    expect_equal(NROW(grts_output$sites_over), 0)
+    expect_equal(NROW(grts_output$sites_near), 0)
+    expect_equal(NCOL(grts_output$sites_legacy), 1)
+    expect_equal(NCOL(grts_output$sites_base), col_out)
+    expect_equal(NCOL(grts_output$sites_over), 1)
+    expect_equal(NCOL(grts_output$sites_near), 1)
+  })
+
+  # stratified, equal probability
+  test_that("algorithm executes", {
+    n_base <- c(Oklahoma = 20, Arkansas = 30)
+    n_over <- list(Oklahoma = 200, Arkansas = 300)
+    grts_output <- grts(Illinois_River, n_base = n_base, seltype = "equal", stratum_var = "STATE_NAME", n_over = n_over)
+    expect_true(exists("grts_output"))
+    expect_equal(NROW(grts_output$sites_legacy), 0)
+    expect_equal(
+      NROW(grts_output$sites_base[grts_output$sites_base$stratum == "Oklahoma", , drop = FALSE]),
+      n_base[["Oklahoma"]]
+    )
+    expect_equal(
+      NROW(grts_output$sites_base[grts_output$sites_base$stratum == "Arkansas", , drop = FALSE]),
+      n_base[["Arkansas"]]
+    )
+    expect_equal(NROW(grts_output$sites_base), sum(n_base))
+    expect_equal(NROW(grts_output$sites_over), sum(unlist(n_over)))
+    expect_equal(NROW(grts_output$sites_near), 0)
+    expect_equal(NCOL(grts_output$sites_legacy), 1)
+    expect_equal(NCOL(grts_output$sites_base), col_out)
+    expect_equal(NCOL(grts_output$sites_over), col_out)
     expect_equal(NCOL(grts_output$sites_near), 1)
   })
 
@@ -705,6 +820,37 @@ if (on_solaris) {
     expect_equal(NCOL(grts_output$sites_near), 1)
   })
 
+  # unstratified, large sample size
+  test_that("algorithm executes", {
+    n_base <- 500
+    grts_output <- grts(Lake_Ontario, n_base = n_base, seltype = "equal")
+    expect_true(exists("grts_output"))
+    expect_equal(NROW(grts_output$sites_legacy), 0)
+    expect_equal(NROW(grts_output$sites_base), n_base)
+    expect_equal(NROW(grts_output$sites_over), 0)
+    expect_equal(NROW(grts_output$sites_near), 0)
+    expect_equal(NCOL(grts_output$sites_legacy), 1)
+    expect_equal(NCOL(grts_output$sites_base), col_out)
+    expect_equal(NCOL(grts_output$sites_over), 1)
+    expect_equal(NCOL(grts_output$sites_near), 1)
+  })
+
+  # unstratified, large sample size, replacement sites
+  test_that("algorithm executes", {
+    n_base <- 50
+    n_over <- 200
+    grts_output <- grts(Lake_Ontario, n_base = n_base, n_over = n_over, seltype = "equal")
+    expect_true(exists("grts_output"))
+    expect_equal(NROW(grts_output$sites_legacy), 0)
+    expect_equal(NROW(grts_output$sites_base), n_base)
+    expect_equal(NROW(grts_output$sites_over), n_over)
+    expect_equal(NROW(grts_output$sites_near), 0)
+    expect_equal(NCOL(grts_output$sites_legacy), 1)
+    expect_equal(NCOL(grts_output$sites_base), col_out)
+    expect_equal(NCOL(grts_output$sites_over), col_out)
+    expect_equal(NCOL(grts_output$sites_near), 1)
+  })
+
   # stratified, equal probability
   test_that("algorithm executes", {
     n_base <- c(CAN = 20, USA = 30)
@@ -725,6 +871,53 @@ if (on_solaris) {
     expect_equal(NCOL(grts_output$sites_legacy), 1)
     expect_equal(NCOL(grts_output$sites_base), col_out)
     expect_equal(NCOL(grts_output$sites_over), 1)
+    expect_equal(NCOL(grts_output$sites_near), 1)
+  })
+
+  # stratified, large sample size
+  test_that("algorithm executes", {
+    n_base <- c(CAN = 200, USA = 300)
+    grts_output <- grts(Lake_Ontario, n_base = n_base, seltype = "equal", stratum_var = "COUNTRY")
+    expect_true(exists("grts_output"))
+    expect_equal(NROW(grts_output$sites_legacy), 0)
+    expect_equal(
+      NROW(grts_output$sites_base[grts_output$sites_base$stratum == "CAN", , drop = FALSE]),
+      n_base[["CAN"]]
+    )
+    expect_equal(
+      NROW(grts_output$sites_base[grts_output$sites_base$stratum == "USA", , drop = FALSE]),
+      n_base[["USA"]]
+    )
+    expect_equal(NROW(grts_output$sites_base), sum(n_base))
+    expect_equal(NROW(grts_output$sites_over), 0)
+    expect_equal(NROW(grts_output$sites_near), 0)
+    expect_equal(NCOL(grts_output$sites_legacy), 1)
+    expect_equal(NCOL(grts_output$sites_base), col_out)
+    expect_equal(NCOL(grts_output$sites_over), 1)
+    expect_equal(NCOL(grts_output$sites_near), 1)
+  })
+
+  # replacement sites
+  test_that("algorithm executes", {
+    n_base <- c(CAN = 200, USA = 300)
+    n_over <- list(CAN = 100, USA = 100)
+    grts_output <- grts(Lake_Ontario, n_base = n_base, seltype = "equal", stratum_var = "COUNTRY", n_over = n_over)
+    expect_true(exists("grts_output"))
+    expect_equal(NROW(grts_output$sites_legacy), 0)
+    expect_equal(
+      NROW(grts_output$sites_base[grts_output$sites_base$stratum == "CAN", , drop = FALSE]),
+      n_base[["CAN"]]
+    )
+    expect_equal(
+      NROW(grts_output$sites_base[grts_output$sites_base$stratum == "USA", , drop = FALSE]),
+      n_base[["USA"]]
+    )
+    expect_equal(NROW(grts_output$sites_base), sum(n_base))
+    expect_equal(NROW(grts_output$sites_over), sum(unlist(n_over)))
+    expect_equal(NROW(grts_output$sites_near), 0)
+    expect_equal(NCOL(grts_output$sites_legacy), 1)
+    expect_equal(NCOL(grts_output$sites_base), col_out)
+    expect_equal(NCOL(grts_output$sites_over), col_out)
     expect_equal(NCOL(grts_output$sites_near), 1)
   })
 }

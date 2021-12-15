@@ -6,7 +6,7 @@
 #' Plot power curves for panel designs
 #'
 #' Plot power curves and relative power curves for trend detection for set of
-#' panel designs, time periods, indicators, signifance levels and trend.  Trend
+#' panel designs, time periods, indicators, significance levels and trend.  Trend
 #' may be based on percent change per period in mean or percent change in
 #' proportion of cumulative distribution function above or below a fixed cut
 #' point. Types of plots are combinations of standard/relative, mean/percent,
@@ -30,7 +30,7 @@
 #'   designates the type of x-axis for power plot where power is plotted on
 #'   y-axis.  For \code{xaxis_type = "period"}, x-axis is periods in \code{dsgnpower}. If
 #'   \code{xaxis_type = "change"}, then x-axis is percent per period with secondary
-#'   x-axises for total percent per period and associated change in mean.
+#'   x-axes for total percent per period and associated change in mean.
 #'   Default is \code{"period"}.  Note that \code{xaxis_type} controls how the input for
 #'   \code{"period"} and \code{"trend"} parameters is used.
 #'
@@ -81,7 +81,7 @@
 #' @details By default the plot function produces a standard power curve at end
 #'   of each time period on the x-axis with y-axis as power. When more than one
 #'   panel design is in \code{dsgnpower}, the first panel design is used. When more than
-#'   one indicatoris in \code{dsgnpower}, the first indicator is used.  When more than
+#'   one indicator is in \code{dsgnpower}, the first indicator is used.  When more than
 #'   one trend value is in \code{dsgnpower}, the maximum trend value is used. When more
 #'   than one significance level, \code{alpha}, is in \code{dsgnpower}, the minimum
 #'   significance level is used.
@@ -89,7 +89,7 @@
 #'   Control of the type of plot produced is governed by \code{plot_type}, \code{trend_type},
 #'   \code{xaxis_type} and \code{comp_type}. The number of plots produced is governed by the
 #'   number of panel designs (\code{dsgn}) specified, the number of indicators
-#'   (\code{indicator}) specified, the number of time periods (\code{period}) specifice, the
+#'   (\code{indicator}) specified, the number of time periods (\code{period}) specifies, the
 #'   number of trend values (trend) specified and the number of significance
 #'   levels (\code{alpha}) specified.
 #'

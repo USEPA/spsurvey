@@ -16,7 +16,7 @@
 #'
 #'
 #' @param sframe The sampling frame as an \code{sf} object. The coordinate
-#'   system for \code{sframe} must be one where distance for coordinates is meaningful.
+#'   system for \code{sframe} must projected (not geographic).
 #'
 #' @param n_base The base sample size required. If the sampling design is unstratified,
 #'   this is a single numeric value. If the sampling design is stratified, this is a named
@@ -127,33 +127,50 @@
 #'   when the minimum distance requirement is met or there are \code{maxtry} iterations.
 #'   The default number of maximum iterations is \code{10}.
 #'
-#' @param n_over If the sampling design is unstratified and \code{seltype} is \code{"equal"} or \code{"proportional"},
-#'   \code{n_over} is an integer specifying the number of reverse hierarchically
-#'   ordered (rho) replacement sites desired.  If the sampling design is unstratified and \code{seltype} is \code{"unequal"},
-#'   then \code{n_over} is a named character vector whose names match the levels of
-#'   \code{caty_var} and whose values are the expected rho replacement sample sizes for each
-#'   level. If the sampling design is stratified and \code{seltype} is \code{"equal"} or \code{"proportional"},
-#'   \code{n_over} is a list whose names match the names of \code{n_base} and whose values
-#'   indicate the number of rho replacement sites for each stratum. If replacement sites are not desired for a particular stratum, then the corresponding value in \code{n_over} should be \code{NULL}. If the sampling design is stratified and
-#'   \code{seltype} is \code{"unequal"}, \code{n_over} changes based on whether the expected
-#'   rho replacement sample sizes change among strata. If \code{n_over} does not change among strata, \code{n_over}
-#'   is a named vector whose names match the names of \code{caty_var} and whose values are the expected rho replacement
-#'   sample sizes to be used for each stratum. If \code{n_over} changes among strata, \code{n_over} is a
-#'   list whose names match the names of \code{n_base} and whose values are each named vectors with names for each level of \code{caty_var} and values representing the expected rho replacement sample sizes (within the stratum) for each level of \code{caty_var}. If replacement sites are not desired for a particular stratum, then the corresponding value in \code{n_over} should be \code{0} or \code{NULL} (which is equivalent to \code{0}).
+#' @param n_over The number of reverse hierarchically ordered (rho) replacement sites.
+#'   If the sampling design is unstratified, then
+#'   \code{n_over} is an integer specifying the number of rho replacement sites desired.
+#'  If the sampling design is stratified,
+#'   then \code{n_over} is a vector (or list) whose names match the names of \code{n_base} and
+#'   whose values indicate the number of rho replacement sites for each stratum.
+#'   If replacement sites are not desired for a particular stratum, then the corresponding
+#'   value in \code{n_over} should be \code{0} or \code{NULL} (which is equivalent to \code{0}).
+#'   If the sampling design is stratified but the number of \code{n_over} sites is the same in each
+#'   stratum, \code{n_over} can be a vector which is used for each stratum. Note that if the
+#'   sampling design has unequal selection probabilities \code{seltype = "unequal"}, the contents of \code{caty_n_over}
+#'   for \code{n_over} and \code{caty_n_over} them omitted -- though possible, this exists to maintain backwards
+#'   compatibility and new designs should explicitly use \code{caty_n_over} instead.
 #'
-#' @param n_near If the sampling design is unstratified, \code{n_near} is integer from \code{1}
+#' @param caty_n_over The number of expected reverse hierarchically ordered (rho) replacement
+#'   sites used when \code{seltype = "unequal"}.
+#'   If the sampling design is unstratified, then \code{caty_n_over} is a named vector whose names
+#'   represent the levels of the unequal probability variable (specified by \code{caty_n}) and
+#'   whose values represent the expected rho replacement sites in each level. If the design is
+#'   stratified, \code{caty_n_over} is a list whose names match the names of \code{n_base} and
+#'   whose values are named vectors, where each named vector has names representing the levels of
+#'   \code{caty_n} and whose values represent the expected rho replacement sites in each
+#'   stratum. Note that the sum of each stratum's values in \code{caty_n_over} must match
+#'   the respective stratum's value in \code{n_over}. If the sampling design is stratified, the
+#'   \code{n_over} is the same for each stratum, and \code{caty_n_over} should be the same in
+#'   each stratum, \code{caty_n_over} can be a vector and will be repeated for each stratum.'
+#'
+#'
+#' @param n_near The number of nearest neighbor (nn) replacement sites.
+#'   If the sampling design is unstratified, \code{n_near} is integer from \code{1}
 #'   to \code{10} specifying the number of
-#'   nearest neighbor replacement sites to be selected for each base site. If the sampling design
-#'   is stratified but the same number of nearest neighbor replacement sites is desired
+#'   nn replacement sites to be selected for each base site. If the sampling design
+#'   is stratified but the same number of nn replacement sites is desired
 #'   for each stratum,  \code{n_near} is integer from \code{1}
 #'   to \code{10} specifying the number of
-#'   nearest neighbor replacement sites to be selected for each base site. If the sampling design is
-#'   unstratified and a different number of nearest neighbor replacement sites is
-#'   desired for each stratum, \code{n_near} is a list whose names represent strata and whose
+#'   nn replacement sites to be selected for each base site. If the sampling design is
+#'   unstratified and a different number of nn replacement sites is
+#'   desired for each stratum, \code{n_near} is a vector (or list) whose names represent strata and whose
 #'   values is integer from \code{1}
 #'   to \code{10} specifying the number of
-#'   nearest neighbor replacement sites to be selected for each base site in the stratum. If replacement sites are not desired for a particular stratum, then the corresponding value in \code{n_over} should be \code{0} or \code{NULL} (which is equivalent to \code{0}). For
-#'   infinite sampling frames, the distance between a site and its nearest neighbor
+#'   nn replacement sites to be selected for each base site in the stratum. If replacement sites
+#'   are not desired for a particular stratum, then the corresponding value in \code{n_over}
+#'   should be \code{0} or \code{NULL} (which is equivalent to \code{0}). For
+#'   infinite sampling frames, the distance between a site and its nn
 #'   depends on \code{pt_density}.
 #'
 #' @param wgt_units The units used to compute the design weights. These
@@ -165,9 +182,14 @@
 #'   frames vastly improves computational efficiency by generating many finite points and
 #'   selecting a sample from the points. \code{pt_density} represents the density
 #'   of finite points per unit to use in the approximation (the units should match
-#'   the units of the sampling frame). The default is a density
-#'   such that the number of finite points used in the approximation equals 10
-#'   times the sample size requested.
+#'   the units of the sampling frame). Increasing \code{pt_density} means increasing the number
+#'   of finite points used in the approximation. For example, a value of 2 means use two
+#'   finite points every unit, while a value of 1/2 means use one finite point
+#'   every two units. The more finite points (i.e., the more accurate) in the approximation,
+#'   the larger the computational burden. The default is a density such that the number
+#'   of finite points used in the approximation equals 10 times the sample size requested.
+#'   When used with \code{caty_n}, the unequal inclusion probabilities generated using
+#'   \code{pt_density} are approximations.
 #'
 #' @param DesignID A character string indicating the naming structure for each
 #'   site's identifier selected in the sample, which is matched with \code{SiteBegin} and
@@ -271,7 +293,7 @@
 #'
 #' @references
 #' Stevens Jr., Don L. and Olsen, Anthony R. (2004). Spatially balanced sampling
-#' of natural resources. \emph{Journal of the american Statistical association}, 99(465), 262-278.
+#' of natural resources. \emph{Journal of the American Statistical Association}, 99(465), 262-278.
 #'
 #' @examples
 #' \dontrun{
@@ -286,7 +308,7 @@ grts <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = 
                  caty_n = NULL, aux_var = NULL, legacy_var = NULL,
                  legacy_sites = NULL, legacy_stratum_var = NULL,
                  legacy_caty_var = NULL, legacy_aux_var = NULL, mindis = NULL,
-                 maxtry = 10, n_over = NULL, n_near = NULL, wgt_units = NULL,
+                 maxtry = 10, n_over = NULL, caty_n_over = NULL, n_near = NULL, wgt_units = NULL,
                  pt_density = NULL, DesignID = "Site", SiteBegin = 1) {
   if (inherits(sframe, c("tbl_df", "tbl"))) { # identify if tibble class elements are present
     class(sframe) <- setdiff(class(sframe), c("tbl_df", "tbl"))
@@ -351,7 +373,7 @@ grts <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = 
   dsgn_check(
     sframe = sframe, sf_type = sf_type, legacy_sites = legacy_sites,
     legacy_option = legacy_option, stratum = stratum, seltype = seltype,
-    n_base = n_base, caty_n = caty_n, n_over = n_over, n_near = n_near,
+    n_base = n_base, caty_n = caty_n, n_over = n_over, caty_n_over = caty_n_over, n_near = n_near,
     stratum_var = stratum_var, caty_var = caty_var, aux_var = aux_var,
     legacy_var = legacy_var, mindis = mindis, DesignID = DesignID,
     SiteBegin = SiteBegin, maxtry = maxtry
@@ -466,10 +488,33 @@ grts <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = 
     if (is.list(n_over)) {
       n_over <- lapply(n_over, function(x) if (all(x == 0)) NULL else x)
       dsgn$n_over <- n_over
+    } else if (!is.null(names(n_over)) && all(sort(stratum) == sort(names(n_over)))) {
+      tmp <- lapply(stratum, function(x, n_over) {
+        x <- n_over[[x]]
+      }, n_over)
+      names(tmp) <- stratum
+      dsgn$n_over <- tmp
     } else {
       tmp <- lapply(stratum, function(x, n_over) {
         x <- n_over
       }, n_over)
+      names(tmp) <- stratum
+      dsgn$n_over <- tmp
+    }
+  }
+
+  # caty_n_over
+  if (!is.null(caty_n_over)) {
+    if (is.list(caty_n_over)) {
+      tmp <- lapply(stratum, function(x, caty_n_over) {
+        caty_n_over[[x]]
+      }, caty_n_over)
+      names(tmp) <- stratum
+      dsgn$n_over <- tmp
+    } else {
+      tmp <- lapply(stratum, function(x, caty_n_over) {
+        caty_n_over
+      }, caty_n_over)
       names(tmp) <- stratum
       dsgn$n_over <- tmp
     }
@@ -480,6 +525,12 @@ grts <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = 
     if (is.list(n_near)) {
       n_near <- lapply(n_near, function(x) if (all(x == 0)) NULL else x)
       dsgn$n_near <- n_near
+    } else if (!is.null(names(n_near)) && all(sort(stratum) == sort(names(n_near)))) {
+      tmp <- lapply(stratum, function(x, n_near) {
+        x <- n_near[[x]]
+      }, n_near)
+      names(tmp) <- stratum
+      dsgn$n_near <- tmp
     } else {
       tmp <- lapply(stratum, function(x, n_near) {
         x <- n_near
@@ -737,11 +788,22 @@ grts <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = 
 
   # add function call to dsgn list
   # dsgn <- c(list(Call = match.call()), dsgn)
-  dsgn <- list(
-    call = match.call(), stratum = dsgn$stratum, n_base = dsgn$n_base,
-    seltype = dsgn$seltype, caty_n = dsgn$caty_n, legacy = dsgn$legacy_option,
-    mindis = dsgn$mindis, n_over = dsgn$n_over, n_near = dsgn$n_near
-  )
+  if (is.null(caty_n_over)) {
+    dsgn <- list(
+      call = match.call(), stratum = dsgn$stratum, n_base = dsgn$n_base,
+      seltype = dsgn$seltype, caty_n = dsgn$caty_n, legacy = dsgn$legacy_option,
+      mindis = dsgn$mindis, n_over = dsgn$n_over, caty_n_over = NULL, n_near = dsgn$n_near
+    )
+  } else {
+    caty_n_over <- dsgn$n_over
+    n_over <- n_over
+    dsgn <- list(
+      call = match.call(), stratum = dsgn$stratum, n_base = dsgn$n_base,
+      seltype = dsgn$seltype, caty_n = dsgn$caty_n, legacy = dsgn$legacy_option,
+      mindis = dsgn$mindis, n_over = n_over, caty_n_over = caty_n_over, n_near = dsgn$n_near
+    )
+  }
+
 
   # create output list
   sites <- list(

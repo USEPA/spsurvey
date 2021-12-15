@@ -64,7 +64,7 @@ if (on_solaris) {
 
   n_base <- 50
   eqprob <- grts(NE_Lakes, n_base = n_base)
-  eqprob_legacy <- grts(NE_Lakes, n_base = n_base, legacy_var = "LEGACY")
+  eqprob_legacy <- grts(NE_Lakes, n_base = n_base, legacy_sites = NE_Lakes_Legacy)
   n_over <- 5
   eqprob_rho <- grts(NE_Lakes, n_base = n_base, n_over = n_over)
   n_near <- 1

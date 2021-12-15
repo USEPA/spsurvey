@@ -8,7 +8,7 @@ cont_analysis(
   dframe,
   vars,
   subpops = NULL,
-  siteID = "siteID",
+  siteID = NULL,
   weight = "weight",
   xcoord = NULL,
   ycoord = NULL,
@@ -26,7 +26,7 @@ cont_analysis(
   jointprob = "overton",
   conf = 95,
   pctval = c(5, 10, 25, 50, 75, 90, 95),
-  statistics = c("CDF", "Pct", "Mean"),
+  statistics = c("CDF", "Pct", "Mean", "Total"),
   All_Sites = FALSE
 )
 }
@@ -47,7 +47,8 @@ default value is \code{NULL}.}
 
 \item{siteID}{Character value providing name of the site ID variable in
 the \code{dframe} data frame.  For a two-stage sample, the site ID variable
-identifies stage two site IDs.  The default value is \code{"siteID"}.}
+identifies stage two site IDs.  The default value is \code{NULL}, which
+assumes that each row in \code{dframe} represents a unique site.}
 
 \item{weight}{Character value providing name of the design weight
 variable in \code{dframe}.  For a two-stage sample, the
@@ -241,9 +242,9 @@ estimated.  The default set is: \code{c(5, 10, 25, 50, 75, 90, 95)}.}
 
 \item{statistics}{Character vector specifying desired estimates, where
 \code{"CDF"} specifies CDF estimates, \code{"Pct"} specifies percentile
-estimates, and \code{"Mean"} specifies mean estimates.  Any combination of
-the three choices may be provided by the user.  The defalt value is
-\code{c("CDF", "Pct", "Mean")}.}
+estimates, \code{"Mean"} specifies mean estimates, and "Total" specifies
+total estimates.  Any combination of the four choices may be provided by
+the user.  The default value is \code{c("CDF", "Pct", "Mean", "Total")}.}
 
 \item{All_Sites}{A logical variable used when \code{subpops} is not
 \code{NULL}. If \code{All_Sites} is \code{TRUE}, then alongside the
@@ -254,27 +255,26 @@ returned for each variable in \code{vars}. If \code{All_Sites} is
 The default is \code{FALSE}.}
 }
 \value{
-The analysis results. A list composed of one, two, or three data frames that contain
-  population estimates for all combinations of subpopulations, categories
-  within each subpopulation, and response variables, where the number of data
-  frames is determined by argument statistics.  Estimates are provided for
-  proportion and total (size) of the population plus standard error, margin
-  of error, and confidence interval estimates.  The possible data frames in
-  the output list are:
+The analysis results. A list composed of one, two, three, or four
+  data frames that contain population estimates for all combinations of
+  subpopulations, categories within each subpopulation, and response
+  variables, where the number of data frames is determined by argument
+  statistics.  The possible data frames in the output list are:
   \describe{
-    \item{\code{CDF}}{: a data frame containing the CDF estimates}
-    \item{\code{Pct}}{: data frame containing the percentile estimates}
-    \item{\code{Mean}}{: a data frame containing the mean estimates}
+    \item{\code{CDF}}{: a data frame containing CDF estimates}
+    \item{\code{Pct}}{: data frame containing percentile estimates}
+    \item{\code{Mean}}{: a data frame containing mean estimates}
+    \item{\code{Total}}{: a data frame containing total estimates}
   }
 }
 \description{
-This function organizes input and output for the analysis of continuous variables.
-The analysis data,
-\code{dframe}, can be either a data frame or a simple features (\code{sf}) object.  If an
-\code{sf} object is used, coordinates are extracted from the geometry column in the
-object, arguments \code{xcoord} and \code{ycoord} are assigned values
-\code{"xcoord"} and \code{"ycoord"}, respectively, and the geometry column is
-dropped from the object.
+This function organizes input and output for the analysis of continuous
+variables. The analysis data, \code{dframe}, can be either a data frame or a
+simple features (\code{sf}) object.  If an \code{sf} object is used,
+coordinates are extracted from the geometry column in the object, arguments
+\code{xcoord} and \code{ycoord} are assigned values \code{"xcoord"} and
+\code{"ycoord"}, respectively, and the geometry column is dropped from the
+object.
 }
 \examples{
 dframe <- data.frame(

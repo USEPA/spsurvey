@@ -101,6 +101,7 @@
 #' @keywords survey
 #'
 #' @examples
+#' \dontrun{
 #' dframe <- data.frame(
 #'   siteID = paste0("Site", 1:100),
 #'   wgt = runif(100, 10, 100),
@@ -135,6 +136,7 @@
 #'   ylab = "Percent of Stream Length", ylab_r = "Same",
 #'   main = "Estimates for Resource Class: Good"
 #' )
+#' }
 #' @export
 ################################################################################
 

@@ -54,7 +54,7 @@
 #'
 #' @param response_levels List providing the category values (levels) for each
 #'   element in the \code{vars_response} argument.  Each element in the list
-#'   must contian two values, where the first value identifies poor condition,
+#'   must contain two values, where the first value identifies poor condition,
 #'   and the second value identifies good condition.  This argument must be
 #'   named and must be the same length as argument \code{vars_response}.  Names
 #'   for this argument must match the values in the \code{vars_response}
@@ -85,7 +85,8 @@
 #'
 #' @param siteID Character value providing the name of the site ID variable in
 #'   \code{dframe}.  For a two-stage sample, the site ID variable
-#'   identifies stage two site IDs.  The default value is \code{"siteID"}.
+#'   identifies stage two site IDs.  The default value is \code{NULL}, which
+#'   assumes that each row in \code{dframe} represents a unique site.
 #'
 #' @param weight Character value providing the name of the design weight
 #'   variable in \code{dframe}.  For a two-stage sample, the
@@ -340,7 +341,7 @@
 ################################################################################
 
 attrisk_analysis <- function(dframe, vars_response, vars_stressor, response_levels = NULL,
-                             stressor_levels = NULL, subpops = NULL, siteID = "siteID", weight = "weight",
+                             stressor_levels = NULL, subpops = NULL, siteID = NULL, weight = "weight",
                              xcoord = NULL, ycoord = NULL, stratumID = NULL, clusterID = NULL,
                              weight1 = NULL, xcoord1 = NULL, ycoord1 = NULL, sizeweight = FALSE,
                              sweight = NULL, sweight1 = NULL, fpc = NULL, popsize = NULL,
@@ -393,6 +394,13 @@ attrisk_analysis <- function(dframe, vars_response, vars_stressor, response_leve
   # data frame
 
   dframe <- droplevels(dframe)
+
+  # If no siteID is provided, set one that assumes each row is a unique site
+
+  if (is.null(siteID)) {
+    siteID <- "siteID"
+    dframe$siteID <- paste("site", seq_len(nrow(dframe)), sep = "-")
+  }
 
   # Ensure that the dframe data frame contains the site ID variable
 

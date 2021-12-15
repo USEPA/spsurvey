@@ -1,6 +1,6 @@
 Package: spsurvey
 Title: Spatial Sampling Design and Analysis
-Version: 5.0.1
+Version: 5.1.0
 Authors@R: c(
     person("Michael", "Dumelle", role=c("aut","cre"),
            email = "Dumelle.Michael@epa.gov", comment = c(ORCID = "0000-0002-3393-5529")),
@@ -27,6 +27,7 @@ Imports:
     grDevices,
     lme4,
     MASS,
+    sampling,
     stats,
     units
 Suggests: 
@@ -39,5 +40,5 @@ BugReports: https://github.com/USEPA/spsurvey/issues
 VignetteBuilder: knitr
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
 NeedsCompilation: no

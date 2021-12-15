@@ -92,12 +92,23 @@
 #' @noRd
 ###############################################################################
 dsgn_check <- function(sframe, sf_type, legacy_sites, legacy_option, stratum, seltype, n_base, caty_n,
-                       n_over, n_near, stratum_var, caty_var, aux_var, legacy_var, mindis,
+                       n_over, caty_n_over, n_near, stratum_var, caty_var, aux_var, legacy_var, mindis,
                        DesignID, SiteBegin, maxtry) {
 
   # Create a data frame for stop messages
   stop_ind <- FALSE
   stop_df <- NULL
+
+  # check that coordinates are NA or geographic
+  if (is.na(st_crs(sframe))) {
+    stop_ind <- TRUE
+    stop_mess <- "The coordinate reference system (crs) for sframe is NA. The coordinate reference system for sframe should instead use projected coordinates. For more information, see spsurvey's \"Start Here\" vignette by running vignette(\"start-here\", \"spsurvey\")."
+    stop_df <- rbind(stop_df, data.frame(func = I("sframe"), I(stop_mess)))
+  } else if (st_is_longlat(sframe)) {
+    stop_ind <- TRUE
+    stop_mess <- "The coordinate reference system (crs) for sframe uses geographic coordinates. The coordinate reference system for sframe should instead use projected coordinates. For more information, see spsurvey's \"Start Here\" vignette by running vignette(\"start-here\", \"spsurvey\")."
+    stop_df <- rbind(stop_df, data.frame(func = I("sframe"), I(stop_mess)))
+  }
 
   # check that sframe has required variables for stratum, caty, aux and legacy
   # If stratum_var is provided, does the attribute exist in sframe
@@ -141,7 +152,7 @@ dsgn_check <- function(sframe, sf_type, legacy_sites, legacy_option, stratum, se
   }
 
   # If legacy_var is provided, does the attribute exist in sframe
-  if (sf_type == "point" & !is.null(legacy_var)) {
+  if (sf_type == "sf_point" & !is.null(legacy_var)) {
     if (match(legacy_var, names(sframe), nomatch = 0) == 0) {
       stop_ind <- TRUE
       stop_mess <- "The value provided for the variable identifying legacy sites does not exist as a variable in sframe."
@@ -150,7 +161,7 @@ dsgn_check <- function(sframe, sf_type, legacy_sites, legacy_option, stratum, se
   }
 
   ### Check legacy_sites sf object if present
-  if (sf_type %in% c("linear", "area")) {
+  if (sf_type %in% c("sf_linear", "sf_area") & !is.null(legacy_sites)) {
     # check that legacy_sites has required variables for stratum, caty, aux and legacy
     # If stratum_var is provided, does the attribute exist
     if (!is.null(stratum_var)) {
@@ -249,18 +260,20 @@ dsgn_check <- function(sframe, sf_type, legacy_sites, legacy_option, stratum, se
     stop_df <- rbind(stop_df, data.frame(func = I("n_base"), I(stop_mess)))
   }
 
-  # check total sample size?
-  if (length(stratum) > 1) {
-    if (any(sapply(stratum, function(x) n_base[x] > NROW(sframe[sframe[[stratum_var]] == x, , drop = FALSE])))) {
-      stop_ind <- TRUE
-      stop_mess <- paste0("Each stratum must have a sample size no larger than the number of rows in 'sframe' representing that stratum")
-      stop_df <- rbind(stop_df, data.frame(func = I("n_base"), I(stop_mess)))
-    }
-  } else {
-    if (n_base > NROW(sframe)) {
-      stop_ind <- TRUE
-      stop_mess <- paste0("Sample size must be no larger than the number of rows in 'sframe'")
-      stop_df <- rbind(stop_df, data.frame(func = I("n_base"), I(stop_mess)))
+  # check total sample size
+  if (sf_type == "sf_point") {
+    if (length(stratum) > 1) {
+      if (any(sapply(stratum, function(x) n_base[x] > NROW(sframe[sframe[[stratum_var]] == x, , drop = FALSE])))) {
+        stop_ind <- TRUE
+        stop_mess <- paste0("Each stratum must have a sample size no larger than the number of rows in 'sframe' representing that stratum")
+        stop_df <- rbind(stop_df, data.frame(func = I("n_base"), I(stop_mess)))
+      }
+    } else {
+      if (n_base > NROW(sframe)) {
+        stop_ind <- TRUE
+        stop_mess <- paste0("Sample size must be no larger than the number of rows in 'sframe'")
+        stop_df <- rbind(stop_df, data.frame(func = I("n_base"), I(stop_mess)))
+      }
     }
   }
 
@@ -341,27 +354,67 @@ dsgn_check <- function(sframe, sf_type, legacy_sites, legacy_option, stratum, se
     }
   }
 
-  # check total sample size for n_over
-  if (!is.null(n_over)) {
-    if (length(stratum) > 1) {
-      if (is.list(n_over)) {
-        if (any(sapply(stratum, function(x) (n_base[[x]] + ifelse(is.null(n_over[[x]]), 0, sum(n_over[[x]]))) > NROW(sframe[sframe[[stratum_var]] == x, , drop = FALSE])))) {
-          stop_ind <- TRUE
-          stop_mess <- paste0("For each stratum, the sum of the base sites and 'Over' replacement sites must be no larger than the number of rows in 'sframe' representing that stratum.")
-          stop_df <- rbind(stop_df, data.frame(func = I("n_base + n_over"), I(stop_mess)))
+  # check n_over caty_n_over
+  if (!is.null(n_over) & !is.null(caty_n_over)) {
+    if (is.null(names(n_over))) {
+      if (is.list(caty_n_over)) {
+        rslts <- sapply(stratum, function(x) sum(caty_n_over[[x]]) != n_over)
+        if (any(rslts)) {
+          stop_ind <- TRUE # scalar n_over list caty_n_over
+          stop_mess <- paste0("Sum of caty_n_over values in each stratum must match the respective n_over values")
+          stop_df <- rbind(stop_df, data.frame(func = I("caty_n_over"), I(stop_mess)))
         }
       } else {
-        if (any(sapply(stratum, function(x) (n_base[[x]] + sum(n_over)) > NROW(sframe[sframe[[stratum_var]] == x, , drop = FALSE])))) {
-          stop_ind <- TRUE
-          stop_mess <- paste0("For each stratum, the sum of the base sites and 'Over' replacement sites must be no larger than the number of rows in 'sframe' representing that stratum.")
-          stop_df <- rbind(stop_df, data.frame(func = I("n_base + n_over"), I(stop_mess)))
+        if (sum(caty_n_over) != n_over) {
+          stop_ind <- TRUE # scalar n_over scalar caty_n_over
+          stop_mess <- paste0("Sum of caty_n_over values must match n_over")
+          stop_df <- rbind(stop_df, data.frame(func = I("caty_n_over"), I(stop_mess)))
         }
       }
     } else {
-      if ((n_base + sum(n_over)) > NROW(sframe)) {
-        stop_ind <- TRUE
-        stop_mess <- paste0("The sum of the base sites and 'Over' replacement sites must be no larger than the number of rows in 'sframe'.")
-        stop_df <- rbind(stop_df, data.frame(func = I("n_base + n_over"), I(stop_mess)))
+      if (is.list(caty_n_over)) {
+        rslts <- sapply(stratum, function(x) sum(caty_n_over[[x]]) != n_over[[x]])
+        if (any(rslts)) {
+          stop_ind <- TRUE # list n_over list caty_n_over
+          stop_mess <- paste0("Sum of caty_n_over values in each stratum must match the respective n_over values")
+          stop_df <- rbind(stop_df, data.frame(func = I("caty_n_over"), I(stop_mess)))
+        }
+      } else {
+        rslts <- sapply(stratum, function(x) sum(caty_n_over) != n_over[[x]])
+        if (any(rslts)) {
+          stop_ind <- TRUE # scalar n_over scalar caty_n_over
+          stop_mess <- paste0("Sum of caty_n_over values must match n_over")
+          stop_df <- rbind(stop_df, data.frame(func = I("caty_n_over"), I(stop_mess)))
+        }
+      }
+    }
+  }
+
+
+
+  # check total sample size for n_over
+  if (sf_type == "sf_point") {
+    if (!is.null(n_over)) {
+      if (length(stratum) > 1) {
+        if (is.list(n_over)) {
+          if (any(sapply(stratum, function(x) (n_base[[x]] + ifelse(is.null(n_over[[x]]), 0, sum(n_over[[x]]))) > NROW(sframe[sframe[[stratum_var]] == x, , drop = FALSE])))) {
+            stop_ind <- TRUE
+            stop_mess <- paste0("For each stratum, the sum of the base sites and 'Over' replacement sites must be no larger than the number of rows in 'sframe' representing that stratum.")
+            stop_df <- rbind(stop_df, data.frame(func = I("n_base + n_over"), I(stop_mess)))
+          }
+        } else {
+          if (any(sapply(stratum, function(x) (n_base[[x]] + sum(n_over)) > NROW(sframe[sframe[[stratum_var]] == x, , drop = FALSE])))) {
+            stop_ind <- TRUE
+            stop_mess <- paste0("For each stratum, the sum of the base sites and 'Over' replacement sites must be no larger than the number of rows in 'sframe' representing that stratum.")
+            stop_df <- rbind(stop_df, data.frame(func = I("n_base + n_over"), I(stop_mess)))
+          }
+        }
+      } else {
+        if ((n_base + sum(n_over)) > NROW(sframe)) {
+          stop_ind <- TRUE
+          stop_mess <- paste0("The sum of the base sites and 'Over' replacement sites must be no larger than the number of rows in 'sframe'.")
+          stop_df <- rbind(stop_df, data.frame(func = I("n_base + n_over"), I(stop_mess)))
+        }
       }
     }
   }

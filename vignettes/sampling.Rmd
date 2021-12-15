@@ -50,7 +50,7 @@ We use the `NE_Lakes` sampling frame in spsurvey to introduce spatially balanced
 Before proceeding, we load spsurvey and set a reproducible seed by running
 ```{r}
 library(spsurvey)
-set.seed(5)
+set.seed(51)
 ```
 
 # Unstratified sampling
@@ -165,7 +165,7 @@ strat_propprob <- grts(
 )
 ```
 
-# Additonal sampling options
+# Additional sampling options
 
 ## Legacy sampling
 

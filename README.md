@@ -39,11 +39,11 @@ library(spsurvey)
 You can install and load the most recent development version of`spsurvey` from GitHub by running:
 
 ```r
-# Installing from GitHub requires you first install devtools
-install.packages("devtools")
+# Installing from GitHub requires you first install the remotes package
+install.packages("remotes")
 
 # install the most recent development version from GitHub
-devtools::install_github("USEPA/spsurvey", ref = "main")
+remotes::install_github("USEPA/spsurvey", ref = "main")
 # load the most recent development version from GitHub
 library(spsurvey)
 ```

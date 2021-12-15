@@ -47,11 +47,11 @@
 #'   structure defined by Urquhart 2012.
 #'
 #'   If \code{nrepeats} is \code{NULL}, then no units sampled more than once in a specific
-#'   panel, period combination) aned then unit by period and index variances are
+#'   panel, period combination) and then unit by period and index variances are
 #'   added together or user may have only estimated unit, period and unit by
 #'   period variance components so that index component is zero. It calculates
 #'   the covariance matrix for the simple linear regression. The standard error
-#'   for a linear trend coeficient is the square root of the variance.
+#'   for a linear trend coefficient is the square root of the variance.
 #'
 #' @references
 #'   Urquhart, N. S., W. S. Overton, et al. (1993) Comparing sampling designs

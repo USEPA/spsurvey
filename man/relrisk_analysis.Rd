@@ -11,7 +11,7 @@ relrisk_analysis(
   response_levels = NULL,
   stressor_levels = NULL,
   subpops = NULL,
-  siteID = "siteID",
+  siteID = NULL,
   weight = "weight",
   xcoord = NULL,
   ycoord = NULL,
@@ -50,7 +50,7 @@ condition.}
 
 \item{response_levels}{List providing the category values (levels) for each
 element in the \code{vars_response} argument.  Each element in the list
-must contian two values, where the first value identifies poor condition,
+must contain two values, where the first value identifies poor condition,
 and the second value identifies good condition.  This argument must be
 named and must be the same length as argument \code{vars_response}.  Names
 for this argument must match the values in the \code{vars_response}
@@ -81,7 +81,8 @@ default value is \code{NULL}.}
 
 \item{siteID}{Character value providing the name of the site ID variable in
 \code{dframe}.  For a two-stage sample, the site ID variable
-identifies stage two site IDs.  The default value is \code{"siteID"}.}
+identifies stage two site IDs.  The default value is \code{NULL}, which
+assumes that each row in \code{dframe} represents a unique site.}
 
 \item{weight}{Character value providing the name of the design weight
 variable in \code{dframe}.  For a two-stage sample, the
@@ -302,7 +303,7 @@ poor condition.   The denominator of the ratio is the probability that the
 response variable is in poor condition given that the stressor variable is in
 good condition. A relative risk value equal to one indicates that the
 response variable is independent of the stressor variable.  Relative risk
-values greater than one measure the extent to which poor conditon of the
+values greater than one measure the extent to which poor condition of the
 stressor variable is associated with poor condition of the response variable.
 }
 

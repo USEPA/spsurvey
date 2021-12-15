@@ -63,6 +63,9 @@ grtspts_ip <- function(type = "equal", n_base, Nstratum = NULL, caty = NULL,
     gsum <- table(caty)
     catmatch <- match(names(n_base), names(gsum), nomatch = 0)
     piden <- n_base / gsum[catmatch]
+    if (any(piden > 1)) {
+      stop(paste0("The number of expected samples in levels ", paste0(names(piden[piden > 1]), collapse = " and "), " from the caty_n variable exceeds the number of allowed samples in sframe (if stratification was not used) or in at least one stratum (if stratification was used). If sframe has POINT or MULTIPOINT geometry, this means that the number of expected samples specified by these levels exceeds the number of observations in sframe. Consider 1) incorporating the caty_n variable into stratification or 2) reduce the number of expected samples for these levels in caty_n. Then rerun grts(). If sframe has LINESTRING, MULTILINESTRING, POLYGON, or MULTIPOLYGON geometry, this means that the number of expected samples specified by these levels exceeds the number of observations used in the approximation specified by the pt_density argument. Consider 1) incorporating the caty_n variable into stratification, 2) reduce the number of expected samples for these levels in caty_n, or 3) increase the pt_density argument. Then rerun grts()."), call. = FALSE)
+    }
     ip <- rep(NA, length(caty))
     for (i in names(n_base)) {
       ip[caty == i] <- piden[i]

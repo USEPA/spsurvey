@@ -48,7 +48,7 @@
 #' response variable is in poor condition given that the stressor variable is in
 #' good condition. A relative risk value equal to one indicates that the
 #' response variable is independent of the stressor variable.  Relative risk
-#' values greater than one measure the extent to which poor conditon of the
+#' values greater than one measure the extent to which poor condition of the
 #' stressor variable is associated with poor condition of the response variable.
 #'
 #' @return The analysis results. A data frame of population estimates for all combinations of
@@ -93,7 +93,7 @@
 ################################################################################
 
 relrisk_analysis <- function(dframe, vars_response, vars_stressor, response_levels = NULL,
-                             stressor_levels = NULL, subpops = NULL, siteID = "siteID", weight = "weight",
+                             stressor_levels = NULL, subpops = NULL, siteID = NULL, weight = "weight",
                              xcoord = NULL, ycoord = NULL, stratumID = NULL, clusterID = NULL,
                              weight1 = NULL, xcoord1 = NULL, ycoord1 = NULL, sizeweight = FALSE,
                              sweight = NULL, sweight1 = NULL, fpc = NULL, popsize = NULL,
@@ -146,6 +146,13 @@ relrisk_analysis <- function(dframe, vars_response, vars_stressor, response_leve
   # data frame
 
   dframe <- droplevels(dframe)
+
+  # If no siteID is provided, set one that assumes each row is a unique site
+
+  if (is.null(siteID)) {
+    siteID <- "siteID"
+    dframe$siteID <- paste("site", seq_len(nrow(dframe)), sep = "-")
+  }
 
   # Ensure that the dframe data frame contains the site ID variable
 

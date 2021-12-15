@@ -21,7 +21,7 @@
 #'
 #' @keywords survey
 #'
-#' @noRd
+#' @export
 ###############################################################################
 
 localmean_cov <- function(zmat, weight_1st) {

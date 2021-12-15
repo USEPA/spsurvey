@@ -29,7 +29,7 @@
 #'
 #' @author  Tom Kincaid \email{Kincaid.Tom@@epa.gov}
 #'
-#' @noRd
+#' @export
 ################################################################################
 
 localmean_weight <- function(x, y, prb, nbh = 4) {
