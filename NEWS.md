@@ -1,3 +1,9 @@
+# spsurvey 5.1.1 (xxxx-xx-xx)
+
+## Bug fixes
+
+* Fixed a bug in `grts()` and `irs()` that prevented use when the geometry column of `sframe` was not named `"geometry"`.
+
 # spsurvey 5.1.0 (2021-12-14)
 
 ## Minor updates
