@@ -64,6 +64,12 @@ irs <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = N
     sframe <- st_zm(sframe)
   }
 
+  # Find geometry column name
+  geom_col_name <- attr(sframe, "sf_column")
+  # Force to geometry for other sf consistency
+  names(sframe)[names(sframe) == geom_col_name] <- "geometry"
+  st_geometry(sframe) <- "geometry"
+  
   # Determine type of sample frame: point, line, polygon
   if (all(temp %in% c("POINT", "MULTIPOINT"))) sf_type <- "sf_point"
   if (all(temp %in% c("LINESTRING", "MULTILINESTRING"))) sf_type <- "sf_linear"
@@ -528,6 +534,28 @@ irs <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = N
       seltype = dsgn$seltype, caty_n = dsgn$caty_n, legacy = dsgn$legacy_option,
       mindis = dsgn$mindis, n_over = n_over, caty_n_over = caty_n_over, n_near = dsgn$n_near
     )
+  }
+  
+  # restore original column names
+  if (!is.null(sites_legacy)) {
+    names(sites_legacy)[names(sites_legacy) == "geometry"] <- geom_col_name
+    st_geometry(sites_legacy) <- geom_col_name
+    
+  }
+  
+  if (!is.null(sites_base)) {
+    names(sites_base)[names(sites_base) == "geometry"] <- geom_col_name
+    st_geometry(sites_base) <- geom_col_name
+  }
+  
+  if (!is.null(sites_over)) {
+    names(sites_over)[names(sites_over) == "geometry"] <- geom_col_name
+    st_geometry(sites_over) <- geom_col_name
+  }
+  
+  if (!is.null(sites_near)) {
+    names(sites_near)[names(sites_near) == "geometry"] <- geom_col_name
+    st_geometry(sites_near) <- geom_col_name
   }
 
   # create output list
