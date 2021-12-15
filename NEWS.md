@@ -69,7 +69,7 @@ this is reported on the CRAN results pages for fedora-clang and fedora-gcc.
 
 ## Bug fix
 
-* Update test data and Description file to handle changes in `sf` and changes to `crs` described [here](https://www.r-spatial.org/r/2020/03/17/wkt.html)
+* Update test data and Description file to handle changes in `sf` and changes to `crs` described [here](https://r-spatial.org/r/2020/03/17/wkt.html)
 
 # spsurvey 4.1.1 (2019-12-12)
 
