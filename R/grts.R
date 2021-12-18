@@ -340,12 +340,6 @@ grts <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = 
     sframe <- st_zm(sframe)
   }
 
-  # Find geometry column name
-  geom_col_name <- attr(sframe, "sf_column")
-  # Force to geometry for other sf consistency
-  names(sframe)[names(sframe) == geom_col_name] <- "geometry"
-  st_geometry(sframe) <- "geometry"
-  
   # Determine type of sampling frame: point, line, polygon
   if (all(temp %in% c("POINT", "MULTIPOINT"))) sf_type <- "sf_point"
   if (all(temp %in% c("LINESTRING", "MULTILINESTRING"))) sf_type <- "sf_linear"
@@ -384,13 +378,21 @@ grts <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = 
     legacy_var = legacy_var, mindis = mindis, DesignID = DesignID,
     SiteBegin = SiteBegin, maxtry = maxtry
   )
-
+  
   # preserve original sframe names
   sframe_names <- names(sframe)
 
   # preserve original legacy_sites names if needed
   if (!is.null(legacy_sites)) {
     legacy_sites_names <- names(legacy_sites)
+  }
+  
+  # Find geometry column name
+  geom_col_name <- attr(sframe, "sf_column")
+  if (geom_col_name != "geometry") {
+    # Force to geometry for other sf consistency
+    names(sframe)[names(sframe) == geom_col_name] <- "geometry"
+    st_geometry(sframe) <- "geometry"
   }
 
   ## Create variables in sampling frame if needed.
@@ -678,6 +680,37 @@ grts <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = 
   )
 
   dsgn_names_extra <- c(dsgn_names, "xcoord", "ycoord", "idpts")
+  
+  if (geom_col_name != "geometry") {
+    # sframe prefix if necessary
+    if (geom_col_name %in% dsgn_names_extra) {
+      new_geom_col_name <- paste("sframe", geom_col_name, sep = "_")
+      sframe_names[sframe_names == geom_col_name] <- new_geom_col_name
+      geom_col_name <- new_geom_col_name
+    }
+    
+    # restore original column names
+    if (!is.null(sites_legacy)) {
+      names(sites_legacy)[names(sites_legacy) == "geometry"] <- geom_col_name
+      st_geometry(sites_legacy) <- geom_col_name
+      
+    }
+    
+    if (!is.null(sites_base)) {
+      names(sites_base)[names(sites_base) == "geometry"] <- geom_col_name
+      st_geometry(sites_base) <- geom_col_name
+    }
+    
+    if (!is.null(sites_over)) {
+      names(sites_over)[names(sites_over) == "geometry"] <- geom_col_name
+      st_geometry(sites_over) <- geom_col_name
+    }
+    
+    if (!is.null(sites_near)) {
+      names(sites_near)[names(sites_near) == "geometry"] <- geom_col_name
+      st_geometry(sites_near) <- geom_col_name
+    }
+  }
 
   # sites_legacy
   if (!is.null(sites_legacy)) {
@@ -810,29 +843,6 @@ grts <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = 
     )
   }
   
-  # restore original column names
-  if (!is.null(sites_legacy)) {
-    names(sites_legacy)[names(sites_legacy) == "geometry"] <- geom_col_name
-    st_geometry(sites_legacy) <- geom_col_name
-    
-  }
-  
-  if (!is.null(sites_base)) {
-    names(sites_base)[names(sites_base) == "geometry"] <- geom_col_name
-    st_geometry(sites_base) <- geom_col_name
-  }
-  
-  if (!is.null(sites_over)) {
-    names(sites_over)[names(sites_over) == "geometry"] <- geom_col_name
-    st_geometry(sites_over) <- geom_col_name
-  }
-  
-  if (!is.null(sites_near)) {
-    names(sites_near)[names(sites_near) == "geometry"] <- geom_col_name
-    st_geometry(sites_near) <- geom_col_name
-  }
-
-
   # create output list
   sites <- list(
     sites_legacy = sites_legacy, sites_base = sites_base,
