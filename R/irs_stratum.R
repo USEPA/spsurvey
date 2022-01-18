@@ -170,7 +170,8 @@ irs_stratum <- function(stratum, dsgn, sframe, sf_type, wgt_units = NULL, pt_den
     if (n_over == 0) {
       n_caty <- dsgn[["caty_n"]][[stratum]]
     } else {
-      n_caty <- dsgn[["caty_n"]][[stratum]] + dsgn[["n_over"]][[stratum]]
+      base_prop <- dsgn[["caty_n"]][[stratum]] / sum(dsgn[["caty_n"]][[stratum]])
+      n_caty <- dsgn[["caty_n"]][[stratum]] + dsgn[["n_over"]][[stratum]] * base_prop
     }
   }
 

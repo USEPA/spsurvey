@@ -20,7 +20,6 @@ irs(
   mindis = NULL,
   maxtry = 10,
   n_over = NULL,
-  caty_n_over = NULL,
   n_near = NULL,
   wgt_units = NULL,
   pt_density = NULL,
@@ -151,22 +150,8 @@ If the sampling design is stratified,
  value in \code{n_over} should be \code{0} or \code{NULL} (which is equivalent to \code{0}).
  If the sampling design is stratified but the number of \code{n_over} sites is the same in each
  stratum, \code{n_over} can be a vector which is used for each stratum. Note that if the
- sampling design has unequal selection probabilities \code{seltype = "unequal"}, the contents of \code{caty_n_over}
- for \code{n_over} and \code{caty_n_over} them omitted -- though possible, this exists to maintain backwards
- compatibility and new designs should explicitly use \code{caty_n_over} instead.}
-
-\item{caty_n_over}{The number of expected reverse hierarchically ordered (rho) replacement
-sites used when \code{seltype = "unequal"}.
-If the sampling design is unstratified, then \code{caty_n_over} is a named vector whose names
-represent the levels of the unequal probability variable (specified by \code{caty_n}) and
-whose values represent the expected rho replacement sites in each level. If the design is
-stratified, \code{caty_n_over} is a list whose names match the names of \code{n_base} and
-whose values are named vectors, where each named vector has names representing the levels of
-\code{caty_n} and whose values represent the expected rho replacement sites in each
-stratum. Note that the sum of each stratum's values in \code{caty_n_over} must match
-the respective stratum's value in \code{n_over}. If the sampling design is stratified, the
-\code{n_over} is the same for each stratum, and \code{caty_n_over} should be the same in
-each stratum, \code{caty_n_over} can be a vector and will be repeated for each stratum.'}
+ sampling design has unequal selection probabilities \code{seltype = "unequal"}, \code{n_over} sites
+ are given the same proportion of \code{caty_n} values as \code{n_base}.}
 
 \item{n_near}{The number of nearest neighbor (nn) replacement sites.
 If the sampling design is unstratified, \code{n_near} is integer from \code{1}
