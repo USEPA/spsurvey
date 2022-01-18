@@ -34,7 +34,7 @@ irs <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = N
                 legacy_sites = NULL, legacy_stratum_var = NULL,
                 legacy_caty_var = NULL, legacy_aux_var = NULL, mindis = NULL,
                 maxtry = 10, n_over = NULL, n_near = NULL, wgt_units = NULL,
-                pt_density = NULL, DesignID = "Site", SiteBegin = 1) {
+                pt_density = NULL, DesignID = "Site", SiteBegin = 1, sep = "-") {
   if (inherits(sframe, c("tbl_df", "tbl"))) { # identify if tibble class elements are present
     class(sframe) <- setdiff(class(sframe), c("tbl_df", "tbl"))
     # remove tibble class for rownames warning
@@ -308,7 +308,7 @@ irs <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = N
 
   # Create a siteID for all sites
   ntot <- NROW(sites_legacy) + NROW(sites_base) + NROW(sites_over) + NROW(sites_near)
-  siteID <- gsub(" ", "0", paste0(DesignID, "-", format(SiteBegin - 1 + 1:ntot, sep = "")))
+  siteID <- gsub(" ", "0", paste0(DesignID, sep, format(SiteBegin - 1 + 1:ntot, sep = "")))
   nlast <- 0
 
   # Create siteID for legacy sites if present using DesignID and SiteBegin

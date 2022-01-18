@@ -24,7 +24,8 @@ irs(
   wgt_units = NULL,
   pt_density = NULL,
   DesignID = "Site",
-  SiteBegin = 1
+  SiteBegin = 1,
+  sep = "-"
 )
 }
 \arguments{
@@ -201,6 +202,9 @@ is \code{1} and the number of digits is equal to number of digits in
 \code{nbase + nover}.
 For example, if \code{nbase} is 50 and \code{nover} is 0, then the default
 site identifiers are \code{Site-01} to \code{Site-50}}
+
+\item{sep}{A character string that acts as a separator between
+\code{DesignID} and \code{SiteBegin}. The default is \code{"-"}.}
 }
 \value{
 The sampling design sites and additional information about the sampling design. More specifically, it is, a list with five elements:

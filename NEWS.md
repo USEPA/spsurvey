@@ -3,6 +3,7 @@
 ## Minor updates
 
 * Made it easier in `grts()` and `irs()` to specify reverse hierarchically ordered replacement sites with unequal selection probabilities by requiring `n_over` be an integer and removing `caty_n_over`.
+* Added an argument to `grts()` and `irs()` called `sep`, which acts as a separator between the character string created by `DesignID` and `SiteBegin` in the `sites` output.
 
 ## Bug fixes
 
