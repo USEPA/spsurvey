@@ -1,13 +1,13 @@
-# spsurvey 5.1.1 (xxxx-xx-xx)
+# spsurvey 5.2.0 (xxxx-xx-xx)
 
 ## Minor updates
 
-* For `grts()` and `irs()`, made it easier to specify reverse hierarchically ordered replacement sites with unequal selection probabilities by requiring `n_over` be an integer and removing `caty_n_over`.
+* Made it easier in `grts()` and `irs()` to specify reverse hierarchically ordered replacement sites with unequal selection probabilities by requiring `n_over` be an integer and removing `caty_n_over`.
 
 ## Bug fixes
 
 * Fixed a bug in `grts()` and `irs()` that prevented use when the geometry column of `sframe` was not named `"geometry"`.
-* Fixed a bug in `grts()` and `irs()` that caused some unequal selection probabilities to be misrepresented when reverse hierarchically ordered replacement sites were desired.
+* Fixed a bug in `grts()` and `irs()` that sometimes caused unequal selection probabilities to be misrepresented when reverse hierarchically ordered replacement sites were desired.
 
 # spsurvey 5.1.0 (2021-12-14)
 
