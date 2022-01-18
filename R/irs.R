@@ -58,7 +58,7 @@ irs <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = N
   }
 
   # Drop m and z values to ensure no issues with grts functionality with sf object
-  if (!is.null(st_m_range(sframe)) & !is.null(st_z_range(sframe))) {
+  if (!is.null(st_m_range(sframe)) | !is.null(st_z_range(sframe))) {
     warn_ind <- TRUE
     warn_df$warn <- "\nThe survey frame object passed to function grts contains m or z values - they are being dropped to ensure functionality in grts."
     sframe <- st_zm(sframe)

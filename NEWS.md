@@ -8,6 +8,7 @@
 
 * Fixed a bug in `grts()` and `irs()` that prevented use when the geometry column of `sframe` was not named `"geometry"`.
 * Fixed a bug in `grts()` and `irs()` that sometimes caused unequal selection probabilities to be misrepresented when reverse hierarchically ordered replacement sites were desired.
+* Fixed a bug in `grts()` and `irs()` that sometimes prevented the dropping of an sf object's z or m dimension.
 
 # spsurvey 5.1.0 (2021-12-14)
 
