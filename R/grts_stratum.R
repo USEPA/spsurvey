@@ -206,7 +206,7 @@ grts_stratum <- function(stratum, dsgn, sframe, sf_type, wgt_units = NULL, pt_de
 
   # If seltype is "equal" or "proportional", set caty to same as stratum
   if (dsgn[["seltype"]][[stratum]] == "equal" | dsgn[["seltype"]][[stratum]] == "proportional") {
-    sftmp$caty <- sftmp$stratum
+    sftmp$caty <- "None"
   }
 
   # compute inclusion probabilities
