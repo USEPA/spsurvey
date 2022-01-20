@@ -137,7 +137,7 @@
 #'   value in \code{n_over} should be \code{0} or \code{NULL} (which is equivalent to \code{0}).
 #'   If the sampling design is stratified but the number of \code{n_over} sites is the same in each
 #'   stratum, \code{n_over} can be a vector which is used for each stratum. Note that if the
-#'   sampling design has unequal selection probabilities \code{seltype = "unequal"}, \code{n_over} sites
+#'   sampling design has unequal selection probabilities (\code{seltype = "unequal"}), then \code{n_over} sites
 #'   are given the same proportion of \code{caty_n} values as \code{n_base}.
 #'
 #' @param n_near The number of nearest neighbor (nn) replacement sites.
@@ -156,7 +156,7 @@
 #'   are not desired for a particular stratum, then the corresponding value in \code{n_over}
 #'   should be \code{0} or \code{NULL} (which is equivalent to \code{0}). For
 #'   infinite sampling frames, the distance between a site and its nn
-#'   depends on \code{pt_density}.
+#'   depends on \code{pt_density}. The larger \code{pt_density}, the closer the nn neighbors.
 #'
 #' @param wgt_units The units used to compute the design weights. These
 #'   units must be standard units as defined by the \code{set_units()} function in
@@ -166,15 +166,13 @@
 #'   for infinite sampling frames. The GRTS approximation for infinite sample
 #'   frames vastly improves computational efficiency by generating many finite points and
 #'   selecting a sample from the points. \code{pt_density} represents the density
-#'   of finite points per unit to use in the approximation (the units should match
-#'   the units of the sampling frame). Increasing \code{pt_density} means increasing the number
-#'   of finite points used in the approximation. For example, a value of 2 means use two
-#'   finite points every unit, while a value of 1/2 means use one finite point
-#'   every two units. The more finite points (i.e., the more accurate) in the approximation,
-#'   the larger the computational burden. The default is a density such that the number
-#'   of finite points used in the approximation equals 10 times the sample size requested.
-#'   When used with \code{caty_n}, the unequal inclusion probabilities generated using
-#'   \code{pt_density} are approximations.
+#'   of finite points per unit to use in the approximation. More specifically,
+#'   for each stratum, the number of points used in the approximation equals
+#'   \code{pt_density * (n_base + n_over)}. A larger value of \code{pt_density}
+#'   means a closer approximation to the infinite sampling frame but less
+#'   computational efficiency. The default value of \code{pt_density} is \code{10}. Note that
+#'   when used with \code{caty_n}, the unequal inclusion probabilities generated from
+#'   this approach are also approximations.
 #'
 #' @param DesignID A character string indicating the naming structure for each
 #'   site's identifier selected in the sample, which is matched with \code{SiteBegin} and
