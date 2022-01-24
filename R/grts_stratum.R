@@ -187,7 +187,7 @@ grts_stratum <- function(stratum, dsgn, sframe, sf_type, wgt_units = NULL, pt_de
     on.exit(options(opt))
     stop()
   }
-  
+
   # Step 2 site selection if linear or area; otherwise Step 1 for points.
   # determine overall sample size required from dsgn for stratum
   # account for n_over sample option if present

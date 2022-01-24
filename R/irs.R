@@ -109,7 +109,7 @@ irs <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = N
   if (!is.null(legacy_sites)) {
     legacy_sites_names <- names(legacy_sites)
   }
-  
+
   # Find geometry column name
   geom_col_name <- attr(sframe, "sf_column")
   if (geom_col_name != "geometry") {
@@ -390,7 +390,7 @@ irs <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = N
   )
 
   dsgn_names_extra <- c(dsgn_names, "xcoord", "ycoord", "idpts")
-  
+
   if (geom_col_name != "geometry") {
     # sframe prefix if necessary
     if (geom_col_name %in% dsgn_names_extra) {
@@ -398,24 +398,23 @@ irs <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = N
       sframe_names[sframe_names == geom_col_name] <- new_geom_col_name
       geom_col_name <- new_geom_col_name
     }
-    
+
     # restore original column names
     if (!is.null(sites_legacy)) {
       names(sites_legacy)[names(sites_legacy) == "geometry"] <- geom_col_name
       st_geometry(sites_legacy) <- geom_col_name
-      
     }
-    
+
     if (!is.null(sites_base)) {
       names(sites_base)[names(sites_base) == "geometry"] <- geom_col_name
       st_geometry(sites_base) <- geom_col_name
     }
-    
+
     if (!is.null(sites_over)) {
       names(sites_over)[names(sites_over) == "geometry"] <- geom_col_name
       st_geometry(sites_over) <- geom_col_name
     }
-    
+
     if (!is.null(sites_near)) {
       names(sites_near)[names(sites_near) == "geometry"] <- geom_col_name
       st_geometry(sites_near) <- geom_col_name
@@ -542,7 +541,7 @@ irs <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = N
     seltype = dsgn$seltype, caty_n = dsgn$caty_n, legacy = dsgn$legacy_option,
     mindis = dsgn$mindis, n_over = dsgn$n_over, n_near = dsgn$n_near
   )
-  
+
   # create output list
   sites <- list(
     sites_legacy = sites_legacy, sites_base = sites_base,

@@ -186,7 +186,7 @@
 #'   \code{nbase + nover}.
 #'   For example, if \code{nbase} is 50 and \code{nover} is 0, then the default
 #'   site identifiers are \code{Site-01} to \code{Site-50}
-#'   
+#'
 #' @param sep A character string that acts as a separator between
 #'  \code{DesignID} and \code{SiteBegin}. The default is \code{"-"}.
 #'
@@ -364,7 +364,7 @@ grts <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = 
     legacy_var = legacy_var, mindis = mindis, DesignID = DesignID,
     SiteBegin = SiteBegin, maxtry = maxtry
   )
-  
+
   # preserve original sframe names
   sframe_names <- names(sframe)
 
@@ -372,7 +372,7 @@ grts <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = 
   if (!is.null(legacy_sites)) {
     legacy_sites_names <- names(legacy_sites)
   }
-  
+
   # Find geometry column name
   geom_col_name <- attr(sframe, "sf_column")
   if (geom_col_name != "geometry") {
@@ -539,7 +539,7 @@ grts <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = 
     names(tmp) <- stratum
     dsgn$legacy_option <- tmp
   }
- 
+
   ## select sites for each stratum
   rslts <- lapply(dsgn$stratum, grts_stratum,
     dsgn = dsgn, sframe = sframe, sf_type = sf_type, wgt_units = wgt_units,
@@ -649,7 +649,7 @@ grts <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = 
   )
 
   dsgn_names_extra <- c(dsgn_names, "xcoord", "ycoord", "idpts")
-  
+
   if (geom_col_name != "geometry") {
     # sframe prefix if necessary
     if (geom_col_name %in% dsgn_names_extra) {
@@ -657,24 +657,23 @@ grts <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = 
       sframe_names[sframe_names == geom_col_name] <- new_geom_col_name
       geom_col_name <- new_geom_col_name
     }
-    
+
     # restore original column names
     if (!is.null(sites_legacy)) {
       names(sites_legacy)[names(sites_legacy) == "geometry"] <- geom_col_name
       st_geometry(sites_legacy) <- geom_col_name
-      
     }
-    
+
     if (!is.null(sites_base)) {
       names(sites_base)[names(sites_base) == "geometry"] <- geom_col_name
       st_geometry(sites_base) <- geom_col_name
     }
-    
+
     if (!is.null(sites_over)) {
       names(sites_over)[names(sites_over) == "geometry"] <- geom_col_name
       st_geometry(sites_over) <- geom_col_name
     }
-    
+
     if (!is.null(sites_near)) {
       names(sites_near)[names(sites_near) == "geometry"] <- geom_col_name
       st_geometry(sites_near) <- geom_col_name
@@ -799,9 +798,10 @@ grts <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = 
   dsgn <- list(
     call = match.call(), stratum = dsgn$stratum, n_base = dsgn$n_base,
     seltype = dsgn$seltype, caty_n = dsgn$caty_n, legacy = dsgn$legacy_option,
-    mindis = dsgn$mindis, n_over = dsgn$n_over, n_near = dsgn$n_near)
+    mindis = dsgn$mindis, n_over = dsgn$n_over, n_near = dsgn$n_near
+  )
 
-  
+
   # create output list
   sites <- list(
     sites_legacy = sites_legacy, sites_base = sites_base,
