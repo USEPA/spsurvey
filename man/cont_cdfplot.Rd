@@ -100,6 +100,7 @@ population, \code{Subpopulation} within \code{Type}, and \code{Indicator} (every
 of subpopulations, subpopulation levels, and variables).
 }
 \examples{
+\dontrun{
 dframe <- data.frame(
   siteID = paste0("Site", 1:100),
   wgt = runif(100, 10, 100),
@@ -121,7 +122,6 @@ myanalysis <- cont_analysis(dframe,
   siteID = "siteID", weight = "wgt", xcoord = "xcoord", ycoord = "ycoord",
   stratumID = "stratum", popsize = mypopsize
 )
-\dontrun{
 cont_cdfplot("myanalysis.pdf", myanalysis$CDF, ylab_r = "Stream Length (km)")
 }
 
