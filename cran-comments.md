@@ -1,47 +1,47 @@
-This is a minor update adding some minor features and addressing a few bugs from version 5.0.0.
+This is a minor update adding some minor features and addressing a few bugs from version 5.1.0.
 
 -------
 
 ## Resubmission
 
-This is a resubmission. In this version, I have moved the https://www.r-spatial.org/r/2020/03/17/wkt.html URL to https://r-spatial.org/r/2020/03/17/wkt.html .
+This is a resubmission. 
 
 ## Test environments
 
-* Tests run on December 14, 2021 (rhub version 1.1.1)
+* Tests run on January 23, 2022 (rhub version 1.1.1)
 
 * Build reports can be viewed through their hyperlinked Build ID URLs
 
 * `rhub::check_for_cran()`
-    * Platform: Windows Server 2008 R2 SP1, R-devel, 32/64 bit
+    * Platform: Windows Server 2022, R-devel, 64 bit
         * Status: success (NOTE related to manual PDF size -- see next section)
-        * Build ID: https://builder.r-hub.io/status/spsurvey_5.1.0.tar.gz-f94189460edb432eb16497e6d7e812b7
+        * Build ID: https://builder.r-hub.io/status/spsurvey_5.2.0.tar.gz-c6b1bfcfe0c840baabf92da7ad8dd917
     * Platform: Fedora Linux, R-devel, clang, gfortran
         * Status: success (NOTE related to manual PDF size -- see next section)
-        * Build ID: https://builder.r-hub.io/status/spsurvey_5.1.0.tar.gz-2fad020053b14838afb28be439a447a6
+        * Build ID: https://builder.r-hub.io/status/spsurvey_5.2.0.tar.gz-c55be11f9571488e8077ece3525d69c4
     * Platform: Ubuntu Linux 20.04.1 LTS, R-release, GCC
         * Status: SUCCESS (NOTE related to manual PDF size see next section)
-        * Build ID: https://builder.r-hub.io/status/spsurvey_5.1.0.tar.gz-d8416a33d90c4da9bafd2d36a2eb410d
+        * Build ID: https://builder.r-hub.io/status/spsurvey_5.2.0.tar.gz-6f693f8d04f74cde8bbf7df801ed86a6
         
 * `rhub::check_on_windows()`
     * Platform: Windows Server 2008 R2 SP1, R-release, 32/64 bit
         * success (NOTE related to manual PDF size -- see next section)
-        * Build ID: https://builder.r-hub.io/status/spsurvey_5.1.0.tar.gz-fe41ebfe984241479f8c54a4997c5bb3
+        * Build ID: https://builder.r-hub.io/status/spsurvey_5.2.0.tar.gz-a601356c2761418788a1ca4811d8bb66
         
 * `rhub::check_on_linux()`
     * Platform: Debian Linux, R-release, GCC
         * success (NOTE related to manual PDF size -- see next section)
-        * Build ID: https://builder.r-hub.io/status/spsurvey_5.1.0.tar.gz-7320ee0635704b84bdf6e7060c52468f
+        * Build ID: https://builder.r-hub.io/status/spsurvey_5.2.0.tar.gz-804ac4ab544a43d491cbb3a6538a17d9
         
 * `rhub::check_on_solaris()`
     * Platform: Oracle Solaris 10, x86, 32 bit, R-release
         * success (NOTE related to panual PDF size -- see next section)
-        * Build ID: https://builder.r-hub.io/status/spsurvey_5.1.0.tar.gz-e5287e26e0fb43b5a1d4a2f221ff4dd7 
+        * Build ID: https://builder.r-hub.io/status/spsurvey_5.2.0.tar.gz-9ab796fc87b2412e9f5c87f53fd2172f
         
 * `rhub::check(platform = "macos-highsierra-release-cran")`
     * Platform: macOS 10.13.6 High Sierra, R-release, CRAN's setup
         * Status: SUCCESS (NOTE related to manual PDF size see next section)
-        * Build ID: https://builder.r-hub.io/status/spsurvey_5.1.0.tar.gz-cde17faf7d7542b98e6d685a39ad847d
+        * Build ID: https://builder.r-hub.io/status/spsurvey_5.2.0.tar.gz-1cf4cfe699d94b2592a8f003b2e31013
         
 ## R CMD check results
 
@@ -60,4 +60,4 @@ reflect the size of the final PDF manual installed upon package build.
 
 ## Downstream dependencies
 
-This minor update should not affect any downstream dependencies.
+This minor update should not affect any downstream dependencies (other than those impacted by the version 5.0.0 update).

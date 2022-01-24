@@ -401,11 +401,10 @@ if (on_solaris) {
   test_that("algorithm executes", {
     n_base <- 50
     caty_n <- c(small = 24, large = 26)
-    caty_n_over <- c(small = 5, large = 5)
-    n_over <- sum(caty_n_over)
+    n_over <- 10
     irs_output <- irs(NE_Lakes,
       n_base = n_base, seltype = "unequal",
-      caty_var = "AREA_CAT", caty_n = caty_n, n_over = caty_n_over
+      caty_var = "AREA_CAT", caty_n = caty_n, n_over = n_over
     )
     expect_true(exists("irs_output"))
     expect_equal(NROW(irs_output$sites_legacy), 0)
@@ -438,15 +437,14 @@ if (on_solaris) {
     expect_equal(NCOL(irs_output$sites_near), 1)
   })
 
-  # stratification and caty_n_over
+  # stratification and n_over
   test_that("algorithm executes", {
     n_base <- c(low = 5, high = 6)
     stratum_var <- "ELEV_CAT"
     caty_n <- list(low = c(small = 2, large = 3), high = c(small = 3, large = 3))
     caty_var <- "AREA_CAT"
     n_over <- c(low = 4, high = 3)
-    caty_n_over <- list(low = c(small = 1, large = 3), high = c(small = 2, large = 1))
-    irs_output <- irs(NE_Lakes, n_base, stratum_var, caty_n = caty_n, caty_var = caty_var, n_over = n_over, caty_n_over = caty_n_over)
+    irs_output <- irs(NE_Lakes, n_base, stratum_var, caty_n = caty_n, caty_var = caty_var, n_over = n_over)
     expect_true(exists("irs_output"))
     expect_equal(NROW(irs_output$sites_legacy), 0)
     expect_equal(NROW(irs_output$sites_base), sum(n_base))

@@ -111,10 +111,9 @@ grts_stratum <- function(stratum, dsgn, sframe, sf_type, wgt_units = NULL, pt_de
     }
     # set default equal to 10 population sites per requested sample site
     if (is.null(pt_density)) {
-      popmatch <- 10
-      pt_density <- ((n_base + n_over + n_near) * popmatch) / stratum_len
+      pt_density <- 10
     }
-    n_size <- as.integer(pt_density * stratum_len)
+    n_size <- as.integer(ceiling(pmin(1e9, pt_density * (n_base + n_over))))
     sfpts <- st_sample(sftmp, size = n_size, type = "regular", exact = TRUE)
     sfpts <- st_as_sf(as.data.frame(sfpts), crs = st_crs(sftmp))
     sfpts <- st_cast(sfpts, to = "POINT")
@@ -141,10 +140,9 @@ grts_stratum <- function(stratum, dsgn, sframe, sf_type, wgt_units = NULL, pt_de
     }
     # set default equal to 10 population sites per requested sample site
     if (is.null(pt_density)) {
-      popmatch <- 10
-      pt_density <- ((n_base + n_over + n_near) * popmatch) / stratum_area
+      pt_density <- 10
     }
-    n_size <- as.integer(pt_density * stratum_area)
+    n_size <- as.integer(ceiling(pmin(1e9, pt_density * (n_base + n_over))))
     sfpts <- st_sample(sftmp, size = n_size, type = "hexagonal", exact = TRUE)
     sfpts <- st_as_sf(as.data.frame(sfpts), crs = st_crs(sftmp))
     sfpts <- st_cast(sfpts, to = "POINT")
@@ -199,13 +197,14 @@ grts_stratum <- function(stratum, dsgn, sframe, sf_type, wgt_units = NULL, pt_de
     if (n_over == 0) {
       n_caty <- dsgn[["caty_n"]][[stratum]]
     } else {
-      n_caty <- dsgn[["caty_n"]][[stratum]] + dsgn[["n_over"]][[stratum]]
+      base_prop <- dsgn[["caty_n"]][[stratum]] / sum(dsgn[["caty_n"]][[stratum]])
+      n_caty <- dsgn[["caty_n"]][[stratum]] + dsgn[["n_over"]][[stratum]] * base_prop
     }
   }
 
   # If seltype is "equal" or "proportional", set caty to same as stratum
   if (dsgn[["seltype"]][[stratum]] == "equal" | dsgn[["seltype"]][[stratum]] == "proportional") {
-    sftmp$caty <- sftmp$stratum
+    sftmp$caty <- "None"
   }
 
   # compute inclusion probabilities

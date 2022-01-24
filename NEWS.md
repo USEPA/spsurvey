@@ -1,3 +1,19 @@
+# spsurvey 5.2.0 (2021-01-23)
+
+## Minor updates
+
+* Made it easier in `grts()` and `irs()` to specify reverse hierarchically ordered replacement sites with unequal selection probabilities by requiring `n_over` be an integer and removing `caty_n_over`.
+* Added an argument to `grts()` and `irs()` called `sep`, which acts as a separator between the character string created by `DesignID` and `SiteBegin` in the `sites` output.
+* The `pt_density` argument in `grts()` and `irs()` now reflects the site multiplier (instead of the per-unit density of `sframe`) that generates the approximation to `sframe` when sampling from `LINESTRING`, `MULTILINESTRING`, `POLYGON`, or `MULTIPOLYGON` sf objects.
+
+## Bug fixes
+
+* Fixed a bug in `grts()` and `irs()` that prevented use when the geometry column of `sframe` was not named `"geometry"`.
+* Fixed a bug in `grts()` and `irs()` that sometimes caused unequal selection probabilities to be misrepresented when reverse hierarchically ordered replacement sites were desired.
+* Fixed a bug in `grts()` and `irs()` that sometimes prevented the dropping of an sf object's z or m dimension.
+* Fixed a bug in `grts()` and `irs()` that sometimes incorrectly copied `stratum` values as `caty` values in the `sites` output.
+* Fixed a bug in `grts()` and `irs()` that prevented sampling from `LINESTRING`, `MULTILINESTRING`, `POLYGON`, or `MULTIPOLYGON` sf objects when `pt_density` was excessively large.
+
 # spsurvey 5.1.0 (2021-12-14)
 
 ## Minor updates

@@ -111,7 +111,7 @@ The function creates revisit designs using the concepts in McDonald
   periods \code{1} to \code{"m"} as if number of time periods was extended by \code{"m"} where \code{"m"}
   is one less than then the sum of the panel design.  For example, a
   [1-4-1-4-1-n] design would result in \code{m = 10}.  Note that some designs with
-  \code{pnl_n} not equal to the number of sample occasions can produce unespected
+  \code{pnl_n} not equal to the number of sample occasions can produce unexpected
   panel designs.  See examples.
 
   Different types of panel structures can be combined, these are termed split

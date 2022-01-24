@@ -92,7 +92,7 @@
 #' @noRd
 ###############################################################################
 dsgn_check <- function(sframe, sf_type, legacy_sites, legacy_option, stratum, seltype, n_base, caty_n,
-                       n_over, caty_n_over, n_near, stratum_var, caty_var, aux_var, legacy_var, mindis,
+                       n_over, n_near, stratum_var, caty_var, aux_var, legacy_var, mindis,
                        DesignID, SiteBegin, maxtry) {
 
   # Create a data frame for stop messages
@@ -353,44 +353,6 @@ dsgn_check <- function(sframe, sf_type, legacy_sites, legacy_option, stratum, se
       }
     }
   }
-
-  # check n_over caty_n_over
-  if (!is.null(n_over) & !is.null(caty_n_over)) {
-    if (is.null(names(n_over))) {
-      if (is.list(caty_n_over)) {
-        rslts <- sapply(stratum, function(x) sum(caty_n_over[[x]]) != n_over)
-        if (any(rslts)) {
-          stop_ind <- TRUE # scalar n_over list caty_n_over
-          stop_mess <- paste0("Sum of caty_n_over values in each stratum must match the respective n_over values")
-          stop_df <- rbind(stop_df, data.frame(func = I("caty_n_over"), I(stop_mess)))
-        }
-      } else {
-        if (sum(caty_n_over) != n_over) {
-          stop_ind <- TRUE # scalar n_over scalar caty_n_over
-          stop_mess <- paste0("Sum of caty_n_over values must match n_over")
-          stop_df <- rbind(stop_df, data.frame(func = I("caty_n_over"), I(stop_mess)))
-        }
-      }
-    } else {
-      if (is.list(caty_n_over)) {
-        rslts <- sapply(stratum, function(x) sum(caty_n_over[[x]]) != n_over[[x]])
-        if (any(rslts)) {
-          stop_ind <- TRUE # list n_over list caty_n_over
-          stop_mess <- paste0("Sum of caty_n_over values in each stratum must match the respective n_over values")
-          stop_df <- rbind(stop_df, data.frame(func = I("caty_n_over"), I(stop_mess)))
-        }
-      } else {
-        rslts <- sapply(stratum, function(x) sum(caty_n_over) != n_over[[x]])
-        if (any(rslts)) {
-          stop_ind <- TRUE # scalar n_over scalar caty_n_over
-          stop_mess <- paste0("Sum of caty_n_over values must match n_over")
-          stop_df <- rbind(stop_df, data.frame(func = I("caty_n_over"), I(stop_mess)))
-        }
-      }
-    }
-  }
-
-
 
   # check total sample size for n_over
   if (sf_type == "sf_point") {

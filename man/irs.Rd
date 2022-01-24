@@ -20,12 +20,12 @@ irs(
   mindis = NULL,
   maxtry = 10,
   n_over = NULL,
-  caty_n_over = NULL,
   n_near = NULL,
   wgt_units = NULL,
   pt_density = NULL,
   DesignID = "Site",
-  SiteBegin = 1
+  SiteBegin = 1,
+  sep = "-"
 )
 }
 \arguments{
@@ -151,22 +151,8 @@ If the sampling design is stratified,
  value in \code{n_over} should be \code{0} or \code{NULL} (which is equivalent to \code{0}).
  If the sampling design is stratified but the number of \code{n_over} sites is the same in each
  stratum, \code{n_over} can be a vector which is used for each stratum. Note that if the
- sampling design has unequal selection probabilities \code{seltype = "unequal"}, the contents of \code{caty_n_over}
- for \code{n_over} and \code{caty_n_over} them omitted -- though possible, this exists to maintain backwards
- compatibility and new designs should explicitly use \code{caty_n_over} instead.}
-
-\item{caty_n_over}{The number of expected reverse hierarchically ordered (rho) replacement
-sites used when \code{seltype = "unequal"}.
-If the sampling design is unstratified, then \code{caty_n_over} is a named vector whose names
-represent the levels of the unequal probability variable (specified by \code{caty_n}) and
-whose values represent the expected rho replacement sites in each level. If the design is
-stratified, \code{caty_n_over} is a list whose names match the names of \code{n_base} and
-whose values are named vectors, where each named vector has names representing the levels of
-\code{caty_n} and whose values represent the expected rho replacement sites in each
-stratum. Note that the sum of each stratum's values in \code{caty_n_over} must match
-the respective stratum's value in \code{n_over}. If the sampling design is stratified, the
-\code{n_over} is the same for each stratum, and \code{caty_n_over} should be the same in
-each stratum, \code{caty_n_over} can be a vector and will be repeated for each stratum.'}
+ sampling design has unequal selection probabilities (\code{seltype = "unequal"}), then \code{n_over} sites
+ are given the same proportion of \code{caty_n} values as \code{n_base}.}
 
 \item{n_near}{The number of nearest neighbor (nn) replacement sites.
 If the sampling design is unstratified, \code{n_near} is integer from \code{1}
@@ -184,7 +170,7 @@ nn replacement sites to be selected for each base site in the stratum. If replac
 are not desired for a particular stratum, then the corresponding value in \code{n_over}
 should be \code{0} or \code{NULL} (which is equivalent to \code{0}). For
 infinite sampling frames, the distance between a site and its nn
-depends on \code{pt_density}.}
+depends on \code{pt_density}. The larger \code{pt_density}, the closer the nn neighbors.}
 
 \item{wgt_units}{The units used to compute the design weights. These
 units must be standard units as defined by the \code{set_units()} function in
@@ -194,15 +180,13 @@ the units package. The default units match the units of the sf object.}
 for infinite sampling frames. The GRTS approximation for infinite sample
 frames vastly improves computational efficiency by generating many finite points and
 selecting a sample from the points. \code{pt_density} represents the density
-of finite points per unit to use in the approximation (the units should match
-the units of the sampling frame). Increasing \code{pt_density} means increasing the number
-of finite points used in the approximation. For example, a value of 2 means use two
-finite points every unit, while a value of 1/2 means use one finite point
-every two units. The more finite points (i.e., the more accurate) in the approximation,
-the larger the computational burden. The default is a density such that the number
-of finite points used in the approximation equals 10 times the sample size requested.
-When used with \code{caty_n}, the unequal inclusion probabilities generated using
-\code{pt_density} are approximations.}
+of finite points per unit to use in the approximation. More specifically,
+for each stratum, the number of points used in the approximation equals
+\code{pt_density * (n_base + n_over)}. A larger value of \code{pt_density}
+means a closer approximation to the infinite sampling frame but less
+computational efficiency. The default value of \code{pt_density} is \code{10}. Note that
+when used with \code{caty_n}, the unequal inclusion probabilities generated from
+this approach are also approximations.}
 
 \item{DesignID}{A character string indicating the naming structure for each
 site's identifier selected in the sample, which is matched with \code{SiteBegin} and
@@ -216,6 +200,9 @@ is \code{1} and the number of digits is equal to number of digits in
 \code{nbase + nover}.
 For example, if \code{nbase} is 50 and \code{nover} is 0, then the default
 site identifiers are \code{Site-01} to \code{Site-50}}
+
+\item{sep}{A character string that acts as a separator between
+\code{DesignID} and \code{SiteBegin}. The default is \code{"-"}.}
 }
 \value{
 The sampling design sites and additional information about the sampling design. More specifically, it is, a list with five elements:

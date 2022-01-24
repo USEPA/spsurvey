@@ -62,7 +62,7 @@ for the list.  The default value is NULL.}
 
 \item{stressor_levels}{List providing the category values (levels) for each
 element in the \code{vars_stressor} argument.  Each element in the list
-must contian two values, where the first value identifies poor condition,
+must contain two values, where the first value identifies poor condition,
 and the second value identifies good condition.  This argument must be
 named and must be the same length as argument \code{vars_stressor}.  Names
 for this argument must match the values in the \code{vars_stressor}

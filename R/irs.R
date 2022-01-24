@@ -33,8 +33,8 @@ irs <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = N
                 caty_n = NULL, aux_var = NULL, legacy_var = NULL,
                 legacy_sites = NULL, legacy_stratum_var = NULL,
                 legacy_caty_var = NULL, legacy_aux_var = NULL, mindis = NULL,
-                maxtry = 10, n_over = NULL, caty_n_over = NULL, n_near = NULL, wgt_units = NULL,
-                pt_density = NULL, DesignID = "Site", SiteBegin = 1) {
+                maxtry = 10, n_over = NULL, n_near = NULL, wgt_units = NULL,
+                pt_density = NULL, DesignID = "Site", SiteBegin = 1, sep = "-") {
   if (inherits(sframe, c("tbl_df", "tbl"))) { # identify if tibble class elements are present
     class(sframe) <- setdiff(class(sframe), c("tbl_df", "tbl"))
     # remove tibble class for rownames warning
@@ -58,7 +58,7 @@ irs <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = N
   }
 
   # Drop m and z values to ensure no issues with grts functionality with sf object
-  if (!is.null(st_m_range(sframe)) & !is.null(st_z_range(sframe))) {
+  if (!is.null(st_m_range(sframe)) | !is.null(st_z_range(sframe))) {
     warn_ind <- TRUE
     warn_df$warn <- "\nThe survey frame object passed to function grts contains m or z values - they are being dropped to ensure functionality in grts."
     sframe <- st_zm(sframe)
@@ -96,7 +96,7 @@ irs <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = N
   dsgn_check(
     sframe = sframe, sf_type = sf_type, legacy_sites = legacy_sites,
     legacy_option = legacy_option, stratum = stratum, seltype = seltype,
-    n_base = n_base, caty_n = caty_n, n_over = n_over, caty_n_over = caty_n_over, n_near = n_near,
+    n_base = n_base, caty_n = caty_n, n_over = n_over, n_near = n_near,
     stratum_var = stratum_var, caty_var = caty_var, aux_var = aux_var,
     legacy_var = legacy_var, mindis = mindis, DesignID = DesignID,
     SiteBegin = SiteBegin, maxtry = maxtry
@@ -109,6 +109,15 @@ irs <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = N
   if (!is.null(legacy_sites)) {
     legacy_sites_names <- names(legacy_sites)
   }
+
+  # Find geometry column name
+  geom_col_name <- attr(sframe, "sf_column")
+  if (geom_col_name != "geometry") {
+    # Force to geometry for other sf consistency
+    names(sframe)[names(sframe) == geom_col_name] <- "geometry"
+    st_geometry(sframe) <- "geometry"
+  }
+
 
   ## Create variables in sample frame if needed.
   # Create unique sample frame ID values
@@ -226,23 +235,6 @@ irs <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = N
     }
   }
 
-  # caty_n_over
-  if (!is.null(caty_n_over)) {
-    if (is.list(caty_n_over)) {
-      tmp <- lapply(stratum, function(x, caty_n_over) {
-        caty_n_over[[x]]
-      }, caty_n_over)
-      names(tmp) <- stratum
-      dsgn$n_over <- tmp
-    } else {
-      tmp <- lapply(stratum, function(x, caty_n_over) {
-        caty_n_over
-      }, caty_n_over)
-      names(tmp) <- stratum
-      dsgn$n_over <- tmp
-    }
-  }
-
   # n_near
   if (!is.null(n_near)) {
     if (is.list(n_near)) {
@@ -316,7 +308,7 @@ irs <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = N
 
   # Create a siteID for all sites
   ntot <- NROW(sites_legacy) + NROW(sites_base) + NROW(sites_over) + NROW(sites_near)
-  siteID <- gsub(" ", "0", paste0(DesignID, "-", format(SiteBegin - 1 + 1:ntot, sep = "")))
+  siteID <- gsub(" ", "0", paste0(DesignID, sep, format(SiteBegin - 1 + 1:ntot, sep = "")))
   nlast <- 0
 
   # Create siteID for legacy sites if present using DesignID and SiteBegin
@@ -398,6 +390,36 @@ irs <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = N
   )
 
   dsgn_names_extra <- c(dsgn_names, "xcoord", "ycoord", "idpts")
+
+  if (geom_col_name != "geometry") {
+    # sframe prefix if necessary
+    if (geom_col_name %in% dsgn_names_extra) {
+      new_geom_col_name <- paste("sframe", geom_col_name, sep = "_")
+      sframe_names[sframe_names == geom_col_name] <- new_geom_col_name
+      geom_col_name <- new_geom_col_name
+    }
+
+    # restore original column names
+    if (!is.null(sites_legacy)) {
+      names(sites_legacy)[names(sites_legacy) == "geometry"] <- geom_col_name
+      st_geometry(sites_legacy) <- geom_col_name
+    }
+
+    if (!is.null(sites_base)) {
+      names(sites_base)[names(sites_base) == "geometry"] <- geom_col_name
+      st_geometry(sites_base) <- geom_col_name
+    }
+
+    if (!is.null(sites_over)) {
+      names(sites_over)[names(sites_over) == "geometry"] <- geom_col_name
+      st_geometry(sites_over) <- geom_col_name
+    }
+
+    if (!is.null(sites_near)) {
+      names(sites_near)[names(sites_near) == "geometry"] <- geom_col_name
+      st_geometry(sites_near) <- geom_col_name
+    }
+  }
 
   # sites_legacy
   if (!is.null(sites_legacy)) {
@@ -514,21 +536,11 @@ irs <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = N
 
   # add function call to dsgn list
   # dsgn <- c(list(Call = match.call()), dsgn)
-  if (is.null(caty_n_over)) {
-    dsgn <- list(
-      call = match.call(), stratum = dsgn$stratum, n_base = dsgn$n_base,
-      seltype = dsgn$seltype, caty_n = dsgn$caty_n, legacy = dsgn$legacy_option,
-      mindis = dsgn$mindis, n_over = dsgn$n_over, caty_n_over = NULL, n_near = dsgn$n_near
-    )
-  } else {
-    caty_n_over <- dsgn$n_over
-    n_over <- n_over
-    dsgn <- list(
-      call = match.call(), stratum = dsgn$stratum, n_base = dsgn$n_base,
-      seltype = dsgn$seltype, caty_n = dsgn$caty_n, legacy = dsgn$legacy_option,
-      mindis = dsgn$mindis, n_over = n_over, caty_n_over = caty_n_over, n_near = dsgn$n_near
-    )
-  }
+  dsgn <- list(
+    call = match.call(), stratum = dsgn$stratum, n_base = dsgn$n_base,
+    seltype = dsgn$seltype, caty_n = dsgn$caty_n, legacy = dsgn$legacy_option,
+    mindis = dsgn$mindis, n_over = dsgn$n_over, n_near = dsgn$n_near
+  )
 
   # create output list
   sites <- list(

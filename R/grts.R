@@ -137,23 +137,8 @@
 #'   value in \code{n_over} should be \code{0} or \code{NULL} (which is equivalent to \code{0}).
 #'   If the sampling design is stratified but the number of \code{n_over} sites is the same in each
 #'   stratum, \code{n_over} can be a vector which is used for each stratum. Note that if the
-#'   sampling design has unequal selection probabilities \code{seltype = "unequal"}, the contents of \code{caty_n_over}
-#'   for \code{n_over} and \code{caty_n_over} them omitted -- though possible, this exists to maintain backwards
-#'   compatibility and new designs should explicitly use \code{caty_n_over} instead.
-#'
-#' @param caty_n_over The number of expected reverse hierarchically ordered (rho) replacement
-#'   sites used when \code{seltype = "unequal"}.
-#'   If the sampling design is unstratified, then \code{caty_n_over} is a named vector whose names
-#'   represent the levels of the unequal probability variable (specified by \code{caty_n}) and
-#'   whose values represent the expected rho replacement sites in each level. If the design is
-#'   stratified, \code{caty_n_over} is a list whose names match the names of \code{n_base} and
-#'   whose values are named vectors, where each named vector has names representing the levels of
-#'   \code{caty_n} and whose values represent the expected rho replacement sites in each
-#'   stratum. Note that the sum of each stratum's values in \code{caty_n_over} must match
-#'   the respective stratum's value in \code{n_over}. If the sampling design is stratified, the
-#'   \code{n_over} is the same for each stratum, and \code{caty_n_over} should be the same in
-#'   each stratum, \code{caty_n_over} can be a vector and will be repeated for each stratum.'
-#'
+#'   sampling design has unequal selection probabilities (\code{seltype = "unequal"}), then \code{n_over} sites
+#'   are given the same proportion of \code{caty_n} values as \code{n_base}.
 #'
 #' @param n_near The number of nearest neighbor (nn) replacement sites.
 #'   If the sampling design is unstratified, \code{n_near} is integer from \code{1}
@@ -171,7 +156,7 @@
 #'   are not desired for a particular stratum, then the corresponding value in \code{n_over}
 #'   should be \code{0} or \code{NULL} (which is equivalent to \code{0}). For
 #'   infinite sampling frames, the distance between a site and its nn
-#'   depends on \code{pt_density}.
+#'   depends on \code{pt_density}. The larger \code{pt_density}, the closer the nn neighbors.
 #'
 #' @param wgt_units The units used to compute the design weights. These
 #'   units must be standard units as defined by the \code{set_units()} function in
@@ -181,15 +166,13 @@
 #'   for infinite sampling frames. The GRTS approximation for infinite sample
 #'   frames vastly improves computational efficiency by generating many finite points and
 #'   selecting a sample from the points. \code{pt_density} represents the density
-#'   of finite points per unit to use in the approximation (the units should match
-#'   the units of the sampling frame). Increasing \code{pt_density} means increasing the number
-#'   of finite points used in the approximation. For example, a value of 2 means use two
-#'   finite points every unit, while a value of 1/2 means use one finite point
-#'   every two units. The more finite points (i.e., the more accurate) in the approximation,
-#'   the larger the computational burden. The default is a density such that the number
-#'   of finite points used in the approximation equals 10 times the sample size requested.
-#'   When used with \code{caty_n}, the unequal inclusion probabilities generated using
-#'   \code{pt_density} are approximations.
+#'   of finite points per unit to use in the approximation. More specifically,
+#'   for each stratum, the number of points used in the approximation equals
+#'   \code{pt_density * (n_base + n_over)}. A larger value of \code{pt_density}
+#'   means a closer approximation to the infinite sampling frame but less
+#'   computational efficiency. The default value of \code{pt_density} is \code{10}. Note that
+#'   when used with \code{caty_n}, the unequal inclusion probabilities generated from
+#'   this approach are also approximations.
 #'
 #' @param DesignID A character string indicating the naming structure for each
 #'   site's identifier selected in the sample, which is matched with \code{SiteBegin} and
@@ -203,6 +186,9 @@
 #'   \code{nbase + nover}.
 #'   For example, if \code{nbase} is 50 and \code{nover} is 0, then the default
 #'   site identifiers are \code{Site-01} to \code{Site-50}
+#'
+#' @param sep A character string that acts as a separator between
+#'  \code{DesignID} and \code{SiteBegin}. The default is \code{"-"}.
 #'
 #' @details \code{n_base} is the number of sites used to calculate
 #'   the design weights, which is typically the number of sites used in an analysis. When a panel sampling design is implemented, \code{n_base} is typically the
@@ -308,8 +294,8 @@ grts <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = 
                  caty_n = NULL, aux_var = NULL, legacy_var = NULL,
                  legacy_sites = NULL, legacy_stratum_var = NULL,
                  legacy_caty_var = NULL, legacy_aux_var = NULL, mindis = NULL,
-                 maxtry = 10, n_over = NULL, caty_n_over = NULL, n_near = NULL, wgt_units = NULL,
-                 pt_density = NULL, DesignID = "Site", SiteBegin = 1) {
+                 maxtry = 10, n_over = NULL, n_near = NULL, wgt_units = NULL,
+                 pt_density = NULL, DesignID = "Site", SiteBegin = 1, sep = "-") {
   if (inherits(sframe, c("tbl_df", "tbl"))) { # identify if tibble class elements are present
     class(sframe) <- setdiff(class(sframe), c("tbl_df", "tbl"))
     # remove tibble class for rownames warning
@@ -334,7 +320,7 @@ grts <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = 
   }
 
   # Drop m and z values to ensure no issues with grts functionality with sf object
-  if (!is.null(st_m_range(sframe)) & !is.null(st_z_range(sframe))) {
+  if (!is.null(st_m_range(sframe)) | !is.null(st_z_range(sframe))) {
     warn_ind <- TRUE
     warn_df$warn <- "\nThe survey frame object passed to function grts contains m or z values - they are being dropped to ensure functionality in grts."
     sframe <- st_zm(sframe)
@@ -373,7 +359,7 @@ grts <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = 
   dsgn_check(
     sframe = sframe, sf_type = sf_type, legacy_sites = legacy_sites,
     legacy_option = legacy_option, stratum = stratum, seltype = seltype,
-    n_base = n_base, caty_n = caty_n, n_over = n_over, caty_n_over = caty_n_over, n_near = n_near,
+    n_base = n_base, caty_n = caty_n, n_over = n_over, n_near = n_near,
     stratum_var = stratum_var, caty_var = caty_var, aux_var = aux_var,
     legacy_var = legacy_var, mindis = mindis, DesignID = DesignID,
     SiteBegin = SiteBegin, maxtry = maxtry
@@ -385,6 +371,14 @@ grts <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = 
   # preserve original legacy_sites names if needed
   if (!is.null(legacy_sites)) {
     legacy_sites_names <- names(legacy_sites)
+  }
+
+  # Find geometry column name
+  geom_col_name <- attr(sframe, "sf_column")
+  if (geom_col_name != "geometry") {
+    # Force to geometry for other sf consistency
+    names(sframe)[names(sframe) == geom_col_name] <- "geometry"
+    st_geometry(sframe) <- "geometry"
   }
 
   ## Create variables in sampling frame if needed.
@@ -503,23 +497,6 @@ grts <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = 
     }
   }
 
-  # caty_n_over
-  if (!is.null(caty_n_over)) {
-    if (is.list(caty_n_over)) {
-      tmp <- lapply(stratum, function(x, caty_n_over) {
-        caty_n_over[[x]]
-      }, caty_n_over)
-      names(tmp) <- stratum
-      dsgn$n_over <- tmp
-    } else {
-      tmp <- lapply(stratum, function(x, caty_n_over) {
-        caty_n_over
-      }, caty_n_over)
-      names(tmp) <- stratum
-      dsgn$n_over <- tmp
-    }
-  }
-
   # n_near
   if (!is.null(n_near)) {
     if (is.list(n_near)) {
@@ -592,7 +569,7 @@ grts <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = 
 
   # Create a siteID for all sites
   ntot <- NROW(sites_legacy) + NROW(sites_base) + NROW(sites_over) + NROW(sites_near)
-  siteID <- gsub(" ", "0", paste0(DesignID, "-", format(SiteBegin - 1 + 1:ntot, sep = "")))
+  siteID <- gsub(" ", "0", paste0(DesignID, sep, format(SiteBegin - 1 + 1:ntot, sep = "")))
   nlast <- 0
 
   # Create siteID for legacy sites if present using DesignID and SiteBegin
@@ -672,6 +649,36 @@ grts <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = 
   )
 
   dsgn_names_extra <- c(dsgn_names, "xcoord", "ycoord", "idpts")
+
+  if (geom_col_name != "geometry") {
+    # sframe prefix if necessary
+    if (geom_col_name %in% dsgn_names_extra) {
+      new_geom_col_name <- paste("sframe", geom_col_name, sep = "_")
+      sframe_names[sframe_names == geom_col_name] <- new_geom_col_name
+      geom_col_name <- new_geom_col_name
+    }
+
+    # restore original column names
+    if (!is.null(sites_legacy)) {
+      names(sites_legacy)[names(sites_legacy) == "geometry"] <- geom_col_name
+      st_geometry(sites_legacy) <- geom_col_name
+    }
+
+    if (!is.null(sites_base)) {
+      names(sites_base)[names(sites_base) == "geometry"] <- geom_col_name
+      st_geometry(sites_base) <- geom_col_name
+    }
+
+    if (!is.null(sites_over)) {
+      names(sites_over)[names(sites_over) == "geometry"] <- geom_col_name
+      st_geometry(sites_over) <- geom_col_name
+    }
+
+    if (!is.null(sites_near)) {
+      names(sites_near)[names(sites_near) == "geometry"] <- geom_col_name
+      st_geometry(sites_near) <- geom_col_name
+    }
+  }
 
   # sites_legacy
   if (!is.null(sites_legacy)) {
@@ -788,21 +795,11 @@ grts <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = 
 
   # add function call to dsgn list
   # dsgn <- c(list(Call = match.call()), dsgn)
-  if (is.null(caty_n_over)) {
-    dsgn <- list(
-      call = match.call(), stratum = dsgn$stratum, n_base = dsgn$n_base,
-      seltype = dsgn$seltype, caty_n = dsgn$caty_n, legacy = dsgn$legacy_option,
-      mindis = dsgn$mindis, n_over = dsgn$n_over, caty_n_over = NULL, n_near = dsgn$n_near
-    )
-  } else {
-    caty_n_over <- dsgn$n_over
-    n_over <- n_over
-    dsgn <- list(
-      call = match.call(), stratum = dsgn$stratum, n_base = dsgn$n_base,
-      seltype = dsgn$seltype, caty_n = dsgn$caty_n, legacy = dsgn$legacy_option,
-      mindis = dsgn$mindis, n_over = n_over, caty_n_over = caty_n_over, n_near = dsgn$n_near
-    )
-  }
+  dsgn <- list(
+    call = match.call(), stratum = dsgn$stratum, n_base = dsgn$n_base,
+    seltype = dsgn$seltype, caty_n = dsgn$caty_n, legacy = dsgn$legacy_option,
+    mindis = dsgn$mindis, n_over = dsgn$n_over, n_near = dsgn$n_near
+  )
 
 
   # create output list

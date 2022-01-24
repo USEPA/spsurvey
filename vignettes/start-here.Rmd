@@ -96,7 +96,7 @@ Spatial data and `sf` objects rely on coordinate reference systems. A coordinate
 
 You can move between coordinate systems using `sf::st_transform()`. For example, we can transform `NE_Lakes_geo` (which uses a geographic CRS) to `NE_Lakes` (which uses a projected CRS) by running
 ```{r}
-NE_Lakes <- st_transform(NE_Lakes, crs = 5070)
+NE_Lakes <- st_transform(NE_Lakes_geo, crs = 5070)
 NE_Lakes
 ```
 
