@@ -121,6 +121,7 @@ By default the plot function produces a standard power curve at end
   plotted on same plot.
 }
 \examples{
+\dontrun{
 # Construct a rotating panel design with sample size of 60
 R60N <- revisit_dsgn(20, panels = list(R60N = list(
   n = 60, pnl_dsgn = c(1, NA),
@@ -150,6 +151,7 @@ ppd_plot(Power_tst,
   trend_type = "mean", trend = c(1, 2), dsgns = c("R60N", "F60"),
   indicator = "Variable_Name"
 )
+}
 }
 \author{
 Tony Olsen \email{Olsen.Tony@epa.gov}

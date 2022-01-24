@@ -109,6 +109,7 @@
 #' @keywords survey
 #'
 #' @examples
+#' \dontrun{
 #' # Construct a rotating panel design with sample size of 60
 #' R60N <- revisit_dsgn(20, panels = list(R60N = list(
 #'   n = 60, pnl_dsgn = c(1, NA),
@@ -138,6 +139,7 @@
 #'   trend_type = "mean", trend = c(1, 2), dsgns = c("R60N", "F60"),
 #'   indicator = "Variable_Name"
 #' )
+#' }
 #' @export
 ###############################################################################
 ppd_plot <- function(object, plot_type = "standard",
