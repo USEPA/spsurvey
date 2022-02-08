@@ -325,7 +325,7 @@ relrisk_analysis <- function(dframe, vars_response, vars_stressor, response_leve
           msg <- paste0("\nCategory names for the following response variables do not match category names \nin the response_levels argument:\n", temp_str)
           error_vec <- c(error_vec, msg)
         } else {
-          if (!all(names(response_levels)) %in% vars_response) {
+          if (!all(names(response_levels) %in% vars_response)) {
             error_ind <- TRUE
             msg <- "Names for the response_levels list do not match the values in the vars_response \nargument."
             error_vec <- c(error_vec, msg)

@@ -1,3 +1,9 @@
+# spsurvey 5.2.1 (2022-xx-xx)
+
+## Bug fixed
+
+* Fixed a bug in `attrisk_analysis()`, `diffrisk_analysis()`, and `relrisk_analysis()` that sometimes caused names in `response_levels` to not be found.
+
 # spsurvey 5.2.0 (2021-01-23)
 
 ## Minor updates
