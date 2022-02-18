@@ -106,10 +106,16 @@ dsgn_check <- function(sframe, sf_type, legacy_sites, legacy_option, stratum, se
   stop_ind <- FALSE
   stop_df <- NULL
 
-  # check that coordinates are NA or geographic
-  if (projcrs_check & (is.na(st_crs(sframe)) | st_is_longlat(sframe))) {
+  # check that coordinates are NA or geographic # | st_is_longlat(sframe))
+  if (projcrs_check & is.na(st_crs(sframe))) {
     stop_ind <- TRUE
     stop_mess <- "The coordinate reference system (crs) for sframe is NA. The coordinate reference system for sframe should instead use projected coordinates. For more information on geographic and projected coordinates, see spsurvey's \"Start Here\" vignette by running vignette(\"start-here\", \"spsurvey\"). To override the check for projected coordinates, set projcrs_check = FALSE."
+    stop_df <- rbind(stop_df, data.frame(func = I("sframe"), I(stop_mess)))
+  }
+  
+  if (projcrs_check & st_is_longlat(sframe)) {
+    stop_ind <- TRUE
+    stop_mess <- "The coordinate reference system (crs) for sframe is geographic. The coordinate reference system for sframe should instead use projected coordinates. For more information on geographic and projected coordinates, see spsurvey's \"Start Here\" vignette by running vignette(\"start-here\", \"spsurvey\"). To override the check for projected coordinates, set projcrs_check = FALSE."
     stop_df <- rbind(stop_df, data.frame(func = I("sframe"), I(stop_mess)))
   }
   
