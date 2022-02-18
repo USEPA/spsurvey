@@ -39,6 +39,18 @@ irs <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = N
     class(sframe) <- setdiff(class(sframe), c("tbl_df", "tbl"))
     # remove tibble class for rownames warning
   }
+  
+  if (!is.null(legacy_sites) & inherits(legacy_sites, c("tbl_df", "tbl"))) { # identify if tibble class elements are present
+    class(legacy_sites) <- setdiff(class(legacy_sites), c("tbl_df", "tbl"))
+    # remove tibble class for rownames warning
+  }
+  
+  if (!is.null(legacy_sites)) {
+    sframe_geom_name <- attr(sframe, "sf_column")
+    legacy_geom_name <- attr(legacy_sites, "sf_column")
+    names(legacy_sites)[names(legacy_sites) == legacy_geom_name] <- sframe_geom_name
+    st_geometry(legacy_sites) <- sframe_geom_name
+  }
 
   # Create warning indicator and data frame to collect all potential issues during
   # sample selection
@@ -59,8 +71,8 @@ irs <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = N
 
   # Drop m and z values to ensure no issues with grts functionality with sf object
   if (!is.null(st_m_range(sframe)) | !is.null(st_z_range(sframe))) {
-    warn_ind <- TRUE
-    warn_df$warn <- "\nThe survey frame object passed to function grts contains m or z values - they are being dropped to ensure functionality in grts."
+    # warn_ind <- TRUE
+    # warn_df$warn <- "\nThe survey frame object passed to function grts contains m or z values - they are being dropped to ensure functionality in grts."
     sframe <- st_zm(sframe)
   }
 
@@ -98,6 +110,8 @@ irs <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = N
     legacy_option = legacy_option, stratum = stratum, seltype = seltype,
     n_base = n_base, caty_n = caty_n, n_over = n_over, n_near = n_near,
     stratum_var = stratum_var, caty_var = caty_var, aux_var = aux_var,
+    legacy_stratum_var = legacy_stratum_var, legacy_caty_var = legacy_caty_var,
+    legacy_aux_var = legacy_aux_var,
     legacy_var = legacy_var, mindis = mindis, DesignID = DesignID,
     SiteBegin = SiteBegin, maxtry = maxtry
   )

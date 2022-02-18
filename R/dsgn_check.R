@@ -92,7 +92,9 @@
 #' @noRd
 ###############################################################################
 dsgn_check <- function(sframe, sf_type, legacy_sites, legacy_option, stratum, seltype, n_base, caty_n,
-                       n_over, n_near, stratum_var, caty_var, aux_var, legacy_var, mindis,
+                       n_over, n_near, stratum_var, caty_var, aux_var,
+                       legacy_stratum_var, legacy_caty_var, legacy_aux_var,
+                       legacy_var, mindis,
                        DesignID, SiteBegin, maxtry) {
 
   # Create a data frame for stop messages
@@ -161,10 +163,10 @@ dsgn_check <- function(sframe, sf_type, legacy_sites, legacy_option, stratum, se
   }
 
   ### Check legacy_sites sf object if present
-  if (sf_type %in% c("sf_linear", "sf_area") & !is.null(legacy_sites)) {
+  if (sf_type %in% c("sf_point", "sf_linear", "sf_area") & !is.null(legacy_sites)) {
     # check that legacy_sites has required variables for stratum, caty, aux and legacy
     # If stratum_var is provided, does the attribute exist
-    if (!is.null(stratum_var)) {
+    if (!is.null(stratum_var) & is.null(legacy_stratum_var)) {
       if (match(stratum_var, names(legacy_sites), nomatch = 0) == 0) {
         stop_ind <- TRUE
         stop_mess <- "The value provided for stratum variable does not exist as a variable in legacy_sites."
@@ -172,7 +174,7 @@ dsgn_check <- function(sframe, sf_type, legacy_sites, legacy_option, stratum, se
       }
     }
     # If caty_var is provided, does the attribute exist
-    if (!is.null(caty_var)) {
+    if (!is.null(caty_var) & is.null(legacy_caty_var)) {
       if (match(caty_var, names(legacy_sites), nomatch = 0) == 0) {
         stop_ind <- TRUE
         stop_mess <- "The value provided for caty variable does not exist as a variable in legacy_sites."
@@ -180,7 +182,7 @@ dsgn_check <- function(sframe, sf_type, legacy_sites, legacy_option, stratum, se
       }
     }
     # If aux_var is provided, does the attribute exist
-    if (!is.null(aux_var)) {
+    if (!is.null(aux_var) & is.null(legacy_aux_var)) {
       if (match(aux_var, names(legacy_sites), nomatch = 0) == 0) {
         stop_ind <- TRUE
         stop_mess <- "The value provided for aux variable does not exist as a variable in legacy_sites."

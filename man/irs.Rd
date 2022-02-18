@@ -30,7 +30,9 @@ irs(
 }
 \arguments{
 \item{sframe}{The sampling frame as an \code{sf} object. The coordinate
-system for \code{sframe} must projected (not geographic).}
+system for \code{sframe} must projected (not geographic). If m or z values
+are in \code{sframe}'s geometry, they are silently dropped (i.e., only x-coordinates
+and y-coordinates are preserved)}
 
 \item{n_base}{The base sample size required. If the sampling design is unstratified,
 this is a single numeric value. If the sampling design is stratified, this is a named

@@ -16,7 +16,9 @@
 #'
 #'
 #' @param sframe The sampling frame as an \code{sf} object. The coordinate
-#'   system for \code{sframe} must projected (not geographic).
+#'   system for \code{sframe} must projected (not geographic). If m or z values
+#'   are in \code{sframe}'s geometry, they are silently dropped (i.e., only x-coordinates
+#'   and y-coordinates are preserved).
 #'
 #' @param n_base The base sample size required. If the sampling design is unstratified,
 #'   this is a single numeric value. If the sampling design is stratified, this is a named
@@ -74,7 +76,9 @@
 #' @param legacy_sites An sf object with a \code{POINT} or \code{MULTIPOINT}
 #'   geometry representing the legacy sites. spsurvey assumes that
 #'   the legacy sites were selected from a previous sampling design that
-#'   incorporated randomness into site selection.
+#'   incorporated randomness into site selection. If m or z values
+#'   are in \code{legacy_sites}' geometry, they are silently dropped (i.e., only x-coordinates
+#'   and y-coordinates are preserved).
 #'
 #' @param legacy_stratum_var A character string containing the name of the column from
 #'   \code{legacy_sites} that identifies stratum membership for each element of \code{legacy_sites}.
@@ -300,7 +304,19 @@ grts <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = 
     class(sframe) <- setdiff(class(sframe), c("tbl_df", "tbl"))
     # remove tibble class for rownames warning
   }
+  
+  if (!is.null(legacy_sites) & inherits(legacy_sites, c("tbl_df", "tbl"))) { # identify if tibble class elements are present
+    class(legacy_sites) <- setdiff(class(legacy_sites), c("tbl_df", "tbl"))
+    # remove tibble class for rownames warning
+  }
 
+  if (!is.null(legacy_sites)) {
+    sframe_geom_name <- attr(sframe, "sf_column")
+    legacy_geom_name <- attr(legacy_sites, "sf_column")
+    names(legacy_sites)[names(legacy_sites) == legacy_geom_name] <- sframe_geom_name
+    st_geometry(legacy_sites) <- sframe_geom_name
+  }
+  
   # Create warning indicator and data frame to collect all potential issues during
   # sample selection
   warn_ind <- FALSE
@@ -321,8 +337,8 @@ grts <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = 
 
   # Drop m and z values to ensure no issues with grts functionality with sf object
   if (!is.null(st_m_range(sframe)) | !is.null(st_z_range(sframe))) {
-    warn_ind <- TRUE
-    warn_df$warn <- "\nThe survey frame object passed to function grts contains m or z values - they are being dropped to ensure functionality in grts."
+    # warn_ind <- TRUE
+    # warn_df$warn <- "\nThe survey frame object passed to function grts contains m or z values - they are being dropped to ensure functionality in grts."
     sframe <- st_zm(sframe)
   }
 
@@ -361,6 +377,8 @@ grts <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = 
     legacy_option = legacy_option, stratum = stratum, seltype = seltype,
     n_base = n_base, caty_n = caty_n, n_over = n_over, n_near = n_near,
     stratum_var = stratum_var, caty_var = caty_var, aux_var = aux_var,
+    legacy_stratum_var = legacy_stratum_var, legacy_caty_var = legacy_caty_var,
+    legacy_aux_var = legacy_aux_var,
     legacy_var = legacy_var, mindis = mindis, DesignID = DesignID,
     SiteBegin = SiteBegin, maxtry = maxtry
   )
@@ -556,7 +574,8 @@ grts <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = 
   sites_near <- NULL
   warn_ind <- FALSE
   warn_df <- NULL
-  for (i in 1:length(rslts)) {
+
+    for (i in 1:length(rslts)) {
     sites_legacy <- rbind(sites_legacy, rslts[[i]]$sites_legacy)
     sites_base <- rbind(sites_base, rslts[[i]]$sites_base)
     sites_over <- rbind(sites_over, rslts[[i]]$sites_over)
