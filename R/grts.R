@@ -582,17 +582,22 @@ grts <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = 
   sites_near <- NULL
   warn_ind <- FALSE
   warn_df <- NULL
-
-    for (i in 1:length(rslts)) {
-    sites_legacy <- rbind(sites_legacy, rslts[[i]]$sites_legacy)
-    sites_base <- rbind(sites_base, rslts[[i]]$sites_base)
-    sites_over <- rbind(sites_over, rslts[[i]]$sites_over)
-    sites_near <- rbind(sites_near, rslts[[i]]$sites_near)
+  for (i in 1:length(rslts)) {
+  sites_legacy <- rbind(sites_legacy, rslts[[i]]$sites_legacy)
+  sites_base <- rbind(sites_base, rslts[[i]]$sites_base)
+  sites_over <- rbind(sites_over, rslts[[i]]$sites_over)
+  sites_near <- rbind(sites_near, rslts[[i]]$sites_near)
     if (rslts[[i]]$warn_ind) {
       warn_ind <- TRUE
       warn_df <- rbind(warn_df, rslts[[i]]$warn_df)
     }
   }
+  
+  # spelling change to avoid clash with analysis warnings
+  if (!is.null(warn_df) && "warning" %in% names(warn_df)) {
+    names(warn_df)[which(names(warn_df) == "warning")] <- "Warning"
+  }
+  
 
   # Create a siteID for all sites
   ntot <- NROW(sites_legacy) + NROW(sites_base) + NROW(sites_over) + NROW(sites_near)

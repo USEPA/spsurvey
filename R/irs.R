@@ -319,6 +319,11 @@ irs <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = N
       warn_df <- rbind(warn_df, rslts[[i]]$warn_df)
     }
   }
+  
+  # spelling change to avoid clash with analysis warnings
+  if (!is.null(warn_df) && "warning" %in% names(warn_df)) {
+    names(warn_df)[which(names(warn_df) == "warning")] <- "Warning"
+  }
 
   # Create a siteID for all sites
   ntot <- NROW(sites_legacy) + NROW(sites_base) + NROW(sites_over) + NROW(sites_near)

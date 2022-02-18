@@ -36,9 +36,10 @@ warnprnt <- function(warn_df = get("warn_df", envir = .GlobalEnv),
   # }
 
   for (i in m) {
-    if ("warn" %in% names(warn_df)) {
+    if ("Warning" %in% names(warn_df)) {
       cat(paste0("Warning Message ", i, ":\n"))
-      cat(paste("Stratum:", warn_df$stratum[i], warn_df$warn[i], "\n"))
+      cat(paste("Stratum:", warn_df$stratum[i], "\n"))
+      cat(paste("Warning:", warn_df$Warning[i], "\n"))
     } else {
       cat(paste0("Warning Message ", i, ":\n"))
       # cat(paste("Function:", warn_df$func[i], "\n")) # removed function name output
