@@ -266,7 +266,7 @@ irs_stratum <- function(stratum, dsgn, sframe, sf_type, wgt_units = NULL, pt_den
     if (!is.null(dsgn[["n_near"]][[stratum]])) {
       keep <- sites[["sites"]][sites[["sites"]]$legacy %in% c(TRUE, FALSE), "idpts", drop = TRUE]
       sites_near <- replace_near(dsgn[["n_near"]][[stratum]],
-        sites = sites[["sites"]][sites[["sites"]]$legacy == FALSE, ],
+        sites = sites[["sites"]][sites[["sites"]]$legacy %in% c(TRUE, FALSE), ],
         sframe = subset(sftmp, !(sftmp$idpts %in% keep))
       )
 

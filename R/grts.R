@@ -166,7 +166,7 @@
 #'   units must be standard units as defined by the \code{set_units()} function in
 #'   the units package. The default units match the units of the sf object.
 #'
-#' @param pt_density A numeric value controlling the density of the GRTS approximation
+#' @param pt_density A positive integer controlling the density of the GRTS approximation
 #'   for infinite sampling frames. The GRTS approximation for infinite sample
 #'   frames vastly improves computational efficiency by generating many finite points and
 #'   selecting a sample from the points. \code{pt_density} represents the density
@@ -193,6 +193,10 @@
 #'
 #' @param sep A character string that acts as a separator between
 #'  \code{DesignID} and \code{SiteBegin}. The default is \code{"-"}.
+#'  
+#' @param projcrs_check A check for whether the coordinates are projected. If \code{TRUE},
+#'    an error is returned if coordinates are not projected  (i.e., they are geographic or NA). If \code{FALSE}, the 
+#'    check is not performed, which means that the crs in \code{sframe} (and \code{legacy_sites} if provided) can be projected, geographic, or NA.
 #'
 #' @details \code{n_base} is the number of sites used to calculate
 #'   the design weights, which is typically the number of sites used in an analysis. When a panel sampling design is implemented, \code{n_base} is typically the
@@ -253,9 +257,13 @@
 #'       \code{Near_}, where the word following \code{_} indicates the ordering of sites closest to
 #'       the originally sampled site.
 #'     \item \code{lon_WGS84} Longitude coordinates using the WGS84 coordinate
-#'       system (EPSG:4326).
+#'       system (EPSG:4326). Only given if coordinates are projected.
 #'     \item \code{lat_WGS84} Latitude coordinates using the WGS84 coordinate
-#'       system (EPSG:4326).
+#'       system (EPSG:4326). Only given if coordinates are projected.
+#'     \item \code{X} Longitude coordinates using the provided coordinate
+#'       system. Only given if coordinates are not projected (i.e., they are geographic or NA).
+#'     \item \code{Y} Latitude coordinates using the provided coordinate
+#'       system. Only given if coordinates are not projected (i.e., they are geographic or NA).
 #'     \item \code{stratum} A stratum indicator. \code{stratum} is \code{None}
 #'       if the sampling design was unstratified. If the sampling design was \code{stratified},
 #'       \code{stratum} indicates the stratum.
@@ -299,7 +307,7 @@ grts <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = 
                  legacy_sites = NULL, legacy_stratum_var = NULL,
                  legacy_caty_var = NULL, legacy_aux_var = NULL, mindis = NULL,
                  maxtry = 10, n_over = NULL, n_near = NULL, wgt_units = NULL,
-                 pt_density = NULL, DesignID = "Site", SiteBegin = 1, sep = "-") {
+                 pt_density = NULL, DesignID = "Site", SiteBegin = 1, sep = "-", projcrs_check = TRUE) {
   if (inherits(sframe, c("tbl_df", "tbl"))) { # identify if tibble class elements are present
     class(sframe) <- setdiff(class(sframe), c("tbl_df", "tbl"))
     # remove tibble class for rownames warning
@@ -380,7 +388,7 @@ grts <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = 
     legacy_stratum_var = legacy_stratum_var, legacy_caty_var = legacy_caty_var,
     legacy_aux_var = legacy_aux_var,
     legacy_var = legacy_var, mindis = mindis, DesignID = DesignID,
-    SiteBegin = SiteBegin, maxtry = maxtry
+    SiteBegin = SiteBegin, maxtry = maxtry, projcrs_check = projcrs_check
   )
 
   # preserve original sframe names
@@ -623,6 +631,13 @@ grts <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = 
 
   # if n_near sample sites, assign base ids to the replacement sites. then add siteIDs
   if (!is.null(n_near)) {
+    
+    tst <- match(paste(sites_near$stratum, sites_near$replsite, sep = "_"),
+                 paste(sites_legacy$stratum, sites_legacy$idpts, sep = "_"),
+                 nomatch = 0
+    )
+    sites_near$replsite[tst > 0] <- sites_legacy$siteID[tst]
+    
     tst <- match(paste(sites_near$stratum, sites_near$replsite, sep = "_"),
       paste(sites_base$stratum, sites_base$idpts, sep = "_"),
       nomatch = 0
@@ -641,31 +656,63 @@ grts <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = 
     sites_near$siteID <- siteID[(nlast + 1):(nlast + nrow(sites_near))]
   }
 
-  # Add lat/lon in WGS84
-  if (!is.null(sites_legacy)) {
-    sites_legacy$lon_WGS84 <- st_coordinates(st_transform(sites_legacy, crs = 4326))[, "X"]
-    sites_legacy$lat_WGS84 <- st_coordinates(st_transform(sites_legacy, crs = 4326))[, "Y"]
+  # Add lat/lon in WGS84 or X/Y coordinates
+  if ((!is.null(sites_base) && is.na(st_crs(sites_base))) | (!is.null(sites_base) && st_is_longlat(st_crs(sites_base))) | (!is.null(sites_legacy) && is.na(st_crs(sites_legacy))) | (!is.null(sites_legacy) && st_is_longlat(st_crs(sites_legacy)))) {
+    if (!is.null(sites_legacy)) {
+      sites_legacy$X <- st_coordinates(sites_legacy)[, "X"]
+      sites_legacy$Y <- st_coordinates(sites_legacy)[, "Y"]
+    }
+    
+    if (!is.null(sites_base)) {
+      sites_base$X <- st_coordinates(sites_base)[, "X"]
+      sites_base$Y <- st_coordinates(sites_base)[, "Y"]
+    }
+    
+    if (!is.null(sites_over)) {
+      sites_over$X <- st_coordinates(sites_over)[, "X"]
+      sites_over$Y <- st_coordinates(sites_over)[, "Y"]
+    }
+    
+    if (!is.null(sites_near)) {
+      sites_near$X <- st_coordinates(sites_near)[, "X"]
+      sites_near$Y <- st_coordinates(sites_near)[, "Y"]
+    }
+    
+    # reorder sf object variables by first specifying design names excluding unique
+    # feature ID id and idpts as they are internal
+    dsgn_names <- c(
+      "siteID", "siteuse", "replsite", "X", "Y",
+      "stratum", "wgt", "ip", "caty", "aux"
+    )
+    
+  } else {
+    if (!is.null(sites_legacy)) {
+      sites_legacy$lon_WGS84 <- st_coordinates(st_transform(sites_legacy, crs = 4326))[, "X"]
+      sites_legacy$lat_WGS84 <- st_coordinates(st_transform(sites_legacy, crs = 4326))[, "Y"] 
+    }
+    
+    if (!is.null(sites_base)) {
+      sites_base$lon_WGS84 <- st_coordinates(st_transform(sites_base, crs = 4326))[, "X"]
+      sites_base$lat_WGS84 <- st_coordinates(st_transform(sites_base, crs = 4326))[, "Y"] 
+    }
+    
+    if (!is.null(sites_over)) {
+      sites_over$lon_WGS84 <- st_coordinates(st_transform(sites_over, crs = 4326))[, "X"]
+      sites_over$lat_WGS84 <- st_coordinates(st_transform(sites_over, crs = 4326))[, "Y"] 
+    }
+    
+    if (!is.null(sites_near)) {
+      sites_near$lon_WGS84 <- st_coordinates(st_transform(sites_near, crs = 4326))[, "X"]
+      sites_near$lat_WGS84 <- st_coordinates(st_transform(sites_near, crs = 4326))[, "Y"] 
+    }
+    
+    # reorder sf object variables by first specifying design names excluding unique
+    # feature ID id and idpts as they are internal
+    dsgn_names <- c(
+      "siteID", "siteuse", "replsite", "lon_WGS84", "lat_WGS84",
+      "stratum", "wgt", "ip", "caty", "aux"
+    )
   }
-  if (!is.null(sites_base)) {
-    sites_base$lon_WGS84 <- st_coordinates(st_transform(sites_base, crs = 4326))[, "X"]
-    sites_base$lat_WGS84 <- st_coordinates(st_transform(sites_base, crs = 4326))[, "Y"]
-  }
-  if (!is.null(sites_over)) {
-    sites_over$lon_WGS84 <- st_coordinates(st_transform(sites_over, crs = 4326))[, "X"]
-    sites_over$lat_WGS84 <- st_coordinates(st_transform(sites_over, crs = 4326))[, "Y"]
-  }
-  if (!is.null(sites_near)) {
-    sites_near$lon_WGS84 <- st_coordinates(st_transform(sites_near, crs = 4326))[, "X"]
-    sites_near$lat_WGS84 <- st_coordinates(st_transform(sites_near, crs = 4326))[, "Y"]
-  }
-
-
-  # reorder sf object variables by first specifying design names excluding unique
-  # feature ID id and idpts as they are internal
-  dsgn_names <- c(
-    "siteID", "siteuse", "replsite", "lon_WGS84", "lat_WGS84",
-    "stratum", "wgt", "ip", "caty", "aux"
-  )
 
   dsgn_names_extra <- c(dsgn_names, "xcoord", "ycoord", "idpts")
 

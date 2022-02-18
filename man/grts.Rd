@@ -25,14 +25,15 @@ grts(
   pt_density = NULL,
   DesignID = "Site",
   SiteBegin = 1,
-  sep = "-"
+  sep = "-",
+  projcrs_check = TRUE
 )
 }
 \arguments{
 \item{sframe}{The sampling frame as an \code{sf} object. The coordinate
 system for \code{sframe} must projected (not geographic). If m or z values
 are in \code{sframe}'s geometry, they are silently dropped (i.e., only x-coordinates
-and y-coordinates are preserved)}
+and y-coordinates are preserved).}
 
 \item{n_base}{The base sample size required. If the sampling design is unstratified,
 this is a single numeric value. If the sampling design is stratified, this is a named
@@ -104,7 +105,9 @@ incorporated randomness into site selection.}
 \item{legacy_sites}{An sf object with a \code{POINT} or \code{MULTIPOINT}
 geometry representing the legacy sites. spsurvey assumes that
 the legacy sites were selected from a previous sampling design that
-incorporated randomness into site selection.}
+incorporated randomness into site selection. If m or z values
+are in \code{legacy_sites}' geometry, they are silently dropped (i.e., only x-coordinates
+and y-coordinates are preserved).}
 
 \item{legacy_stratum_var}{A character string containing the name of the column from
 \code{legacy_sites} that identifies stratum membership for each element of \code{legacy_sites}.
@@ -178,7 +181,7 @@ depends on \code{pt_density}. The larger \code{pt_density}, the closer the nn ne
 units must be standard units as defined by the \code{set_units()} function in
 the units package. The default units match the units of the sf object.}
 
-\item{pt_density}{A numeric value controlling the density of the GRTS approximation
+\item{pt_density}{A positive integer controlling the density of the GRTS approximation
 for infinite sampling frames. The GRTS approximation for infinite sample
 frames vastly improves computational efficiency by generating many finite points and
 selecting a sample from the points. \code{pt_density} represents the density
@@ -205,6 +208,10 @@ site identifiers are \code{Site-01} to \code{Site-50}}
 
 \item{sep}{A character string that acts as a separator between
 \code{DesignID} and \code{SiteBegin}. The default is \code{"-"}.}
+
+\item{projcrs_check}{A check for whether the coordinates are projected. If \code{TRUE},
+an error is returned if coordinates are not projected  (i.e., they are geographic or NA). If \code{FALSE}, the 
+check is not performed, which means that the crs in \code{sframe} (and \code{legacy_sites} if provided) can be projected, geographic, or NA.}
 }
 \value{
 The sampling design sites and additional information about the sampling design. More specifically, it is, a list with five elements:
@@ -259,9 +266,13 @@ The sampling design sites and additional information about the sampling design. 
       \code{Near_}, where the word following \code{_} indicates the ordering of sites closest to
       the originally sampled site.
     \item \code{lon_WGS84} Longitude coordinates using the WGS84 coordinate
-      system (EPSG:4326).
+      system (EPSG:4326). Only given if coordinates are projected.
     \item \code{lat_WGS84} Latitude coordinates using the WGS84 coordinate
-      system (EPSG:4326).
+      system (EPSG:4326). Only given if coordinates are projected.
+    \item \code{X} Longitude coordinates using the provided coordinate
+      system. Only given if coordinates are not projected (i.e., they are geographic or NA).
+    \item \code{Y} Latitude coordinates using the provided coordinate
+      system. Only given if coordinates are not projected (i.e., they are geographic or NA).
     \item \code{stratum} A stratum indicator. \code{stratum} is \code{None}
       if the sampling design was unstratified. If the sampling design was \code{stratified},
       \code{stratum} indicates the stratum.
