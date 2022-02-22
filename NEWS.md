@@ -17,6 +17,8 @@
 * Added an error in `grts()` and `irs()` when `legacy_stratum_var` (and `legacy_caty_var` and `legacy_aux_var`) are `NULL` but the name of `stratum_var` in `sframe` is not contained in `legacy_sites`.
 * Added an error in `grts()` and `irs()` that checks whether `sframe` and `legacy_sites` have the same crs.
 * Updated documentation for `pt_density` in `grts()` and `irs()` to indicate that `pt_density` must be a positive integer.
+* Fixed a bug in `sp_summary()` that returned an error when `formula = ~ .` and the geometry column was not named `"geometry"`. Now, `sp_summary()` works with `formula = ~ .` regardless of the name of the geometry column.
+* Fixed a bug in `grts()` and `irs()` that affected minimum distance performance when legacy sites were used.
 
 # spsurvey 5.2.0 (2021-01-23)
 

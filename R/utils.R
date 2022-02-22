@@ -8,7 +8,7 @@ make_formlist <- function(formula, onlyshow, object) {
   # find all right hand side names
   varlabels <- attr(varterms, "term.labels")
   # remove geometry if present
-  varlabels <- varlabels[varlabels != "geometry"]
+  varlabels <- varlabels[varlabels != attr(object, "sf_column")]
   # find if intercept exists in the formula
   if (attr(varterms, "intercept") == 1) {
     intercept <- TRUE
@@ -151,7 +151,7 @@ match_sf_defaults <- function(varsf, list_args) {
     rule = c(NA, NA, NA, NA, "evenodd", "evenodd"),
     stringsAsFactors = FALSE
   )
-  sf_defaults <- merge(as.character(st_geometry_type(varsf)), sf_default_df, sort = FALSE)
+  sf_defaults <- merge(data.frame(geometry = as.character(st_geometry_type(varsf))), sf_default_df, sort = FALSE)
   # sf_defaults <- lapply(st_geometry_type(varsf), get_sf_defaults)
   # sf_defaults <- do.call("rbind", sf_defaults)
 
