@@ -121,8 +121,14 @@
 #'   are desired among strata, then \code{mindis}
 #'   is a list whose names match the names of \code{n_base} and whose and values
 #'   are the minimum distance for the corresponding stratum.  If a minimum distance is not desired
-#'   for a particular stratum, then the corresponding value in \code{mindis} should be \code{0} or \code{NULL} (which is equivalent to \code{0}).
-#'   The units of \code{mindis} must represent the units in \code{sframe}.
+#'   for a particular stratum, then the corresponding value in \code{mindis} should be \code{0} or
+#'    \code{NULL} (which is equivalent to \code{0}).
+#'   The units of \code{mindis} must represent the units in \code{sframe}. A warning is returned if the 
+#'   minimum distance could not be reached after \code{maxtry} attempts. If legacy sites are used, the minimum distance
+#'   requirement (and subsequent warning if \code{maxtry} attempts are reached) is applied to all base sites
+#'   that are not legacy sites (i.e., the minimum distance is enforced for base sites that are not legacy sites
+#'   by comparing distances against all base sites (legacy and non-legacy); the minimum distance is enforced for base
+#'   sites that are not legacy sites).
 #'
 #' @param maxtry The number of maximum attempts to apply the minimum distance algorithm to obtain
 #'   the desired minimum distance between sites. Each iteration takes roughly as long as the
