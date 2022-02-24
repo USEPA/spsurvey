@@ -1,4 +1,4 @@
-This is a minor update adding some minor features and addressing a few bugs from version 5.1.0.
+This is a minor update adding two minor features and addressing a few bugs from version 5.2.0.
 
 -------
 
@@ -8,40 +8,42 @@ This is a resubmission.
 
 ## Test environments
 
-* Tests run on January 23, 2022 (rhub version 1.1.1)
+* Tests run on February 24, 2022 (rhub version 1.1.1)
 
 * Build reports can be viewed through their hyperlinked Build ID URLs
 
 * `rhub::check_for_cran()`
     * Platform: Windows Server 2022, R-devel, 64 bit
         * Status: success (NOTE related to manual PDF size -- see next section)
-        * Build ID: https://builder.r-hub.io/status/spsurvey_5.2.0.tar.gz-c6b1bfcfe0c840baabf92da7ad8dd917
+        * Build ID: https://builder.r-hub.io/status/spsurvey_5.3.0.tar.gz-f750211f35ad44d7b1e61302a2a5b39c
     * Platform: Fedora Linux, R-devel, clang, gfortran
         * Status: success (NOTE related to manual PDF size -- see next section)
-        * Build ID: https://builder.r-hub.io/status/spsurvey_5.2.0.tar.gz-c55be11f9571488e8077ece3525d69c4
+        * Build ID: https://builder.r-hub.io/status/spsurvey_5.3.0.tar.gz-7199ad2bdc6c4dc6b05cb4596cbf3004
     * Platform: Ubuntu Linux 20.04.1 LTS, R-release, GCC
         * Status: SUCCESS (NOTE related to manual PDF size see next section)
-        * Build ID: https://builder.r-hub.io/status/spsurvey_5.2.0.tar.gz-6f693f8d04f74cde8bbf7df801ed86a6
+        * Build ID: https://builder.r-hub.io/status/spsurvey_5.3.0.tar.gz-7c098ab242434600aead79e1868d9025
         
 * `rhub::check_on_windows()`
     * Platform: Windows Server 2008 R2 SP1, R-release, 32/64 bit
         * success (NOTE related to manual PDF size -- see next section)
-        * Build ID: https://builder.r-hub.io/status/spsurvey_5.2.0.tar.gz-a601356c2761418788a1ca4811d8bb66
+        * Build ID: https://builder.r-hub.io/status/spsurvey_5.3.0.tar.gz-ed36c5c25bb2439ba20a9c956ad323c8
         
 * `rhub::check_on_linux()`
     * Platform: Debian Linux, R-release, GCC
-        * success (NOTE related to manual PDF size -- see next section)
-        * Build ID: https://builder.r-hub.io/status/spsurvey_5.2.0.tar.gz-804ac4ab544a43d491cbb3a6538a17d9
+        * SUCCESS (NOTE related to manual PDF size -- see next section)
+        * Build ID: https://builder.r-hub.io/status/spsurvey_5.3.0.tar.gz-7a33f803708640fbabb5b7d0d4d6b01f
         
 * `rhub::check_on_solaris()`
     * Platform: Oracle Solaris 10, x86, 32 bit, R-release
-        * success (NOTE related to panual PDF size -- see next section)
-        * Build ID: https://builder.r-hub.io/status/spsurvey_5.2.0.tar.gz-9ab796fc87b2412e9f5c87f53fd2172f
+        * SUCCESS
+                * `One ERROR: checking package dependencies ... ERROR Packages required but not available: 'sf', 'lme4'`
+                * I am not sure how to diagnose / solve this error if sf and lme4 are not available on Solaris
+        * Build ID: https://builder.r-hub.io/status/spsurvey_5.3.0.tar.gz-c5500b5566414d24a5d8c00eaf4a3d0c
         
 * `rhub::check(platform = "macos-highsierra-release-cran")`
     * Platform: macOS 10.13.6 High Sierra, R-release, CRAN's setup
         * Status: SUCCESS (NOTE related to manual PDF size see next section)
-        * Build ID: https://builder.r-hub.io/status/spsurvey_5.2.0.tar.gz-1cf4cfe699d94b2592a8f003b2e31013
+        * Build ID: https://builder.r-hub.io/status/spsurvey_5.3.0.tar.gz-86095e6fe1cb49889fb3fef9c3b2bea2
         
 ## R CMD check results
 
