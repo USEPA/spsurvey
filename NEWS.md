@@ -1,4 +1,4 @@
-# spsurvey 5.3.0 (2022-xx-xx)
+# spsurvey 5.3.0 (2022-02-24)
 
 ## Minor updates
 

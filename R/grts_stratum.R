@@ -177,11 +177,11 @@ grts_stratum <- function(stratum, dsgn, sframe, sf_type, wgt_units = NULL, pt_de
     tmp <- sftmp[sftmp$legacy == TRUE, , drop = FALSE]
     n_legacy <- nrow(tmp)
   }
-  
+
   if (legacy_option == TRUE & n_legacy == 0) {
     sftmp$legacy <- FALSE
   }
-  
+
   # check that number of legacy sites is less than or equal number of base sites
   # stop if not
   if (n_legacy > n_base) {
@@ -330,7 +330,7 @@ grts_stratum <- function(stratum, dsgn, sframe, sf_type, wgt_units = NULL, pt_de
   }
 
 
-  
+
   # save base sites
   sites_base <- NULL
   if (n_base > n_legacy) {
@@ -345,7 +345,7 @@ grts_stratum <- function(stratum, dsgn, sframe, sf_type, wgt_units = NULL, pt_de
     sites_over$siteuse <- "Over"
     sites_over[, setdiff(names(legacy_sites), names(sites_over))] <- NA
   }
-  
+
   # if no legacy sites match in strata then put in appropriate column
   if (legacy_option == TRUE & n_legacy == 0) {
     sites_base$legacy <- FALSE

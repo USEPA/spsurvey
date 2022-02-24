@@ -68,7 +68,7 @@ grtspts_mindis <- function(mindis, sframe, samplesize, stratum, maxtry = 10,
   ntry <- 1
   while (any(!keep)) {
 
-      # identify sites that will be treated as legacy probability sites in sample frame
+    # identify sites that will be treated as legacy probability sites in sample frame
     sframe$probdis <- FALSE
     sframe$probdis[sframe$idpts %in% sites_base$idpts[keep]] <- TRUE
 

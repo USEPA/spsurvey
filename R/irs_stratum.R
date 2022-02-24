@@ -148,7 +148,7 @@ irs_stratum <- function(stratum, dsgn, sframe, sf_type, wgt_units = NULL, pt_den
     tmp <- sftmp[sftmp$legacy == TRUE, , drop = FALSE]
     n_legacy <- nrow(tmp)
   }
-  
+
   if (legacy_option == TRUE & n_legacy == 0) {
     sftmp$legacy <- FALSE
   }

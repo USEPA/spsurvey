@@ -604,6 +604,34 @@ if (on_solaris) {
     expect_equal(NCOL(grts_output$sites_near), col_out + 1)
   })
 
+  #--------------------------------------
+  #-------- Projected CRS
+  #--------------------------------------
+
+  # unstratified, equal probability
+  test_that("algorithm executes", {
+    n_base <- 50
+    grts_output <- grts(st_transform(NE_Lakes, 4326), n_base = n_base, seltype = "equal", projcrs_check = FALSE)
+    # see if function ran without error
+    expect_true(exists("grts_output"))
+    # no legacy sites
+    expect_equal(NROW(grts_output$sites_legacy), 0)
+    # base sample size of 50
+    expect_equal(NROW(grts_output$sites_base), n_base)
+    # no rho replacement sites
+    expect_equal(NROW(grts_output$sites_over), 0)
+    # no nn replacement sites
+    expect_equal(NROW(grts_output$sites_near), 0)
+    # no legacy sites
+    expect_equal(NCOL(grts_output$sites_legacy), 1)
+    # base sample size columns should equal extra columns plus original columns
+    expect_equal(NCOL(grts_output$sites_base), col_out)
+    # no rho replacement sites
+    expect_equal(NCOL(grts_output$sites_over), 1)
+    # no nn replacement sites
+    expect_equal(NCOL(grts_output$sites_near), 1)
+  })
+
   #################################################
   ########### Illinois_River DATA TESTS
   #################################################

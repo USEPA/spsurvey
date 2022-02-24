@@ -39,12 +39,12 @@ irs <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = N
     class(sframe) <- setdiff(class(sframe), c("tbl_df", "tbl"))
     # remove tibble class for rownames warning
   }
-  
+
   if (!is.null(legacy_sites) & inherits(legacy_sites, c("tbl_df", "tbl"))) { # identify if tibble class elements are present
     class(legacy_sites) <- setdiff(class(legacy_sites), c("tbl_df", "tbl"))
     # remove tibble class for rownames warning
   }
-  
+
   if (!is.null(legacy_sites)) {
     sframe_geom_name <- attr(sframe, "sf_column")
     legacy_geom_name <- attr(legacy_sites, "sf_column")
@@ -319,7 +319,7 @@ irs <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = N
       warn_df <- rbind(warn_df, rslts[[i]]$warn_df)
     }
   }
-  
+
   # spelling change to avoid clash with analysis warnings
   if (!is.null(warn_df) && "warning" %in% names(warn_df)) {
     names(warn_df)[which(names(warn_df) == "warning")] <- "Warning"
@@ -362,13 +362,12 @@ irs <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = N
 
   # if n_near sample sites, assign base ids to the replacement sites. then add siteIDs
   if (!is.null(n_near)) {
-    
     tst <- match(paste(sites_near$stratum, sites_near$replsite, sep = "_"),
-                 paste(sites_legacy$stratum, sites_legacy$idpts, sep = "_"),
-                 nomatch = 0
+      paste(sites_legacy$stratum, sites_legacy$idpts, sep = "_"),
+      nomatch = 0
     )
     sites_near$replsite[tst > 0] <- sites_legacy$siteID[tst]
-    
+
     tst <- match(paste(sites_near$stratum, sites_near$replsite, sep = "_"),
       paste(sites_base$stratum, sites_base$idpts, sep = "_"),
       nomatch = 0
@@ -393,50 +392,49 @@ irs <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = N
       sites_legacy$X <- st_coordinates(sites_legacy)[, "X"]
       sites_legacy$Y <- st_coordinates(sites_legacy)[, "Y"]
     }
-    
+
     if (!is.null(sites_base)) {
       sites_base$X <- st_coordinates(sites_base)[, "X"]
       sites_base$Y <- st_coordinates(sites_base)[, "Y"]
     }
-    
+
     if (!is.null(sites_over)) {
       sites_over$X <- st_coordinates(sites_over)[, "X"]
       sites_over$Y <- st_coordinates(sites_over)[, "Y"]
     }
-    
+
     if (!is.null(sites_near)) {
       sites_near$X <- st_coordinates(sites_near)[, "X"]
       sites_near$Y <- st_coordinates(sites_near)[, "Y"]
     }
-    
+
     # reorder sf object variables by first specifying design names excluding unique
     # feature ID id and idpts as they are internal
     dsgn_names <- c(
       "siteID", "siteuse", "replsite", "X", "Y",
       "stratum", "wgt", "ip", "caty", "aux"
     )
-    
   } else {
     if (!is.null(sites_legacy)) {
       sites_legacy$lon_WGS84 <- st_coordinates(st_transform(sites_legacy, crs = 4326))[, "X"]
-      sites_legacy$lat_WGS84 <- st_coordinates(st_transform(sites_legacy, crs = 4326))[, "Y"] 
+      sites_legacy$lat_WGS84 <- st_coordinates(st_transform(sites_legacy, crs = 4326))[, "Y"]
     }
-    
+
     if (!is.null(sites_base)) {
       sites_base$lon_WGS84 <- st_coordinates(st_transform(sites_base, crs = 4326))[, "X"]
-      sites_base$lat_WGS84 <- st_coordinates(st_transform(sites_base, crs = 4326))[, "Y"] 
+      sites_base$lat_WGS84 <- st_coordinates(st_transform(sites_base, crs = 4326))[, "Y"]
     }
-    
+
     if (!is.null(sites_over)) {
       sites_over$lon_WGS84 <- st_coordinates(st_transform(sites_over, crs = 4326))[, "X"]
-      sites_over$lat_WGS84 <- st_coordinates(st_transform(sites_over, crs = 4326))[, "Y"] 
+      sites_over$lat_WGS84 <- st_coordinates(st_transform(sites_over, crs = 4326))[, "Y"]
     }
-    
+
     if (!is.null(sites_near)) {
       sites_near$lon_WGS84 <- st_coordinates(st_transform(sites_near, crs = 4326))[, "X"]
-      sites_near$lat_WGS84 <- st_coordinates(st_transform(sites_near, crs = 4326))[, "Y"] 
+      sites_near$lat_WGS84 <- st_coordinates(st_transform(sites_near, crs = 4326))[, "Y"]
     }
-    
+
     # reorder sf object variables by first specifying design names excluding unique
     # feature ID id and idpts as they are internal
     dsgn_names <- c(

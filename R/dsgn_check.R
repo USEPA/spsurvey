@@ -81,9 +81,9 @@
 #'
 #' @param maxtry Number of maximum attempts to ensure minimum distance (mindis) between sites.
 #'   Default is \code{10}.
-#'   
+#'
 #'  @param projcrs_check A check for whether the coordinates are projected. If \code{TRUE},
-#'    an error is returned if coordinates are not projected. If \code{FALSE}, the 
+#'    an error is returned if coordinates are not projected. If \code{FALSE}, the
 #'    check is not performed and the raw coordinates in the geometry column of
 #'    \code{sframe} (and \code{legacy_sites} if provided) are used.
 #'
@@ -112,13 +112,13 @@ dsgn_check <- function(sframe, sf_type, legacy_sites, legacy_option, stratum, se
     stop_mess <- "The coordinate reference system (crs) for sframe is NA. The coordinate reference system for sframe should instead use projected coordinates. For more information on geographic and projected coordinates, see spsurvey's \"Start Here\" vignette by running vignette(\"start-here\", \"spsurvey\"). To override the check for projected coordinates, set projcrs_check = FALSE."
     stop_df <- rbind(stop_df, data.frame(func = I("sframe"), I(stop_mess)))
   }
-  
+
   if (projcrs_check & st_is_longlat(sframe)) {
     stop_ind <- TRUE
     stop_mess <- "The coordinate reference system (crs) for sframe is geographic. The coordinate reference system for sframe should instead use projected coordinates. For more information on geographic and projected coordinates, see spsurvey's \"Start Here\" vignette by running vignette(\"start-here\", \"spsurvey\"). To override the check for projected coordinates, set projcrs_check = FALSE."
     stop_df <- rbind(stop_df, data.frame(func = I("sframe"), I(stop_mess)))
   }
-  
+
   # check that legacy and sframe coordinates match
   if (!is.null(legacy_sites)) {
     if (sum(is.na(st_crs(sframe)), is.na(st_crs(legacy_sites))) == 1) {

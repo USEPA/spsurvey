@@ -123,12 +123,11 @@
 #'   are the minimum distance for the corresponding stratum.  If a minimum distance is not desired
 #'   for a particular stratum, then the corresponding value in \code{mindis} should be \code{0} or
 #'    \code{NULL} (which is equivalent to \code{0}).
-#'   The units of \code{mindis} must represent the units in \code{sframe}. A warning is returned if the 
+#'   The units of \code{mindis} must represent the units in \code{sframe}. A warning is returned if the
 #'   minimum distance could not be reached after \code{maxtry} attempts. If legacy sites are used, the minimum distance
-#'   requirement (and subsequent warning if \code{maxtry} attempts are reached) is applied to all base sites
-#'   that are not legacy sites (i.e., the minimum distance is enforced for base sites that are not legacy sites
-#'   by comparing distances against all base sites (legacy and non-legacy); the minimum distance is enforced for base
-#'   sites that are not legacy sites).
+#'   requirement (and subsequent warning if \code{maxtry} attempts are reached) is enforced for all base sites
+#'   that are not legacy sites (i.e., the minimum distance is enforced for these sites
+#'   by comparing distances against all base sites (legacy and non-legacy)).
 #'
 #' @param maxtry The number of maximum attempts to apply the minimum distance algorithm to obtain
 #'   the desired minimum distance between sites. Each iteration takes roughly as long as the
@@ -199,9 +198,9 @@
 #'
 #' @param sep A character string that acts as a separator between
 #'  \code{DesignID} and \code{SiteBegin}. The default is \code{"-"}.
-#'  
+#'
 #' @param projcrs_check A check for whether the coordinates are projected. If \code{TRUE},
-#'    an error is returned if coordinates are not projected  (i.e., they are geographic or NA). If \code{FALSE}, the 
+#'    an error is returned if coordinates are not projected  (i.e., they are geographic or NA). If \code{FALSE}, the
 #'    check is not performed, which means that the crs in \code{sframe} (and \code{legacy_sites} if provided) can be projected, geographic, or NA.
 #'
 #' @details \code{n_base} is the number of sites used to calculate
@@ -318,7 +317,7 @@ grts <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = 
     class(sframe) <- setdiff(class(sframe), c("tbl_df", "tbl"))
     # remove tibble class for rownames warning
   }
-  
+
   if (!is.null(legacy_sites) & inherits(legacy_sites, c("tbl_df", "tbl"))) { # identify if tibble class elements are present
     class(legacy_sites) <- setdiff(class(legacy_sites), c("tbl_df", "tbl"))
     # remove tibble class for rownames warning
@@ -330,7 +329,7 @@ grts <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = 
     names(legacy_sites)[names(legacy_sites) == legacy_geom_name] <- sframe_geom_name
     st_geometry(legacy_sites) <- sframe_geom_name
   }
-  
+
   # Create warning indicator and data frame to collect all potential issues during
   # sample selection
   warn_ind <- FALSE
@@ -589,21 +588,21 @@ grts <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = 
   warn_ind <- FALSE
   warn_df <- NULL
   for (i in 1:length(rslts)) {
-  sites_legacy <- rbind(sites_legacy, rslts[[i]]$sites_legacy)
-  sites_base <- rbind(sites_base, rslts[[i]]$sites_base)
-  sites_over <- rbind(sites_over, rslts[[i]]$sites_over)
-  sites_near <- rbind(sites_near, rslts[[i]]$sites_near)
+    sites_legacy <- rbind(sites_legacy, rslts[[i]]$sites_legacy)
+    sites_base <- rbind(sites_base, rslts[[i]]$sites_base)
+    sites_over <- rbind(sites_over, rslts[[i]]$sites_over)
+    sites_near <- rbind(sites_near, rslts[[i]]$sites_near)
     if (rslts[[i]]$warn_ind) {
       warn_ind <- TRUE
       warn_df <- rbind(warn_df, rslts[[i]]$warn_df)
     }
   }
-  
+
   # spelling change to avoid clash with analysis warnings
   if (!is.null(warn_df) && "warning" %in% names(warn_df)) {
     names(warn_df)[which(names(warn_df) == "warning")] <- "Warning"
   }
-  
+
 
   # Create a siteID for all sites
   ntot <- NROW(sites_legacy) + NROW(sites_base) + NROW(sites_over) + NROW(sites_near)
@@ -642,13 +641,12 @@ grts <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = 
 
   # if n_near sample sites, assign base ids to the replacement sites. then add siteIDs
   if (!is.null(n_near)) {
-    
     tst <- match(paste(sites_near$stratum, sites_near$replsite, sep = "_"),
-                 paste(sites_legacy$stratum, sites_legacy$idpts, sep = "_"),
-                 nomatch = 0
+      paste(sites_legacy$stratum, sites_legacy$idpts, sep = "_"),
+      nomatch = 0
     )
     sites_near$replsite[tst > 0] <- sites_legacy$siteID[tst]
-    
+
     tst <- match(paste(sites_near$stratum, sites_near$replsite, sep = "_"),
       paste(sites_base$stratum, sites_base$idpts, sep = "_"),
       nomatch = 0
@@ -673,50 +671,49 @@ grts <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = 
       sites_legacy$X <- st_coordinates(sites_legacy)[, "X"]
       sites_legacy$Y <- st_coordinates(sites_legacy)[, "Y"]
     }
-    
+
     if (!is.null(sites_base)) {
       sites_base$X <- st_coordinates(sites_base)[, "X"]
       sites_base$Y <- st_coordinates(sites_base)[, "Y"]
     }
-    
+
     if (!is.null(sites_over)) {
       sites_over$X <- st_coordinates(sites_over)[, "X"]
       sites_over$Y <- st_coordinates(sites_over)[, "Y"]
     }
-    
+
     if (!is.null(sites_near)) {
       sites_near$X <- st_coordinates(sites_near)[, "X"]
       sites_near$Y <- st_coordinates(sites_near)[, "Y"]
     }
-    
+
     # reorder sf object variables by first specifying design names excluding unique
     # feature ID id and idpts as they are internal
     dsgn_names <- c(
       "siteID", "siteuse", "replsite", "X", "Y",
       "stratum", "wgt", "ip", "caty", "aux"
     )
-    
   } else {
     if (!is.null(sites_legacy)) {
       sites_legacy$lon_WGS84 <- st_coordinates(st_transform(sites_legacy, crs = 4326))[, "X"]
-      sites_legacy$lat_WGS84 <- st_coordinates(st_transform(sites_legacy, crs = 4326))[, "Y"] 
+      sites_legacy$lat_WGS84 <- st_coordinates(st_transform(sites_legacy, crs = 4326))[, "Y"]
     }
-    
+
     if (!is.null(sites_base)) {
       sites_base$lon_WGS84 <- st_coordinates(st_transform(sites_base, crs = 4326))[, "X"]
-      sites_base$lat_WGS84 <- st_coordinates(st_transform(sites_base, crs = 4326))[, "Y"] 
+      sites_base$lat_WGS84 <- st_coordinates(st_transform(sites_base, crs = 4326))[, "Y"]
     }
-    
+
     if (!is.null(sites_over)) {
       sites_over$lon_WGS84 <- st_coordinates(st_transform(sites_over, crs = 4326))[, "X"]
-      sites_over$lat_WGS84 <- st_coordinates(st_transform(sites_over, crs = 4326))[, "Y"] 
+      sites_over$lat_WGS84 <- st_coordinates(st_transform(sites_over, crs = 4326))[, "Y"]
     }
-    
+
     if (!is.null(sites_near)) {
       sites_near$lon_WGS84 <- st_coordinates(st_transform(sites_near, crs = 4326))[, "X"]
-      sites_near$lat_WGS84 <- st_coordinates(st_transform(sites_near, crs = 4326))[, "Y"] 
+      sites_near$lat_WGS84 <- st_coordinates(st_transform(sites_near, crs = 4326))[, "Y"]
     }
-    
+
     # reorder sf object variables by first specifying design names excluding unique
     # feature ID id and idpts as they are internal
     dsgn_names <- c(
