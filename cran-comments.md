@@ -36,8 +36,8 @@ This is a resubmission.
 * `rhub::check_on_solaris()`
     * Platform: Oracle Solaris 10, x86, 32 bit, R-release
         * SUCCESS
-                * `One ERROR: checking package dependencies ... ERROR Packages required but not available: 'sf', 'lme4'`
-                * I am not sure how to diagnose / solve this error if sf and lme4 are not available on Solaris
+            * `One ERROR: checking package dependencies ... ERROR Packages required but not available: 'sf', 'lme4'`
+            * I am not sure how to diagnose / solve this error if sf and lme4 are not available on Solaris
         * Build ID: https://builder.r-hub.io/status/spsurvey_5.3.0.tar.gz-c5500b5566414d24a5d8c00eaf4a3d0c
         
 * `rhub::check(platform = "macos-highsierra-release-cran")`
