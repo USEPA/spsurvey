@@ -1,3 +1,25 @@
+# spsurvey 5.3.0 (2022-02-24)
+
+## Minor updates
+
+* Added a `projcrs_check` argument to `grts()` and `irs()`, which checks whether projected coordinates are required (`projcrs_check = TRUE`) or not (`projcrs_check = FALSE`).
+* Nearest neighbor replacement sites (specified by `n_near`) in `grts()` or `irs()` are now also generated for each observation in `legacy_sites`.
+
+## Bug fixes
+
+* Fixed a bug in `attrisk_analysis()`, `diffrisk_analysis()`, and `relrisk_analysis()` that sometimes caused names in `response_levels` to not be found.
+* Fixed a bug in `grts()` and `irs()` that returned an error when the name of the `geometry` column in `sframe` and `legacy_sites` differed. Now when this occurs, the `geometry` column in `legacy_sites` is renamed to have the same name as the geometry column in `sframe`.
+* Fixed a bug in `grts()` and `irs()` that prevented `legacy_stratum_var`, `legacy_caty_var` and `legacy_aux_var` from performing properly.
+* Fixed a bug in `grts()` and `irs()` that returned an error when at least one stratum in `legacy_sites` had zero observations.
+* Fixed a bug in `grts()` and `irs()` that prevented `warnprnt()` from performing properly.
+* Removed the warning in `grts()` and `irs()` that indicated when m or z values in `sframe` or `legacy_sites` were dropped. Now, the dropping of m or z values is explained in the documentation.
+* Removed a warning in `grts()` and `irs()` that indicated when row names were set if `legacy_sites` was a tibble. Now, `legacy_sites` is coerced to a base R data frame (i.e., not a tibble) before setting row names.
+* Added an error in `grts()` and `irs()` when `legacy_stratum_var` (and `legacy_caty_var` and `legacy_aux_var`) are `NULL` but the name of `stratum_var` in `sframe` is not contained in `legacy_sites`.
+* Added an error in `grts()` and `irs()` that checks whether `sframe` and `legacy_sites` have the same crs.
+* Updated documentation for `pt_density` in `grts()` and `irs()` to indicate that `pt_density` must be a positive integer.
+* Fixed a bug in `sp_summary()` that returned an error when `formula = ~ .` and the geometry column was not named `"geometry"`. Now, `sp_summary()` works with `formula = ~ .` regardless of the name of the geometry column.
+* Fixed a bug in `grts()` and `irs()` that affected minimum distance performance when legacy sites were used.
+
 # spsurvey 5.2.0 (2021-01-23)
 
 ## Minor updates

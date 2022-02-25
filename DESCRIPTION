@@ -1,6 +1,6 @@
 Package: spsurvey
 Title: Spatial Sampling Design and Analysis
-Version: 5.2.0
+Version: 5.3.0
 Authors@R: c(
     person("Michael", "Dumelle", role=c("aut","cre"),
            email = "Dumelle.Michael@epa.gov", comment = c(ORCID = "0000-0002-3393-5529")),

@@ -61,19 +61,20 @@ grtspts_mindis <- function(mindis, sframe, samplesize, stratum, maxtry = 10,
 
   # if any legacy sites keep those sites
   if (legacy_option == TRUE) {
-    keep[!is.na(sites_base$legacy)] <- TRUE
+    keep[sites_base$legacy] <- TRUE
   }
 
   # see if any sites are less than mindis and check until none or max tries
   ntry <- 1
   while (any(!keep)) {
+
     # identify sites that will be treated as legacy probability sites in sample frame
     sframe$probdis <- FALSE
     sframe$probdis[sframe$idpts %in% sites_base$idpts[keep]] <- TRUE
 
     # if any true legacy sites add them to sites to be kept
     if (legacy_option == TRUE) {
-      sframe$probdis[!is.na(sframe$legacy)] <- TRUE
+      sframe$probdis[sframe$legacy] <- TRUE
     }
 
     # Adjust initial inclusion probabilities to account for current mindis sites
@@ -97,14 +98,14 @@ grtspts_mindis <- function(mindis, sframe, samplesize, stratum, maxtry = 10,
 
     # Change to TRUE if any legacy sites
     if (legacy_option == TRUE) {
-      keep[!is.na(sites_base$legacy)] <- TRUE
+      keep[sites_base$legacy] <- TRUE
     }
 
     # check if maxtry reached. If so write out warning message
     if (ntry >= maxtry) {
       keep <- rep(TRUE, nr)
       warn <- paste0("Minimum distance between sites not attained after ", maxtry, " attempts.")
-      if (warn_ind) {
+      if (warn_ind) { # this code has a bug but is never called (the rbind fails because warn_df has a column warn and the bind has a column warning)
         warn_df <- rbind(warn_df, data.frame(
           stratum = stratum, func = I("grtspts_mindis"),
           warning = warn

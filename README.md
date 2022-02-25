@@ -77,16 +77,16 @@ citation(package = "spsurvey")
 ```
 #> To cite the spsurvey package in publications use:
 #> 
-#>   Dumelle, Michael., Kincaid, T. M., Olsen, A. R., and Weber, M. H. (2021). spsurvey:
-#>   Spatial Sampling Design and Analysis. R package version 5.2.0.
+#>   Dumelle, Michael., Kincaid, T. M., Olsen, A. R., and Weber, M. H. (2022). spsurvey:
+#>   Spatial Sampling Design and Analysis. R package version 5.3.0.
 #> 
 #> A BibTeX entry for LaTeX users is
 #> 
 #>   @Manual{,
 #>     title = {spsurvey: Spatial Sampling Design and Analysis},
 #>     author = {Michael Dumelle and Thomas M. Kincaid and Anthony R. Olsen and Marc H. Weber},
-#>     year = {2021},
-#>     note = {R package version 5.2.0},
+#>     year = {2022},
+#>     note = {R package version 5.3.0},
 #>   }
 ```
 
