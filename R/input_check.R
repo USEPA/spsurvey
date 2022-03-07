@@ -90,6 +90,9 @@ input_check <- function(dframe, design_names, vars_cat, vars_cont,
   # Ensure that character variables are processed as factors
 
   # options(stringsAsFactors = TRUE)
+  ## set factors to character and then reassign as factor so default factor ordering is imposed
+  fac_index <- vapply(dframe, is.factor, logical(1))
+  dframe[fac_index] <- vapply(dframe[fac_index], as.character, character(nrow(dframe)))
   dframe <- as.data.frame(unclass(dframe), stringsAsFactors = TRUE)
 
   # For variables that exist in the dframe data frame, assign survey design

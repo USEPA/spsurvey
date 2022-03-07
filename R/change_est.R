@@ -1439,6 +1439,8 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
           } else {
             design_2 <- update(design_2, medcat = p_2)
           }
+          # save indicator name to replace later after medcat used for analysis
+          ivar_name <- ivar
           ivar <- "medcat"
           lev_ivar <- levels(p_1)
           nlev_ivar <- 2
@@ -2066,6 +2068,9 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
             ))
           ))
         }
+        
+        #replace medcat name with original variable name
+        changesum$contsum_median$Indicator_1 <- ivar_name
 
         #
         # End the section for a continuous variable using the median

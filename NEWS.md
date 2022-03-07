@@ -1,3 +1,10 @@
+# spsurvey 5.3.1 (2022-xx-xx)
+
+## Bug fixes
+
+* Fixed a bug that prevented proper printing of the `Indicator` column when using `change_analysis()` with `test = median`.
+* Fixed a bug that made `change_analysis` sensititve to the ordering of the levels of variables in `var_cat` if those variables were factors.
+
 # spsurvey 5.3.0 (2022-02-24)
 
 ## Minor updates
