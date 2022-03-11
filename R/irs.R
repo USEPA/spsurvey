@@ -22,10 +22,13 @@
 #'
 #' @examples
 #' \dontrun{
-#' sample <- irs(NE_Lakes, n_base = 100)
+#' samp <- irs(NE_Lakes, n_base = 100)
+#' print(samp)
 #' strata_n <- c(low = 25, high = 30)
-#' sample_strat <- irs(NE_Lakes, n_base = strata_n, stratum_var = "ELEV_CAT")
-#' sample_over <- irs(NE_Lakes, n_base = 30, n_over = 5)
+#' samp_strat <- irs(NE_Lakes, n_base = strata_n, stratum_var = "ELEV_CAT")
+#' print(samp_strat)
+#' samp_over <- irs(NE_Lakes, n_base = 30, n_over = 5)
+#' print(samp_over)
 #' }
 #' @export
 ###############################################################################
@@ -51,7 +54,12 @@ irs <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = N
     names(legacy_sites)[names(legacy_sites) == legacy_geom_name] <- sframe_geom_name
     st_geometry(legacy_sites) <- sframe_geom_name
   }
-
+  
+  # save initial variable specifications for the design list later
+  initial_stratum_var <- stratum_var
+  initial_caty_var <- caty_var
+  initial_aux_var <- aux_var
+  
   # Create warning indicator and data frame to collect all potential issues during
   # sample selection
   warn_ind <- FALSE
@@ -184,6 +192,11 @@ irs <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = N
       legacy_sites$legacy <- legacy_sites[[legacy_var]]
     }
   }
+  
+  # save initial variable specifications for the design list later
+  initial_legacy_stratum_var <- legacy_stratum_var
+  initial_legacy_caty_var <- legacy_caty_var
+  initial_legacy_aux_var <- legacy_aux_var
 
   ## Create a dsgn list object
   # variable assignments to dsgn list object
@@ -591,10 +604,18 @@ irs <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = N
   # add function call to dsgn list
   # dsgn <- c(list(Call = match.call()), dsgn)
   dsgn <- list(
-    call = match.call(), stratum = dsgn$stratum, n_base = dsgn$n_base,
-    seltype = dsgn$seltype, caty_n = dsgn$caty_n, legacy = dsgn$legacy_option,
+    call = match.call(), stratum_var = initial_stratum_var, stratum = dsgn$stratum, n_base = dsgn$n_base,
+    seltype = dsgn$seltype, caty_var = initial_caty_var, caty_n = dsgn$caty_n, aux_var = initial_aux_var, legacy = dsgn$legacy_option,
     mindis = dsgn$mindis, n_over = dsgn$n_over, n_near = dsgn$n_near
   )
+  
+  if (any(dsgn$legacy)) {
+    dsgn <- c(dsgn, list(legacy_stratum_var = initial_legacy_stratum_var, legacy_caty_var = initial_legacy_caty_var,
+                         legacy_aux_var = initial_legacy_aux_var))
+    dsgn <- dsgn[c("call", "stratum_var", "stratum", "n_base", "seltype", "caty_var",
+                   "caty_n", "aux_var", "legacy", "legacy_stratum_var", "legacy_caty_var", "legacy_aux_var",
+                   "mindis", "n_over", "n_near")]
+  }
 
   # create output list
   sites <- list(
@@ -616,7 +637,7 @@ irs <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = N
   }
 
   # constructor for design class
-  sites <- structure(sites, class = "spdesign")
+  sites <- structure(sites, class = "sp_design")
 
   # return the survey design sf object
   invisible(sites)

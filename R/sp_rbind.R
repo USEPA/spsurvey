@@ -28,7 +28,7 @@
 #' write_sf(sample, "mypath/sample.shp")
 #' }
 sp_rbind <- function(object, siteuse = NULL) {
-  if (!inherits(object, "spdesign")) {
+  if (!inherits(object, "sp_design")) {
     stop("object must be output from grts() or irs()")
   } else {
     if (is.null(siteuse)) {

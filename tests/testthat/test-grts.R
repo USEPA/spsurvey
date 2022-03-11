@@ -7,12 +7,36 @@ if (on_solaris) {
     expect_true(on_solaris)
   })
 } else {
+  
+  
   # set reproducible seed (as there are random components here)
   set.seed(5)
 
   #################################################
   ########### NE_LAKES DATA TESTS
   #################################################
+  
+  #--------------------------------------
+  #-------- Class Inheritance
+  #--------------------------------------
+  
+  test_that("algorithm executes", {
+    n_base <- 50
+    grts_output <- grts(NE_Lakes, n_base = n_base, seltype = "equal")
+    # class inheritance
+    expect_s3_class(grts_output, "sp_design")
+  })
+  
+  #--------------------------------------
+  #-------- Work with sp_frame
+  #--------------------------------------
+  
+  test_that("algorithm executes", {
+    n_base <- 50
+    grts_output <- grts(sp_frame(NE_Lakes), n_base = n_base, seltype = "equal")
+    # class inheritance
+    expect_s3_class(grts_output, "sp_design")
+  })
 
   #--------------------------------------
   #-------- Regular
@@ -49,6 +73,8 @@ if (on_solaris) {
     expect_equal(NCOL(grts_output$sites_over), 1)
     # no nn replacement sites
     expect_equal(NCOL(grts_output$sites_near), 1)
+    # class inheritance
+    expect_s3_class(grts_output, "sp_design")
   })
 
   # stratified, equal probability

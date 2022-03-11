@@ -7,26 +7,50 @@ if (on_solaris) {
     expect_true(on_solaris)
   })
 } else {
+  
+  
   # set reproducible seed (as there are random components here)
   set.seed(5)
-
+  
   #################################################
   ########### NE_LAKES DATA TESTS
   #################################################
-
+  
+  #--------------------------------------
+  #-------- Class Inheritance
+  #--------------------------------------
+  
+  test_that("algorithm executes", {
+    n_base <- 50
+    irs_output <- irs(NE_Lakes, n_base = n_base, seltype = "equal")
+    # class inheritance
+    expect_s3_class(irs_output, "sp_design")
+  })
+  
+  #--------------------------------------
+  #-------- Work with sp_frame
+  #--------------------------------------
+  
+  test_that("algorithm executes", {
+    n_base <- 50
+    irs_output <- irs(sp_frame(NE_Lakes), n_base = n_base, seltype = "equal")
+    # class inheritance
+    expect_s3_class(irs_output, "sp_design")
+  })
+  
   #--------------------------------------
   #-------- Regular
   #--------------------------------------
-
+  
   # number of irs columns added
   col_irs_add <- 9
-
+  
   # number of NE_Lakes columns
   col_data <- NCOL(NE_Lakes)
-
+  
   # number of irs columns plus NE_Lakes columns
   col_out <- col_irs_add + col_data
-
+  
   # unstratified, equal probability
   test_that("algorithm executes", {
     n_base <- 50
@@ -49,8 +73,10 @@ if (on_solaris) {
     expect_equal(NCOL(irs_output$sites_over), 1)
     # no nn replacement sites
     expect_equal(NCOL(irs_output$sites_near), 1)
+    # class inheritance
+    expect_s3_class(irs_output, "sp_design")
   })
-
+  
   # stratified, equal probability
   test_that("algorithm executes", {
     n_base <- c(low = 20, high = 30)
@@ -73,7 +99,7 @@ if (on_solaris) {
     expect_equal(NCOL(irs_output$sites_over), 1)
     expect_equal(NCOL(irs_output$sites_near), 1)
   })
-
+  
   # unstratified, unequal probability
   test_that("algorithm executes", {
     n_base <- 50
@@ -89,14 +115,14 @@ if (on_solaris) {
     expect_equal(NCOL(irs_output$sites_over), 1)
     expect_equal(NCOL(irs_output$sites_near), 1)
   })
-
+  
   # stratified, unequal probability
   test_that("algorithm executes", {
     n_base <- c(low = 20, high = 30)
     caty_n <- list(low = c(small = 10, large = 10), high = c(small = 10, large = 20))
     irs_output <- irs(NE_Lakes,
-      n_base = n_base, seltype = "unequal", stratum_var = "ELEV_CAT",
-      caty_var = "AREA_CAT", caty_n = caty_n
+                        n_base = n_base, seltype = "unequal", stratum_var = "ELEV_CAT",
+                        caty_var = "AREA_CAT", caty_n = caty_n
     )
     expect_true(exists("irs_output"))
     expect_equal(NROW(irs_output$sites_legacy), 0)
@@ -116,14 +142,14 @@ if (on_solaris) {
     expect_equal(NCOL(irs_output$sites_over), 1)
     expect_equal(NCOL(irs_output$sites_near), 1)
   })
-
+  
   # stratified, unequal probability (with repeated caty_n)
   test_that("algorithm executes", {
     n_base <- c(low = 25, high = 25)
     caty_n <- c(small = 12.5, large = 12.5)
     irs_output <- irs(NE_Lakes,
-      n_base = n_base, seltype = "unequal", stratum_var = "ELEV_CAT",
-      caty_var = "AREA_CAT", caty_n = caty_n
+                        n_base = n_base, seltype = "unequal", stratum_var = "ELEV_CAT",
+                        caty_var = "AREA_CAT", caty_n = caty_n
     )
     expect_true(exists("irs_output"))
     expect_equal(NROW(irs_output$sites_legacy), 0)
@@ -143,14 +169,14 @@ if (on_solaris) {
     expect_equal(NCOL(irs_output$sites_over), 1)
     expect_equal(NCOL(irs_output$sites_near), 1)
   })
-
+  
   # stratified, unequal probability (with different caty_n)
   test_that("algorithm executes", {
     n_base <- c(low = 25, high = 25)
     caty_n <- list(low = c(small = 10, large = 15), high = c(small = 12, large = 13))
     irs_output <- irs(NE_Lakes,
-      n_base = n_base, seltype = "unequal", stratum_var = "ELEV_CAT",
-      caty_var = "AREA_CAT", caty_n = caty_n
+                        n_base = n_base, seltype = "unequal", stratum_var = "ELEV_CAT",
+                        caty_var = "AREA_CAT", caty_n = caty_n
     )
     expect_true(exists("irs_output"))
     expect_equal(NROW(irs_output$sites_legacy), 0)
@@ -170,7 +196,7 @@ if (on_solaris) {
     expect_equal(NCOL(irs_output$sites_over), 1)
     expect_equal(NCOL(irs_output$sites_near), 1)
   })
-
+  
   # unstratified, proportional (to size) probability
   test_that("algorithm executes", {
     n_base <- 50
@@ -185,7 +211,7 @@ if (on_solaris) {
     expect_equal(NCOL(irs_output$sites_over), 1)
     expect_equal(NCOL(irs_output$sites_near), 1)
   })
-
+  
   # stratified, proportional probability
   test_that("algorithm executes", {
     n_base <- c(low = 20, high = 30)
@@ -208,11 +234,11 @@ if (on_solaris) {
     expect_equal(NCOL(irs_output$sites_over), 1)
     expect_equal(NCOL(irs_output$sites_near), 1)
   })
-
+  
   #--------------------------------------
   #-------- Legacy
   #--------------------------------------
-
+  
   # legacy sites, unstratified, equal probability
   test_that("algorithm executes", {
     n_base <- 50
@@ -228,15 +254,15 @@ if (on_solaris) {
     expect_equal(NCOL(irs_output$sites_over), 1)
     expect_equal(NCOL(irs_output$sites_near), 1)
   })
-
+  
   # legacy sites, stratified, equal probability
   test_that("algorithm executes", {
     n_base <- c(low = 20, high = 30)
     n_legacy <- NROW(NE_Lakes_Legacy)
     irs_output <- irs(NE_Lakes,
-      n_base = n_base, seltype = "equal",
-      stratum_var = "ELEV_CAT", legacy_sites = NE_Lakes_Legacy,
-      legacy_stratum_var = "ELEV_CAT"
+                        n_base = n_base, seltype = "equal",
+                        stratum_var = "ELEV_CAT", legacy_sites = NE_Lakes_Legacy,
+                        legacy_stratum_var = "ELEV_CAT"
     )
     expect_true(exists("irs_output"))
     expect_equal(NROW(irs_output$sites_legacy), n_legacy)
@@ -258,16 +284,16 @@ if (on_solaris) {
     expect_equal(NCOL(irs_output$sites_over), 1)
     expect_equal(NCOL(irs_output$sites_near), 1)
   })
-
+  
   # legacy sites, unequal probability
   test_that("algorithm executes", {
     n_base <- 50
     caty_n <- c(small = 24, large = 26)
     n_legacy <- NROW(NE_Lakes_Legacy)
     irs_output <- irs(NE_Lakes,
-      n_base = n_base, seltype = "unequal",
-      caty_var = "AREA_CAT", caty_n = caty_n, legacy_sites = NE_Lakes_Legacy,
-      legacy_caty_var = "AREA_CAT"
+                        n_base = n_base, seltype = "unequal",
+                        caty_var = "AREA_CAT", caty_n = caty_n, legacy_sites = NE_Lakes_Legacy,
+                        legacy_caty_var = "AREA_CAT"
     )
     expect_true(exists("irs_output"))
     expect_equal(NROW(irs_output$sites_legacy), n_legacy)
@@ -279,15 +305,15 @@ if (on_solaris) {
     expect_equal(NCOL(irs_output$sites_over), 1)
     expect_equal(NCOL(irs_output$sites_near), 1)
   })
-
+  
   # legacy sites, proportional probability
   test_that("algorithm executes", {
     n_base <- 50
     n_legacy <- NROW(NE_Lakes_Legacy)
     irs_output <- irs(NE_Lakes,
-      n_base = n_base, seltype = "proportional",
-      aux_var = "AREA", legacy_sites = NE_Lakes_Legacy,
-      legacy_aux_var = "AREA"
+                        n_base = n_base, seltype = "proportional",
+                        aux_var = "AREA", legacy_sites = NE_Lakes_Legacy,
+                        legacy_aux_var = "AREA"
     )
     expect_true(exists("irs_output"))
     expect_equal(NROW(irs_output$sites_legacy), n_legacy)
@@ -299,7 +325,7 @@ if (on_solaris) {
     expect_equal(NCOL(irs_output$sites_over), 1)
     expect_equal(NCOL(irs_output$sites_near), 1)
   })
-
+  
   # legacy sites, unstratified, equal probability -- old method
   test_that("algorithm executes", {
     n_base <- 50
@@ -318,11 +344,11 @@ if (on_solaris) {
     expect_equal(NCOL(irs_output$sites_over), 1)
     expect_equal(NCOL(irs_output$sites_near), 1)
   })
-
+  
   #--------------------------------------
   #-------- Minimum Distance
   #--------------------------------------
-
+  
   # minimum distance, unstratified, equal probability
   test_that("algorithm executes", {
     library(sf)
@@ -341,11 +367,11 @@ if (on_solaris) {
     dist_mx <- as.vector(st_distance(irs_output$sites_base))
     expect_true(min(dist_mx[dist_mx > 0]) > mindis)
   })
-
+  
   #--------------------------------------
   #-------- RHO replacement
   #--------------------------------------
-
+  
   # rho replacement sites, unstratified, equal probability
   test_that("algorithm executes", {
     n_base <- 50
@@ -361,14 +387,14 @@ if (on_solaris) {
     expect_equal(NCOL(irs_output$sites_over), col_out)
     expect_equal(NCOL(irs_output$sites_near), 1)
   })
-
+  
   # rho replacement sites, stratified, equal probability
   test_that("algorithm executes", {
     n_base <- c(low = 20, high = 30)
     n_over <- list(low = 2, high = 3)
     irs_output <- irs(NE_Lakes,
-      n_base = n_base, seltype = "equal",
-      stratum_var = "ELEV_CAT", n_over = n_over
+                        n_base = n_base, seltype = "equal",
+                        stratum_var = "ELEV_CAT", n_over = n_over
     )
     expect_true(exists("irs_output"))
     expect_equal(NROW(irs_output$sites_legacy), 0)
@@ -396,15 +422,15 @@ if (on_solaris) {
     expect_equal(NCOL(irs_output$sites_over), col_out)
     expect_equal(NCOL(irs_output$sites_near), 1)
   })
-
+  
   # rho replacement sites, unstratified, unequal probability
   test_that("algorithm executes", {
     n_base <- 50
     caty_n <- c(small = 24, large = 26)
     n_over <- 10
     irs_output <- irs(NE_Lakes,
-      n_base = n_base, seltype = "unequal",
-      caty_var = "AREA_CAT", caty_n = caty_n, n_over = n_over
+                        n_base = n_base, seltype = "unequal",
+                        caty_var = "AREA_CAT", caty_n = caty_n, n_over = n_over
     )
     expect_true(exists("irs_output"))
     expect_equal(NROW(irs_output$sites_legacy), 0)
@@ -416,15 +442,15 @@ if (on_solaris) {
     expect_equal(NCOL(irs_output$sites_over), col_out)
     expect_equal(NCOL(irs_output$sites_near), 1)
   })
-
+  
   # rho replacement sites, unstratified, proportional probability
   test_that("algorithm executes", {
     n_base <- 50
     caty_n <- c(small = 24, large = 26)
     n_over <- 10
     irs_output <- irs(NE_Lakes,
-      n_base = n_base, seltype = "proportional",
-      aux_var = "AREA", n_over = n_over
+                        n_base = n_base, seltype = "proportional",
+                        aux_var = "AREA", n_over = n_over
     )
     expect_true(exists("irs_output"))
     expect_equal(NROW(irs_output$sites_legacy), 0)
@@ -436,7 +462,7 @@ if (on_solaris) {
     expect_equal(NCOL(irs_output$sites_over), col_out + 1)
     expect_equal(NCOL(irs_output$sites_near), 1)
   })
-
+  
   # stratification and n_over
   test_that("algorithm executes", {
     n_base <- c(low = 5, high = 6)
@@ -455,11 +481,11 @@ if (on_solaris) {
     expect_equal(NCOL(irs_output$sites_over), col_out)
     expect_equal(NCOL(irs_output$sites_near), 1)
   })
-
+  
   #--------------------------------------
   #-------- NN replacement
   #--------------------------------------
-
+  
   # nn replacement sites, unstratified, equal probability
   test_that("algorithm executes", {
     n_base <- 50
@@ -475,14 +501,14 @@ if (on_solaris) {
     expect_equal(NCOL(irs_output$sites_over), 1)
     expect_equal(NCOL(irs_output$sites_near), col_out)
   })
-
+  
   # nn replacement sites, stratified, equal probability
   test_that("algorithm executes", {
     n_base <- c(low = 20, high = 30)
     n_near <- 2
     irs_output <- irs(NE_Lakes,
-      n_base = n_base, seltype = "equal",
-      stratum_var = "ELEV_CAT", n_near = n_near
+                        n_base = n_base, seltype = "equal",
+                        stratum_var = "ELEV_CAT", n_near = n_near
     )
     expect_true(exists("irs_output"))
     expect_equal(NROW(irs_output$sites_legacy), 0)
@@ -502,15 +528,15 @@ if (on_solaris) {
     expect_equal(NCOL(irs_output$sites_over), 1)
     expect_equal(NCOL(irs_output$sites_near), col_out)
   })
-
+  
   # nn replacement sites, unstratified, unequal probability
   test_that("algorithm executes", {
     n_base <- 50
     caty_n <- c(small = 24, large = 26)
     n_near <- 2
     irs_output <- irs(NE_Lakes,
-      n_base = n_base, seltype = "unequal",
-      caty_var = "AREA_CAT", caty_n = caty_n, n_near = n_near
+                        n_base = n_base, seltype = "unequal",
+                        caty_var = "AREA_CAT", caty_n = caty_n, n_near = n_near
     )
     expect_true(exists("irs_output"))
     expect_equal(NROW(irs_output$sites_legacy), 0)
@@ -522,15 +548,15 @@ if (on_solaris) {
     expect_equal(NCOL(irs_output$sites_over), 1)
     expect_equal(NCOL(irs_output$sites_near), col_out)
   })
-
+  
   # nn replacement sites, unstratified, proportional probability
   test_that("algorithm executes", {
     n_base <- 50
     caty_n <- c(small = 24, large = 26)
     n_near <- 2
     irs_output <- irs(NE_Lakes,
-      n_base = n_base, seltype = "proportional",
-      aux_var = "AREA", n_near = n_near
+                        n_base = n_base, seltype = "proportional",
+                        aux_var = "AREA", n_near = n_near
     )
     expect_true(exists("irs_output"))
     expect_equal(NROW(irs_output$sites_legacy), 0)
@@ -542,7 +568,7 @@ if (on_solaris) {
     expect_equal(NCOL(irs_output$sites_over), 1)
     expect_equal(NCOL(irs_output$sites_near), col_out + 1)
   })
-
+  
   # stratification and n_near
   test_that("algorithm executes", {
     n_base <- c(low = 5, high = 6)
@@ -559,11 +585,11 @@ if (on_solaris) {
     expect_equal(NCOL(irs_output$sites_over), 1)
     expect_equal(NCOL(irs_output$sites_near), col_out)
   })
-
+  
   #--------------------------------------
   #-------- RHO and NN replacement
   #--------------------------------------
-
+  
   # both replacement sites, unstratified
   test_that("algorithm executes", {
     n_base <- 50
@@ -580,11 +606,11 @@ if (on_solaris) {
     expect_equal(NCOL(irs_output$sites_over), col_out)
     expect_equal(NCOL(irs_output$sites_near), col_out)
   })
-
+  
   #--------------------------------------
   #-------- Bad name replacement
   #--------------------------------------
-
+  
   test_that("algorithm executes", {
     n_legacy <- NROW(NE_Lakes_Legacy)
     n_base <- 50
@@ -603,11 +629,11 @@ if (on_solaris) {
     expect_equal(NCOL(irs_output$sites_over), col_out + 1)
     expect_equal(NCOL(irs_output$sites_near), col_out + 1)
   })
-
+  
   #--------------------------------------
   #-------- Projected CRS
   #--------------------------------------
-
+  
   # unstratified, equal probability
   test_that("algorithm executes", {
     n_base <- 50
@@ -631,24 +657,24 @@ if (on_solaris) {
     # no nn replacement sites
     expect_equal(NCOL(irs_output$sites_near), 1)
   })
-
+  
   #################################################
   ########### Illinois_River DATA TESTS
   #################################################
-
+  
   # number of irs columns added
   col_irs_add <- 9
-
+  
   # number of Illinois_River columns
   col_data <- NCOL(Illinois_River)
-
+  
   # number of irs columns plus Illinois_River columns
   col_out <- col_irs_add + col_data
-
+  
   #--------------------------------------
   #-------- Regular
   #--------------------------------------
-
+  
   # unstratified, equal probability
   test_that("algorithm executes", {
     n_base <- 50
@@ -663,7 +689,7 @@ if (on_solaris) {
     expect_equal(NCOL(irs_output$sites_over), 1)
     expect_equal(NCOL(irs_output$sites_near), 1)
   })
-
+  
   # unstratified, large sample size
   test_that("algorithm executes", {
     n_base <- 500
@@ -678,7 +704,7 @@ if (on_solaris) {
     expect_equal(NCOL(irs_output$sites_over), 1)
     expect_equal(NCOL(irs_output$sites_near), 1)
   })
-
+  
   # unstratified, large sample size, replacement sites
   test_that("algorithm executes", {
     n_base <- 50
@@ -694,7 +720,7 @@ if (on_solaris) {
     expect_equal(NCOL(irs_output$sites_over), col_out)
     expect_equal(NCOL(irs_output$sites_near), 1)
   })
-
+  
   # stratified, equal probability
   test_that("algorithm executes", {
     n_base <- c(Oklahoma = 20, Arkansas = 30)
@@ -717,7 +743,7 @@ if (on_solaris) {
     expect_equal(NCOL(irs_output$sites_over), 1)
     expect_equal(NCOL(irs_output$sites_near), 1)
   })
-
+  
   # stratified, equal probability
   test_that("algorithm executes", {
     n_base <- c(Oklahoma = 200, Arkansas = 300)
@@ -740,7 +766,7 @@ if (on_solaris) {
     expect_equal(NCOL(irs_output$sites_over), 1)
     expect_equal(NCOL(irs_output$sites_near), 1)
   })
-
+  
   # stratified, equal probability
   test_that("algorithm executes", {
     n_base <- c(Oklahoma = 20, Arkansas = 30)
@@ -764,11 +790,11 @@ if (on_solaris) {
     expect_equal(NCOL(irs_output$sites_over), col_out)
     expect_equal(NCOL(irs_output$sites_near), 1)
   })
-
+  
   #--------------------------------------
   #-------- Legacy
   #--------------------------------------
-
+  
   # legacy sites, unstratified, equal probability
   test_that("algorithm executes", {
     n_base <- 50
@@ -784,15 +810,15 @@ if (on_solaris) {
     expect_equal(NCOL(irs_output$sites_over), 1)
     expect_equal(NCOL(irs_output$sites_near), 1)
   })
-
+  
   # legacy sites, stratified, equal probability
   test_that("algorithm executes", {
     n_base <- c(Oklahoma = 20, Arkansas = 30)
     n_legacy <- nrow(Illinois_River_Legacy)
     irs_output <- irs(Illinois_River,
-      n_base = n_base, seltype = "equal",
-      stratum_var = "STATE_NAME", legacy_sites = Illinois_River_Legacy,
-      legacy_stratum_var = "STATE_NAME"
+                        n_base = n_base, seltype = "equal",
+                        stratum_var = "STATE_NAME", legacy_sites = Illinois_River_Legacy,
+                        legacy_stratum_var = "STATE_NAME"
     )
     expect_true(exists("irs_output"))
     expect_equal(NROW(irs_output$sites_legacy), n_legacy)
@@ -814,24 +840,24 @@ if (on_solaris) {
     expect_equal(NCOL(irs_output$sites_over), 1)
     expect_equal(NCOL(irs_output$sites_near), 1)
   })
-
+  
   #################################################
   ########### Lake_Ontario DATA TESTS
   #################################################
-
+  
   # number of irs columns added
   col_irs_add <- 9
-
+  
   # number of Lake_Ontario columns
   col_data <- NCOL(Lake_Ontario)
-
+  
   # number of irs columns plus Lake_Ontario columns
   col_out <- col_irs_add + col_data
-
+  
   #--------------------------------------
   #-------- Regular
   #--------------------------------------
-
+  
   # unstratified, equal probability
   test_that("algorithm executes", {
     n_base <- 50
@@ -846,7 +872,7 @@ if (on_solaris) {
     expect_equal(NCOL(irs_output$sites_over), 1)
     expect_equal(NCOL(irs_output$sites_near), 1)
   })
-
+  
   # unstratified, large sample size
   test_that("algorithm executes", {
     n_base <- 500
@@ -861,7 +887,7 @@ if (on_solaris) {
     expect_equal(NCOL(irs_output$sites_over), 1)
     expect_equal(NCOL(irs_output$sites_near), 1)
   })
-
+  
   # unstratified, large sample size, replacement sites
   test_that("algorithm executes", {
     n_base <- 50
@@ -877,7 +903,7 @@ if (on_solaris) {
     expect_equal(NCOL(irs_output$sites_over), col_out)
     expect_equal(NCOL(irs_output$sites_near), 1)
   })
-
+  
   # stratified, equal probability
   test_that("algorithm executes", {
     n_base <- c(CAN = 20, USA = 30)
@@ -900,7 +926,7 @@ if (on_solaris) {
     expect_equal(NCOL(irs_output$sites_over), 1)
     expect_equal(NCOL(irs_output$sites_near), 1)
   })
-
+  
   # stratified, large sample size
   test_that("algorithm executes", {
     n_base <- c(CAN = 200, USA = 300)
@@ -923,7 +949,7 @@ if (on_solaris) {
     expect_equal(NCOL(irs_output$sites_over), 1)
     expect_equal(NCOL(irs_output$sites_near), 1)
   })
-
+  
   # replacement sites
   test_that("algorithm executes", {
     n_base <- c(CAN = 200, USA = 300)

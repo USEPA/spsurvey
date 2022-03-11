@@ -294,7 +294,8 @@ The sampling design sites and additional information about the sampling design. 
   }
   If any columns in \code{sframe} contain these names, those columns
   from \code{sframe} will be automatically prefixed with \code{sframe_}
-  in the \code{sites} object.
+  in the \code{sites} object. When output is printed, a summary of site counts by
+  the levels in \code{stratum_var} and \code{caty_var} is shown.
 }
 \description{
 Select a spatially balanced sample from a point (finite), linear / linestring (infinite),
@@ -317,10 +318,13 @@ For technical details, see Stevens and Olsen (2004).
 }
 \examples{
 \dontrun{
-sample <- grts(NE_Lakes, n_base = 100)
+samp <- grts(NE_Lakes, n_base = 100)
+print(samp)
 strata_n <- c(low = 25, high = 30)
-sample_strat <- grts(NE_Lakes, n_base = strata_n, stratum_var = "ELEV_CAT")
-sample_over <- grts(NE_Lakes, n_base = 30, n_over = 5)
+samp_strat <- grts(NE_Lakes, n_base = strata_n, stratum_var = "ELEV_CAT")
+print(samp_strat)
+samp_over <- grts(NE_Lakes, n_base = 30, n_over = 5)
+print(samp_over)
 }
 }
 \references{

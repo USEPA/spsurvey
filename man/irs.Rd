@@ -294,7 +294,8 @@ The sampling design sites and additional information about the sampling design. 
   }
   If any columns in \code{sframe} contain these names, those columns
   from \code{sframe} will be automatically prefixed with \code{sframe_}
-  in the \code{sites} object.
+  in the \code{sites} object. When output is printed, a summary of site counts by
+  the levels in \code{stratum_var} and \code{caty_var} is shown.
 }
 \description{
 Select a sample that is not spatially balanced from a point (finite), linear / linestring (infinite),
@@ -316,10 +317,13 @@ requiring a minimum distance between sites, and selecting replacement sites.
 }
 \examples{
 \dontrun{
-sample <- irs(NE_Lakes, n_base = 100)
+samp <- irs(NE_Lakes, n_base = 100)
+print(samp)
 strata_n <- c(low = 25, high = 30)
-sample_strat <- irs(NE_Lakes, n_base = strata_n, stratum_var = "ELEV_CAT")
-sample_over <- irs(NE_Lakes, n_base = 30, n_over = 5)
+samp_strat <- irs(NE_Lakes, n_base = strata_n, stratum_var = "ELEV_CAT")
+print(samp_strat)
+samp_over <- irs(NE_Lakes, n_base = 30, n_over = 5)
+print(samp_over)
 }
 }
 \seealso{
