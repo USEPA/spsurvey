@@ -234,16 +234,32 @@ The sampling design sites and additional information about the sampling design. 
     \item \code{design} A list documenting the specifications of this sampling design.
       This can be checked to verify your sampling design ran as intended.
       \itemize{
-        \item \code{Call} The original function call.
+        \item \code{call} The original function call.
+        \item \code{stratum_var} The name of the stratification variable in \code{sframe}.
+          This equals \code{NULL} if no stratification is used.
         \item \code{stratum} The unique strata. This equals \code{"None"} if
-          the sampling design was unstratified.
+          the sampling design is unstratified.
         \item \code{n_base} The base sample size per stratum.
         \item \code{seltype} The selection type per stratum.
+        \item \code{caty_var} The name of the unequal probability variable in \code{sframe}.
+          This equals \code{NULL} if no unequal probability variable is used.
         \item \code{caty_n} The expected sample sizes for each level of the
           unequal probability grouping variable per stratum. This equals
           \code{NULL} when \code{seltype} is not \code{"unequal"}.
+        \item \code{aux_var} The name of the proportional probability (auxiliary) variable in \code{sframe}.
+          This equals \code{NULL} if no proportional probability variable is used.
         \item \code{legacy} A logical variable indicating whether legacy sites
           were included in the sample.
+        \item \code{legacy_stratum_var} The name of the stratification variable in \code{legacy_sites}.
+          Omitted if legacy sites are not used. This equals \code{NULL} if legacy sites were used but
+          no stratification variable is used.
+        \item \code{legacy_caty_var} The name of the unequal probability variable in \code{legacy_sites}.
+          Omitted if legacy sites are not used. This equals \code{NULL} if legacy sites were used but
+          no unequal probability variable is used.
+        \item \code{legacy_aux_var} The name of the proportional probability (auxiliary)
+          variable in \code{legacy_sites}.
+          Omitted if legacy sites are not used. This equals \code{NULL} if legacy sites
+          were used but no proportional probability variable is used.
         \item \code{mindis} The minimum distance requirement desired. This
           is \code{NULL} when no minimum distance requirement was applied.
         \item \code{n_over} The reverse hierarchically ordered replacement

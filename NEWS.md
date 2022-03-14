@@ -1,4 +1,22 @@
-# spsurvey 5.3.1 (2022-xx-xx)
+# spsurvey 5.4.0 (2022-xx-xx)
+
+## Minor Updates
+
+* Added an `sp_frame()` function to create `sp_frame` objects for use with `plot()` and `summary()` for sampling frames and analysis data.
+    * `sp_frame` objects have class `sp_frame`.
+* Added an `sp_unframe()` function to transform `sp_frame` objects back into their original object type.
+* Objects output from `grts()` and `irs()` are now called `sp_design` objects instead of `spdesign` objects
+    * `sp_design` objects have class `sp_design`.
+* `summary()` now works with `sp_frame` objects and `sp_design` objects.
+    * `sp_summary()` yields equivalent summaries and is currently maintained for backwards compatibility (i.e., `sp_summary()` has not changed).
+* `plot()` now works with `sp_frame` objects and `sp_design` objects.
+    * `sp_plot()` yields equivalent plots and is currently maintained for backwards compatibility (i.e., `sp_plot()` has not changed).
+* Updated print functions for summaries obtained via `summary()` or `sp_summary()` so that they are clearer and easier to read.
+* Added a print function for `sp_design` objects. Now, a summary of site counts by site type (`Legacy`, `Base`, `Near` `Over`) crossed by strata or unequal probability levels or both is provided.
+* Added `stratum_var`, `caty_var`, and `aux_var` elements to the design list in `sp_design` objects.
+* Added `legacy_stratum_var`, `legacy_caty_var`, and `legacy_aux_var` elements to the design list in `sp_design` objects when legacy sites are used.
+* Minor documentation updates.
+* Minor vignette updates.
 
 ## Bug fixes
 

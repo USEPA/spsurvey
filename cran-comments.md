@@ -1,4 +1,4 @@
-This is a minor update adding two minor features and addressing a few bugs from version 5.2.0.
+This is a minor update adding two minor features and addressing a few bugs from version 5.3.0.
 
 -------
 
