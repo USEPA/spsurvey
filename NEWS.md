@@ -12,7 +12,7 @@
 * `plot()` now works with `sp_frame` objects and `sp_design` objects.
     * `sp_plot()` yields equivalent plots and is currently maintained for backwards compatibility (i.e., `sp_plot()` has not changed).
 * Updated print functions for summaries obtained via `summary()` or `sp_summary()` so that they are clearer and easier to read.
-* Added a print function for `sp_design` objects. Now, a summary of site counts by site type (`Legacy`, `Base`, `Near` `Over`) crossed by strata or unequal probability levels or both is provided.
+* Added a print function for `sp_design` objects. Now, a summary of site counts by site type (`Legacy`, `Base`, `Over` `Near`) crossed by strata or unequal probability levels or both is provided.
 * Added `stratum_var`, `caty_var`, and `aux_var` elements to the design list in `sp_design` objects.
 * Added `legacy_stratum_var`, `legacy_caty_var`, and `legacy_aux_var` elements to the design list in `sp_design` objects when legacy sites are used.
 * Minor documentation updates.
@@ -22,6 +22,7 @@
 
 * Fixed a bug that prevented proper printing of the `Indicator` column when using `change_analysis()` with `test = median`.
 * Fixed a bug that made `change_analysis` sensititve to the ordering of the levels of variables in `var_cat` if those variables were factors.
+* Fixed a bug in `sp_summary()` that incorrectly ordered the `siteuse` variable.
 
 # spsurvey 5.3.0 (2022-02-24)
 

@@ -117,7 +117,7 @@ sp_summary.sp_design <- function(object, formula = ~siteuse, siteuse = NULL, onl
   object <- sp_rbind(object, siteuse)
 
   if (is.null(siteuse)) {
-    fac_levels <- c("Legacy", "Base", "Near", "Over")
+    fac_levels <- c("Legacy", "Base", "Over", "Near")
     fac_levels_used <- fac_levels[fac_levels %in% unique(object$siteuse)]
     object$siteuse <- factor(object$siteuse, levels = fac_levels_used)
   } else {
