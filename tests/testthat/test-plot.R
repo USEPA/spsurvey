@@ -1,4 +1,4 @@
-context("sp_plot")
+context("plot")
 
 # find system info
 on_solaris <- Sys.info()[["sysname"]] == "SunOS"
@@ -175,4 +175,54 @@ if (on_solaris) {
     var_args <- list(AREA_CAT = list(ELEV_CAT = list(levels = c("low", "high"), pch = c(1, 19))))
     expect_error(sp_plot(NE_Lakes, formula = ELEV_CAT ~ AREA_CAT, var_args = var_args, onlyshow = "large"), NA)
   })
+
+  #################################################
+  ########### sp_CDF
+  #################################################
+
+  test_that("plot.sp_CDF works",  {
+    bmmi <- cont_analysis(
+      NLA_PNW,
+      vars = "BMMI",
+      weight = "WEIGHT",
+      siteID = "SITE_ID"
+    )
+    expect_error(plot(bmmi$CDF), NA)
+  })
+  
+  test_that("plot.sp_CDF works subpop", {
+    bmmi <- cont_analysis(
+      NLA_PNW,
+      vars = "BMMI",
+      subpop = "PHOS_COND",
+      weight = "WEIGHT",
+      siteID = "SITE_ID"
+    )
+    expect_error(plot(bmmi$CDF, subpop = "PHOS_COND", subpop_level = "Good"), NA)
+  })
+  
+  test_that("plot.sp_CDF works variables", {
+    bmmi <- cont_analysis(
+      NLA_PNW,
+      vars = c("BMMI", "WEIGHT"),
+      weight = "WEIGHT",
+      siteID = "SITE_ID"
+    )
+    expect_error(plot(bmmi$CDF, var = "BMMI"), NA)
+  })
+  
+  test_that("plot.sp_CDF works variables subpop", {
+    bmmi <- cont_analysis(
+      NLA_PNW,
+      vars = c("BMMI", "WEIGHT"),
+      subpop = "PHOS_COND",
+      weight = "WEIGHT",
+      siteID = "SITE_ID"
+    )
+    expect_error(plot(bmmi$CDF, var = "BMMI", subpop = "PHOS_COND", subpop_level = "Good"), NA)
+  })
+
 }
+
+
+

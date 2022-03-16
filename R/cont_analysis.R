@@ -520,6 +520,7 @@ cont_analysis <- function(dframe, vars, subpops = NULL, siteID = NULL,
       paste0("UCB", conf, "Pct.P"), "Estimate.U", "StdError.U", "MarginofError.U",
       paste0("LCB", conf, "Pct.U"), paste0("UCB", conf, "Pct.U")
     ))
+    class(contsum$CDF) <- c("sp_CDF", class(contsum$CDF))
   }
 
   if (!is.null(contsum$Pct)) {
