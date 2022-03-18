@@ -70,7 +70,9 @@ The default is \code{NULL}.}
 
 \item{siteID}{Character value providing name of the site ID variable in
 \code{dframe}.  For a two-stage sample, the site ID variable
-identifies stage two site IDs.  The default value is \code{"siteID"}.}
+identifies stage two site IDs.  The default value is \code{"siteID"}. If a
+unique site is visited in both surveys, the corresponding \code{siteID}
+should be the same for both entries.}
 
 \item{weight}{Character value providing name of the design weight
 variable in \code{dframe}.  For a two-stage sample, the
