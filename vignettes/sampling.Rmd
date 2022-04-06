@@ -78,7 +78,7 @@ plot(eqprob, NE_Lakes, key.width = lcm(3))
 plot(eqprob, NE_Lakes, key.width = lcm(3), key.pos = 4)
 ```
 
-The `key.width` argument extends the plot's margin to fit the legend text nicely within the plot. The `sp_plot()` can equivalently be used in place of `plot()` (`sp_plot()` is currently maintained for backwards compatibility with previous spsurvey versions).
+The `key.width` argument extends the plot's margin to fit the legend text nicely within the plot. `sp_plot()` can equivalently be used in place of `plot()` (`sp_plot()` is currently maintained for backwards compatibility with previous spsurvey versions).
 
 ## Unequal inclusion probabilities
 

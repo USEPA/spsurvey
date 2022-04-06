@@ -292,6 +292,11 @@ The `NLA_PNW` analysis data in spsurvey is analysis data (as an `sf` object) fro
 1. `STATE`: state name (`California`, `Washington`, and `Oregon`)
 2. `NITR_COND` : nitrogen content categories (`Poor`, `Fair`, and `Good`)
 
+Before summarizing or visualizing a sampling frame, turn it into an object using  `sp_frame()`:
+```{r}
+NLA_PNW <- sp_frame(NLA_PNW)
+```
+
 To summarize and visualize `NITR_COND` across all states, run
 ```{r}
 summary(NLA_PNW, formula = ~ NITR_COND)

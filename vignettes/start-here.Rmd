@@ -62,7 +62,7 @@ spsurvey implements a design-based approach to statistical inference, with a foc
 There are three additional vignettes in spsurvey:
 
 1. Exploratory Data Analysis: Summarizing and Visualizing Sampling Frames, Design Sites, and Analysis Data
-    * Use the `sp_summary()` and `sp_plot()` functions to summarize and visualize sampling frames, design sites, and analysis data
+    * Use the `summary()` and `plot()` functions to summarize and visualize sampling frames, design sites, and analysis data
     * To view this vignette, run `vignette("EDA", "spsurvey")`
 2. Spatially Balanced Sampling
     * Use the `grts()` function to implement the Generalized Random Tessellation Stratified (GRTS) algorithm (Stevens and Olsen, 2004) to select spatially balanced samples

@@ -150,7 +150,7 @@ cont_ests$Pct
 
 To visualize the CDF estimates, run
 ```{r}
-cdf_plot(cont_ests$CDF)
+plot(cont_ests$CDF)
 ```
 
 The solid line indicates the CDF estimates, and the dashed lines indicate lower and upper 95% confidence interval bounds for the CDF estimates.
