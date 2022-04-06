@@ -84,7 +84,7 @@ if (on_solaris) {
   test_that("one sided formulas work", {
     output <- sp_summary(NE_Lakes, formula = ~.)
     expect_true(exists("output"))
-    expect_equal(NCOL(output), NCOL(NE_Lakes)) # our summary removes geometry but includes total
+    expect_equal(NCOL(output), NCOL(NE_Lakes) + 1) # our summary adds an intercept
   })
 
   # maxsum works operator works

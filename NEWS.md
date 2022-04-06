@@ -9,6 +9,7 @@
     * `sp_design` objects have class `sp_design`.
 * `summary()` now works with `sp_frame` objects and `sp_design` objects.
     * `sp_summary()` yields equivalent summaries and is currently maintained for backwards compatibility (i.e., `sp_summary()` has not changed).
+* `summary` functions now also summarize `sf` object geometries if the name of the geometry list-column is provided in the summary formula
 * `plot()` now works with `sp_frame` objects and `sp_design` objects.
     * `sp_plot()` yields equivalent plots and is currently maintained for backwards compatibility (i.e., `sp_plot()` has not changed).
  * `plot()` now works with `sp_CDF` objects that are output from the `CDF` element of `cont_analysis()`.
@@ -25,6 +26,7 @@
 * Fixed a bug that prevented proper printing of the `Indicator` column when using `change_analysis()` with `test = median`.
 * Fixed a bug that made `change_analysis` sensititve to the ordering of the levels of variables in `var_cat` if those variables were factors.
 * Fixed a bug in `sp_summary()` that incorrectly ordered the `siteuse` variable.
+* Fixed a bug in `sp_summary()` that failed to summarize data frames that did not have an `sf_column` attribute.
 
 # spsurvey 5.3.0 (2022-02-24)
 

@@ -82,8 +82,11 @@ sp_summary.default <- function(object, formula = ~1, onlyshow = NULL, ...) {
     stop("sp_summary() is not supported on Solaris.")
   }
 
+  # store as data frame for geometry summaries
+  # this removes default sf sticky behavior
+  object <- data.frame(object)
   # making formlist (utils.R)
-  formlist <- make_formlist(formula, onlyshow, object)
+  formlist <- make_formlist(formula, onlyshow, object, remove_geom = FALSE)
   # making varsf (utils.R)
   varsf <- make_varsf(object, formlist)
   # accomodating an intercept
