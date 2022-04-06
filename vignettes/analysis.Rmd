@@ -153,7 +153,7 @@ To visualize the CDF estimates, run
 plot(cont_ests$CDF)
 ```
 
-The solid line indicates the CDF estimates, and the dashed lines indicate lower and upper 95% confidence interval bounds for the CDF estimates.
+The solid line indicates the CDF estimates, and the dashed lines indicate lower and upper 95% confidence interval bounds for the CDF estimates. `cdf_plot()` can equivalently be used in place of `plot()` (`cdf_plot()` is currently maintained for backwards compatibility with previous spsurvey versions).
 
 To estimate the CDF, certain percentiles, and means of `BMMI` separately for each state, run
 ```{r}
