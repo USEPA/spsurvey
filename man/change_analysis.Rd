@@ -48,7 +48,8 @@ default is \code{NULL}.}
 
 \item{test}{Character string or character vector providing the location
 measure(s) to use for change estimation for continuous variables.  The
-choices are \code{"mean"}, \code{"median"}, or \code{c("mean", "median")}.
+choices are \code{"mean"}, \code{"total"}, \code{"median"}, or some
+combination of the three options (e.g., \code{c("mean", "total")}).
 The default is \code{"mean"}.}
 
 \item{subpops}{Vector composed of character values that identify the

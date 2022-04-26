@@ -57,7 +57,8 @@
 #'
 #' @param test Character string or character vector providing the location
 #'   measure(s) to use for change estimation for continuous variables.  The
-#'   choices are \code{"mean"}, \code{"median"}, or \code{c("mean", "median")}.
+#'   choices are \code{"mean"}, \code{"total"}, \code{"median"}, or some
+#'   combination of the three options (e.g., \code{c("mean", "total")}).
 #'   The default is \code{"mean"}.
 #'
 #' @param subpops Vector composed of character values that identify the
@@ -806,7 +807,7 @@ change_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL, test = "m
 
   # Create the output object
 
-  changesum <- list(catsum = NULL, contsum_mean = NULL, contsum_median = NULL)
+  changesum <- list(catsum = NULL, contsum_mean = NULL, contsum_total = NULL, contsum_median = NULL)
 
   #
   # Begin the section for categorical response variables
