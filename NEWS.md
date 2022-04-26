@@ -18,6 +18,7 @@
 * Added a print function for `sp_design` objects. Now, a summary of site counts by site type (`Legacy`, `Base`, `Over` `Near`) crossed by strata or unequal probability levels or both is provided.
 * Added `stratum_var`, `caty_var`, and `aux_var` elements to the design list in `sp_design` objects.
 * Added `legacy_stratum_var`, `legacy_caty_var`, and `legacy_aux_var` elements to the design list in `sp_design` objects when legacy sites are used.
+* Added a `"total"` option to `test` in `change_analysis()`.
 * Minor documentation updates.
 * Minor vignette updates.
 

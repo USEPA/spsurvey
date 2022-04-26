@@ -1784,7 +1784,7 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
                 )
               } else {
                 temp <- changevar_mean(z1, z2, wgt, xcoord, ycoord, revisitwgt,
-                                        total1, total2, stratum_ind, NULL, cluster_ind,
+                                        mean1, mean2, stratum_ind, NULL, cluster_ind,
                                        vartype = vartype, warn_ind = warn_ind, warn_df = warn_df,
                                        warn_vec = warn_vec
                 )
