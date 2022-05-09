@@ -301,3 +301,32 @@ test_that("Change: with finite population correction factor", {
   expect_equal(nrow(Change_Estimates$contsum_total), 1)
   expect_equal(nrow(Change_Estimates$contsum_median), 2)
 })
+
+test_that("Change for totals matches cont_analysis()", {
+  set.seed(1)
+  dframe <- data.frame(
+     surveyID = rep(c("Survey 1", "Survey 2"), c(100, 100)),
+     siteID = paste0("Site", 1:200),
+     wgt = runif(200, 10, 100),
+     xcoord = runif(200),
+     ycoord = runif(200),
+     ContVar = rnorm(200)
+   )
+   myvars <- c("ContVar")
+   change <- change_analysis(dframe,
+     vars_cont = myvars, 
+     surveyID = "surveyID", siteID = "siteID", weight = "wgt",
+     xcoord = "xcoord", ycoord = "ycoord", test = "total"
+   )$contsum_total
+   cont1 <- cont_analysis(dframe[dframe$surveyID == "Survey 1", ], 
+                          vars = myvars, 
+                          siteID = "siteID", xcoord = "xcoord", ycoord = "ycoord",
+                          weight = "wgt", statistics = "Total")$Total
+   cont2 <- cont_analysis(dframe[dframe$surveyID == "Survey 2", ], 
+                          vars = myvars, 
+                          siteID = "siteID", xcoord = "xcoord", ycoord = "ycoord",
+                          weight = "wgt", statistics = "Total")$Total
+   expect_equal(change$DiffEst, cont2$Estimate - cont1$Estimate)
+   expect_equal(change$StdError, sqrt(cont2$StdError^2 + cont1$StdError^2))
+})
+
