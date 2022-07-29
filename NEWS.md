@@ -28,6 +28,7 @@
 * Fixed a bug that made `change_analysis` sensititve to the ordering of the levels of variables in `var_cat` if those variables were factors.
 * Fixed a bug in `sp_summary()` that incorrectly ordered the `siteuse` variable.
 * Fixed a bug in `sp_summary()` that failed to summarize data frames that did not have an `sf_column` attribute.
+* Fixed a bug in `*_analysis()` functions when `popsize` is a list intended for use with `survey::calibrate()`.
 
 # spsurvey 5.3.0 (2022-02-24)
 
