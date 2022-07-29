@@ -1270,7 +1270,6 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
                   xcoord1, ycoord1, vartype, warn_ind, warn_df, warn_vec
                 )
               } else {
-                # browser()
                 temp <- changevar_mean(z1, z2, wgt, xcoord, ycoord, revisitwgt,
                   mean1, mean2, stratum_ind, NULL, cluster_ind,
                   vartype = vartype, warn_ind = warn_ind, warn_df = warn_df,
@@ -1382,7 +1381,6 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
         }
         
         # Calculate estimate for all sites from survey one
-        # browser()
         temp <- total_est(
           NULL, dframe_1, itype, isubpop, 1, ivar,
           design_1, design_names, var_nondetect, vartype, conf, mult, warn_ind,
@@ -1442,7 +1440,6 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
           dframe_2 <- subset(dframe_2, repeat_2)
           
           # Subset the design_1 and design_2 objects to retain repeat visit sites
-          # browser()
           design_1 <- subset(design_1, repeat_1)
           design_2 <- subset(design_2, repeat_2)
           

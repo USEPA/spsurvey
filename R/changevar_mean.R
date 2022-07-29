@@ -411,7 +411,6 @@ changevar_mean <- function(z1, z2, wgt, x, y, revisitwgt, mean1, mean2,
     } else {
 
       # Calculate the weighted residuals matrix
-      # browser()
       phat <- c(mean1, mean2)
       rm <- (cbind(z1, z2) - matrix(rep(phat, n), nrow = n, byrow = TRUE)) *
         matrix(rep(wgt, 2), nrow = n)
