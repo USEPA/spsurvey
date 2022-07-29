@@ -782,8 +782,8 @@ change_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL, test = "m
           k <- k + 1
         }
       }
-      design_1 <- calibrate(design_1, make.formula(cnames), pop_totals)
-      design_2 <- calibrate(design_2, make.formula(cnames), pop_totals)
+      design_1 <- calibrate(design_1, make.formula(names(popsize)), pop_totals)
+      design_2 <- calibrate(design_2, make.formula(names(popsize)), pop_totals)
     }
   }
 

@@ -400,7 +400,7 @@ cont_analysis <- function(dframe, vars, subpops = NULL, siteID = NULL,
           k <- k + 1
         }
       }
-      design <- calibrate(design, make.formula(cnames), pop_totals)
+      design <- calibrate(design, make.formula(names(popsize)), pop_totals)
     }
   }
 

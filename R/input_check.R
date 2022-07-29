@@ -526,7 +526,7 @@ input_check <- function(dframe, design_names, vars_cat, vars_cont,
       }
       for (i in length(popsize)) {
         temp <- names(popsize[[i]])
-        tst <- !(temp %in% unique(as.character(dframe[, pnames[i]])))
+        tst <- !(temp %in% unique(as.character(dframe[, cnames[i]])))
         if (any(tst)) {
           error_ind <- TRUE
           temp_str <- vecprint(temp[tst])

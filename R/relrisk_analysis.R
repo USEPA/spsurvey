@@ -478,7 +478,7 @@ relrisk_analysis <- function(dframe, vars_response, vars_stressor, response_leve
           k <- k + 1
         }
       }
-      design <- calibrate(design, make.formula(cnames), pop_totals)
+      design <- calibrate(design, make.formula(names(popsize)), pop_totals)
     }
   }
 
