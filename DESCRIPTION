@@ -35,7 +35,7 @@ Suggests:
     testthat,
     rmarkdown
 License: GPL (>= 3)
-URL: https://github.com/USEPA/spsurvey
+URL: https://usepa.github.io/spsurvey/, https://github.com/USEPA/spsurvey
 BugReports: https://github.com/USEPA/spsurvey/issues
 VignetteBuilder: knitr
 Encoding: UTF-8

@@ -177,6 +177,14 @@ match_sf_defaults <- function(varsf, list_args) {
   list_args
 }
 
+# CRAN release questions
+release_questions <- function() {
+  c(
+    "Have you changed version numbers in DESCRIPTION, CITATION, and README?",
+    "Have you run pkgdown::build_site() and committed?"
+  )
+}
+
 # get_sf_defaults <-   function(geometry) {
 #   if (geometry %in% c("POINT", "MULTIPOINT")) {
 #     sf_defaults <- data.frame(pch = 1, cex = 1, col = 1, bg = 0, lwd = 1, lty = 1, type = "p", border = NA, rule = NA, stringsAsFactors = FALSE)
