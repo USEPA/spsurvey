@@ -1,0 +1,10 @@
+pandoc: 2.7.3
+pkgdown: 2.0.6
+pkgdown_sha: ~
+articles:
+  analysis: analysis.html
+  EDA: EDA.html
+  sampling: sampling.html
+  start-here: start-here.html
+last_built: 2022-09-15T21:29Z
+
