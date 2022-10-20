@@ -29,6 +29,7 @@
 * Fixed a bug in `sp_summary()` that incorrectly ordered the `siteuse` variable.
 * Fixed a bug in `sp_summary()` that failed to summarize data frames that did not have an `sf_column` attribute.
 * Fixed a bug in `*_analysis()` functions when `popsize` is a list intended for use with `survey::calibrate()`.
+* Fixed a bug in `*analysis()` functions that returned an error while performing percentile estimation when there was no variability in at least one variable in `vars` for at least one level of one variable in `subpops`.
 
 # spsurvey 5.3.0 (2022-02-24)
 
