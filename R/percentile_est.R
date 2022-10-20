@@ -117,12 +117,12 @@ percentile_est <- function(pctsum, dframe, itype, lev_itype, nlev_itype, ivar,
         ubound <- rep(NA, npctval)
       } else {
         options(warn = -1)
-        rslt_svy <- oldsvyquantile(make.formula(ivar),
+        rslt_svy <- svyquantile(make.formula(ivar),
           design = subset(design, tst), quantiles = pctval / 100,
           alpha = (100 - conf) / 100, ci = TRUE, na.rm = TRUE, ties = "rounded"
         )
         options(warn = 0)
-        pctest <- rslt_svy$quantiles
+        pctest <- coef(rslt_svy)
         nresp <- cdf_nresp(dframe[, ivar], as.vector(pctest))
         stderr <- SE(rslt_svy)
         temp <- confint(rslt_svy)

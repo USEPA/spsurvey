@@ -32,7 +32,7 @@
 #' @importFrom grDevices graphics.off pdf rainbow
 #' @importFrom lme4 lmer VarCorr
 #' @importFrom MASS ginv
-#' @importFrom stats addmargins chisq.test confint dist dnorm extractAIC ftable
+#' @importFrom stats addmargins chisq.test coef confint dist dnorm extractAIC ftable
 #'             lm model.frame model.matrix na.omit na.pass optimize pchisq pf
 #'             pnorm qnorm rnorm runif terms update var weights
 #' @importFrom units set_units
