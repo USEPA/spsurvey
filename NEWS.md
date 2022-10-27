@@ -30,6 +30,8 @@
 * Fixed a bug in `sp_summary()` that failed to summarize data frames that did not have an `sf_column` attribute.
 * Fixed a bug in `*_analysis()` functions when `popsize` is a list intended for use with `survey::calibrate()`.
 * Fixed a bug in `*analysis()` functions that returned an error while performing percentile estimation when there was no variability in at least one variable in `vars` for at least one level of one variable in `subpops`.
+* Fixed a bug in `grts()` that caused an error for some combinations of `n_base` and `n_over`.
+* Fixed a bug in `change_analysis()` that returned an error when at least one varible in `vars_cat` has only one unique value.
 
 # spsurvey 5.3.0 (2022-02-24)
 

@@ -748,7 +748,13 @@ change_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL, test = "m
   cluster_ind <- !is.null(clusterID)
 
   # Create the survey design object for each survey
-
+  ## give factors two levels if they only have one level
+  for (x in vars_cat) {
+    catvar_levels <- levels(dframe[[x]])
+    if (length(catvar_levels) == 1) {
+      levels(dframe[[x]]) <- c(catvar_levels, paste0("Not ", catvar_levels))
+    }
+  }
   design <- survey_design(
     dframe, siteID, weight, stratum_ind, stratumID, cluster_ind, clusterID,
     weight1, sizeweight, sweight, sweight1, fpcfactor_ind, fpcsize, Ncluster,
