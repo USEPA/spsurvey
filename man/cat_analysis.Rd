@@ -248,7 +248,25 @@ The analysis results. A data frame of population estimates for all combinations 
   subpopulations, categories within each subpopulation, response variables,
   and categories within each response variable.  Estimates are provided for
   proportion and total of the population plus standard error, margin of
-  error, and confidence interval estimates.
+  error, and confidence interval estimates. The data frame contains the following
+  variables:
+  \describe{
+    \item{Type}{subpopulation (domain) name}
+    \item{Subpopulation}{subpopulation name within a domain}
+    \item{Indicator}{response variable}
+    \item{Category}{category of response variable}
+    \item{nResp}{sample size}
+    \item{Estimate.P}{proportion estimate (in \%)}
+    \item{StdError.P}{standard error of proportion estimate}
+    \item{MarginofError.P}{margin of error of proportion estimate}
+    \item{LCBxxPct.P}{xx\% (default 95\%) lower confidence bound of proportion estimate}
+    \item{UCBxxPct.P}{xx\% (default 95\%) upper confidence bound of proportion estimate}
+    \item{Estimate.U}{total estimate}
+    \item{StdError.U}{standard error of total estimate}
+    \item{MarginofError.U}{margin of error of total estimate}
+    \item{LCBxxPct.U}{xx\% (default 95\%) lower confidence bound of total estimate}
+    \item{UCBxxPct.U}{xx\% (default 95\%) upper confidence bound of total estimate}
+  }
 }
 \description{
 This function organizes input and output for the analysis of categorical variables.  The analysis data,
