@@ -122,7 +122,7 @@ sp_plot.default <- function(object, formula = ~1, xcoord, ycoord, crs,
   }
 
   # setting old graphical parameter value
-  oldpar <- par()
+  oldpar <- par(no.readonly = TRUE)
   # setting exit handler
   on.exit(par(ask = oldpar$ask), add = TRUE)
 

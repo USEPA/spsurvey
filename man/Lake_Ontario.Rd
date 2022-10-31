@@ -20,6 +20,6 @@ Lake_Ontario
 }
 \description{
 An \code{sf} MULTIPOLYGON object of 187 polygons consisting
-of shoreline segments in Lake Ontario.
+of shore segments in Lake Ontario.
 }
 \keyword{datasets}

@@ -76,7 +76,7 @@
 #' Lake Ontario data
 #'
 #' An \code{sf} MULTIPOLYGON object of 187 polygons consisting
-#' of shoreline segments in Lake Ontario.
+#' of shore segments in Lake Ontario.
 #'
 #' @format 187 rows and 5 variables:
 #' \describe{

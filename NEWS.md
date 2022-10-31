@@ -21,6 +21,7 @@
 * Added a `"total"` option to `test` in `change_analysis()`.
 * Minor documentation updates.
 * Minor vignette updates.
+* Minor stability updates.
 
 ## Bug fixes
 
