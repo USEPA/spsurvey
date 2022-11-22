@@ -1,6 +1,6 @@
 Package: spsurvey
 Title: Spatial Sampling Design and Analysis
-Version: 5.3.0
+Version: 5.4.0
 Authors@R: c(
     person("Michael", "Dumelle", role=c("aut","cre"),
            email = "Dumelle.Michael@epa.gov", comment = c(ORCID = "0000-0002-3393-5529")),
@@ -35,7 +35,7 @@ Suggests:
     testthat,
     rmarkdown
 License: GPL (>= 3)
-URL: https://github.com/USEPA/spsurvey
+URL: https://usepa.github.io/spsurvey/, https://github.com/USEPA/spsurvey
 BugReports: https://github.com/USEPA/spsurvey/issues
 VignetteBuilder: knitr
 Encoding: UTF-8

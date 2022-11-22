@@ -10,13 +10,14 @@
 #' summarize by. If the left-hand side of the formula is empty, the
 #' summary will be of the distributions of the right-hand side variables. If the left-hand side
 #' of the formula contains a variable, the summary will be of the left-hand size variable
-#' for each level of each right-hand side variable.
+#' for each level of each right-hand side variable. Equivalent to \code{spsurvey::summary()}; both
+#' are currently maintained for backwards compatibility.
 #'
 #' @param object An object to summarize. When summarizing sampling frames,
-#' or analysis data, a data frame or \code{sf}
+#' an \code{sf}
 #' object. When summarizing design sites, an object created by \code{grts()} or
-#' \code{irs()} (which has class \code{spdesign}). When summarizing analysis data,
-#' a data frame or an \code{sf} object.
+#' \code{irs()} (which has class \code{sp_design}). When summarizing analysis data,
+#' a data frame or an \code{sf} object. 
 #'
 #' @param formula A formula. One-sided formulas are used to summarize the
 #' distribution of numeric or categorical variables. For one-sided formulas,
@@ -81,8 +82,11 @@ sp_summary.default <- function(object, formula = ~1, onlyshow = NULL, ...) {
     stop("sp_summary() is not supported on Solaris.")
   }
 
+  # store as data frame for geometry summaries
+  # this removes default sf sticky behavior
+  object <- data.frame(object)
   # making formlist (utils.R)
-  formlist <- make_formlist(formula, onlyshow, object)
+  formlist <- make_formlist(formula, onlyshow, object, remove_geom = FALSE)
   # making varsf (utils.R)
   varsf <- make_varsf(object, formlist)
   # accomodating an intercept
@@ -97,17 +101,17 @@ sp_summary.default <- function(object, formula = ~1, onlyshow = NULL, ...) {
   # calling the appropriate summary based on formula (right-hand side vs two sided)
   if (is.null(formlist$response)) {
     output <- cat_summary(formlist, varsf, ...)
-    output
   } else {
     output <- cont_summary(formlist, varsf, ...)
-    output
   }
+  new_output <- structure(output, class = c("sp_summary.sp_frame", class(output)))
+  new_output
 }
 
 #' @name sp_summary
-#' @method sp_summary spdesign
+#' @method sp_summary sp_design
 #' @export
-sp_summary.spdesign <- function(object, formula = ~siteuse, siteuse = NULL, onlyshow = NULL, ...) {
+sp_summary.sp_design <- function(object, formula = ~siteuse, siteuse = NULL, onlyshow = NULL, ...) {
   if ((is.null(siteuse) & (!is.null(object$sites_near))) | "Near" %in% siteuse) {
     object$sites_near$siteuse <- "Near"
   }
@@ -116,7 +120,7 @@ sp_summary.spdesign <- function(object, formula = ~siteuse, siteuse = NULL, only
   object <- sp_rbind(object, siteuse)
 
   if (is.null(siteuse)) {
-    fac_levels <- c("Legacy", "Base", "Near", "Over")
+    fac_levels <- c("Legacy", "Base", "Over", "Near")
     fac_levels_used <- fac_levels[fac_levels %in% unique(object$siteuse)]
     object$siteuse <- factor(object$siteuse, levels = fac_levels_used)
   } else {
@@ -124,7 +128,8 @@ sp_summary.spdesign <- function(object, formula = ~siteuse, siteuse = NULL, only
   }
 
   output <- sp_summary.default(object, formula, onlyshow, ...)
-  output
+  new_output <- structure(output, class = c("sp_summary.sp_design", setdiff(class(output), c("sp_summary.sp_frame", "summary.sp_frame"))))
+  new_output
 }
 
 # Helpers -----------------------------------------------------------------

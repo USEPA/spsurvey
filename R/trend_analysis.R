@@ -795,7 +795,7 @@ trend_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL, subpops = 
           k <- k + 1
         }
       }
-      design <- calibrate(design, make.formula(cnames), pop.totals)
+      design <- calibrate(design, make.formula(names(popsize)), pop.totals)
     }
   }
 

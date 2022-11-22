@@ -6,7 +6,6 @@
 ^Meta$
 ^\.github$
 ^LICENSE\.md$
-^notes.md$
 ^_pkgdown\.yml$
 ^docs$
 ^pkgdown$

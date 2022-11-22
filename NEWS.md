@@ -1,4 +1,40 @@
-# spsurvey 5.3.0 (2022-02-24)
+# spsurvey 5.4.0
+
+## Minor Updates
+
+* Added an `sp_frame()` function to create `sp_frame` objects for use with `plot()` and `summary()` for sampling frames and analysis data.
+    * `sp_frame` objects have class `sp_frame`.
+* Added an `sp_unframe()` function to transform `sp_frame` objects back into their original object type.
+* Objects output from `grts()` and `irs()` are now called `sp_design` objects instead of `spdesign` objects.
+    * `sp_design` objects have class `sp_design`.
+* `summary()` now works with `sp_frame` objects and `sp_design` objects.
+    * `sp_summary()` yields equivalent summaries and is currently maintained for backwards compatibility (i.e., `sp_summary()` has not changed).
+* `summary` functions now also summarize `sf` object geometries if the name of the geometry list-column is provided in the summary formula.
+* `plot()` now works with `sp_frame` objects and `sp_design` objects.
+    * `sp_plot()` yields equivalent plots and is currently maintained for backwards compatibility (i.e., `sp_plot()` has not changed).
+ * `plot()` now works with `sp_CDF` objects that are output from the `CDF` element of `cont_analysis()`.
+    * `cdf_plot()` yields equivalent plots and is currently maintained for backwards compatibility (i.e., `cdf_plot()` has not changed).   
+* Updated print functions for summaries obtained via `summary()` or `sp_summary()` so that they are clearer and easier to read.
+* Added a print function for `sp_design` objects. Now, a summary of site counts by site type (`Legacy`, `Base`, `Over` `Near`) crossed by strata or unequal probability levels or both is provided.
+* Added `stratum_var`, `caty_var`, and `aux_var` elements to the design list in `sp_design` objects.
+* Added `legacy_stratum_var`, `legacy_caty_var`, and `legacy_aux_var` elements to the design list in `sp_design` objects when legacy sites are used.
+* Added a `"total"` option to `test` in `change_analysis()`.
+* Minor documentation updates.
+* Minor vignette updates.
+* Minor stability updates.
+
+## Bug fixes
+
+* Fixed a bug that prevented proper printing of the `Indicator` column when using `change_analysis()` with `test = median`.
+* Fixed a bug that made `change_analysis` sensititve to the ordering of the levels of variables in `var_cat` if those variables were factors.
+* Fixed a bug in `sp_summary()` that incorrectly ordered the `siteuse` variable.
+* Fixed a bug in `sp_summary()` that failed to summarize data frames that did not have an `sf_column` attribute.
+* Fixed a bug in `*_analysis()` functions when `popsize` is a list intended for use with `survey::calibrate()`.
+* Fixed a bug in `*analysis()` functions that returned an error while performing percentile estimation when there was no variability in at least one variable in `vars` for at least one level of one variable in `subpops`.
+* Fixed a bug in `grts()` that caused an error for some combinations of `n_base` and `n_over`.
+* Fixed a bug in `change_analysis()` that returned an error when at least one varible in `vars_cat` has only one unique value.
+
+# spsurvey 5.3.0
 
 ## Minor updates
 
@@ -20,7 +56,7 @@
 * Fixed a bug in `sp_summary()` that returned an error when `formula = ~ .` and the geometry column was not named `"geometry"`. Now, `sp_summary()` works with `formula = ~ .` regardless of the name of the geometry column.
 * Fixed a bug in `grts()` and `irs()` that affected minimum distance performance when legacy sites were used.
 
-# spsurvey 5.2.0 (2021-01-23)
+# spsurvey 5.2.0
 
 ## Minor updates
 
@@ -36,7 +72,7 @@
 * Fixed a bug in `grts()` and `irs()` that sometimes incorrectly copied `stratum` values as `caty` values in the `sites` output.
 * Fixed a bug in `grts()` and `irs()` that prevented sampling from `LINESTRING`, `MULTILINESTRING`, `POLYGON`, or `MULTIPOLYGON` sf objects when `pt_density` was excessively large.
 
-# spsurvey 5.1.0 (2021-12-14)
+# spsurvey 5.1.0
 
 ## Minor updates
 
@@ -55,13 +91,13 @@
 * Fixed a bug in percentile estimation from `cont_analysis()` that incorrectly copied estimate values.
 * Fixed a bug in `grts()` and `irs()` that prevented sampling from `sframe` when the geometry type was `LINESTRING`, `MULTILINESTRING`, `POLYGON`, or `MULTIPOLYGON` and the number of desired samples exceeded the number of rows.
 
-# spsurvey 5.0.1 (2021-10-18)
+# spsurvey 5.0.1
 
 ## Bug fix
 
 * Addressed Solaris performance problems.
 
-# spsurvey 5.0.0 (2021-10-15)
+# spsurvey 5.0.0
 
 ## Major Updates
 
@@ -87,7 +123,7 @@
 
 * Several functions have changed (both inputs and outputs) and functions in version 5.0.0 are not always backwards compatible with functions from previous versions. Though we recommend users upgrade existing code to work with the current version's simpler implementations, backwards compatibility can be achieved by downloading previous versions of spsurvey.
 
-# spsurvey 4.1.4 (2020-9-15)
+# spsurvey 4.1.4
 
 ## Bug fix
 
@@ -95,7 +131,7 @@
 * A new check in R-devel (part of --as-cran) looks for return without (): 
 this is reported on the CRAN results pages for fedora-clang and fedora-gcc.
 
-# spsurvey 4.1.3 (2020-6-15)
+# spsurvey 4.1.3
 
 ## Bug fix
 
@@ -103,19 +139,19 @@ this is reported on the CRAN results pages for fedora-clang and fedora-gcc.
 
 * Variable sframe$len was used in grts function and never defined. Now uses length_mdm that is calculated earlier. [(#6)](https://github.com/USEPA/spsurvey/issues/6)
 
-# spsurvey 4.1.2 (2020-03-31)
+# spsurvey 4.1.2
 
 ## Bug fix
 
 * Update test data and Description file to handle changes in `sf` and changes to `crs` described [here](https://r-spatial.org/r/2020/03/17/wkt.html)
 
-# spsurvey 4.1.1 (2019-12-12)
+# spsurvey 4.1.1
 
 ## Bug fix
 
 * Fix to `localmean.weight` function to correct when class for matrix objects was causing an indicator variable to have length two rather than length one, which caused an error in a while statement.
 
-# spsurvey 4.1.0 (2019-07-11)
+# spsurvey 4.1.0
 
 ## Breaking changes
 * Functions that create survey designs were modified to replace use of shapefiles to provide the survey frame with use of simple features `sf` objects to provide the survey frame.  To accommodate this change, argument src.frame for functions `grts` and `irs` now will accept the choice `sf.object` to indicate that an `sf` object will be used as the source of the survey frame.  In addition, a new argument named `sf.object` was added to functions `grts` and `irs` to allow input of an `sf` object as the survey frame.  Also, note that arguments id, maxtry, and prjfilename for functions `grts` and `irs` have been depricated since they are no longer needed.  Finally, the three rda files in the data directory that contain survey frame objects (`NE_lakes`, `Luck_Ash_streams`, and `UT_ecoregions`) were revised to contain `sf` objects rather than objects belonging to classes that are defined in the `sp` package. 
@@ -128,7 +164,7 @@ this is reported on the CRAN results pages for fedora-clang and fedora-gcc.
 ## Modified function
 * Modified function `input.check` to check for missing values among the x-coordinates and y-coordinates for location.
 
-# spsurvey 4.0.0 (2019-04-04)
+# spsurvey 4.0.0
 
 ## New features
 
@@ -140,7 +176,7 @@ this is reported on the CRAN results pages for fedora-clang and fedora-gcc.
 
 * Modified C function `readDbfFile` to avoid PROTECT errors.
 
-# spsurvey 3.4.0 (2018-06-12)
+# spsurvey 3.4.0
 
 ## Bug fixes
 
@@ -154,7 +190,7 @@ this is reported on the CRAN results pages for fedora-clang and fedora-gcc.
 
 * Modified C function `readDbfFile` to ensure that missing values (NA) are handled correctly.
 
-# spsurvey 3.3.0 (2016-08-19)
+# spsurvey 3.3.0
 
 ## New features
 
@@ -164,7 +200,7 @@ this is reported on the CRAN results pages for fedora-clang and fedora-gcc.
 
 * Removed the C header file named `order.h` and replaced C functions `readBigEndian` and `readLittleEndian` with the version of those functions from `spsurvey` version 3.1.
 
-# spsurvey 3.2.0 (2016-08-16)
+# spsurvey 3.2.0
 
 ## New features
 
@@ -192,7 +228,7 @@ this is reported on the CRAN results pages for fedora-clang and fedora-gcc.
 
 * Modified function `read.sas` to use "C:/Program Files/SASHome/SASFoundation/9.4/sas.exe" as the default value for argument `sascmd`.
 
-# spsurvey 3.1.0 (2015-10-23)
+# spsurvey 3.1.0
 
 ## New features
 
@@ -202,7 +238,7 @@ this is reported on the CRAN results pages for fedora-clang and fedora-gcc.
 
 * Modified C functions to ensure that variables passed to function `malloc` are of type unsigned integer.
 
-# spsurvey 3.0.0 (2015-05-21)
+# spsurvey 3.0.0
 
 ## New features
 
@@ -220,7 +256,7 @@ this is reported on the CRAN results pages for fedora-clang and fedora-gcc.
 
 * Modified functions `grtspts`, `grtslin`, and `grtsarea` to ensure that argument `nlev` (number of hierarchical levels) for  C function `constructAddr` was stored as type integer.
 
-# spsurvey 2.7.0 (2014-06-26)
+# spsurvey 2.7.0
 
 ## New features
 
@@ -230,7 +266,7 @@ this is reported on the CRAN results pages for fedora-clang and fedora-gcc.
 
 * Modified function `warnprnt` to use correct variable names in the output data frame so that partial matching warnings for the names are not generated.
 
-# spsurvey 2.6.0 (2013-09-20)
+# spsurvey 2.6.0
 
 ## New features
 
@@ -244,7 +280,7 @@ this is reported on the CRAN results pages for fedora-clang and fedora-gcc.
 
 * Modified function `localmean.weight` to allow recovery from an error in the singular value decomposition function `La.svd` that is called by the generalized inverse function `ginv` in the `MASS` package. Also, created a support function named `localmean.weight2`.
 
-# spsurvey 2.5.0 (2012-10-10)
+# spsurvey 2.5.0
 
 ## New features
 
@@ -262,7 +298,7 @@ this is reported on the CRAN results pages for fedora-clang and fedora-gcc.
 
 * Modified function `dframe.check` to ensure proper handling of repeated site ID values in the sites data frame.
 
-# spsurvey 2.4.0 (2012-05-23)
+# spsurvey 2.4.0
 
 ## New features
 
@@ -282,7 +318,7 @@ this is reported on the CRAN results pages for fedora-clang and fedora-gcc.
  
 * Modified the following functions to assign consecutive numbers to the row names for the output data frame(s): `attrisk.analysis`, `cat.analysis`, `change.analysis`, `cont.analysis`, `cont.cdftest`, and `relrisk.analysis`.
 
-# spsurvey 2.3.0 (2012-02-03)
+# spsurvey 2.3.0
 
 ## New features
 
@@ -304,7 +340,7 @@ this is reported on the CRAN results pages for fedora-clang and fedora-gcc.
 
 * Created an `.onAttach` function that prints a message when the `spsurvey` package is attached.  Removed the `.onLoad` function, which prior versions used to to print a startup message.
 
-# spsurvey 2.2.0 (2011-05-16)
+# spsurvey 2.2.0
 
 ## New features
 
@@ -335,7 +371,7 @@ this is reported on the CRAN results pages for fedora-clang and fedora-gcc.
 * Modified function `dframe.check` to terminate execution when
  missing values are encountered in the logical variable of the sites data frame.
  
-# spsurvey 2.1.0 (2009-10-29)
+# spsurvey 2.1.0
 
 ## New features
 
@@ -354,7 +390,7 @@ this is reported on the CRAN results pages for fedora-clang and fedora-gcc.
 * Modified function `relrisk.analysis` to correct an error resulting from inclusion of more than one response variable in the
 `response.var` argument.
 
-# spsurvey 2.0.0 (2008-06-16)
+# spsurvey 2.0.0
 
 ## New features
 
@@ -374,7 +410,7 @@ this is reported on the CRAN results pages for fedora-clang and fedora-gcc.
 
 * Modified functions `grts`, `irs`, and `sp2shape` to ensure that an output shapefile attributes (dbf) file containing character variables with missing values can be read without error.
 
-# spsurvey 1.7.0 (2007-11-09)
+# spsurvey 1.7.0
 
 ## New features
 
@@ -402,7 +438,7 @@ this is reported on the CRAN results pages for fedora-clang and fedora-gcc.
 
 * Modified function `grts` to ensure that, when the type of random selection is "unequal", an oversample is apportioned correctly whenever the category sample sizes are proportional to the oversample size.
 
-# spsurvey 1.6.0 (2007-01-18)
+# spsurvey 1.6.0
 
 ## New features
 
@@ -416,13 +452,13 @@ this is reported on the CRAN results pages for fedora-clang and fedora-gcc.
 
 * Modified functions `grts` and `irs` to ensure that sample weights are correctly adjusted when an oversample is present and the type of random selection is "Continuous".
 
-# spsurvey 1.5.0 (2006-12-06)
+# spsurvey 1.5.0
 
 ## Bug fixes
 
 * Modified C functions `getRecordShapeSizes` and `lintFcn` to accommodate Polyline shapefiles that have multiple parts.
 
-# spsurvey 1.4.0 (2006-10-10)
+# spsurvey 1.4.0
 
 ## New features
 
@@ -446,7 +482,7 @@ this is reported on the CRAN results pages for fedora-clang and fedora-gcc.
 
 * Modified functions `grts` and `irs` to ensure that valid values are provided for the `panel` and `caty.n` arguments in the design list.
 
-# spsurvey 1.3.0 (2006-08-01)
+# spsurvey 1.3.0
 
 ## New features
 
@@ -454,7 +490,7 @@ this is reported on the CRAN results pages for fedora-clang and fedora-gcc.
 
 * Incorporated the CHANGES, README, and UserGuide files into the help page.
 
-# spsurvey 1.2.0 (2006-06-27)
+# spsurvey 1.2.0
 
 ## New features
 
@@ -464,7 +500,7 @@ this is reported on the CRAN results pages for fedora-clang and fedora-gcc.
 
 * Modified function `irsarea` and created a C function named `getRecordIDs` to ensure that an IRS sample is selected when argument `type.frame` is set to "area" in function `irs`.
 
-# spsurvey 1.1.0 (2006-05-31)
+# spsurvey 1.1.0
 
 ## New features
 
@@ -478,7 +514,7 @@ this is reported on the CRAN results pages for fedora-clang and fedora-gcc.
 
 * Modified functions `grts` and `irs` so that the sample weights are correctly adjusted when an oversample is requested and the realized sample size is less than the desired sample size.
 
-# spsurvey 1.0.0 (2006-05-05)
+# spsurvey 1.0.0
 
 ## New features
 

@@ -85,7 +85,7 @@ popsize <- data.frame(
 # Perform tests
 Change_Estimates <- change_analysis(
   dframe = dframe, vars_cat = vars_cat,
-  vars_cont = vars_cont, test = c("mean", "median"), subpops = subpops,
+  vars_cont = vars_cont, test = c("mean", "total", "median"), subpops = subpops,
   surveyID = "YEAR", siteID = "UNIQUE_ID", weight = "WGT_TP", xcoord = "XCOORD",
   ycoord = "YCOORD"
 )
@@ -94,15 +94,17 @@ test_that("Change: Unstratified single-stage analysis", {
   expect_true(exists("Change_Estimates"))
   expect_equal(attributes(Change_Estimates$catsum)$class, "data.frame")
   expect_equal(attributes(Change_Estimates$contsum_mean)$class, "data.frame")
+  expect_equal(attributes(Change_Estimates$contsum_total)$class, "data.frame")
   expect_equal(attributes(Change_Estimates$contsum_median)$class, "data.frame")
   expect_equal(nrow(Change_Estimates$catsum), 2)
   expect_equal(nrow(Change_Estimates$contsum_mean), 1)
+  expect_equal(nrow(Change_Estimates$contsum_total), 1)
   expect_equal(nrow(Change_Estimates$contsum_median), 2)
 })
 
 Change_Estimates <- change_analysis(
   dframe = dframe, vars_cat = vars_cat,
-  vars_cont = vars_cont, test = c("mean", "median"), subpops = subpops,
+  vars_cont = vars_cont, test = c("mean", "total", "median"), subpops = subpops,
   surveyID = "YEAR", siteID = "UNIQUE_ID", weight = "WGT_TP", xcoord = "XCOORD",
   ycoord = "YCOORD", popsize = popsize
 )
@@ -111,15 +113,17 @@ test_that("Change: with known population sizes", {
   expect_true(exists("Change_Estimates"))
   expect_equal(attributes(Change_Estimates$catsum)$class, "data.frame")
   expect_equal(attributes(Change_Estimates$contsum_mean)$class, "data.frame")
+  expect_equal(attributes(Change_Estimates$contsum_total)$class, "data.frame")
   expect_equal(attributes(Change_Estimates$contsum_median)$class, "data.frame")
   expect_equal(nrow(Change_Estimates$catsum), 2)
   expect_equal(nrow(Change_Estimates$contsum_mean), 1)
+  expect_equal(nrow(Change_Estimates$contsum_total), 1)
   expect_equal(nrow(Change_Estimates$contsum_median), 2)
 })
 
 Change_Estimates <- change_analysis(
   dframe = dframe, vars_cat = vars_cat,
-  vars_cont = vars_cont, test = c("mean", "median"), subpops = subpops,
+  vars_cont = vars_cont, test = c("mean", "total", "median"), subpops = subpops,
   surveyID = "YEAR", siteID = "UNIQUE_ID", weight = "WGT_TP", xcoord = "XCOORD",
   ycoord = "YCOORD", fpc = fpc1
 )
@@ -128,15 +132,17 @@ test_that("Change: with finite population correction factor", {
   expect_true(exists("Change_Estimates"))
   expect_equal(attributes(Change_Estimates$catsum)$class, "data.frame")
   expect_equal(attributes(Change_Estimates$contsum_mean)$class, "data.frame")
+  expect_equal(attributes(Change_Estimates$contsum_total)$class, "data.frame")
   expect_equal(attributes(Change_Estimates$contsum_median)$class, "data.frame")
   expect_equal(nrow(Change_Estimates$catsum), 2)
   expect_equal(nrow(Change_Estimates$contsum_mean), 1)
+  expect_equal(nrow(Change_Estimates$contsum_total), 1)
   expect_equal(nrow(Change_Estimates$contsum_median), 2)
 })
 
 Change_Estimates <- change_analysis(
   dframe = dframe, vars_cat = vars_cat,
-  vars_cont = vars_cont, test = c("mean", "median"), subpops = subpops,
+  vars_cont = vars_cont, test = c("mean", "total", "median"), subpops = subpops,
   surveyID = "YEAR", siteID = "UNIQUE_ID", weight = "WGT_TP", xcoord = "XCOORD",
   ycoord = "YCOORD", stratumID = "LAKE_ORGN"
 )
@@ -145,15 +151,17 @@ test_that("Change: Stratified single-stage analysis", {
   expect_true(exists("Change_Estimates"))
   expect_equal(attributes(Change_Estimates$catsum)$class, "data.frame")
   expect_equal(attributes(Change_Estimates$contsum_mean)$class, "data.frame")
+  expect_equal(attributes(Change_Estimates$contsum_total)$class, "data.frame")
   expect_equal(attributes(Change_Estimates$contsum_median)$class, "data.frame")
   expect_equal(nrow(Change_Estimates$catsum), 2)
   expect_equal(nrow(Change_Estimates$contsum_mean), 1)
+  expect_equal(nrow(Change_Estimates$contsum_total), 1)
   expect_equal(nrow(Change_Estimates$contsum_median), 2)
 })
 
 Change_Estimates <- change_analysis(
   dframe = dframe, vars_cat = vars_cat,
-  vars_cont = vars_cont, test = c("mean", "median"), subpops = subpops,
+  vars_cont = vars_cont, test = c("mean", "total", "median"), subpops = subpops,
   surveyID = "YEAR", siteID = "UNIQUE_ID", weight = "WGT_TP", xcoord = "XCOORD",
   ycoord = "YCOORD", stratumID = "LAKE_ORGN", fpc = fpc2b
 )
@@ -162,15 +170,17 @@ test_that("Change: with finite population correction factor", {
   expect_true(exists("Change_Estimates"))
   expect_equal(attributes(Change_Estimates$catsum)$class, "data.frame")
   expect_equal(attributes(Change_Estimates$contsum_mean)$class, "data.frame")
+  expect_equal(attributes(Change_Estimates$contsum_total)$class, "data.frame")
   expect_equal(attributes(Change_Estimates$contsum_median)$class, "data.frame")
   expect_equal(nrow(Change_Estimates$catsum), 2)
   expect_equal(nrow(Change_Estimates$contsum_mean), 1)
+  expect_equal(nrow(Change_Estimates$contsum_total), 1)
   expect_equal(nrow(Change_Estimates$contsum_median), 2)
 })
 
 Change_Estimates <- change_analysis(
   dframe = dframe, vars_cat = vars_cat,
-  vars_cont = vars_cont, test = c("mean", "median"), subpops = subpops,
+  vars_cont = vars_cont, test = c("mean", "total", "median"), subpops = subpops,
   surveyID = "YEAR", siteID = "UNIQUE_ID", weight = "WGT_TP", xcoord = "XCOORD",
   ycoord = "YCOORD", clusterID = "clusterID", weight1 = "weight1",
   xcoord1 = "xcoord1", ycoord1 = "ycoord1", vartype = "SRS"
@@ -180,15 +190,17 @@ test_that("Change: Unstratified two-stage analysis", {
   expect_true(exists("Change_Estimates"))
   expect_equal(attributes(Change_Estimates$catsum)$class, "data.frame")
   expect_equal(attributes(Change_Estimates$contsum_mean)$class, "data.frame")
+  expect_equal(attributes(Change_Estimates$contsum_total)$class, "data.frame")
   expect_equal(attributes(Change_Estimates$contsum_median)$class, "data.frame")
   expect_equal(nrow(Change_Estimates$catsum), 2)
   expect_equal(nrow(Change_Estimates$contsum_mean), 1)
+  expect_equal(nrow(Change_Estimates$contsum_total), 1)
   expect_equal(nrow(Change_Estimates$contsum_median), 2)
 })
 
 Change_Estimates <- change_analysis(
   dframe = dframe, vars_cat = vars_cat,
-  vars_cont = vars_cont, test = c("mean", "median"), subpops = subpops,
+  vars_cont = vars_cont, test = c("mean", "total", "median"), subpops = subpops,
   surveyID = "YEAR", siteID = "UNIQUE_ID", weight = "WGT_TP", xcoord = "XCOORD",
   ycoord = "YCOORD", clusterID = "clusterID", weight1 = "weight1",
   xcoord1 = "xcoord1", ycoord1 = "ycoord1", popsize = popsize,
@@ -199,15 +211,17 @@ test_that("Change: with known population sizes", {
   expect_true(exists("Change_Estimates"))
   expect_equal(attributes(Change_Estimates$catsum)$class, "data.frame")
   expect_equal(attributes(Change_Estimates$contsum_mean)$class, "data.frame")
+  expect_equal(attributes(Change_Estimates$contsum_total)$class, "data.frame")
   expect_equal(attributes(Change_Estimates$contsum_median)$class, "data.frame")
   expect_equal(nrow(Change_Estimates$catsum), 2)
   expect_equal(nrow(Change_Estimates$contsum_mean), 1)
+  expect_equal(nrow(Change_Estimates$contsum_total), 1)
   expect_equal(nrow(Change_Estimates$contsum_median), 2)
 })
 
 Change_Estimates <- change_analysis(
   dframe = dframe, vars_cat = vars_cat,
-  vars_cont = vars_cont, test = c("mean", "median"), subpops = subpops,
+  vars_cont = vars_cont, test = c("mean", "total", "median"), subpops = subpops,
   surveyID = "YEAR", siteID = "UNIQUE_ID", weight = "WGT_TP", xcoord = "XCOORD",
   ycoord = "YCOORD", clusterID = "clusterID", weight1 = "weight1",
   xcoord1 = "xcoord1", ycoord1 = "ycoord1", fpc = fpc3, vartype = "SRS"
@@ -217,15 +231,17 @@ test_that("Change: with finite population correction factor", {
   expect_true(exists("Change_Estimates"))
   expect_equal(attributes(Change_Estimates$catsum)$class, "data.frame")
   expect_equal(attributes(Change_Estimates$contsum_mean)$class, "data.frame")
+  expect_equal(attributes(Change_Estimates$contsum_total)$class, "data.frame")
   expect_equal(attributes(Change_Estimates$contsum_median)$class, "data.frame")
   expect_equal(nrow(Change_Estimates$catsum), 2)
   expect_equal(nrow(Change_Estimates$contsum_mean), 1)
+  expect_equal(nrow(Change_Estimates$contsum_total), 1)
   expect_equal(nrow(Change_Estimates$contsum_median), 2)
 })
 
 Change_Estimates <- change_analysis(
   dframe = dframe, vars_cat = vars_cat,
-  vars_cont = vars_cont, test = c("mean", "median"), subpops = subpops,
+  vars_cont = vars_cont, test = c("mean", "total", "median"), subpops = subpops,
   surveyID = "YEAR", siteID = "UNIQUE_ID", weight = "WGT_TP", xcoord = "XCOORD",
   ycoord = "YCOORD", stratumID = "LAKE_ORGN", clusterID = "clusterID",
   weight1 = "weight1", xcoord1 = "xcoord1", ycoord1 = "ycoord1",
@@ -236,15 +252,17 @@ test_that("Change: Stratified two-stage analysis", {
   expect_true(exists("Change_Estimates"))
   expect_equal(attributes(Change_Estimates$catsum)$class, "data.frame")
   expect_equal(attributes(Change_Estimates$contsum_mean)$class, "data.frame")
+  expect_equal(attributes(Change_Estimates$contsum_total)$class, "data.frame")
   expect_equal(attributes(Change_Estimates$contsum_median)$class, "data.frame")
   expect_equal(nrow(Change_Estimates$catsum), 2)
   expect_equal(nrow(Change_Estimates$contsum_mean), 1)
+  expect_equal(nrow(Change_Estimates$contsum_total), 1)
   expect_equal(nrow(Change_Estimates$contsum_median), 2)
 })
 
 Change_Estimates <- change_analysis(
   dframe = dframe, vars_cat = vars_cat,
-  vars_cont = vars_cont, test = c("mean", "median"), subpops = subpops,
+  vars_cont = vars_cont, test = c("mean", "total", "median"), subpops = subpops,
   surveyID = "YEAR", siteID = "UNIQUE_ID", weight = "WGT_TP", xcoord = "XCOORD",
   ycoord = "YCOORD", stratumID = "LAKE_ORGN", clusterID = "clusterID",
   weight1 = "weight1", xcoord1 = "xcoord1", ycoord1 = "ycoord1",
@@ -255,15 +273,17 @@ test_that("Change: with known population sizes", {
   expect_true(exists("Change_Estimates"))
   expect_equal(attributes(Change_Estimates$catsum)$class, "data.frame")
   expect_equal(attributes(Change_Estimates$contsum_mean)$class, "data.frame")
+  expect_equal(attributes(Change_Estimates$contsum_total)$class, "data.frame")
   expect_equal(attributes(Change_Estimates$contsum_median)$class, "data.frame")
   expect_equal(nrow(Change_Estimates$catsum), 2)
   expect_equal(nrow(Change_Estimates$contsum_mean), 1)
+  expect_equal(nrow(Change_Estimates$contsum_total), 1)
   expect_equal(nrow(Change_Estimates$contsum_median), 2)
 })
 
 Change_Estimates <- change_analysis(
   dframe = dframe, vars_cat = vars_cat,
-  vars_cont = vars_cont, test = c("mean", "median"), subpops = subpops,
+  vars_cont = vars_cont, test = c("mean", "total", "median"), subpops = subpops,
   surveyID = "YEAR", siteID = "UNIQUE_ID", weight = "WGT_TP", xcoord = "XCOORD",
   ycoord = "YCOORD", stratumID = "LAKE_ORGN", clusterID = "clusterID",
   weight1 = "weight1", xcoord1 = "xcoord1", ycoord1 = "ycoord1",
@@ -274,8 +294,39 @@ test_that("Change: with finite population correction factor", {
   expect_true(exists("Change_Estimates"))
   expect_equal(attributes(Change_Estimates$catsum)$class, "data.frame")
   expect_equal(attributes(Change_Estimates$contsum_mean)$class, "data.frame")
+  expect_equal(attributes(Change_Estimates$contsum_total)$class, "data.frame")
   expect_equal(attributes(Change_Estimates$contsum_median)$class, "data.frame")
   expect_equal(nrow(Change_Estimates$catsum), 2)
   expect_equal(nrow(Change_Estimates$contsum_mean), 1)
+  expect_equal(nrow(Change_Estimates$contsum_total), 1)
   expect_equal(nrow(Change_Estimates$contsum_median), 2)
 })
+
+test_that("Change for totals matches cont_analysis()", {
+  set.seed(1)
+  dframe <- data.frame(
+     surveyID = rep(c("Survey 1", "Survey 2"), c(100, 100)),
+     siteID = paste0("Site", 1:200),
+     wgt = runif(200, 10, 100),
+     xcoord = runif(200),
+     ycoord = runif(200),
+     ContVar = rnorm(200)
+   )
+   myvars <- c("ContVar")
+   change <- change_analysis(dframe,
+     vars_cont = myvars, 
+     surveyID = "surveyID", siteID = "siteID", weight = "wgt",
+     xcoord = "xcoord", ycoord = "ycoord", test = "total"
+   )$contsum_total
+   cont1 <- cont_analysis(dframe[dframe$surveyID == "Survey 1", ], 
+                          vars = myvars, 
+                          siteID = "siteID", xcoord = "xcoord", ycoord = "ycoord",
+                          weight = "wgt", statistics = "Total")$Total
+   cont2 <- cont_analysis(dframe[dframe$surveyID == "Survey 2", ], 
+                          vars = myvars, 
+                          siteID = "siteID", xcoord = "xcoord", ycoord = "ycoord",
+                          weight = "wgt", statistics = "Total")$Total
+   expect_equal(change$DiffEst, cont2$Estimate - cont1$Estimate)
+   expect_equal(change$StdError, sqrt(cont2$StdError^2 + cont1$StdError^2))
+})
+

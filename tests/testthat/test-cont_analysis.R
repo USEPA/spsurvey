@@ -84,7 +84,7 @@ CDF_Estimates <- cont_analysis(
 
 test_that("Continuous: Unstratified single-stage analysis", {
   expect_true(exists("CDF_Estimates"))
-  expect_equal(attributes(CDF_Estimates$CDF)$class, "data.frame")
+  expect_equal(attributes(CDF_Estimates$CDF)$class, c("sp_CDF", "data.frame"))
   expect_equal(attributes(CDF_Estimates$Pct)$class, "data.frame")
   expect_equal(attributes(CDF_Estimates$Mean)$class, "data.frame")
   expect_equal(attributes(CDF_Estimates$Total)$class, "data.frame")
@@ -102,7 +102,7 @@ CDF_Estimates <- cont_analysis(
 
 test_that("Continuous: with known population sizes", {
   expect_true(exists("CDF_Estimates"))
-  expect_equal(attributes(CDF_Estimates$CDF)$class, "data.frame")
+  expect_equal(attributes(CDF_Estimates$CDF)$class, c("sp_CDF", "data.frame"))
   expect_equal(attributes(CDF_Estimates$Pct)$class, "data.frame")
   expect_equal(attributes(CDF_Estimates$Mean)$class, "data.frame")
   expect_equal(attributes(CDF_Estimates$Total)$class, "data.frame")
@@ -120,7 +120,7 @@ CDF_Estimates <- cont_analysis(
 
 test_that("Continuous: with finite population correction factor", {
   expect_true(exists("CDF_Estimates"))
-  expect_equal(attributes(CDF_Estimates$CDF)$class, "data.frame")
+  expect_equal(attributes(CDF_Estimates$CDF)$class, c("sp_CDF", "data.frame"))
   expect_equal(attributes(CDF_Estimates$Pct)$class, "data.frame")
   expect_equal(attributes(CDF_Estimates$Mean)$class, "data.frame")
   expect_equal(attributes(CDF_Estimates$Total)$class, "data.frame")
@@ -138,7 +138,7 @@ CDF_Estimates <- cont_analysis(
 
 test_that("Continuous: Stratified single-stage analysis", {
   expect_true(exists("CDF_Estimates"))
-  expect_equal(attributes(CDF_Estimates$CDF)$class, "data.frame")
+  expect_equal(attributes(CDF_Estimates$CDF)$class, c("sp_CDF", "data.frame"))
   expect_equal(attributes(CDF_Estimates$Pct)$class, "data.frame")
   expect_equal(attributes(CDF_Estimates$Mean)$class, "data.frame")
   expect_equal(attributes(CDF_Estimates$Total)$class, "data.frame")
@@ -156,7 +156,7 @@ CDF_Estimates <- cont_analysis(
 
 test_that("Continuous: with known population sizes", {
   expect_true(exists("CDF_Estimates"))
-  expect_equal(attributes(CDF_Estimates$CDF)$class, "data.frame")
+  expect_equal(attributes(CDF_Estimates$CDF)$class, c("sp_CDF", "data.frame"))
   expect_equal(attributes(CDF_Estimates$Pct)$class, "data.frame")
   expect_equal(attributes(CDF_Estimates$Mean)$class, "data.frame")
   expect_equal(attributes(CDF_Estimates$Total)$class, "data.frame")
@@ -174,7 +174,7 @@ CDF_Estimates <- cont_analysis(
 
 test_that("Continuous: with finite population correction factor", {
   expect_true(exists("CDF_Estimates"))
-  expect_equal(attributes(CDF_Estimates$CDF)$class, "data.frame")
+  expect_equal(attributes(CDF_Estimates$CDF)$class, c("sp_CDF", "data.frame"))
   expect_equal(attributes(CDF_Estimates$Pct)$class, "data.frame")
   expect_equal(attributes(CDF_Estimates$Mean)$class, "data.frame")
   expect_equal(attributes(CDF_Estimates$Total)$class, "data.frame")
@@ -193,7 +193,7 @@ CDF_Estimates <- cont_analysis(
 
 test_that("Continuous: Unstratified two-stage analysis", {
   expect_true(exists("CDF_Estimates"))
-  expect_equal(attributes(CDF_Estimates$CDF)$class, "data.frame")
+  expect_equal(attributes(CDF_Estimates$CDF)$class, c("sp_CDF", "data.frame"))
   expect_equal(attributes(CDF_Estimates$Pct)$class, "data.frame")
   expect_equal(attributes(CDF_Estimates$Mean)$class, "data.frame")
   expect_equal(attributes(CDF_Estimates$Total)$class, "data.frame")
@@ -212,7 +212,7 @@ CDF_Estimates <- cont_analysis(
 
 test_that("Continuous: with known population sizes", {
   expect_true(exists("CDF_Estimates"))
-  expect_equal(attributes(CDF_Estimates$CDF)$class, "data.frame")
+  expect_equal(attributes(CDF_Estimates$CDF)$class, c("sp_CDF", "data.frame"))
   expect_equal(attributes(CDF_Estimates$Pct)$class, "data.frame")
   expect_equal(attributes(CDF_Estimates$Mean)$class, "data.frame")
   expect_equal(attributes(CDF_Estimates$Total)$class, "data.frame")
@@ -231,7 +231,7 @@ CDF_Estimates <- cont_analysis(
 
 test_that("Continuous: with finite population correction factor", {
   expect_true(exists("CDF_Estimates"))
-  expect_equal(attributes(CDF_Estimates$CDF)$class, "data.frame")
+  expect_equal(attributes(CDF_Estimates$CDF)$class, c("sp_CDF", "data.frame"))
   expect_equal(attributes(CDF_Estimates$Pct)$class, "data.frame")
   expect_equal(attributes(CDF_Estimates$Mean)$class, "data.frame")
   expect_equal(attributes(CDF_Estimates$Total)$class, "data.frame")
@@ -250,7 +250,7 @@ CDF_Estimates <- cont_analysis(
 
 test_that("Continuous: Stratified two-stage analysis", {
   expect_true(exists("CDF_Estimates"))
-  expect_equal(attributes(CDF_Estimates$CDF)$class, "data.frame")
+  expect_equal(attributes(CDF_Estimates$CDF)$class, c("sp_CDF", "data.frame"))
   expect_equal(attributes(CDF_Estimates$Pct)$class, "data.frame")
   expect_equal(attributes(CDF_Estimates$Mean)$class, "data.frame")
   expect_equal(attributes(CDF_Estimates$Total)$class, "data.frame")
@@ -270,7 +270,7 @@ CDF_Estimates <- cont_analysis(
 
 test_that("Continuous: with known population sizes", {
   expect_true(exists("CDF_Estimates"))
-  expect_equal(attributes(CDF_Estimates$CDF)$class, "data.frame")
+  expect_equal(attributes(CDF_Estimates$CDF)$class, c("sp_CDF", "data.frame"))
   expect_equal(attributes(CDF_Estimates$Pct)$class, "data.frame")
   expect_equal(attributes(CDF_Estimates$Mean)$class, "data.frame")
   expect_equal(attributes(CDF_Estimates$Total)$class, "data.frame")
@@ -289,7 +289,7 @@ CDF_Estimates <- cont_analysis(
 
 test_that("Continuous: with finite population correction factor", {
   expect_true(exists("CDF_Estimates"))
-  expect_equal(attributes(CDF_Estimates$CDF)$class, "data.frame")
+  expect_equal(attributes(CDF_Estimates$CDF)$class, c("sp_CDF", "data.frame"))
   expect_equal(attributes(CDF_Estimates$Pct)$class, "data.frame")
   expect_equal(attributes(CDF_Estimates$Mean)$class, "data.frame")
   expect_equal(attributes(CDF_Estimates$Total)$class, "data.frame")

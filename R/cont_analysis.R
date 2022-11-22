@@ -54,12 +54,71 @@
 #'   data frames that contain population estimates for all combinations of
 #'   subpopulations, categories within each subpopulation, and response
 #'   variables, where the number of data frames is determined by argument
-#'   statistics.  The possible data frames in the output list are:
+#'   \code{statistics}.  The possible data frames in the output list are:
 #'   \describe{
 #'     \item{\code{CDF}}{: a data frame containing CDF estimates}
 #'     \item{\code{Pct}}{: data frame containing percentile estimates}
 #'     \item{\code{Mean}}{: a data frame containing mean estimates}
 #'     \item{\code{Total}}{: a data frame containing total estimates}
+#'   }
+#'   
+#'   The \code{CDF} data frame contains the following variables:
+#'   \describe{
+#'     \item{Type}{subpopulation (domain) name}
+#'     \item{Subpopulation}{subpopulation name within a domain}
+#'     \item{Indicator}{response variable}
+#'     \item{Value}{value of response variable}
+#'     \item{nResp}{sample size at or below \code{Value}}
+#'     \item{Estimate.P}{CDF proportion estimate (in \%)}
+#'     \item{StdError.P}{standard error of CDF proportion estimate}
+#'     \item{MarginofError.P}{margin of error of CDF proportion estimate}
+#'     \item{LCBxxPct.P}{xx\% (default 95\%) lower confidence bound of CDF proportion estimate}
+#'     \item{UCBxxPct.P}{xx\% (default 95\%) upper confidence bound of CDF proportion estimate}
+#'     \item{Estimate.U}{CDF total estimate}
+#'     \item{StdError.U}{standard error of CDF total estimate}
+#'     \item{MarginofError.U}{margin of error of CDF total estimate}
+#'     \item{LCBxxPct.U}{xx\% (default 95\%) lower confidence bound of CDF total estimate}
+#'     \item{UCBxxPct.U}{xx\% (default 95\%) upper confidence bound of CDF total estimate}
+#'   }
+#'   
+#'   The \code{Pct} data frame contains the following variables:
+#'   \describe{
+#'     \item{Type}{subpopulation (domain) name}
+#'     \item{Subpopulation}{subpopulation name within a domain}
+#'     \item{Indicator}{response variable}
+#'     \item{Statistic}{value of percentile}
+#'     \item{nResp}{sample size at or below \code{Value}}
+#'     \item{Estimate}{percentile estimate}
+#'     \item{StdError}{standard error of percentile estimate}
+#'     \item{MarginofError}{margin of error of percentile estimate}
+#'     \item{LCBxxPct}{xx\% (default 95\%) lower confidence bound of percentile estimate}
+#'     \item{UCBxxPct}{xx\% (default 95\%) upper confidence bound of percentile estimate}
+#'   }
+#'   
+#'   The \code{Mean} data frame contains the following variables:
+#'   \describe{
+#'     \item{Type}{subpopulation (domain) name}
+#'     \item{Subpopulation}{subpopulation name within a domain}
+#'     \item{Indicator}{response variable}
+#'     \item{nResp}{sample size at or below \code{Value}}
+#'     \item{Estimate}{mean estimate}
+#'     \item{StdError}{standard error of mean estimate}
+#'     \item{MarginofError}{margin of error of mean estimate}
+#'     \item{LCBxxPct}{xx\% (default 95\%) lower confidence bound of mean estimate}
+#'     \item{UCBxxPct}{xx\% (default 95\%) upper confidence bound of mean estimate}
+#'   }
+#'   
+#'   The \code{Total} data frame contains the following variables:
+#'   \describe{
+#'     \item{Type}{subpopulation (domain) name}
+#'     \item{Subpopulation}{subpopulation name within a domain}
+#'     \item{Indicator}{response variable}
+#'     \item{nResp}{sample size at or below \code{Value}}
+#'     \item{Estimate}{total estimate}
+#'     \item{StdError}{standard error of total estimate}
+#'     \item{MarginofError}{margin of error of total estimate}
+#'     \item{LCBxxPct}{xx\% (default 95\%) lower confidence bound of total estimate}
+#'     \item{UCBxxPct}{xx\% (default 95\%) upper confidence bound of total estimate}
 #'   }
 #'
 #' @author Tom Kincaid \email{Kincaid.Tom@@epa.gov}
@@ -400,7 +459,7 @@ cont_analysis <- function(dframe, vars, subpops = NULL, siteID = NULL,
           k <- k + 1
         }
       }
-      design <- calibrate(design, make.formula(cnames), pop_totals)
+      design <- calibrate(design, make.formula(names(popsize)), pop_totals)
     }
   }
 
@@ -520,6 +579,7 @@ cont_analysis <- function(dframe, vars, subpops = NULL, siteID = NULL,
       paste0("UCB", conf, "Pct.P"), "Estimate.U", "StdError.U", "MarginofError.U",
       paste0("LCB", conf, "Pct.U"), paste0("UCB", conf, "Pct.U")
     ))
+    class(contsum$CDF) <- c("sp_CDF", class(contsum$CDF))
   }
 
   if (!is.null(contsum$Pct)) {

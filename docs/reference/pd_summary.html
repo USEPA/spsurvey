@@ -21,7 +21,7 @@ periods."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/ma
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">spsurvey</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">5.3.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">5.4.0</span>
       </span>
     </div>
 
@@ -80,7 +80,7 @@ periods.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">pd_summary</span><span class="op">(</span><span class="va">object</span>, visitdsgn <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">pd_summary</span><span class="op">(</span><span class="va">object</span>, visitdsgn <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -151,12 +151,12 @@ will be sampled only once at each time period.</p></dd>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Serially alternating panel revisit design summary</span></span></span>
-<span class="r-in"><span><span class="va">sa_dsgn</span> <span class="op">&lt;-</span> <span class="fu"><a href="revisit_dsgn.html">revisit_dsgn</a></span><span class="op">(</span><span class="fl">20</span>, panels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>SA60N <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>  n <span class="op">=</span> <span class="fl">60</span>, pnl_dsgn <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">4</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  pnl_n <span class="op">=</span> <span class="cn">NA</span>, start_option <span class="op">=</span> <span class="st">"None"</span></span></span>
-<span class="r-in"><span><span class="op">)</span><span class="op">)</span>, begin <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu">pd_summary</span><span class="op">(</span><span class="va">sa_dsgn</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co"># Serially alternating panel revisit design summary</span></span>
+<span class="r-in"><span class="va">sa_dsgn</span> <span class="op">&lt;-</span> <span class="fu"><a href="revisit_dsgn.html">revisit_dsgn</a></span><span class="op">(</span><span class="fl">20</span>, panels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>SA60N <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span class="r-in">  n <span class="op">=</span> <span class="fl">60</span>, pnl_dsgn <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">4</span><span class="op">)</span>,</span>
+<span class="r-in">  pnl_n <span class="op">=</span> <span class="cn">NA</span>, start_option <span class="op">=</span> <span class="st">"None"</span></span>
+<span class="r-in"><span class="op">)</span><span class="op">)</span>, begin <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu">pd_summary</span><span class="op">(</span><span class="va">sa_dsgn</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $n_panel</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 5</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -182,11 +182,11 @@ will be sampled only once at each time period.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   1   2   3   4   5   6   7   8   9  10  11  12  13  14  15  16  17  18  19  20 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  60 120 180 240 300 300 300 300 300 300 300 300 300 300 300 300 300 300 300 300 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"><span><span class="co"># Add visit design where first panel is sampled twice at every time period</span></span></span>
-<span class="r-in"><span><span class="va">sa_visit</span> <span class="op">&lt;-</span> <span class="va">sa_dsgn</span></span></span>
-<span class="r-in"><span><span class="va">sa_visit</span><span class="op">[</span><span class="va">sa_visit</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">1</span></span></span>
-<span class="r-in"><span><span class="va">sa_visit</span><span class="op">[</span><span class="fl">1</span>, <span class="va">sa_visit</span><span class="op">[</span><span class="fl">1</span>, <span class="op">]</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">2</span></span></span>
-<span class="r-in"><span><span class="fu">pd_summary</span><span class="op">(</span><span class="va">sa_dsgn</span>, <span class="va">sa_visit</span><span class="op">)</span></span></span>
+<span class="r-in"><span class="co"># Add visit design where first panel is sampled twice at every time period</span></span>
+<span class="r-in"><span class="va">sa_visit</span> <span class="op">&lt;-</span> <span class="va">sa_dsgn</span></span>
+<span class="r-in"><span class="va">sa_visit</span><span class="op">[</span><span class="va">sa_visit</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">1</span></span>
+<span class="r-in"><span class="va">sa_visit</span><span class="op">[</span><span class="fl">1</span>, <span class="va">sa_visit</span><span class="op">[</span><span class="fl">1</span>, <span class="op">]</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">2</span></span>
+<span class="r-in"><span class="fu">pd_summary</span><span class="op">(</span><span class="va">sa_dsgn</span>, <span class="va">sa_visit</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $n_panel</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 5</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>

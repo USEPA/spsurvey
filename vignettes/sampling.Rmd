@@ -62,16 +62,23 @@ To select an unstratified GRTS sample where each site in the sampling frame has 
 eqprob <- grts(NE_Lakes, n_base = 50)
 ```
 
-The first argument to `grts()` is the sampling frame, which must be an `sf` object. The second argument is `n_base`, which specifies the number of sites in the base (main) sample. The `sites_base` object in `eqprob` is an `sf` object and contains the original columns of `NE_Lakes` as well as a few additional columns such as a site identifier, latitude and longitude coordinates, inclusion probabilities, and design weights (to be used in analyses after collecting data). To visualize the design sites overlain onto the sampling frame, run
+The first argument to `grts()` is the sampling frame, which must be an `sf` object. The second argument is `n_base`, which specifies the number of sites in the base (main) sample. The `sites_base` object in `eqprob` is an `sf` object and contains the original columns of `NE_Lakes` as well as a few additional columns such as a site identifier, latitude and longitude coordinates, inclusion probabilities, and design weights (to be used in analyses after collecting data). 
+
+To print a summary of site counts, run
+```{r}
+eqprob
+```
+
+To visualize the design sites overlain onto the sampling frame, run
 ```{r, eval = FALSE}
-sp_plot(eqprob, NE_Lakes, key.width = lcm(3))
+plot(eqprob, NE_Lakes, key.width = lcm(3))
 ```
 
 ```{r, echo = FALSE}
-sp_plot(eqprob, NE_Lakes, key.width = lcm(3), key.pos = 4)
+plot(eqprob, NE_Lakes, key.width = lcm(3), key.pos = 4)
 ```
 
-The `key.width` argument extends the plot's margin to fit the legend text nicely within the plot. 
+The `key.width` argument extends the plot's margin to fit the legend text nicely within the plot. `sp_plot()` can equivalently be used in place of `plot()` (`sp_plot()` is currently maintained for backwards compatibility with previous spsurvey versions).
 
 ## Unequal inclusion probabilities
 
@@ -84,6 +91,7 @@ uneqprob <- grts(
   caty_var = "AREA_CAT",
   caty_n = caty_n
 )
+uneqprob
 ```
 
 `caty_var` is the unequal inclusion probability variable (`"AREA_CAT"` in `NE_Lakes`), and `caty_n` is a vector whose names are the levels in `caty_var` and whose values are the expected sample sizes in each category (the sum of these expected samples sizes must equal `n_base`). In this sample, inclusion probabilities are adjusted so that on average, there are 40 small lakes and 10 large lakes selected. 
@@ -111,12 +119,13 @@ To select a sample stratified by elevation category with equal inclusion probabi
 ```{r}
 strata_n <- c(low = 25, high = 15)
 strat_eqprob <- grts(NE_Lakes, n_base = strata_n, stratum_var = "ELEV_CAT")
+strat_eqprob
 ```
 `strata_n` is a named vector whose names represent the strata and whose values represent strata-specific sample sizes, and `stratum_var` is the stratification variable (`ELEV_CAT` in `NE_Lakes`).
 
 To visualize the design sites overlain onto the sampling frame (separately for each stratum), run
 ```{r, eval = FALSE}
-sp_plot(
+plot(
   strat_eqprob,
   formula = siteuse ~ ELEV_CAT,
   NE_Lakes,
@@ -125,7 +134,7 @@ sp_plot(
 ```
 
 ```{r, echo = FALSE}
-sp_plot(
+plot(
   strat_eqprob,
   formula = siteuse ~ ELEV_CAT,
   NE_Lakes,
@@ -149,6 +158,7 @@ strat_uneqprob <- grts(
   caty_var = "AREA_CAT",
   caty_n = caty_n
 )
+strat_uneqprob
 ```
 
 `caty_n` is now a list: the first element contains the expected sample sizes for each area category in the low elevation stratum, and the second element contains the expected sample sizes for each area category in the high elevation stratum.
@@ -169,21 +179,22 @@ strat_propprob <- grts(
 
 ## Legacy sampling
 
-Legacy (historical) sites are sites that were selected in a previous sampling design and should be always be included in the current sample. The `NE_Lakes_Legacy` data contains some legacy sites. To accommodate these legacy sites while sampling, use the `legacy_sites` argument:
+Legacy (historical) sites are sites that were selected from a previous sampling design that incorporated randomness into site selection, are part of the sampling frame for the current sampling design, and should be always be selected in the current sample. The `NE_Lakes_Legacy` data contains some legacy sites. To accommodate these legacy sites while sampling, use the `legacy_sites` argument:
 ```{r}
 legacy <- grts(NE_Lakes, n_base = 50, legacy_sites = NE_Lakes_Legacy)
+legacy
 ```
 
 To visualize the legacy and base sites together, run
 ```{r, eval = FALSE}
-sp_plot(legacy, key.width = lcm(3))
+plot(legacy, key.width = lcm(3))
 ```
 
 ```{r, echo = FALSE}
-sp_plot(legacy, key.width = lcm(3), key.pos = 4)
+plot(legacy, key.width = lcm(3), key.pos = 4)
 ```
 
-These points can be overlain onto the sampling frame by including `NE_Lakes` in the `sp_plot()` command.
+These points can be overlain onto the sampling frame by including `NE_Lakes` in the `plot()` command.
 
 Legacy sites are included in the base (main) sample, so the value for `n_base` should be equal to the number of legacy sites plus the number of non-legacy sites desired in the sample. If your sampling design uses stratification, unequal inclusion probabilities, or proportional inclusion probabilities, you need to name the column in `legacy_sites` that represents these values. By default, `grts()` assumes that the respective columns in `sframe` and `legacy_sites` share the same name -- if this is not the case, use the `legacy_stratum_var`, `legacy_caty_var` or `legacy_aux_var` arguments. If your population is finite, you may alternatively accommodate legacy sites by including a variable in your sampling frame that indicates whether each site is a legacy site or not and then use the `legacy_var` argument in `grts()`. When using `legacy_var`, you do not need to use `legacy_stratum_var`, `legacy_caty_var` or `legacy_aux_var`.
 
@@ -218,16 +229,17 @@ Sometimes data cannot be collected at a site. This may occur for a variety of re
 The first replacement site option is reverse hierarchical ordering (Stevens and Olsen, 2004). To select a base sample with reverse hierarchically ordered replacement sites, run
 ```{r}
 rho_replace <- grts(NE_Lakes, n_base = 50, n_over = 25)
+rho_replace
 ```
 `n_base` indicates the desired sample size, and `n_over` indicates the number of replacement sites. Sites are first selected using the GRTS algorithm for a sample size of `n_base + n_over`. They are then determined as base sites or replacement sites in a way that preserves as much spatial balance as possible. The spatial balance of the base sites degrades as `n_over` increases, however, so it is important to choose a realistic value for `n_over`.
 
 To visualize the base sites and reverse hierarchically ordered replacement sites, run
 ```{r, eval = FALSE}
-sp_plot(rho_replace, key.width = lcm(3))
+plot(rho_replace, key.width = lcm(3))
 ```
 
 ```{r, echo = FALSE}
-sp_plot(rho_replace, key.width = lcm(3), key.pos = 4)
+plot(rho_replace, key.width = lcm(3), key.pos = 4)
 ```
 
 When stratifying, `n_over` will apply to all strata if it is a single value. It is possible to set stratum-specific reverse hierarchical ordering requirements by storing them in a named list (the names must match the strata):
@@ -239,6 +251,7 @@ strat_rho_replace <- grts(
   stratum_var = "ELEV_CAT",
   n_over = over_list
 )
+strat_rho_replace
 ```
 
 ### Nearest neighbor
@@ -246,6 +259,7 @@ strat_rho_replace <- grts(
 The second replacement site option is nearest neighbor. To select a base sample with nearest neighbor replacement sites, run
 ```{r}
 nn_replace <- grts(NE_Lakes, n_base = 50, n_near = 1)
+nn_replace
 ```
 `n_base` indicates the desired sample size, and `n_near` indicates the number of replacement sites for each base site. For `n_near = 1`, each site in the base sample has a replacement site associated with it -- this replacement site is the closest site (measured by Euclidean distance) to the base site (within a stratum).
 
@@ -258,6 +272,7 @@ strat_nn_replace <- grts(
   stratum_var = "ELEV_CAT",
   n_near = near_list
 )
+strat_nn_replace
 ```
 
 ## Independent Random Sampling
@@ -265,15 +280,16 @@ strat_nn_replace <- grts(
 If you want to select samples that are not spatially balanced, use spsurvey's `irs()` function (IRS is for Independent Random Sampling). The function arguments for the `irs()` function are the same as the function arguments for the `grts()` function. This means that the flexible sampling design options available for the GRTS algorithm are also available for the IRS algorithm. To select an unstratified IRS sample where each site in the sampling frame has an equal inclusion probability, run
 ```{r}
 eqprob_irs <- irs(NE_Lakes, n_base = 50)
+eqprob_irs
 ```
 
 To visualize the design sites, run
 ```{r, eval = FALSE}
-sp_plot(eqprob_irs, NE_Lakes, key.width = lcm(3))
+plot(eqprob_irs, NE_Lakes, key.width = lcm(3))
 ```
 
 ```{r, echo = FALSE}
-sp_plot(eqprob_irs, NE_Lakes, key.width = lcm(3), key.pos = 4)
+plot(eqprob_irs, NE_Lakes, key.width = lcm(3), key.pos = 4)
 ```
 
 Notice how these IRS design sites appear less spread out than the design sites from the unstratified GRTS sample with equal inclusion probabilities.
@@ -282,6 +298,7 @@ To select an IRS sample stratified by elevation category with equal inclusion pr
 ```{r}
 strata_n <- c(low = 25, high = 15)
 strat_eqprob_irs <- irs(NE_Lakes, n_base = strata_n, stratum_var = "ELEV_CAT")
+strat_eqprob_irs
 ```
 
 # Measuring spatial balance
@@ -311,11 +328,11 @@ eqprob <- grts(Illinois_River, n_base = 50)
 
 To visualize the design sites overlain onto the sampling frame, run
 ```{r, eval = FALSE}
-sp_plot(eqprob, Illinois_River, key.width = lcm(3))
+plot(eqprob, Illinois_River, key.width = lcm(3))
 ```
 
 ```{r, echo = FALSE}
-sp_plot(eqprob, Illinois_River, key.width = lcm(3), key.pos = 4)
+plot(eqprob, Illinois_River, key.width = lcm(3), key.pos = 4)
 ```
 
 To accommodate the Illinois River legacy sites, run:
@@ -330,11 +347,11 @@ eqprob <- grts(Lake_Ontario, n_base = 50)
 
 To visualize the design sites (with closed circles) overlain onto the sampling frame, run
 ```{r, eval = FALSE}
-sp_plot(eqprob, Lake_Ontario, pch = 19, key.width = lcm(3))
+plot(eqprob, Lake_Ontario, pch = 19, key.width = lcm(3))
 ```
 
 ```{r, echo = FALSE}
-sp_plot(eqprob, Lake_Ontario, pch = 19, key.width = lcm(3), key.pos = 4)
+plot(eqprob, Lake_Ontario, pch = 19, key.width = lcm(3), key.pos = 4)
 ```
 
 # Binding design sites

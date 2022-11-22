@@ -38,13 +38,13 @@ Before proceeding, we load spsurvey by running
 library(spsurvey)
 ```
 
-The `sp_summary()` and `sp_plot()` functions in spsurvey are used to summarize and visualize sampling frames, design sites, and analysis data. Both functions use a formula argument that specifies the variables to summarize or visualize. These functions behave differently for one-sided and two-sided formulas. To learn more about formulas in R, run `?formula`. Only the core functionality of `sp_summary()` and `sp_plot()` will be covered in this vignette, so to learn more about these functions, run `?sp_summary` and `?sp_plot`.
+The `summary()` and `plot()` functions in spsurvey are used to summarize and visualize sampling frames, design sites, and analysis data. Both functions use a formula argument that specifies the variables to summarize or visualize. These functions behave differently for one-sided and two-sided formulas. To learn more about formulas in R, run `?formula`. Only the core functionality of `summary()` and `plot()` will be covered in this vignette, so to learn more about these functions, run `?summary` and `?plot`. The `sp_summary()` and `sp_plot()` functions can equivalently be used in place of `plot()` and `summary()`, respectively (`sp_summary()` and `sp_plot()` are currently maintained for backwards compatibility with previous spsurvey versions).
 
-The `sp_plot()` function in spsurvey is built on the `plot()` function in sf. spsurvey's `sp_plot()` function accommodates all the arguments in sf's `plot()` function and adds a few additional features.  To learn more about the `plot()` function in sf, run `?plot.sf()`. 
+The `plot()` function in spsurvey is built on the `plot()` function in sf. spsurvey's `plot()` function accommodates all the arguments in sf's `plot()` function and adds a few additional features.  To learn more about the `plot()` function in sf, run `?plot.sf()`. 
 
 # Sampling frames
 
-Summarizing and visualizing the sampling frame is often helpful to better understand your data and inform additional survey design options (e.g. stratification). To use `sp_plot()` or `sp_summarize()`, sampling frames must either be an `sf` object or a data frame with x-coordinates, y-coordinates, and a crs (coordinate reference system).
+Summarizing and visualizing the sampling frame is often helpful to better understand your data and inform additional survey design options (e.g. stratification). To use `plot()` or `sp_summarize()`, sampling frames must either be an `sf` object or a data frame with x-coordinates, y-coordinates, and a crs (coordinate reference system).
 
 The `NE_Lakes` data in spsurvey is a sampling frame (as an `sf` object) that contains lakes from the Northeastern United States. There are three variables in `NE_Lakes` you will use next:
 
@@ -52,60 +52,67 @@ The `NE_Lakes` data in spsurvey is a sampling frame (as an `sf` object) that con
 2. `ELEV`: lake elevation (a continuous variable)
 3. `ELEV_CAT`: lake elevation categories (low and high)
 
+Before summarizing or visualizing a sampling frame, turn it into an \code{sp_frame} object using `sp_frame()`:
+```{r}
+NE_Lakes <- sp_frame(NE_Lakes)
+```
+
+
+
 ## One-sided formulas
 
 One-sided formulas are used to summarize and visualize the distributions of variables. The variables of interest should be placed on the right-hand side of the formula. To summarize the distribution of `ELEV`, run
 ```{r}
-sp_summary(NE_Lakes, formula = ~ ELEV)
+summary(NE_Lakes, formula = ~ ELEV)
 ```
 The output contains two columns: `total` and `ELEV`. The `total` column returns the total number of lakes, functioning as an "intercept" to the formula (it can by removed by supplying `- 1` to the formula). The `ELEV` column returns a numerical summary of lake elevation. To visualize `ELEV`, run
 ```{r, eval = FALSE}
-sp_plot(NE_Lakes, formula = ~ ELEV)
+plot(NE_Lakes, formula = ~ ELEV)
 ```
 
 ```{r, echo = FALSE}
-sp_plot(NE_Lakes, formula = ~ ELEV, key.pos = 4)
+plot(NE_Lakes, formula = ~ ELEV, key.pos = 4)
 ```
 
 To summarize the distribution of `ELEV_CAT`, run
 ```{r}
-sp_summary(NE_Lakes, formula = ~ ELEV_CAT)
+summary(NE_Lakes, formula = ~ ELEV_CAT)
 ```
 The `ELEV_CAT` column returns the number of lakes in each elevation category. To visualize `ELEV_CAT`, run
 ```{r, eval = FALSE}
-sp_plot(NE_Lakes, formula = ~ ELEV_CAT, key.width = lcm(3))
+plot(NE_Lakes, formula = ~ ELEV_CAT, key.width = lcm(3))
 ```
 
 ```{r, echo = FALSE}
-sp_plot(NE_Lakes, formula = ~ ELEV_CAT, key.width = lcm(3), key.pos = 4)
+plot(NE_Lakes, formula = ~ ELEV_CAT, key.width = lcm(3), key.pos = 4)
 ```
 
-The `key.width` argument extends the plot's margin to fit the legend text nicely within the plot. The plot's default title is the `formula` argument, though this is changed using the `main` argument to `sp_plot()`.
+The `key.width` argument extends the plot's margin to fit the legend text nicely within the plot. The plot's default title is the `formula` argument, though this is changed using the `main` argument to `plot()`.
 
-The formula used by `sp_summary()` and `sp_plot()` is quite flexible. Additional variables are included using `+`:
+The formula used by `summary()` and `plot()` is quite flexible. Additional variables are included using `+`:
 ```{r}
-sp_summary(NE_Lakes, formula = ~ ELEV_CAT + AREA_CAT)
+summary(NE_Lakes, formula = ~ ELEV_CAT + AREA_CAT)
 ```
-The `sp_plot()` function returns two plots -- one for `ELEV_CAT` and another for `AREA_CAT`:
+The `plot()` function returns two plots -- one for `ELEV_CAT` and another for `AREA_CAT`:
 ```{r, eval = FALSE}
-sp_plot(NE_Lakes, formula = ~ ELEV_CAT + AREA_CAT, key.width = lcm(3))
+plot(NE_Lakes, formula = ~ ELEV_CAT + AREA_CAT, key.width = lcm(3))
 ```
 
 ```{r, echo = FALSE}
-sp_plot(NE_Lakes, formula = ~ ELEV_CAT + AREA_CAT, key.width = lcm(3), key.pos = 4)
+plot(NE_Lakes, formula = ~ ELEV_CAT + AREA_CAT, key.width = lcm(3), key.pos = 4)
 ```
 
 Interactions are included using the interaction operator, `:`. The interaction operator returns the interaction between variables and is most useful when used with categorical variables. To summarize the interaction between `ELEV_CAT` and `AREA_CAT`, run
 ```{r}
-sp_summary(NE_Lakes, formula = ~ ELEV_CAT:AREA_CAT)
+summary(NE_Lakes, formula = ~ ELEV_CAT:AREA_CAT)
 ```
 Levels of each variable are separated by `:`. For example, there are 86 lakes that are in the low elevation category and the small area category. To visualize this interaction, run
 ```{r, eval = FALSE}
-sp_plot(NE_Lakes, formula = ~ ELEV_CAT:AREA_CAT, key.width = lcm(3))
+plot(NE_Lakes, formula = ~ ELEV_CAT:AREA_CAT, key.width = lcm(3))
 ```
 
 ```{r, echo = FALSE}
-sp_plot(NE_Lakes, formula = ~ ELEV_CAT:AREA_CAT, key.width = lcm(3), key.pos = 4)
+plot(NE_Lakes, formula = ~ ELEV_CAT:AREA_CAT, key.width = lcm(3), key.pos = 4)
 ```
 
 The formula accommodates the `*` operator, which combines the `+` and `:` operators. For example, `ELEV_CAT*AREA_CAT` is shorthand for `ELEV_CAT + AREA_CAT + ELEV_CAT:AREA_CAT`. The formula also accommodates the `.` operator, which is shorthand for all variables separated by `+`.
@@ -114,47 +121,47 @@ The formula accommodates the `*` operator, which combines the `+` and `:` operat
 
 Two-sided formulas are used to summarize the distribution of a left-hand side variable for each level of each right-hand side variable. To summarize the distribution of `ELEV` for each level of `AREA_CAT`, run
 ```{r}
-sp_summary(NE_Lakes, formula = ELEV ~ AREA_CAT)
+summary(NE_Lakes, formula = ELEV ~ AREA_CAT)
 ```
 To visualize the distribution of `ELEV` for each level of `AREA_CAT`, run
 ```{r, eval = FALSE}
-sp_plot(NE_Lakes, formula = ELEV ~ AREA_CAT)
+plot(NE_Lakes, formula = ELEV ~ AREA_CAT)
 ```
 
 ```{r, echo = FALSE}
-sp_plot(NE_Lakes, formula = ELEV ~ AREA_CAT, key.pos = 4)
+plot(NE_Lakes, formula = ELEV ~ AREA_CAT, key.pos = 4)
 ```
 
 To only summarize or visualize a particular level of a single right-hand side variable, use the `onlyshow` argument:
 ```{r}
-sp_summary(NE_Lakes, formula = ELEV ~ AREA_CAT, onlyshow = "small")
+summary(NE_Lakes, formula = ELEV ~ AREA_CAT, onlyshow = "small")
 ```
 
 ```{r, eval = FALSE}
-sp_plot(NE_Lakes, formula = ELEV ~ AREA_CAT, onlyshow = "small")
+plot(NE_Lakes, formula = ELEV ~ AREA_CAT, onlyshow = "small")
 ```
 
 ```{r, echo = FALSE}
-sp_plot(NE_Lakes, formula = ELEV ~ AREA_CAT, onlyshow = "small", key.pos = 4)
+plot(NE_Lakes, formula = ELEV ~ AREA_CAT, onlyshow = "small", key.pos = 4)
 ```
 
 To summarize the distribution of `ELEV_CAT` for each level of `AREA_CAT`, run
 ```{r}
-sp_summary(NE_Lakes, formula = ELEV_CAT ~ AREA_CAT)
+summary(NE_Lakes, formula = ELEV_CAT ~ AREA_CAT)
 ```
 To visualize the distribution of `ELEV_CAT` for each level of `AREA_CAT`, run
 ```{r, eval = FALSE}
-sp_plot(NE_Lakes, formula = ELEV_CAT ~ AREA_CAT, key.width = lcm(3))
+plot(NE_Lakes, formula = ELEV_CAT ~ AREA_CAT, key.width = lcm(3))
 ```
 
 ```{r, echo = FALSE}
-sp_plot(NE_Lakes, formula = ELEV_CAT ~ AREA_CAT, key.width = lcm(3), key.pos = 4)
+plot(NE_Lakes, formula = ELEV_CAT ~ AREA_CAT, key.width = lcm(3), key.pos = 4)
 ```
 
 
 ## Adjusting graphical parameters
 
-There are three arguments in `sp_plot()` that can adjust graphical parameters:
+There are three arguments in `plot()` that can adjust graphical parameters:
 
 1. `var_args` adjusts graphical parameters simultaneously for all levels of a variable 
 2. `varlevel_args` adjusts graphical parameters uniquely for each level of a variable
@@ -165,7 +172,7 @@ The `var_args` and `varlevel_args` arguments take lists whose names match variab
 list1 <- list(main = "Elevation Categories", pal = rainbow)
 list2 <- list(main = "Area Categories")
 list3 <- list(levels = c("small", "large"), pch = c(4, 19))
-sp_plot(
+plot(
   NE_Lakes,
   formula = ~ ELEV_CAT + AREA_CAT,
   var_args = list(ELEV_CAT = list1, AREA_CAT = list2),
@@ -179,7 +186,7 @@ sp_plot(
 list1 <- list(main = "Elevation Categories", pal = rainbow)
 list2 <- list(main = "Area Categories")
 list3 <- list(levels = c("small", "large"), pch = c(4, 19))
-sp_plot(
+plot(
   NE_Lakes,
   formula = ~ ELEV_CAT + AREA_CAT,
   var_args = list(ELEV_CAT = list1, AREA_CAT = list2),
@@ -195,7 +202,7 @@ sp_plot(
 If a two-sided formula is used, it is possible to adjust graphical parameters of the left-hand side variable for all levels of a right-hand side variable. This occurs when a sublist matching the structure of `varlevel_args` is used as an argument to `var_args`. In this next example, different shapes are used for the small and large levels of `AREA_CAT` for all levels of `ELEV_CAT`:
 ```{r,, eval = FALSE}
 sublist <- list(AREA_CAT = list3)
-sp_plot(
+plot(
   NE_Lakes,
   formula = AREA_CAT ~ ELEV_CAT,
   var_args = list(ELEV_CAT = sublist),
@@ -205,7 +212,7 @@ sp_plot(
 
 ```{r, echo = FALSE}
 sublist <- list(AREA_CAT = list3)
-sp_plot(
+plot(
   NE_Lakes,
   formula = AREA_CAT ~ ELEV_CAT,
   var_args = list(ELEV_CAT = sublist),
@@ -216,7 +223,7 @@ sp_plot(
 
 # Design sites
 
-Design sites (output from the `grts()` or `irs()` functions) can be summarized and visualized using `sp_summary()` and `sp_plot()` very similarly to how sampling frames were summarized and visualized in the previous section. Soon you will use the `grts()` function to select a spatially balance sample. The `grts()` function does incorporate randomness, so to match your results with this output exactly you will need to set a reproducible seed by running
+Design sites (output from the `grts()` or `irs()` functions) can be summarized and visualized using `summary()` and `plot()` very similarly to how sampling frames were summarized and visualized in the previous section. Soon you will use the `grts()` function to select a spatially balanced sample. The `grts()` function does incorporate randomness, so to match your results with this output exactly you will need to set a reproducible seed by running
 ```{r}
 set.seed(51)
 ```
@@ -226,87 +233,92 @@ First we will obtain some design sites: To select an equal probability GRTS samp
 eqprob_rho <- grts(NE_Lakes, n_base = 50, n_over = 10)
 ```
 
-Similar to `sp_summary()` and `sp_plot()` for sampling frames, `sp_summary()` and `sp_plot()` for design sites uses a formula. The formula should include `siteuse`, which is the name of the variable in the design sites object that indicates the type of each site. The default formula for `sp_summary()` and `sp_plot()` is `~siteuse`, which summarizes or visualizes the `sites` objects in the design sites object. By default, the formula is applied to all non-`NULL` `sites` objects (in `eqprob_rho`, the non`NULL` sites objects are `sites_base` (for the base sites) and `sites_over` (for the reverse hierarchically ordered replacement sites)).
+Similar to `summary()` and `plot()` for sampling frames, `summary()` and `plot()` for design sites uses a formula. The formula should include `siteuse`, which is the name of the variable in the design sites object that indicates the type of each site. The default formula for `summary()` and `plot()` is `~siteuse`, which summarizes or visualizes the `sites` objects in the design sites object. By default, the formula is applied to all non-`NULL` `sites` objects (in `eqprob_rho`, the non`NULL` sites objects are `sites_base` (for the base sites) and `sites_over` (for the reverse hierarchically ordered replacement sites)).
 ```{r}
-sp_summary(eqprob_rho)
+summary(eqprob_rho)
 ```
 
 
 ```{r, eval = FALSE}
-sp_plot(eqprob_rho, key.width = lcm(3))
+plot(eqprob_rho, key.width = lcm(3))
 ```
 
 ```{r, echo = FALSE}
-sp_plot(eqprob_rho, key.width = lcm(3), key.pos = 4)
+plot(eqprob_rho, key.width = lcm(3), key.pos = 4)
 ```
 
-The sampling frame may be included as an argument to the `sp_plot()` function:
+The sampling frame may be included as an argument to the `plot()` function:
 ```{r, eval = FALSE}
-sp_plot(eqprob_rho, NE_Lakes, key.width = lcm(3))
+plot(eqprob_rho, NE_Lakes, key.width = lcm(3))
 ```
 
 ```{r, echo = FALSE}
-sp_plot(eqprob_rho, NE_Lakes, key.width = lcm(3), key.pos = 4)
+plot(eqprob_rho, NE_Lakes, key.width = lcm(3), key.pos = 4)
 ```
 
 When you include `siteuse` as a left-hand side variable (`siteuse` is treated as a categorical variable), you can summarize and visualize the `sites` object for each level of each right-hand side variable:
 ```{r}
-sp_summary(eqprob_rho, formula = siteuse ~ AREA_CAT)
+summary(eqprob_rho, formula = siteuse ~ AREA_CAT)
 ```
 
 ```{r, eval = FALSE}
-sp_plot(eqprob_rho, formula = siteuse ~ AREA_CAT, key.width = lcm(3))
+plot(eqprob_rho, formula = siteuse ~ AREA_CAT, key.width = lcm(3))
 ```
 
 ```{r, echo = FALSE}
-sp_plot(eqprob_rho, formula = siteuse ~ AREA_CAT, key.width = lcm(3), key.pos = 4)
+plot(eqprob_rho, formula = siteuse ~ AREA_CAT, key.width = lcm(3), key.pos = 4)
 ```
 
 
 You can also summarize and visualize a left-hand side variable for each level of `siteuse`:
 ```{r}
-sp_summary(eqprob_rho, formula = ELEV ~ siteuse)
+summary(eqprob_rho, formula = ELEV ~ siteuse)
 ```
 
 ```{r, eval = FALSE}
-sp_plot(eqprob_rho, formula = ELEV ~ siteuse)
+plot(eqprob_rho, formula = ELEV ~ siteuse)
 ```
 
 ```{r, echo = FALSE}
-sp_plot(eqprob_rho, formula = ELEV ~ siteuse, key.pos = 4)
+plot(eqprob_rho, formula = ELEV ~ siteuse, key.pos = 4)
 ```
 
 
 # Analysis data
 
-`sp_summarize()` and `sp_plot()` work for analysis data the same way they do for sampling frames.
+`sp_summarize()` and `plot()` work for analysis data the same way they do for sampling frames.
 The `NLA_PNW` analysis data in spsurvey is analysis data (as an `sf` object) from lakes in California, Oregon, and Washington. There are two variables in `NLA_PNW` you will use next:
 
 1. `STATE`: state name (`California`, `Washington`, and `Oregon`)
 2. `NITR_COND` : nitrogen content categories (`Poor`, `Fair`, and `Good`)
 
+Before summarizing or visualizing a sampling frame, turn it into an object using  `sp_frame()`:
+```{r}
+NLA_PNW <- sp_frame(NLA_PNW)
+```
+
 To summarize and visualize `NITR_COND` across all states, run
 ```{r}
-sp_summary(NLA_PNW, formula = ~ NITR_COND)
+summary(NLA_PNW, formula = ~ NITR_COND)
 ```
 
 ```{r, eval = FALSE}
-sp_plot(NLA_PNW, formula = ~ NITR_COND, key.width = lcm(3))
+plot(NLA_PNW, formula = ~ NITR_COND, key.width = lcm(3))
 ```
 
 ```{r, echo = FALSE}
-sp_plot(NLA_PNW, formula = ~ NITR_COND, key.width = lcm(3), key.pos = 4)
+plot(NLA_PNW, formula = ~ NITR_COND, key.width = lcm(3), key.pos = 4)
 ```
 
 Suppose the sampling design was stratified by `STATE`. To summarize and visualize `NITR_COND` by `STATE`, run
 ```{r}
-sp_summary(NLA_PNW, formula = NITR_COND ~ STATE)
+summary(NLA_PNW, formula = NITR_COND ~ STATE)
 ```
 
 ```{r, eval = FALSE}
-sp_plot(NLA_PNW, formula = NITR_COND ~ STATE, key.width = lcm(3))
+plot(NLA_PNW, formula = NITR_COND ~ STATE, key.width = lcm(3))
 ```
 
 ```{r, echo = FALSE}
-sp_plot(NLA_PNW, formula = NITR_COND ~ STATE, key.width = lcm(3), key.pos = 4)
+plot(NLA_PNW, formula = NITR_COND ~ STATE, key.width = lcm(3), key.pos = 4)
 ```

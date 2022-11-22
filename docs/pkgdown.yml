@@ -1,4 +1,4 @@
-pandoc: 2.7.3
+pandoc: 2.11.4
 pkgdown: 2.0.6
 pkgdown_sha: ~
 articles:
@@ -6,5 +6,5 @@ articles:
   EDA: EDA.html
   sampling: sampling.html
   start-here: start-here.html
-last_built: 2022-09-15T21:29Z
+last_built: 2022-11-22T15:55Z
 

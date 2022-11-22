@@ -117,9 +117,13 @@ percentile_est <- function(pctsum, dframe, itype, lev_itype, nlev_itype, ivar,
         ubound <- rep(NA, npctval)
       } else {
         options(warn = -1)
-        rslt_svy <- oldsvyquantile(make.formula(ivar),
+        rslt_svy <- tryCatch(
+          oldsvyquantile(make.formula(ivar),
           design = subset(design, tst), quantiles = pctval / 100,
-          alpha = (100 - conf) / 100, ci = TRUE, na.rm = TRUE, ties = "rounded"
+          alpha = (100 - conf) / 100, ci = TRUE, na.rm = TRUE, ties = "rounded"),
+          error = function(e) oldsvyquantile(make.formula(ivar),
+          design = subset(design, tst), quantiles = pctval / 100,
+          alpha = (100 - conf) / 100, ci = TRUE, na.rm = TRUE, ties = "rounded", method = "constant")
         )
         options(warn = 0)
         pctest <- rslt_svy$quantiles
@@ -154,10 +158,15 @@ percentile_est <- function(pctsum, dframe, itype, lev_itype, nlev_itype, ivar,
         tst <- tst & dframe[, itype] %in% lev_itype[subpop_ind]
         levs <- (1:nlev_itype)[subpop_ind]
         options(warn = -1)
-        rslt_svy <- svyby(make.formula(ivar), make.formula(itype),
+        rslt_svy <- tryCatch(
+          svyby(make.formula(ivar), make.formula(itype),
           design = subset(design, tst), oldsvyquantile,
           quantiles = pctval / 100, alpha = (100 - conf) / 100, ci = TRUE,
-          na.rm = TRUE, ties = "rounded"
+          na.rm = TRUE, ties = "rounded"),
+          error = function(e) svyby(make.formula(ivar), make.formula(itype),
+          design = subset(design, tst), oldsvyquantile,
+          quantiles = pctval / 100, alpha = (100 - conf) / 100, ci = TRUE,
+          na.rm = TRUE, ties = "rounded", method = "constant")
         )
         options(warn = 0)
         j <- 1

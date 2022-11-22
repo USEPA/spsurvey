@@ -3,20 +3,20 @@
 \name{sp_summary}
 \alias{sp_summary}
 \alias{sp_summary.default}
-\alias{sp_summary.spdesign}
+\alias{sp_summary.sp_design}
 \title{Summarize sampling frames, design sites, and analysis data.}
 \usage{
 sp_summary(object, ...)
 
 \method{sp_summary}{default}(object, formula = ~1, onlyshow = NULL, ...)
 
-\method{sp_summary}{spdesign}(object, formula = ~siteuse, siteuse = NULL, onlyshow = NULL, ...)
+\method{sp_summary}{sp_design}(object, formula = ~siteuse, siteuse = NULL, onlyshow = NULL, ...)
 }
 \arguments{
 \item{object}{An object to summarize. When summarizing sampling frames,
-or analysis data, a data frame or \code{sf}
+an \code{sf}
 object. When summarizing design sites, an object created by \code{grts()} or
-\code{irs()} (which has class \code{spdesign}). When summarizing analysis data,
+\code{irs()} (which has class \code{sp_design}). When summarizing analysis data,
 a data frame or an \code{sf} object.}
 
 \item{...}{Additional arguments to pass to \code{sp_summary()}. If the left-hand
@@ -60,7 +60,8 @@ formula specifies the variables (or factors) to
 summarize by. If the left-hand side of the formula is empty, the
 summary will be of the distributions of the right-hand side variables. If the left-hand side
 of the formula contains a variable, the summary will be of the left-hand size variable
-for each level of each right-hand side variable.
+for each level of each right-hand side variable. Equivalent to \code{spsurvey::summary()}; both
+are currently maintained for backwards compatibility.
 }
 \examples{
 \dontrun{

@@ -62,7 +62,7 @@ spsurvey implements a design-based approach to statistical inference, with a foc
 There are three additional vignettes in spsurvey:
 
 1. Exploratory Data Analysis: Summarizing and Visualizing Sampling Frames, Design Sites, and Analysis Data
-    * Use the `sp_summary()` and `sp_plot()` functions to summarize and visualize sampling frames, design sites, and analysis data
+    * Use the `summary()` and `plot()` functions to summarize and visualize sampling frames, design sites, and analysis data
     * To view this vignette, run `vignette("EDA", "spsurvey")`
 2. Spatially Balanced Sampling
     * Use the `grts()` function to implement the Generalized Random Tessellation Stratified (GRTS) algorithm (Stevens and Olsen, 2004) to select spatially balanced samples
@@ -71,11 +71,11 @@ There are three additional vignettes in spsurvey:
     * Use several analysis functions to analyze data
     * To view this vignette, run `vignette("analysis", "spsurvey")`.
 
-These vignettes cover some of the core functions (and arguments within those functions) in spsurvey. To learn more about features of spsurvey that are not covered in these vignettes, we encourage you to read spsurvey's documentation available for download [here](https://cran.r-project.org/package=spsurvey). Help files for a particular function are viewable by running `?function_name` after loading spsurvey. For example, to learn more about the `grts()` function, run `?grts`.
+These vignettes cover some of the core functions (and arguments within those functions) in spsurvey. To learn more about features of spsurvey that are not covered in these vignettes, we encourage you to read spsurvey's documentation available for download [here](https://cran.r-project.org/package=spsurvey) or viewable interactively on our website [here](https://usepa.github.io/spsurvey/). Help files for a particular function are viewable by running `?function_name` after loading spsurvey. For example, to learn more about the `grts()` function, run `?grts`.
 
 # Installing a previous version of spsurvey
 
-The version 5.0.0 update to spsurvey implemented many significant changes to existing functions. As a result, some of your old code may not run properly while using version 5.0.0. Though we recommend adapting your code to work with the version 5.0.0, you may also install a previous version of spsurvey. For information regarding the installation of previous version of R packages, please see the RStudio support page [here](https://support.rstudio.com/hc/en-us/articles/219949047-Installing-older-versions-of-packages). Additionally, old versions of spsurvey are also available for download in the release tags section of our GitHub repository [here](https://github.com/USEPA/spsurvey/releases).
+The version 5.0.0 update to spsurvey implemented many significant changes to existing functions. As a result, some of your old code may not run properly while using version 5.0.0. Though we recommend adapting your code to work with the version 5.0.0, you may also install a previous version of spsurvey. For information regarding the installation of previous version of R packages, please see the RStudio support page [here](https://support.posit.co/hc/en-us/articles/219949047-Installing-older-versions-of-packages). Additionally, old versions of spsurvey are also available for download in the release tags section of our GitHub repository [here](https://github.com/USEPA/spsurvey/releases).
 
 # `sf` objects
 

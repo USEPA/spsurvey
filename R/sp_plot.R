@@ -11,11 +11,12 @@
 #' for each level of each right-hand side variable.
 #' This function is largely built on \code{plot.sf()}, and all spsurvey plotting
 #' methods can supply additional arguments to \code{plot.sf()}. For more information on
-#' plotting in \code{sf}, run \code{?sf::plot.sf()}.
+#' plotting in \code{sf}, run \code{?sf::plot.sf()}. Equivalent to \code{spsurvey::plot()}; both
+#' are currently maintained for backwards compatibility.
 #'
 #' @param object An object to plot. When plotting sampling frames or analysis data,
 #' a data frame or \code{sf} object. When plotting design sites, an object created by \code{grts()} or
-#' \code{irs()} (which has class \code{spdesign}).
+#' \code{irs()} (which has class \code{sp_design}).
 #'
 #' @param sframe The sampling frame (an \code{sf} object) to plot alongside design
 #' sites. This argument is only used when \code{object} corresponds to the design sites.
@@ -121,7 +122,7 @@ sp_plot.default <- function(object, formula = ~1, xcoord, ycoord, crs,
   }
 
   # setting old graphical parameter value
-  oldpar <- par()
+  oldpar <- par(no.readonly = TRUE)
   # setting exit handler
   on.exit(par(ask = oldpar$ask), add = TRUE)
 
@@ -306,9 +307,9 @@ sp_plot.default <- function(object, formula = ~1, xcoord, ycoord, crs,
 }
 
 #' @name sp_plot
-#' @method sp_plot spdesign
+#' @method sp_plot sp_design
 #' @export
-sp_plot.spdesign <- function(object, sframe = NULL, formula = ~siteuse, siteuse = NULL,
+sp_plot.sp_design <- function(object, sframe = NULL, formula = ~siteuse, siteuse = NULL,
                              var_args = NULL, varlevel_args = NULL, geom = FALSE, onlyshow = NULL,
                              fix_bbox = TRUE, ...) {
 

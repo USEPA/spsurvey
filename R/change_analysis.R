@@ -57,7 +57,8 @@
 #'
 #' @param test Character string or character vector providing the location
 #'   measure(s) to use for change estimation for continuous variables.  The
-#'   choices are \code{"mean"}, \code{"median"}, or \code{c("mean", "median")}.
+#'   choices are \code{"mean"}, \code{"total"}, \code{"median"}, or some
+#'   combination of the three options (e.g., \code{c("mean", "total")}).
 #'   The default is \code{"mean"}.
 #'
 #' @param subpops Vector composed of character values that identify the
@@ -79,7 +80,9 @@
 #'
 #' @param siteID Character value providing name of the site ID variable in
 #'   \code{dframe}.  For a two-stage sample, the site ID variable
-#'   identifies stage two site IDs.  The default value is \code{"siteID"}.
+#'   identifies stage two site IDs.  The default value is \code{"siteID"}. If a
+#'   unique site is visited in both surveys, the corresponding \code{siteID}
+#'   should be the same for both entries.
 #'
 #' @param weight Character value providing name of the design weight
 #'   variable in \code{dframe}.  For a two-stage sample, the
@@ -283,10 +286,11 @@
 #'   (ignoring subpopulations) is not returned for each variable in \code{vars}.
 #'   The default is \code{FALSE}.
 #'
-#' @return List of change estimates composed of three items:
+#' @return List of change estimates composed of four items:
 #'   (1) \code{catsum} contains change estimates for categorical variables,
 #'   (2) \code{contsum_mean} contains estimates for continuous variables using
-#'   the mean, and (3) \code{contsum_median} contains estimates for continuous
+#'   the mean, (3) \code{contsum_total} contains estimates for continuous
+#'   variables using the total, and (4) \code{contsum_median} contains estimates for continuous
 #'   variables using the median.  The items in the list will contain \code{NULL}
 #'   for estimates that were not calculated.  Each data frame includes estimates
 #'   for all combinations of population Types, subpopulations within types,
@@ -294,6 +298,146 @@
 #'   categorical variables and continuous variables using the median).  Change
 #'   estimates are provided plus standard error estimates and confidence
 #'   interval estimates.
+#'   
+#'   The \code{catsum} data frame contains the following variables:
+#'   \describe{
+#'     \item{Survey_1}{first survey name}
+#'     \item{Survey_2}{second survey name}
+#'     \item{Type}{subpopulation (domain) name}
+#'     \item{Subpopulation}{subpopulation name within a domain}
+#'     \item{Indicator}{response variable}
+#'     \item{Category}{category of response variable}
+#'     \item{DiffEst.P}{proportion difference estimate (in \%; second survey - first survey)}
+#'     \item{StdError.P}{standard error of proportion difference estimate}
+#'     \item{MarginofError.P}{margin of error of proportion difference estimate}
+#'     \item{LCBxxPct.P}{xx\% (default 95\%) lower confidence bound of proportion difference estimate}
+#'     \item{UCBxxPct.P}{xx\% (default 95\%) upper confidence bound of proportion difference estimate}
+#'     \item{Estimate.U}{total difference estimate (second survey - first survey)}
+#'     \item{StdError.U}{standard error of total difference estimate}
+#'     \item{MarginofError.U}{margin of error of total difference estimate}
+#'     \item{LCBxxPct.U}{xx\% (default 95\%) lower confidence bound of total difference estimate}
+#'     \item{UCBxxPct.U}{xx\% (default 95\%) upper confidence bound of total difference estimate}
+#'     \item{nResp_1}{sample size in the first survey}
+#'     \item{Estimate.P_1}{proportion estimate (in \%) from the first survey}
+#'     \item{StdError.P_1}{standard error of proportion estimate from the first survey}
+#'     \item{MarginofError.P_1}{margin of error of proportion estimate from the first survey}
+#'     \item{LCBxxPct.P_1}{xx\% (default 95\%) lower confidence bound of proportion estimate from the first survey}
+#'     \item{UCBxxPct.P_1}{xx\% (default 95\%) upper confidence bound of proportion estimate from the first survey}
+#'     \item{nResp_2}{sample size in the second survey}
+#'     \item{Estimate.U_1}{total estimate from the first survey}
+#'     \item{StdError.U_1}{standard error of total estimate from the first survey}
+#'     \item{MarginofError.U_1}{margin of error of total estimate from the first survey}
+#'     \item{LCBxxPct.U_1}{xx\% (default 95\%) lower confidence bound of total estimate from the first survey}
+#'     \item{UCBxxPct.U_1}{xx\% (default 95\%) upper confidence bound of total estimate from the first survey}
+#'     \item{Estimate.P_2}{proportion estimate (in \%) from the second survey}
+#'     \item{StdError.P_2}{standard error of proportion estimate from the second survey}
+#'     \item{MarginofError.P_2}{margin of error of proportion estimate from the second survey}
+#'     \item{LCBxxPct.P_2}{xx\% (default 95\%) lower confidence bound of proportion estimate from the second survey}
+#'     \item{UCBxxPct.P_2}{xx\% (default 95\%) upper confidence bound of proportion estimate from the second survey}
+#'     \item{Estimate.U_2}{total estimate from the second survey}
+#'     \item{StdError.U_2}{standard error of total estimate from the second survey}
+#'     \item{MarginofError.U_2}{margin of error of total estimate from the second survey}
+#'     \item{LCBxxPct.U_2}{xx\% (default 95\%) lower confidence bound of total estimate from the second survey}
+#'     \item{UCBxxPct.U_2}{xx\% (default 95\%) upper confidence bound of total estimate from the second survey}
+#'   }
+#'   
+#'   The \code{contsum_mean} data frame contains the following variables:
+#'   \describe{
+#'     \item{Survey_1}{first survey name}
+#'     \item{Survey_2}{second survey name}
+#'     \item{Type}{subpopulation (domain) name}
+#'     \item{Subpopulation}{subpopulation name within a domain}
+#'     \item{Indicator}{response variable}
+#'     \item{Statistic}{value of percentile}
+#'     \item{nResp}{sample size at or below \code{Value}}
+#'     \item{DiffEst}{mean difference estimate}
+#'     \item{StdError}{standard error of mean difference estimate}
+#'     \item{MarginofError}{margin of error of mean difference estimate}
+#'     \item{LCBxxPct}{xx\% (default 95\%) lower confidence bound of mean difference estimate}
+#'     \item{UCBxxPct}{xx\% (default 95\%) upper confidence bound of mean difference estimate}
+#'     \item{nResp_1}{sample size in the first survey}
+#'     \item{Estimate_1}{mean estimate from the first survey}
+#'     \item{StdError_1}{standard error of mean estimate from the first survey}
+#'     \item{MarginofError_1}{margin of error of mean estimate from the first survey}
+#'     \item{LCBxxPct_1}{xx\% (default 95\%) lower confidence bound of mean estimate from the first survey}
+#'     \item{UCBxxPct_1}{xx\% (default 95\%) upper confidence bound of mean estimate from the first survey}
+#'     \item{nResp_2}{sample size in the second survey}
+#'     \item{Estimate_2}{mean estimate from the second survey}
+#'     \item{StdError_2}{standard error of mean estimate from the second survey}
+#'     \item{MarginofError_2}{margin of error of mean estimate from the second survey}
+#'     \item{LCBxxPct_2}{xx\% (default 95\%) lower confidence bound of mean estimate from the second survey}
+#'     \item{UCBxxPct_2}{xx\% (default 95\%) upper confidence bound of mean estimate from the second survey}
+#'   }
+#'   
+#'   The \code{contsum_total} data frame contains the following variables:
+#'   \describe{
+#'     \item{Survey_1}{first survey name}
+#'     \item{Survey_2}{second survey name}
+#'     \item{Type}{subpopulation (domain) name}
+#'     \item{Subpopulation}{subpopulation name within a domain}
+#'     \item{Indicator}{response variable}
+#'     \item{Statistic}{value of percentile}
+#'     \item{nResp}{sample size at or below \code{Value}}
+#'     \item{DiffEst}{total difference estimate}
+#'     \item{StdError}{standard error of total difference estimate}
+#'     \item{MarginofError}{margin of error of total difference estimate}
+#'     \item{LCBxxPct}{xx\% (default 95\%) lower confidence bound of total difference estimate}
+#'     \item{UCBxxPct}{xx\% (default 95\%) upper confidence bound of total difference estimate}
+#'     \item{nResp_1}{sample size in the first survey}
+#'     \item{Estimate_1}{total estimate from the first survey}
+#'     \item{StdError_1}{standard error of total estimate from the first survey}
+#'     \item{MarginofError_1}{margin of error of total estimate from the first survey}
+#'     \item{LCBxxPct_1}{xx\% (default 95\%) lower confidence bound of total estimate from the first survey}
+#'     \item{UCBxxPct_1}{xx\% (default 95\%) upper confidence bound of total estimate from the first survey}
+#'     \item{nResp_2}{sample size in the second survey}
+#'     \item{Estimate_2}{total estimate from the second survey}
+#'     \item{StdError_2}{standard error of total estimate from the second survey}
+#'     \item{MarginofError_2}{margin of error of total estimate from the second survey}
+#'     \item{LCBxxPct_2}{xx\% (default 95\%) lower confidence bound of total estimate from the second survey}
+#'     \item{UCBxxPct_2}{xx\% (default 95\%) upper confidence bound of total estimate from the second survey}
+#'   }
+#'   
+#'   The \code{contsum_median} data frame contains the following variables:
+#'   \describe{
+#'     \item{Survey_1}{first survey name}
+#'     \item{Survey_2}{second survey name}
+#'     \item{Type}{subpopulation (domain) name}
+#'     \item{Subpopulation}{subpopulation name within a domain}
+#'     \item{Indicator}{response variable}
+#'     \item{Category}{category of response variable}
+#'     \item{DiffEst.P}{proportion above or below median difference estimate (in \%; second survey - first survey)}
+#'     \item{StdError.P}{standard error of proportion above or below median difference estimate}
+#'     \item{MarginofError.P}{margin of error of proportion above or below median difference estimate}
+#'     \item{LCBxxPct.P}{xx\% (default 95\%) lower confidence bound of proportion above or below median difference estimate}
+#'     \item{UCBxxPct.P}{xx\% (default 95\%) upper confidence bound of proportion above or below median difference estimate}
+#'     \item{Estimate.U}{total above or below median difference estimate (second survey - first survey)}
+#'     \item{StdError.U}{standard error of total above or below median difference estimate}
+#'     \item{MarginofError.U}{margin of error of total above or below median difference estimate}
+#'     \item{LCBxxPct.U}{xx\% (default 95\%) lower confidence bound of total above or below median difference estimate}
+#'     \item{UCBxxPct.U}{xx\% (default 95\%) upper confidence bound of total above or below median difference estimate}
+#'     \item{nResp_1}{sample size in the first survey}
+#'     \item{Estimate.P_1}{proportion above or below median estimate (in \%) from the first survey}
+#'     \item{StdError.P_1}{standard error of proportion above or below median estimate from the first survey}
+#'     \item{MarginofError.P_1}{margin of error of proportion above or below median estimate from the first survey}
+#'     \item{LCBxxPct.P_1}{xx\% (default 95\%) lower confidence bound of proportion above or below median estimate from the first survey}
+#'     \item{UCBxxPct.P_1}{xx\% (default 95\%) upper confidence bound of proportion above or below median estimate from the first survey}
+#'     \item{nResp_2}{sample size in the second survey}
+#'     \item{Estimate.U_1}{total above or below median estimate from the first survey}
+#'     \item{StdError.U_1}{standard error of total above or below median estimate from the first survey}
+#'     \item{MarginofError.U_1}{margin of error of total above or below median estimate from the first survey}
+#'     \item{LCBxxPct.U_1}{xx\% (default 95\%) lower confidence bound of total above or below median estimate from the first survey}
+#'     \item{UCBxxPct.U_1}{xx\% (default 95\%) upper confidence bound of total above or below median estimate from the first survey}
+#'     \item{Estimate.P_2}{proportion above or below median estimate (in \%) from the second survey}
+#'     \item{StdError.P_2}{standard error of proportion above or below median estimate from the second survey}
+#'     \item{MarginofError.P_2}{margin of error of proportion above or below median estimate from the second survey}
+#'     \item{LCBxxPct.P_2}{xx\% (default 95\%) lower confidence bound of proportion above or below median estimate from the second survey}
+#'     \item{UCBxxPct.P_2}{xx\% (default 95\%) upper confidence bound of proportion above or below median estimate from the second survey}
+#'     \item{Estimate.U_2}{total above or below median estimate from the second survey}
+#'     \item{StdError.U_2}{standard error of total above or below median estimate from the second survey}
+#'     \item{MarginofError.U_2}{margin of error of total above or below median estimate from the second survey}
+#'     \item{LCBxxPct.U_2}{xx\% (default 95\%) lower confidence bound of total above or below median estimate from the second survey}
+#'     \item{UCBxxPct.U_2}{xx\% (default 95\%) upper confidence bound of total above or below median estimate from the second survey}
+#'   }
 #'
 #' @author Tom Kincaid \email{Kincaid.Tom@@epa.gov}
 #'
@@ -745,7 +889,13 @@ change_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL, test = "m
   cluster_ind <- !is.null(clusterID)
 
   # Create the survey design object for each survey
-
+  ## give factors two levels if they only have one level
+  for (x in vars_cat) {
+    catvar_levels <- levels(dframe[[x]])
+    if (length(catvar_levels) == 1) {
+      levels(dframe[[x]]) <- c(catvar_levels, paste0("Not ", catvar_levels))
+    }
+  }
   design <- survey_design(
     dframe, siteID, weight, stratum_ind, stratumID, cluster_ind, clusterID,
     weight1, sizeweight, sweight, sweight1, fpcfactor_ind, fpcsize, Ncluster,
@@ -779,8 +929,8 @@ change_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL, test = "m
           k <- k + 1
         }
       }
-      design_1 <- calibrate(design_1, make.formula(cnames), pop_totals)
-      design_2 <- calibrate(design_2, make.formula(cnames), pop_totals)
+      design_1 <- calibrate(design_1, make.formula(names(popsize)), pop_totals)
+      design_2 <- calibrate(design_2, make.formula(names(popsize)), pop_totals)
     }
   }
 
@@ -804,7 +954,7 @@ change_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL, test = "m
 
   # Create the output object
 
-  changesum <- list(catsum = NULL, contsum_mean = NULL, contsum_median = NULL)
+  changesum <- list(catsum = NULL, contsum_mean = NULL, contsum_total = NULL, contsum_median = NULL)
 
   #
   # Begin the section for categorical response variables
@@ -942,6 +1092,21 @@ change_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL, test = "m
   if (!is.null(changesum$contsum_mean)) {
     dimnames(changesum$contsum_mean) <- list(
       1:nrow(changesum$contsum_mean),
+      c(
+        "Survey_1", "Survey_2", "Type", "Subpopulation", "Indicator",
+        "DiffEst", "StdError", "MarginofError", paste0("LCB", conf, "Pct"),
+        paste0("UCB", conf, "Pct"), "nResp_1", "Estimate_1", "StdError_1",
+        "MarginofError_1", paste0("LCB", conf, "Pct_1"),
+        paste0("UCB", conf, "Pct_1"), "nResp_2", "Estimate_2", "StdError_2",
+        "MarginofError_2", paste0("LCB", conf, "Pct_2"),
+        paste0("UCB", conf, "Pct_2")
+      )
+    )
+  }
+  
+  if (!is.null(changesum$contsum_total)) {
+    dimnames(changesum$contsum_total) <- list(
+      1:nrow(changesum$contsum_total),
       c(
         "Survey_1", "Survey_2", "Type", "Subpopulation", "Indicator",
         "DiffEst", "StdError", "MarginofError", paste0("LCB", conf, "Pct"),

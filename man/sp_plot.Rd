@@ -3,7 +3,7 @@
 \name{sp_plot}
 \alias{sp_plot}
 \alias{sp_plot.default}
-\alias{sp_plot.spdesign}
+\alias{sp_plot.sp_design}
 \title{Plot sampling frames, design sites, and analysis data.}
 \usage{
 sp_plot(object, ...)
@@ -22,7 +22,7 @@ sp_plot(object, ...)
   ...
 )
 
-\method{sp_plot}{spdesign}(
+\method{sp_plot}{sp_design}(
   object,
   sframe = NULL,
   formula = ~siteuse,
@@ -38,7 +38,7 @@ sp_plot(object, ...)
 \arguments{
 \item{object}{An object to plot. When plotting sampling frames or analysis data,
 a data frame or \code{sf} object. When plotting design sites, an object created by \code{grts()} or
-\code{irs()} (which has class \code{spdesign}).}
+\code{irs()} (which has class \code{sp_design}).}
 
 \item{...}{Additional arguments to pass to \code{plot.sf()}.}
 
@@ -114,7 +114,8 @@ of the variable contains a variable, plots are of the left-hand size variable
 for each level of each right-hand side variable.
 This function is largely built on \code{plot.sf()}, and all spsurvey plotting
 methods can supply additional arguments to \code{plot.sf()}. For more information on
-plotting in \code{sf}, run \code{?sf::plot.sf()}.
+plotting in \code{sf}, run \code{?sf::plot.sf()}. Equivalent to \code{spsurvey::plot()}; both
+are currently maintained for backwards compatibility.
 }
 \examples{
 \dontrun{

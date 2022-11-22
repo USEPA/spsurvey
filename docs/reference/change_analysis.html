@@ -23,7 +23,7 @@ dropped from the object.'><!-- mathjax --><script src="https://cdnjs.cloudflare.
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">spsurvey</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">5.3.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">5.4.0</span>
       </span>
     </div>
 
@@ -84,34 +84,34 @@ dropped from the object.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">change_analysis</span><span class="op">(</span></span>
-<span>  <span class="va">dframe</span>,</span>
-<span>  vars_cat <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  vars_cont <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  test <span class="op">=</span> <span class="st">"mean"</span>,</span>
-<span>  subpops <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  surveyID <span class="op">=</span> <span class="st">"surveyID"</span>,</span>
-<span>  survey_names <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  siteID <span class="op">=</span> <span class="st">"siteID"</span>,</span>
-<span>  weight <span class="op">=</span> <span class="st">"weight"</span>,</span>
-<span>  revisitwgt <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  xcoord <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  ycoord <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  stratumID <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  clusterID <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  weight1 <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  xcoord1 <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  ycoord1 <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  sizeweight <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  sweight <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  sweight1 <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  fpc <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  popsize <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  vartype <span class="op">=</span> <span class="st">"Local"</span>,</span>
-<span>  jointprob <span class="op">=</span> <span class="st">"overton"</span>,</span>
-<span>  conf <span class="op">=</span> <span class="fl">95</span>,</span>
-<span>  All_Sites <span class="op">=</span> <span class="cn">FALSE</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">change_analysis</span><span class="op">(</span>
+  <span class="va">dframe</span>,
+  vars_cat <span class="op">=</span> <span class="cn">NULL</span>,
+  vars_cont <span class="op">=</span> <span class="cn">NULL</span>,
+  test <span class="op">=</span> <span class="st">"mean"</span>,
+  subpops <span class="op">=</span> <span class="cn">NULL</span>,
+  surveyID <span class="op">=</span> <span class="st">"surveyID"</span>,
+  survey_names <span class="op">=</span> <span class="cn">NULL</span>,
+  siteID <span class="op">=</span> <span class="st">"siteID"</span>,
+  weight <span class="op">=</span> <span class="st">"weight"</span>,
+  revisitwgt <span class="op">=</span> <span class="cn">FALSE</span>,
+  xcoord <span class="op">=</span> <span class="cn">NULL</span>,
+  ycoord <span class="op">=</span> <span class="cn">NULL</span>,
+  stratumID <span class="op">=</span> <span class="cn">NULL</span>,
+  clusterID <span class="op">=</span> <span class="cn">NULL</span>,
+  weight1 <span class="op">=</span> <span class="cn">NULL</span>,
+  xcoord1 <span class="op">=</span> <span class="cn">NULL</span>,
+  ycoord1 <span class="op">=</span> <span class="cn">NULL</span>,
+  sizeweight <span class="op">=</span> <span class="cn">FALSE</span>,
+  sweight <span class="op">=</span> <span class="cn">NULL</span>,
+  sweight1 <span class="op">=</span> <span class="cn">NULL</span>,
+  fpc <span class="op">=</span> <span class="cn">NULL</span>,
+  popsize <span class="op">=</span> <span class="cn">NULL</span>,
+  vartype <span class="op">=</span> <span class="st">"Local"</span>,
+  jointprob <span class="op">=</span> <span class="st">"overton"</span>,
+  conf <span class="op">=</span> <span class="fl">95</span>,
+  All_Sites <span class="op">=</span> <span class="cn">FALSE</span>
+<span class="op">)</span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -137,7 +137,8 @@ default is <code>NULL</code>.</p></dd>
 <dt>test</dt>
 <dd><p>Character string or character vector providing the location
 measure(s) to use for change estimation for continuous variables.  The
-choices are <code>"mean"</code>, <code>"median"</code>, or <code>c("mean", "median")</code>.
+choices are <code>"mean"</code>, <code>"total"</code>, <code>"median"</code>, or some
+combination of the three options (e.g., <code>c("mean", "total")</code>).
 The default is <code>"mean"</code>.</p></dd>
 
 
@@ -167,7 +168,9 @@ The default is <code>NULL</code>.</p></dd>
 <dt>siteID</dt>
 <dd><p>Character value providing name of the site ID variable in
 <code>dframe</code>.  For a two-stage sample, the site ID variable
-identifies stage two site IDs.  The default value is <code>"siteID"</code>.</p></dd>
+identifies stage two site IDs.  The default value is <code>"siteID"</code>. If a
+unique site is visited in both surveys, the corresponding <code>siteID</code>
+should be the same for both entries.</p></dd>
 
 
 <dt>weight</dt>
@@ -396,10 +399,11 @@ The default is <code>FALSE</code>.</p></dd>
     <h2>Value</h2>
     
 
-<p>List of change estimates composed of three items:
+<p>List of change estimates composed of four items:
   (1) <code>catsum</code> contains change estimates for categorical variables,
   (2) <code>contsum_mean</code> contains estimates for continuous variables using
-  the mean, and (3) <code>contsum_median</code> contains estimates for continuous
+  the mean, (3) <code>contsum_total</code> contains estimates for continuous
+  variables using the total, and (4) <code>contsum_median</code> contains estimates for continuous
   variables using the median.  The items in the list will contain <code>NULL</code></p>
 
 
@@ -409,7 +413,393 @@ The default is <code>FALSE</code>.</p></dd>
   categorical variables and continuous variables using the median).  Change
   estimates are provided plus standard error estimates and confidence
   interval estimates.</p>
-    </div>
+  
+
+<p>The <code>catsum</code> data frame contains the following variables:</p>
+<p></p>
+<dl><dt>Survey_1</dt>
+<dd><p>first survey name</p></dd>
+
+    <dt>Survey_2</dt>
+<dd><p>second survey name</p></dd>
+
+    <dt>Type</dt>
+<dd><p>subpopulation (domain) name</p></dd>
+
+    <dt>Subpopulation</dt>
+<dd><p>subpopulation name within a domain</p></dd>
+
+    <dt>Indicator</dt>
+<dd><p>response variable</p></dd>
+
+    <dt>Category</dt>
+<dd><p>category of response variable</p></dd>
+
+    <dt>DiffEst.P</dt>
+<dd><p>proportion difference estimate (in %; second survey - first survey)</p></dd>
+
+    <dt>StdError.P</dt>
+<dd><p>standard error of proportion difference estimate</p></dd>
+
+    <dt>MarginofError.P</dt>
+<dd><p>margin of error of proportion difference estimate</p></dd>
+
+    <dt>LCBxxPct.P</dt>
+<dd><p>xx% (default 95%) lower confidence bound of proportion difference estimate</p></dd>
+
+    <dt>UCBxxPct.P</dt>
+<dd><p>xx% (default 95%) upper confidence bound of proportion difference estimate</p></dd>
+
+    <dt>Estimate.U</dt>
+<dd><p>total difference estimate (second survey - first survey)</p></dd>
+
+    <dt>StdError.U</dt>
+<dd><p>standard error of total difference estimate</p></dd>
+
+    <dt>MarginofError.U</dt>
+<dd><p>margin of error of total difference estimate</p></dd>
+
+    <dt>LCBxxPct.U</dt>
+<dd><p>xx% (default 95%) lower confidence bound of total difference estimate</p></dd>
+
+    <dt>UCBxxPct.U</dt>
+<dd><p>xx% (default 95%) upper confidence bound of total difference estimate</p></dd>
+
+    <dt>nResp_1</dt>
+<dd><p>sample size in the first survey</p></dd>
+
+    <dt>Estimate.P_1</dt>
+<dd><p>proportion estimate (in %) from the first survey</p></dd>
+
+    <dt>StdError.P_1</dt>
+<dd><p>standard error of proportion estimate from the first survey</p></dd>
+
+    <dt>MarginofError.P_1</dt>
+<dd><p>margin of error of proportion estimate from the first survey</p></dd>
+
+    <dt>LCBxxPct.P_1</dt>
+<dd><p>xx% (default 95%) lower confidence bound of proportion estimate from the first survey</p></dd>
+
+    <dt>UCBxxPct.P_1</dt>
+<dd><p>xx% (default 95%) upper confidence bound of proportion estimate from the first survey</p></dd>
+
+    <dt>nResp_2</dt>
+<dd><p>sample size in the second survey</p></dd>
+
+    <dt>Estimate.U_1</dt>
+<dd><p>total estimate from the first survey</p></dd>
+
+    <dt>StdError.U_1</dt>
+<dd><p>standard error of total estimate from the first survey</p></dd>
+
+    <dt>MarginofError.U_1</dt>
+<dd><p>margin of error of total estimate from the first survey</p></dd>
+
+    <dt>LCBxxPct.U_1</dt>
+<dd><p>xx% (default 95%) lower confidence bound of total estimate from the first survey</p></dd>
+
+    <dt>UCBxxPct.U_1</dt>
+<dd><p>xx% (default 95%) upper confidence bound of total estimate from the first survey</p></dd>
+
+    <dt>Estimate.P_2</dt>
+<dd><p>proportion estimate (in %) from the second survey</p></dd>
+
+    <dt>StdError.P_2</dt>
+<dd><p>standard error of proportion estimate from the second survey</p></dd>
+
+    <dt>MarginofError.P_2</dt>
+<dd><p>margin of error of proportion estimate from the second survey</p></dd>
+
+    <dt>LCBxxPct.P_2</dt>
+<dd><p>xx% (default 95%) lower confidence bound of proportion estimate from the second survey</p></dd>
+
+    <dt>UCBxxPct.P_2</dt>
+<dd><p>xx% (default 95%) upper confidence bound of proportion estimate from the second survey</p></dd>
+
+    <dt>Estimate.U_2</dt>
+<dd><p>total estimate from the second survey</p></dd>
+
+    <dt>StdError.U_2</dt>
+<dd><p>standard error of total estimate from the second survey</p></dd>
+
+    <dt>MarginofError.U_2</dt>
+<dd><p>margin of error of total estimate from the second survey</p></dd>
+
+    <dt>LCBxxPct.U_2</dt>
+<dd><p>xx% (default 95%) lower confidence bound of total estimate from the second survey</p></dd>
+
+    <dt>UCBxxPct.U_2</dt>
+<dd><p>xx% (default 95%) upper confidence bound of total estimate from the second survey</p></dd>
+
+  
+</dl><p>The <code>contsum_mean</code> data frame contains the following variables:</p>
+<p></p>
+<dl><dt>Survey_1</dt>
+<dd><p>first survey name</p></dd>
+
+    <dt>Survey_2</dt>
+<dd><p>second survey name</p></dd>
+
+    <dt>Type</dt>
+<dd><p>subpopulation (domain) name</p></dd>
+
+    <dt>Subpopulation</dt>
+<dd><p>subpopulation name within a domain</p></dd>
+
+    <dt>Indicator</dt>
+<dd><p>response variable</p></dd>
+
+    <dt>Statistic</dt>
+<dd><p>value of percentile</p></dd>
+
+    <dt>nResp</dt>
+<dd><p>sample size at or below <code>Value</code></p></dd>
+
+    <dt>DiffEst</dt>
+<dd><p>mean difference estimate</p></dd>
+
+    <dt>StdError</dt>
+<dd><p>standard error of mean difference estimate</p></dd>
+
+    <dt>MarginofError</dt>
+<dd><p>margin of error of mean difference estimate</p></dd>
+
+    <dt>LCBxxPct</dt>
+<dd><p>xx% (default 95%) lower confidence bound of mean difference estimate</p></dd>
+
+    <dt>UCBxxPct</dt>
+<dd><p>xx% (default 95%) upper confidence bound of mean difference estimate</p></dd>
+
+    <dt>nResp_1</dt>
+<dd><p>sample size in the first survey</p></dd>
+
+    <dt>Estimate_1</dt>
+<dd><p>mean estimate from the first survey</p></dd>
+
+    <dt>StdError_1</dt>
+<dd><p>standard error of mean estimate from the first survey</p></dd>
+
+    <dt>MarginofError_1</dt>
+<dd><p>margin of error of mean estimate from the first survey</p></dd>
+
+    <dt>LCBxxPct_1</dt>
+<dd><p>xx% (default 95%) lower confidence bound of mean estimate from the first survey</p></dd>
+
+    <dt>UCBxxPct_1</dt>
+<dd><p>xx% (default 95%) upper confidence bound of mean estimate from the first survey</p></dd>
+
+    <dt>nResp_2</dt>
+<dd><p>sample size in the second survey</p></dd>
+
+    <dt>Estimate_2</dt>
+<dd><p>mean estimate from the second survey</p></dd>
+
+    <dt>StdError_2</dt>
+<dd><p>standard error of mean estimate from the second survey</p></dd>
+
+    <dt>MarginofError_2</dt>
+<dd><p>margin of error of mean estimate from the second survey</p></dd>
+
+    <dt>LCBxxPct_2</dt>
+<dd><p>xx% (default 95%) lower confidence bound of mean estimate from the second survey</p></dd>
+
+    <dt>UCBxxPct_2</dt>
+<dd><p>xx% (default 95%) upper confidence bound of mean estimate from the second survey</p></dd>
+
+  
+</dl><p>The <code>contsum_total</code> data frame contains the following variables:</p>
+<p></p>
+<dl><dt>Survey_1</dt>
+<dd><p>first survey name</p></dd>
+
+    <dt>Survey_2</dt>
+<dd><p>second survey name</p></dd>
+
+    <dt>Type</dt>
+<dd><p>subpopulation (domain) name</p></dd>
+
+    <dt>Subpopulation</dt>
+<dd><p>subpopulation name within a domain</p></dd>
+
+    <dt>Indicator</dt>
+<dd><p>response variable</p></dd>
+
+    <dt>Statistic</dt>
+<dd><p>value of percentile</p></dd>
+
+    <dt>nResp</dt>
+<dd><p>sample size at or below <code>Value</code></p></dd>
+
+    <dt>DiffEst</dt>
+<dd><p>total difference estimate</p></dd>
+
+    <dt>StdError</dt>
+<dd><p>standard error of total difference estimate</p></dd>
+
+    <dt>MarginofError</dt>
+<dd><p>margin of error of total difference estimate</p></dd>
+
+    <dt>LCBxxPct</dt>
+<dd><p>xx% (default 95%) lower confidence bound of total difference estimate</p></dd>
+
+    <dt>UCBxxPct</dt>
+<dd><p>xx% (default 95%) upper confidence bound of total difference estimate</p></dd>
+
+    <dt>nResp_1</dt>
+<dd><p>sample size in the first survey</p></dd>
+
+    <dt>Estimate_1</dt>
+<dd><p>total estimate from the first survey</p></dd>
+
+    <dt>StdError_1</dt>
+<dd><p>standard error of total estimate from the first survey</p></dd>
+
+    <dt>MarginofError_1</dt>
+<dd><p>margin of error of total estimate from the first survey</p></dd>
+
+    <dt>LCBxxPct_1</dt>
+<dd><p>xx% (default 95%) lower confidence bound of total estimate from the first survey</p></dd>
+
+    <dt>UCBxxPct_1</dt>
+<dd><p>xx% (default 95%) upper confidence bound of total estimate from the first survey</p></dd>
+
+    <dt>nResp_2</dt>
+<dd><p>sample size in the second survey</p></dd>
+
+    <dt>Estimate_2</dt>
+<dd><p>total estimate from the second survey</p></dd>
+
+    <dt>StdError_2</dt>
+<dd><p>standard error of total estimate from the second survey</p></dd>
+
+    <dt>MarginofError_2</dt>
+<dd><p>margin of error of total estimate from the second survey</p></dd>
+
+    <dt>LCBxxPct_2</dt>
+<dd><p>xx% (default 95%) lower confidence bound of total estimate from the second survey</p></dd>
+
+    <dt>UCBxxPct_2</dt>
+<dd><p>xx% (default 95%) upper confidence bound of total estimate from the second survey</p></dd>
+
+  
+</dl><p>The <code>contsum_median</code> data frame contains the following variables:</p>
+<p></p>
+<dl><dt>Survey_1</dt>
+<dd><p>first survey name</p></dd>
+
+    <dt>Survey_2</dt>
+<dd><p>second survey name</p></dd>
+
+    <dt>Type</dt>
+<dd><p>subpopulation (domain) name</p></dd>
+
+    <dt>Subpopulation</dt>
+<dd><p>subpopulation name within a domain</p></dd>
+
+    <dt>Indicator</dt>
+<dd><p>response variable</p></dd>
+
+    <dt>Category</dt>
+<dd><p>category of response variable</p></dd>
+
+    <dt>DiffEst.P</dt>
+<dd><p>proportion above or below median difference estimate (in %; second survey - first survey)</p></dd>
+
+    <dt>StdError.P</dt>
+<dd><p>standard error of proportion above or below median difference estimate</p></dd>
+
+    <dt>MarginofError.P</dt>
+<dd><p>margin of error of proportion above or below median difference estimate</p></dd>
+
+    <dt>LCBxxPct.P</dt>
+<dd><p>xx% (default 95%) lower confidence bound of proportion above or below median difference estimate</p></dd>
+
+    <dt>UCBxxPct.P</dt>
+<dd><p>xx% (default 95%) upper confidence bound of proportion above or below median difference estimate</p></dd>
+
+    <dt>Estimate.U</dt>
+<dd><p>total above or below median difference estimate (second survey - first survey)</p></dd>
+
+    <dt>StdError.U</dt>
+<dd><p>standard error of total above or below median difference estimate</p></dd>
+
+    <dt>MarginofError.U</dt>
+<dd><p>margin of error of total above or below median difference estimate</p></dd>
+
+    <dt>LCBxxPct.U</dt>
+<dd><p>xx% (default 95%) lower confidence bound of total above or below median difference estimate</p></dd>
+
+    <dt>UCBxxPct.U</dt>
+<dd><p>xx% (default 95%) upper confidence bound of total above or below median difference estimate</p></dd>
+
+    <dt>nResp_1</dt>
+<dd><p>sample size in the first survey</p></dd>
+
+    <dt>Estimate.P_1</dt>
+<dd><p>proportion above or below median estimate (in %) from the first survey</p></dd>
+
+    <dt>StdError.P_1</dt>
+<dd><p>standard error of proportion above or below median estimate from the first survey</p></dd>
+
+    <dt>MarginofError.P_1</dt>
+<dd><p>margin of error of proportion above or below median estimate from the first survey</p></dd>
+
+    <dt>LCBxxPct.P_1</dt>
+<dd><p>xx% (default 95%) lower confidence bound of proportion above or below median estimate from the first survey</p></dd>
+
+    <dt>UCBxxPct.P_1</dt>
+<dd><p>xx% (default 95%) upper confidence bound of proportion above or below median estimate from the first survey</p></dd>
+
+    <dt>nResp_2</dt>
+<dd><p>sample size in the second survey</p></dd>
+
+    <dt>Estimate.U_1</dt>
+<dd><p>total above or below median estimate from the first survey</p></dd>
+
+    <dt>StdError.U_1</dt>
+<dd><p>standard error of total above or below median estimate from the first survey</p></dd>
+
+    <dt>MarginofError.U_1</dt>
+<dd><p>margin of error of total above or below median estimate from the first survey</p></dd>
+
+    <dt>LCBxxPct.U_1</dt>
+<dd><p>xx% (default 95%) lower confidence bound of total above or below median estimate from the first survey</p></dd>
+
+    <dt>UCBxxPct.U_1</dt>
+<dd><p>xx% (default 95%) upper confidence bound of total above or below median estimate from the first survey</p></dd>
+
+    <dt>Estimate.P_2</dt>
+<dd><p>proportion above or below median estimate (in %) from the second survey</p></dd>
+
+    <dt>StdError.P_2</dt>
+<dd><p>standard error of proportion above or below median estimate from the second survey</p></dd>
+
+    <dt>MarginofError.P_2</dt>
+<dd><p>margin of error of proportion above or below median estimate from the second survey</p></dd>
+
+    <dt>LCBxxPct.P_2</dt>
+<dd><p>xx% (default 95%) lower confidence bound of proportion above or below median estimate from the second survey</p></dd>
+
+    <dt>UCBxxPct.P_2</dt>
+<dd><p>xx% (default 95%) upper confidence bound of proportion above or below median estimate from the second survey</p></dd>
+
+    <dt>Estimate.U_2</dt>
+<dd><p>total above or below median estimate from the second survey</p></dd>
+
+    <dt>StdError.U_2</dt>
+<dd><p>standard error of total above or below median estimate from the second survey</p></dd>
+
+    <dt>MarginofError.U_2</dt>
+<dd><p>margin of error of total above or below median estimate from the second survey</p></dd>
+
+    <dt>LCBxxPct.U_2</dt>
+<dd><p>xx% (default 95%) lower confidence bound of total above or below median estimate from the second survey</p></dd>
+
+    <dt>UCBxxPct.U_2</dt>
+<dd><p>xx% (default 95%) upper confidence bound of total above or below median estimate from the second survey</p></dd>
+
+  
+</dl></div>
     <div id="see-also">
     <h2>See also</h2>
     <div class="dont-index">
@@ -426,91 +816,94 @@ The default is <code>FALSE</code>.</p></dd>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Categorical variable example for three resource classes</span></span></span>
-<span class="r-in"><span><span class="va">dframe</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>  surveyID <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Survey 1"</span>, <span class="st">"Survey 2"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fl">100</span><span class="op">)</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  siteID <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"Site"</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">200</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  wgt <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">200</span>, <span class="fl">10</span>, <span class="fl">100</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  xcoord <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">200</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  ycoord <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">200</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  stratum <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Stratum 1"</span>, <span class="st">"Stratum 2"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span>, <span class="fl">50</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  CatVar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"North"</span>, <span class="st">"South"</span><span class="op">)</span>, <span class="fl">100</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  All_Sites <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"All Sites"</span>, <span class="fl">200</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  Resource_Class <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Good"</span>, <span class="st">"Fair"</span>, <span class="st">"Poor"</span><span class="op">)</span>, <span class="fl">200</span>, replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">myvars</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"CatVar"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">mysubpops</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"All_Sites"</span>, <span class="st">"Resource_Class"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu">change_analysis</span><span class="op">(</span><span class="va">dframe</span>,</span></span>
-<span class="r-in"><span>  vars_cat <span class="op">=</span> <span class="va">myvars</span>, subpops <span class="op">=</span> <span class="va">mysubpops</span>,</span></span>
-<span class="r-in"><span>  surveyID <span class="op">=</span> <span class="st">"surveyID"</span>, siteID <span class="op">=</span> <span class="st">"siteID"</span>, weight <span class="op">=</span> <span class="st">"wgt"</span>,</span></span>
-<span class="r-in"><span>  xcoord <span class="op">=</span> <span class="st">"xcoord"</span>, ycoord <span class="op">=</span> <span class="st">"ycoord"</span>, stratumID <span class="op">=</span> <span class="st">"stratum"</span></span></span>
-<span class="r-in"><span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co"># Categorical variable example for three resource classes</span></span>
+<span class="r-in"><span class="va">dframe</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<span class="r-in">  surveyID <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Survey 1"</span>, <span class="st">"Survey 2"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fl">100</span><span class="op">)</span><span class="op">)</span>,</span>
+<span class="r-in">  siteID <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"Site"</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">200</span><span class="op">)</span>,</span>
+<span class="r-in">  wgt <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">200</span>, <span class="fl">10</span>, <span class="fl">100</span><span class="op">)</span>,</span>
+<span class="r-in">  xcoord <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">200</span><span class="op">)</span>,</span>
+<span class="r-in">  ycoord <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">200</span><span class="op">)</span>,</span>
+<span class="r-in">  stratum <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Stratum 1"</span>, <span class="st">"Stratum 2"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span>, <span class="fl">50</span><span class="op">)</span>,</span>
+<span class="r-in">  CatVar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"North"</span>, <span class="st">"South"</span><span class="op">)</span>, <span class="fl">100</span><span class="op">)</span>,</span>
+<span class="r-in">  All_Sites <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"All Sites"</span>, <span class="fl">200</span><span class="op">)</span>,</span>
+<span class="r-in">  Resource_Class <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Good"</span>, <span class="st">"Fair"</span>, <span class="st">"Poor"</span><span class="op">)</span>, <span class="fl">200</span>, replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span class="r-in"><span class="op">)</span></span>
+<span class="r-in"><span class="va">myvars</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"CatVar"</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">mysubpops</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"All_Sites"</span>, <span class="st">"Resource_Class"</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu">change_analysis</span><span class="op">(</span><span class="va">dframe</span>,</span>
+<span class="r-in">  vars_cat <span class="op">=</span> <span class="va">myvars</span>, subpops <span class="op">=</span> <span class="va">mysubpops</span>,</span>
+<span class="r-in">  surveyID <span class="op">=</span> <span class="st">"surveyID"</span>, siteID <span class="op">=</span> <span class="st">"siteID"</span>, weight <span class="op">=</span> <span class="st">"wgt"</span>,</span>
+<span class="r-in">  xcoord <span class="op">=</span> <span class="st">"xcoord"</span>, ycoord <span class="op">=</span> <span class="st">"ycoord"</span>, stratumID <span class="op">=</span> <span class="st">"stratum"</span></span>
+<span class="r-in"><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $catsum</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Survey_1 Survey_2           Type Subpopulation Indicator Category  DiffEst.P</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 Survey 1 Survey 2      All_Sites     All Sites    CatVar    North   3.000475</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 Survey 1 Survey 2      All_Sites     All Sites    CatVar    South  -3.000475</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3 Survey 1 Survey 2 Resource_Class          Fair    CatVar    North  14.689313</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4 Survey 1 Survey 2 Resource_Class          Fair    CatVar    South -14.689313</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5 Survey 1 Survey 2 Resource_Class          Good    CatVar    North  -2.134971</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6 Survey 1 Survey 2 Resource_Class          Good    CatVar    South   2.134971</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7 Survey 1 Survey 2 Resource_Class          Poor    CatVar    North  -4.938677</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8 Survey 1 Survey 2 Resource_Class          Poor    CatVar    South   4.938677</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   StdError.P MarginofError.P LCB95Pct.P UCB95Pct.P  DiffEst.U StdError.U</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1   6.585026        12.90641  -9.905938  15.906889  382.06004   387.8324</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2   6.585026        12.90641 -15.906889   9.905938   63.51599   385.1670</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3  11.769332        23.06747  -8.378153  37.756779  368.12859   233.8012</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  11.769332        23.06747 -37.756779   8.378153 -151.88865   229.3587</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  11.112683        21.78046 -23.915429  19.645488  249.50372   233.6940</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6  11.112683        21.78046 -19.645488  23.915429  308.38128   238.0019</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7  11.256382        22.06210 -27.000780  17.123425 -235.57227   196.7008</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8  11.256382        22.06210 -17.123425  27.000780  -92.97664   201.8435</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 Survey 1 Survey 2      All_Sites     All Sites    CatVar    North  -5.551905</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 Survey 1 Survey 2      All_Sites     All Sites    CatVar    South   5.551905</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 Survey 1 Survey 2 Resource_Class          Fair    CatVar    North   6.863027</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 Survey 1 Survey 2 Resource_Class          Fair    CatVar    South  -6.863027</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 Survey 1 Survey 2 Resource_Class          Good    CatVar    North  -7.228277</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 Survey 1 Survey 2 Resource_Class          Good    CatVar    South   7.228277</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7 Survey 1 Survey 2 Resource_Class          Poor    CatVar    North -19.737047</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8 Survey 1 Survey 2 Resource_Class          Poor    CatVar    South  19.737047</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   StdError.P MarginofError.P  LCB95Pct.P UCB95Pct.P  DiffEst.U StdError.U</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1   6.739858        13.20988 -18.7617840  7.6579743 -881.98282   364.8439</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2   6.739858        13.20988  -7.6579743 18.7617840 -355.22782   394.8457</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  10.745858        21.06149 -14.1984680 27.9245214   30.55211   240.7683</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  10.745858        21.06149 -27.9245214 14.1984680 -219.67753   234.8343</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  12.094317        23.70443 -30.9327032 16.4761484 -430.49174   186.8175</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  12.094317        23.70443 -16.4761484 30.9327032 -255.97709   214.1114</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7  10.356814        20.29898 -40.0360290  0.5619351 -482.04318   183.9679</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8  10.356814        20.29898  -0.5619351 40.0360290  120.42680   227.0108</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   MarginofError.U LCB95Pct.U UCB95Pct.U nResp_1 Estimate.P_1 StdError.P_1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1        760.1374 -378.07741  1142.1975      50     48.19580     4.611864</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2        754.9134 -691.39739   818.4294      50     51.80420     4.611864</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3        458.2420  -90.11337   826.3706      12     41.20733     8.243510</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4        449.5348 -601.42342   297.6461      19     58.79267     8.243510</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5        458.0317 -208.52802   707.5355      18     53.27583     7.996568</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6        466.4751 -158.09385   774.8564      16     46.72417     7.996568</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7        385.5264 -621.09867   149.9541      20     50.02829     7.193177</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8        395.6059 -488.58256   302.6293      15     49.97171     7.193177</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1        715.0808 -1597.0636 -166.90199      50     50.61501     4.434782</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2        773.8834 -1129.1112  418.65554      50     49.38499     4.434782</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3        471.8971  -441.3450  502.44925      20     53.00321     7.461814</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4        460.2669  -679.9444  240.58933      17     46.99679     7.461814</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5        366.1555  -796.6473  -64.33622      16     50.74692     8.134174</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6        419.6506  -675.6277  163.67351      14     49.25308     8.134174</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7        360.5704  -842.6136 -121.47276      14     47.89318     7.415762</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8        444.9330  -324.5062  565.35983      19     52.10682     7.415762</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   MarginofError.P_1 LCB95Pct.P_1 UCB95Pct.P_1 Estimate.U_1 StdError.U_1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1          9.039088     39.15671     57.23488    2472.7231     249.6333</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2          9.039088     42.76512     60.84329    2657.8553     270.2843</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3         16.156982     25.05034     57.36431     693.6219     145.9089</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4         16.156982     42.63569     74.94966     989.6272     164.0714</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5         15.672986     37.60284     68.94881     893.4358     141.4375</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6         15.672986     31.05119     62.39716     783.5644     145.5566</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7         14.098368     35.92992     64.12666     885.6654     140.9146</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8         14.098368     35.87334     64.07008     884.6637     144.4921</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1          8.692012     41.92300     59.30703    2957.9772     270.8763</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2          8.692012     40.69297     58.07700    2886.0936     283.2032</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3         14.624887     38.37833     67.62810    1110.3708     161.4705</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4         14.624887     32.37190     61.62167     984.5414     174.0828</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5         15.942688     34.80423     66.68961     924.9642     156.4421</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6         15.942688     33.31039     65.19577     897.7360     168.1758</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7         14.534626     33.35855     62.42781     922.6422     154.3667</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8         14.534626     37.57219     66.64145    1003.8162     149.1878</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   MarginofError.U_1 LCB95Pct.U_1 UCB95Pct.U_1 nResp_2 Estimate.P_2 StdError.P_2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1          489.2722    1983.4509    2961.9953      50     51.19627     4.700348</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2          529.7475    2128.1078    3187.6028      50     48.80373     4.700348</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3          285.9761     407.6458     979.5981      17     55.89664     8.400102</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4          321.5741     668.0530    1311.2013      15     44.10336     8.400102</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5          277.2124     616.2233    1170.6482      20     51.14086     7.716646</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6          285.2858     498.2787    1068.8502      20     48.85914     7.716646</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7          276.1876     609.4778    1161.8530      13     45.08961     8.658194</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8          283.1993     601.4644    1167.8630      15     54.91039     8.658194</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1          530.9078    2427.0694     3488.885      50     45.06311     5.075273</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2          555.0680    2331.0256     3441.162      50     54.93689     5.075273</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3          316.4764     793.8944     1426.847      23     59.86624     7.732709</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4          341.1960     643.3454     1325.737      16     40.13376     7.732709</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5          306.6209     618.3433     1231.585      13     43.51864     8.950291</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6          329.6185     568.1175     1227.355      12     56.48136     8.950291</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7          302.5533     620.0889     1225.195      14     28.15613     7.229804</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8          292.4026     711.4135     1296.219      22     71.84387     7.229804</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   MarginofError.P_2 LCB95Pct.P_2 UCB95Pct.P_2 Estimate.U_2 StdError.U_2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1          9.212513     41.98376     60.40878    2854.7831     296.8117</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2          9.212513     39.59122     58.01624    2721.3713     274.4084</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3         16.463898     39.43274     72.36054    1061.7505     182.6845</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4         16.463898     27.63946     60.56726     837.7385     160.2684</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5         15.124348     36.01651     66.26521    1142.9395     186.0331</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6         15.124348     33.73479     63.98349    1091.9457     188.3034</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7         16.969749     28.11986     62.05936     650.0931     137.2379</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8         16.969749     37.94064     71.88014     791.6871     140.9355</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1          9.947353     35.11576     55.01046    2075.9944     244.4117</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2          9.947353     44.98954     64.88424    2530.8658     275.1347</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3         15.155832     44.71041     75.02207    1140.9229     178.5963</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4         15.155832     24.97793     55.28959     764.8639     157.6145</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5         17.542249     25.97639     61.06089     494.4725     102.1109</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6         17.542249     38.93911     74.02361     641.7589     132.5164</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7         14.170156     13.98598     42.32629     440.5990     100.0754</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8         14.170156     57.67371     86.01402    1124.2430     171.1050</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   MarginofError.U_2 LCB95Pct.U_2 UCB95Pct.U_2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1          581.7402    2273.0429    3436.5233</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2          537.8306    2183.5407    3259.2019</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3          358.0550     703.6956    1419.8055</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4          314.1204     523.6182    1151.8589</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5          364.6181     778.3214    1507.5576</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6          369.0678     722.8779    1461.0136</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7          268.9814     381.1117     919.0745</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8          276.2285     515.4585    1067.9156</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1          479.0381    1596.9563    2555.0325</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2          539.2540    1991.6117    3070.1198</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3          350.0423     790.8806    1490.9652</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4          308.9188     455.9451    1073.7827</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5          200.1337     294.3387     694.6062</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6          259.7273     382.0317     901.4862</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7          196.1442     244.4548     636.7432</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8          335.3596     788.8833    1459.6026</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $contsum_mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $contsum_total</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $contsum_median</span>

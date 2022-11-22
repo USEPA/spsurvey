@@ -279,7 +279,31 @@ The analysis results. A data frame of population estimates for all combinations 
   subpopulations, categories within each subpopulation, response variables,
   and categories within each response variable.  Estimates are provided for
   proportion and size of the population plus standard error, margin of error,
-  and confidence interval estimates.
+  and confidence interval estimates. The data frame contains the following
+  variables:
+  \describe{
+    \item{Type}{subpopulation (domain) name}
+    \item{Subpopulation}{subpopulation name within a domain}
+    \item{Response}{response variable}
+    \item{Stressor}{stressor variable}
+    \item{nResp}{sample size}
+    \item{Estimate}{risk difference estimate}
+    \item{Estimate_StressPoor}{risk estimate for poor condition stressor}
+    \item{Estimate_StressGood}{risk estimate for good condition stressor}
+    \item{StdError}{risk difference standard error}
+    \item{MarginofError}{risk difference margin of error}
+    \item{LCBxxPct}{xx\% (default 95\%) lower confidence bound}
+    \item{UCBxxPct}{xx\% (default 95\%) upper confidence bound}
+    \item{WeightTotal}{sum of design weights}
+    \item{Count_RespPoor_StressPoor}{number of observations in the poor response and poor stressor group}
+    \item{Count_RespPoor_StressGood}{number of observations in the poor response and good stressor group}
+    \item{Count_RespGood_StressPoor}{number of observations in the good response and poor stressor group}
+    \item{Count_RespGood_StressGood}{number of observations in the good response and good stressor group}
+    \item{Prop_RespPoor_StressPoor}{weighted proportion of observations in the poor response and poor stressor group}
+    \item{Prop_RespPoor_StressGood}{weighted proportion of observations in the poor response and good stressor group}
+    \item{Prop_RespGood_StressPoor}{weighted proportion of observations in the good response and poor stressor group}
+    \item{Prop_RespGood_StressGood}{weighted proportion of observations in the good response and good stressor group}
+  }
 }
 \description{
 This function organizes input and output for risk difference analysis (of

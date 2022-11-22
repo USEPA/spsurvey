@@ -1,6 +1,7 @@
 # Helpers ---------------------------------------------------------------------
 
-make_formlist <- function(formula, onlyshow, object) {
+make_formlist <- function(formula, onlyshow, object, remove_geom = TRUE) {
+
   # find all terms from the formula
   varterms <- terms(formula, data = object)
   # find all variable names
@@ -8,7 +9,12 @@ make_formlist <- function(formula, onlyshow, object) {
   # find all right hand side names
   varlabels <- attr(varterms, "term.labels")
   # remove geometry if present
-  varlabels <- varlabels[varlabels != attr(object, "sf_column")]
+  # this was taken to be logical so it could 1) show geometry summaries and 2) remove a bug that
+  # caused summaries to fail silently if no geometry column was in the data
+  # but remain unaltered for plots
+  if (remove_geom) {
+    varlabels <- varlabels[varlabels != attr(object, "sf_column")]
+  }
   # find if intercept exists in the formula
   if (attr(varterms, "intercept") == 1) {
     intercept <- TRUE
@@ -61,12 +67,15 @@ make_varsf <- function(object, formlist) {
     } else {
       object_df <- object
     }
+
     formlist <- lapply(
       formlist$varnames_split,
       function(x) {
-        if (length(x) == 1 && is.numeric(object_df[[x]])) {
+        if (length(x) == 1 && (is.numeric(object_df[[x]]) || is.list(object_df[[x]]))) {
           return(object_df[, x, drop = FALSE]) # return numeric if provided
-        } else {
+        } else if (length(x) > 1 && any(vapply(x, function(y) is.list(object_df[[y]]), logical(1)))) {
+           stop("summarizing list-columns interacted with other variables not supported")
+        }  else {
           return(interaction(object_df[, x, drop = FALSE], sep = ":")) # return factors
         }
       }
@@ -166,6 +175,14 @@ match_sf_defaults <- function(varsf, list_args) {
   })
   names(list_args) <- names_list_args
   list_args
+}
+
+# CRAN release questions
+release_questions <- function() {
+  c(
+    "Have you changed version numbers in DESCRIPTION, CITATION, and README?",
+    "Have you run pkgdown::build_site() and committed?"
+  )
 }
 
 # get_sf_defaults <-   function(geometry) {

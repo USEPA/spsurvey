@@ -387,7 +387,7 @@ dsgn_check <- function(sframe, sf_type, legacy_sites, legacy_option, stratum, se
             stop_df <- rbind(stop_df, data.frame(func = I("n_base + n_over"), I(stop_mess)))
           }
         } else {
-          if (any(sapply(stratum, function(x) (n_base[[x]] + sum(n_over)) > NROW(sframe[sframe[[stratum_var]] == x, , drop = FALSE])))) {
+          if (any(sapply(stratum, function(x) (n_base[[x]] + sum(n_over[[x]])) > NROW(sframe[sframe[[stratum_var]] == x, , drop = FALSE])))) {
             stop_ind <- TRUE
             stop_mess <- paste0("For each stratum, the sum of the base sites and 'Over' replacement sites must be no larger than the number of rows in 'sframe' representing that stratum.")
             stop_df <- rbind(stop_df, data.frame(func = I("n_base + n_over"), I(stop_mess)))

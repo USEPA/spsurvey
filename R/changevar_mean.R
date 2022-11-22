@@ -151,7 +151,6 @@ changevar_mean <- function(z1, z2, wgt, x, y, revisitwgt, mean1, mean2,
       # For each stage one sampling unit and each survey, calculate an estimate
       # of the total of the stage two sampling unit residuals; then calculate
       # the variance/covariance matrix of the totals
-
       total2est <- matrix(0, ncluster, 2)
       var2est <- matrix(0, ncluster, 4)
       phat <- c(mean1, mean2)
@@ -412,7 +411,6 @@ changevar_mean <- function(z1, z2, wgt, x, y, revisitwgt, mean1, mean2,
     } else {
 
       # Calculate the weighted residuals matrix
-
       phat <- c(mean1, mean2)
       rm <- (cbind(z1, z2) - matrix(rep(phat, n), nrow = n, byrow = TRUE)) *
         matrix(rep(wgt, 2), nrow = n)
