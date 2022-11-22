@@ -112,6 +112,12 @@
     <loc>/reference/pd_summary.html</loc>
   </url>
   <url>
+    <loc>/reference/plot.html</loc>
+  </url>
+  <url>
+    <loc>/reference/plot.sp_CDF.html</loc>
+  </url>
+  <url>
     <loc>/reference/power_dsgn.html</loc>
   </url>
   <url>
@@ -136,6 +142,9 @@
     <loc>/reference/sp_balance.html</loc>
   </url>
   <url>
+    <loc>/reference/sp_frame.html</loc>
+  </url>
+  <url>
     <loc>/reference/sp_plot.html</loc>
   </url>
   <url>
@@ -146,6 +155,9 @@
   </url>
   <url>
     <loc>/reference/stopprnt.html</loc>
+  </url>
+  <url>
+    <loc>/reference/summary.html</loc>
   </url>
   <url>
     <loc>/reference/trend_analysis.html</loc>
