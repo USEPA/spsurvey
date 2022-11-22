@@ -179,7 +179,7 @@ strat_propprob <- grts(
 
 ## Legacy sampling
 
-Legacy (historical) sites are sites that were selected in a previous sampling design and should be always be included in the current sample. The `NE_Lakes_Legacy` data contains some legacy sites. To accommodate these legacy sites while sampling, use the `legacy_sites` argument:
+Legacy (historical) sites are sites that were selected from a previous sampling design that incorporated randomness into site selection, are part of the sampling frame for the current sampling design, and should be always be selected in the current sample. The `NE_Lakes_Legacy` data contains some legacy sites. To accommodate these legacy sites while sampling, use the `legacy_sites` argument:
 ```{r}
 legacy <- grts(NE_Lakes, n_base = 50, legacy_sites = NE_Lakes_Legacy)
 legacy

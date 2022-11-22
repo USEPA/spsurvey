@@ -30,7 +30,7 @@ irs(
 )
 }
 \arguments{
-\item{sframe}{The sampling frame as an \code{sf} object. The coordinate
+\item{sframe}{A sampling frame as an \code{sf} object. The coordinate
 system for \code{sframe} must projected (not geographic). If m or z values
 are in \code{sframe}'s geometry, they are silently dropped (i.e., only x-coordinates
 and y-coordinates are preserved).}
@@ -98,14 +98,18 @@ act as a legacy site identifier. For non-legacy sites, the values of the
 \code{legacy_var} column must be \code{NA}. Using this approach,
 \code{legacy_stratum_var}, \code{legacy_caty_var}, and \code{legacy_aux_var}
 are not required and should not be used (because \code{legacy_var} represents a column
-in \code{sframe}). spsurvey assumes that the legacy sites were selected from
-a previous sampling design that
-incorporated randomness into site selection.}
+in \code{sframe}). \code{spsurvey} assumes that the legacy sites were selected from
+a previous sampling design that incorporated randomness into site selection
+and that the legacy sites are elements of the current sampling frame.}
 
 \item{legacy_sites}{An sf object with a \code{POINT} or \code{MULTIPOINT}
 geometry representing the legacy sites. spsurvey assumes that
 the legacy sites were selected from a previous sampling design that
-incorporated randomness into site selection. If m or z values
+incorporated randomness into site selection and that the legacy sites
+are elements of the current sampling frame. If \code{sframe} has a 
+\code{POINT} or \code{MULTIPOINT} geometry, the observations in \code{legacy_sites}
+should not also be in \code{sframe} (i.e., duplicates are not removed). Thus, \code{sframe}
+and \code{legacy_sites} together compose the current sampling frame. If m or z values
 are in \code{legacy_sites}' geometry, they are silently dropped (i.e., only x-coordinates
 and y-coordinates are preserved).}
 
