@@ -20,7 +20,7 @@ or rotating panels."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/a
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">spsurvey</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">5.4.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">5.4.1</span>
       </span>
     </div>
 
@@ -78,7 +78,7 @@ or rotating panels.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">revisit_dsgn</span><span class="op">(</span><span class="va">n_period</span>, <span class="va">panels</span>, begin <span class="op">=</span> <span class="fl">1</span>, skip <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">revisit_dsgn</span><span class="op">(</span><span class="va">n_period</span>, <span class="va">panels</span>, begin <span class="op">=</span> <span class="fl">1</span>, skip <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -226,26 +226,26 @@ periods, e.g., sampling will occur only every 5 periods if <code>skip = 5</code>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co"># One panel of  60 sample units sampled at every time period: [1-0]</span></span>
-<span class="r-in"><span class="fu">revisit_dsgn</span><span class="op">(</span><span class="fl">20</span>, panels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span class="r-in">  Annual <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span class="r-in">    n <span class="op">=</span> <span class="fl">60</span>, pnl_dsgn <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0</span><span class="op">)</span>, pnl.n <span class="op">=</span> <span class="cn">NA</span>,</span>
-<span class="r-in">    start_option <span class="op">=</span> <span class="st">"None"</span></span>
-<span class="r-in">  <span class="op">)</span></span>
-<span class="r-in"><span class="op">)</span>, begin <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># One panel of  60 sample units sampled at every time period: [1-0]</span></span></span>
+<span class="r-in"><span><span class="fu">revisit_dsgn</span><span class="op">(</span><span class="fl">20</span>, panels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  Annual <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>    n <span class="op">=</span> <span class="fl">60</span>, pnl_dsgn <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0</span><span class="op">)</span>, pnl.n <span class="op">=</span> <span class="cn">NA</span>,</span></span>
+<span class="r-in"><span>    start_option <span class="op">=</span> <span class="st">"None"</span></span></span>
+<span class="r-in"><span>  <span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span>, begin <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Annual 60 60 60 60 60 60 60 60 60 60 60 60 60 60 60 60 60 60 60 60</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "paneldesign"</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Rotating panels of 60 units sampled once and never again: [1-n].  Number</span></span>
-<span class="r-in"><span class="co"># of panels equal n_period.</span></span>
-<span class="r-in"><span class="fu">revisit_dsgn</span><span class="op">(</span><span class="fl">20</span>,</span>
-<span class="r-in">  panels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span class="r-in">    R60N <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">60</span>, pnl_dsgn <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="cn">NA</span><span class="op">)</span>, pnl_n <span class="op">=</span> <span class="cn">NA</span>, start_option <span class="op">=</span> <span class="st">"None"</span><span class="op">)</span></span>
-<span class="r-in">  <span class="op">)</span>,</span>
-<span class="r-in">  begin <span class="op">=</span> <span class="fl">1</span></span>
-<span class="r-in"><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Rotating panels of 60 units sampled once and never again: [1-n].  Number</span></span></span>
+<span class="r-in"><span><span class="co"># of panels equal n_period.</span></span></span>
+<span class="r-in"><span><span class="fu">revisit_dsgn</span><span class="op">(</span><span class="fl">20</span>,</span></span>
+<span class="r-in"><span>  panels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>    R60N <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">60</span>, pnl_dsgn <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="cn">NA</span><span class="op">)</span>, pnl_n <span class="op">=</span> <span class="cn">NA</span>, start_option <span class="op">=</span> <span class="st">"None"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="op">)</span>,</span></span>
+<span class="r-in"><span>  begin <span class="op">=</span> <span class="fl">1</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>          1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> R60N_01 60  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> R60N_02  0 60  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0</span>
@@ -269,15 +269,15 @@ periods, e.g., sampling will occur only every 5 periods if <code>skip = 5</code>
 <span class="r-out co"><span class="r-pr">#&gt;</span> R60N_20  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0 60</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "paneldesign"</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Serially alternating panel with three visits to sample unit then skip</span></span>
-<span class="r-in"><span class="co"># next two time periods: [3-2]</span></span>
-<span class="r-in"><span class="fu">revisit_dsgn</span><span class="op">(</span><span class="fl">20</span>, panels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span class="r-in">  SA60PE <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span class="r-in">    n <span class="op">=</span> <span class="fl">20</span>, pnl_dsgn <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">2</span><span class="op">)</span>, pnl_n <span class="op">=</span> <span class="cn">NA</span>,</span>
-<span class="r-in">    start_option <span class="op">=</span> <span class="st">"Partial_End"</span></span>
-<span class="r-in">  <span class="op">)</span></span>
-<span class="r-in"><span class="op">)</span>, begin <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Serially alternating panel with three visits to sample unit then skip</span></span></span>
+<span class="r-in"><span><span class="co"># next two time periods: [3-2]</span></span></span>
+<span class="r-in"><span><span class="fu">revisit_dsgn</span><span class="op">(</span><span class="fl">20</span>, panels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  SA60PE <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>    n <span class="op">=</span> <span class="fl">20</span>, pnl_dsgn <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">2</span><span class="op">)</span>, pnl_n <span class="op">=</span> <span class="cn">NA</span>,</span></span>
+<span class="r-in"><span>    start_option <span class="op">=</span> <span class="st">"Partial_End"</span></span></span>
+<span class="r-in"><span>  <span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span>, begin <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> SA60PE_1 20 20 20  0  0 20 20 20  0  0 20 20 20  0  0 20 20 20  0  0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> SA60PE_2  0 20 20 20  0  0 20 20 20  0  0 20 20 20  0  0 20 20 20  0</span>
@@ -286,15 +286,15 @@ periods, e.g., sampling will occur only every 5 periods if <code>skip = 5</code>
 <span class="r-out co"><span class="r-pr">#&gt;</span> SA60PE_5 20 20  0  0 20 20 20  0  0 20 20 20  0  0 20 20 20  0  0 20</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "paneldesign"</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Split panel of sample units combining above two panel designs: [1-0, 1-n]</span></span>
-<span class="r-in"><span class="fu">revisit_dsgn</span><span class="op">(</span>n_period <span class="op">=</span> <span class="fl">20</span>, begin <span class="op">=</span> <span class="fl">2017</span>, panels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span class="r-in">  Annual <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span class="r-in">    n <span class="op">=</span> <span class="fl">60</span>, pnl_dsgn <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0</span><span class="op">)</span>, pnl.n <span class="op">=</span> <span class="cn">NA</span>,</span>
-<span class="r-in">    start_option <span class="op">=</span> <span class="st">"None"</span></span>
-<span class="r-in">  <span class="op">)</span>,</span>
-<span class="r-in">  R60N <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">60</span>, pnl_dsgn <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="cn">NA</span><span class="op">)</span>, pnl_n <span class="op">=</span> <span class="cn">NA</span>, start_option <span class="op">=</span> <span class="st">"None"</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Split panel of sample units combining above two panel designs: [1-0, 1-n]</span></span></span>
+<span class="r-in"><span><span class="fu">revisit_dsgn</span><span class="op">(</span>n_period <span class="op">=</span> <span class="fl">20</span>, begin <span class="op">=</span> <span class="fl">2017</span>, panels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  Annual <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>    n <span class="op">=</span> <span class="fl">60</span>, pnl_dsgn <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0</span><span class="op">)</span>, pnl.n <span class="op">=</span> <span class="cn">NA</span>,</span></span>
+<span class="r-in"><span>    start_option <span class="op">=</span> <span class="st">"None"</span></span></span>
+<span class="r-in"><span>  <span class="op">)</span>,</span></span>
+<span class="r-in"><span>  R60N <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">60</span>, pnl_dsgn <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="cn">NA</span><span class="op">)</span>, pnl_n <span class="op">=</span> <span class="cn">NA</span>, start_option <span class="op">=</span> <span class="st">"None"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>         2017 2018 2019 2020 2021 2022 2023 2024 2025 2026 2027 2028 2029 2030</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> R60N_01   60    0    0    0    0    0    0    0    0    0    0    0    0    0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> R60N_02    0   60    0    0    0    0    0    0    0    0    0    0    0    0</span>

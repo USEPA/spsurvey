@@ -23,7 +23,7 @@ dropped from the object.'><!-- mathjax --><script src="https://cdnjs.cloudflare.
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">spsurvey</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">5.4.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">5.4.1</span>
       </span>
     </div>
 
@@ -84,31 +84,31 @@ dropped from the object.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">attrisk_analysis</span><span class="op">(</span>
-  <span class="va">dframe</span>,
-  <span class="va">vars_response</span>,
-  <span class="va">vars_stressor</span>,
-  response_levels <span class="op">=</span> <span class="cn">NULL</span>,
-  stressor_levels <span class="op">=</span> <span class="cn">NULL</span>,
-  subpops <span class="op">=</span> <span class="cn">NULL</span>,
-  siteID <span class="op">=</span> <span class="cn">NULL</span>,
-  weight <span class="op">=</span> <span class="st">"weight"</span>,
-  xcoord <span class="op">=</span> <span class="cn">NULL</span>,
-  ycoord <span class="op">=</span> <span class="cn">NULL</span>,
-  stratumID <span class="op">=</span> <span class="cn">NULL</span>,
-  clusterID <span class="op">=</span> <span class="cn">NULL</span>,
-  weight1 <span class="op">=</span> <span class="cn">NULL</span>,
-  xcoord1 <span class="op">=</span> <span class="cn">NULL</span>,
-  ycoord1 <span class="op">=</span> <span class="cn">NULL</span>,
-  sizeweight <span class="op">=</span> <span class="cn">FALSE</span>,
-  sweight <span class="op">=</span> <span class="cn">NULL</span>,
-  sweight1 <span class="op">=</span> <span class="cn">NULL</span>,
-  fpc <span class="op">=</span> <span class="cn">NULL</span>,
-  popsize <span class="op">=</span> <span class="cn">NULL</span>,
-  vartype <span class="op">=</span> <span class="st">"Local"</span>,
-  conf <span class="op">=</span> <span class="fl">95</span>,
-  All_Sites <span class="op">=</span> <span class="cn">FALSE</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">attrisk_analysis</span><span class="op">(</span></span>
+<span>  <span class="va">dframe</span>,</span>
+<span>  <span class="va">vars_response</span>,</span>
+<span>  <span class="va">vars_stressor</span>,</span>
+<span>  response_levels <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  stressor_levels <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  subpops <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  siteID <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  weight <span class="op">=</span> <span class="st">"weight"</span>,</span>
+<span>  xcoord <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  ycoord <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  stratumID <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  clusterID <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  weight1 <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  xcoord1 <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  ycoord1 <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  sizeweight <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  sweight <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  sweight1 <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  fpc <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  popsize <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  vartype <span class="op">=</span> <span class="st">"Local"</span>,</span>
+<span>  conf <span class="op">=</span> <span class="fl">95</span>,</span>
+<span>  All_Sites <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -500,62 +500,62 @@ reduction of the probability that the response variable is in poor condition.</p
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="va">dframe</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
-<span class="r-in">  siteID <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"Site"</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">100</span><span class="op">)</span>,</span>
-<span class="r-in">  wgt <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fl">10</span>, <span class="fl">100</span><span class="op">)</span>,</span>
-<span class="r-in">  xcoord <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">100</span><span class="op">)</span>,</span>
-<span class="r-in">  ycoord <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">100</span><span class="op">)</span>,</span>
-<span class="r-in">  stratum <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Stratum1"</span>, <span class="st">"Stratum2"</span><span class="op">)</span>, <span class="fl">50</span><span class="op">)</span>,</span>
-<span class="r-in">  RespVar1 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Poor"</span>, <span class="st">"Good"</span><span class="op">)</span>, <span class="fl">100</span>, replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
-<span class="r-in">  RespVar2 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Poor"</span>, <span class="st">"Good"</span><span class="op">)</span>, <span class="fl">100</span>, replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
-<span class="r-in">  StressVar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Poor"</span>, <span class="st">"Good"</span><span class="op">)</span>, <span class="fl">100</span>, replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
-<span class="r-in">  All_Sites <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"All Sites"</span>, <span class="fl">100</span><span class="op">)</span>,</span>
-<span class="r-in">  Resource_Class <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Agr"</span>, <span class="st">"Forest"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">55</span>, <span class="fl">45</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">)</span></span>
-<span class="r-in"><span class="va">myresponse</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"RespVar1"</span>, <span class="st">"RespVar2"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">mystressor</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"StressVar"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">mysubpops</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"All_Sites"</span>, <span class="st">"Resource_Class"</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu">attrisk_analysis</span><span class="op">(</span><span class="va">dframe</span>,</span>
-<span class="r-in">  vars_response <span class="op">=</span> <span class="va">myresponse</span>,</span>
-<span class="r-in">  vars_stressor <span class="op">=</span> <span class="va">mystressor</span>, subpops <span class="op">=</span> <span class="va">mysubpops</span>, siteID <span class="op">=</span> <span class="st">"siteID"</span>,</span>
-<span class="r-in">  weight <span class="op">=</span> <span class="st">"wgt"</span>, xcoord <span class="op">=</span> <span class="st">"xcoord"</span>, ycoord <span class="op">=</span> <span class="st">"ycoord"</span>,</span>
-<span class="r-in">  stratumID <span class="op">=</span> <span class="st">"stratum"</span></span>
-<span class="r-in"><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">dframe</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  siteID <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"Site"</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">100</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  wgt <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fl">10</span>, <span class="fl">100</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  xcoord <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">100</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  ycoord <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">100</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  stratum <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Stratum1"</span>, <span class="st">"Stratum2"</span><span class="op">)</span>, <span class="fl">50</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  RespVar1 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Poor"</span>, <span class="st">"Good"</span><span class="op">)</span>, <span class="fl">100</span>, replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  RespVar2 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Poor"</span>, <span class="st">"Good"</span><span class="op">)</span>, <span class="fl">100</span>, replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  StressVar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Poor"</span>, <span class="st">"Good"</span><span class="op">)</span>, <span class="fl">100</span>, replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  All_Sites <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"All Sites"</span>, <span class="fl">100</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  Resource_Class <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Agr"</span>, <span class="st">"Forest"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">55</span>, <span class="fl">45</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">myresponse</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"RespVar1"</span>, <span class="st">"RespVar2"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">mystressor</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"StressVar"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">mysubpops</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"All_Sites"</span>, <span class="st">"Resource_Class"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">attrisk_analysis</span><span class="op">(</span><span class="va">dframe</span>,</span></span>
+<span class="r-in"><span>  vars_response <span class="op">=</span> <span class="va">myresponse</span>,</span></span>
+<span class="r-in"><span>  vars_stressor <span class="op">=</span> <span class="va">mystressor</span>, subpops <span class="op">=</span> <span class="va">mysubpops</span>, siteID <span class="op">=</span> <span class="st">"siteID"</span>,</span></span>
+<span class="r-in"><span>  weight <span class="op">=</span> <span class="st">"wgt"</span>, xcoord <span class="op">=</span> <span class="st">"xcoord"</span>, ycoord <span class="op">=</span> <span class="st">"ycoord"</span>,</span></span>
+<span class="r-in"><span>  stratumID <span class="op">=</span> <span class="st">"stratum"</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             Type Subpopulation Response  Stressor nResp     Estimate</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1      All_Sites     All Sites RespVar1 StressVar   100 -0.053553090</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2      All_Sites     All Sites RespVar2 StressVar   100 -0.015072305</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3 Resource_Class           Agr RespVar1 StressVar    55 -0.021946712</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4 Resource_Class        Forest RespVar1 StressVar    45 -0.101788905</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5 Resource_Class           Agr RespVar2 StressVar    55 -0.022583339</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6 Resource_Class        Forest RespVar2 StressVar    45  0.005855771</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1      All_Sites     All Sites RespVar1 StressVar   100 -0.008602746</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2      All_Sites     All Sites RespVar2 StressVar   100 -0.051540581</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 Resource_Class           Agr RespVar1 StressVar    55 -0.098069000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 Resource_Class        Forest RespVar1 StressVar    45  0.086235451</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 Resource_Class           Agr RespVar2 StressVar    55 -0.047914507</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 Resource_Class        Forest RespVar2 StressVar    45 -0.060099064</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   StdError_log MarginofError_log  LCB95Pct  UCB95Pct WeightTotal</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1    0.3931882         0.7706346 -1.276873 0.5125006    5624.385</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2    0.3822275         0.7491521 -1.147087 0.5201070    5624.385</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3    0.5270931         1.0330836 -1.871381 0.6362812    3191.590</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4    0.6122530         1.1999937 -2.658045 0.6681455    2432.795</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5    0.4780978         0.9370544 -1.610095 0.5993721    3191.590</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6    0.5688276         1.1148817 -2.031352 0.6739663    2432.795</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1    0.3807913         0.7463373 -1.127406 0.5218216    5439.746</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2    0.3550170         0.6958205 -1.108711 0.4756334    5439.746</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3    0.5387972         1.0560232 -2.156855 0.6180517    3028.672</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4    0.5973395         1.1707639 -1.946393 0.7166143    2411.074</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5    0.4827913         0.9462536 -1.699470 0.5932073    3028.672</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6    0.5531554         1.0841646 -2.134680 0.6414913    2411.074</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Count_RespPoor_StressPoor Count_RespPoor_StressGood Count_RespGood_StressPoor</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1                        28                        25                        25</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2                        26                        25                        27</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3                        14                        15                        13</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4                        14                        10                        12</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5                        14                        17                        13</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6                        12                         8                        14</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                        23                        31                        19</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2                        20                        28                        22</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3                        11                        17                        12</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4                        12                        14                         7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5                        12                        16                        11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6                         8                        12                        11</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Count_RespGood_StressGood Prop_RespPoor_StressPoor Prop_RespPoor_StressGood</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1                        22                0.2467685                0.2429339</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2                        22                0.2667671                0.2442471</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3                        13                0.2387940                0.2500388</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4                         9                0.2572303                0.2336129</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5                        11                0.2589503                0.2714903</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6                        11                0.2770221                0.2085067</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                        27                0.2326256                0.2893811</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2                        30                0.1867886                0.2557994</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3                        15                0.2112064                0.2788079</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4                        12                0.2595314                0.3026626</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5                        16                0.2075605                0.2466110</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6                        14                0.1606958                0.2673414</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Prop_RespGood_StressPoor Prop_RespGood_StressGood</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1                0.2823632                0.2279344</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2                0.2623645                0.2266212</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3                0.2606890                0.2504782</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4                0.3107977                0.1983592</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5                0.2405327                0.2290267</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6                0.2910059                0.2234653</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                0.2177400                0.2602533</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2                0.2635770                0.2938350</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3                0.2706303                0.2393555</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4                0.1513018                0.2865041</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5                0.2742761                0.2715523</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6                0.2501374                0.3218253</span>
 </code></pre></div>
     </div>
   </div>
