@@ -23,7 +23,7 @@ dropped from the object.'><!-- mathjax --><script src="https://cdnjs.cloudflare.
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">spsurvey</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">5.4.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">5.3.0</span>
       </span>
     </div>
 
@@ -394,68 +394,8 @@ The default is <code>FALSE</code>.</p></dd>
   subpopulations, categories within each subpopulation, response variables,
   and categories within each response variable.  Estimates are provided for
   proportion and size of the population plus standard error, margin of
-  error, and confidence interval estimates. The data frame contains the following
-  variables:</p>
-<p></p>
-<dl><dt>Type</dt>
-<dd><p>subpopulation (domain) name</p></dd>
-
-    <dt>Subpopulation</dt>
-<dd><p>subpopulation name within a domain</p></dd>
-
-    <dt>Response</dt>
-<dd><p>response variable</p></dd>
-
-    <dt>Stressor</dt>
-<dd><p>stressor variable</p></dd>
-
-    <dt>nResp</dt>
-<dd><p>sample size</p></dd>
-
-    <dt>Estimate</dt>
-<dd><p>attributable risk estimate</p></dd>
-
-    <dt>StdError_log</dt>
-<dd><p>attributable risk standard error (on the log scale)</p></dd>
-
-    <dt>MarginofError_log</dt>
-<dd><p>attributable risk margin of error (on the log scale)</p></dd>
-
-    <dt>LCBxxPct</dt>
-<dd><p>xx% (default 95%) lower confidence bound</p></dd>
-
-    <dt>UCBxxPct</dt>
-<dd><p>xx% (default 95%) upper confidence bound</p></dd>
-
-    <dt>WeightTotal</dt>
-<dd><p>sum of design weights</p></dd>
-
-    <dt>Count_RespPoor_StressPoor</dt>
-<dd><p>number of observations in the poor response and poor stressor group</p></dd>
-
-    <dt>Count_RespPoor_StressGood</dt>
-<dd><p>number of observations in the poor response and good stressor group</p></dd>
-
-    <dt>Count_RespGood_StressPoor</dt>
-<dd><p>number of observations in the good response and poor stressor group</p></dd>
-
-    <dt>Count_RespGood_StressGood</dt>
-<dd><p>number of observations in the good response and good stressor group</p></dd>
-
-    <dt>Prop_RespPoor_StressPoor</dt>
-<dd><p>weighted proportion of observations in the poor response and poor stressor group</p></dd>
-
-    <dt>Prop_RespPoor_StressGood</dt>
-<dd><p>weighted proportion of observations in the poor response and good stressor group</p></dd>
-
-    <dt>Prop_RespGood_StressPoor</dt>
-<dd><p>weighted proportion of observations in the good response and poor stressor group</p></dd>
-
-    <dt>Prop_RespGood_StressGood</dt>
-<dd><p>weighted proportion of observations in the good response and good stressor group</p></dd>
-
-  
-</dl></div>
+  error, and confidence interval estimates.</p>
+    </div>
     <div id="details">
     <h2>Details</h2>
     
@@ -522,40 +462,40 @@ reduction of the probability that the response variable is in poor condition.</p
 <span class="r-in"><span>  stratumID <span class="op">=</span> <span class="st">"stratum"</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             Type Subpopulation Response  Stressor nResp    Estimate</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1      All_Sites     All Sites RespVar1 StressVar   100  0.27401866</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2      All_Sites     All Sites RespVar2 StressVar   100 -0.09407114</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3 Resource_Class           Agr RespVar1 StressVar    55  0.30570075</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4 Resource_Class        Forest RespVar1 StressVar    45  0.28726614</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5 Resource_Class           Agr RespVar2 StressVar    55 -0.39525705</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6 Resource_Class        Forest RespVar2 StressVar    45  0.27111443</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   StdError_log MarginofError_log   LCB95Pct  UCB95Pct WeightTotal</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1    0.3739445         0.7329178 -0.5108718 0.6511624    5380.772</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2    0.3788132         0.7424602 -1.2987509 0.4792860    5380.772</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3    0.5443401         1.0668869 -1.0178543 0.7611069    3084.548</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4    0.6352092         1.2449872 -1.4752465 0.7947721    2296.223</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5    0.5057871         0.9913246 -2.7599409 0.4822413    3084.548</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6    0.6022079         1.1803058 -1.3727919 0.7760974    2296.223</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1      All_Sites     All Sites RespVar1 StressVar   100 -0.01092561</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2      All_Sites     All Sites RespVar2 StressVar   100 -0.06257537</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 Resource_Class           Agr RespVar1 StressVar    55 -0.07407643</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 Resource_Class        Forest RespVar1 StressVar    45  0.06227049</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 Resource_Class           Agr RespVar2 StressVar    55 -0.11037593</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 Resource_Class        Forest RespVar2 StressVar    45  0.11468838</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   StdError_log MarginofError_log  LCB95Pct  UCB95Pct WeightTotal</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1    0.3918520         0.7680159 -1.179035 0.5309986    5365.266</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2    0.3899923         0.7643709 -1.282032 0.5052365    5365.266</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3    0.5656290         1.1086125 -2.254614 0.6455370    2781.100</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4    0.5661776         1.1096877 -1.844519 0.6908663    2584.166</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5    0.5152084         1.0097899 -2.048009 0.5954950    2781.100</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6    0.5965905         1.1692960 -1.850460 0.7250350    2584.166</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Count_RespPoor_StressPoor Count_RespPoor_StressGood Count_RespGood_StressPoor</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1                        28                        18                        22</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2                        23                        27                        27</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3                        13                         7                        16</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4                        15                        11                         6</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5                        11                        17                        18</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6                        12                        10                         9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                        24                        26                        26</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2                        23                        26                        27</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3                         9                        18                        12</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4                        15                         8                        14</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5                        11                        18                        10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6                        12                         8                        17</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Count_RespGood_StressGood Prop_RespPoor_StressPoor Prop_RespPoor_StressGood</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1                        32                0.2942679                0.1627181</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2                        23                0.2482995                0.2875251</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3                        19                0.2357602                0.1066473</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4                        13                0.3728619                0.2380387</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5                         9                0.2123526                0.3553032</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6                        14                0.2965875                0.1964778</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                        24                0.2383699                0.2254592</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2                        24                0.2157078                0.2253377</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3                        16                0.1656854                0.2787525</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4                         8                0.3165936                0.1681045</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5                        16                0.1710187                0.3153817</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6                         8                0.2638026                0.1284316</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Prop_RespGood_StressPoor Prop_RespGood_StressGood</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1               0.21526773               0.32774635</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2               0.26123606               0.20293936</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3               0.31563920               0.34195327</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4               0.08043738               0.30866199</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5               0.33904684               0.09329737</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6               0.15671179               0.35022294</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                0.2808010                0.2553699</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2                0.3034631                0.2554914</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3                0.2503688                0.3051933</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4                0.3135523                0.2017496</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5                0.2450355                0.2685641</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6                0.3663434                0.2414224</span>
 </code></pre></div>
     </div>
   </div>

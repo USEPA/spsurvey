@@ -22,7 +22,7 @@ dropped from the object.'><!-- mathjax --><script src="https://cdnjs.cloudflare.
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">spsurvey</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">5.4.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">5.3.0</span>
       </span>
     </div>
 
@@ -357,56 +357,8 @@ The default is <code>FALSE</code>.</p></dd>
   subpopulations, categories within each subpopulation, response variables,
   and categories within each response variable.  Estimates are provided for
   proportion and total of the population plus standard error, margin of
-  error, and confidence interval estimates. The data frame contains the following
-  variables:</p>
-<p></p>
-<dl><dt>Type</dt>
-<dd><p>subpopulation (domain) name</p></dd>
-
-    <dt>Subpopulation</dt>
-<dd><p>subpopulation name within a domain</p></dd>
-
-    <dt>Indicator</dt>
-<dd><p>response variable</p></dd>
-
-    <dt>Category</dt>
-<dd><p>category of response variable</p></dd>
-
-    <dt>nResp</dt>
-<dd><p>sample size</p></dd>
-
-    <dt>Estimate.P</dt>
-<dd><p>proportion estimate (in %)</p></dd>
-
-    <dt>StdError.P</dt>
-<dd><p>standard error of proportion estimate</p></dd>
-
-    <dt>MarginofError.P</dt>
-<dd><p>margin of error of proportion estimate</p></dd>
-
-    <dt>LCBxxPct.P</dt>
-<dd><p>xx% (default 95%) lower confidence bound of proportion estimate</p></dd>
-
-    <dt>UCBxxPct.P</dt>
-<dd><p>xx% (default 95%) upper confidence bound of proportion estimate</p></dd>
-
-    <dt>Estimate.U</dt>
-<dd><p>total estimate</p></dd>
-
-    <dt>StdError.U</dt>
-<dd><p>standard error of total estimate</p></dd>
-
-    <dt>MarginofError.U</dt>
-<dd><p>margin of error of total estimate</p></dd>
-
-    <dt>LCBxxPct.U</dt>
-<dd><p>xx% (default 95%) lower confidence bound of total estimate</p></dd>
-
-    <dt>UCBxxPct.U</dt>
-<dd><p>xx% (default 95%) upper confidence bound of total estimate</p></dd>
-
-  
-</dl></div>
+  error, and confidence interval estimates.</p>
+    </div>
     <div id="see-also">
     <h2>See also</h2>
     <div class="dont-index">
@@ -445,52 +397,52 @@ The default is <code>FALSE</code>.</p></dd>
 <span class="r-in"><span>  stratumID <span class="op">=</span> <span class="st">"stratum"</span>, popsize <span class="op">=</span> <span class="va">mypopsize</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>              Type Subpopulation Indicator Category nResp Estimate.P StdError.P</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1       All_Sites     All Sites    CatVar     east    25   22.80833   3.560660</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2       All_Sites     All Sites    CatVar    north    25   25.79697   3.560660</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3       All_Sites     All Sites    CatVar    south    25   26.14128   3.367666</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4       All_Sites     All Sites    CatVar     west    25   25.25342   3.367666</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1       All_Sites     All Sites    CatVar     east    25   27.81378   3.487701</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2       All_Sites     All Sites    CatVar    north    25   20.59172   3.487701</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3       All_Sites     All Sites    CatVar    south    25   25.69074   3.699926</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4       All_Sites     All Sites    CatVar     west    25   25.90376   3.699926</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 5       All_Sites     All Sites    CatVar    Total   100  100.00000   0.000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6  Resource_Class          Good    CatVar     east    14   21.94432   4.675357</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7  Resource_Class          Good    CatVar    north    14   26.70860   4.675357</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8  Resource_Class          Good    CatVar    south    14   25.77010   4.505799</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9  Resource_Class          Good    CatVar     west    13   25.57698   4.505799</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  Resource_Class          Good    CatVar     east    14   29.11103   4.446098</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7  Resource_Class          Good    CatVar    north    14   19.70708   4.446098</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8  Resource_Class          Good    CatVar    south    14   26.71673   4.557377</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9  Resource_Class          Good    CatVar     west    13   24.46517   4.557377</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 10 Resource_Class          Good    CatVar    Total    55  100.00000   0.000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11 Resource_Class          Poor    CatVar     east    11   25.11237   3.987389</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12 Resource_Class          Poor    CatVar    north    11   23.36595   3.987389</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13 Resource_Class          Poor    CatVar    south    11   27.13109   5.212915</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14 Resource_Class          Poor    CatVar     west    12   24.39059   5.212915</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11 Resource_Class          Poor    CatVar     east    11   24.35445   4.758312</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12 Resource_Class          Poor    CatVar    north    11   22.95077   4.758312</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13 Resource_Class          Poor    CatVar    south    11   22.95476   5.258645</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14 Resource_Class          Poor    CatVar     west    12   29.74001   5.258645</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 15 Resource_Class          Poor    CatVar    Total    45  100.00000   0.000000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    MarginofError.P LCB95Pct.P UCB95Pct.P Estimate.U StdError.U MarginofError.U</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1         6.978765   15.82957   29.78710  1254.4583  202.73142        397.3463</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2         6.978765   18.81821   32.77574  1418.8334  248.44434        486.9420</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3         6.600504   19.54078   32.74178  1437.7704  199.65029        391.3074</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4         6.600504   18.65291   31.85392  1388.9379  237.56293        465.6148</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1         6.835768   20.97801   34.64955  1529.7578  254.86606        499.5283</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2         6.835768   13.75596   27.42749  1132.5448  182.74365        358.1710</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3         7.251722   18.43901   32.94246  1412.9905  231.56776        453.8645</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4         7.251722   18.65204   33.15549  1424.7070  224.15816        439.3419</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 5         0.000000  100.00000  100.00000  5500.0000    0.00000          0.0000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6         9.163532   12.78079   31.10785   877.7728  186.44133        365.4183</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7         9.163532   17.54507   35.87214  1068.3442  229.62479        450.0563</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8         8.831203   16.93890   34.60130  1030.8040  178.90009        350.6377</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9         8.831203   16.74577   34.40818  1023.0790  229.39701        449.6099</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6         8.714193   20.39683   37.82522  1164.4411  236.75395        464.0292</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7         8.714193   10.99289   28.42127   788.2832  165.65362        324.6751</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8         8.932294   17.78443   35.64902  1068.6690  188.93066        370.2973</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9         8.932294   15.53287   33.39746   978.6068  203.84223        399.5234</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 10        0.000000  100.00000  100.00000  4000.0000    0.00000          0.0000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11        7.815138   17.29723   32.92751   376.6855   74.97370        146.9458</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12        7.815138   15.55081   31.18108   350.4892   61.96709        121.4533</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13       10.217125   16.91396   37.34822   406.9663   82.87069        162.4236</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14       10.217125   14.17347   34.60772   365.8589   87.54236        171.5799</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11        9.326121   15.02833   33.68057   365.3167   81.41709        159.5746</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12        9.326121   13.62465   32.27689   344.2616   71.87456        140.8715</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13       10.306754   12.64801   33.26152   344.3214   77.59865        152.0906</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14       10.306754   19.43326   40.04677   446.1002   88.27390        173.0137</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 15        0.000000  100.00000  100.00000  1500.0000    0.00000          0.0000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    LCB95Pct.U UCB95Pct.U</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1    857.1120  1651.8046</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2    931.8914  1905.7753</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3   1046.4630  1829.0778</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4    923.3231  1854.5527</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1   1030.2295  2029.2861</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2    774.3738  1490.7157</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3    959.1260  1866.8549</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4    985.3651  1864.0489</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 5   5500.0000  5500.0000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6    512.3545  1243.1911</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7    618.2879  1518.4005</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8    680.1663  1381.4418</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9    573.4691  1472.6889</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6    700.4119  1628.4703</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7    463.6080  1112.9583</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8    698.3717  1438.9663</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9    579.0833  1378.1302</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 10  4000.0000  4000.0000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11   229.7398   523.6313</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12   229.0359   471.9425</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13   244.5428   569.3899</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14   194.2790   537.4388</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11   205.7422   524.8913</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12   203.3901   485.1331</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13   192.2309   496.4120</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14   273.0866   619.1139</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 15  1500.0000  1500.0000</span>
 </code></pre></div>
     </div>
