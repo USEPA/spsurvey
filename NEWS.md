@@ -1,3 +1,9 @@
+# spsurvey 5.4.1
+
+## Minor Updates
+
+* Updated citation information to Dumelle et al. (2023) <doi:10.18637/jss.v105.i03>.
+
 # spsurvey 5.4.0
 
 ## Minor Updates
