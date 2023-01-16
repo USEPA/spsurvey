@@ -1,4 +1,6 @@
-This is a minor update adding a few minor features and addressing a few bugs from version 5.3.0.
+This is a minor update that adds citation information for a publication in 
+*The Journal of Statistical Software* (JSS). The DOI in the CITATION for the
+new JSS publication will be registered after publication on CRAN.
 
 -------
 
@@ -23,4 +25,4 @@ reflect the size of the final PDF manual installed upon package build.
 
 ## Downstream dependencies
 
-This minor update should not affect any downstream dependencies (other than those impacted by the version 5.0.0 update).
+This minor update should not affect any downstream dependencies.
