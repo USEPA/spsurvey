@@ -23,7 +23,7 @@ variable analysis, attributable risk analysis, risk difference analysis, relativ
 risk analysis, change analysis, and trend analysis. spsurvey can also be used to
 summarize objects, visualize objects, select samples that are not spatially balanced,
 select panel samples, measure the amount of spatial balance in a sample,
-adjust design weights, and more.
+adjust design weights, and more. For additional details, see Dumelle et al. (2023) <doi:10.18637/jss.v105.i03>.
 
 ## Installation
 

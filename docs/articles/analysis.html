@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">spsurvey</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">5.3.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">5.4.1</span>
       </span>
     </div>
 
@@ -125,7 +125,7 @@
 </ul>
 <p>Before proceeding, we load spsurvey by running</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/USEPA/spsurvey" class="external-link">spsurvey</a></span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://usepa.github.io/spsurvey/" class="external-link">spsurvey</a></span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="categorical-variable-analysis">Categorical Variable Analysis<a class="anchor" aria-label="anchor" href="#categorical-variable-analysis"></a>
@@ -380,9 +380,9 @@
 <span><span class="va">cont_ests</span><span class="op">$</span><span class="va">Pct</span></span></code></pre></div>
 <p>To visualize the CDF estimates, run</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/cdf_plot.html">cdf_plot</a></span><span class="op">(</span><span class="va">cont_ests</span><span class="op">$</span><span class="va">CDF</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot.html">plot</a></span><span class="op">(</span><span class="va">cont_ests</span><span class="op">$</span><span class="va">CDF</span><span class="op">)</span></span></code></pre></div>
 <p><img src="analysis_files/figure-html/unnamed-chunk-12-1.png" width="700"></p>
-<p>The solid line indicates the CDF estimates, and the dashed lines indicate lower and upper 95% confidence interval bounds for the CDF estimates.</p>
+<p>The solid line indicates the CDF estimates, and the dashed lines indicate lower and upper 95% confidence interval bounds for the CDF estimates. <code><a href="../reference/cdf_plot.html">cdf_plot()</a></code> can equivalently be used in place of <code><a href="../reference/plot.html">plot()</a></code> (<code><a href="../reference/cdf_plot.html">cdf_plot()</a></code> is currently maintained for backwards compatibility with previous spsurvey versions).</p>
 <p>To estimate the CDF, certain percentiles, and means of <code>BMMI</code> separately for each state, run</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cont_ests_sp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cont_analysis.html">cont_analysis</a></span><span class="op">(</span></span>

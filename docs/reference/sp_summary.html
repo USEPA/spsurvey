@@ -4,7 +4,8 @@ formula specifies the variables (or factors) to
 summarize by. If the left-hand side of the formula is empty, the
 summary will be of the distributions of the right-hand side variables. If the left-hand side
 of the formula contains a variable, the summary will be of the left-hand size variable
-for each level of each right-hand side variable."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
+for each level of each right-hand side variable. Equivalent to spsurvey::summary(); both
+are currently maintained for backwards compatibility."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]--></head><body data-spy="scroll" data-target="#toc">
@@ -22,7 +23,7 @@ for each level of each right-hand side variable."><!-- mathjax --><script src="h
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">spsurvey</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">5.3.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">5.4.1</span>
       </span>
     </div>
 
@@ -78,7 +79,8 @@ formula specifies the variables (or factors) to
 summarize by. If the left-hand side of the formula is empty, the
 summary will be of the distributions of the right-hand side variables. If the left-hand side
 of the formula contains a variable, the summary will be of the left-hand size variable
-for each level of each right-hand side variable.</p>
+for each level of each right-hand side variable. Equivalent to <code><a href="summary.html">spsurvey::summary()</a></code>; both
+are currently maintained for backwards compatibility.</p>
     </div>
 
     <div id="ref-usage">
@@ -87,7 +89,7 @@ for each level of each right-hand side variable.</p>
 <span><span class="co"># S3 method for default</span></span>
 <span><span class="fu">sp_summary</span><span class="op">(</span><span class="va">object</span>, formula <span class="op">=</span> <span class="op">~</span><span class="fl">1</span>, onlyshow <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S3 method for spdesign</span></span>
+<span><span class="co"># S3 method for sp_design</span></span>
 <span><span class="fu">sp_summary</span><span class="op">(</span><span class="va">object</span>, formula <span class="op">=</span> <span class="op">~</span><span class="va">siteuse</span>, siteuse <span class="op">=</span> <span class="cn">NULL</span>, onlyshow <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -95,9 +97,9 @@ for each level of each right-hand side variable.</p>
     <h2>Arguments</h2>
     <dl><dt>object</dt>
 <dd><p>An object to summarize. When summarizing sampling frames,
-or analysis data, a data frame or <code>sf</code>
+an <code>sf</code>
 object. When summarizing design sites, an object created by <code><a href="grts.html">grts()</a></code> or
-<code><a href="irs.html">irs()</a></code> (which has class <code>spdesign</code>). When summarizing analysis data,
+<code><a href="irs.html">irs()</a></code> (which has class <code>sp_design</code>). When summarizing analysis data,
 a data frame or an <code>sf</code> object.</p></dd>
 
 

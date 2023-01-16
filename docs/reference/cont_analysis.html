@@ -23,7 +23,7 @@ object.'><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mat
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">spsurvey</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">5.3.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">5.4.1</span>
       </span>
     </div>
 
@@ -373,8 +373,9 @@ The default is <code>FALSE</code>.</p></dd>
 <p>The analysis results. A list composed of one, two, three, or four
   data frames that contain population estimates for all combinations of
   subpopulations, categories within each subpopulation, and response
-  variables, where the number of data frames is determined by argument
-  statistics.  The possible data frames in the output list are:</p>
+  variables, where the number of data frames is determined by argument</p>
+<p></p>
+<p><code>statistics</code>.  The possible data frames in the output list are:</p>
 <p></p>
 <dl><dt><code>CDF</code></dt>
 <dd><p>: a data frame containing CDF estimates</p></dd>
@@ -387,6 +388,147 @@ The default is <code>FALSE</code>.</p></dd>
 
     <dt><code>Total</code></dt>
 <dd><p>: a data frame containing total estimates</p></dd>
+
+  
+</dl><p>The <code>CDF</code> data frame contains the following variables:</p>
+<p></p>
+<dl><dt>Type</dt>
+<dd><p>subpopulation (domain) name</p></dd>
+
+    <dt>Subpopulation</dt>
+<dd><p>subpopulation name within a domain</p></dd>
+
+    <dt>Indicator</dt>
+<dd><p>response variable</p></dd>
+
+    <dt>Value</dt>
+<dd><p>value of response variable</p></dd>
+
+    <dt>nResp</dt>
+<dd><p>sample size at or below <code>Value</code></p></dd>
+
+    <dt>Estimate.P</dt>
+<dd><p>CDF proportion estimate (in %)</p></dd>
+
+    <dt>StdError.P</dt>
+<dd><p>standard error of CDF proportion estimate</p></dd>
+
+    <dt>MarginofError.P</dt>
+<dd><p>margin of error of CDF proportion estimate</p></dd>
+
+    <dt>LCBxxPct.P</dt>
+<dd><p>xx% (default 95%) lower confidence bound of CDF proportion estimate</p></dd>
+
+    <dt>UCBxxPct.P</dt>
+<dd><p>xx% (default 95%) upper confidence bound of CDF proportion estimate</p></dd>
+
+    <dt>Estimate.U</dt>
+<dd><p>CDF total estimate</p></dd>
+
+    <dt>StdError.U</dt>
+<dd><p>standard error of CDF total estimate</p></dd>
+
+    <dt>MarginofError.U</dt>
+<dd><p>margin of error of CDF total estimate</p></dd>
+
+    <dt>LCBxxPct.U</dt>
+<dd><p>xx% (default 95%) lower confidence bound of CDF total estimate</p></dd>
+
+    <dt>UCBxxPct.U</dt>
+<dd><p>xx% (default 95%) upper confidence bound of CDF total estimate</p></dd>
+
+  
+</dl><p>The <code>Pct</code> data frame contains the following variables:</p>
+<p></p>
+<dl><dt>Type</dt>
+<dd><p>subpopulation (domain) name</p></dd>
+
+    <dt>Subpopulation</dt>
+<dd><p>subpopulation name within a domain</p></dd>
+
+    <dt>Indicator</dt>
+<dd><p>response variable</p></dd>
+
+    <dt>Statistic</dt>
+<dd><p>value of percentile</p></dd>
+
+    <dt>nResp</dt>
+<dd><p>sample size at or below <code>Value</code></p></dd>
+
+    <dt>Estimate</dt>
+<dd><p>percentile estimate</p></dd>
+
+    <dt>StdError</dt>
+<dd><p>standard error of percentile estimate</p></dd>
+
+    <dt>MarginofError</dt>
+<dd><p>margin of error of percentile estimate</p></dd>
+
+    <dt>LCBxxPct</dt>
+<dd><p>xx% (default 95%) lower confidence bound of percentile estimate</p></dd>
+
+    <dt>UCBxxPct</dt>
+<dd><p>xx% (default 95%) upper confidence bound of percentile estimate</p></dd>
+
+  
+</dl><p>The <code>Mean</code> data frame contains the following variables:</p>
+<p></p>
+<dl><dt>Type</dt>
+<dd><p>subpopulation (domain) name</p></dd>
+
+    <dt>Subpopulation</dt>
+<dd><p>subpopulation name within a domain</p></dd>
+
+    <dt>Indicator</dt>
+<dd><p>response variable</p></dd>
+
+    <dt>nResp</dt>
+<dd><p>sample size at or below <code>Value</code></p></dd>
+
+    <dt>Estimate</dt>
+<dd><p>mean estimate</p></dd>
+
+    <dt>StdError</dt>
+<dd><p>standard error of mean estimate</p></dd>
+
+    <dt>MarginofError</dt>
+<dd><p>margin of error of mean estimate</p></dd>
+
+    <dt>LCBxxPct</dt>
+<dd><p>xx% (default 95%) lower confidence bound of mean estimate</p></dd>
+
+    <dt>UCBxxPct</dt>
+<dd><p>xx% (default 95%) upper confidence bound of mean estimate</p></dd>
+
+  
+</dl><p>The <code>Total</code> data frame contains the following variables:</p>
+<p></p>
+<dl><dt>Type</dt>
+<dd><p>subpopulation (domain) name</p></dd>
+
+    <dt>Subpopulation</dt>
+<dd><p>subpopulation name within a domain</p></dd>
+
+    <dt>Indicator</dt>
+<dd><p>response variable</p></dd>
+
+    <dt>nResp</dt>
+<dd><p>sample size at or below <code>Value</code></p></dd>
+
+    <dt>Estimate</dt>
+<dd><p>total estimate</p></dd>
+
+    <dt>StdError</dt>
+<dd><p>standard error of total estimate</p></dd>
+
+    <dt>MarginofError</dt>
+<dd><p>margin of error of total estimate</p></dd>
+
+    <dt>LCBxxPct</dt>
+<dd><p>xx% (default 95%) lower confidence bound of total estimate</p></dd>
+
+    <dt>UCBxxPct</dt>
+<dd><p>xx% (default 95%) upper confidence bound of total estimate</p></dd>
 
   
 </dl></div>
@@ -434,14 +576,14 @@ The default is <code>FALSE</code>.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $Mean</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             Type Subpopulation Indicator nResp Estimate   StdError</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1      All_Sites     All Sites   ContVar   100 10.22019 0.09099677</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 Resource_Class          Good   ContVar    55 10.23417 0.11232056</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3 Resource_Class          Poor   ContVar    45 10.18292 0.14879565</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   MarginofError  LCB95Pct UCB95Pct</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1     0.1783504 10.041843 10.39854</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2     0.2201442 10.014028 10.45432</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3     0.2916341  9.891282 10.47455</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             Type Subpopulation Indicator nResp  Estimate   StdError</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1      All_Sites     All Sites   ContVar   100 10.037935 0.09565297</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 Resource_Class          Good   ContVar    55 10.070371 0.12060860</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 Resource_Class          Poor   ContVar    45  9.951438 0.11252950</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   MarginofError LCB95Pct UCB95Pct</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1     0.1874764 9.850458 10.22541</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2     0.2363885 9.833982 10.30676</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3     0.2205538 9.730884 10.17199</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $Total</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>

@@ -23,7 +23,7 @@ dropped from the object.'><!-- mathjax --><script src="https://cdnjs.cloudflare.
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">spsurvey</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">5.3.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">5.4.1</span>
       </span>
     </div>
 
@@ -137,7 +137,8 @@ default is <code>NULL</code>.</p></dd>
 <dt>test</dt>
 <dd><p>Character string or character vector providing the location
 measure(s) to use for change estimation for continuous variables.  The
-choices are <code>"mean"</code>, <code>"median"</code>, or <code>c("mean", "median")</code>.
+choices are <code>"mean"</code>, <code>"total"</code>, <code>"median"</code>, or some
+combination of the three options (e.g., <code>c("mean", "total")</code>).
 The default is <code>"mean"</code>.</p></dd>
 
 
@@ -167,7 +168,9 @@ The default is <code>NULL</code>.</p></dd>
 <dt>siteID</dt>
 <dd><p>Character value providing name of the site ID variable in
 <code>dframe</code>.  For a two-stage sample, the site ID variable
-identifies stage two site IDs.  The default value is <code>"siteID"</code>.</p></dd>
+identifies stage two site IDs.  The default value is <code>"siteID"</code>. If a
+unique site is visited in both surveys, the corresponding <code>siteID</code>
+should be the same for both entries.</p></dd>
 
 
 <dt>weight</dt>
@@ -396,10 +399,11 @@ The default is <code>FALSE</code>.</p></dd>
     <h2>Value</h2>
     
 
-<p>List of change estimates composed of three items:
+<p>List of change estimates composed of four items:
   (1) <code>catsum</code> contains change estimates for categorical variables,
   (2) <code>contsum_mean</code> contains estimates for continuous variables using
-  the mean, and (3) <code>contsum_median</code> contains estimates for continuous
+  the mean, (3) <code>contsum_total</code> contains estimates for continuous
+  variables using the total, and (4) <code>contsum_median</code> contains estimates for continuous
   variables using the median.  The items in the list will contain <code>NULL</code></p>
 
 
@@ -409,7 +413,393 @@ The default is <code>FALSE</code>.</p></dd>
   categorical variables and continuous variables using the median).  Change
   estimates are provided plus standard error estimates and confidence
   interval estimates.</p>
-    </div>
+  
+
+<p>The <code>catsum</code> data frame contains the following variables:</p>
+<p></p>
+<dl><dt>Survey_1</dt>
+<dd><p>first survey name</p></dd>
+
+    <dt>Survey_2</dt>
+<dd><p>second survey name</p></dd>
+
+    <dt>Type</dt>
+<dd><p>subpopulation (domain) name</p></dd>
+
+    <dt>Subpopulation</dt>
+<dd><p>subpopulation name within a domain</p></dd>
+
+    <dt>Indicator</dt>
+<dd><p>response variable</p></dd>
+
+    <dt>Category</dt>
+<dd><p>category of response variable</p></dd>
+
+    <dt>DiffEst.P</dt>
+<dd><p>proportion difference estimate (in %; second survey - first survey)</p></dd>
+
+    <dt>StdError.P</dt>
+<dd><p>standard error of proportion difference estimate</p></dd>
+
+    <dt>MarginofError.P</dt>
+<dd><p>margin of error of proportion difference estimate</p></dd>
+
+    <dt>LCBxxPct.P</dt>
+<dd><p>xx% (default 95%) lower confidence bound of proportion difference estimate</p></dd>
+
+    <dt>UCBxxPct.P</dt>
+<dd><p>xx% (default 95%) upper confidence bound of proportion difference estimate</p></dd>
+
+    <dt>Estimate.U</dt>
+<dd><p>total difference estimate (second survey - first survey)</p></dd>
+
+    <dt>StdError.U</dt>
+<dd><p>standard error of total difference estimate</p></dd>
+
+    <dt>MarginofError.U</dt>
+<dd><p>margin of error of total difference estimate</p></dd>
+
+    <dt>LCBxxPct.U</dt>
+<dd><p>xx% (default 95%) lower confidence bound of total difference estimate</p></dd>
+
+    <dt>UCBxxPct.U</dt>
+<dd><p>xx% (default 95%) upper confidence bound of total difference estimate</p></dd>
+
+    <dt>nResp_1</dt>
+<dd><p>sample size in the first survey</p></dd>
+
+    <dt>Estimate.P_1</dt>
+<dd><p>proportion estimate (in %) from the first survey</p></dd>
+
+    <dt>StdError.P_1</dt>
+<dd><p>standard error of proportion estimate from the first survey</p></dd>
+
+    <dt>MarginofError.P_1</dt>
+<dd><p>margin of error of proportion estimate from the first survey</p></dd>
+
+    <dt>LCBxxPct.P_1</dt>
+<dd><p>xx% (default 95%) lower confidence bound of proportion estimate from the first survey</p></dd>
+
+    <dt>UCBxxPct.P_1</dt>
+<dd><p>xx% (default 95%) upper confidence bound of proportion estimate from the first survey</p></dd>
+
+    <dt>nResp_2</dt>
+<dd><p>sample size in the second survey</p></dd>
+
+    <dt>Estimate.U_1</dt>
+<dd><p>total estimate from the first survey</p></dd>
+
+    <dt>StdError.U_1</dt>
+<dd><p>standard error of total estimate from the first survey</p></dd>
+
+    <dt>MarginofError.U_1</dt>
+<dd><p>margin of error of total estimate from the first survey</p></dd>
+
+    <dt>LCBxxPct.U_1</dt>
+<dd><p>xx% (default 95%) lower confidence bound of total estimate from the first survey</p></dd>
+
+    <dt>UCBxxPct.U_1</dt>
+<dd><p>xx% (default 95%) upper confidence bound of total estimate from the first survey</p></dd>
+
+    <dt>Estimate.P_2</dt>
+<dd><p>proportion estimate (in %) from the second survey</p></dd>
+
+    <dt>StdError.P_2</dt>
+<dd><p>standard error of proportion estimate from the second survey</p></dd>
+
+    <dt>MarginofError.P_2</dt>
+<dd><p>margin of error of proportion estimate from the second survey</p></dd>
+
+    <dt>LCBxxPct.P_2</dt>
+<dd><p>xx% (default 95%) lower confidence bound of proportion estimate from the second survey</p></dd>
+
+    <dt>UCBxxPct.P_2</dt>
+<dd><p>xx% (default 95%) upper confidence bound of proportion estimate from the second survey</p></dd>
+
+    <dt>Estimate.U_2</dt>
+<dd><p>total estimate from the second survey</p></dd>
+
+    <dt>StdError.U_2</dt>
+<dd><p>standard error of total estimate from the second survey</p></dd>
+
+    <dt>MarginofError.U_2</dt>
+<dd><p>margin of error of total estimate from the second survey</p></dd>
+
+    <dt>LCBxxPct.U_2</dt>
+<dd><p>xx% (default 95%) lower confidence bound of total estimate from the second survey</p></dd>
+
+    <dt>UCBxxPct.U_2</dt>
+<dd><p>xx% (default 95%) upper confidence bound of total estimate from the second survey</p></dd>
+
+  
+</dl><p>The <code>contsum_mean</code> data frame contains the following variables:</p>
+<p></p>
+<dl><dt>Survey_1</dt>
+<dd><p>first survey name</p></dd>
+
+    <dt>Survey_2</dt>
+<dd><p>second survey name</p></dd>
+
+    <dt>Type</dt>
+<dd><p>subpopulation (domain) name</p></dd>
+
+    <dt>Subpopulation</dt>
+<dd><p>subpopulation name within a domain</p></dd>
+
+    <dt>Indicator</dt>
+<dd><p>response variable</p></dd>
+
+    <dt>Statistic</dt>
+<dd><p>value of percentile</p></dd>
+
+    <dt>nResp</dt>
+<dd><p>sample size at or below <code>Value</code></p></dd>
+
+    <dt>DiffEst</dt>
+<dd><p>mean difference estimate</p></dd>
+
+    <dt>StdError</dt>
+<dd><p>standard error of mean difference estimate</p></dd>
+
+    <dt>MarginofError</dt>
+<dd><p>margin of error of mean difference estimate</p></dd>
+
+    <dt>LCBxxPct</dt>
+<dd><p>xx% (default 95%) lower confidence bound of mean difference estimate</p></dd>
+
+    <dt>UCBxxPct</dt>
+<dd><p>xx% (default 95%) upper confidence bound of mean difference estimate</p></dd>
+
+    <dt>nResp_1</dt>
+<dd><p>sample size in the first survey</p></dd>
+
+    <dt>Estimate_1</dt>
+<dd><p>mean estimate from the first survey</p></dd>
+
+    <dt>StdError_1</dt>
+<dd><p>standard error of mean estimate from the first survey</p></dd>
+
+    <dt>MarginofError_1</dt>
+<dd><p>margin of error of mean estimate from the first survey</p></dd>
+
+    <dt>LCBxxPct_1</dt>
+<dd><p>xx% (default 95%) lower confidence bound of mean estimate from the first survey</p></dd>
+
+    <dt>UCBxxPct_1</dt>
+<dd><p>xx% (default 95%) upper confidence bound of mean estimate from the first survey</p></dd>
+
+    <dt>nResp_2</dt>
+<dd><p>sample size in the second survey</p></dd>
+
+    <dt>Estimate_2</dt>
+<dd><p>mean estimate from the second survey</p></dd>
+
+    <dt>StdError_2</dt>
+<dd><p>standard error of mean estimate from the second survey</p></dd>
+
+    <dt>MarginofError_2</dt>
+<dd><p>margin of error of mean estimate from the second survey</p></dd>
+
+    <dt>LCBxxPct_2</dt>
+<dd><p>xx% (default 95%) lower confidence bound of mean estimate from the second survey</p></dd>
+
+    <dt>UCBxxPct_2</dt>
+<dd><p>xx% (default 95%) upper confidence bound of mean estimate from the second survey</p></dd>
+
+  
+</dl><p>The <code>contsum_total</code> data frame contains the following variables:</p>
+<p></p>
+<dl><dt>Survey_1</dt>
+<dd><p>first survey name</p></dd>
+
+    <dt>Survey_2</dt>
+<dd><p>second survey name</p></dd>
+
+    <dt>Type</dt>
+<dd><p>subpopulation (domain) name</p></dd>
+
+    <dt>Subpopulation</dt>
+<dd><p>subpopulation name within a domain</p></dd>
+
+    <dt>Indicator</dt>
+<dd><p>response variable</p></dd>
+
+    <dt>Statistic</dt>
+<dd><p>value of percentile</p></dd>
+
+    <dt>nResp</dt>
+<dd><p>sample size at or below <code>Value</code></p></dd>
+
+    <dt>DiffEst</dt>
+<dd><p>total difference estimate</p></dd>
+
+    <dt>StdError</dt>
+<dd><p>standard error of total difference estimate</p></dd>
+
+    <dt>MarginofError</dt>
+<dd><p>margin of error of total difference estimate</p></dd>
+
+    <dt>LCBxxPct</dt>
+<dd><p>xx% (default 95%) lower confidence bound of total difference estimate</p></dd>
+
+    <dt>UCBxxPct</dt>
+<dd><p>xx% (default 95%) upper confidence bound of total difference estimate</p></dd>
+
+    <dt>nResp_1</dt>
+<dd><p>sample size in the first survey</p></dd>
+
+    <dt>Estimate_1</dt>
+<dd><p>total estimate from the first survey</p></dd>
+
+    <dt>StdError_1</dt>
+<dd><p>standard error of total estimate from the first survey</p></dd>
+
+    <dt>MarginofError_1</dt>
+<dd><p>margin of error of total estimate from the first survey</p></dd>
+
+    <dt>LCBxxPct_1</dt>
+<dd><p>xx% (default 95%) lower confidence bound of total estimate from the first survey</p></dd>
+
+    <dt>UCBxxPct_1</dt>
+<dd><p>xx% (default 95%) upper confidence bound of total estimate from the first survey</p></dd>
+
+    <dt>nResp_2</dt>
+<dd><p>sample size in the second survey</p></dd>
+
+    <dt>Estimate_2</dt>
+<dd><p>total estimate from the second survey</p></dd>
+
+    <dt>StdError_2</dt>
+<dd><p>standard error of total estimate from the second survey</p></dd>
+
+    <dt>MarginofError_2</dt>
+<dd><p>margin of error of total estimate from the second survey</p></dd>
+
+    <dt>LCBxxPct_2</dt>
+<dd><p>xx% (default 95%) lower confidence bound of total estimate from the second survey</p></dd>
+
+    <dt>UCBxxPct_2</dt>
+<dd><p>xx% (default 95%) upper confidence bound of total estimate from the second survey</p></dd>
+
+  
+</dl><p>The <code>contsum_median</code> data frame contains the following variables:</p>
+<p></p>
+<dl><dt>Survey_1</dt>
+<dd><p>first survey name</p></dd>
+
+    <dt>Survey_2</dt>
+<dd><p>second survey name</p></dd>
+
+    <dt>Type</dt>
+<dd><p>subpopulation (domain) name</p></dd>
+
+    <dt>Subpopulation</dt>
+<dd><p>subpopulation name within a domain</p></dd>
+
+    <dt>Indicator</dt>
+<dd><p>response variable</p></dd>
+
+    <dt>Category</dt>
+<dd><p>category of response variable</p></dd>
+
+    <dt>DiffEst.P</dt>
+<dd><p>proportion above or below median difference estimate (in %; second survey - first survey)</p></dd>
+
+    <dt>StdError.P</dt>
+<dd><p>standard error of proportion above or below median difference estimate</p></dd>
+
+    <dt>MarginofError.P</dt>
+<dd><p>margin of error of proportion above or below median difference estimate</p></dd>
+
+    <dt>LCBxxPct.P</dt>
+<dd><p>xx% (default 95%) lower confidence bound of proportion above or below median difference estimate</p></dd>
+
+    <dt>UCBxxPct.P</dt>
+<dd><p>xx% (default 95%) upper confidence bound of proportion above or below median difference estimate</p></dd>
+
+    <dt>Estimate.U</dt>
+<dd><p>total above or below median difference estimate (second survey - first survey)</p></dd>
+
+    <dt>StdError.U</dt>
+<dd><p>standard error of total above or below median difference estimate</p></dd>
+
+    <dt>MarginofError.U</dt>
+<dd><p>margin of error of total above or below median difference estimate</p></dd>
+
+    <dt>LCBxxPct.U</dt>
+<dd><p>xx% (default 95%) lower confidence bound of total above or below median difference estimate</p></dd>
+
+    <dt>UCBxxPct.U</dt>
+<dd><p>xx% (default 95%) upper confidence bound of total above or below median difference estimate</p></dd>
+
+    <dt>nResp_1</dt>
+<dd><p>sample size in the first survey</p></dd>
+
+    <dt>Estimate.P_1</dt>
+<dd><p>proportion above or below median estimate (in %) from the first survey</p></dd>
+
+    <dt>StdError.P_1</dt>
+<dd><p>standard error of proportion above or below median estimate from the first survey</p></dd>
+
+    <dt>MarginofError.P_1</dt>
+<dd><p>margin of error of proportion above or below median estimate from the first survey</p></dd>
+
+    <dt>LCBxxPct.P_1</dt>
+<dd><p>xx% (default 95%) lower confidence bound of proportion above or below median estimate from the first survey</p></dd>
+
+    <dt>UCBxxPct.P_1</dt>
+<dd><p>xx% (default 95%) upper confidence bound of proportion above or below median estimate from the first survey</p></dd>
+
+    <dt>nResp_2</dt>
+<dd><p>sample size in the second survey</p></dd>
+
+    <dt>Estimate.U_1</dt>
+<dd><p>total above or below median estimate from the first survey</p></dd>
+
+    <dt>StdError.U_1</dt>
+<dd><p>standard error of total above or below median estimate from the first survey</p></dd>
+
+    <dt>MarginofError.U_1</dt>
+<dd><p>margin of error of total above or below median estimate from the first survey</p></dd>
+
+    <dt>LCBxxPct.U_1</dt>
+<dd><p>xx% (default 95%) lower confidence bound of total above or below median estimate from the first survey</p></dd>
+
+    <dt>UCBxxPct.U_1</dt>
+<dd><p>xx% (default 95%) upper confidence bound of total above or below median estimate from the first survey</p></dd>
+
+    <dt>Estimate.P_2</dt>
+<dd><p>proportion above or below median estimate (in %) from the second survey</p></dd>
+
+    <dt>StdError.P_2</dt>
+<dd><p>standard error of proportion above or below median estimate from the second survey</p></dd>
+
+    <dt>MarginofError.P_2</dt>
+<dd><p>margin of error of proportion above or below median estimate from the second survey</p></dd>
+
+    <dt>LCBxxPct.P_2</dt>
+<dd><p>xx% (default 95%) lower confidence bound of proportion above or below median estimate from the second survey</p></dd>
+
+    <dt>UCBxxPct.P_2</dt>
+<dd><p>xx% (default 95%) upper confidence bound of proportion above or below median estimate from the second survey</p></dd>
+
+    <dt>Estimate.U_2</dt>
+<dd><p>total above or below median estimate from the second survey</p></dd>
+
+    <dt>StdError.U_2</dt>
+<dd><p>standard error of total above or below median estimate from the second survey</p></dd>
+
+    <dt>MarginofError.U_2</dt>
+<dd><p>margin of error of total above or below median estimate from the second survey</p></dd>
+
+    <dt>LCBxxPct.U_2</dt>
+<dd><p>xx% (default 95%) lower confidence bound of total above or below median estimate from the second survey</p></dd>
+
+    <dt>UCBxxPct.U_2</dt>
+<dd><p>xx% (default 95%) upper confidence bound of total above or below median estimate from the second survey</p></dd>
+
+  
+</dl></div>
     <div id="see-also">
     <h2>See also</h2>
     <div class="dont-index">
@@ -446,71 +836,74 @@ The default is <code>FALSE</code>.</p></dd>
 <span class="r-in"><span>  xcoord <span class="op">=</span> <span class="st">"xcoord"</span>, ycoord <span class="op">=</span> <span class="st">"ycoord"</span>, stratumID <span class="op">=</span> <span class="st">"stratum"</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $catsum</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   Survey_1 Survey_2           Type Subpopulation Indicator Category  DiffEst.P</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 Survey 1 Survey 2      All_Sites     All Sites    CatVar    North   3.000475</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 Survey 1 Survey 2      All_Sites     All Sites    CatVar    South  -3.000475</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3 Survey 1 Survey 2 Resource_Class          Fair    CatVar    North  14.689313</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4 Survey 1 Survey 2 Resource_Class          Fair    CatVar    South -14.689313</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5 Survey 1 Survey 2 Resource_Class          Good    CatVar    North  -2.134971</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6 Survey 1 Survey 2 Resource_Class          Good    CatVar    South   2.134971</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7 Survey 1 Survey 2 Resource_Class          Poor    CatVar    North  -4.938677</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8 Survey 1 Survey 2 Resource_Class          Poor    CatVar    South   4.938677</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Survey_1 Survey_2           Type Subpopulation Indicator Category DiffEst.P</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 Survey 1 Survey 2      All_Sites     All Sites    CatVar    North  1.609367</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 Survey 1 Survey 2      All_Sites     All Sites    CatVar    South -1.609367</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 Survey 1 Survey 2 Resource_Class          Fair    CatVar    North -1.079304</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 Survey 1 Survey 2 Resource_Class          Fair    CatVar    South  1.079304</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 Survey 1 Survey 2 Resource_Class          Good    CatVar    North  8.837157</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 Survey 1 Survey 2 Resource_Class          Good    CatVar    South -8.837157</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7 Survey 1 Survey 2 Resource_Class          Poor    CatVar    North -3.961994</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8 Survey 1 Survey 2 Resource_Class          Poor    CatVar    South  3.961994</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   StdError.P MarginofError.P LCB95Pct.P UCB95Pct.P  DiffEst.U StdError.U</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1   6.585026        12.90641  -9.905938  15.906889  382.06004   387.8324</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2   6.585026        12.90641 -15.906889   9.905938   63.51599   385.1670</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3  11.769332        23.06747  -8.378153  37.756779  368.12859   233.8012</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  11.769332        23.06747 -37.756779   8.378153 -151.88865   229.3587</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  11.112683        21.78046 -23.915429  19.645488  249.50372   233.6940</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6  11.112683        21.78046 -19.645488  23.915429  308.38128   238.0019</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7  11.256382        22.06210 -27.000780  17.123425 -235.57227   196.7008</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8  11.256382        22.06210 -17.123425  27.000780  -92.97664   201.8435</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1   6.755911        13.24134  -11.63198   14.85071 -118.88482   411.9229</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2   6.755911        13.24134  -14.85071   11.63198 -277.19987   403.0951</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  11.897922        23.31950  -24.39880   22.24019   26.85027   272.9971</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  11.897922        23.31950  -22.24019   24.39880   61.24119   247.4251</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  11.904171        23.33175  -14.49459   32.16890  209.86971   237.3108</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  11.904171        23.33175  -32.16890   14.49459 -109.40630   221.6202</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7  12.500761        24.50104  -28.46303   20.53905 -355.60480   240.6830</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8  12.500761        24.50104  -20.53905   28.46303 -229.03476   232.9635</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   MarginofError.U LCB95Pct.U UCB95Pct.U nResp_1 Estimate.P_1 StdError.P_1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1        760.1374 -378.07741  1142.1975      50     48.19580     4.611864</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2        754.9134 -691.39739   818.4294      50     51.80420     4.611864</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3        458.2420  -90.11337   826.3706      12     41.20733     8.243510</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4        449.5348 -601.42342   297.6461      19     58.79267     8.243510</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5        458.0317 -208.52802   707.5355      18     53.27583     7.996568</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6        466.4751 -158.09385   774.8564      16     46.72417     7.996568</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7        385.5264 -621.09867   149.9541      20     50.02829     7.193177</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8        395.6059 -488.58256   302.6293      15     49.97171     7.193177</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1        807.3541  -926.2389   688.4693      50     51.56990     4.731998</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2        790.0520 -1067.2518   512.8521      50     48.43010     4.731998</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3        535.0645  -508.2142   561.9148      20     55.03476     8.263895</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4        484.9443  -423.7031   546.1855      16     44.96524     8.263895</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5        465.1207  -255.2510   674.9904      14     48.63274     8.380884</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6        434.3676  -543.7739   324.9613      17     51.36726     8.380884</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7        471.7299  -827.3347   116.1251      16     50.80302     8.619944</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8        456.6000  -685.6348   227.5652      17     49.19698     8.619944</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   MarginofError.P_1 LCB95Pct.P_1 UCB95Pct.P_1 Estimate.U_1 StdError.U_1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1          9.039088     39.15671     57.23488    2472.7231     249.6333</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2          9.039088     42.76512     60.84329    2657.8553     270.2843</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3         16.156982     25.05034     57.36431     693.6219     145.9089</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4         16.156982     42.63569     74.94966     989.6272     164.0714</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5         15.672986     37.60284     68.94881     893.4358     141.4375</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6         15.672986     31.05119     62.39716     783.5644     145.5566</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7         14.098368     35.92992     64.12666     885.6654     140.9146</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8         14.098368     35.87334     64.07008     884.6637     144.4921</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1          9.274545     42.29535     60.84444    2940.0029     298.2372</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2          9.274545     39.15556     57.70465    2761.0029     294.3671</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3         16.196936     38.83782     71.23169    1054.4869     192.2087</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4         16.196936     28.76831     61.16218     861.5512     167.7683</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5         16.426230     32.20651     65.05897     837.2227     161.2906</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6         16.426230     34.94103     67.79349     884.2982     152.9366</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7         16.894779     33.90824     67.69780    1048.2933     185.8129</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8         16.894779     32.30220     66.09176    1015.1535     192.0729</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   MarginofError.U_1 LCB95Pct.U_1 UCB95Pct.U_1 nResp_2 Estimate.P_2 StdError.P_2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1          489.2722    1983.4509    2961.9953      50     51.19627     4.700348</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2          529.7475    2128.1078    3187.6028      50     48.80373     4.700348</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3          285.9761     407.6458     979.5981      17     55.89664     8.400102</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4          321.5741     668.0530    1311.2013      15     44.10336     8.400102</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5          277.2124     616.2233    1170.6482      20     51.14086     7.716646</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6          285.2858     498.2787    1068.8502      20     48.85914     7.716646</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7          276.1876     609.4778    1161.8530      13     45.08961     8.658194</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8          283.1993     601.4644    1167.8630      15     54.91039     8.658194</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1          584.5342    2355.4687     3524.537      50     53.17927     4.821880</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2          576.9490    2184.0539     3337.952      50     46.82073     4.821880</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3          376.7222     677.7648     1431.209      18     53.95545     8.559707</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4          328.8199     532.7313     1190.371      16     46.04455     8.559707</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5          316.1237     521.0990     1153.346      20     57.46989     8.453998</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6          299.7503     584.5479     1184.048      16     42.53011     8.453998</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7          364.1867     684.1066     1412.480      12     46.84102     9.053485</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8          376.4560     638.6975     1391.610      18     53.15898     9.053485</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   MarginofError.P_2 LCB95Pct.P_2 UCB95Pct.P_2 Estimate.U_2 StdError.U_2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1          9.212513     41.98376     60.40878    2854.7831     296.8117</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2          9.212513     39.59122     58.01624    2721.3713     274.4084</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3         16.463898     39.43274     72.36054    1061.7505     182.6845</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4         16.463898     27.63946     60.56726     837.7385     160.2684</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5         15.124348     36.01651     66.26521    1142.9395     186.0331</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6         15.124348     33.73479     63.98349    1091.9457     188.3034</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7         16.969749     28.11986     62.05936     650.0931     137.2379</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8         16.969749     37.94064     71.88014     791.6871     140.9355</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1          9.450712     43.72855     62.62998    2821.1181     284.1392</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2          9.450712     37.37002     56.27145    2483.8030     275.3792</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3         16.776717     37.17874     70.73217    1081.3372     193.8640</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4         16.776717     29.26783     62.82126     922.7924     181.8597</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5         16.569531     40.90036     74.03942    1047.0924     174.0741</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6         16.569531     25.96058     59.09964     774.8919     160.3929</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7         17.744504     29.09652     64.58553     692.6885     152.9766</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8         17.744504     35.41447     70.90348     786.1188     131.8331</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   MarginofError.U_2 LCB95Pct.U_2 UCB95Pct.U_2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1          581.7402    2273.0429    3436.5233</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2          537.8306    2183.5407    3259.2019</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3          358.0550     703.6956    1419.8055</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4          314.1204     523.6182    1151.8589</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5          364.6181     778.3214    1507.5576</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6          369.0678     722.8779    1461.0136</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7          268.9814     381.1117     919.0745</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8          276.2285     515.4585    1067.9156</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1          556.9026    2264.2155     3378.021</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2          539.7332    1944.0698     3023.536</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3          379.9664     701.3708     1461.304</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4          356.4385     566.3538     1279.231</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5          341.1789     705.9135     1388.271</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6          314.3644     460.5275     1089.256</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7          299.8286     392.8599      992.517</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8          258.3881     527.7307     1044.507</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $contsum_mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $contsum_total</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $contsum_median</span>
