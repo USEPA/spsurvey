@@ -93,6 +93,36 @@ DiffRisk_Estimates <- diffrisk_analysis(
   dframe = NLA_IN,
   vars_response = vars_response, vars_stressor = vars_stressor,
   subpops = subpops, siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD",
+  ycoord = "YCOORD",
+  response_levels = list("BENT_MMI_COND_2017" = c("Poor", "Good")),
+  stressor_levels = list("PTL_COND" = c("Poor", "Good"), "NTL_COND" = c("Poor", "Good"))
+)
+
+test_that("Risk Difference: Unstratified single-stage analysis (specify response/stressor levels)", {
+  expect_true(exists("DiffRisk_Estimates"))
+  expect_equal(attributes(DiffRisk_Estimates)$class, "data.frame")
+  expect_equal(nrow(DiffRisk_Estimates), 6)
+})
+
+DiffRisk_Estimates <- diffrisk_analysis(
+  dframe = NLA_IN,
+  vars_response = vars_response, vars_stressor = vars_stressor,
+  subpops = subpops, siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD",
+  ycoord = "YCOORD",
+  response_levels = list(c("Poor", "Good")),
+  stressor_levels = list(c("Poor", "Good"), c("Poor", "Good"))
+)
+
+test_that("Risk Difference: Unstratified single-stage analysis (unnamed response/stressor levels)", {
+  expect_true(exists("DiffRisk_Estimates"))
+  expect_equal(attributes(DiffRisk_Estimates)$class, "data.frame")
+  expect_equal(nrow(DiffRisk_Estimates), 6)
+})
+
+DiffRisk_Estimates <- diffrisk_analysis(
+  dframe = NLA_IN,
+  vars_response = vars_response, vars_stressor = vars_stressor,
+  subpops = subpops, siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD",
   ycoord = "YCOORD", popsize = popsize
 )
 
