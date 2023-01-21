@@ -1,3 +1,22 @@
+# spsurvey 5.4.2
+
+## Minor Updates
+
+* Changed default behavior in `attrisk_analysis()`, `diffrisk_analysis()`, and
+  `relrisk_analysis()` regarding the handling of `response_levels` and `stressor_levels`.
+  Previously, if `response_levels` and `stressor_levels` were specified, 
+  their elements required names.
+  Now, if `response_levels` is specified and its names are `NULL`, then its names are set to `vars_response`,
+  and if `stressor_levels` is specified and its names are `NULL`, then its names are set to `vars_stressor` (#33).
+
+## Bug Fixes
+
+* Fixed a bug that caused an erorr in `grts()` and `irs()` occurred when at least
+  one variable name in `sframe` was named `"siteID"`, `"siteuse"`, `"replsite"`,
+  `"lon_WGS84"`, `"lat_WGS84"`, `"stratum"`, `"wgt"`, `"ip"`, `"caty"`, `"aux"`,
+  `xcoord`, `ycoord`, or `idpts` and the name of the geometry column in `sframe`
+  was not named `"geometry"` (#32).
+
 # spsurvey 5.4.1
 
 ## Minor Updates
