@@ -21,8 +21,8 @@
 errorprnt <- function(error_vec = get("error_vec", envir = .GlobalEnv)) {
   m <- 1:length(error_vec)
   for (i in m) {
-    cat(paste0("Error Message ", i, ":\n"))
-    cat(paste(error_vec[i], "\n"))
+    message(paste0("Error Message ", i, ":\n"))
+    message(paste(error_vec[i], "\n"))
   }
 
   invisible(NULL)

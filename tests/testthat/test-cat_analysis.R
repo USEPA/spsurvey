@@ -324,3 +324,11 @@ test_that("Categorical: Unstratified single-stage analysis, YG-HR variance", {
   expect_equal(attributes(Condition_Estimates)$class, "data.frame")
   expect_equal(nrow(Condition_Estimates), 9)
 })
+
+test_that("A warning (in message form) is produced", {
+  expect_message(expect_error(cat_analysis(
+    dframe = NLA_IN, vars = vars,
+    subpops = subpops, siteID = "SITE_ID", weight = "XYZ", vartype = "YG",
+    jointprob = "hr"
+  )))
+})

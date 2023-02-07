@@ -302,6 +302,17 @@ test_that("Change: with finite population correction factor", {
   expect_equal(nrow(Change_Estimates$contsum_median), 2)
 })
 
+test_that("A warning (in message form) is produced", {
+  expect_message(expect_error(change_analysis(
+    dframe = dframe, vars_cat = vars_cat,
+    vars_cont = vars_cont, test = c("mean", "total", "median"), subpops = subpops,
+    surveyID = "YEAR", siteID = "UNIQUE_ID", weight = "XYZ", xcoord = "XCOORD",
+    ycoord = "YCOORD", stratumID = "LAKE_ORGN", clusterID = "clusterID",
+    weight1 = "weight1", xcoord1 = "xcoord1", ycoord1 = "ycoord1",
+    fpc = fpc4b, vartype = "SRS"
+  )))
+})
+
 test_that("Change for totals matches cont_analysis()", {
   set.seed(1)
   dframe <- data.frame(

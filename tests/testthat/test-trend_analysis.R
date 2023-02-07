@@ -247,3 +247,13 @@ test_that("Trend: with finite population correction factor", {
   expect_equal(nrow(Trend_Estimates$catsum), 6)
   expect_equal(nrow(Trend_Estimates$contsum), 3)
 })
+
+test_that("A warning (in message form) is produced", {
+  expect_message(expect_error(trend_analysis(
+    dframe = NLA_IN, vars_cat = vars_cat,
+    vars_cont = vars_cont, model_cont = "SLR", subpops = subpops,
+    siteID = "UNIQUE_ID", weight = "XYZ", xcoord = "XCOORD", ycoord = "YCOORD",
+    stratumID = "LAKE_ORGN", clusterID = "clusterID", weight1 = "weight1",
+    xcoord1 = "xcoord1", ycoord1 = "ycoord1", fpc = fpc4b, vartype = "SRS"
+  )))
+})

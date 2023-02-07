@@ -424,9 +424,9 @@ dsgn_check <- function(sframe, sf_type, legacy_sites, legacy_option, stratum, se
   if (stop_ind) {
     names(stop_df) <- c("Design Input", "Error Message")
     stop_df <<- stop_df
-    cat("During the check of the input to grtspts, one or more errors were identified.\n")
-    cat("Enter the following command to view all input error messages: stopprnt()\n")
-    cat("To view a subset of the errors (e.g., errors 1 and 5) enter stopprnt(m=c(1,5))\n\n")
+    message("During the check of the input to grtspts, one or more errors were identified.\n")
+    message("Enter the following command to view all input error messages: stopprnt()\n")
+    message("To view a subset of the errors (e.g., errors 1 and 5) enter stopprnt(m=c(1,5))\n\n")
     opt <- options(show.error.messages = FALSE)
     on.exit(options(opt))
     stop()

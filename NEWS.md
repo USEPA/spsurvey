@@ -9,6 +9,8 @@
   Now, if `response_levels` is specified and its names are `NULL`, then its names are set to `vars_response`,
   and if `stressor_levels` is specified and its names are `NULL`, then its names are set to `vars_stressor` (#33).
 
+* Warning and error messages from `grts()`, `irs()`, and `*_analysis()` functions now print using `message()` instead of `cat()`. This change makes the resulting output more consistent with standard practices and easier to suppress if desired (#36).
+
 ## Bug Fixes
 
 * Fixed a bug that caused an erorr in `grts()` and `irs()` occurred when at least

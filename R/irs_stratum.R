@@ -156,8 +156,8 @@ irs_stratum <- function(stratum, dsgn, sframe, sf_type, wgt_units = NULL, pt_den
   # check that number of legacy sites is less than or equal number of base sites
   # stop if not
   if (n_legacy > n_base) {
-    cat("Number of legacy sites is greater than number of base sites in at least one\n")
-    cat("stratum. Please check that all strata have fewer legacy sites than base sites.\n")
+    message("Number of legacy sites is greater than number of base sites in at least one\n")
+    message("stratum. Please check that all strata have fewer legacy sites than base sites.\n")
     opt <- options(show.error.messages = FALSE)
     on.exit(options(opt))
     stop()
