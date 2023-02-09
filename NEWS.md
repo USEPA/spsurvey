@@ -1,7 +1,8 @@
-# spsurvey 5.4.2
+# spsurvey 5.5.0
 
 ## Minor Updates
 
+* Added an `adjwgtNR()` function to perform non-response weight adjustments.
 * Changed default behavior in `attrisk_analysis()`, `diffrisk_analysis()`, and
   `relrisk_analysis()` regarding the handling of `response_levels` and `stressor_levels`.
   Previously, if `response_levels` and `stressor_levels` were specified, 
