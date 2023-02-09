@@ -240,7 +240,7 @@ if (on_solaris) {
     
     test_that("A warning (in message form) is produced", {
       n_base <- c(low = 20, high = 30)
-      expect_message(irs(NE_Lakes, n_base = n_base, stratum_var = "XYZ"))
+      expect_message(expect_error(irs(NE_Lakes, n_base = n_base, stratum_var = "XYZ")))
       
     })
     
