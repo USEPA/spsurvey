@@ -2,6 +2,7 @@
 
 ## Minor Updates
 
+* `n_over` is now recycled if the design is stratified and `n_over` is a length-one numeric vector
 * Added an `adjwgtNR()` function to perform non-response weight adjustments.
 * Changed default behavior in `attrisk_analysis()`, `diffrisk_analysis()`, and
   `relrisk_analysis()` regarding the handling of `response_levels` and `stressor_levels`.
