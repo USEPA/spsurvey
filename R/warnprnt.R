@@ -37,27 +37,27 @@ warnprnt <- function(warn_df = get("warn_df", envir = .GlobalEnv),
 
   for (i in m) {
     if ("Warning" %in% names(warn_df)) {
-      cat(paste0("Warning Message ", i, ":\n"))
-      cat(paste("Stratum:", warn_df$stratum[i], "\n"))
-      cat(paste("Warning:", warn_df$Warning[i], "\n"))
+      message(paste0("Warning Message ", i, ":\n"))
+      message(paste("Stratum:", warn_df$stratum[i], "\n"))
+      message(paste("Warning:", warn_df$Warning[i], "\n"))
     } else {
-      cat(paste0("Warning Message ", i, ":\n"))
-      # cat(paste("Function:", warn_df$func[i], "\n")) # removed function name output
+      message(paste0("Warning Message ", i, ":\n"))
+      # message(paste("Function:", warn_df$func[i], "\n")) # removed function name output
       if (sum(!is.null(warn_df$subpoptype[i]), is.na(warn_df$subpoptype[i]))) {
-        cat(paste("Population Type:", warn_df$subpoptype[i], "\n"))
+        message(paste("Population Type:", warn_df$subpoptype[i], "\n"))
       }
       if (sum(!is.null(warn_df$subpop[i]), is.na(warn_df$subpop[i]))) {
-        cat(paste("Subpopulation:", warn_df$subpop[i], "\n"))
+        message(paste("Subpopulation:", warn_df$subpop[i], "\n"))
       }
       if (sum(!is.null(warn_df$indicator[i]), is.na(warn_df$indicator[i]))) {
-        cat(paste("Indicator:", warn_df$indicator[i], "\n"))
+        message(paste("Indicator:", warn_df$indicator[i], "\n"))
       }
       if (sum(!is.null(warn_df$stratum[i]), is.na(warn_df$stratum[i]))) {
-        cat(paste("Stratum:", warn_df$stratum[i], "\n"))
+        message(paste("Stratum:", warn_df$stratum[i], "\n"))
       }
-      cat(paste("Warning:", warn_df$warning[i]))
+      message(paste("Warning:", warn_df$warning[i]))
       if (sum(!is.null(warn_df$action[i]), is.na(warn_df$action[i]))) {
-        cat(paste("Action:", warn_df$action[i], "\n"))
+        message(paste("Action:", warn_df$action[i], "\n"))
       }
     }
   }

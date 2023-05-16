@@ -1,7 +1,7 @@
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/USEPA/spsurvey/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/USEPA/spsurvey/actions/workflows/R-CMD-check.yaml)
 [![CRAN](http://www.r-pkg.org/badges/version/spsurvey)](https://cran.r-project.org/package=spsurvey)
-[![cran checks](https://cranchecks.info/badges/worst/spsurvey)](https://cran.r-project.org/web/checks/check_results_spsurvey.html)
+[![cran checks](https://badges.cranchecks.info/worst/spsurvey.svg)](https://cran.r-project.org/web/checks/check_results_spsurvey.html)
 [![Downloads](https://cranlogs.r-pkg.org/badges/grand-total/spsurvey)](https://cran.r-project.org/package=spsurvey)
 <!-- badges: end -->
 

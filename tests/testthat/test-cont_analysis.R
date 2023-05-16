@@ -298,3 +298,12 @@ test_that("Continuous: with finite population correction factor", {
   expect_equal(nrow(CDF_Estimates$Mean), 3)
   expect_equal(nrow(CDF_Estimates$Total), 3)
 })
+
+test_that("A warning (in message form) is produced", {
+  expect_message(expect_error(cont_analysis(
+    dframe = dframe, vars = vars, subpops = subpops,
+    siteID = "SITE_ID", weight = "XYZ", xcoord = "XCOORD", ycoord = "YCOORD",
+    stratumID = "URBN_NLA17", clusterID = "clusterID", weight1 = "weight1",
+    xcoord1 = "xcoord1", ycoord1 = "ycoord1", fpc = fpc4a, vartype = "SRS"
+  )))
+})

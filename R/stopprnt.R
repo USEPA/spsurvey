@@ -25,10 +25,10 @@
 
 stopprnt <- function(stop_df = get("stop_df", envir = .GlobalEnv),
                      m = 1:nrow(stop_df)) {
-  cat(paste("Input      ", "Error Message\n"))
+  message(paste("Input      ", "Error Message\n"))
 
   for (i in m) {
-    cat(paste(stop_df[i, 1], ": ", stop_df[i, 2], "\n"))
+    message(paste(stop_df[i, 1], ": ", stop_df[i, 2], "\n"))
   }
 
   invisible(NULL)

@@ -1,3 +1,25 @@
+# spsurvey 5.5.0
+
+## Minor Updates
+
+* `n_over` is now recycled if the design is stratified and `n_over` is a length-one numeric vector.
+* Added an `adjwgtNR()` function to perform non-response weight adjustments.
+* Warning and error messages from `grts()`, `irs()`, and `*_analysis()` functions now print using `message()` instead of `cat()`. This change makes the resulting output more consistent with standard practice and easier to suppress when desired (#36).
+* Changed default behavior in `attrisk_analysis()`, `diffrisk_analysis()`, and
+  `relrisk_analysis()` regarding the handling of `response_levels` and `stressor_levels`.
+  Previously, if `response_levels` and `stressor_levels` were specified, 
+  their elements required names.
+  Now, if `response_levels` is specified and its names are `NULL`, then its names are set to `vars_response`,
+  and if `stressor_levels` is specified and its names are `NULL`, then its names are set to `vars_stressor` (#33).
+
+## Bug Fixes
+
+* Fixed a bug that caused an erorr in `grts()` and `irs()` occurred when at least
+  one variable name in `sframe` was named `"siteID"`, `"siteuse"`, `"replsite"`,
+  `"lon_WGS84"`, `"lat_WGS84"`, `"stratum"`, `"wgt"`, `"ip"`, `"caty"`, `"aux"`,
+  `xcoord`, `ycoord`, or `idpts` and the name of the geometry column in `sframe`
+  was not named `"geometry"` (#32).
+
 # spsurvey 5.4.1
 
 ## Minor Updates
@@ -32,13 +54,13 @@
 ## Bug fixes
 
 * Fixed a bug that prevented proper printing of the `Indicator` column when using `change_analysis()` with `test = median`.
-* Fixed a bug that made `change_analysis` sensititve to the ordering of the levels of variables in `var_cat` if those variables were factors.
+* Fixed a bug that made `change_analysis` sensitive to the ordering of the levels of variables in `var_cat` if those variables were factors.
 * Fixed a bug in `sp_summary()` that incorrectly ordered the `siteuse` variable.
 * Fixed a bug in `sp_summary()` that failed to summarize data frames that did not have an `sf_column` attribute.
 * Fixed a bug in `*_analysis()` functions when `popsize` is a list intended for use with `survey::calibrate()`.
 * Fixed a bug in `*analysis()` functions that returned an error while performing percentile estimation when there was no variability in at least one variable in `vars` for at least one level of one variable in `subpops`.
 * Fixed a bug in `grts()` that caused an error for some combinations of `n_base` and `n_over`.
-* Fixed a bug in `change_analysis()` that returned an error when at least one varible in `vars_cat` has only one unique value.
+* Fixed a bug in `change_analysis()` that returned an error when at least one variable in `vars_cat` has only one unique value.
 
 # spsurvey 5.3.0
 

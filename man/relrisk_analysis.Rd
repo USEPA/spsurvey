@@ -58,7 +58,9 @@ argument. If this argument equals NULL, then a named list is created that
 contains the values \code{"Poor"} and \code{"Good"} for the first and
 second levels, respectively, of each element in the \code{vars_response}
 argument and that uses values in the \code{vars_response} argument as names
-for the list.  The default value is NULL.}
+for the list.  If \code{response_levels} is provided without names,
+then the names of \code{response_levels} are set to \code{vars_response}.
+The default value is NULL.}
 
 \item{stressor_levels}{List providing the category values (levels) for each
 element in the \code{vars_stressor} argument.  Each element in the list
@@ -70,7 +72,9 @@ argument. If this argument equals NULL, then a named list is created that
 contains the values \code{"Poor"} and \code{"Good"} for the first and
 second levels, respectively, of each element in the \code{vars_stressor}
 argument and that uses values in the \code{vars_stressor} argument as names
-for the list.  The default value is NULL.}
+for the list.  If \code{stressor_levels} is provided without names,
+then the names of \code{stressor_levels} are set to \code{vars_stressor}. 
+The default value is NULL.}
 
 \item{subpops}{Vector composed of character values that identify the
 names of subpopulation (domain) variables in \code{dframe}.

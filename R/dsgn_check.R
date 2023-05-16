@@ -362,6 +362,15 @@ dsgn_check <- function(sframe, sf_type, legacy_sites, legacy_option, stratum, se
             stop_mess <- paste0("n_over values must be zero or positive.")
             stop_df <- rbind(stop_df, data.frame(func = I("n_over"), I(stop_mess)))
           }
+          
+          # fixes a bug downstream in checking sizes of n_base + n_over
+          if (length(n_over) == 1) {
+            n_over <- rep(n_over, length(stratum))
+          }
+          if (is.null(names(n_over)) || all(names(n_over) %in% stratum)) {
+            names(n_over) <- stratum
+          }
+          n_over <- as.list(n_over)
         }
         if (is.list(n_over)) {
           if (any(names(n_over) %in% stratum == FALSE)) {
@@ -387,7 +396,7 @@ dsgn_check <- function(sframe, sf_type, legacy_sites, legacy_option, stratum, se
             stop_df <- rbind(stop_df, data.frame(func = I("n_base + n_over"), I(stop_mess)))
           }
         } else {
-          if (any(sapply(stratum, function(x) (n_base[[x]] + sum(n_over[[x]])) > NROW(sframe[sframe[[stratum_var]] == x, , drop = FALSE])))) {
+           if (any(sapply(stratum, function(x) (n_base[[x]] + sum(n_over[[x]])) > NROW(sframe[sframe[[stratum_var]] == x, , drop = FALSE])))) {
             stop_ind <- TRUE
             stop_mess <- paste0("For each stratum, the sum of the base sites and 'Over' replacement sites must be no larger than the number of rows in 'sframe' representing that stratum.")
             stop_df <- rbind(stop_df, data.frame(func = I("n_base + n_over"), I(stop_mess)))
@@ -424,9 +433,9 @@ dsgn_check <- function(sframe, sf_type, legacy_sites, legacy_option, stratum, se
   if (stop_ind) {
     names(stop_df) <- c("Design Input", "Error Message")
     stop_df <<- stop_df
-    cat("During the check of the input to grtspts, one or more errors were identified.\n")
-    cat("Enter the following command to view all input error messages: stopprnt()\n")
-    cat("To view a subset of the errors (e.g., errors 1 and 5) enter stopprnt(m=c(1,5))\n\n")
+    message("During the check of the input to grtspts, one or more errors were identified.\n")
+    message("Enter the following command to view all input error messages: stopprnt()\n")
+    message("To view a subset of the errors (e.g., errors 1 and 5) enter stopprnt(m=c(1,5))\n\n")
     opt <- options(show.error.messages = FALSE)
     on.exit(options(opt))
     stop()

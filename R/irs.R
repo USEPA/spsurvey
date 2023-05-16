@@ -498,11 +498,11 @@ irs <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = N
       } else {
         legacy_sites_names_bad <- legacy_sites_names[legacy_sites_names %in% dsgn_names_extra]
         legacy_sites_temp <- legacy_sites[, legacy_sites_names_bad, drop = FALSE]
-        temp_geometry_col <- which(names(legacy_sites_temp) == attr(sites_legacy, "sf_column"))
-        legacy_sites_geometry_col <- which(names(legacy_sites) == attr(sites_legacy, "sf_column"))
+        temp_geometry_col <- which(names(legacy_sites_temp) == attr(legacy_sites_temp, "sf_column"))
+        legacy_sites_geometry_col <- which(names(legacy_sites) == attr(legacy_sites, "sf_column"))
         names(legacy_sites_temp)[-temp_geometry_col] <- paste("legacy_sites", names(legacy_sites_temp)[-temp_geometry_col], sep = "_")
         sites_legacy <- st_join(sites_legacy, legacy_sites_temp, join = st_nearest_feature)
-        sites_legacy <- subset(sites_legacy, select = c(add_names, legacy_sites_names_good[-legacy_sites_geometry_col], names(legacy_sites_temp)))
+        sites_legacy <- subset(sites_legacy, select = c(add_names, legacy_sites_names_good[-legacy_sites_geometry_col], names(legacy_sites_temp)[-temp_geometry_col]))
         for (i in names(sites_legacy)) {
           if (i %in% c("legacy_sites_xcoord", "legacy_sites_ycoord", "legacy_sites_idpts")) {
             names(sites_legacy)[which(names(sites_legacy) == i)] <- substring(i, first = 14)
@@ -518,12 +518,12 @@ irs <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = N
       } else {
         sframe_names_bad <- sframe_names[sframe_names %in% dsgn_names_extra]
         sframe_temp <- sframe[, sframe_names_bad, drop = FALSE]
-        temp_geometry_col <- which(names(sframe_temp) == attr(sites_legacy, "sf_column"))
-        sframe_geometry_col <- which(names(sframe) == attr(sites_legacy, "sf_column"))
+        temp_geometry_col <- which(names(sframe_temp) == attr(sframe_temp, "sf_column"))
+        sframe_geometry_col <- which(names(sframe) == attr(sframe, "sf_column"))
         names(sframe_temp)[-temp_geometry_col] <- paste("sframe", names(sframe_temp)[-temp_geometry_col], sep = "_")
         sites_legacy <- st_join(sites_legacy, sframe_temp, join = st_nearest_feature)
         sites_legacy <- subset(sites_legacy,
-          select = c(add_names, sframe_names_good[-sframe_geometry_col], names(sframe_temp))
+          select = c(add_names, sframe_names_good[-sframe_geometry_col], names(sframe_temp)[-temp_geometry_col])
         )
         for (i in names(sites_legacy)) {
           if (i %in% c("sframe_xcoord", "sframe_ycoord", "sframe_idpts")) {
@@ -544,11 +544,11 @@ irs <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = N
     } else {
       sframe_names_bad <- sframe_names[sframe_names %in% dsgn_names_extra]
       sframe_temp <- sframe[, sframe_names_bad, drop = FALSE]
-      temp_geometry_col <- which(names(sframe_temp) == attr(sites_base, "sf_column"))
-      sframe_geometry_col <- which(names(sframe) == attr(sites_base, "sf_column"))
+      temp_geometry_col <- which(names(sframe_temp) == attr(sframe_temp, "sf_column"))
+      sframe_geometry_col <- which(names(sframe) == attr(sframe, "sf_column"))
       names(sframe_temp)[-temp_geometry_col] <- paste("sframe", names(sframe_temp)[-temp_geometry_col], sep = "_")
       sites_base <- st_join(sites_base, sframe_temp, join = st_nearest_feature)
-      sites_base <- subset(sites_base, select = c(add_names, sframe_names_good[-sframe_geometry_col], names(sframe_temp)))
+      sites_base <- subset(sites_base, select = c(add_names, sframe_names_good[-sframe_geometry_col], names(sframe_temp)[-temp_geometry_col]))
       for (i in names(sites_base)) {
         if (i %in% c("sframe_xcoord", "sframe_ycoord", "sframe_idpts")) {
           names(sites_base)[which(names(sites_base) == i)] <- substring(i, first = 8)
@@ -566,11 +566,11 @@ irs <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = N
     } else {
       sframe_names_bad <- sframe_names[sframe_names %in% dsgn_names_extra]
       sframe_temp <- sframe[, sframe_names_bad, drop = FALSE]
-      temp_geometry_col <- which(names(sframe_temp) == attr(sites_over, "sf_column"))
-      sframe_geometry_col <- which(names(sframe) == attr(sites_over, "sf_column"))
+      temp_geometry_col <- which(names(sframe_temp) == attr(sframe_temp, "sf_column"))
+      sframe_geometry_col <- which(names(sframe) == attr(sframe, "sf_column"))
       names(sframe_temp)[-temp_geometry_col] <- paste("sframe", names(sframe_temp)[-temp_geometry_col], sep = "_")
       sites_over <- st_join(sites_over, sframe_temp, join = st_nearest_feature)
-      sites_over <- subset(sites_over, select = c(add_names, sframe_names_good[-sframe_geometry_col], names(sframe_temp)))
+      sites_over <- subset(sites_over, select = c(add_names, sframe_names_good[-sframe_geometry_col], names(sframe_temp)[-temp_geometry_col]))
       for (i in names(sites_over)) {
         if (i %in% c("sframe_xcoord", "sframe_ycoord", "sframe_idpts")) {
           names(sites_over)[which(names(sites_over) == i)] <- substring(i, first = 8)
@@ -588,11 +588,11 @@ irs <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = N
     } else {
       sframe_names_bad <- sframe_names[sframe_names %in% dsgn_names_extra]
       sframe_temp <- sframe[, sframe_names_bad, drop = FALSE]
-      temp_geometry_col <- which(names(sframe_temp) == attr(sites_near, "sf_column"))
-      sframe_geometry_col <- which(names(sframe) == attr(sites_near, "sf_column"))
+      temp_geometry_col <- which(names(sframe_temp) == attr(sframe_temp, "sf_column"))
+      sframe_geometry_col <- which(names(sframe) == attr(sframe, "sf_column"))
       names(sframe_temp)[-temp_geometry_col] <- paste("sframe", names(sframe_temp)[-temp_geometry_col], sep = "_")
       sites_near <- st_join(sites_near, sframe_temp, join = st_nearest_feature)
-      sites_near <- subset(sites_near, select = c(add_names, sframe_names_good[-sframe_geometry_col], names(sframe_temp)))
+      sites_near <- subset(sites_near, select = c(add_names, sframe_names_good[-sframe_geometry_col], names(sframe_temp)[-temp_geometry_col]))
       for (i in names(sites_near)) {
         if (i %in% c("sframe_xcoord", "sframe_ycoord", "sframe_idpts")) {
           names(sites_near)[which(names(sites_near) == i)] <- substring(i, first = 8)
@@ -630,9 +630,9 @@ irs <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = N
   if (warn_ind) {
     warn_df <<- warn_df
     if (nrow(warn_df) == 1) {
-      cat("During execution of the program, a warning message was generated. The warning \nmessage is stored in a data frame named 'warn_df'.  Enter the following command \nto view the warning message: warnprnt()\n")
+      message("During execution of the program, a warning message was generated. The warning \nmessage is stored in a data frame named 'warn_df'.  Enter the following command \nto view the warning message: warnprnt()\n")
     } else {
-      cat(paste("During execution of the program,", nrow(warn_df), "warning messages were generated.  The warning \nmessages are stored in a data frame named 'warn_df'.  Enter the following \ncommand to view the warning messages: warnprnt() \nTo view a subset of the warning messages (say, messages number 1, 3, and 5), \nenter the following command: warnprnt(m=c(1,3,5))\n"))
+      message(paste("During execution of the program,", nrow(warn_df), "warning messages were generated.  The warning \nmessages are stored in a data frame named 'warn_df'.  Enter the following \ncommand to view the warning messages: warnprnt() \nTo view a subset of the warning messages (say, messages number 1, 3, and 5), \nenter the following command: warnprnt(m=c(1,3,5))\n"))
     }
   }
 

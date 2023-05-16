@@ -25,7 +25,7 @@ are currently maintained for backwards compatibility."><!-- mathjax --><script s
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">spsurvey</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">5.4.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">5.5.0</span>
       </span>
     </div>
 
@@ -81,41 +81,41 @@ If the left-hand side of the formula is empty, plots
 are of the distributions of the right-hand side variables. If the left-hand side
 of the variable contains a variable, plots are of the left-hand size variable
 for each level of each right-hand side variable.
-This function is largely built on <code>plot.sf()</code>, and all spsurvey plotting
-methods can supply additional arguments to <code>plot.sf()</code>. For more information on
+This function is largely built on <code><a href="https://r-spatial.github.io/sf/reference/plot.html" class="external-link">plot.sf()</a></code>, and all spsurvey plotting
+methods can supply additional arguments to <code><a href="https://r-spatial.github.io/sf/reference/plot.html" class="external-link">plot.sf()</a></code>. For more information on
 plotting in <code>sf</code>, run <code>?sf::plot.sf()</code>. Equivalent to <code><a href="sp_plot.html">sp_plot()</a></code>; both
 are currently maintained for backwards compatibility.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># S3 method for sp_frame</span></span>
-<span><span class="fu">plot</span><span class="op">(</span></span>
-<span>  <span class="va">x</span>,</span>
-<span>  formula <span class="op">=</span> <span class="op">~</span><span class="fl">1</span>,</span>
-<span>  <span class="va">xcoord</span>,</span>
-<span>  <span class="va">ycoord</span>,</span>
-<span>  <span class="va">crs</span>,</span>
-<span>  var_args <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  varlevel_args <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  geom <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  onlyshow <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  fix_bbox <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  <span class="va">...</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># S3 method for sp_design</span></span>
-<span><span class="fu">plot</span><span class="op">(</span></span>
-<span>  <span class="va">x</span>,</span>
-<span>  sframe <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  formula <span class="op">=</span> <span class="op">~</span><span class="va">siteuse</span>,</span>
-<span>  siteuse <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  var_args <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  varlevel_args <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  geom <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  onlyshow <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  fix_bbox <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  <span class="va">...</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="co"># S3 method for sp_frame</span>
+<span class="fu">plot</span><span class="op">(</span>
+  <span class="va">x</span>,
+  formula <span class="op">=</span> <span class="op">~</span><span class="fl">1</span>,
+  <span class="va">xcoord</span>,
+  <span class="va">ycoord</span>,
+  <span class="va">crs</span>,
+  var_args <span class="op">=</span> <span class="cn">NULL</span>,
+  varlevel_args <span class="op">=</span> <span class="cn">NULL</span>,
+  geom <span class="op">=</span> <span class="cn">FALSE</span>,
+  onlyshow <span class="op">=</span> <span class="cn">NULL</span>,
+  fix_bbox <span class="op">=</span> <span class="cn">TRUE</span>,
+  <span class="va">...</span>
+<span class="op">)</span>
+
+<span class="co"># S3 method for sp_design</span>
+<span class="fu">plot</span><span class="op">(</span>
+  <span class="va">x</span>,
+  sframe <span class="op">=</span> <span class="cn">NULL</span>,
+  formula <span class="op">=</span> <span class="op">~</span><span class="va">siteuse</span>,
+  siteuse <span class="op">=</span> <span class="cn">NULL</span>,
+  var_args <span class="op">=</span> <span class="cn">NULL</span>,
+  varlevel_args <span class="op">=</span> <span class="cn">NULL</span>,
+  geom <span class="op">=</span> <span class="cn">FALSE</span>,
+  onlyshow <span class="op">=</span> <span class="cn">NULL</span>,
+  fix_bbox <span class="op">=</span> <span class="cn">TRUE</span>,
+  <span class="va">...</span>
+<span class="op">)</span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -198,7 +198,7 @@ plots according to the unique geometry for each plot. Defaults to <code>TRUE</co
 
 
 <dt>...</dt>
-<dd><p>Additional arguments to pass to <code>plot.sf()</code>.</p></dd>
+<dd><p>Additional arguments to pass to <code><a href="https://r-spatial.github.io/sf/reference/plot.html" class="external-link">plot.sf()</a></code>.</p></dd>
 
 
 <dt>sframe</dt>
@@ -225,13 +225,13 @@ in <code>x</code> and <code>y</code> with plot order <code>"sframe"</code>, <cod
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"NE_Lakes"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">NE_Lakes</span> <span class="op">&lt;-</span> <span class="fu"><a href="sp_frame.html">sp_frame</a></span><span class="op">(</span><span class="va">NE_Lakes</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu">plot</span><span class="op">(</span><span class="va">NE_Lakes</span>, formula <span class="op">=</span> <span class="op">~</span><span class="va">ELEV_CAT</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">sample</span> <span class="op">&lt;-</span> <span class="fu"><a href="grts.html">grts</a></span><span class="op">(</span><span class="va">NE_Lakes</span>, <span class="fl">30</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu">plot</span><span class="op">(</span><span class="va">sample</span>, <span class="va">NE_Lakes</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"NE_Lakes"</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">NE_Lakes</span> <span class="op">&lt;-</span> <span class="fu"><a href="sp_frame.html">sp_frame</a></span><span class="op">(</span><span class="va">NE_Lakes</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu">plot</span><span class="op">(</span><span class="va">NE_Lakes</span>, formula <span class="op">=</span> <span class="op">~</span><span class="va">ELEV_CAT</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">sample</span> <span class="op">&lt;-</span> <span class="fu"><a href="grts.html">grts</a></span><span class="op">(</span><span class="va">NE_Lakes</span>, <span class="fl">30</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu">plot</span><span class="op">(</span><span class="va">sample</span>, <span class="va">NE_Lakes</span><span class="op">)</span></span>
+<span class="r-in"><span class="op">}</span></span>
 </code></pre></div>
     </div>
   </div>

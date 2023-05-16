@@ -238,6 +238,12 @@ if (on_solaris) {
       expect_equal(NCOL(irs_output$sites_near), 1)
     })
     
+    test_that("A warning (in message form) is produced", {
+      n_base <- c(low = 20, high = 30)
+      expect_message(expect_error(irs(NE_Lakes, n_base = n_base, stratum_var = "XYZ")))
+      
+    })
+    
     #--------------------------------------
     #-------- Legacy
     #--------------------------------------

@@ -164,7 +164,9 @@ If the sampling design is stratified,
  If replacement sites are not desired for a particular stratum, then the corresponding
  value in \code{n_over} should be \code{0} or \code{NULL} (which is equivalent to \code{0}).
  If the sampling design is stratified but the number of \code{n_over} sites is the same in each
- stratum, \code{n_over} can be a vector which is used for each stratum. Note that if the
+ stratum, \code{n_over} can be a vector which is used for each stratum.
+ If \code{n_over} is an unnamed, length-one vector, it's value is recycled
+ and used for each stratum. Note that if the
  sampling design has unequal selection probabilities (\code{seltype = "unequal"}), then \code{n_over} sites
  are given the same proportion of \code{caty_n} values as \code{n_base}.}
 

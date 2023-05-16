@@ -93,6 +93,36 @@ RelRisk_Estimates <- relrisk_analysis(
   dframe = NLA_IN,
   vars_response = vars_response, vars_stressor = vars_stressor,
   subpops = subpops, siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD",
+  ycoord = "YCOORD",
+  response_levels = list("BENT_MMI_COND_2017" = c("Poor", "Good")),
+  stressor_levels = list("PTL_COND" = c("Poor", "Good"), "NTL_COND" = c("Poor", "Good"))
+)
+
+test_that("Relative Risk: Unstratified single-stage analysis (specify response/stressor levels)", {
+  expect_true(exists("RelRisk_Estimates"))
+  expect_equal(attributes(RelRisk_Estimates)$class, "data.frame")
+  expect_equal(nrow(RelRisk_Estimates), 6)
+})
+
+RelRisk_Estimates <- relrisk_analysis(
+  dframe = NLA_IN,
+  vars_response = vars_response, vars_stressor = vars_stressor,
+  subpops = subpops, siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD",
+  ycoord = "YCOORD",
+  response_levels = list(c("Poor", "Good")),
+  stressor_levels = list(c("Poor", "Good"), c("Poor", "Good"))
+)
+
+test_that("Relative Risk: Unstratified single-stage analysis (unnamed response/stressor levels)", {
+  expect_true(exists("RelRisk_Estimates"))
+  expect_equal(attributes(RelRisk_Estimates)$class, "data.frame")
+  expect_equal(nrow(RelRisk_Estimates), 6)
+})
+
+RelRisk_Estimates <- relrisk_analysis(
+  dframe = NLA_IN,
+  vars_response = vars_response, vars_stressor = vars_stressor,
+  subpops = subpops, siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD",
   ycoord = "YCOORD", popsize = popsize
 )
 
@@ -239,4 +269,15 @@ test_that("Relative Risk: with finite population correction factor", {
   expect_true(exists("RelRisk_Estimates"))
   expect_equal(attributes(RelRisk_Estimates)$class, "data.frame")
   expect_equal(nrow(RelRisk_Estimates), 6)
+})
+
+test_that("A warning (in message form) is produced", {
+  expect_message(expect_error(relrisk_analysis(
+    dframe = NLA_IN,
+    vars_response = vars_response, vars_stressor = vars_stressor,
+    subpops = subpops, siteID = "SITE_ID", weight = "XYZ", xcoord = "XCOORD",
+    ycoord = "YCOORD", stratumID = "URBN_NLA17", clusterID = "clusterID",
+    weight1 = "weight1", xcoord1 = "xcoord1", ycoord1 = "ycoord1",
+    fpc = fpc4a, vartype = "SRS"
+  )))
 })

@@ -308,6 +308,9 @@ diffrisk_analysis <- function(dframe, vars_response, vars_stressor, response_lev
         msg <- "Argument response_levels must be the same length as argument vars_response.\n"
         error_vec <- c(error_vec, msg)
       }
+      if (is.null(names(response_levels))) { # set default names if none provided
+        names(response_levels) <- vars_response
+      }
       if (any(sapply(response_levels, function(x) length(x) != 2))) {
         error_ind <- TRUE
         msg <- "Each element of argument response_levels must contain only two values.\n"
@@ -358,6 +361,9 @@ diffrisk_analysis <- function(dframe, vars_response, vars_stressor, response_lev
         msg <- "Argument stressor_levels must be the same length as argument vars_stressor.\n"
         error_vec <- c(error_vec, msg)
       }
+      if (is.null(names(stressor_levels))) { # set default names if none provided
+        names(stressor_levels) <- vars_stressor
+      }
       if (any(sapply(stressor_levels, function(x) length(x) != 2))) {
         error_ind <- TRUE
         msg <- "Each element of argument stressor_levels must contain only two values.\n"
@@ -400,17 +406,17 @@ diffrisk_analysis <- function(dframe, vars_response, vars_stressor, response_lev
   if (error_ind) {
     error_vec <<- error_vec
     if (length(error_vec) == 1) {
-      cat("During execution of the program, an error message was generated.  The error \nmessage is stored in a vector named 'error_vec'.  Enter the following command \nto view the error message: errorprnt()\n")
+      message("During execution of the program, an error message was generated.  The error \nmessage is stored in a vector named 'error_vec'.  Enter the following command \nto view the error message: errorprnt()\n")
     } else {
-      cat(paste("During execution of the program,", length(error_vec), "error messages were generated.  The error \nmessages are stored in a vector named 'error_vec'.  Enter the following \ncommand to view the error messages: errorprnt()\n"))
+      message(paste("During execution of the program,", length(error_vec), "error messages were generated.  The error \nmessages are stored in a vector named 'error_vec'.  Enter the following \ncommand to view the error messages: errorprnt()\n"))
     }
 
     if (warn_ind) {
       warn_df <<- warn_df
       if (nrow(warn_df) == 1) {
-        cat("During execution of the program, a warning message was generated.  The warning \nmessage is stored in a data frame named 'warn_df'.  Enter the following command \nto view the warning message: warnprnt()\n")
+        message("During execution of the program, a warning message was generated.  The warning \nmessage is stored in a data frame named 'warn_df'.  Enter the following command \nto view the warning message: warnprnt()\n")
       } else {
-        cat(paste("During execution of the program,", nrow(warn_df), "warning messages were generated.  The warning \nmessages are stored in a data frame named 'warn_df'.  Enter the following \ncommand to view the warning messages: warnprnt() \nTo view a subset of the warning messages (say, messages number 1, 3, and 5), \nenter the following command: warnprnt(m=c(1,3,5))\n"))
+        message(paste("During execution of the program,", nrow(warn_df), "warning messages were generated.  The warning \nmessages are stored in a data frame named 'warn_df'.  Enter the following \ncommand to view the warning messages: warnprnt() \nTo view a subset of the warning messages (say, messages number 1, 3, and 5), \nenter the following command: warnprnt(m=c(1,3,5))\n"))
       }
     }
     stop("See the preceding message(s).")
@@ -678,9 +684,9 @@ diffrisk_analysis <- function(dframe, vars_response, vars_stressor, response_lev
   if (warn_ind) {
     warn_df <<- warn_df
     if (nrow(warn_df) == 1) {
-      cat("During execution of the program, a warning message was generated.  The warning \nmessage is stored in a data frame named 'warn_df'.  Enter the following command \nto view the warning message: warnprnt()\n")
+      message("During execution of the program, a warning message was generated.  The warning \nmessage is stored in a data frame named 'warn_df'.  Enter the following command \nto view the warning message: warnprnt()\n")
     } else {
-      cat(paste("During execution of the program,", nrow(warn_df), "warning messages were generated.  The warning \nmessages are stored in a data frame named 'warn_df'.  Enter the following \ncommand to view the warning messages: warnprnt() \nTo view a subset of the warning messages (say, messages number 1, 3, and 5), \nenter the following command: warnprnt(m=c(1,3,5))\n"))
+      message(paste("During execution of the program,", nrow(warn_df), "warning messages were generated.  The warning \nmessages are stored in a data frame named 'warn_df'.  Enter the following \ncommand to view the warning messages: warnprnt() \nTo view a subset of the warning messages (say, messages number 1, 3, and 5), \nenter the following command: warnprnt(m=c(1,3,5))\n"))
     }
   }
 

@@ -24,7 +24,7 @@ requiring a minimum distance between sites, and selecting replacement sites."><!
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">spsurvey</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">5.4.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">5.5.0</span>
       </span>
     </div>
 
@@ -86,30 +86,30 @@ requiring a minimum distance between sites, and selecting replacement sites.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">irs</span><span class="op">(</span></span>
-<span>  <span class="va">sframe</span>,</span>
-<span>  <span class="va">n_base</span>,</span>
-<span>  stratum_var <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  seltype <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  caty_var <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  caty_n <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  aux_var <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  legacy_var <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  legacy_sites <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  legacy_stratum_var <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  legacy_caty_var <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  legacy_aux_var <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  mindis <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  maxtry <span class="op">=</span> <span class="fl">10</span>,</span>
-<span>  n_over <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  n_near <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  wgt_units <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  pt_density <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  DesignID <span class="op">=</span> <span class="st">"Site"</span>,</span>
-<span>  SiteBegin <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  sep <span class="op">=</span> <span class="st">"-"</span>,</span>
-<span>  projcrs_check <span class="op">=</span> <span class="cn">TRUE</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">irs</span><span class="op">(</span>
+  <span class="va">sframe</span>,
+  <span class="va">n_base</span>,
+  stratum_var <span class="op">=</span> <span class="cn">NULL</span>,
+  seltype <span class="op">=</span> <span class="cn">NULL</span>,
+  caty_var <span class="op">=</span> <span class="cn">NULL</span>,
+  caty_n <span class="op">=</span> <span class="cn">NULL</span>,
+  aux_var <span class="op">=</span> <span class="cn">NULL</span>,
+  legacy_var <span class="op">=</span> <span class="cn">NULL</span>,
+  legacy_sites <span class="op">=</span> <span class="cn">NULL</span>,
+  legacy_stratum_var <span class="op">=</span> <span class="cn">NULL</span>,
+  legacy_caty_var <span class="op">=</span> <span class="cn">NULL</span>,
+  legacy_aux_var <span class="op">=</span> <span class="cn">NULL</span>,
+  mindis <span class="op">=</span> <span class="cn">NULL</span>,
+  maxtry <span class="op">=</span> <span class="fl">10</span>,
+  n_over <span class="op">=</span> <span class="cn">NULL</span>,
+  n_near <span class="op">=</span> <span class="cn">NULL</span>,
+  wgt_units <span class="op">=</span> <span class="cn">NULL</span>,
+  pt_density <span class="op">=</span> <span class="cn">NULL</span>,
+  DesignID <span class="op">=</span> <span class="st">"Site"</span>,
+  SiteBegin <span class="op">=</span> <span class="fl">1</span>,
+  sep <span class="op">=</span> <span class="st">"-"</span>,
+  projcrs_check <span class="op">=</span> <span class="cn">TRUE</span>
+<span class="op">)</span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -277,7 +277,9 @@ If the sampling design is stratified,
  If replacement sites are not desired for a particular stratum, then the corresponding
  value in <code>n_over</code> should be <code>0</code> or <code>NULL</code> (which is equivalent to <code>0</code>).
  If the sampling design is stratified but the number of <code>n_over</code> sites is the same in each
- stratum, <code>n_over</code> can be a vector which is used for each stratum. Note that if the
+ stratum, <code>n_over</code> can be a vector which is used for each stratum.
+ If <code>n_over</code> is an unnamed, length-one vector, it's value is recycled
+ and used for each stratum. Note that if the
  sampling design has unequal selection probabilities (<code>seltype = "unequal"</code>), then <code>n_over</code> sites
  are given the same proportion of <code>caty_n</code> values as <code>n_base</code>.</p></dd>
 
@@ -472,15 +474,15 @@ check is not performed, which means that the crs in <code>sframe</code> (and <co
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
-<span class="r-in"><span><span class="va">samp</span> <span class="op">&lt;-</span> <span class="fu">irs</span><span class="op">(</span><span class="va">NE_Lakes</span>, n_base <span class="op">=</span> <span class="fl">100</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">samp</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">strata_n</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>low <span class="op">=</span> <span class="fl">25</span>, high <span class="op">=</span> <span class="fl">30</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">samp_strat</span> <span class="op">&lt;-</span> <span class="fu">irs</span><span class="op">(</span><span class="va">NE_Lakes</span>, n_base <span class="op">=</span> <span class="va">strata_n</span>, stratum_var <span class="op">=</span> <span class="st">"ELEV_CAT"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">samp_strat</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">samp_over</span> <span class="op">&lt;-</span> <span class="fu">irs</span><span class="op">(</span><span class="va">NE_Lakes</span>, n_base <span class="op">=</span> <span class="fl">30</span>, n_over <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">samp_over</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
+<span class="r-in"><span class="va">samp</span> <span class="op">&lt;-</span> <span class="fu">irs</span><span class="op">(</span><span class="va">NE_Lakes</span>, n_base <span class="op">=</span> <span class="fl">100</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">samp</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">strata_n</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>low <span class="op">=</span> <span class="fl">25</span>, high <span class="op">=</span> <span class="fl">30</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">samp_strat</span> <span class="op">&lt;-</span> <span class="fu">irs</span><span class="op">(</span><span class="va">NE_Lakes</span>, n_base <span class="op">=</span> <span class="va">strata_n</span>, stratum_var <span class="op">=</span> <span class="st">"ELEV_CAT"</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">samp_strat</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">samp_over</span> <span class="op">&lt;-</span> <span class="fu">irs</span><span class="op">(</span><span class="va">NE_Lakes</span>, n_base <span class="op">=</span> <span class="fl">30</span>, n_over <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">samp_over</span><span class="op">)</span></span>
+<span class="r-in"><span class="op">}</span></span>
 </code></pre></div>
     </div>
   </div>
