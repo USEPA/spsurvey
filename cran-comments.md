@@ -1,6 +1,4 @@
-This is a minor update that adds citation information for a publication in 
-*The Journal of Statistical Software* (JSS). The DOI in the CITATION for the
-new JSS publication will be registered after publication on CRAN.
+This is a minor update that adds few new features and bug fixes.
 
 -------
 
