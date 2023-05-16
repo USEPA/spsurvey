@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">spsurvey</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">5.4.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">5.5.0</span>
       </span>
     </div>
 
@@ -84,7 +84,7 @@
 
       
 
-      </header><script src="sampling_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Spatially Balanced Sampling</h1>
@@ -100,7 +100,7 @@
     
 <p>If you have yet not read the “Start Here” vignette, please do so by running</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/vignette.html" class="external-link">vignette</a></span><span class="op">(</span><span class="st">"start-here"</span>, <span class="st">"spsurvey"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/vignette.html" class="external-link">vignette</a></span><span class="op">(</span><span class="st">"start-here"</span>, <span class="st">"spsurvey"</span><span class="op">)</span></code></pre></div>
 <div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
@@ -128,8 +128,8 @@
 </ol>
 <p>Before proceeding, we load spsurvey and set a reproducible seed by running</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://usepa.github.io/spsurvey/" class="external-link">spsurvey</a></span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">51</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://usepa.github.io/spsurvey/" class="external-link">spsurvey</a></span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">51</span><span class="op">)</span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="unstratified-sampling">Unstratified sampling<a class="anchor" aria-label="anchor" href="#unstratified-sampling"></a>
@@ -139,18 +139,18 @@
 </h3>
 <p>To select an unstratified GRTS sample where each site in the sampling frame has an equal probability of selection (i.e. inclusion probability), run</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">eqprob</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/grts.html">grts</a></span><span class="op">(</span><span class="va">NE_Lakes</span>, n_base <span class="op">=</span> <span class="fl">50</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span class="va">eqprob</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/grts.html">grts</a></span><span class="op">(</span><span class="va">NE_Lakes</span>, n_base <span class="op">=</span> <span class="fl">50</span><span class="op">)</span></code></pre></div>
 <p>The first argument to <code><a href="../reference/grts.html">grts()</a></code> is the sampling frame, which must be an <code>sf</code> object. The second argument is <code>n_base</code>, which specifies the number of sites in the base (main) sample. The <code>sites_base</code> object in <code>eqprob</code> is an <code>sf</code> object and contains the original columns of <code>NE_Lakes</code> as well as a few additional columns such as a site identifier, latitude and longitude coordinates, inclusion probabilities, and design weights (to be used in analyses after collecting data).</p>
 <p>To print a summary of site counts, run</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">eqprob</span></span>
-<span><span class="co">#&gt; Summary of Site Counts: </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;    total    siteuse  </span></span>
-<span><span class="co">#&gt;  total:50   Base:50</span></span></code></pre></div>
+<code class="sourceCode R"><span class="va">eqprob</span>
+<span class="co">#&gt; Summary of Site Counts: </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;    total    siteuse  </span>
+<span class="co">#&gt;  total:50   Base:50</span></code></pre></div>
 <p>To visualize the design sites overlain onto the sampling frame, run</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot.html">plot</a></span><span class="op">(</span><span class="va">eqprob</span>, <span class="va">NE_Lakes</span>, key.width <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/graphics/layout.html" class="external-link">lcm</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span class="fu"><a href="../reference/plot.html">plot</a></span><span class="op">(</span><span class="va">eqprob</span>, <span class="va">NE_Lakes</span>, key.width <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/graphics/layout.html" class="external-link">lcm</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <p><img src="sampling_files/figure-html/unnamed-chunk-7-1.png" width="700"></p>
 <p>The <code>key.width</code> argument extends the plot’s margin to fit the legend text nicely within the plot. <code><a href="../reference/sp_plot.html">sp_plot()</a></code> can equivalently be used in place of <code><a href="../reference/plot.html">plot()</a></code> (<code><a href="../reference/sp_plot.html">sp_plot()</a></code> is currently maintained for backwards compatibility with previous spsurvey versions).</p>
 </div>
@@ -159,24 +159,24 @@
 </h3>
 <p>To select an unstratified GRTS sample where each site in the sampling frame has unequal inclusion probabilities according to some categorical variable, run</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">caty_n</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>small <span class="op">=</span> <span class="fl">40</span>, large <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span>
-<span><span class="va">uneqprob</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/grts.html">grts</a></span><span class="op">(</span></span>
-<span>  <span class="va">NE_Lakes</span>,</span>
-<span>  n_base <span class="op">=</span> <span class="fl">50</span>,</span>
-<span>  caty_var <span class="op">=</span> <span class="st">"AREA_CAT"</span>,</span>
-<span>  caty_n <span class="op">=</span> <span class="va">caty_n</span></span>
-<span><span class="op">)</span></span>
-<span><span class="va">uneqprob</span></span>
-<span><span class="co">#&gt; Summary of Site Counts: </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; siteuse by total: </span></span>
-<span><span class="co">#&gt;       Base</span></span>
-<span><span class="co">#&gt; total   50</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; siteuse by caty: </span></span>
-<span><span class="co">#&gt;       Base</span></span>
-<span><span class="co">#&gt; large   10</span></span>
-<span><span class="co">#&gt; small   40</span></span></code></pre></div>
+<code class="sourceCode R"><span class="va">caty_n</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>small <span class="op">=</span> <span class="fl">40</span>, large <span class="op">=</span> <span class="fl">10</span><span class="op">)</span>
+<span class="va">uneqprob</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/grts.html">grts</a></span><span class="op">(</span>
+  <span class="va">NE_Lakes</span>,
+  n_base <span class="op">=</span> <span class="fl">50</span>,
+  caty_var <span class="op">=</span> <span class="st">"AREA_CAT"</span>,
+  caty_n <span class="op">=</span> <span class="va">caty_n</span>
+<span class="op">)</span>
+<span class="va">uneqprob</span>
+<span class="co">#&gt; Summary of Site Counts: </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; siteuse by total: </span>
+<span class="co">#&gt;       Base</span>
+<span class="co">#&gt; total   50</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; siteuse by caty: </span>
+<span class="co">#&gt;       Base</span>
+<span class="co">#&gt; large   10</span>
+<span class="co">#&gt; small   40</span></code></pre></div>
 <p><code>caty_var</code> is the unequal inclusion probability variable (<code>"AREA_CAT"</code> in <code>NE_Lakes</code>), and <code>caty_n</code> is a vector whose names are the levels in <code>caty_var</code> and whose values are the expected sample sizes in each category (the sum of these expected samples sizes must equal <code>n_base</code>). In this sample, inclusion probabilities are adjusted so that on average, there are 40 small lakes and 10 large lakes selected.</p>
 </div>
 <div class="section level3">
@@ -184,11 +184,11 @@
 </h3>
 <p>To select an unstratified GRTS sample where each site in the sampling frame has inclusion probability proportional to a positive, continuous variable, run</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">propprob</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/grts.html">grts</a></span><span class="op">(</span></span>
-<span>  <span class="va">NE_Lakes</span>,</span>
-<span>  n_base <span class="op">=</span> <span class="fl">50</span>,</span>
-<span>  aux_var <span class="op">=</span> <span class="st">"AREA"</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span class="va">propprob</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/grts.html">grts</a></span><span class="op">(</span>
+  <span class="va">NE_Lakes</span>,
+  n_base <span class="op">=</span> <span class="fl">50</span>,
+  aux_var <span class="op">=</span> <span class="st">"AREA"</span>
+<span class="op">)</span></code></pre></div>
 <p><code>aux_var</code> is the proportional probability (auxiliary) variable (<code>"AREA"</code> in <code>NE_Lakes</code>). Proportional (to size) inclusion probabilities are useful because they can increase the precision of estimates when the response variable is positively correlated with the proportional probability variable.</p>
 </div>
 </div>
@@ -201,28 +201,28 @@
 </h3>
 <p>To select a sample stratified by elevation category with equal inclusion probabilities in each stratum, run</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">strata_n</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>low <span class="op">=</span> <span class="fl">25</span>, high <span class="op">=</span> <span class="fl">15</span><span class="op">)</span></span>
-<span><span class="va">strat_eqprob</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/grts.html">grts</a></span><span class="op">(</span><span class="va">NE_Lakes</span>, n_base <span class="op">=</span> <span class="va">strata_n</span>, stratum_var <span class="op">=</span> <span class="st">"ELEV_CAT"</span><span class="op">)</span></span>
-<span><span class="va">strat_eqprob</span></span>
-<span><span class="co">#&gt; Summary of Site Counts: </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; siteuse by total: </span></span>
-<span><span class="co">#&gt;       Base</span></span>
-<span><span class="co">#&gt; total   40</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; siteuse by stratum: </span></span>
-<span><span class="co">#&gt;      Base</span></span>
-<span><span class="co">#&gt; high   15</span></span>
-<span><span class="co">#&gt; low    25</span></span></code></pre></div>
+<code class="sourceCode R"><span class="va">strata_n</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>low <span class="op">=</span> <span class="fl">25</span>, high <span class="op">=</span> <span class="fl">15</span><span class="op">)</span>
+<span class="va">strat_eqprob</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/grts.html">grts</a></span><span class="op">(</span><span class="va">NE_Lakes</span>, n_base <span class="op">=</span> <span class="va">strata_n</span>, stratum_var <span class="op">=</span> <span class="st">"ELEV_CAT"</span><span class="op">)</span>
+<span class="va">strat_eqprob</span>
+<span class="co">#&gt; Summary of Site Counts: </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; siteuse by total: </span>
+<span class="co">#&gt;       Base</span>
+<span class="co">#&gt; total   40</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; siteuse by stratum: </span>
+<span class="co">#&gt;      Base</span>
+<span class="co">#&gt; high   15</span>
+<span class="co">#&gt; low    25</span></code></pre></div>
 <p><code>strata_n</code> is a named vector whose names represent the strata and whose values represent strata-specific sample sizes, and <code>stratum_var</code> is the stratification variable (<code>ELEV_CAT</code> in <code>NE_Lakes</code>).</p>
 <p>To visualize the design sites overlain onto the sampling frame (separately for each stratum), run</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot.html">plot</a></span><span class="op">(</span></span>
-<span>  <span class="va">strat_eqprob</span>,</span>
-<span>  formula <span class="op">=</span> <span class="va">siteuse</span> <span class="op">~</span> <span class="va">ELEV_CAT</span>,</span>
-<span>  <span class="va">NE_Lakes</span>,</span>
-<span>  key.width <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/graphics/layout.html" class="external-link">lcm</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span class="fu"><a href="../reference/plot.html">plot</a></span><span class="op">(</span>
+  <span class="va">strat_eqprob</span>,
+  formula <span class="op">=</span> <span class="va">siteuse</span> <span class="op">~</span> <span class="va">ELEV_CAT</span>,
+  <span class="va">NE_Lakes</span>,
+  key.width <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/graphics/layout.html" class="external-link">lcm</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span>
+<span class="op">)</span></code></pre></div>
 <p><img src="sampling_files/figure-html/unnamed-chunk-12-1.png" width="700"><img src="sampling_files/figure-html/unnamed-chunk-12-2.png" width="700"></p>
 </div>
 <div class="section level3">
@@ -230,40 +230,40 @@
 </h3>
 <p>To select a sample stratified by elevation category with unequal inclusion probabilities for each area category, run</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">caty_n</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span>  low <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>small <span class="op">=</span> <span class="fl">20</span>, large <span class="op">=</span> <span class="fl">5</span><span class="op">)</span>,</span>
-<span>  high <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>small <span class="op">=</span> <span class="fl">10</span>, large <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span>
-<span><span class="op">)</span></span>
-<span><span class="va">strat_uneqprob</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/grts.html">grts</a></span><span class="op">(</span></span>
-<span>  <span class="va">NE_Lakes</span>,</span>
-<span>  n_base <span class="op">=</span> <span class="va">strata_n</span>,</span>
-<span>  stratum_var <span class="op">=</span> <span class="st">"ELEV_CAT"</span>,</span>
-<span>  caty_var <span class="op">=</span> <span class="st">"AREA_CAT"</span>,</span>
-<span>  caty_n <span class="op">=</span> <span class="va">caty_n</span></span>
-<span><span class="op">)</span></span>
-<span><span class="va">strat_uneqprob</span></span>
-<span><span class="co">#&gt; Summary of Site Counts: </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; siteuse by total: </span></span>
-<span><span class="co">#&gt;       Base</span></span>
-<span><span class="co">#&gt; total   40</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; siteuse by stratum: </span></span>
-<span><span class="co">#&gt;      Base</span></span>
-<span><span class="co">#&gt; high   15</span></span>
-<span><span class="co">#&gt; low    25</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; siteuse by caty: </span></span>
-<span><span class="co">#&gt;       Base</span></span>
-<span><span class="co">#&gt; large    9</span></span>
-<span><span class="co">#&gt; small   31</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; siteuse by stratum:caty: </span></span>
-<span><span class="co">#&gt;            Base</span></span>
-<span><span class="co">#&gt; high:large    3</span></span>
-<span><span class="co">#&gt; low:large     6</span></span>
-<span><span class="co">#&gt; high:small   12</span></span>
-<span><span class="co">#&gt; low:small    19</span></span></code></pre></div>
+<code class="sourceCode R"><span class="va">caty_n</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>
+  low <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>small <span class="op">=</span> <span class="fl">20</span>, large <span class="op">=</span> <span class="fl">5</span><span class="op">)</span>,
+  high <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>small <span class="op">=</span> <span class="fl">10</span>, large <span class="op">=</span> <span class="fl">5</span><span class="op">)</span>
+<span class="op">)</span>
+<span class="va">strat_uneqprob</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/grts.html">grts</a></span><span class="op">(</span>
+  <span class="va">NE_Lakes</span>,
+  n_base <span class="op">=</span> <span class="va">strata_n</span>,
+  stratum_var <span class="op">=</span> <span class="st">"ELEV_CAT"</span>,
+  caty_var <span class="op">=</span> <span class="st">"AREA_CAT"</span>,
+  caty_n <span class="op">=</span> <span class="va">caty_n</span>
+<span class="op">)</span>
+<span class="va">strat_uneqprob</span>
+<span class="co">#&gt; Summary of Site Counts: </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; siteuse by total: </span>
+<span class="co">#&gt;       Base</span>
+<span class="co">#&gt; total   40</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; siteuse by stratum: </span>
+<span class="co">#&gt;      Base</span>
+<span class="co">#&gt; high   15</span>
+<span class="co">#&gt; low    25</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; siteuse by caty: </span>
+<span class="co">#&gt;       Base</span>
+<span class="co">#&gt; large    9</span>
+<span class="co">#&gt; small   31</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; siteuse by stratum:caty: </span>
+<span class="co">#&gt;            Base</span>
+<span class="co">#&gt; high:large    3</span>
+<span class="co">#&gt; low:large     6</span>
+<span class="co">#&gt; high:small   12</span>
+<span class="co">#&gt; low:small    19</span></code></pre></div>
 <p><code>caty_n</code> is now a list: the first element contains the expected sample sizes for each area category in the low elevation stratum, and the second element contains the expected sample sizes for each area category in the high elevation stratum.</p>
 </div>
 <div class="section level3">
@@ -271,12 +271,12 @@
 </h3>
 <p>To select a sample stratified by elevation category with probabilities proportional to lake area, run</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">strat_propprob</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/grts.html">grts</a></span><span class="op">(</span></span>
-<span>  <span class="va">NE_Lakes</span>,</span>
-<span>  n_base <span class="op">=</span> <span class="va">strata_n</span>,</span>
-<span>  stratum_var <span class="op">=</span> <span class="st">"ELEV_CAT"</span>,</span>
-<span>  aux_var <span class="op">=</span> <span class="st">"AREA"</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span class="va">strat_propprob</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/grts.html">grts</a></span><span class="op">(</span>
+  <span class="va">NE_Lakes</span>,
+  n_base <span class="op">=</span> <span class="va">strata_n</span>,
+  stratum_var <span class="op">=</span> <span class="st">"ELEV_CAT"</span>,
+  aux_var <span class="op">=</span> <span class="st">"AREA"</span>
+<span class="op">)</span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
@@ -287,16 +287,16 @@
 </h3>
 <p>Legacy (historical) sites are sites that were selected from a previous sampling design that incorporated randomness into site selection, are part of the sampling frame for the current sampling design, and should be always be selected in the current sample. The <code>NE_Lakes_Legacy</code> data contains some legacy sites. To accommodate these legacy sites while sampling, use the <code>legacy_sites</code> argument:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">legacy</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/grts.html">grts</a></span><span class="op">(</span><span class="va">NE_Lakes</span>, n_base <span class="op">=</span> <span class="fl">50</span>, legacy_sites <span class="op">=</span> <span class="va">NE_Lakes_Legacy</span><span class="op">)</span></span>
-<span><span class="va">legacy</span></span>
-<span><span class="co">#&gt; Summary of Site Counts: </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;    total      siteuse  </span></span>
-<span><span class="co">#&gt;  total:50   Legacy: 5  </span></span>
-<span><span class="co">#&gt;             Base  :45</span></span></code></pre></div>
+<code class="sourceCode R"><span class="va">legacy</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/grts.html">grts</a></span><span class="op">(</span><span class="va">NE_Lakes</span>, n_base <span class="op">=</span> <span class="fl">50</span>, legacy_sites <span class="op">=</span> <span class="va">NE_Lakes_Legacy</span><span class="op">)</span>
+<span class="va">legacy</span>
+<span class="co">#&gt; Summary of Site Counts: </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;    total      siteuse  </span>
+<span class="co">#&gt;  total:50   Legacy: 5  </span>
+<span class="co">#&gt;             Base  :45</span></code></pre></div>
 <p>To visualize the legacy and base sites together, run</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot.html">plot</a></span><span class="op">(</span><span class="va">legacy</span>, key.width <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/graphics/layout.html" class="external-link">lcm</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span class="fu"><a href="../reference/plot.html">plot</a></span><span class="op">(</span><span class="va">legacy</span>, key.width <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/graphics/layout.html" class="external-link">lcm</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <p><img src="sampling_files/figure-html/unnamed-chunk-17-1.png" width="700"></p>
 <p>These points can be overlain onto the sampling frame by including <code>NE_Lakes</code> in the <code><a href="../reference/plot.html">plot()</a></code> command.</p>
 <p>Legacy sites are included in the base (main) sample, so the value for <code>n_base</code> should be equal to the number of legacy sites plus the number of non-legacy sites desired in the sample. If your sampling design uses stratification, unequal inclusion probabilities, or proportional inclusion probabilities, you need to name the column in <code>legacy_sites</code> that represents these values. By default, <code><a href="../reference/grts.html">grts()</a></code> assumes that the respective columns in <code>sframe</code> and <code>legacy_sites</code> share the same name – if this is not the case, use the <code>legacy_stratum_var</code>, <code>legacy_caty_var</code> or <code>legacy_aux_var</code> arguments. If your population is finite, you may alternatively accommodate legacy sites by including a variable in your sampling frame that indicates whether each site is a legacy site or not and then use the <code>legacy_var</code> argument in <code><a href="../reference/grts.html">grts()</a></code>. When using <code>legacy_var</code>, you do not need to use <code>legacy_stratum_var</code>, <code>legacy_caty_var</code> or <code>legacy_aux_var</code>.</p>
@@ -307,17 +307,17 @@
 </h3>
 <p>Though the GRTS algorithm selects spatially balanced samples, the algorithm can select sites that are closer together than you may desire. To enforce a minimum distance between sites, run</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">mindis</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/grts.html">grts</a></span><span class="op">(</span><span class="va">NE_Lakes</span>, n_base <span class="op">=</span> <span class="fl">50</span>, mindis <span class="op">=</span> <span class="fl">1600</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span class="va">mindis</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/grts.html">grts</a></span><span class="op">(</span><span class="va">NE_Lakes</span>, n_base <span class="op">=</span> <span class="fl">50</span>, mindis <span class="op">=</span> <span class="fl">1600</span><span class="op">)</span></code></pre></div>
 <p>Here we have specified that sites be no closer together than 1600 meters (meters are the units of the <code>sf</code> object). In some situations, the <code><a href="../reference/grts.html">grts()</a></code> function will fail to enforce the minimum distance requirement for all sites. When this occurs, the function will enforce the requirement for as many sites as possible and then return a warning.</p>
 <p>When stratifying, <code>mindis</code> will apply to all strata if it is a single value. It is possible to set stratum-specific minimum distance requirements by storing them in a named list (the names must match the strata):</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">mindis_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>low <span class="op">=</span> <span class="fl">1400</span>, high <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span></span>
-<span><span class="va">strat_mindis</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/grts.html">grts</a></span><span class="op">(</span></span>
-<span>  <span class="va">NE_Lakes</span>,</span>
-<span>  <span class="va">strata_n</span>,</span>
-<span>  stratum_var <span class="op">=</span> <span class="st">"ELEV_CAT"</span>,</span>
-<span>  mindis <span class="op">=</span> <span class="va">mindis_list</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span class="va">mindis_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>low <span class="op">=</span> <span class="fl">1400</span>, high <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span>
+<span class="va">strat_mindis</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/grts.html">grts</a></span><span class="op">(</span>
+  <span class="va">NE_Lakes</span>,
+  <span class="va">strata_n</span>,
+  stratum_var <span class="op">=</span> <span class="st">"ELEV_CAT"</span>,
+  mindis <span class="op">=</span> <span class="va">mindis_list</span>
+<span class="op">)</span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="replacement-sampling">Replacement sampling<a class="anchor" aria-label="anchor" href="#replacement-sampling"></a>
@@ -328,72 +328,72 @@
 </h4>
 <p>The first replacement site option is reverse hierarchical ordering (Stevens and Olsen, 2004). To select a base sample with reverse hierarchically ordered replacement sites, run</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">rho_replace</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/grts.html">grts</a></span><span class="op">(</span><span class="va">NE_Lakes</span>, n_base <span class="op">=</span> <span class="fl">50</span>, n_over <span class="op">=</span> <span class="fl">25</span><span class="op">)</span></span>
-<span><span class="va">rho_replace</span></span>
-<span><span class="co">#&gt; Summary of Site Counts: </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;    total    siteuse  </span></span>
-<span><span class="co">#&gt;  total:75   Base:50  </span></span>
-<span><span class="co">#&gt;             Over:25</span></span></code></pre></div>
+<code class="sourceCode R"><span class="va">rho_replace</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/grts.html">grts</a></span><span class="op">(</span><span class="va">NE_Lakes</span>, n_base <span class="op">=</span> <span class="fl">50</span>, n_over <span class="op">=</span> <span class="fl">25</span><span class="op">)</span>
+<span class="va">rho_replace</span>
+<span class="co">#&gt; Summary of Site Counts: </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;    total    siteuse  </span>
+<span class="co">#&gt;  total:75   Base:50  </span>
+<span class="co">#&gt;             Over:25</span></code></pre></div>
 <p><code>n_base</code> indicates the desired sample size, and <code>n_over</code> indicates the number of replacement sites. Sites are first selected using the GRTS algorithm for a sample size of <code>n_base + n_over</code>. They are then determined as base sites or replacement sites in a way that preserves as much spatial balance as possible. The spatial balance of the base sites degrades as <code>n_over</code> increases, however, so it is important to choose a realistic value for <code>n_over</code>.</p>
 <p>To visualize the base sites and reverse hierarchically ordered replacement sites, run</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot.html">plot</a></span><span class="op">(</span><span class="va">rho_replace</span>, key.width <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/graphics/layout.html" class="external-link">lcm</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span class="fu"><a href="../reference/plot.html">plot</a></span><span class="op">(</span><span class="va">rho_replace</span>, key.width <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/graphics/layout.html" class="external-link">lcm</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <p><img src="sampling_files/figure-html/unnamed-chunk-22-1.png" width="700"></p>
 <p>When stratifying, <code>n_over</code> will apply to all strata if it is a single value. It is possible to set stratum-specific reverse hierarchical ordering requirements by storing them in a named list (the names must match the strata):</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">over_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>low <span class="op">=</span> <span class="fl">2</span>, high <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span>
-<span><span class="va">strat_rho_replace</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/grts.html">grts</a></span><span class="op">(</span></span>
-<span>  <span class="va">NE_Lakes</span>,</span>
-<span>  <span class="va">strata_n</span>,</span>
-<span>  stratum_var <span class="op">=</span> <span class="st">"ELEV_CAT"</span>,</span>
-<span>  n_over <span class="op">=</span> <span class="va">over_list</span></span>
-<span><span class="op">)</span></span>
-<span><span class="va">strat_rho_replace</span></span>
-<span><span class="co">#&gt; Summary of Site Counts: </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; siteuse by total: </span></span>
-<span><span class="co">#&gt;       Base Over</span></span>
-<span><span class="co">#&gt; total   40    7</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; siteuse by stratum: </span></span>
-<span><span class="co">#&gt;      Base Over</span></span>
-<span><span class="co">#&gt; high   15    5</span></span>
-<span><span class="co">#&gt; low    25    2</span></span></code></pre></div>
+<code class="sourceCode R"><span class="va">over_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>low <span class="op">=</span> <span class="fl">2</span>, high <span class="op">=</span> <span class="fl">5</span><span class="op">)</span>
+<span class="va">strat_rho_replace</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/grts.html">grts</a></span><span class="op">(</span>
+  <span class="va">NE_Lakes</span>,
+  <span class="va">strata_n</span>,
+  stratum_var <span class="op">=</span> <span class="st">"ELEV_CAT"</span>,
+  n_over <span class="op">=</span> <span class="va">over_list</span>
+<span class="op">)</span>
+<span class="va">strat_rho_replace</span>
+<span class="co">#&gt; Summary of Site Counts: </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; siteuse by total: </span>
+<span class="co">#&gt;       Base Over</span>
+<span class="co">#&gt; total   40    7</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; siteuse by stratum: </span>
+<span class="co">#&gt;      Base Over</span>
+<span class="co">#&gt; high   15    5</span>
+<span class="co">#&gt; low    25    2</span></code></pre></div>
 </div>
 <div class="section level4">
 <h4 id="nearest-neighbor">Nearest neighbor<a class="anchor" aria-label="anchor" href="#nearest-neighbor"></a>
 </h4>
 <p>The second replacement site option is nearest neighbor. To select a base sample with nearest neighbor replacement sites, run</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">nn_replace</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/grts.html">grts</a></span><span class="op">(</span><span class="va">NE_Lakes</span>, n_base <span class="op">=</span> <span class="fl">50</span>, n_near <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
-<span><span class="va">nn_replace</span></span>
-<span><span class="co">#&gt; Summary of Site Counts: </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;    total     siteuse  </span></span>
-<span><span class="co">#&gt;  total:100   Base:50  </span></span>
-<span><span class="co">#&gt;              Near:50</span></span></code></pre></div>
+<code class="sourceCode R"><span class="va">nn_replace</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/grts.html">grts</a></span><span class="op">(</span><span class="va">NE_Lakes</span>, n_base <span class="op">=</span> <span class="fl">50</span>, n_near <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>
+<span class="va">nn_replace</span>
+<span class="co">#&gt; Summary of Site Counts: </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;    total     siteuse  </span>
+<span class="co">#&gt;  total:100   Base:50  </span>
+<span class="co">#&gt;              Near:50</span></code></pre></div>
 <p><code>n_base</code> indicates the desired sample size, and <code>n_near</code> indicates the number of replacement sites for each base site. For <code>n_near = 1</code>, each site in the base sample has a replacement site associated with it – this replacement site is the closest site (measured by Euclidean distance) to the base site (within a stratum).</p>
 <p>When stratifying, <code>n_near</code> will apply to all strata if it is a single value. It is possible to set stratum-specific nearest neighbor requirements by storing them in a named list (the names must match the strata):</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">near_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>low <span class="op">=</span> <span class="fl">1</span>, high <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
-<span><span class="va">strat_nn_replace</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/grts.html">grts</a></span><span class="op">(</span></span>
-<span>  <span class="va">NE_Lakes</span>,</span>
-<span>  <span class="va">strata_n</span>,</span>
-<span>  stratum_var <span class="op">=</span> <span class="st">"ELEV_CAT"</span>,</span>
-<span>  n_near <span class="op">=</span> <span class="va">near_list</span></span>
-<span><span class="op">)</span></span>
-<span><span class="va">strat_nn_replace</span></span>
-<span><span class="co">#&gt; Summary of Site Counts: </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; siteuse by total: </span></span>
-<span><span class="co">#&gt;       Base Near</span></span>
-<span><span class="co">#&gt; total   40   55</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; siteuse by stratum: </span></span>
-<span><span class="co">#&gt;      Base Near</span></span>
-<span><span class="co">#&gt; high   15   30</span></span>
-<span><span class="co">#&gt; low    25   25</span></span></code></pre></div>
+<code class="sourceCode R"><span class="va">near_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>low <span class="op">=</span> <span class="fl">1</span>, high <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>
+<span class="va">strat_nn_replace</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/grts.html">grts</a></span><span class="op">(</span>
+  <span class="va">NE_Lakes</span>,
+  <span class="va">strata_n</span>,
+  stratum_var <span class="op">=</span> <span class="st">"ELEV_CAT"</span>,
+  n_near <span class="op">=</span> <span class="va">near_list</span>
+<span class="op">)</span>
+<span class="va">strat_nn_replace</span>
+<span class="co">#&gt; Summary of Site Counts: </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; siteuse by total: </span>
+<span class="co">#&gt;       Base Near</span>
+<span class="co">#&gt; total   40   55</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; siteuse by stratum: </span>
+<span class="co">#&gt;      Base Near</span>
+<span class="co">#&gt; high   15   30</span>
+<span class="co">#&gt; low    25   25</span></code></pre></div>
 </div>
 </div>
 <div class="section level3">
@@ -401,32 +401,32 @@
 </h3>
 <p>If you want to select samples that are not spatially balanced, use spsurvey’s <code><a href="../reference/irs.html">irs()</a></code> function (IRS is for Independent Random Sampling). The function arguments for the <code><a href="../reference/irs.html">irs()</a></code> function are the same as the function arguments for the <code><a href="../reference/grts.html">grts()</a></code> function. This means that the flexible sampling design options available for the GRTS algorithm are also available for the IRS algorithm. To select an unstratified IRS sample where each site in the sampling frame has an equal inclusion probability, run</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">eqprob_irs</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/irs.html">irs</a></span><span class="op">(</span><span class="va">NE_Lakes</span>, n_base <span class="op">=</span> <span class="fl">50</span><span class="op">)</span></span>
-<span><span class="va">eqprob_irs</span></span>
-<span><span class="co">#&gt; Summary of Site Counts: </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;    total    siteuse  </span></span>
-<span><span class="co">#&gt;  total:50   Base:50</span></span></code></pre></div>
+<code class="sourceCode R"><span class="va">eqprob_irs</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/irs.html">irs</a></span><span class="op">(</span><span class="va">NE_Lakes</span>, n_base <span class="op">=</span> <span class="fl">50</span><span class="op">)</span>
+<span class="va">eqprob_irs</span>
+<span class="co">#&gt; Summary of Site Counts: </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;    total    siteuse  </span>
+<span class="co">#&gt;  total:50   Base:50</span></code></pre></div>
 <p>To visualize the design sites, run</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot.html">plot</a></span><span class="op">(</span><span class="va">eqprob_irs</span>, <span class="va">NE_Lakes</span>, key.width <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/graphics/layout.html" class="external-link">lcm</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span class="fu"><a href="../reference/plot.html">plot</a></span><span class="op">(</span><span class="va">eqprob_irs</span>, <span class="va">NE_Lakes</span>, key.width <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/graphics/layout.html" class="external-link">lcm</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <p><img src="sampling_files/figure-html/unnamed-chunk-28-1.png" width="700"></p>
 <p>Notice how these IRS design sites appear less spread out than the design sites from the unstratified GRTS sample with equal inclusion probabilities.</p>
 <p>To select an IRS sample stratified by elevation category with equal inclusion probabilities in each stratum, run</p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">strata_n</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>low <span class="op">=</span> <span class="fl">25</span>, high <span class="op">=</span> <span class="fl">15</span><span class="op">)</span></span>
-<span><span class="va">strat_eqprob_irs</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/irs.html">irs</a></span><span class="op">(</span><span class="va">NE_Lakes</span>, n_base <span class="op">=</span> <span class="va">strata_n</span>, stratum_var <span class="op">=</span> <span class="st">"ELEV_CAT"</span><span class="op">)</span></span>
-<span><span class="va">strat_eqprob_irs</span></span>
-<span><span class="co">#&gt; Summary of Site Counts: </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; siteuse by total: </span></span>
-<span><span class="co">#&gt;       Base</span></span>
-<span><span class="co">#&gt; total   40</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; siteuse by stratum: </span></span>
-<span><span class="co">#&gt;      Base</span></span>
-<span><span class="co">#&gt; high   15</span></span>
-<span><span class="co">#&gt; low    25</span></span></code></pre></div>
+<code class="sourceCode R"><span class="va">strata_n</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>low <span class="op">=</span> <span class="fl">25</span>, high <span class="op">=</span> <span class="fl">15</span><span class="op">)</span>
+<span class="va">strat_eqprob_irs</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/irs.html">irs</a></span><span class="op">(</span><span class="va">NE_Lakes</span>, n_base <span class="op">=</span> <span class="va">strata_n</span>, stratum_var <span class="op">=</span> <span class="st">"ELEV_CAT"</span><span class="op">)</span>
+<span class="va">strat_eqprob_irs</span>
+<span class="co">#&gt; Summary of Site Counts: </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; siteuse by total: </span>
+<span class="co">#&gt;       Base</span>
+<span class="co">#&gt; total   40</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; siteuse by stratum: </span>
+<span class="co">#&gt;      Base</span>
+<span class="co">#&gt; high   15</span>
+<span class="co">#&gt; low    25</span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
@@ -435,23 +435,23 @@
 <p>So far we have talked generally about spatial balance but not about how to measure it. Stevens and Olsen (2004) proposed measuring spatial balance using Voronoi polygons. A design site’s Voronoi polygon contains all sites in the sampling frame closer to this design site than any other design site. To measure spatial balance, these Voronoi polygons are combined with the inclusion probabilities of all sites in the sampling frame and a loss metric.</p>
 <p>Several spatial balance metrics are available in spsurvey. The default is Pielou’s evenness index. Pielou’s evenness index ranges from 0 (perfect spatial balance) to 1 (a complete lack of spatial balance). Larger values of the Pielou’s evenness index indicate worse spatial balance. To measure the spatial balance of the unstratified GRTS and IRS samples with equal inclusion probabilities, run</p>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/sp_balance.html">sp_balance</a></span><span class="op">(</span><span class="va">eqprob</span><span class="op">$</span><span class="va">sites_base</span>, <span class="va">NE_Lakes</span><span class="op">)</span> <span class="co"># grts</span></span>
-<span><span class="co">#&gt;   stratum metric      value</span></span>
-<span><span class="co">#&gt; 1    None pielou 0.02585831</span></span>
-<span><span class="fu"><a href="../reference/sp_balance.html">sp_balance</a></span><span class="op">(</span><span class="va">eqprob_irs</span><span class="op">$</span><span class="va">sites_base</span>, <span class="va">NE_Lakes</span><span class="op">)</span> <span class="co"># irs</span></span>
-<span><span class="co">#&gt;   stratum metric      value</span></span>
-<span><span class="co">#&gt; 1    None pielou 0.03823327</span></span></code></pre></div>
+<code class="sourceCode R"><span class="fu"><a href="../reference/sp_balance.html">sp_balance</a></span><span class="op">(</span><span class="va">eqprob</span><span class="op">$</span><span class="va">sites_base</span>, <span class="va">NE_Lakes</span><span class="op">)</span> <span class="co"># grts</span>
+<span class="co">#&gt;   stratum metric      value</span>
+<span class="co">#&gt; 1    None pielou 0.02585831</span>
+<span class="fu"><a href="../reference/sp_balance.html">sp_balance</a></span><span class="op">(</span><span class="va">eqprob_irs</span><span class="op">$</span><span class="va">sites_base</span>, <span class="va">NE_Lakes</span><span class="op">)</span> <span class="co"># irs</span>
+<span class="co">#&gt;   stratum metric      value</span>
+<span class="co">#&gt; 1    None pielou 0.03823327</span></code></pre></div>
 <p>The GRTS design sites are more spatially balanced than the IRS design sites.</p>
 <p>In a stratified sample, spatial balance is calculated separately for each stratum:</p>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/sp_balance.html">sp_balance</a></span><span class="op">(</span><span class="va">strat_eqprob</span><span class="op">$</span><span class="va">sites_base</span>, <span class="va">NE_Lakes</span>, stratum_var <span class="op">=</span> <span class="st">"ELEV_CAT"</span><span class="op">)</span> <span class="co"># grts</span></span>
-<span><span class="co">#&gt;   stratum metric      value</span></span>
-<span><span class="co">#&gt; 1     low pielou 0.03680620</span></span>
-<span><span class="co">#&gt; 2    high pielou 0.04543609</span></span>
-<span><span class="fu"><a href="../reference/sp_balance.html">sp_balance</a></span><span class="op">(</span><span class="va">strat_eqprob_irs</span><span class="op">$</span><span class="va">sites_base</span>, <span class="va">NE_Lakes</span>, stratum_var <span class="op">=</span> <span class="st">"ELEV_CAT"</span><span class="op">)</span> <span class="co"># irs</span></span>
-<span><span class="co">#&gt;   stratum metric     value</span></span>
-<span><span class="co">#&gt; 1     low pielou 0.0415444</span></span>
-<span><span class="co">#&gt; 2    high pielou 0.1171086</span></span></code></pre></div>
+<code class="sourceCode R"><span class="fu"><a href="../reference/sp_balance.html">sp_balance</a></span><span class="op">(</span><span class="va">strat_eqprob</span><span class="op">$</span><span class="va">sites_base</span>, <span class="va">NE_Lakes</span>, stratum_var <span class="op">=</span> <span class="st">"ELEV_CAT"</span><span class="op">)</span> <span class="co"># grts</span>
+<span class="co">#&gt;   stratum metric      value</span>
+<span class="co">#&gt; 1     low pielou 0.03680620</span>
+<span class="co">#&gt; 2    high pielou 0.04543609</span>
+<span class="fu"><a href="../reference/sp_balance.html">sp_balance</a></span><span class="op">(</span><span class="va">strat_eqprob_irs</span><span class="op">$</span><span class="va">sites_base</span>, <span class="va">NE_Lakes</span>, stratum_var <span class="op">=</span> <span class="st">"ELEV_CAT"</span><span class="op">)</span> <span class="co"># irs</span>
+<span class="co">#&gt;   stratum metric     value</span>
+<span class="co">#&gt; 1     low pielou 0.0415444</span>
+<span class="co">#&gt; 2    high pielou 0.1171086</span></code></pre></div>
 <p>The GRTS design sites are more spatially balanced than the IRS design sites in both strata.</p>
 </div>
 <div class="section level2">
@@ -459,20 +459,20 @@
 </h2>
 <p>Though this vignette used a finite population (<code>NE_Lakes</code>) to illustrate the sampling options available in spsurvey, the same commands are used to sample from infinite populations. The <code>Illinois_River</code> <code>sf</code> object in spsurvey is a linear resource and the <code>Lake_Ontario</code> <code>sf</code> object in spsurvey is an areal resource – both are examples of infinite populations. To select a GRTS sample with equal inclusion probabilities from <code>Illinois_River</code>, run</p>
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">eqprob</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/grts.html">grts</a></span><span class="op">(</span><span class="va">Illinois_River</span>, n_base <span class="op">=</span> <span class="fl">50</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span class="va">eqprob</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/grts.html">grts</a></span><span class="op">(</span><span class="va">Illinois_River</span>, n_base <span class="op">=</span> <span class="fl">50</span><span class="op">)</span></code></pre></div>
 <p>To visualize the design sites overlain onto the sampling frame, run</p>
 <div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot.html">plot</a></span><span class="op">(</span><span class="va">eqprob</span>, <span class="va">Illinois_River</span>, key.width <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/graphics/layout.html" class="external-link">lcm</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span class="fu"><a href="../reference/plot.html">plot</a></span><span class="op">(</span><span class="va">eqprob</span>, <span class="va">Illinois_River</span>, key.width <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/graphics/layout.html" class="external-link">lcm</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <p><img src="sampling_files/figure-html/unnamed-chunk-34-1.png" width="700"></p>
 <p>To accommodate the Illinois River legacy sites, run:</p>
 <div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">legacy</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/grts.html">grts</a></span><span class="op">(</span><span class="va">Illinois_River</span>, n_base <span class="op">=</span> <span class="fl">50</span>, legacy_sites <span class="op">=</span> <span class="va">Illinois_River_Legacy</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span class="va">legacy</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/grts.html">grts</a></span><span class="op">(</span><span class="va">Illinois_River</span>, n_base <span class="op">=</span> <span class="fl">50</span>, legacy_sites <span class="op">=</span> <span class="va">Illinois_River_Legacy</span><span class="op">)</span></code></pre></div>
 <p>To select a GRTS sample with equal inclusion probabilities from <code>Lake_Ontario</code>, run</p>
 <div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">eqprob</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/grts.html">grts</a></span><span class="op">(</span><span class="va">Lake_Ontario</span>, n_base <span class="op">=</span> <span class="fl">50</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span class="va">eqprob</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/grts.html">grts</a></span><span class="op">(</span><span class="va">Lake_Ontario</span>, n_base <span class="op">=</span> <span class="fl">50</span><span class="op">)</span></code></pre></div>
 <p>To visualize the design sites (with closed circles) overlain onto the sampling frame, run</p>
 <div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot.html">plot</a></span><span class="op">(</span><span class="va">eqprob</span>, <span class="va">Lake_Ontario</span>, pch <span class="op">=</span> <span class="fl">19</span>, key.width <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/graphics/layout.html" class="external-link">lcm</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span class="fu"><a href="../reference/plot.html">plot</a></span><span class="op">(</span><span class="va">eqprob</span>, <span class="va">Lake_Ontario</span>, pch <span class="op">=</span> <span class="fl">19</span>, key.width <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/graphics/layout.html" class="external-link">lcm</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <p><img src="sampling_files/figure-html/unnamed-chunk-38-1.png" width="700"></p>
 </div>
 <div class="section level2">
@@ -480,10 +480,10 @@
 </h2>
 <p>To bind <code>sites_legacy</code>, <code>sites_base</code>, <code>sites_over</code>, <code>sites_near</code> (four separate <code>sf</code> objects) into a single <code>sf</code> object, use <code><a href="../reference/sp_rbind.html">sp_rbind()</a></code>. For example, to combine the base and reverse hierarchically ordered replacement sites from <code>rho_replace</code> into a single <code>sf</code> object, run</p>
 <div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">combined</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sp_rbind.html">sp_rbind</a></span><span class="op">(</span><span class="va">rho_replace</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span class="va">combined</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sp_rbind.html">sp_rbind</a></span><span class="op">(</span><span class="va">rho_replace</span><span class="op">)</span></code></pre></div>
 <p>Then it is straightforward to write out a single <code>sf</code> object using a function like <code><a href="https://r-spatial.github.io/sf/reference/st_write.html" class="external-link">sf::write_sf()</a></code>. For example, to save the combined <code>sf</code> object as a shapefile named <code>"file_name.shp"</code> at the location on your machine called <code>"file_path"</code>, run</p>
 <div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_write.html" class="external-link">write_sf</a></span><span class="op">(</span><span class="va">combined</span>, <span class="st">"file_path/file_name.shp"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_write.html" class="external-link">write_sf</a></span><span class="op">(</span><span class="va">combined</span>, <span class="st">"file_path/file_name.shp"</span><span class="op">)</span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>

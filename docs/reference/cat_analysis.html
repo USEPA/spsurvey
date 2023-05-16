@@ -22,7 +22,7 @@ dropped from the object.'><!-- mathjax --><script src="https://cdnjs.cloudflare.
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">spsurvey</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">5.4.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">5.5.0</span>
       </span>
     </div>
 
@@ -82,29 +82,29 @@ dropped from the object.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">cat_analysis</span><span class="op">(</span></span>
-<span>  <span class="va">dframe</span>,</span>
-<span>  <span class="va">vars</span>,</span>
-<span>  subpops <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  siteID <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  weight <span class="op">=</span> <span class="st">"weight"</span>,</span>
-<span>  xcoord <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  ycoord <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  stratumID <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  clusterID <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  weight1 <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  xcoord1 <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  ycoord1 <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  sizeweight <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  sweight <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  sweight1 <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  fpc <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  popsize <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  vartype <span class="op">=</span> <span class="st">"Local"</span>,</span>
-<span>  jointprob <span class="op">=</span> <span class="st">"overton"</span>,</span>
-<span>  conf <span class="op">=</span> <span class="fl">95</span>,</span>
-<span>  All_Sites <span class="op">=</span> <span class="cn">FALSE</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">cat_analysis</span><span class="op">(</span>
+  <span class="va">dframe</span>,
+  <span class="va">vars</span>,
+  subpops <span class="op">=</span> <span class="cn">NULL</span>,
+  siteID <span class="op">=</span> <span class="cn">NULL</span>,
+  weight <span class="op">=</span> <span class="st">"weight"</span>,
+  xcoord <span class="op">=</span> <span class="cn">NULL</span>,
+  ycoord <span class="op">=</span> <span class="cn">NULL</span>,
+  stratumID <span class="op">=</span> <span class="cn">NULL</span>,
+  clusterID <span class="op">=</span> <span class="cn">NULL</span>,
+  weight1 <span class="op">=</span> <span class="cn">NULL</span>,
+  xcoord1 <span class="op">=</span> <span class="cn">NULL</span>,
+  ycoord1 <span class="op">=</span> <span class="cn">NULL</span>,
+  sizeweight <span class="op">=</span> <span class="cn">FALSE</span>,
+  sweight <span class="op">=</span> <span class="cn">NULL</span>,
+  sweight1 <span class="op">=</span> <span class="cn">NULL</span>,
+  fpc <span class="op">=</span> <span class="cn">NULL</span>,
+  popsize <span class="op">=</span> <span class="cn">NULL</span>,
+  vartype <span class="op">=</span> <span class="st">"Local"</span>,
+  jointprob <span class="op">=</span> <span class="st">"overton"</span>,
+  conf <span class="op">=</span> <span class="fl">95</span>,
+  All_Sites <span class="op">=</span> <span class="cn">FALSE</span>
+<span class="op">)</span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -423,74 +423,74 @@ The default is <code>FALSE</code>.</p></dd>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">dframe</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>  siteID <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"Site"</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">100</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  wgt <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fl">10</span>, <span class="fl">100</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  xcoord <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">100</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  ycoord <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">100</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  stratum <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Stratum1"</span>, <span class="st">"Stratum2"</span><span class="op">)</span>, <span class="fl">50</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  CatVar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"north"</span>, <span class="st">"south"</span>, <span class="st">"east"</span>, <span class="st">"west"</span><span class="op">)</span>, <span class="fl">25</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  All_Sites <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"All Sites"</span>, <span class="fl">100</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  Resource_Class <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Good"</span>, <span class="st">"Poor"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">55</span>, <span class="fl">45</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">myvars</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"CatVar"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">mysubpops</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"All_Sites"</span>, <span class="st">"Resource_Class"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">mypopsize</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>  Resource_Class <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Good"</span>, <span class="st">"Poor"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  Total <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4000</span>, <span class="fl">1500</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu">cat_analysis</span><span class="op">(</span><span class="va">dframe</span>,</span></span>
-<span class="r-in"><span>  vars <span class="op">=</span> <span class="va">myvars</span>, subpops <span class="op">=</span> <span class="va">mysubpops</span>, siteID <span class="op">=</span> <span class="st">"siteID"</span>,</span></span>
-<span class="r-in"><span>  weight <span class="op">=</span> <span class="st">"wgt"</span>, xcoord <span class="op">=</span> <span class="st">"xcoord"</span>, ycoord <span class="op">=</span> <span class="st">"ycoord"</span>,</span></span>
-<span class="r-in"><span>  stratumID <span class="op">=</span> <span class="st">"stratum"</span>, popsize <span class="op">=</span> <span class="va">mypopsize</span></span></span>
-<span class="r-in"><span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="va">dframe</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<span class="r-in">  siteID <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"Site"</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">100</span><span class="op">)</span>,</span>
+<span class="r-in">  wgt <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fl">10</span>, <span class="fl">100</span><span class="op">)</span>,</span>
+<span class="r-in">  xcoord <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">100</span><span class="op">)</span>,</span>
+<span class="r-in">  ycoord <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">100</span><span class="op">)</span>,</span>
+<span class="r-in">  stratum <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Stratum1"</span>, <span class="st">"Stratum2"</span><span class="op">)</span>, <span class="fl">50</span><span class="op">)</span>,</span>
+<span class="r-in">  CatVar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"north"</span>, <span class="st">"south"</span>, <span class="st">"east"</span>, <span class="st">"west"</span><span class="op">)</span>, <span class="fl">25</span><span class="op">)</span>,</span>
+<span class="r-in">  All_Sites <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"All Sites"</span>, <span class="fl">100</span><span class="op">)</span>,</span>
+<span class="r-in">  Resource_Class <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Good"</span>, <span class="st">"Poor"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">55</span>, <span class="fl">45</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span class="op">)</span></span>
+<span class="r-in"><span class="va">myvars</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"CatVar"</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">mysubpops</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"All_Sites"</span>, <span class="st">"Resource_Class"</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">mypopsize</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<span class="r-in">  Resource_Class <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Good"</span>, <span class="st">"Poor"</span><span class="op">)</span>,</span>
+<span class="r-in">  Total <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4000</span>, <span class="fl">1500</span><span class="op">)</span></span>
+<span class="r-in"><span class="op">)</span></span>
+<span class="r-in"><span class="fu">cat_analysis</span><span class="op">(</span><span class="va">dframe</span>,</span>
+<span class="r-in">  vars <span class="op">=</span> <span class="va">myvars</span>, subpops <span class="op">=</span> <span class="va">mysubpops</span>, siteID <span class="op">=</span> <span class="st">"siteID"</span>,</span>
+<span class="r-in">  weight <span class="op">=</span> <span class="st">"wgt"</span>, xcoord <span class="op">=</span> <span class="st">"xcoord"</span>, ycoord <span class="op">=</span> <span class="st">"ycoord"</span>,</span>
+<span class="r-in">  stratumID <span class="op">=</span> <span class="st">"stratum"</span>, popsize <span class="op">=</span> <span class="va">mypopsize</span></span>
+<span class="r-in"><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>              Type Subpopulation Indicator Category nResp Estimate.P StdError.P</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1       All_Sites     All Sites    CatVar     east    25   23.75497   3.403561</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2       All_Sites     All Sites    CatVar    north    25   26.87107   3.403561</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3       All_Sites     All Sites    CatVar    south    25   24.34974   3.582027</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4       All_Sites     All Sites    CatVar     west    25   25.02422   3.582027</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1       All_Sites     All Sites    CatVar     east    25   24.56407   3.655213</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2       All_Sites     All Sites    CatVar    north    25   26.94039   3.655213</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3       All_Sites     All Sites    CatVar    south    25   25.31730   3.360741</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4       All_Sites     All Sites    CatVar     west    25   23.17824   3.360741</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 5       All_Sites     All Sites    CatVar    Total   100  100.00000   0.000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6  Resource_Class          Good    CatVar     east    14   22.58904   4.130423</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7  Resource_Class          Good    CatVar    north    14   28.11049   4.130423</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8  Resource_Class          Good    CatVar    south    14   24.51464   4.657531</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9  Resource_Class          Good    CatVar     west    13   24.78583   4.657531</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  Resource_Class          Good    CatVar     east    14   22.54320   4.807093</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7  Resource_Class          Good    CatVar    north    14   28.93427   4.807093</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8  Resource_Class          Good    CatVar    south    14   25.83591   4.439926</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9  Resource_Class          Good    CatVar     west    13   22.68661   4.439926</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 10 Resource_Class          Good    CatVar    Total    55  100.00000   0.000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11 Resource_Class          Poor    CatVar     east    11   26.86410   5.316598</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12 Resource_Class          Poor    CatVar    north    11   23.56594   5.316598</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13 Resource_Class          Poor    CatVar    south    11   23.91001   5.362600</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14 Resource_Class          Poor    CatVar     west    12   25.65995   5.362600</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11 Resource_Class          Poor    CatVar     east    11   29.95303   5.373134</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12 Resource_Class          Poor    CatVar    north    11   21.62338   5.373134</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13 Resource_Class          Poor    CatVar    south    11   23.93435   4.086409</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14 Resource_Class          Poor    CatVar     west    12   24.48924   4.086409</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 15 Resource_Class          Poor    CatVar    Total    45  100.00000   0.000000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    MarginofError.P LCB95Pct.P UCB95Pct.P Estimate.U StdError.U MarginofError.U</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1         6.670856   17.08411   30.42582  1306.5231  195.87611        383.9101</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2         6.670856   20.20021   33.54192  1477.9087  223.42108        437.8973</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3         7.020643   17.32910   31.37039  1339.2359  223.42450        437.9040</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4         7.020643   18.00358   32.04487  1376.3323  221.72897        434.5808</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1         7.164087   17.39998   31.72815  1351.0237  202.58725        397.0637</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2         7.164087   19.77630   34.10448  1481.7215  252.67329        495.2306</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3         6.586931   18.73037   31.90424  1392.4518  208.32033        408.3003</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4         6.586931   16.59131   29.76517  1274.8030  209.95998        411.5140</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 5         0.000000  100.00000  100.00000  5500.0000    0.00000          0.0000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6         8.095481   14.49356   30.68452   903.5616  163.77389        320.9909</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7         8.095481   20.01501   36.20597  1124.4196  195.87130        383.9007</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8         9.128593   15.38605   33.64324   980.5858  192.77179        377.8258</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9         9.128593   15.65723   33.91442   991.4331  209.33332        410.2858</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6         9.421730   13.12148   31.96493   901.7282  179.01008        350.8533</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7         9.421730   19.51254   38.35600  1157.3708  245.47227        481.1168</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8         8.702095   17.13382   34.53801  1033.4366  194.99544        382.1840</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9         8.702095   13.98452   31.38871   907.4645  184.72902        362.0622</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 10        0.000000  100.00000  100.00000  4000.0000    0.00000          0.0000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11       10.420340   16.44376   37.28444   402.9615   88.26998        173.0060</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12       10.420340   13.14560   33.98628   353.4891   78.55862        153.9721</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13       10.510502   13.39950   34.42051   358.6501   86.64543        169.8219</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14       10.510502   15.14945   36.17045   384.8992   84.80251        166.2099</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11       10.531150   19.42188   40.48418   449.2955   97.12757        190.3665</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12       10.531150   11.09223   32.15453   324.3508   78.92257        154.6854</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13        8.009215   15.92513   31.94356   359.0152   69.13670        135.5054</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14        8.009215   16.48002   32.49845   367.3386   65.75138        128.8703</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 15        0.000000  100.00000  100.00000  1500.0000    0.00000          0.0000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    LCB95Pct.U UCB95Pct.U</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1    922.6130  1690.4332</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2   1040.0114  1915.8060</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3    901.3319  1777.1398</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4    941.7515  1810.9131</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1    953.9600  1748.0874</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2    986.4910  1976.9521</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3    984.1514  1800.7521</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4    863.2891  1686.3170</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 5   5500.0000  5500.0000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6    582.5707  1224.5525</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7    740.5189  1508.3203</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8    602.7600  1358.4115</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9    581.1473  1401.7188</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6    550.8749  1252.5815</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7    676.2539  1638.4876</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8    651.2525  1415.6206</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9    545.4022  1269.5267</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 10  4000.0000  4000.0000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11   229.9555   575.9675</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12   199.5171   507.4612</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13   188.8282   528.4720</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14   218.6894   551.1091</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11   258.9289   639.6620</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12   169.6654   479.0362</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13   223.5098   494.5207</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14   238.4682   496.2089</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 15  1500.0000  1500.0000</span>
 </code></pre></div>
     </div>

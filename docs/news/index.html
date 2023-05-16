@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">spsurvey</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">5.4.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">5.5.0</span>
       </span>
     </div>
 
@@ -67,7 +67,21 @@
     </div>
 
     <div class="section level2">
-<h2 class="page-header" data-toc-text="5.4.1" id="spsurvey-541">spsurvey 5.4.1<a class="anchor" aria-label="anchor" href="#spsurvey-541"></a></h2>
+<h2 class="page-header" data-toc-text="5.5.0" id="spsurvey-550">spsurvey 5.5.0<a class="anchor" aria-label="anchor" href="#spsurvey-550"></a></h2>
+<div class="section level3">
+<h3 id="minor-updates-5-5-0">Minor Updates<a class="anchor" aria-label="anchor" href="#minor-updates-5-5-0"></a></h3>
+<ul><li>
+<code>n_over</code> is now recycled if the design is stratified and <code>n_over</code> is a length-one numeric vector.</li>
+<li>Added an <code><a href="../reference/adjwgtNR.html">adjwgtNR()</a></code> function to perform non-response weight adjustments.</li>
+<li>Warning and error messages from <code><a href="../reference/grts.html">grts()</a></code>, <code><a href="../reference/irs.html">irs()</a></code>, and <code>*_analysis()</code> functions now print using <code><a href="https://rdrr.io/r/base/message.html" class="external-link">message()</a></code> instead of <code><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat()</a></code>. This change makes the resulting output more consistent with standard practice and easier to suppress when desired (<a href="https://github.com/USEPA/spsurvey/issues/36" class="external-link">#36</a>).</li>
+<li>Changed default behavior in <code><a href="../reference/attrisk_analysis.html">attrisk_analysis()</a></code>, <code><a href="../reference/diffrisk_analysis.html">diffrisk_analysis()</a></code>, and <code><a href="../reference/relrisk_analysis.html">relrisk_analysis()</a></code> regarding the handling of <code>response_levels</code> and <code>stressor_levels</code>. Previously, if <code>response_levels</code> and <code>stressor_levels</code> were specified, their elements required names. Now, if <code>response_levels</code> is specified and its names are <code>NULL</code>, then its names are set to <code>vars_response</code>, and if <code>stressor_levels</code> is specified and its names are <code>NULL</code>, then its names are set to <code>vars_stressor</code> (<a href="https://github.com/USEPA/spsurvey/issues/33" class="external-link">#33</a>).</li>
+</ul></div>
+<div class="section level3">
+<h3 id="bug-fixes-5-5-0">Bug Fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-5-5-0"></a></h3>
+<ul><li>Fixed a bug that caused an erorr in <code><a href="../reference/grts.html">grts()</a></code> and <code><a href="../reference/irs.html">irs()</a></code> occurred when at least one variable name in <code>sframe</code> was named <code>"siteID"</code>, <code>"siteuse"</code>, <code>"replsite"</code>, <code>"lon_WGS84"</code>, <code>"lat_WGS84"</code>, <code>"stratum"</code>, <code>"wgt"</code>, <code>"ip"</code>, <code>"caty"</code>, <code>"aux"</code>, <code>xcoord</code>, <code>ycoord</code>, or <code>idpts</code> and the name of the geometry column in <code>sframe</code> was not named <code>"geometry"</code> (<a href="https://github.com/USEPA/spsurvey/issues/32" class="external-link">#32</a>).</li></ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="5.4.1" id="spsurvey-541">spsurvey 5.4.1<small>2023-01-16</small><a class="anchor" aria-label="anchor" href="#spsurvey-541"></a></h2>
 <div class="section level3">
 <h3 id="minor-updates-5-4-1">Minor Updates<a class="anchor" aria-label="anchor" href="#minor-updates-5-4-1"></a></h3>
 <ul><li>Updated citation information to Dumelle et al. (2023) <a href="doi:10.18637/jss.v105.i03" class="uri">doi:10.18637/jss.v105.i03</a>.</li></ul></div>
@@ -104,13 +118,13 @@
 <div class="section level3">
 <h3 id="bug-fixes-5-4-0">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-5-4-0"></a></h3>
 <ul><li>Fixed a bug that prevented proper printing of the <code>Indicator</code> column when using <code><a href="../reference/change_analysis.html">change_analysis()</a></code> with <code>test = median</code>.</li>
-<li>Fixed a bug that made <code>change_analysis</code> sensititve to the ordering of the levels of variables in <code>var_cat</code> if those variables were factors.</li>
+<li>Fixed a bug that made <code>change_analysis</code> sensitive to the ordering of the levels of variables in <code>var_cat</code> if those variables were factors.</li>
 <li>Fixed a bug in <code><a href="../reference/sp_summary.html">sp_summary()</a></code> that incorrectly ordered the <code>siteuse</code> variable.</li>
 <li>Fixed a bug in <code><a href="../reference/sp_summary.html">sp_summary()</a></code> that failed to summarize data frames that did not have an <code>sf_column</code> attribute.</li>
 <li>Fixed a bug in <code>*_analysis()</code> functions when <code>popsize</code> is a list intended for use with <code><a href="https://rdrr.io/pkg/survey/man/calibrate.html" class="external-link">survey::calibrate()</a></code>.</li>
 <li>Fixed a bug in <code>*analysis()</code> functions that returned an error while performing percentile estimation when there was no variability in at least one variable in <code>vars</code> for at least one level of one variable in <code>subpops</code>.</li>
 <li>Fixed a bug in <code><a href="../reference/grts.html">grts()</a></code> that caused an error for some combinations of <code>n_base</code> and <code>n_over</code>.</li>
-<li>Fixed a bug in <code><a href="../reference/change_analysis.html">change_analysis()</a></code> that returned an error when at least one varible in <code>vars_cat</code> has only one unique value.</li>
+<li>Fixed a bug in <code><a href="../reference/change_analysis.html">change_analysis()</a></code> that returned an error when at least one variable in <code>vars_cat</code> has only one unique value.</li>
 </ul></div>
 </div>
     <div class="section level2">

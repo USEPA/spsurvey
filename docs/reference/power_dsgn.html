@@ -21,7 +21,7 @@ units and periods, and the residual (or index) variance."><!-- mathjax --><scrip
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">spsurvey</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">5.4.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">5.5.0</span>
       </span>
     </div>
 
@@ -80,23 +80,23 @@ units and periods, and the residual (or index) variance.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">power_dsgn</span><span class="op">(</span></span>
-<span>  <span class="va">ind_names</span>,</span>
-<span>  <span class="va">ind_values</span>,</span>
-<span>  <span class="va">unit_var</span>,</span>
-<span>  <span class="va">period_var</span>,</span>
-<span>  <span class="va">unitperiod_var</span>,</span>
-<span>  <span class="va">index_var</span>,</span>
-<span>  unit_rho <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  period_rho <span class="op">=</span> <span class="fl">0</span>,</span>
-<span>  <span class="va">paneldsgn</span>,</span>
-<span>  nrepeats <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  trend_type <span class="op">=</span> <span class="st">"mean"</span>,</span>
-<span>  ind_pct <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  ind_tail <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  trend <span class="op">=</span> <span class="fl">2</span>,</span>
-<span>  alpha <span class="op">=</span> <span class="fl">0.05</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">power_dsgn</span><span class="op">(</span>
+  <span class="va">ind_names</span>,
+  <span class="va">ind_values</span>,
+  <span class="va">unit_var</span>,
+  <span class="va">period_var</span>,
+  <span class="va">unitperiod_var</span>,
+  <span class="va">index_var</span>,
+  unit_rho <span class="op">=</span> <span class="fl">1</span>,
+  period_rho <span class="op">=</span> <span class="fl">0</span>,
+  <span class="va">paneldsgn</span>,
+  nrepeats <span class="op">=</span> <span class="cn">NULL</span>,
+  trend_type <span class="op">=</span> <span class="st">"mean"</span>,
+  ind_pct <span class="op">=</span> <span class="cn">NULL</span>,
+  ind_tail <span class="op">=</span> <span class="cn">NULL</span>,
+  trend <span class="op">=</span> <span class="fl">2</span>,
+  alpha <span class="op">=</span> <span class="fl">0.05</span>
+<span class="op">)</span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -237,18 +237,18 @@ trend test, alpha, Type I error, level.  The default is <code>0.05</code>.</p></
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Power for rotating panel with sample size 60</span></span></span>
-<span class="r-in"><span><span class="fu">power_dsgn</span><span class="op">(</span><span class="st">"Variable_Name"</span>,</span></span>
-<span class="r-in"><span>  ind_values <span class="op">=</span> <span class="fl">43</span>, unit_var <span class="op">=</span> <span class="fl">280</span>, period_var <span class="op">=</span> <span class="fl">4</span>,</span></span>
-<span class="r-in"><span>  unitperiod_var <span class="op">=</span> <span class="fl">40</span>, index_var <span class="op">=</span> <span class="fl">90</span>, unit_rho <span class="op">=</span> <span class="fl">1</span>, period_rho <span class="op">=</span> <span class="fl">0</span>,</span></span>
-<span class="r-in"><span>  paneldsgn <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>NoR60 <span class="op">=</span> <span class="fu"><a href="revisit_dsgn.html">revisit_dsgn</a></span><span class="op">(</span><span class="fl">20</span>,</span></span>
-<span class="r-in"><span>    panels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>NoR60 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>      n <span class="op">=</span> <span class="fl">60</span>, pnl_dsgn <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="cn">NA</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>      pnl_n <span class="op">=</span> <span class="cn">NA</span>, start_option <span class="op">=</span> <span class="st">"None"</span></span></span>
-<span class="r-in"><span>    <span class="op">)</span><span class="op">)</span>, begin <span class="op">=</span> <span class="fl">1</span></span></span>
-<span class="r-in"><span>  <span class="op">)</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  nrepeats <span class="op">=</span> <span class="cn">NULL</span>, trend_type <span class="op">=</span> <span class="st">"mean"</span>, trend <span class="op">=</span> <span class="fl">1.0</span>, alpha <span class="op">=</span> <span class="fl">0.05</span></span></span>
-<span class="r-in"><span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co"># Power for rotating panel with sample size 60</span></span>
+<span class="r-in"><span class="fu">power_dsgn</span><span class="op">(</span><span class="st">"Variable_Name"</span>,</span>
+<span class="r-in">  ind_values <span class="op">=</span> <span class="fl">43</span>, unit_var <span class="op">=</span> <span class="fl">280</span>, period_var <span class="op">=</span> <span class="fl">4</span>,</span>
+<span class="r-in">  unitperiod_var <span class="op">=</span> <span class="fl">40</span>, index_var <span class="op">=</span> <span class="fl">90</span>, unit_rho <span class="op">=</span> <span class="fl">1</span>, period_rho <span class="op">=</span> <span class="fl">0</span>,</span>
+<span class="r-in">  paneldsgn <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>NoR60 <span class="op">=</span> <span class="fu"><a href="revisit_dsgn.html">revisit_dsgn</a></span><span class="op">(</span><span class="fl">20</span>,</span>
+<span class="r-in">    panels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>NoR60 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span class="r-in">      n <span class="op">=</span> <span class="fl">60</span>, pnl_dsgn <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="cn">NA</span><span class="op">)</span>,</span>
+<span class="r-in">      pnl_n <span class="op">=</span> <span class="cn">NA</span>, start_option <span class="op">=</span> <span class="st">"None"</span></span>
+<span class="r-in">    <span class="op">)</span><span class="op">)</span>, begin <span class="op">=</span> <span class="fl">1</span></span>
+<span class="r-in">  <span class="op">)</span><span class="op">)</span>,</span>
+<span class="r-in">  nrepeats <span class="op">=</span> <span class="cn">NULL</span>, trend_type <span class="op">=</span> <span class="st">"mean"</span>, trend <span class="op">=</span> <span class="fl">1.0</span>, alpha <span class="op">=</span> <span class="fl">0.05</span></span>
+<span class="r-in"><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $design</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "NoR60"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
