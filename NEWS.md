@@ -1,3 +1,11 @@
+# spsurvey 5.6.0
+
+* Added a `contrast_analysis()` function to estimate linear and nonlinear functions of estimates.
+
+## Minor Updates
+
+## Bug Fixes
+
 # spsurvey 5.5.0
 
 ## Minor Updates
