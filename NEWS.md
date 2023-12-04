@@ -1,19 +1,11 @@
 # spsurvey 5.6.0
 
-<<<<<<< HEAD
-=======
-* Added a `contrast_analysis()` function to estimate linear and nonlinear functions of estimates.
-
->>>>>>> 7ff3575052580a654d5e5e32c49c99eea926599a
 ## Minor Updates
 
 ## Bug Fixes
 
-<<<<<<< HEAD
 * Fixed a bug in `revisit_dsgn` that prevented proper printing of panels when there were multiple panels.
 
-=======
->>>>>>> 7ff3575052580a654d5e5e32c49c99eea926599a
 # spsurvey 5.5.0
 
 ## Minor Updates
