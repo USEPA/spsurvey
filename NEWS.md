@@ -4,7 +4,8 @@
 
 ## Bug Fixes
 
-* Fixed a bug in `revisit_dsgn` that prevented proper printing of panels when there were multiple panels.
+* Fixed a bug in `revisit_dsgn()` that prevented proper printing of panels when there were multiple panels.
+* Fixed a bug that prevented `grts()` and `irs()` from working properly with empty `LINESTRING` or `POLYGON` geometries.
 
 # spsurvey 5.5.0
 
