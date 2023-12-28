@@ -134,7 +134,7 @@ Urquhart, N. S., W. S. Overton, et al. (1993) Comparing sampling designs
   pp. 151-173.
 }
 \seealso{
-\itemize{
+\describe{
     \item{\code{\link{ppd_plot}}}{ to plot power curves for
       panel designs}
   }
