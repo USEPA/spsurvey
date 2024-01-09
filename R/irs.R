@@ -38,6 +38,7 @@ irs <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = N
                 legacy_caty_var = NULL, legacy_aux_var = NULL, mindis = NULL,
                 maxtry = 10, n_over = NULL, n_near = NULL, wgt_units = NULL,
                 pt_density = NULL, DesignID = "Site", SiteBegin = 1, sep = "-", projcrs_check = TRUE) {
+
   if (inherits(sframe, c("tbl_df", "tbl"))) { # identify if tibble class elements are present
     class(sframe) <- setdiff(class(sframe), c("tbl_df", "tbl"))
     # remove tibble class for rownames warning
@@ -48,18 +49,17 @@ irs <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = N
     # remove tibble class for rownames warning
   }
 
+  geom_col_name <- attr(sframe, "sf_column")
+  st_geometry(sframe) <- "geometry"
   if (!is.null(legacy_sites)) {
-    sframe_geom_name <- attr(sframe, "sf_column")
-    legacy_geom_name <- attr(legacy_sites, "sf_column")
-    names(legacy_sites)[names(legacy_sites) == legacy_geom_name] <- sframe_geom_name
-    st_geometry(legacy_sites) <- sframe_geom_name
+    st_geometry(legacy_sites) <- "geometry"
   }
-  
+
   # save initial variable specifications for the design list later
   initial_stratum_var <- stratum_var
   initial_caty_var <- caty_var
   initial_aux_var <- aux_var
-  
+
   # Create warning indicator and data frame to collect all potential issues during
   # sample selection
   warn_ind <- FALSE
@@ -132,15 +132,6 @@ irs <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = N
     legacy_sites_names <- names(legacy_sites)
   }
 
-  # Find geometry column name
-  geom_col_name <- attr(sframe, "sf_column")
-  if (geom_col_name != "geometry") {
-    # Force to geometry for other sf consistency
-    names(sframe)[names(sframe) == geom_col_name] <- "geometry"
-    st_geometry(sframe) <- "geometry"
-  }
-
-
   ## Create variables in sample frame if needed.
   # Create unique sample frame ID values
   sframe$id <- 1:nrow(sframe)
@@ -192,7 +183,7 @@ irs <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = N
       legacy_sites$legacy <- legacy_sites[[legacy_var]]
     }
   }
-  
+
   # save initial variable specifications for the design list later
   initial_legacy_stratum_var <- legacy_stratum_var
   initial_legacy_caty_var <- legacy_caty_var
@@ -461,29 +452,26 @@ irs <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = N
   if (geom_col_name != "geometry") {
     # sframe prefix if necessary
     if (geom_col_name %in% dsgn_names_extra) {
-      new_geom_col_name <- paste("sframe", geom_col_name, sep = "_")
-      sframe_names[sframe_names == geom_col_name] <- new_geom_col_name
-      geom_col_name <- new_geom_col_name
+      geom_col_name <- paste("sframe", geom_col_name, sep = "_")
     }
 
     # restore original column names
     if (!is.null(sites_legacy)) {
-      names(sites_legacy)[names(sites_legacy) == "geometry"] <- geom_col_name
       st_geometry(sites_legacy) <- geom_col_name
+      legacy_sites_names[legacy_sites_names == "geometry"] <- geom_col_name
+      st_geometry(legacy_sites) <- geom_col_name
     }
 
     if (!is.null(sites_base)) {
-      names(sites_base)[names(sites_base) == "geometry"] <- geom_col_name
+      sframe_names[sframe_names == "geometry"] <- geom_col_name
       st_geometry(sites_base) <- geom_col_name
     }
 
     if (!is.null(sites_over)) {
-      names(sites_over)[names(sites_over) == "geometry"] <- geom_col_name
       st_geometry(sites_over) <- geom_col_name
     }
 
     if (!is.null(sites_near)) {
-      names(sites_near)[names(sites_near) == "geometry"] <- geom_col_name
       st_geometry(sites_near) <- geom_col_name
     }
   }
@@ -608,7 +596,7 @@ irs <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = N
     seltype = dsgn$seltype, caty_var = initial_caty_var, caty_n = dsgn$caty_n, aux_var = initial_aux_var, legacy = dsgn$legacy_option,
     mindis = dsgn$mindis, n_over = dsgn$n_over, n_near = dsgn$n_near
   )
-  
+
   if (any(dsgn$legacy)) {
     dsgn <- c(dsgn, list(legacy_stratum_var = initial_legacy_stratum_var, legacy_caty_var = initial_legacy_caty_var,
                          legacy_aux_var = initial_legacy_aux_var))

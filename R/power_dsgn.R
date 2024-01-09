@@ -103,7 +103,7 @@
 #' @keywords survey
 #'
 #' @seealso
-#'   \itemize{
+#'   \describe{
 #'     \item{\code{\link{ppd_plot}}}{ to plot power curves for
 #'       panel designs}
 #'   }

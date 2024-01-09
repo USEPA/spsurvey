@@ -22,7 +22,7 @@ panel-period combinations is fixed.'><!-- mathjax --><script src="https://cdnjs.
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">spsurvey</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">5.5.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">5.5.1</span>
       </span>
     </div>
 
@@ -82,16 +82,16 @@ panel-period combinations is fixed.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">revisit_rand</span><span class="op">(</span>
-  <span class="va">n_period</span>,
-  <span class="va">n_pnl</span>,
-  rand_control <span class="op">=</span> <span class="st">"period"</span>,
-  <span class="va">n_visit</span>,
-  <span class="va">nsamp</span>,
-  panel_name <span class="op">=</span> <span class="st">"Random"</span>,
-  begin <span class="op">=</span> <span class="fl">1</span>,
-  skip <span class="op">=</span> <span class="fl">1</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">revisit_rand</span><span class="op">(</span></span>
+<span>  <span class="va">n_period</span>,</span>
+<span>  <span class="va">n_pnl</span>,</span>
+<span>  rand_control <span class="op">=</span> <span class="st">"period"</span>,</span>
+<span>  <span class="va">n_visit</span>,</span>
+<span>  <span class="va">nsamp</span>,</span>
+<span>  panel_name <span class="op">=</span> <span class="st">"Random"</span>,</span>
+<span>  begin <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  skip <span class="op">=</span> <span class="fl">1</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -176,10 +176,10 @@ periods, e.g., sampling will occur only every 5 periods if <code>skip = 5</code>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="fu">revisit_rand</span><span class="op">(</span></span>
-<span class="r-in">  n_period <span class="op">=</span> <span class="fl">20</span>, n_pnl <span class="op">=</span> <span class="fl">10</span>, rand_control <span class="op">=</span> <span class="st">"none"</span>, n_visit <span class="op">=</span> <span class="fl">50</span>,</span>
-<span class="r-in">  nsamp <span class="op">=</span> <span class="fl">20</span></span>
-<span class="r-in"><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">revisit_rand</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  n_period <span class="op">=</span> <span class="fl">20</span>, n_pnl <span class="op">=</span> <span class="fl">10</span>, rand_control <span class="op">=</span> <span class="st">"none"</span>, n_visit <span class="op">=</span> <span class="fl">50</span>,</span></span>
+<span class="r-in"><span>  nsamp <span class="op">=</span> <span class="fl">20</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            1  2  3  4  5  6 7  8  9 10 11 12 13 14 15 16 17 18 19 20</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Random_01  0  0  0 20 20  0 0  0  0  0  0  0  0 20  0 20  0 20  0  0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Random_02  0  0  0  0  0 20 0  0  0  0  0 20  0  0  0  0 20  0  0  0</span>
@@ -193,10 +193,10 @@ periods, e.g., sampling will occur only every 5 periods if <code>skip = 5</code>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Random_10  0  0 20  0  0  0 0  0  0 20  0 20  0 20  0 20  0 20  0  0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "paneldesign"</span>
-<span class="r-in"><span class="fu">revisit_rand</span><span class="op">(</span></span>
-<span class="r-in">  n_period <span class="op">=</span> <span class="fl">20</span>, n_pnl <span class="op">=</span> <span class="fl">10</span>, rand_control <span class="op">=</span> <span class="st">"panel"</span>, n_visit <span class="op">=</span> <span class="fl">5</span>,</span>
-<span class="r-in">  nsamp <span class="op">=</span> <span class="fl">10</span></span>
-<span class="r-in"><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu">revisit_rand</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  n_period <span class="op">=</span> <span class="fl">20</span>, n_pnl <span class="op">=</span> <span class="fl">10</span>, rand_control <span class="op">=</span> <span class="st">"panel"</span>, n_visit <span class="op">=</span> <span class="fl">5</span>,</span></span>
+<span class="r-in"><span>  nsamp <span class="op">=</span> <span class="fl">10</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Random_01 10  0 10  0  0  0 10  0 10  0  0 10  0  0  0  0  0  0  0  0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Random_02  0  0  0  0  0  0  0 10  0 10  0  0 10 10 10  0  0  0  0  0</span>
@@ -210,10 +210,10 @@ periods, e.g., sampling will occur only every 5 periods if <code>skip = 5</code>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Random_10  0  0  0  0  0  0  0 10  0 10  0  0  0 10  0  0  0  0 10 10</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "paneldesign"</span>
-<span class="r-in"><span class="fu">revisit_rand</span><span class="op">(</span></span>
-<span class="r-in">  n_period <span class="op">=</span> <span class="fl">20</span>, n_pnl <span class="op">=</span> <span class="fl">10</span>, rand_control <span class="op">=</span> <span class="st">"period"</span>,</span>
-<span class="r-in">  n_visit <span class="op">=</span> <span class="fl">5</span>, nsamp <span class="op">=</span> <span class="fl">10</span></span>
-<span class="r-in"><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu">revisit_rand</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  n_period <span class="op">=</span> <span class="fl">20</span>, n_pnl <span class="op">=</span> <span class="fl">10</span>, rand_control <span class="op">=</span> <span class="st">"period"</span>,</span></span>
+<span class="r-in"><span>  n_visit <span class="op">=</span> <span class="fl">5</span>, nsamp <span class="op">=</span> <span class="fl">10</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Random_01  0 10  0 10  0  0 10 10 10  0  0 10 10 10 10 10 10 10  0 10</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Random_02  0 10  0  0  0 10  0  0  0 10 10  0 10 10 10  0  0  0 10  0</span>
@@ -241,7 +241,7 @@ periods, e.g., sampling will occur only every 5 periods if <code>skip = 5</code>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

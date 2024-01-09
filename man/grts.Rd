@@ -106,7 +106,7 @@ and that the legacy sites are elements of the current sampling frame.}
 geometry representing the legacy sites. spsurvey assumes that
 the legacy sites were selected from a previous sampling design that
 incorporated randomness into site selection and that the legacy sites
-are elements of the current sampling frame. If \code{sframe} has a 
+are elements of the current sampling frame. If \code{sframe} has a
 \code{POINT} or \code{MULTIPOINT} geometry, the observations in \code{legacy_sites}
 should not also be in \code{sframe} (i.e., duplicates are not removed). Thus, \code{sframe}
 and \code{legacy_sites} together compose the current sampling frame. If m or z values

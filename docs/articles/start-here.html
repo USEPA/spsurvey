@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">spsurvey</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">5.5.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">5.5.1</span>
       </span>
     </div>
 
@@ -88,7 +88,8 @@
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Start Here</h1>
-                        <h4 data-toc-skip class="author">Michael Dumelle, Tom Kincaid, Anthony Olsen, and Marc Weber</h4>
+                        <h4 data-toc-skip class="author">Michael
+Dumelle, Tom Kincaid, Anthony Olsen, and Marc Weber</h4>
             
       
       <small class="dont-index">Source: <a href="https://github.com/USEPA/spsurvey/blob/HEAD/vignettes/start-here.Rmd" class="external-link"><code>vignettes/start-here.Rmd</code></a></small>
@@ -103,49 +104,65 @@
 </h2>
 <p>If this is your first time using the spsurvey package, run</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"spsurvey"</span><span class="op">)</span></code></pre></div>
-<p>to install the package. You only need to run this code once per version of R.</p>
-<p>After the spsurvey package is installed, load it into R each new R session by running</p>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"spsurvey"</span><span class="op">)</span></span></code></pre></div>
+<p>to install the package. You only need to run this code once per
+version of R.</p>
+<p>After the spsurvey package is installed, load it into R each new R
+session by running</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://usepa.github.io/spsurvey/" class="external-link">spsurvey</a></span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://usepa.github.io/spsurvey/" class="external-link">spsurvey</a></span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="citation-information">Citation information<a class="anchor" aria-label="anchor" href="#citation-information"></a>
 </h2>
-<p>If you used spsurvey in your work, please cite it. You can view the most recent citation by running</p>
+<p>If you used spsurvey in your work, please cite it. You can view the
+most recent citation by running</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/citation.html" class="external-link">citation</a></span><span class="op">(</span><span class="st">"spsurvey"</span><span class="op">)</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; To cite spsurvey in publications use:</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;   Michael Dumelle, Tom Kincaid, Anthony R. Olsen, Marc Weber (2023).</span>
-<span class="co">#&gt;   spsurvey: Spatial Sampling Design and Analysis in R. Journal of</span>
-<span class="co">#&gt;   Statistical Software, 105(3), 1-29. doi:10.18637/jss.v105.i03</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; A BibTeX entry for LaTeX users is</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;   @Article{,</span>
-<span class="co">#&gt;     title = {{spsurvey}: Spatial Sampling Design and Analysis in {R}},</span>
-<span class="co">#&gt;     author = {Michael Dumelle and Tom Kincaid and Anthony R. Olsen and Marc Weber},</span>
-<span class="co">#&gt;     journal = {Journal of Statistical Software},</span>
-<span class="co">#&gt;     year = {2023},</span>
-<span class="co">#&gt;     volume = {105},</span>
-<span class="co">#&gt;     number = {3},</span>
-<span class="co">#&gt;     pages = {1--29},</span>
-<span class="co">#&gt;     doi = {10.18637/jss.v105.i03},</span>
-<span class="co">#&gt;   }</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/citation.html" class="external-link">citation</a></span><span class="op">(</span><span class="st">"spsurvey"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; To cite spsurvey in publications use:</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;   Michael Dumelle, Tom Kincaid, Anthony R. Olsen, Marc Weber (2023).</span></span>
+<span><span class="co">#&gt;   spsurvey: Spatial Sampling Design and Analysis in R. Journal of</span></span>
+<span><span class="co">#&gt;   Statistical Software, 105(3), 1-29. doi:10.18637/jss.v105.i03</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; A BibTeX entry for LaTeX users is</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;   @Article{,</span></span>
+<span><span class="co">#&gt;     title = {{spsurvey}: Spatial Sampling Design and Analysis in {R}},</span></span>
+<span><span class="co">#&gt;     author = {Michael Dumelle and Tom Kincaid and Anthony R. Olsen and Marc Weber},</span></span>
+<span><span class="co">#&gt;     journal = {Journal of Statistical Software},</span></span>
+<span><span class="co">#&gt;     year = {2023},</span></span>
+<span><span class="co">#&gt;     volume = {105},</span></span>
+<span><span class="co">#&gt;     number = {3},</span></span>
+<span><span class="co">#&gt;     pages = {1--29},</span></span>
+<span><span class="co">#&gt;     doi = {10.18637/jss.v105.i03},</span></span>
+<span><span class="co">#&gt;   }</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="spsurvey-terminology">spsurvey terminology<a class="anchor" aria-label="anchor" href="#spsurvey-terminology"></a>
 </h2>
-<p>spsurvey implements a design-based approach to statistical inference, with a focus on spatial data. There are a few terms helpful to define before we move forward with spsurvey, as these terms will be used throughout the vignettes and documentation:</p>
+<p>spsurvey implements a design-based approach to statistical inference,
+with a focus on spatial data. There are a few terms helpful to define
+before we move forward with spsurvey, as these terms will be used
+throughout the vignettes and documentation:</p>
 <ul>
-<li>Survey design: All aspects of a survey from establishment of a need for data to the production of final results.</li>
-<li>Sampling frame: The set of all sites (i.e. units) from which a sample is selected.</li>
-<li>Sampling design: The process by which sites are selected from the sampling frame.</li>
-<li>Design sites: The set of sites selected from the sampling frame according to the sampling design. Sometimes the term “sample” is used to refer to a collection of design sites (e.g. the term “GRTS sample” more formally means “the collection of design sites selected using the GRTS algorithm according to the sampling design”).</li>
-<li>Analysis data: Data collected at the design sites. This includes information from the survey design such as design weights, stratification variables, subpopulation variables, etc.</li>
-<li>Analysis results: The results from an appropriate statistical analysis of the analysis data.</li>
+<li>Survey design: All aspects of a survey from establishment of a need
+for data to the production of final results.</li>
+<li>Sampling frame: The set of all sites (i.e. units) from which a
+sample is selected.</li>
+<li>Sampling design: The process by which sites are selected from the
+sampling frame.</li>
+<li>Design sites: The set of sites selected from the sampling frame
+according to the sampling design. Sometimes the term “sample” is used to
+refer to a collection of design sites (e.g. the term “GRTS sample” more
+formally means “the collection of design sites selected using the GRTS
+algorithm according to the sampling design”).</li>
+<li>Analysis data: Data collected at the design sites. This includes
+information from the survey design such as design weights,
+stratification variables, subpopulation variables, etc.</li>
+<li>Analysis results: The results from an appropriate statistical
+analysis of the analysis data.</li>
 </ul>
 </div>
 <div class="section level2">
@@ -153,95 +170,174 @@
 </h2>
 <p>There are three additional vignettes in spsurvey:</p>
 <ol style="list-style-type: decimal">
-<li>Exploratory Data Analysis: Summarizing and Visualizing Sampling Frames, Design Sites, and Analysis Data
+<li>Exploratory Data Analysis: Summarizing and Visualizing Sampling
+Frames, Design Sites, and Analysis Data
 <ul>
-<li>Use the <code><a href="../reference/summary.html">summary()</a></code> and <code><a href="../reference/plot.html">plot()</a></code> functions to summarize and visualize sampling frames, design sites, and analysis data</li>
-<li>To view this vignette, run <code><a href="../articles/EDA.html">vignette("EDA", "spsurvey")</a></code>
+<li>Use the <code><a href="../reference/summary.html">summary()</a></code> and <code><a href="../reference/plot.html">plot()</a></code> functions to
+summarize and visualize sampling frames, design sites, and analysis
+data</li>
+<li>To view this vignette, run
+<code><a href="../articles/EDA.html">vignette("EDA", "spsurvey")</a></code>
 </li>
 </ul>
 </li>
 <li>Spatially Balanced Sampling
 <ul>
-<li>Use the <code><a href="../reference/grts.html">grts()</a></code> function to implement the Generalized Random Tessellation Stratified (GRTS) algorithm (Stevens and Olsen, 2004) to select spatially balanced samples</li>
-<li>To view this vignette, run <code><a href="../articles/sampling.html">vignette("sampling", "spsurvey")</a></code>.</li>
+<li>Use the <code><a href="../reference/grts.html">grts()</a></code> function to implement the Generalized
+Random Tessellation Stratified (GRTS) algorithm (Stevens and Olsen,
+2004) to select spatially balanced samples</li>
+<li>To view this vignette, run
+<code><a href="../articles/sampling.html">vignette("sampling", "spsurvey")</a></code>.</li>
 </ul>
 </li>
 <li>Analyzing Data
 <ul>
 <li>Use several analysis functions to analyze data</li>
-<li>To view this vignette, run <code><a href="../articles/analysis.html">vignette("analysis", "spsurvey")</a></code>.</li>
+<li>To view this vignette, run
+<code><a href="../articles/analysis.html">vignette("analysis", "spsurvey")</a></code>.</li>
 </ul>
 </li>
 </ol>
-<p>These vignettes cover some of the core functions (and arguments within those functions) in spsurvey. To learn more about features of spsurvey that are not covered in these vignettes, we encourage you to read spsurvey’s documentation available for download <a href="https://cran.r-project.org/package=spsurvey" class="external-link">here</a> or viewable interactively on our website <a href="https://usepa.github.io/spsurvey/" class="external-link">here</a>. Help files for a particular function are viewable by running <code>?function_name</code> after loading spsurvey. For example, to learn more about the <code><a href="../reference/grts.html">grts()</a></code> function, run <code><a href="../reference/grts.html">?grts</a></code>.</p>
+<p>These vignettes cover some of the core functions (and arguments
+within those functions) in spsurvey. To learn more about features of
+spsurvey that are not covered in these vignettes, we encourage you to
+read spsurvey’s documentation available for download <a href="https://cran.r-project.org/package=spsurvey" class="external-link">here</a> or viewable
+interactively on our website <a href="https://usepa.github.io/spsurvey/" class="external-link">here</a>. Help files for a
+particular function are viewable by running <code>?function_name</code>
+after loading spsurvey. For example, to learn more about the
+<code><a href="../reference/grts.html">grts()</a></code> function, run <code><a href="../reference/grts.html">?grts</a></code>.</p>
 </div>
 <div class="section level2">
 <h2 id="installing-a-previous-version-of-spsurvey">Installing a previous version of spsurvey<a class="anchor" aria-label="anchor" href="#installing-a-previous-version-of-spsurvey"></a>
 </h2>
-<p>The version 5.0.0 update to spsurvey implemented many significant changes to existing functions. As a result, some of your old code may not run properly while using version 5.0.0. Though we recommend adapting your code to work with the version 5.0.0, you may also install a previous version of spsurvey. For information regarding the installation of previous version of R packages, please see the RStudio support page <a href="https://support.posit.co/hc/en-us/articles/219949047-Installing-older-versions-of-packages" class="external-link">here</a>. Additionally, old versions of spsurvey are also available for download in the release tags section of our GitHub repository <a href="https://github.com/USEPA/spsurvey/releases" class="external-link">here</a>.</p>
+<p>The version 5.0.0 update to spsurvey implemented many significant
+changes to existing functions. As a result, some of your old code may
+not run properly while using version 5.0.0. Though we recommend adapting
+your code to work with the version 5.0.0, you may also install a
+previous version of spsurvey. For information regarding the installation
+of previous version of R packages, please see the RStudio support page
+<a href="https://support.posit.co/hc/en-us/articles/219949047-Installing-older-versions-of-packages" class="external-link">here</a>.
+Additionally, old versions of spsurvey are also available for download
+in the release tags section of our GitHub repository <a href="https://github.com/USEPA/spsurvey/releases" class="external-link">here</a>.</p>
 </div>
 <div class="section level2">
 <h2 id="sf-objects">
 <code>sf</code> objects<a class="anchor" aria-label="anchor" href="#sf-objects"></a>
 </h2>
-<p>The sampling functions in spsurvey (<code><a href="../reference/grts.html">grts()</a></code> and <code><a href="../reference/irs.html">irs()</a></code>) require that your sampling frame is an <code>sf</code> object. An <code>sf</code> object (shorthand for a “simple features” object) is an R object with a unique structure used to conveniently store spatial data. <code>sf</code> objects are constructed using the sf package (Pebesma, 2018). The sf package is loaded and installed alongside the spsurvey package, so you do not need to run <code>install.packages("sf")</code> or <code><a href="https://r-spatial.github.io/sf/" class="external-link">library(sf)</a></code> to access the sf package if spsurvey is already installed and loaded. For more on the sf package, see <a href="https://cran.r-project.org/package=sf" class="external-link">here</a>.</p>
-<p>Next we discuss a few ways to construct <code>sf</code> objects in R. The first is to read a shapefile directly into R using <code><a href="https://r-spatial.github.io/sf/reference/st_read.html" class="external-link">sf::read_sf()</a></code>. The second is to use the <code><a href="https://r-spatial.github.io/sf/reference/sf.html" class="external-link">sf::st_sf()</a></code> function or the <code><a href="https://r-spatial.github.io/sf/reference/st_as_sf.html" class="external-link">sf::st_as_sf()</a></code> function to combine an appropriate R object (most commonly a data frame) and an appropriate geometry object into an <code>sf</code> object. To illustrate one approach for turning a data frame into an <code>sf</code> object, we start with <code>NE_Lakes_df</code>, a data frame in spsurvey that contains variables and geographic coordinates (latitude and longitude coordinates) for lakes in the Northeastern United States. To turn <code>NE_Lakes_df</code> into <code>NE_Lakes_geo</code>, an <code>sf</code> object with geographic coordinates, run</p>
+<p>The sampling functions in spsurvey (<code><a href="../reference/grts.html">grts()</a></code> and
+<code><a href="../reference/irs.html">irs()</a></code>) require that your sampling frame is an
+<code>sf</code> object. An <code>sf</code> object (shorthand for a
+“simple features” object) is an R object with a unique structure used to
+conveniently store spatial data. <code>sf</code> objects are constructed
+using the sf package (Pebesma, 2018). The sf package is loaded and
+installed alongside the spsurvey package, so you do not need to run
+<code>install.packages("sf")</code> or <code><a href="https://r-spatial.github.io/sf/" class="external-link">library(sf)</a></code> to
+access the sf package if spsurvey is already installed and loaded. For
+more on the sf package, see <a href="https://cran.r-project.org/package=sf" class="external-link">here</a>.</p>
+<p>Next we discuss a few ways to construct <code>sf</code> objects in R.
+The first is to read a shapefile directly into R using
+<code><a href="https://r-spatial.github.io/sf/reference/st_read.html" class="external-link">sf::read_sf()</a></code>. The second is to use the
+<code><a href="https://r-spatial.github.io/sf/reference/sf.html" class="external-link">sf::st_sf()</a></code> function or the <code><a href="https://r-spatial.github.io/sf/reference/st_as_sf.html" class="external-link">sf::st_as_sf()</a></code>
+function to combine an appropriate R object (most commonly a data frame)
+and an appropriate geometry object into an <code>sf</code> object. To
+illustrate one approach for turning a data frame into an <code>sf</code>
+object, we start with <code>NE_Lakes_df</code>, a data frame in spsurvey
+that contains variables and geographic coordinates (latitude and
+longitude coordinates) for lakes in the Northeastern United States. To
+turn <code>NE_Lakes_df</code> into <code>NE_Lakes_geo</code>, an
+<code>sf</code> object with geographic coordinates, run</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">NE_Lakes_geo</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_as_sf.html" class="external-link">st_as_sf</a></span><span class="op">(</span><span class="va">NE_Lakes_df</span>, coords <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"XCOORD"</span>, <span class="st">"YCOORD"</span><span class="op">)</span>, crs <span class="op">=</span> <span class="fl">4326</span><span class="op">)</span>
-<span class="va">NE_Lakes_geo</span>
-<span class="co">#&gt; Simple feature collection with 195 features and 4 fields</span>
-<span class="co">#&gt; Geometry type: POINT</span>
-<span class="co">#&gt; Dimension:     XY</span>
-<span class="co">#&gt; Bounding box:  xmin: -73.64778 ymin: 41.07065 xmax: -69.96715 ymax: 42.73616</span>
-<span class="co">#&gt; Geodetic CRS:  WGS 84</span>
-<span class="co">#&gt; First 10 features:</span>
-<span class="co">#&gt;         AREA AREA_CAT   ELEV ELEV_CAT                   geometry</span>
-<span class="co">#&gt; 1  10.648825    large 264.69     high POINT (-72.08896 42.55508)</span>
-<span class="co">#&gt; 2   2.504606    small 557.63     high POINT (-73.18199 42.36727)</span>
-<span class="co">#&gt; 3   3.979199    small  28.79      low POINT (-71.14074 42.15596)</span>
-<span class="co">#&gt; 4   1.645657    small 212.60     high   POINT (-73.06726 41.783)</span>
-<span class="co">#&gt; 5   7.489052    small 239.67     high  POINT (-72.2602 42.36255)</span>
-<span class="co">#&gt; 6  86.533725    large 195.37     high POINT (-71.74634 41.87624)</span>
-<span class="co">#&gt; 7   1.926996    small 158.96     high POINT (-73.48408 41.34238)</span>
-<span class="co">#&gt; 8   6.514217    small  29.26      low POINT (-73.25487 41.20551)</span>
-<span class="co">#&gt; 9   3.100221    small 204.62     high POINT (-72.20897 42.12512)</span>
-<span class="co">#&gt; 10  1.868094    small  78.77      low POINT (-72.70233 42.18012)</span></code></pre></div>
-<p>The <code>coords</code> argument to <code><a href="https://r-spatial.github.io/sf/reference/st_as_sf.html" class="external-link">sf::st_as_sf</a></code> specifies the columns in <code>NE_Lakes_df</code> that are the x-coordinates and y-coordinates. The <code>crs</code> argument specifies the coordinate reference system, which we discuss in more detail next.</p>
+<code class="sourceCode R"><span><span class="va">NE_Lakes_geo</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_as_sf.html" class="external-link">st_as_sf</a></span><span class="op">(</span><span class="va">NE_Lakes_df</span>, coords <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"XCOORD"</span>, <span class="st">"YCOORD"</span><span class="op">)</span>, crs <span class="op">=</span> <span class="fl">4326</span><span class="op">)</span></span>
+<span><span class="va">NE_Lakes_geo</span></span>
+<span><span class="co">#&gt; Simple feature collection with 195 features and 4 fields</span></span>
+<span><span class="co">#&gt; Geometry type: POINT</span></span>
+<span><span class="co">#&gt; Dimension:     XY</span></span>
+<span><span class="co">#&gt; Bounding box:  xmin: -73.64778 ymin: 41.07065 xmax: -69.96715 ymax: 42.73616</span></span>
+<span><span class="co">#&gt; Geodetic CRS:  WGS 84</span></span>
+<span><span class="co">#&gt; First 10 features:</span></span>
+<span><span class="co">#&gt;         AREA AREA_CAT   ELEV ELEV_CAT                   geometry</span></span>
+<span><span class="co">#&gt; 1  10.648825    large 264.69     high POINT (-72.08896 42.55508)</span></span>
+<span><span class="co">#&gt; 2   2.504606    small 557.63     high POINT (-73.18199 42.36727)</span></span>
+<span><span class="co">#&gt; 3   3.979199    small  28.79      low POINT (-71.14074 42.15596)</span></span>
+<span><span class="co">#&gt; 4   1.645657    small 212.60     high   POINT (-73.06726 41.783)</span></span>
+<span><span class="co">#&gt; 5   7.489052    small 239.67     high  POINT (-72.2602 42.36255)</span></span>
+<span><span class="co">#&gt; 6  86.533725    large 195.37     high POINT (-71.74634 41.87624)</span></span>
+<span><span class="co">#&gt; 7   1.926996    small 158.96     high POINT (-73.48408 41.34238)</span></span>
+<span><span class="co">#&gt; 8   6.514217    small  29.26      low POINT (-73.25487 41.20551)</span></span>
+<span><span class="co">#&gt; 9   3.100221    small 204.62     high POINT (-72.20897 42.12512)</span></span>
+<span><span class="co">#&gt; 10  1.868094    small  78.77      low POINT (-72.70233 42.18012)</span></span></code></pre></div>
+<p>The <code>coords</code> argument to <code><a href="https://r-spatial.github.io/sf/reference/st_as_sf.html" class="external-link">sf::st_as_sf</a></code>
+specifies the columns in <code>NE_Lakes_df</code> that are the
+x-coordinates and y-coordinates. The <code>crs</code> argument specifies
+the coordinate reference system, which we discuss in more detail
+next.</p>
 </div>
 <div class="section level2">
 <h2 id="coordinate-reference-systems">Coordinate reference systems<a class="anchor" aria-label="anchor" href="#coordinate-reference-systems"></a>
 </h2>
-<p>Spatial data and <code>sf</code> objects rely on coordinate reference systems. A coordinate reference system (CRS) provides a structure by which to identify unique locations on the Earth’s surface. CRSs are either geographic or projected. A geographic CRS uses longitude (east-west direction) and latitude (north-south direction) coordinates to represent location with respect to a specific ellipsoid or spheroid surface. Geographic CRSs are measured in degrees, <em>not units like meters or feet</em> – this has important consequences. For example, a one degree difference in latitude is different at different longitudes. Projected CRSs are measured in standard Cartesian coordinates with respect to a flat surface. They have x and y locations, an origin, and a unit of measurement (like meters or feet).</p>
-<p>You can move between coordinate systems using <code><a href="https://r-spatial.github.io/sf/reference/st_transform.html" class="external-link">sf::st_transform()</a></code>. For example, we can transform <code>NE_Lakes_geo</code> (which uses a geographic CRS) to <code>NE_Lakes</code> (which uses a projected CRS) by running</p>
+<p>Spatial data and <code>sf</code> objects rely on coordinate reference
+systems. A coordinate reference system (CRS) provides a structure by
+which to identify unique locations on the Earth’s surface. CRSs are
+either geographic or projected. A geographic CRS uses longitude
+(east-west direction) and latitude (north-south direction) coordinates
+to represent location with respect to a specific ellipsoid or spheroid
+surface. Geographic CRSs are measured in degrees, <em>not units like
+meters or feet</em> – this has important consequences. For example, a
+one degree difference in latitude is different at different longitudes.
+Projected CRSs are measured in standard Cartesian coordinates with
+respect to a flat surface. They have x and y locations, an origin, and a
+unit of measurement (like meters or feet).</p>
+<p>You can move between coordinate systems using
+<code><a href="https://r-spatial.github.io/sf/reference/st_transform.html" class="external-link">sf::st_transform()</a></code>. For example, we can transform
+<code>NE_Lakes_geo</code> (which uses a geographic CRS) to
+<code>NE_Lakes</code> (which uses a projected CRS) by running</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">NE_Lakes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_transform.html" class="external-link">st_transform</a></span><span class="op">(</span><span class="va">NE_Lakes_geo</span>, crs <span class="op">=</span> <span class="fl">5070</span><span class="op">)</span>
-<span class="va">NE_Lakes</span>
-<span class="co">#&gt; Simple feature collection with 195 features and 4 fields</span>
-<span class="co">#&gt; Geometry type: POINT</span>
-<span class="co">#&gt; Dimension:     XY</span>
-<span class="co">#&gt; Bounding box:  xmin: 1834001 ymin: 2225021 xmax: 2127632 ymax: 2449985</span>
-<span class="co">#&gt; Projected CRS: NAD83 / Conus Albers</span>
-<span class="co">#&gt; First 10 features:</span>
-<span class="co">#&gt;         AREA AREA_CAT   ELEV ELEV_CAT                geometry</span>
-<span class="co">#&gt; 1  10.648825    large 264.69     high POINT (1930929 2417191)</span>
-<span class="co">#&gt; 2   2.504606    small 557.63     high POINT (1849399 2375085)</span>
-<span class="co">#&gt; 3   3.979199    small  28.79      low POINT (2017323 2393723)</span>
-<span class="co">#&gt; 4   1.645657    small 212.60     high POINT (1874135 2313865)</span>
-<span class="co">#&gt; 5   7.489052    small 239.67     high POINT (1922712 2392868)</span>
-<span class="co">#&gt; 6  86.533725    large 195.37     high POINT (1977163 2350744)</span>
-<span class="co">#&gt; 7   1.926996    small 158.96     high POINT (1852292 2257784)</span>
-<span class="co">#&gt; 8   6.514217    small  29.26      low POINT (1874421 2247388)</span>
-<span class="co">#&gt; 9   3.100221    small 204.62     high POINT (1933352 2368181)</span>
-<span class="co">#&gt; 10  1.868094    small  78.77      low POINT (1892582 2364213)</span></code></pre></div>
-<p>CRSs in R have traditionally been stored using EPSG codes or <code>proj4string</code> values. This meant that in order to transform your coordinates from one CRS to another, you needed two EPSG codes or <code>proj4string</code> values, one for each CRS. Recent updates to R’s handling of spatial data follow GDAL and PROJ (more information available <a href="https://r-spatial.org/r/2020/03/17/wkt.html" class="external-link">here</a>), and CRSs in <code>sf</code> objects are stored in R as lists with two components: <code>input</code>, which contains information regarding the EPSG code and <code>proj4string</code>; and <code>wkt</code>, an open geospatial standard format. For more information on CRSs and EPSG codes, see Pebesma (2018) and Lovelace et al. (2019). To search for various CRSs and EPSG codes, see <a href="https://epsg.io/" class="external-link">here</a> and <a href="https://spatialreference.org" class="external-link">here</a>.</p>
-<p>spsurvey will use the CRS from your <code>sf</code> object, so it is your responsibility to make sure the <code>sf</code> object has an appropriate CRS. If the CRS is not specified correctly, you may get misleading results.</p>
+<code class="sourceCode R"><span><span class="va">NE_Lakes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_transform.html" class="external-link">st_transform</a></span><span class="op">(</span><span class="va">NE_Lakes_geo</span>, crs <span class="op">=</span> <span class="fl">5070</span><span class="op">)</span></span>
+<span><span class="va">NE_Lakes</span></span>
+<span><span class="co">#&gt; Simple feature collection with 195 features and 4 fields</span></span>
+<span><span class="co">#&gt; Geometry type: POINT</span></span>
+<span><span class="co">#&gt; Dimension:     XY</span></span>
+<span><span class="co">#&gt; Bounding box:  xmin: 1834001 ymin: 2225021 xmax: 2127632 ymax: 2449985</span></span>
+<span><span class="co">#&gt; Projected CRS: NAD83 / Conus Albers</span></span>
+<span><span class="co">#&gt; First 10 features:</span></span>
+<span><span class="co">#&gt;         AREA AREA_CAT   ELEV ELEV_CAT                geometry</span></span>
+<span><span class="co">#&gt; 1  10.648825    large 264.69     high POINT (1930929 2417191)</span></span>
+<span><span class="co">#&gt; 2   2.504606    small 557.63     high POINT (1849399 2375085)</span></span>
+<span><span class="co">#&gt; 3   3.979199    small  28.79      low POINT (2017323 2393723)</span></span>
+<span><span class="co">#&gt; 4   1.645657    small 212.60     high POINT (1874135 2313865)</span></span>
+<span><span class="co">#&gt; 5   7.489052    small 239.67     high POINT (1922712 2392868)</span></span>
+<span><span class="co">#&gt; 6  86.533725    large 195.37     high POINT (1977163 2350744)</span></span>
+<span><span class="co">#&gt; 7   1.926996    small 158.96     high POINT (1852292 2257784)</span></span>
+<span><span class="co">#&gt; 8   6.514217    small  29.26      low POINT (1874421 2247388)</span></span>
+<span><span class="co">#&gt; 9   3.100221    small 204.62     high POINT (1933352 2368181)</span></span>
+<span><span class="co">#&gt; 10  1.868094    small  78.77      low POINT (1892582 2364213)</span></span></code></pre></div>
+<p>CRSs in R have traditionally been stored using EPSG codes or
+<code>proj4string</code> values. This meant that in order to transform
+your coordinates from one CRS to another, you needed two EPSG codes or
+<code>proj4string</code> values, one for each CRS. Recent updates to R’s
+handling of spatial data follow GDAL and PROJ (more information
+available <a href="https://r-spatial.org/r/2020/03/17/wkt.html" class="external-link">here</a>), and CRSs
+in <code>sf</code> objects are stored in R as lists with two components:
+<code>input</code>, which contains information regarding the EPSG code
+and <code>proj4string</code>; and <code>wkt</code>, an open geospatial
+standard format. For more information on CRSs and EPSG codes, see
+Pebesma (2018) and Lovelace et al. (2019). To search for various CRSs
+and EPSG codes, see <a href="https://epsg.io/" class="external-link">here</a> and <a href="https://spatialreference.org" class="external-link">here</a>.</p>
+<p>spsurvey will use the CRS from your <code>sf</code> object, so it is
+your responsibility to make sure the <code>sf</code> object has an
+appropriate CRS. If the CRS is not specified correctly, you may get
+misleading results.</p>
 </div>
 <div class="section level2">
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
-<p>Lovelace, R., Nowosad, J., &amp; Muenchow, J. (2019). Geocomputation with R. CRC Press.</p>
-<p>Pebesma, E., (2018). Simple Features for R: Standardized Support for Spatial Vector Data. <em>The R Journal</em>, 10 (1):439-446. <a href="https://doi.org/10.32614/RJ-2018-009" class="external-link uri">https://doi.org/10.32614/RJ-2018-009</a></p>
-<p>Stevens Jr, D. L. and Olsen, A. R. (2004). Spatially balanced sampling of natural resources. <em>Journal of the American Statistical Association</em>, 99(465):262-278.</p>
+<p>Lovelace, R., Nowosad, J., &amp; Muenchow, J. (2019). Geocomputation
+with R. CRC Press.</p>
+<p>Pebesma, E., (2018). Simple Features for R: Standardized Support for
+Spatial Vector Data. <em>The R Journal</em>, 10 (1):439-446. <a href="https://doi.org/10.32614/RJ-2018-009" class="external-link uri">https://doi.org/10.32614/RJ-2018-009</a></p>
+<p>Stevens Jr, D. L. and Olsen, A. R. (2004). Spatially balanced
+sampling of natural resources. <em>Journal of the American Statistical
+Association</em>, 99(465):262-278.</p>
 </div>
   </div>
 
@@ -262,7 +358,7 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer>

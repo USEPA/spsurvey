@@ -86,7 +86,7 @@ irs_stratum <- function(stratum, dsgn, sframe, sf_type, wgt_units = NULL, pt_den
     n_size <- as.integer(ceiling(pmin(1e9, pt_density * (n_base + n_over))))
     sfpts <- st_sample(sftmp, size = n_size, type = "regular", exact = TRUE)
     sfpts <- st_as_sf(as.data.frame(sfpts), crs = st_crs(sftmp))
-    sfpts <- st_cast(sfpts, to = "POINT")
+    # sfpts <- st_cast(sfpts, to = "POINT")
     # drop features with no points
     sfpts <- sfpts[!st_is_empty(sfpts), ]
     # join sites with linear features
@@ -115,9 +115,10 @@ irs_stratum <- function(stratum, dsgn, sframe, sf_type, wgt_units = NULL, pt_den
     n_size <- as.integer(ceiling(pmin(1e9, pt_density * (n_base + n_over))))
     sfpts <- st_sample(sftmp, size = n_size, type = "hexagonal", exact = TRUE)
     sfpts <- st_as_sf(as.data.frame(sfpts), crs = st_crs(sftmp))
-    sfpts <- st_cast(sfpts, to = "POINT")
+    # sfpts <- st_cast(sfpts, to = "POINT")
     # drop features with no points
     sfpts <- sfpts[!st_is_empty(sfpts), ]
+    sfpts <- st_cast(sfpts, to = "POINT")
     sftmp <- st_join(sfpts, sftmp)
     sftmp$xcoord <- st_coordinates(sftmp)[, "X"]
     sftmp$ycoord <- st_coordinates(sftmp)[, "Y"]

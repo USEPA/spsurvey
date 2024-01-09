@@ -1,3 +1,11 @@
+# spsurvey 5.5.1
+
+## Bug Fixes
+
+* Fixed a bug in `revisit_dsgn()` that prevented proper printing of panels when there were multiple panels.
+* Fixed a bug that prevented `grts()` and `irs()` from working properly with empty `LINESTRING` or `POLYGON` geometries.
+* Fixed a bug that prevented `grts()` and `irs()` from returning coordinates when the the `geometry` column of `sframe` was not `"geometry"` and `legacy_sites` was specified ([#40](https://github.com/USEPA/spsurvey/issues/40)). 
+
 # spsurvey 5.5.0
 
 ## Minor Updates
@@ -14,7 +22,7 @@
 
 ## Bug Fixes
 
-* Fixed a bug that caused an erorr in `grts()` and `irs()` occurred when at least
+* Fixed a bug that caused an error in `grts()` and `irs()` occurred when at least
   one variable name in `sframe` was named `"siteID"`, `"siteuse"`, `"replsite"`,
   `"lon_WGS84"`, `"lat_WGS84"`, `"stratum"`, `"wgt"`, `"ip"`, `"caty"`, `"aux"`,
   `xcoord`, `ycoord`, or `idpts` and the name of the geometry column in `sframe`

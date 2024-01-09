@@ -375,6 +375,7 @@ revisit_dsgn <- function(n_period, panels, begin = 1, skip = 1) {
   }
 
   # return final revisit panel design structure
-  class(pan_dsgn) <- "paneldesign"
-  return(pan_dsgn)
+  class(panels_dsgn) <- "paneldesign"
+  return(panels_dsgn)
+  
 }

@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">spsurvey</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">5.5.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">5.5.1</span>
       </span>
     </div>
 
@@ -67,7 +67,16 @@
     </div>
 
     <div class="section level2">
-<h2 class="page-header" data-toc-text="5.5.0" id="spsurvey-550">spsurvey 5.5.0<a class="anchor" aria-label="anchor" href="#spsurvey-550"></a></h2>
+<h2 class="page-header" data-toc-text="5.5.1" id="spsurvey-551">spsurvey 5.5.1<small>2024-01-09</small><a class="anchor" aria-label="anchor" href="#spsurvey-551"></a></h2>
+<div class="section level3">
+<h3 id="bug-fixes-5-5-1">Bug Fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-5-5-1"></a></h3>
+<ul><li>Fixed a bug in <code><a href="../reference/revisit_dsgn.html">revisit_dsgn()</a></code> that prevented proper printing of panels when there were multiple panels.</li>
+<li>Fixed a bug that prevented <code><a href="../reference/grts.html">grts()</a></code> and <code><a href="../reference/irs.html">irs()</a></code> from working properly with empty <code>LINESTRING</code> or <code>POLYGON</code> geometries.</li>
+<li>Fixed a bug that prevented <code><a href="../reference/grts.html">grts()</a></code> and <code><a href="../reference/irs.html">irs()</a></code> from returning coordinates when the the <code>geometry</code> column of <code>sframe</code> was not <code>"geometry"</code> and <code>legacy_sites</code> was specified (<a href="https://github.com/USEPA/spsurvey/issues/40" class="external-link">#40</a>).</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="5.5.0" id="spsurvey-550">spsurvey 5.5.0<small>2023-05-16</small><a class="anchor" aria-label="anchor" href="#spsurvey-550"></a></h2>
 <div class="section level3">
 <h3 id="minor-updates-5-5-0">Minor Updates<a class="anchor" aria-label="anchor" href="#minor-updates-5-5-0"></a></h3>
 <ul><li>
@@ -78,34 +87,46 @@
 </ul></div>
 <div class="section level3">
 <h3 id="bug-fixes-5-5-0">Bug Fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-5-5-0"></a></h3>
-<ul><li>Fixed a bug that caused an erorr in <code><a href="../reference/grts.html">grts()</a></code> and <code><a href="../reference/irs.html">irs()</a></code> occurred when at least one variable name in <code>sframe</code> was named <code>"siteID"</code>, <code>"siteuse"</code>, <code>"replsite"</code>, <code>"lon_WGS84"</code>, <code>"lat_WGS84"</code>, <code>"stratum"</code>, <code>"wgt"</code>, <code>"ip"</code>, <code>"caty"</code>, <code>"aux"</code>, <code>xcoord</code>, <code>ycoord</code>, or <code>idpts</code> and the name of the geometry column in <code>sframe</code> was not named <code>"geometry"</code> (<a href="https://github.com/USEPA/spsurvey/issues/32" class="external-link">#32</a>).</li></ul></div>
+<ul><li>Fixed a bug that caused an error in <code><a href="../reference/grts.html">grts()</a></code> and <code><a href="../reference/irs.html">irs()</a></code> occurred when at least one variable name in <code>sframe</code> was named <code>"siteID"</code>, <code>"siteuse"</code>, <code>"replsite"</code>, <code>"lon_WGS84"</code>, <code>"lat_WGS84"</code>, <code>"stratum"</code>, <code>"wgt"</code>, <code>"ip"</code>, <code>"caty"</code>, <code>"aux"</code>, <code>xcoord</code>, <code>ycoord</code>, or <code>idpts</code> and the name of the geometry column in <code>sframe</code> was not named <code>"geometry"</code> (<a href="https://github.com/USEPA/spsurvey/issues/32" class="external-link">#32</a>).</li>
+</ul></div>
 </div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="5.4.1" id="spsurvey-541">spsurvey 5.4.1<small>2023-01-16</small><a class="anchor" aria-label="anchor" href="#spsurvey-541"></a></h2>
 <div class="section level3">
 <h3 id="minor-updates-5-4-1">Minor Updates<a class="anchor" aria-label="anchor" href="#minor-updates-5-4-1"></a></h3>
-<ul><li>Updated citation information to Dumelle et al. (2023) <a href="doi:10.18637/jss.v105.i03" class="uri">doi:10.18637/jss.v105.i03</a>.</li></ul></div>
+<ul><li>Updated citation information to Dumelle et al. (2023) <a href="doi:10.18637/jss.v105.i03" class="uri">doi:10.18637/jss.v105.i03</a>.</li>
+</ul></div>
 </div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="5.4.0" id="spsurvey-540">spsurvey 5.4.0<small>2022-11-22</small><a class="anchor" aria-label="anchor" href="#spsurvey-540"></a></h2>
 <div class="section level3">
 <h3 id="minor-updates-5-4-0">Minor Updates<a class="anchor" aria-label="anchor" href="#minor-updates-5-4-0"></a></h3>
-<ul><li>Added an <code><a href="../reference/sp_frame.html">sp_frame()</a></code> function to create <code>sp_frame</code> objects for use with <code><a href="../reference/plot.html">plot()</a></code> and <code><a href="../reference/summary.html">summary()</a></code> for sampling frames and analysis data.<ul><li>
-<code>sp_frame</code> objects have class <code>sp_frame</code>.</li></ul></li>
+<ul><li>Added an <code><a href="../reference/sp_frame.html">sp_frame()</a></code> function to create <code>sp_frame</code> objects for use with <code><a href="../reference/plot.html">plot()</a></code> and <code><a href="../reference/summary.html">summary()</a></code> for sampling frames and analysis data.
+<ul><li>
+<code>sp_frame</code> objects have class <code>sp_frame</code>.</li>
+</ul></li>
 <li>Added an <code><a href="../reference/sp_frame.html">sp_unframe()</a></code> function to transform <code>sp_frame</code> objects back into their original object type.</li>
-<li>Objects output from <code><a href="../reference/grts.html">grts()</a></code> and <code><a href="../reference/irs.html">irs()</a></code> are now called <code>sp_design</code> objects instead of <code>spdesign</code> objects.<ul><li>
-<code>sp_design</code> objects have class <code>sp_design</code>.</li></ul></li>
+<li>Objects output from <code><a href="../reference/grts.html">grts()</a></code> and <code><a href="../reference/irs.html">irs()</a></code> are now called <code>sp_design</code> objects instead of <code>spdesign</code> objects.
+<ul><li>
+<code>sp_design</code> objects have class <code>sp_design</code>.</li>
+</ul></li>
 <li>
-<code><a href="../reference/summary.html">summary()</a></code> now works with <code>sp_frame</code> objects and <code>sp_design</code> objects.<ul><li>
-<code><a href="../reference/sp_summary.html">sp_summary()</a></code> yields equivalent summaries and is currently maintained for backwards compatibility (i.e., <code><a href="../reference/sp_summary.html">sp_summary()</a></code> has not changed).</li></ul></li>
+<code><a href="../reference/summary.html">summary()</a></code> now works with <code>sp_frame</code> objects and <code>sp_design</code> objects.
+<ul><li>
+<code><a href="../reference/sp_summary.html">sp_summary()</a></code> yields equivalent summaries and is currently maintained for backwards compatibility (i.e., <code><a href="../reference/sp_summary.html">sp_summary()</a></code> has not changed).</li>
+</ul></li>
 <li>
 <code>summary</code> functions now also summarize <code>sf</code> object geometries if the name of the geometry list-column is provided in the summary formula.</li>
 <li>
-<code><a href="../reference/plot.html">plot()</a></code> now works with <code>sp_frame</code> objects and <code>sp_design</code> objects.<ul><li>
-<code><a href="../reference/sp_plot.html">sp_plot()</a></code> yields equivalent plots and is currently maintained for backwards compatibility (i.e., <code><a href="../reference/sp_plot.html">sp_plot()</a></code> has not changed).</li></ul></li>
+<code><a href="../reference/plot.html">plot()</a></code> now works with <code>sp_frame</code> objects and <code>sp_design</code> objects.
+<ul><li>
+<code><a href="../reference/sp_plot.html">sp_plot()</a></code> yields equivalent plots and is currently maintained for backwards compatibility (i.e., <code><a href="../reference/sp_plot.html">sp_plot()</a></code> has not changed).</li>
+</ul></li>
 <li>
-<code><a href="../reference/plot.html">plot()</a></code> now works with <code>sp_CDF</code> objects that are output from the <code>CDF</code> element of <code><a href="../reference/cont_analysis.html">cont_analysis()</a></code>.<ul><li>
-<code><a href="../reference/cdf_plot.html">cdf_plot()</a></code> yields equivalent plots and is currently maintained for backwards compatibility (i.e., <code><a href="../reference/cdf_plot.html">cdf_plot()</a></code> has not changed).<br></li></ul></li>
+<code><a href="../reference/plot.html">plot()</a></code> now works with <code>sp_CDF</code> objects that are output from the <code>CDF</code> element of <code><a href="../reference/cont_analysis.html">cont_analysis()</a></code>.
+<ul><li>
+<code><a href="../reference/cdf_plot.html">cdf_plot()</a></code> yields equivalent plots and is currently maintained for backwards compatibility (i.e., <code><a href="../reference/cdf_plot.html">cdf_plot()</a></code> has not changed).<br></li>
+</ul></li>
 <li>Updated print functions for summaries obtained via <code><a href="../reference/summary.html">summary()</a></code> or <code><a href="../reference/sp_summary.html">sp_summary()</a></code> so that they are clearer and easier to read.</li>
 <li>Added a print function for <code>sp_design</code> objects. Now, a summary of site counts by site type (<code>Legacy</code>, <code>Base</code>, <code>Over</code> <code>Near</code>) crossed by strata or unequal probability levels or both is provided.</li>
 <li>Added <code>stratum_var</code>, <code>caty_var</code>, and <code>aux_var</code> elements to the design list in <code>sp_design</code> objects.</li>
@@ -191,7 +212,8 @@
 <h2 class="page-header" data-toc-text="5.0.1" id="spsurvey-501">spsurvey 5.0.1<small>2021-10-20</small><a class="anchor" aria-label="anchor" href="#spsurvey-501"></a></h2>
 <div class="section level3">
 <h3 id="bug-fix-5-0-1">Bug fix<a class="anchor" aria-label="anchor" href="#bug-fix-5-0-1"></a></h3>
-<ul><li>Addressed Solaris performance problems.</li></ul></div>
+<ul><li>Addressed Solaris performance problems.</li>
+</ul></div>
 </div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="5.0.0" id="spsurvey-500">spsurvey 5.0.0<small>2021-10-18</small><a class="anchor" aria-label="anchor" href="#spsurvey-500"></a></h2>
@@ -207,10 +229,12 @@
 </ul></div>
 <div class="section level3">
 <h3 id="minor-updates-5-0-0">Minor Updates<a class="anchor" aria-label="anchor" href="#minor-updates-5-0-0"></a></h3>
-<ul><li>Several functions have undergone minor changes to syntax and scope.</li></ul></div>
+<ul><li>Several functions have undergone minor changes to syntax and scope.</li>
+</ul></div>
 <div class="section level3">
 <h3 id="breaking-changes-5-0-0">Breaking Changes<a class="anchor" aria-label="anchor" href="#breaking-changes-5-0-0"></a></h3>
-<ul><li>Several functions have changed (both inputs and outputs) and functions in version 5.0.0 are not always backwards compatible with functions from previous versions. Though we recommend users upgrade existing code to work with the current version’s simpler implementations, backwards compatibility can be achieved by downloading previous versions of spsurvey.</li></ul></div>
+<ul><li>Several functions have changed (both inputs and outputs) and functions in version 5.0.0 are not always backwards compatible with functions from previous versions. Though we recommend users upgrade existing code to work with the current version’s simpler implementations, backwards compatibility can be achieved by downloading previous versions of spsurvey.</li>
+</ul></div>
 </div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="4.1.4" id="spsurvey-414">spsurvey 4.1.4<small>2020-09-18</small><a class="anchor" aria-label="anchor" href="#spsurvey-414"></a></h2>
@@ -233,13 +257,15 @@
 <div class="section level3">
 <h3 id="bug-fix-4-1-2">Bug fix<a class="anchor" aria-label="anchor" href="#bug-fix-4-1-2"></a></h3>
 <ul><li>Update test data and Description file to handle changes in <code>sf</code> and changes to <code>crs</code> described <a href="https://r-spatial.org/r/2020/03/17/wkt.html" class="external-link">here</a>
-</li></ul></div>
+</li>
+</ul></div>
 </div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="4.1.1" id="spsurvey-411">spsurvey 4.1.1<small>2019-12-18</small><a class="anchor" aria-label="anchor" href="#spsurvey-411"></a></h2>
 <div class="section level3">
 <h3 id="bug-fix-4-1-1">Bug fix<a class="anchor" aria-label="anchor" href="#bug-fix-4-1-1"></a></h3>
-<ul><li>Fix to <code>localmean.weight</code> function to correct when class for matrix objects was causing an indicator variable to have length two rather than length one, which caused an error in a while statement.</li></ul></div>
+<ul><li>Fix to <code>localmean.weight</code> function to correct when class for matrix objects was causing an indicator variable to have length two rather than length one, which caused an error in a while statement.</li>
+</ul></div>
 </div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="4.1.0" id="spsurvey-410">spsurvey 4.1.0<small>2019-08-30</small><a class="anchor" aria-label="anchor" href="#spsurvey-410"></a></h2>
@@ -250,10 +276,12 @@
 </ul></div>
 <div class="section level3">
 <h3 id="bug-fixes-4-1-0">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-4-1-0"></a></h3>
-<ul><li>The new R code function named <code>numLevels</code> that determines the number of hierarchical levels for a generalized random-tessellation stratified (GRTS) survey design now includes code to ensure that the maximum number of levels (which is currently 11) is not bypassed when creating a survey design.</li></ul></div>
+<ul><li>The new R code function named <code>numLevels</code> that determines the number of hierarchical levels for a generalized random-tessellation stratified (GRTS) survey design now includes code to ensure that the maximum number of levels (which is currently 11) is not bypassed when creating a survey design.</li>
+</ul></div>
 <div class="section level3">
 <h3 id="modified-function-4-1-0">Modified function<a class="anchor" aria-label="anchor" href="#modified-function-4-1-0"></a></h3>
-<ul><li>Modified function <code>input.check</code> to check for missing values among the x-coordinates and y-coordinates for location.</li></ul></div>
+<ul><li>Modified function <code>input.check</code> to check for missing values among the x-coordinates and y-coordinates for location.</li>
+</ul></div>
 </div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="4.0.0" id="spsurvey-400">spsurvey 4.0.0<small>2019-04-05</small><a class="anchor" aria-label="anchor" href="#spsurvey-400"></a></h2>
@@ -264,7 +292,8 @@
 </ul></div>
 <div class="section level3">
 <h3 id="bug-fixes-4-0-0">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-4-0-0"></a></h3>
-<ul><li>Modified C function <code>readDbfFile</code> to avoid PROTECT errors.</li></ul></div>
+<ul><li>Modified C function <code>readDbfFile</code> to avoid PROTECT errors.</li>
+</ul></div>
 </div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="3.4.0" id="spsurvey-340">spsurvey 3.4.0<a class="anchor" aria-label="anchor" href="#spsurvey-340"></a></h2>
@@ -281,10 +310,12 @@
 <h2 class="page-header" data-toc-text="3.3.0" id="spsurvey-330">spsurvey 3.3.0<a class="anchor" aria-label="anchor" href="#spsurvey-330"></a></h2>
 <div class="section level3">
 <h3 id="new-features-3-3-0">New features<a class="anchor" aria-label="anchor" href="#new-features-3-3-0"></a></h3>
-<ul><li>Inserted a SystemRequirements field in the DESCRIPTION file and modified functions <code>grts</code>, <code>grtsarea</code>, <code>grtslin</code>, <code>grtspts</code>, <code>irs</code>, <code>irsarea</code>, <code>irslin</code>, <code>read.dbf</code>, and <code>read.shape</code> to prevent the functions from being executed on big-endian processors.</li></ul></div>
+<ul><li>Inserted a SystemRequirements field in the DESCRIPTION file and modified functions <code>grts</code>, <code>grtsarea</code>, <code>grtslin</code>, <code>grtspts</code>, <code>irs</code>, <code>irsarea</code>, <code>irslin</code>, <code>read.dbf</code>, and <code>read.shape</code> to prevent the functions from being executed on big-endian processors.</li>
+</ul></div>
 <div class="section level3">
 <h3 id="bug-fixes-3-3-0">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-3-3-0"></a></h3>
-<ul><li>Removed the C header file named <code>order.h</code> and replaced C functions <code>readBigEndian</code> and <code>readLittleEndian</code> with the version of those functions from <code>spsurvey</code> version 3.1.</li></ul></div>
+<ul><li>Removed the C header file named <code>order.h</code> and replaced C functions <code>readBigEndian</code> and <code>readLittleEndian</code> with the version of those functions from <code>spsurvey</code> version 3.1.</li>
+</ul></div>
 </div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="3.2.0" id="spsurvey-320">spsurvey 3.2.0<a class="anchor" aria-label="anchor" href="#spsurvey-320"></a></h2>
@@ -310,10 +341,12 @@
 <h2 class="page-header" data-toc-text="3.1.0" id="spsurvey-310">spsurvey 3.1.0<a class="anchor" aria-label="anchor" href="#spsurvey-310"></a></h2>
 <div class="section level3">
 <h3 id="new-features-3-1-0">New features<a class="anchor" aria-label="anchor" href="#new-features-3-1-0"></a></h3>
-<ul><li>Modified vignettes to use data sets from the data directory for the package.</li></ul></div>
+<ul><li>Modified vignettes to use data sets from the data directory for the package.</li>
+</ul></div>
 <div class="section level3">
 <h3 id="bug-fixes-3-1-0">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-3-1-0"></a></h3>
-<ul><li>Modified C functions to ensure that variables passed to function <code>malloc</code> are of type unsigned integer.</li></ul></div>
+<ul><li>Modified C functions to ensure that variables passed to function <code>malloc</code> are of type unsigned integer.</li>
+</ul></div>
 </div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="3.0.0" id="spsurvey-300">spsurvey 3.0.0<a class="anchor" aria-label="anchor" href="#spsurvey-300"></a></h2>
@@ -334,16 +367,19 @@
 <h2 class="page-header" data-toc-text="2.7.0" id="spsurvey-270">spsurvey 2.7.0<a class="anchor" aria-label="anchor" href="#spsurvey-270"></a></h2>
 <div class="section level3">
 <h3 id="new-features-2-7-0">New features<a class="anchor" aria-label="anchor" href="#new-features-2-7-0"></a></h3>
-<ul><li>Added a <code>cex.main</code> argument to the <code>cont.cdfplot</code> and <code>cdf.plot</code> functions.</li></ul></div>
+<ul><li>Added a <code>cex.main</code> argument to the <code>cont.cdfplot</code> and <code>cdf.plot</code> functions.</li>
+</ul></div>
 <div class="section level3">
 <h3 id="bug-fixes-2-7-0">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-2-7-0"></a></h3>
-<ul><li>Modified function <code>warnprnt</code> to use correct variable names in the output data frame so that partial matching warnings for the names are not generated.</li></ul></div>
+<ul><li>Modified function <code>warnprnt</code> to use correct variable names in the output data frame so that partial matching warnings for the names are not generated.</li>
+</ul></div>
 </div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="2.6.0" id="spsurvey-260">spsurvey 2.6.0<a class="anchor" aria-label="anchor" href="#spsurvey-260"></a></h2>
 <div class="section level3">
 <h3 id="new-features-2-6-0">New features<a class="anchor" aria-label="anchor" href="#new-features-2-6-0"></a></h3>
-<ul><li>Created a data directory that contain rda versions of the data files used by vignettes.</li></ul></div>
+<ul><li>Created a data directory that contain rda versions of the data files used by vignettes.</li>
+</ul></div>
 <div class="section level3">
 <h3 id="bug-fixes-2-6-0">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-2-6-0"></a></h3>
 <ul><li><p>Modified function <code>change.analysis</code> to allow analysis of surveys with no repeat visit sites.</p></li>
@@ -355,7 +391,8 @@
 <h2 class="page-header" data-toc-text="2.5.0" id="spsurvey-250">spsurvey 2.5.0<a class="anchor" aria-label="anchor" href="#spsurvey-250"></a></h2>
 <div class="section level3">
 <h3 id="new-features-2-5-0">New features<a class="anchor" aria-label="anchor" href="#new-features-2-5-0"></a></h3>
-<ul><li>Modified function <code>grtspts</code> and C function <code>numLevels</code> to calculate the sampling grid random shift values only once rather than each time the number of hierarchical levels is incremented.</li></ul></div>
+<ul><li>Modified function <code>grtspts</code> and C function <code>numLevels</code> to calculate the sampling grid random shift values only once rather than each time the number of hierarchical levels is incremented.</li>
+</ul></div>
 <div class="section level3">
 <h3 id="bug-fixes-2-5-0">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-2-5-0"></a></h3>
 <ul><li><p>Modified functions <code>attrisk.analysis</code>, <code>cat.analysis</code>, <code>change.analysis</code>, <code>cont.analysis</code>, and <code>relrisk.analysis</code> to replace NA values with FALSE in the indicator variables for subpopulations.</p></li>
@@ -487,7 +524,8 @@
 <h2 class="page-header" data-toc-text="1.5.0" id="spsurvey-150">spsurvey 1.5.0<a class="anchor" aria-label="anchor" href="#spsurvey-150"></a></h2>
 <div class="section level3">
 <h3 id="bug-fixes-1-5-0">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-1-5-0"></a></h3>
-<ul><li>Modified C functions <code>getRecordShapeSizes</code> and <code>lintFcn</code> to accommodate Polyline shapefiles that have multiple parts.</li></ul></div>
+<ul><li>Modified C functions <code>getRecordShapeSizes</code> and <code>lintFcn</code> to accommodate Polyline shapefiles that have multiple parts.</li>
+</ul></div>
 </div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="1.4.0" id="spsurvey-140">spsurvey 1.4.0<a class="anchor" aria-label="anchor" href="#spsurvey-140"></a></h2>
@@ -519,16 +557,19 @@
 <h2 class="page-header" data-toc-text="1.2.0" id="spsurvey-120">spsurvey 1.2.0<a class="anchor" aria-label="anchor" href="#spsurvey-120"></a></h2>
 <div class="section level3">
 <h3 id="new-features-1-2-0">New features<a class="anchor" aria-label="anchor" href="#new-features-1-2-0"></a></h3>
-<ul><li>Created a function named <code>sp2shape</code> and a C function named <code>writeShapeFilePolygon</code> that convert objects created by package <code>sp</code> to ESRI shapefiles. Also, renamed the C function <code>writeShapeFile</code> to <code>writeShapeFilePoint</code>.</li></ul></div>
+<ul><li>Created a function named <code>sp2shape</code> and a C function named <code>writeShapeFilePolygon</code> that convert objects created by package <code>sp</code> to ESRI shapefiles. Also, renamed the C function <code>writeShapeFile</code> to <code>writeShapeFilePoint</code>.</li>
+</ul></div>
 <div class="section level3">
 <h3 id="bug-fixes-1-2-0">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-1-2-0"></a></h3>
-<ul><li>Modified function <code>irsarea</code> and created a C function named <code>getRecordIDs</code> to ensure that an IRS sample is selected when argument <code>type.frame</code> is set to “area” in function <code>irs</code>.</li></ul></div>
+<ul><li>Modified function <code>irsarea</code> and created a C function named <code>getRecordIDs</code> to ensure that an IRS sample is selected when argument <code>type.frame</code> is set to “area” in function <code>irs</code>.</li>
+</ul></div>
 </div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="1.1.0" id="spsurvey-110">spsurvey 1.1.0<a class="anchor" aria-label="anchor" href="#spsurvey-110"></a></h2>
 <div class="section level3">
 <h3 id="new-features-1-1-0">New features<a class="anchor" aria-label="anchor" href="#new-features-1-1-0"></a></h3>
-<ul><li>Modified the C functions so that the package can accommodate M-type shapefiles.</li></ul></div>
+<ul><li>Modified the C functions so that the package can accommodate M-type shapefiles.</li>
+</ul></div>
 <div class="section level3">
 <h3 id="bug-fixes-1-1-0">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-1-1-0"></a></h3>
 <ul><li><p>Modified functions <code>grts</code> and <code>irs</code> to ensure that the levels of <code>mdcaty</code> (the variable in the attributes data frame that specifies the unequal probability category for each element in the frame) are equivalent to the names in <code>caty.n</code> (the vector of sample sizes for each category in <code>mdcaty</code>, which is required for each element of the design list for which the selection type is “Unequal”).</p></li>
@@ -540,7 +581,8 @@
 <h2 class="page-header" data-toc-text="1.0.0" id="spsurvey-100">spsurvey 1.0.0<a class="anchor" aria-label="anchor" href="#spsurvey-100"></a></h2>
 <div class="section level3">
 <h3 id="new-features-1-0-0">New features<a class="anchor" aria-label="anchor" href="#new-features-1-0-0"></a></h3>
-<ul><li>This is the original version of the package.</li></ul></div>
+<ul><li>This is the original version of the package.</li>
+</ul></div>
 </div>
   </div>
 
@@ -556,7 +598,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

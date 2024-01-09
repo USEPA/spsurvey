@@ -34,7 +34,7 @@ respectively, and the geometry column is dropped from the object.'><!-- mathjax 
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">spsurvey</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">5.5.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">5.5.1</span>
       </span>
     </div>
 
@@ -106,30 +106,30 @@ respectively, and the geometry column is dropped from the object.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">cont_cdftest</span><span class="op">(</span>
-  <span class="va">dframe</span>,
-  <span class="va">vars</span>,
-  subpops <span class="op">=</span> <span class="cn">NULL</span>,
-  surveyID <span class="op">=</span> <span class="cn">NULL</span>,
-  siteID <span class="op">=</span> <span class="st">"siteID"</span>,
-  weight <span class="op">=</span> <span class="st">"weight"</span>,
-  xcoord <span class="op">=</span> <span class="cn">NULL</span>,
-  ycoord <span class="op">=</span> <span class="cn">NULL</span>,
-  stratumID <span class="op">=</span> <span class="cn">NULL</span>,
-  clusterID <span class="op">=</span> <span class="cn">NULL</span>,
-  weight1 <span class="op">=</span> <span class="cn">NULL</span>,
-  xcoord1 <span class="op">=</span> <span class="cn">NULL</span>,
-  ycoord1 <span class="op">=</span> <span class="cn">NULL</span>,
-  sizeweight <span class="op">=</span> <span class="cn">FALSE</span>,
-  sweight <span class="op">=</span> <span class="cn">NULL</span>,
-  sweight1 <span class="op">=</span> <span class="cn">NULL</span>,
-  fpc <span class="op">=</span> <span class="cn">NULL</span>,
-  popsize <span class="op">=</span> <span class="cn">NULL</span>,
-  vartype <span class="op">=</span> <span class="st">"Local"</span>,
-  jointprob <span class="op">=</span> <span class="st">"overton"</span>,
-  testname <span class="op">=</span> <span class="st">"adjWald"</span>,
-  nclass <span class="op">=</span> <span class="fl">3</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">cont_cdftest</span><span class="op">(</span></span>
+<span>  <span class="va">dframe</span>,</span>
+<span>  <span class="va">vars</span>,</span>
+<span>  subpops <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  surveyID <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  siteID <span class="op">=</span> <span class="st">"siteID"</span>,</span>
+<span>  weight <span class="op">=</span> <span class="st">"weight"</span>,</span>
+<span>  xcoord <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  ycoord <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  stratumID <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  clusterID <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  weight1 <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  xcoord1 <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  ycoord1 <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  sizeweight <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  sweight <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  sweight1 <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  fpc <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  popsize <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  vartype <span class="op">=</span> <span class="st">"Local"</span>,</span>
+<span>  jointprob <span class="op">=</span> <span class="st">"overton"</span>,</span>
+<span>  testname <span class="op">=</span> <span class="st">"adjWald"</span>,</span>
+<span>  nclass <span class="op">=</span> <span class="fl">3</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -402,36 +402,36 @@ respectively.  The default is <code>"adjWald"</code>.</p></dd>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">200</span></span>
-<span class="r-in"><span class="va">mysiteID</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"Site"</span>, <span class="fl">1</span><span class="op">:</span><span class="va">n</span>, sep <span class="op">=</span> <span class="st">""</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">dframe</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
-<span class="r-in">  siteID <span class="op">=</span> <span class="va">mysiteID</span>,</span>
-<span class="r-in">  wgt <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="va">n</span>, <span class="fl">10</span>, <span class="fl">100</span><span class="op">)</span>,</span>
-<span class="r-in">  xcoord <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span>,</span>
-<span class="r-in">  ycoord <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span>,</span>
-<span class="r-in">  stratum <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Stratum1"</span>, <span class="st">"Stratum2"</span><span class="op">)</span>, <span class="va">n</span> <span class="op">/</span> <span class="fl">2</span><span class="op">)</span>,</span>
-<span class="r-in">  Resource_Class <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Agr"</span>, <span class="st">"Forest"</span>, <span class="st">"Urban"</span><span class="op">)</span>, <span class="va">n</span>, replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">)</span></span>
-<span class="r-in"><span class="va">ContVar</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">tst</span> <span class="op">&lt;-</span> <span class="va">dframe</span><span class="op">$</span><span class="va">Resource_Class</span> <span class="op">==</span> <span class="st">"Agr"</span></span>
-<span class="r-in"><span class="va">ContVar</span><span class="op">[</span><span class="va">tst</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">tst</span><span class="op">)</span>, <span class="fl">10</span>, <span class="fl">1</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">tst</span> <span class="op">&lt;-</span> <span class="va">dframe</span><span class="op">$</span><span class="va">Resource_Class</span> <span class="op">==</span> <span class="st">"Forest"</span></span>
-<span class="r-in"><span class="va">ContVar</span><span class="op">[</span><span class="va">tst</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">tst</span><span class="op">)</span>, <span class="fl">10.1</span>, <span class="fl">1</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">tst</span> <span class="op">&lt;-</span> <span class="va">dframe</span><span class="op">$</span><span class="va">Resource_Class</span> <span class="op">==</span> <span class="st">"Urban"</span></span>
-<span class="r-in"><span class="va">ContVar</span><span class="op">[</span><span class="va">tst</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">tst</span><span class="op">)</span>, <span class="fl">10.5</span>, <span class="fl">1</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">dframe</span><span class="op">$</span><span class="va">ContVar</span> <span class="op">&lt;-</span> <span class="va">ContVar</span></span>
-<span class="r-in"><span class="va">myvars</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ContVar"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">mysubpops</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Resource_Class"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">mypopsize</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
-<span class="r-in">  Resource_Class <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Agr"</span>, <span class="st">"Forest"</span>, <span class="st">"Urban"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span>,</span>
-<span class="r-in">  stratum <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Stratum1"</span>, <span class="st">"Stratum2"</span><span class="op">)</span>, <span class="fl">3</span><span class="op">)</span>,</span>
-<span class="r-in">  Total <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2500</span>, <span class="fl">1500</span>, <span class="fl">1000</span>, <span class="fl">500</span>, <span class="fl">600</span>, <span class="fl">450</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">)</span></span>
-<span class="r-in"><span class="fu">cont_cdftest</span><span class="op">(</span><span class="va">dframe</span>,</span>
-<span class="r-in">  vars <span class="op">=</span> <span class="va">myvars</span>, subpops <span class="op">=</span> <span class="va">mysubpops</span>, siteID <span class="op">=</span> <span class="st">"siteID"</span>,</span>
-<span class="r-in">  weight <span class="op">=</span> <span class="st">"wgt"</span>, xcoord <span class="op">=</span> <span class="st">"xcoord"</span>, ycoord <span class="op">=</span> <span class="st">"ycoord"</span>,</span>
-<span class="r-in">  stratumID <span class="op">=</span> <span class="st">"stratum"</span>, popsize <span class="op">=</span> <span class="va">mypopsize</span>, testname <span class="op">=</span> <span class="st">"RaoScott_First"</span></span>
-<span class="r-in"><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">200</span></span></span>
+<span class="r-in"><span><span class="va">mysiteID</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"Site"</span>, <span class="fl">1</span><span class="op">:</span><span class="va">n</span>, sep <span class="op">=</span> <span class="st">""</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">dframe</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  siteID <span class="op">=</span> <span class="va">mysiteID</span>,</span></span>
+<span class="r-in"><span>  wgt <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="va">n</span>, <span class="fl">10</span>, <span class="fl">100</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  xcoord <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  ycoord <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  stratum <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Stratum1"</span>, <span class="st">"Stratum2"</span><span class="op">)</span>, <span class="va">n</span> <span class="op">/</span> <span class="fl">2</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  Resource_Class <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Agr"</span>, <span class="st">"Forest"</span>, <span class="st">"Urban"</span><span class="op">)</span>, <span class="va">n</span>, replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">ContVar</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">tst</span> <span class="op">&lt;-</span> <span class="va">dframe</span><span class="op">$</span><span class="va">Resource_Class</span> <span class="op">==</span> <span class="st">"Agr"</span></span></span>
+<span class="r-in"><span><span class="va">ContVar</span><span class="op">[</span><span class="va">tst</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">tst</span><span class="op">)</span>, <span class="fl">10</span>, <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">tst</span> <span class="op">&lt;-</span> <span class="va">dframe</span><span class="op">$</span><span class="va">Resource_Class</span> <span class="op">==</span> <span class="st">"Forest"</span></span></span>
+<span class="r-in"><span><span class="va">ContVar</span><span class="op">[</span><span class="va">tst</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">tst</span><span class="op">)</span>, <span class="fl">10.1</span>, <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">tst</span> <span class="op">&lt;-</span> <span class="va">dframe</span><span class="op">$</span><span class="va">Resource_Class</span> <span class="op">==</span> <span class="st">"Urban"</span></span></span>
+<span class="r-in"><span><span class="va">ContVar</span><span class="op">[</span><span class="va">tst</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">tst</span><span class="op">)</span>, <span class="fl">10.5</span>, <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">dframe</span><span class="op">$</span><span class="va">ContVar</span> <span class="op">&lt;-</span> <span class="va">ContVar</span></span></span>
+<span class="r-in"><span><span class="va">myvars</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ContVar"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">mysubpops</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Resource_Class"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">mypopsize</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  Resource_Class <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Agr"</span>, <span class="st">"Forest"</span>, <span class="st">"Urban"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  stratum <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Stratum1"</span>, <span class="st">"Stratum2"</span><span class="op">)</span>, <span class="fl">3</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  Total <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2500</span>, <span class="fl">1500</span>, <span class="fl">1000</span>, <span class="fl">500</span>, <span class="fl">600</span>, <span class="fl">450</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">cont_cdftest</span><span class="op">(</span><span class="va">dframe</span>,</span></span>
+<span class="r-in"><span>  vars <span class="op">=</span> <span class="va">myvars</span>, subpops <span class="op">=</span> <span class="va">mysubpops</span>, siteID <span class="op">=</span> <span class="st">"siteID"</span>,</span></span>
+<span class="r-in"><span>  weight <span class="op">=</span> <span class="st">"wgt"</span>, xcoord <span class="op">=</span> <span class="st">"xcoord"</span>, ycoord <span class="op">=</span> <span class="st">"ycoord"</span>,</span></span>
+<span class="r-in"><span>  stratumID <span class="op">=</span> <span class="st">"stratum"</span>, popsize <span class="op">=</span> <span class="va">mypopsize</span>, testname <span class="op">=</span> <span class="st">"RaoScott_First"</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             Type Subpopulation_1 Subpopulation_2 Indicator</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1 Resource_Class             Agr          Forest   ContVar</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2 Resource_Class             Agr           Urban   ContVar</span>
@@ -454,7 +454,7 @@ respectively.  The default is <code>"adjWald"</code>.</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>
