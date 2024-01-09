@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">spsurvey</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">5.5.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">5.5.1</span>
       </span>
     </div>
 
@@ -88,7 +88,8 @@
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Analyzing Data</h1>
-                        <h4 data-toc-skip class="author">Michael Dumelle, Tom Kincaid, Anthony Olsen, and Marc Weber</h4>
+                        <h4 data-toc-skip class="author">Michael
+Dumelle, Tom Kincaid, Anthony Olsen, and Marc Weber</h4>
             
       
       <small class="dont-index">Source: <a href="https://github.com/USEPA/spsurvey/blob/HEAD/vignettes/analysis.Rmd" class="external-link"><code>vignettes/analysis.Rmd</code></a></small>
@@ -98,515 +99,675 @@
 
     
     
-<p>If you have yet not read the “Start Here” vignette, please do so by running</p>
+<p>If you have yet not read the “Start Here” vignette, please do so by
+running</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/vignette.html" class="external-link">vignette</a></span><span class="op">(</span><span class="st">"start-here"</span>, <span class="st">"spsurvey"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/vignette.html" class="external-link">vignette</a></span><span class="op">(</span><span class="st">"start-here"</span>, <span class="st">"spsurvey"</span><span class="op">)</span></span></code></pre></div>
 <div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
-<p>spsurvey’s analysis functions are used to analyze data in a variety of contexts. We focus mainly on using the <code>NLA_PNW</code> analysis data to introduce some of these analysis functions. The <code>NLA_PNW</code> data contains response variables measured at several lakes in the Pacific Northwest Region (PNW) of the United States. There are several variables in <code>NLA_PNW</code> you will use throughout this vignette:</p>
+<p>spsurvey’s analysis functions are used to analyze data in a variety
+of contexts. We focus mainly on using the <code>NLA_PNW</code> analysis
+data to introduce some of these analysis functions. The
+<code>NLA_PNW</code> data contains response variables measured at
+several lakes in the Pacific Northwest Region (PNW) of the United
+States. There are several variables in <code>NLA_PNW</code> you will use
+throughout this vignette:</p>
 <ul>
 <li>
 <code>SITE_ID</code>: a unique site identifier</li>
 <li>
 <code>WEIGHT</code>: the design weights</li>
 <li>
-<code>URBAN</code>: urban land categories (<code>Urban</code> and <code>Non-Urban</code>)</li>
+<code>URBAN</code>: urban land categories (<code>Urban</code> and
+<code>Non-Urban</code>)</li>
 <li>
-<code>STATE</code>: state name (<code>California</code>, <code>Oregon</code>, and <code>Washington</code>)</li>
+<code>STATE</code>: state name (<code>California</code>,
+<code>Oregon</code>, and <code>Washington</code>)</li>
 <li>
 <code>BMMI</code>: benthic macroinvertebrate multi-metric index</li>
 <li>
-<code>BMMI_COND</code>: benthic macroinvertebrate multi-metric index condition categories (<code>Poor</code> and <code>Good</code>)</li>
+<code>BMMI_COND</code>: benthic macroinvertebrate multi-metric index
+condition categories (<code>Poor</code> and <code>Good</code>)</li>
 <li>
-<code>PHOS_COND</code>: phosphorous condition categories (<code>Poor</code> and <code>Good</code>)</li>
+<code>PHOS_COND</code>: phosphorous condition categories
+(<code>Poor</code> and <code>Good</code>)</li>
 <li>
-<code>NITR_COND</code>: nitrogen condition categories (<code>Poor</code> <code>Fair</code>, and <code>Good</code>)</li>
+<code>NITR_COND</code>: nitrogen condition categories
+(<code>Poor</code> <code>Fair</code>, and <code>Good</code>)</li>
 </ul>
 <p>Before proceeding, we load spsurvey by running</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://usepa.github.io/spsurvey/" class="external-link">spsurvey</a></span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://usepa.github.io/spsurvey/" class="external-link">spsurvey</a></span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="categorical-variable-analysis">Categorical Variable Analysis<a class="anchor" aria-label="anchor" href="#categorical-variable-analysis"></a>
 </h2>
-<p>Categorical variables are analyzed in spsurvey using the <code><a href="../reference/cat_analysis.html">cat_analysis()</a></code> function. The <code><a href="../reference/cat_analysis.html">cat_analysis()</a></code> function estimates the proportion of observations and the total units (i.e. extent) that belong to each level of the categorical variable (total units refer to the total number (point resources), total line length (linear network), or total area (areal network)). Several useful pieces of information are returned by <code><a href="../reference/cat_analysis.html">cat_analysis()</a></code>, including estimates, standard errors, margins of error, and confidence intervals. The analysis results contain columns with a <code>.P</code> and <code>.U</code> suffixes. The <code>.P</code> suffix corresponds to estimates of proportions for each category, while the <code>.U</code> suffix corresponds to estimates of total units (i.e. extent) for each category.</p>
+<p>Categorical variables are analyzed in spsurvey using the
+<code><a href="../reference/cat_analysis.html">cat_analysis()</a></code> function. The <code><a href="../reference/cat_analysis.html">cat_analysis()</a></code>
+function estimates the proportion of observations and the total units
+(i.e. extent) that belong to each level of the categorical variable
+(total units refer to the total number (point resources), total line
+length (linear network), or total area (areal network)). Several useful
+pieces of information are returned by <code><a href="../reference/cat_analysis.html">cat_analysis()</a></code>,
+including estimates, standard errors, margins of error, and confidence
+intervals. The analysis results contain columns with a <code>.P</code>
+and <code>.U</code> suffixes. The <code>.P</code> suffix corresponds to
+estimates of proportions for each category, while the <code>.U</code>
+suffix corresponds to estimates of total units (i.e. extent) for each
+category.</p>
 <div class="section level3">
 <h3 id="unstratified-analysis">Unstratified Analysis<a class="anchor" aria-label="anchor" href="#unstratified-analysis"></a>
 </h3>
-<p>To estimate the proportion of total lakes in each nitrogen condition category and the total number of lakes in each nitrogen condition category, run</p>
+<p>To estimate the proportion of total lakes in each nitrogen condition
+category and the total number of lakes in each nitrogen condition
+category, run</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">cat_ests</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cat_analysis.html">cat_analysis</a></span><span class="op">(</span>
-  <span class="va">NLA_PNW</span>,
-  siteID <span class="op">=</span> <span class="st">"SITE_ID"</span>,
-  vars <span class="op">=</span> <span class="st">"NITR_COND"</span>,
-  weight <span class="op">=</span> <span class="st">"WEIGHT"</span>
-<span class="op">)</span>
-<span class="va">cat_ests</span>
-<span class="co">#&gt;        Type Subpopulation Indicator Category nResp Estimate.P StdError.P</span>
-<span class="co">#&gt; 1 All_Sites     All Sites NITR_COND     Fair    24   23.69392   6.194024</span>
-<span class="co">#&gt; 2 All_Sites     All Sites NITR_COND     Good    38   51.35111   7.430172</span>
-<span class="co">#&gt; 3 All_Sites     All Sites NITR_COND     Poor    34   24.95496   5.919180</span>
-<span class="co">#&gt; 4 All_Sites     All Sites NITR_COND    Total    96  100.00000   0.000000</span>
-<span class="co">#&gt;   MarginofError.P LCB95Pct.P UCB95Pct.P Estimate.U StdError.U MarginofError.U</span>
-<span class="co">#&gt; 1        12.14006   11.55386   35.83399   2530.428   693.5593        1359.351</span>
-<span class="co">#&gt; 2        14.56287   36.78824   65.91398   5484.120  1223.3708        2397.763</span>
-<span class="co">#&gt; 3        11.60138   13.35359   36.55634   2665.103   658.0966        1289.846</span>
-<span class="co">#&gt; 4         0.00000  100.00000  100.00000  10679.652  1416.2707        2775.840</span>
-<span class="co">#&gt;   LCB95Pct.U UCB95Pct.U</span>
-<span class="co">#&gt; 1   1171.077   3889.780</span>
-<span class="co">#&gt; 2   3086.357   7881.883</span>
-<span class="co">#&gt; 3   1375.258   3954.949</span>
-<span class="co">#&gt; 4   7903.812  13455.491</span></code></pre></div>
-<p>The estimate of the proportion of lakes in <code>Good</code> condition is 51.35% with a 95% confidence interval of (36.8%, 65.9%), while the estimate of the total number of lakes in <code>Good</code> condition is 5484 lakes with a 95% confidence interval of (3086, 7882). In each case, the estimated standard error and margin of error is given. The confidence level can be changed using the <code>conf</code> argument. If more than one categorical variable is of interest, then <code>vars</code> can be a vector of variables and separate analyses are performed for each variable.</p>
-<p>Sometimes the goal is to estimate proportions and totals separately for different subsets of the population – these subsets are called subpopulations. To estimate the proportion of total lakes and in each nitrogen condition category the total number of lakes in each nitrogen condition category separately for <code>California</code>, <code>Oregon</code>, and <code>Washington</code> lakes, run</p>
+<code class="sourceCode R"><span><span class="va">cat_ests</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cat_analysis.html">cat_analysis</a></span><span class="op">(</span></span>
+<span>  <span class="va">NLA_PNW</span>,</span>
+<span>  siteID <span class="op">=</span> <span class="st">"SITE_ID"</span>,</span>
+<span>  vars <span class="op">=</span> <span class="st">"NITR_COND"</span>,</span>
+<span>  weight <span class="op">=</span> <span class="st">"WEIGHT"</span></span>
+<span><span class="op">)</span></span>
+<span><span class="va">cat_ests</span></span>
+<span><span class="co">#&gt;        Type Subpopulation Indicator Category nResp Estimate.P StdError.P</span></span>
+<span><span class="co">#&gt; 1 All_Sites     All Sites NITR_COND     Fair    24   23.69392   6.194024</span></span>
+<span><span class="co">#&gt; 2 All_Sites     All Sites NITR_COND     Good    38   51.35111   7.430172</span></span>
+<span><span class="co">#&gt; 3 All_Sites     All Sites NITR_COND     Poor    34   24.95496   5.919180</span></span>
+<span><span class="co">#&gt; 4 All_Sites     All Sites NITR_COND    Total    96  100.00000   0.000000</span></span>
+<span><span class="co">#&gt;   MarginofError.P LCB95Pct.P UCB95Pct.P Estimate.U StdError.U MarginofError.U</span></span>
+<span><span class="co">#&gt; 1        12.14006   11.55386   35.83399   2530.428   693.5593        1359.351</span></span>
+<span><span class="co">#&gt; 2        14.56287   36.78824   65.91398   5484.120  1223.3708        2397.763</span></span>
+<span><span class="co">#&gt; 3        11.60138   13.35359   36.55634   2665.103   658.0966        1289.846</span></span>
+<span><span class="co">#&gt; 4         0.00000  100.00000  100.00000  10679.652  1416.2707        2775.840</span></span>
+<span><span class="co">#&gt;   LCB95Pct.U UCB95Pct.U</span></span>
+<span><span class="co">#&gt; 1   1171.077   3889.780</span></span>
+<span><span class="co">#&gt; 2   3086.357   7881.883</span></span>
+<span><span class="co">#&gt; 3   1375.258   3954.949</span></span>
+<span><span class="co">#&gt; 4   7903.812  13455.491</span></span></code></pre></div>
+<p>The estimate of the proportion of lakes in <code>Good</code>
+condition is 51.35% with a 95% confidence interval of (36.8%, 65.9%),
+while the estimate of the total number of lakes in <code>Good</code>
+condition is 5484 lakes with a 95% confidence interval of (3086, 7882).
+In each case, the estimated standard error and margin of error is given.
+The confidence level can be changed using the <code>conf</code>
+argument. If more than one categorical variable is of interest, then
+<code>vars</code> can be a vector of variables and separate analyses are
+performed for each variable.</p>
+<p>Sometimes the goal is to estimate proportions and totals separately
+for different subsets of the population – these subsets are called
+subpopulations. To estimate the proportion of total lakes and in each
+nitrogen condition category the total number of lakes in each nitrogen
+condition category separately for <code>California</code>,
+<code>Oregon</code>, and <code>Washington</code> lakes, run</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">cat_ests_sp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cat_analysis.html">cat_analysis</a></span><span class="op">(</span>
-  <span class="va">NLA_PNW</span>,
-  siteID <span class="op">=</span> <span class="st">"SITE_ID"</span>,
-  vars <span class="op">=</span> <span class="st">"NITR_COND"</span>,
-  weight <span class="op">=</span> <span class="st">"WEIGHT"</span>,
-  subpop <span class="op">=</span> <span class="st">"STATE"</span>
-<span class="op">)</span>
-<span class="va">cat_ests_sp</span>
-<span class="co">#&gt;     Type Subpopulation Indicator Category nResp Estimate.P StdError.P</span>
-<span class="co">#&gt; 1  STATE    California NITR_COND     Fair     6   8.239162   4.712515</span>
-<span class="co">#&gt; 2  STATE    California NITR_COND     Good     8  73.722638  13.359879</span>
-<span class="co">#&gt; 3  STATE    California NITR_COND     Poor     5  18.038200  11.909638</span>
-<span class="co">#&gt; 4  STATE    California NITR_COND    Total    19 100.000000   0.000000</span>
-<span class="co">#&gt; 5  STATE        Oregon NITR_COND     Fair     8  27.152211   9.763817</span>
-<span class="co">#&gt; 6  STATE        Oregon NITR_COND     Good    26  59.670307   9.717093</span>
-<span class="co">#&gt; 7  STATE        Oregon NITR_COND     Poor    13  13.177483   4.901892</span>
-<span class="co">#&gt; 8  STATE        Oregon NITR_COND    Total    47 100.000000   0.000000</span>
-<span class="co">#&gt; 9  STATE    Washington NITR_COND     Fair    10  30.396139  11.938582</span>
-<span class="co">#&gt; 10 STATE    Washington NITR_COND     Good     4  22.711979  11.878964</span>
-<span class="co">#&gt; 11 STATE    Washington NITR_COND     Poor    16  46.891882  13.041148</span>
-<span class="co">#&gt; 12 STATE    Washington NITR_COND    Total    30 100.000000   0.000000</span>
-<span class="co">#&gt;    MarginofError.P LCB95Pct.P UCB95Pct.P Estimate.U StdError.U MarginofError.U</span>
-<span class="co">#&gt; 1         9.236359   0.000000   17.47552   208.4605   87.63415        171.7598</span>
-<span class="co">#&gt; 2        26.184881  47.537757   99.90752  1865.2692  940.12797       1842.6170</span>
-<span class="co">#&gt; 3        23.342462   0.000000   41.38066   456.3876  299.29104        586.5997</span>
-<span class="co">#&gt; 4         0.000000 100.000000  100.00000  2530.1172  978.65831       1918.1350</span>
-<span class="co">#&gt; 5        19.136729   8.015482   46.28894  1298.8470  526.66732       1032.2490</span>
-<span class="co">#&gt; 6        19.045152  40.625155   78.71546  2854.3752  674.02641       1321.0675</span>
-<span class="co">#&gt; 7         9.607532   3.569950   22.78501   630.3551  198.49966        389.0522</span>
-<span class="co">#&gt; 8         0.000000 100.000000  100.00000  4783.5773  706.53216       1384.7776</span>
-<span class="co">#&gt; 9        23.399190   6.996949   53.79533  1023.1210  437.69351        857.8635</span>
-<span class="co">#&gt; 10       23.282341   0.000000   45.99432   764.4755  453.48899        888.8221</span>
-<span class="co">#&gt; 11       25.560181  21.331701   72.45206  1578.3606  556.63044       1090.9756</span>
-<span class="co">#&gt; 12        0.000000 100.000000  100.00000  3365.9571  741.89397       1454.0855</span>
-<span class="co">#&gt;    LCB95Pct.U UCB95Pct.U</span>
-<span class="co">#&gt; 1    36.70069   380.2202</span>
-<span class="co">#&gt; 2    22.65222  3707.8861</span>
-<span class="co">#&gt; 3     0.00000  1042.9873</span>
-<span class="co">#&gt; 4   611.98220  4448.2523</span>
-<span class="co">#&gt; 5   266.59801  2331.0960</span>
-<span class="co">#&gt; 6  1533.30774  4175.4427</span>
-<span class="co">#&gt; 7   241.30288  1019.4072</span>
-<span class="co">#&gt; 8  3398.79970  6168.3549</span>
-<span class="co">#&gt; 9   165.25751  1880.9845</span>
-<span class="co">#&gt; 10    0.00000  1653.2976</span>
-<span class="co">#&gt; 11  487.38500  2669.3362</span>
-<span class="co">#&gt; 12 1911.87165  4820.0426</span></code></pre></div>
-<p>If more than one type of subpopulation is of interest, then <code>subpop</code> can be a vector of subpopulation variables and separate analyses are performed for each subpopulation. If both <code>vars</code> and <code>subpops</code> are vectors, separate analyses are performed for each variable and subpopulation combination.</p>
-<p>Analysis results for all sites (ignoring subpopulations) can be presented alongside the subpopulation analysis results using the <code>All_Sites</code> argument:</p>
+<code class="sourceCode R"><span><span class="va">cat_ests_sp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cat_analysis.html">cat_analysis</a></span><span class="op">(</span></span>
+<span>  <span class="va">NLA_PNW</span>,</span>
+<span>  siteID <span class="op">=</span> <span class="st">"SITE_ID"</span>,</span>
+<span>  vars <span class="op">=</span> <span class="st">"NITR_COND"</span>,</span>
+<span>  weight <span class="op">=</span> <span class="st">"WEIGHT"</span>,</span>
+<span>  subpop <span class="op">=</span> <span class="st">"STATE"</span></span>
+<span><span class="op">)</span></span>
+<span><span class="va">cat_ests_sp</span></span>
+<span><span class="co">#&gt;     Type Subpopulation Indicator Category nResp Estimate.P StdError.P</span></span>
+<span><span class="co">#&gt; 1  STATE    California NITR_COND     Fair     6   8.239162   4.712515</span></span>
+<span><span class="co">#&gt; 2  STATE    California NITR_COND     Good     8  73.722638  13.359879</span></span>
+<span><span class="co">#&gt; 3  STATE    California NITR_COND     Poor     5  18.038200  11.909638</span></span>
+<span><span class="co">#&gt; 4  STATE    California NITR_COND    Total    19 100.000000   0.000000</span></span>
+<span><span class="co">#&gt; 5  STATE        Oregon NITR_COND     Fair     8  27.152211   9.763817</span></span>
+<span><span class="co">#&gt; 6  STATE        Oregon NITR_COND     Good    26  59.670307   9.717093</span></span>
+<span><span class="co">#&gt; 7  STATE        Oregon NITR_COND     Poor    13  13.177483   4.901892</span></span>
+<span><span class="co">#&gt; 8  STATE        Oregon NITR_COND    Total    47 100.000000   0.000000</span></span>
+<span><span class="co">#&gt; 9  STATE    Washington NITR_COND     Fair    10  30.396139  11.938582</span></span>
+<span><span class="co">#&gt; 10 STATE    Washington NITR_COND     Good     4  22.711979  11.878964</span></span>
+<span><span class="co">#&gt; 11 STATE    Washington NITR_COND     Poor    16  46.891882  13.041148</span></span>
+<span><span class="co">#&gt; 12 STATE    Washington NITR_COND    Total    30 100.000000   0.000000</span></span>
+<span><span class="co">#&gt;    MarginofError.P LCB95Pct.P UCB95Pct.P Estimate.U StdError.U MarginofError.U</span></span>
+<span><span class="co">#&gt; 1         9.236359   0.000000   17.47552   208.4605   87.63415        171.7598</span></span>
+<span><span class="co">#&gt; 2        26.184881  47.537757   99.90752  1865.2692  940.12797       1842.6170</span></span>
+<span><span class="co">#&gt; 3        23.342462   0.000000   41.38066   456.3876  299.29104        586.5997</span></span>
+<span><span class="co">#&gt; 4         0.000000 100.000000  100.00000  2530.1172  978.65831       1918.1350</span></span>
+<span><span class="co">#&gt; 5        19.136729   8.015482   46.28894  1298.8470  526.66732       1032.2490</span></span>
+<span><span class="co">#&gt; 6        19.045152  40.625155   78.71546  2854.3752  674.02641       1321.0675</span></span>
+<span><span class="co">#&gt; 7         9.607532   3.569950   22.78501   630.3551  198.49966        389.0522</span></span>
+<span><span class="co">#&gt; 8         0.000000 100.000000  100.00000  4783.5773  706.53216       1384.7776</span></span>
+<span><span class="co">#&gt; 9        23.399190   6.996949   53.79533  1023.1210  437.69351        857.8635</span></span>
+<span><span class="co">#&gt; 10       23.282341   0.000000   45.99432   764.4755  453.48899        888.8221</span></span>
+<span><span class="co">#&gt; 11       25.560181  21.331701   72.45206  1578.3606  556.63044       1090.9756</span></span>
+<span><span class="co">#&gt; 12        0.000000 100.000000  100.00000  3365.9571  741.89397       1454.0855</span></span>
+<span><span class="co">#&gt;    LCB95Pct.U UCB95Pct.U</span></span>
+<span><span class="co">#&gt; 1    36.70069   380.2202</span></span>
+<span><span class="co">#&gt; 2    22.65222  3707.8861</span></span>
+<span><span class="co">#&gt; 3     0.00000  1042.9873</span></span>
+<span><span class="co">#&gt; 4   611.98220  4448.2523</span></span>
+<span><span class="co">#&gt; 5   266.59801  2331.0960</span></span>
+<span><span class="co">#&gt; 6  1533.30774  4175.4427</span></span>
+<span><span class="co">#&gt; 7   241.30288  1019.4072</span></span>
+<span><span class="co">#&gt; 8  3398.79970  6168.3549</span></span>
+<span><span class="co">#&gt; 9   165.25751  1880.9845</span></span>
+<span><span class="co">#&gt; 10    0.00000  1653.2976</span></span>
+<span><span class="co">#&gt; 11  487.38500  2669.3362</span></span>
+<span><span class="co">#&gt; 12 1911.87165  4820.0426</span></span></code></pre></div>
+<p>If more than one type of subpopulation is of interest, then
+<code>subpop</code> can be a vector of subpopulation variables and
+separate analyses are performed for each subpopulation. If both
+<code>vars</code> and <code>subpops</code> are vectors, separate
+analyses are performed for each variable and subpopulation
+combination.</p>
+<p>Analysis results for all sites (ignoring subpopulations) can be
+presented alongside the subpopulation analysis results using the
+<code>All_Sites</code> argument:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">cat_ests_sp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cat_analysis.html">cat_analysis</a></span><span class="op">(</span>
-  <span class="va">NLA_PNW</span>,
-  siteID <span class="op">=</span> <span class="st">"SITE_ID"</span>,
-  vars <span class="op">=</span> <span class="st">"NITR_COND"</span>,
-  weight <span class="op">=</span> <span class="st">"WEIGHT"</span>,
-  subpop <span class="op">=</span> <span class="st">"STATE"</span>,
-  All_Sites <span class="op">=</span> <span class="cn">TRUE</span>
-<span class="op">)</span>
-<span class="va">cat_ests_sp</span>
-<span class="co">#&gt;         Type Subpopulation Indicator Category nResp Estimate.P StdError.P</span>
-<span class="co">#&gt; 1      STATE    California NITR_COND     Fair     6   8.239162   4.712515</span>
-<span class="co">#&gt; 2      STATE    California NITR_COND     Good     8  73.722638  13.359879</span>
-<span class="co">#&gt; 3      STATE    California NITR_COND     Poor     5  18.038200  11.909638</span>
-<span class="co">#&gt; 4      STATE    California NITR_COND    Total    19 100.000000   0.000000</span>
-<span class="co">#&gt; 5      STATE        Oregon NITR_COND     Fair     8  27.152211   9.763817</span>
-<span class="co">#&gt; 6      STATE        Oregon NITR_COND     Good    26  59.670307   9.717093</span>
-<span class="co">#&gt; 7      STATE        Oregon NITR_COND     Poor    13  13.177483   4.901892</span>
-<span class="co">#&gt; 8      STATE        Oregon NITR_COND    Total    47 100.000000   0.000000</span>
-<span class="co">#&gt; 9      STATE    Washington NITR_COND     Fair    10  30.396139  11.938582</span>
-<span class="co">#&gt; 10     STATE    Washington NITR_COND     Good     4  22.711979  11.878964</span>
-<span class="co">#&gt; 11     STATE    Washington NITR_COND     Poor    16  46.891882  13.041148</span>
-<span class="co">#&gt; 12     STATE    Washington NITR_COND    Total    30 100.000000   0.000000</span>
-<span class="co">#&gt; 13 All_Sites     All Sites NITR_COND     Fair    24  23.693923   6.194024</span>
-<span class="co">#&gt; 14 All_Sites     All Sites NITR_COND     Good    38  51.351112   7.430172</span>
-<span class="co">#&gt; 15 All_Sites     All Sites NITR_COND     Poor    34  24.954965   5.919180</span>
-<span class="co">#&gt; 16 All_Sites     All Sites NITR_COND    Total    96 100.000000   0.000000</span>
-<span class="co">#&gt;    MarginofError.P LCB95Pct.P UCB95Pct.P Estimate.U StdError.U MarginofError.U</span>
-<span class="co">#&gt; 1         9.236359   0.000000   17.47552   208.4605   87.63415        171.7598</span>
-<span class="co">#&gt; 2        26.184881  47.537757   99.90752  1865.2692  940.12797       1842.6170</span>
-<span class="co">#&gt; 3        23.342462   0.000000   41.38066   456.3876  299.29104        586.5997</span>
-<span class="co">#&gt; 4         0.000000 100.000000  100.00000  2530.1172  978.65831       1918.1350</span>
-<span class="co">#&gt; 5        19.136729   8.015482   46.28894  1298.8470  526.66732       1032.2490</span>
-<span class="co">#&gt; 6        19.045152  40.625155   78.71546  2854.3752  674.02641       1321.0675</span>
-<span class="co">#&gt; 7         9.607532   3.569950   22.78501   630.3551  198.49966        389.0522</span>
-<span class="co">#&gt; 8         0.000000 100.000000  100.00000  4783.5773  706.53216       1384.7776</span>
-<span class="co">#&gt; 9        23.399190   6.996949   53.79533  1023.1210  437.69351        857.8635</span>
-<span class="co">#&gt; 10       23.282341   0.000000   45.99432   764.4755  453.48899        888.8221</span>
-<span class="co">#&gt; 11       25.560181  21.331701   72.45206  1578.3606  556.63044       1090.9756</span>
-<span class="co">#&gt; 12        0.000000 100.000000  100.00000  3365.9571  741.89397       1454.0855</span>
-<span class="co">#&gt; 13       12.140064  11.553860   35.83399  2530.4285  693.55933       1359.3513</span>
-<span class="co">#&gt; 14       14.562870  36.788242   65.91398  5484.1199 1223.37078       2397.7627</span>
-<span class="co">#&gt; 15       11.601379  13.353585   36.55634  2665.1033  658.09658       1289.8456</span>
-<span class="co">#&gt; 16        0.000000 100.000000  100.00000 10679.6517 1416.27075       2775.8397</span>
-<span class="co">#&gt;    LCB95Pct.U UCB95Pct.U</span>
-<span class="co">#&gt; 1    36.70069   380.2202</span>
-<span class="co">#&gt; 2    22.65222  3707.8861</span>
-<span class="co">#&gt; 3     0.00000  1042.9873</span>
-<span class="co">#&gt; 4   611.98220  4448.2523</span>
-<span class="co">#&gt; 5   266.59801  2331.0960</span>
-<span class="co">#&gt; 6  1533.30774  4175.4427</span>
-<span class="co">#&gt; 7   241.30288  1019.4072</span>
-<span class="co">#&gt; 8  3398.79970  6168.3549</span>
-<span class="co">#&gt; 9   165.25751  1880.9845</span>
-<span class="co">#&gt; 10    0.00000  1653.2976</span>
-<span class="co">#&gt; 11  487.38500  2669.3362</span>
-<span class="co">#&gt; 12 1911.87165  4820.0426</span>
-<span class="co">#&gt; 13 1171.07716  3889.7798</span>
-<span class="co">#&gt; 14 3086.35722  7881.8826</span>
-<span class="co">#&gt; 15 1375.25770  3954.9489</span>
-<span class="co">#&gt; 16 7903.81199 13455.4913</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">cat_ests_sp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cat_analysis.html">cat_analysis</a></span><span class="op">(</span></span>
+<span>  <span class="va">NLA_PNW</span>,</span>
+<span>  siteID <span class="op">=</span> <span class="st">"SITE_ID"</span>,</span>
+<span>  vars <span class="op">=</span> <span class="st">"NITR_COND"</span>,</span>
+<span>  weight <span class="op">=</span> <span class="st">"WEIGHT"</span>,</span>
+<span>  subpop <span class="op">=</span> <span class="st">"STATE"</span>,</span>
+<span>  All_Sites <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span>
+<span><span class="va">cat_ests_sp</span></span>
+<span><span class="co">#&gt;         Type Subpopulation Indicator Category nResp Estimate.P StdError.P</span></span>
+<span><span class="co">#&gt; 1      STATE    California NITR_COND     Fair     6   8.239162   4.712515</span></span>
+<span><span class="co">#&gt; 2      STATE    California NITR_COND     Good     8  73.722638  13.359879</span></span>
+<span><span class="co">#&gt; 3      STATE    California NITR_COND     Poor     5  18.038200  11.909638</span></span>
+<span><span class="co">#&gt; 4      STATE    California NITR_COND    Total    19 100.000000   0.000000</span></span>
+<span><span class="co">#&gt; 5      STATE        Oregon NITR_COND     Fair     8  27.152211   9.763817</span></span>
+<span><span class="co">#&gt; 6      STATE        Oregon NITR_COND     Good    26  59.670307   9.717093</span></span>
+<span><span class="co">#&gt; 7      STATE        Oregon NITR_COND     Poor    13  13.177483   4.901892</span></span>
+<span><span class="co">#&gt; 8      STATE        Oregon NITR_COND    Total    47 100.000000   0.000000</span></span>
+<span><span class="co">#&gt; 9      STATE    Washington NITR_COND     Fair    10  30.396139  11.938582</span></span>
+<span><span class="co">#&gt; 10     STATE    Washington NITR_COND     Good     4  22.711979  11.878964</span></span>
+<span><span class="co">#&gt; 11     STATE    Washington NITR_COND     Poor    16  46.891882  13.041148</span></span>
+<span><span class="co">#&gt; 12     STATE    Washington NITR_COND    Total    30 100.000000   0.000000</span></span>
+<span><span class="co">#&gt; 13 All_Sites     All Sites NITR_COND     Fair    24  23.693923   6.194024</span></span>
+<span><span class="co">#&gt; 14 All_Sites     All Sites NITR_COND     Good    38  51.351112   7.430172</span></span>
+<span><span class="co">#&gt; 15 All_Sites     All Sites NITR_COND     Poor    34  24.954965   5.919180</span></span>
+<span><span class="co">#&gt; 16 All_Sites     All Sites NITR_COND    Total    96 100.000000   0.000000</span></span>
+<span><span class="co">#&gt;    MarginofError.P LCB95Pct.P UCB95Pct.P Estimate.U StdError.U MarginofError.U</span></span>
+<span><span class="co">#&gt; 1         9.236359   0.000000   17.47552   208.4605   87.63415        171.7598</span></span>
+<span><span class="co">#&gt; 2        26.184881  47.537757   99.90752  1865.2692  940.12797       1842.6170</span></span>
+<span><span class="co">#&gt; 3        23.342462   0.000000   41.38066   456.3876  299.29104        586.5997</span></span>
+<span><span class="co">#&gt; 4         0.000000 100.000000  100.00000  2530.1172  978.65831       1918.1350</span></span>
+<span><span class="co">#&gt; 5        19.136729   8.015482   46.28894  1298.8470  526.66732       1032.2490</span></span>
+<span><span class="co">#&gt; 6        19.045152  40.625155   78.71546  2854.3752  674.02641       1321.0675</span></span>
+<span><span class="co">#&gt; 7         9.607532   3.569950   22.78501   630.3551  198.49966        389.0522</span></span>
+<span><span class="co">#&gt; 8         0.000000 100.000000  100.00000  4783.5773  706.53216       1384.7776</span></span>
+<span><span class="co">#&gt; 9        23.399190   6.996949   53.79533  1023.1210  437.69351        857.8635</span></span>
+<span><span class="co">#&gt; 10       23.282341   0.000000   45.99432   764.4755  453.48899        888.8221</span></span>
+<span><span class="co">#&gt; 11       25.560181  21.331701   72.45206  1578.3606  556.63044       1090.9756</span></span>
+<span><span class="co">#&gt; 12        0.000000 100.000000  100.00000  3365.9571  741.89397       1454.0855</span></span>
+<span><span class="co">#&gt; 13       12.140064  11.553860   35.83399  2530.4285  693.55933       1359.3513</span></span>
+<span><span class="co">#&gt; 14       14.562870  36.788242   65.91398  5484.1199 1223.37078       2397.7627</span></span>
+<span><span class="co">#&gt; 15       11.601379  13.353585   36.55634  2665.1033  658.09658       1289.8456</span></span>
+<span><span class="co">#&gt; 16        0.000000 100.000000  100.00000 10679.6517 1416.27075       2775.8397</span></span>
+<span><span class="co">#&gt;    LCB95Pct.U UCB95Pct.U</span></span>
+<span><span class="co">#&gt; 1    36.70069   380.2202</span></span>
+<span><span class="co">#&gt; 2    22.65222  3707.8861</span></span>
+<span><span class="co">#&gt; 3     0.00000  1042.9873</span></span>
+<span><span class="co">#&gt; 4   611.98220  4448.2523</span></span>
+<span><span class="co">#&gt; 5   266.59801  2331.0960</span></span>
+<span><span class="co">#&gt; 6  1533.30774  4175.4427</span></span>
+<span><span class="co">#&gt; 7   241.30288  1019.4072</span></span>
+<span><span class="co">#&gt; 8  3398.79970  6168.3549</span></span>
+<span><span class="co">#&gt; 9   165.25751  1880.9845</span></span>
+<span><span class="co">#&gt; 10    0.00000  1653.2976</span></span>
+<span><span class="co">#&gt; 11  487.38500  2669.3362</span></span>
+<span><span class="co">#&gt; 12 1911.87165  4820.0426</span></span>
+<span><span class="co">#&gt; 13 1171.07716  3889.7798</span></span>
+<span><span class="co">#&gt; 14 3086.35722  7881.8826</span></span>
+<span><span class="co">#&gt; 15 1375.25770  3954.9489</span></span>
+<span><span class="co">#&gt; 16 7903.81199 13455.4913</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="stratified-analysis">Stratified Analysis<a class="anchor" aria-label="anchor" href="#stratified-analysis"></a>
 </h3>
-<p>To estimate the proportion of total lakes in each nitrogen condition category and the total number of lakes in each nitrogen condition category stratified by <code>URBAN</code> category (whether the lake is classified as <code>Urban</code> or <code>Non-Urban</code>), run</p>
+<p>To estimate the proportion of total lakes in each nitrogen condition
+category and the total number of lakes in each nitrogen condition
+category stratified by <code>URBAN</code> category (whether the lake is
+classified as <code>Urban</code> or <code>Non-Urban</code>), run</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">strat_cat_ests</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cat_analysis.html">cat_analysis</a></span><span class="op">(</span>
-  <span class="va">NLA_PNW</span>,
-  siteID <span class="op">=</span> <span class="st">"SITE_ID"</span>,
-  vars <span class="op">=</span> <span class="st">"NITR_COND"</span>,
-  weight <span class="op">=</span> <span class="st">"WEIGHT"</span>,
-  stratumID <span class="op">=</span> <span class="st">"URBAN"</span>
-<span class="op">)</span>
-<span class="va">strat_cat_ests</span>
-<span class="co">#&gt;        Type Subpopulation Indicator Category nResp Estimate.P StdError.P</span>
-<span class="co">#&gt; 1 All_Sites     All Sites NITR_COND     Fair    24   23.69392   6.027083</span>
-<span class="co">#&gt; 2 All_Sites     All Sites NITR_COND     Good    38   51.35111   7.472377</span>
-<span class="co">#&gt; 3 All_Sites     All Sites NITR_COND     Poor    34   24.95496   5.882487</span>
-<span class="co">#&gt; 4 All_Sites     All Sites NITR_COND    Total    96  100.00000   0.000000</span>
-<span class="co">#&gt;   MarginofError.P LCB95Pct.P UCB95Pct.P Estimate.U StdError.U MarginofError.U</span>
-<span class="co">#&gt; 1        11.81287   11.88106   35.50679   2530.428   683.8837        1340.387</span>
-<span class="co">#&gt; 2        14.64559   36.70552   65.99670   5484.120  1229.9485        2410.655</span>
-<span class="co">#&gt; 3        11.52946   13.42550   36.48443   2665.103   653.6357        1281.102</span>
-<span class="co">#&gt; 4         0.00000  100.00000  100.00000  10679.652  1440.4796        2823.288</span>
-<span class="co">#&gt;   LCB95Pct.U UCB95Pct.U</span>
-<span class="co">#&gt; 1   1190.041   3870.816</span>
-<span class="co">#&gt; 2   3073.465   7894.775</span>
-<span class="co">#&gt; 3   1384.001   3946.206</span>
-<span class="co">#&gt; 4   7856.363  13502.940</span></code></pre></div>
-<p>To then compute these estimates separately for <code>California</code>, <code>Oregon</code>, and <code>Washington</code>, run</p>
+<code class="sourceCode R"><span><span class="va">strat_cat_ests</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cat_analysis.html">cat_analysis</a></span><span class="op">(</span></span>
+<span>  <span class="va">NLA_PNW</span>,</span>
+<span>  siteID <span class="op">=</span> <span class="st">"SITE_ID"</span>,</span>
+<span>  vars <span class="op">=</span> <span class="st">"NITR_COND"</span>,</span>
+<span>  weight <span class="op">=</span> <span class="st">"WEIGHT"</span>,</span>
+<span>  stratumID <span class="op">=</span> <span class="st">"URBAN"</span></span>
+<span><span class="op">)</span></span>
+<span><span class="va">strat_cat_ests</span></span>
+<span><span class="co">#&gt;        Type Subpopulation Indicator Category nResp Estimate.P StdError.P</span></span>
+<span><span class="co">#&gt; 1 All_Sites     All Sites NITR_COND     Fair    24   23.69392   6.027083</span></span>
+<span><span class="co">#&gt; 2 All_Sites     All Sites NITR_COND     Good    38   51.35111   7.472377</span></span>
+<span><span class="co">#&gt; 3 All_Sites     All Sites NITR_COND     Poor    34   24.95496   5.882487</span></span>
+<span><span class="co">#&gt; 4 All_Sites     All Sites NITR_COND    Total    96  100.00000   0.000000</span></span>
+<span><span class="co">#&gt;   MarginofError.P LCB95Pct.P UCB95Pct.P Estimate.U StdError.U MarginofError.U</span></span>
+<span><span class="co">#&gt; 1        11.81287   11.88106   35.50679   2530.428   683.8837        1340.387</span></span>
+<span><span class="co">#&gt; 2        14.64559   36.70552   65.99670   5484.120  1229.9485        2410.655</span></span>
+<span><span class="co">#&gt; 3        11.52946   13.42550   36.48443   2665.103   653.6357        1281.102</span></span>
+<span><span class="co">#&gt; 4         0.00000  100.00000  100.00000  10679.652  1440.4796        2823.288</span></span>
+<span><span class="co">#&gt;   LCB95Pct.U UCB95Pct.U</span></span>
+<span><span class="co">#&gt; 1   1190.041   3870.816</span></span>
+<span><span class="co">#&gt; 2   3073.465   7894.775</span></span>
+<span><span class="co">#&gt; 3   1384.001   3946.206</span></span>
+<span><span class="co">#&gt; 4   7856.363  13502.940</span></span></code></pre></div>
+<p>To then compute these estimates separately for
+<code>California</code>, <code>Oregon</code>, and
+<code>Washington</code>, run</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">strat_cat_ests_sp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cat_analysis.html">cat_analysis</a></span><span class="op">(</span>
-  <span class="va">NLA_PNW</span>,
-  siteID <span class="op">=</span> <span class="st">"SITE_ID"</span>,
-  vars <span class="op">=</span> <span class="st">"NITR_COND"</span>,
-  weight <span class="op">=</span> <span class="st">"WEIGHT"</span>,
-  stratumID <span class="op">=</span> <span class="st">"URBAN"</span>,
-  subpop <span class="op">=</span> <span class="st">"STATE"</span>
-<span class="op">)</span>
-<span class="va">strat_cat_ests_sp</span>
-<span class="co">#&gt;     Type Subpopulation Indicator Category nResp Estimate.P StdError.P</span>
-<span class="co">#&gt; 1  STATE    California NITR_COND     Fair     6   8.239162   5.481100</span>
-<span class="co">#&gt; 2  STATE    California NITR_COND     Good     8  73.722638  13.653267</span>
-<span class="co">#&gt; 3  STATE    California NITR_COND     Poor     5  18.038200  12.512366</span>
-<span class="co">#&gt; 4  STATE    California NITR_COND    Total    19 100.000000   0.000000</span>
-<span class="co">#&gt; 5  STATE        Oregon NITR_COND     Fair     8  27.152211   9.592356</span>
-<span class="co">#&gt; 6  STATE        Oregon NITR_COND     Good    26  59.670307   9.845022</span>
-<span class="co">#&gt; 7  STATE        Oregon NITR_COND     Poor    13  13.177483   5.325784</span>
-<span class="co">#&gt; 8  STATE        Oregon NITR_COND    Total    47 100.000000   0.000000</span>
-<span class="co">#&gt; 9  STATE    Washington NITR_COND     Fair    10  30.396139  11.383474</span>
-<span class="co">#&gt; 10 STATE    Washington NITR_COND     Good     4  22.711979   9.039351</span>
-<span class="co">#&gt; 11 STATE    Washington NITR_COND     Poor    16  46.891882  12.109215</span>
-<span class="co">#&gt; 12 STATE    Washington NITR_COND    Total    30 100.000000   0.000000</span>
-<span class="co">#&gt;    MarginofError.P LCB95Pct.P UCB95Pct.P Estimate.U StdError.U MarginofError.U</span>
-<span class="co">#&gt; 1         10.74276   0.000000   18.98192   208.4605   87.91849        172.3171</span>
-<span class="co">#&gt; 2         26.75991  46.962726  100.00000  1865.2692  953.91452       1869.6381</span>
-<span class="co">#&gt; 3         24.52379   0.000000   42.56199   456.3876  306.37270        600.4795</span>
-<span class="co">#&gt; 4          0.00000 100.000000  100.00000  2530.1172  994.94678       1950.0599</span>
-<span class="co">#&gt; 5         18.80067   8.351538   45.95288  1298.8470  531.02949       1040.7987</span>
-<span class="co">#&gt; 6         19.29589  40.374417   78.96620  2854.3752  685.86488       1344.2705</span>
-<span class="co">#&gt; 7         10.43835   2.739137   23.61583   630.3551  177.79364        348.4691</span>
-<span class="co">#&gt; 8          0.00000 100.000000  100.00000  4783.5773  737.53853       1445.5490</span>
-<span class="co">#&gt; 9         22.31120   8.084941   52.70734  1023.1210  435.45383        853.4738</span>
-<span class="co">#&gt; 10        17.71680   4.995177   40.42878   764.4755  433.94100        850.5087</span>
-<span class="co">#&gt; 11        23.73363  23.158256   70.62551  1578.3606  554.91047       1087.6045</span>
-<span class="co">#&gt; 12         0.00000 100.000000  100.00000  3365.9571  748.29764       1466.6364</span>
-<span class="co">#&gt;    LCB95Pct.U UCB95Pct.U</span>
-<span class="co">#&gt; 1     36.1434   380.7775</span>
-<span class="co">#&gt; 2      0.0000  3734.9073</span>
-<span class="co">#&gt; 3      0.0000  1056.8671</span>
-<span class="co">#&gt; 4    580.0574  4480.1771</span>
-<span class="co">#&gt; 5    258.0483  2339.6457</span>
-<span class="co">#&gt; 6   1510.1048  4198.6457</span>
-<span class="co">#&gt; 7    281.8859   978.8242</span>
-<span class="co">#&gt; 8   3338.0283  6229.1262</span>
-<span class="co">#&gt; 9    169.6472  1876.5948</span>
-<span class="co">#&gt; 10     0.0000  1614.9842</span>
-<span class="co">#&gt; 11   490.7561  2665.9652</span>
-<span class="co">#&gt; 12  1899.3207  4832.5935</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">strat_cat_ests_sp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cat_analysis.html">cat_analysis</a></span><span class="op">(</span></span>
+<span>  <span class="va">NLA_PNW</span>,</span>
+<span>  siteID <span class="op">=</span> <span class="st">"SITE_ID"</span>,</span>
+<span>  vars <span class="op">=</span> <span class="st">"NITR_COND"</span>,</span>
+<span>  weight <span class="op">=</span> <span class="st">"WEIGHT"</span>,</span>
+<span>  stratumID <span class="op">=</span> <span class="st">"URBAN"</span>,</span>
+<span>  subpop <span class="op">=</span> <span class="st">"STATE"</span></span>
+<span><span class="op">)</span></span>
+<span><span class="va">strat_cat_ests_sp</span></span>
+<span><span class="co">#&gt;     Type Subpopulation Indicator Category nResp Estimate.P StdError.P</span></span>
+<span><span class="co">#&gt; 1  STATE    California NITR_COND     Fair     6   8.239162   5.481100</span></span>
+<span><span class="co">#&gt; 2  STATE    California NITR_COND     Good     8  73.722638  13.653267</span></span>
+<span><span class="co">#&gt; 3  STATE    California NITR_COND     Poor     5  18.038200  12.512366</span></span>
+<span><span class="co">#&gt; 4  STATE    California NITR_COND    Total    19 100.000000   0.000000</span></span>
+<span><span class="co">#&gt; 5  STATE        Oregon NITR_COND     Fair     8  27.152211   9.592356</span></span>
+<span><span class="co">#&gt; 6  STATE        Oregon NITR_COND     Good    26  59.670307   9.845022</span></span>
+<span><span class="co">#&gt; 7  STATE        Oregon NITR_COND     Poor    13  13.177483   5.325784</span></span>
+<span><span class="co">#&gt; 8  STATE        Oregon NITR_COND    Total    47 100.000000   0.000000</span></span>
+<span><span class="co">#&gt; 9  STATE    Washington NITR_COND     Fair    10  30.396139  11.383474</span></span>
+<span><span class="co">#&gt; 10 STATE    Washington NITR_COND     Good     4  22.711979   9.039351</span></span>
+<span><span class="co">#&gt; 11 STATE    Washington NITR_COND     Poor    16  46.891882  12.109215</span></span>
+<span><span class="co">#&gt; 12 STATE    Washington NITR_COND    Total    30 100.000000   0.000000</span></span>
+<span><span class="co">#&gt;    MarginofError.P LCB95Pct.P UCB95Pct.P Estimate.U StdError.U MarginofError.U</span></span>
+<span><span class="co">#&gt; 1         10.74276   0.000000   18.98192   208.4605   87.91849        172.3171</span></span>
+<span><span class="co">#&gt; 2         26.75991  46.962726  100.00000  1865.2692  953.91452       1869.6381</span></span>
+<span><span class="co">#&gt; 3         24.52379   0.000000   42.56199   456.3876  306.37270        600.4795</span></span>
+<span><span class="co">#&gt; 4          0.00000 100.000000  100.00000  2530.1172  994.94678       1950.0599</span></span>
+<span><span class="co">#&gt; 5         18.80067   8.351538   45.95288  1298.8470  531.02949       1040.7987</span></span>
+<span><span class="co">#&gt; 6         19.29589  40.374417   78.96620  2854.3752  685.86488       1344.2705</span></span>
+<span><span class="co">#&gt; 7         10.43835   2.739137   23.61583   630.3551  177.79364        348.4691</span></span>
+<span><span class="co">#&gt; 8          0.00000 100.000000  100.00000  4783.5773  737.53853       1445.5490</span></span>
+<span><span class="co">#&gt; 9         22.31120   8.084941   52.70734  1023.1210  435.45383        853.4738</span></span>
+<span><span class="co">#&gt; 10        17.71680   4.995177   40.42878   764.4755  433.94100        850.5087</span></span>
+<span><span class="co">#&gt; 11        23.73363  23.158256   70.62551  1578.3606  554.91047       1087.6045</span></span>
+<span><span class="co">#&gt; 12         0.00000 100.000000  100.00000  3365.9571  748.29764       1466.6364</span></span>
+<span><span class="co">#&gt;    LCB95Pct.U UCB95Pct.U</span></span>
+<span><span class="co">#&gt; 1     36.1434   380.7775</span></span>
+<span><span class="co">#&gt; 2      0.0000  3734.9073</span></span>
+<span><span class="co">#&gt; 3      0.0000  1056.8671</span></span>
+<span><span class="co">#&gt; 4    580.0574  4480.1771</span></span>
+<span><span class="co">#&gt; 5    258.0483  2339.6457</span></span>
+<span><span class="co">#&gt; 6   1510.1048  4198.6457</span></span>
+<span><span class="co">#&gt; 7    281.8859   978.8242</span></span>
+<span><span class="co">#&gt; 8   3338.0283  6229.1262</span></span>
+<span><span class="co">#&gt; 9    169.6472  1876.5948</span></span>
+<span><span class="co">#&gt; 10     0.0000  1614.9842</span></span>
+<span><span class="co">#&gt; 11   490.7561  2665.9652</span></span>
+<span><span class="co">#&gt; 12  1899.3207  4832.5935</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
 <h2 id="continuous-variable-analysis">Continuous Variable Analysis<a class="anchor" aria-label="anchor" href="#continuous-variable-analysis"></a>
 </h2>
-<p>Continuous variables are analyzed in spsurvey using the <code><a href="../reference/cont_analysis.html">cont_analysis()</a></code> function. The <code><a href="../reference/cont_analysis.html">cont_analysis()</a></code> function estimates cumulative distribution functions (CDFs), percentiles, and means of continuous variables. By default, all these quantities are estimated (though this can be changed using the <code>statsitics</code> argument to <code><a href="../reference/cont_analysis.html">cont_analysis()</a></code>). For the quantities requiring estimation, several useful pieces of information are returned by <code><a href="../reference/cont_analysis.html">cont_analysis()</a></code>, including estimates, standard errors, margins of error, and confidence intervals. The <code>.P</code> suffix corresponds to estimates of proportions for each variable, while the <code>.U</code> suffix corresponds to estimates of total units (i.e. extent) for each variable.</p>
+<p>Continuous variables are analyzed in spsurvey using the
+<code><a href="../reference/cont_analysis.html">cont_analysis()</a></code> function. The <code><a href="../reference/cont_analysis.html">cont_analysis()</a></code>
+function estimates cumulative distribution functions (CDFs),
+percentiles, and means of continuous variables. By default, all these
+quantities are estimated (though this can be changed using the
+<code>statsitics</code> argument to <code><a href="../reference/cont_analysis.html">cont_analysis()</a></code>). For
+the quantities requiring estimation, several useful pieces of
+information are returned by <code><a href="../reference/cont_analysis.html">cont_analysis()</a></code>, including
+estimates, standard errors, margins of error, and confidence intervals.
+The <code>.P</code> suffix corresponds to estimates of proportions for
+each variable, while the <code>.U</code> suffix corresponds to estimates
+of total units (i.e. extent) for each variable.</p>
 <div class="section level3">
 <h3 id="unstratified-analysis-1">Unstratified Analysis<a class="anchor" aria-label="anchor" href="#unstratified-analysis-1"></a>
 </h3>
-<p>To estimate the cumulative distribution function (CDF), certain percentiles, and means of <code>BMMI</code>, run</p>
+<p>To estimate the cumulative distribution function (CDF), certain
+percentiles, and means of <code>BMMI</code>, run</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">cont_ests</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cont_analysis.html">cont_analysis</a></span><span class="op">(</span>
-  <span class="va">NLA_PNW</span>,
-  siteID <span class="op">=</span> <span class="st">"SITE_ID"</span>,
-  vars <span class="op">=</span> <span class="st">"BMMI"</span>,
-  weight <span class="op">=</span> <span class="st">"WEIGHT"</span>
-<span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">cont_ests</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cont_analysis.html">cont_analysis</a></span><span class="op">(</span></span>
+<span>  <span class="va">NLA_PNW</span>,</span>
+<span>  siteID <span class="op">=</span> <span class="st">"SITE_ID"</span>,</span>
+<span>  vars <span class="op">=</span> <span class="st">"BMMI"</span>,</span>
+<span>  weight <span class="op">=</span> <span class="st">"WEIGHT"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 <p>To view the analysis results for the mean estimates, run</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">cont_ests</span><span class="op">$</span><span class="va">Mean</span>
-<span class="co">#&gt;        Type Subpopulation Indicator nResp Estimate StdError MarginofError</span>
-<span class="co">#&gt; 1 All_Sites     All Sites      BMMI    96 56.50929 1.782278        3.4932</span>
-<span class="co">#&gt;   LCB95Pct UCB95Pct</span>
-<span class="co">#&gt; 1 53.01609 60.00249</span></code></pre></div>
-<p>Similarly, the CDF and select percentile estimates can be viewed (the output is omitted here) by running</p>
+<code class="sourceCode R"><span><span class="va">cont_ests</span><span class="op">$</span><span class="va">Mean</span></span>
+<span><span class="co">#&gt;        Type Subpopulation Indicator nResp Estimate StdError MarginofError</span></span>
+<span><span class="co">#&gt; 1 All_Sites     All Sites      BMMI    96 56.50929 1.782278        3.4932</span></span>
+<span><span class="co">#&gt;   LCB95Pct UCB95Pct</span></span>
+<span><span class="co">#&gt; 1 53.01609 60.00249</span></span></code></pre></div>
+<p>Similarly, the CDF and select percentile estimates can be viewed (the
+output is omitted here) by running</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">cont_ests</span><span class="op">$</span><span class="va">CDF</span>
-<span class="va">cont_ests</span><span class="op">$</span><span class="va">Pct</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">cont_ests</span><span class="op">$</span><span class="va">CDF</span></span>
+<span><span class="va">cont_ests</span><span class="op">$</span><span class="va">Pct</span></span></code></pre></div>
 <p>To visualize the CDF estimates, run</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/plot.html">plot</a></span><span class="op">(</span><span class="va">cont_ests</span><span class="op">$</span><span class="va">CDF</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot.html">plot</a></span><span class="op">(</span><span class="va">cont_ests</span><span class="op">$</span><span class="va">CDF</span><span class="op">)</span></span></code></pre></div>
 <p><img src="analysis_files/figure-html/unnamed-chunk-12-1.png" width="700"></p>
-<p>The solid line indicates the CDF estimates, and the dashed lines indicate lower and upper 95% confidence interval bounds for the CDF estimates. <code><a href="../reference/cdf_plot.html">cdf_plot()</a></code> can equivalently be used in place of <code><a href="../reference/plot.html">plot()</a></code> (<code><a href="../reference/cdf_plot.html">cdf_plot()</a></code> is currently maintained for backwards compatibility with previous spsurvey versions).</p>
-<p>To estimate the CDF, certain percentiles, and means of <code>BMMI</code> separately for each state, run</p>
+<p>The solid line indicates the CDF estimates, and the dashed lines
+indicate lower and upper 95% confidence interval bounds for the CDF
+estimates. <code><a href="../reference/cdf_plot.html">cdf_plot()</a></code> can equivalently be used in place of
+<code><a href="../reference/plot.html">plot()</a></code> (<code><a href="../reference/cdf_plot.html">cdf_plot()</a></code> is currently maintained for
+backwards compatibility with previous spsurvey versions).</p>
+<p>To estimate the CDF, certain percentiles, and means of
+<code>BMMI</code> separately for each state, run</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">cont_ests_sp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cont_analysis.html">cont_analysis</a></span><span class="op">(</span>
-  <span class="va">NLA_PNW</span>,
-  siteID <span class="op">=</span> <span class="st">"SITE_ID"</span>,
-  vars <span class="op">=</span> <span class="st">"BMMI"</span>,
-  weight <span class="op">=</span> <span class="st">"WEIGHT"</span>,
-  subpop <span class="op">=</span> <span class="st">"STATE"</span>
-<span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">cont_ests_sp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cont_analysis.html">cont_analysis</a></span><span class="op">(</span></span>
+<span>  <span class="va">NLA_PNW</span>,</span>
+<span>  siteID <span class="op">=</span> <span class="st">"SITE_ID"</span>,</span>
+<span>  vars <span class="op">=</span> <span class="st">"BMMI"</span>,</span>
+<span>  weight <span class="op">=</span> <span class="st">"WEIGHT"</span>,</span>
+<span>  subpop <span class="op">=</span> <span class="st">"STATE"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 <p>To view the analysis results for the mean estimates, run</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">cont_ests_sp</span><span class="op">$</span><span class="va">Mean</span>
-<span class="co">#&gt;    Type Subpopulation Indicator nResp Estimate StdError MarginofError LCB95Pct</span>
-<span class="co">#&gt; 1 STATE    California      BMMI    19 50.48964 4.049094      7.936079 42.55357</span>
-<span class="co">#&gt; 2 STATE        Oregon      BMMI    47 61.29675 2.581032      5.058730 56.23802</span>
-<span class="co">#&gt; 3 STATE    Washington      BMMI    30 54.23036 3.143924      6.161977 48.06838</span>
-<span class="co">#&gt;   UCB95Pct</span>
-<span class="co">#&gt; 1 58.42572</span>
-<span class="co">#&gt; 2 66.35548</span>
-<span class="co">#&gt; 3 60.39234</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">cont_ests_sp</span><span class="op">$</span><span class="va">Mean</span></span>
+<span><span class="co">#&gt;    Type Subpopulation Indicator nResp Estimate StdError MarginofError LCB95Pct</span></span>
+<span><span class="co">#&gt; 1 STATE    California      BMMI    19 50.48964 4.049094      7.936079 42.55357</span></span>
+<span><span class="co">#&gt; 2 STATE        Oregon      BMMI    47 61.29675 2.581032      5.058730 56.23802</span></span>
+<span><span class="co">#&gt; 3 STATE    Washington      BMMI    30 54.23036 3.143924      6.161977 48.06838</span></span>
+<span><span class="co">#&gt;   UCB95Pct</span></span>
+<span><span class="co">#&gt; 1 58.42572</span></span>
+<span><span class="co">#&gt; 2 66.35548</span></span>
+<span><span class="co">#&gt; 3 60.39234</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="stratified-analysis-1">Stratified Analysis<a class="anchor" aria-label="anchor" href="#stratified-analysis-1"></a>
 </h3>
-<p>To estimate the CDF, certain percentiles, and means of <code>BMMI</code> for a design stratified by <code>URBAN</code> category, run</p>
+<p>To estimate the CDF, certain percentiles, and means of
+<code>BMMI</code> for a design stratified by <code>URBAN</code>
+category, run</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">strat_cont_ests</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cont_analysis.html">cont_analysis</a></span><span class="op">(</span>
-  <span class="va">NLA_PNW</span>,
-  siteID <span class="op">=</span> <span class="st">"SITE_ID"</span>,
-  vars <span class="op">=</span> <span class="st">"BMMI"</span>,
-  weight <span class="op">=</span> <span class="st">"WEIGHT"</span>,
-  stratumID <span class="op">=</span> <span class="st">"URBAN"</span>
-<span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">strat_cont_ests</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cont_analysis.html">cont_analysis</a></span><span class="op">(</span></span>
+<span>  <span class="va">NLA_PNW</span>,</span>
+<span>  siteID <span class="op">=</span> <span class="st">"SITE_ID"</span>,</span>
+<span>  vars <span class="op">=</span> <span class="st">"BMMI"</span>,</span>
+<span>  weight <span class="op">=</span> <span class="st">"WEIGHT"</span>,</span>
+<span>  stratumID <span class="op">=</span> <span class="st">"URBAN"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 <p>To view the analysis results for the mean estimates, run</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">strat_cont_ests</span><span class="op">$</span><span class="va">Mean</span>
-<span class="co">#&gt;        Type Subpopulation Indicator nResp Estimate StdError MarginofError</span>
-<span class="co">#&gt; 1 All_Sites     All Sites      BMMI    96 56.50929 1.795959      3.520015</span>
-<span class="co">#&gt;   LCB95Pct UCB95Pct</span>
-<span class="co">#&gt; 1 52.98928 60.02931</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">strat_cont_ests</span><span class="op">$</span><span class="va">Mean</span></span>
+<span><span class="co">#&gt;        Type Subpopulation Indicator nResp Estimate StdError MarginofError</span></span>
+<span><span class="co">#&gt; 1 All_Sites     All Sites      BMMI    96 56.50929 1.795959      3.520015</span></span>
+<span><span class="co">#&gt;   LCB95Pct UCB95Pct</span></span>
+<span><span class="co">#&gt; 1 52.98928 60.02931</span></span></code></pre></div>
 <p>To then compute these estimates separately for each state, run</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">strat_cont_ests_sp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cont_analysis.html">cont_analysis</a></span><span class="op">(</span>
-  <span class="va">NLA_PNW</span>,
-  siteID <span class="op">=</span> <span class="st">"SITE_ID"</span>,
-  vars <span class="op">=</span> <span class="st">"BMMI"</span>,
-  weight <span class="op">=</span> <span class="st">"WEIGHT"</span>,
-  stratumID <span class="op">=</span> <span class="st">"URBAN"</span>,
-  subpop <span class="op">=</span> <span class="st">"STATE"</span>,
-<span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">strat_cont_ests_sp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cont_analysis.html">cont_analysis</a></span><span class="op">(</span></span>
+<span>  <span class="va">NLA_PNW</span>,</span>
+<span>  siteID <span class="op">=</span> <span class="st">"SITE_ID"</span>,</span>
+<span>  vars <span class="op">=</span> <span class="st">"BMMI"</span>,</span>
+<span>  weight <span class="op">=</span> <span class="st">"WEIGHT"</span>,</span>
+<span>  stratumID <span class="op">=</span> <span class="st">"URBAN"</span>,</span>
+<span>  subpop <span class="op">=</span> <span class="st">"STATE"</span>,</span>
+<span><span class="op">)</span></span></code></pre></div>
 <p>To view the analysis results for the mean estimates, run</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">strat_cont_ests_sp</span><span class="op">$</span><span class="va">Mean</span>
-<span class="co">#&gt;    Type Subpopulation Indicator nResp Estimate StdError MarginofError LCB95Pct</span>
-<span class="co">#&gt; 1 STATE    California      BMMI    19 50.48964 4.110046      8.055543 42.43410</span>
-<span class="co">#&gt; 2 STATE        Oregon      BMMI    47 61.29675 1.630357      3.195441 58.10131</span>
-<span class="co">#&gt; 3 STATE    Washington      BMMI    30 54.23036 2.930517      5.743708 48.48665</span>
-<span class="co">#&gt;   UCB95Pct</span>
-<span class="co">#&gt; 1 58.54519</span>
-<span class="co">#&gt; 2 64.49219</span>
-<span class="co">#&gt; 3 59.97407</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">strat_cont_ests_sp</span><span class="op">$</span><span class="va">Mean</span></span>
+<span><span class="co">#&gt;    Type Subpopulation Indicator nResp Estimate StdError MarginofError LCB95Pct</span></span>
+<span><span class="co">#&gt; 1 STATE    California      BMMI    19 50.48964 4.110046      8.055543 42.43410</span></span>
+<span><span class="co">#&gt; 2 STATE        Oregon      BMMI    47 61.29675 1.630357      3.195441 58.10131</span></span>
+<span><span class="co">#&gt; 3 STATE    Washington      BMMI    30 54.23036 2.930517      5.743708 48.48665</span></span>
+<span><span class="co">#&gt;   UCB95Pct</span></span>
+<span><span class="co">#&gt; 1 58.54519</span></span>
+<span><span class="co">#&gt; 2 64.49219</span></span>
+<span><span class="co">#&gt; 3 59.97407</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
 <h2 id="additional-analysis-approaches">Additional Analysis Approaches<a class="anchor" aria-label="anchor" href="#additional-analysis-approaches"></a>
 </h2>
-<p>Alongside the <code><a href="../reference/cat_analysis.html">cat_analysis()</a></code> and <code><a href="../reference/cont_analysis.html">cont_analysis()</a></code> functions, spsurvey offers functions for estimating attributable risk, relative risk, risk difference, change, and trend. Attributable risk analysis, relative risk analysis, and risk difference analysis quantify the attributable risk, relative risk, and risk difference, respectively, of environmental resources being in poor condition after exposure to a stressor. Attributable risk analysis is performed using the <code><a href="../reference/attrisk_analysis.html">attrisk_analysis()</a></code> function, relative risk analysis is performed using the <code><a href="../reference/relrisk_analysis.html">relrisk_analysis()</a></code> function, and risk difference analysis is performed using the <code><a href="../reference/diffrisk_analysis.html">diffrisk_analysis()</a></code> function. Change and trend analysis capture the behavior of environmental resources between two samples, while trend analysis generalizes this approach to include more than two samples. Often, change and trend analyses are performed to study an environmental resource through time. Change analysis is performed using the <code><a href="../reference/change_analysis.html">change_analysis()</a></code> function, and trend analysis is performed using the <code><a href="../reference/trend_analysis.html">trend_analysis()</a></code> function. The <code><a href="../reference/attrisk_analysis.html">attrisk_analysis()</a></code>, <code><a href="../reference/relrisk_analysis.html">relrisk_analysis()</a></code>, <code><a href="../reference/diffrisk_analysis.html">diffrisk_analysis()</a></code>, <code><a href="../reference/change_analysis.html">change_analysis()</a></code> and <code><a href="../reference/trend_analysis.html">trend_analysis()</a></code> functions all share very similar syntax with the <code><a href="../reference/cat_analysis.html">cat_analysis()</a></code> and <code><a href="../reference/cont_analysis.html">cont_analysis()</a></code> functions.</p>
+<p>Alongside the <code><a href="../reference/cat_analysis.html">cat_analysis()</a></code> and
+<code><a href="../reference/cont_analysis.html">cont_analysis()</a></code> functions, spsurvey offers functions for
+estimating attributable risk, relative risk, risk difference, change,
+and trend. Attributable risk analysis, relative risk analysis, and risk
+difference analysis quantify the attributable risk, relative risk, and
+risk difference, respectively, of environmental resources being in poor
+condition after exposure to a stressor. Attributable risk analysis is
+performed using the <code><a href="../reference/attrisk_analysis.html">attrisk_analysis()</a></code> function, relative
+risk analysis is performed using the <code><a href="../reference/relrisk_analysis.html">relrisk_analysis()</a></code>
+function, and risk difference analysis is performed using the
+<code><a href="../reference/diffrisk_analysis.html">diffrisk_analysis()</a></code> function. Change and trend analysis
+capture the behavior of environmental resources between two samples,
+while trend analysis generalizes this approach to include more than two
+samples. Often, change and trend analyses are performed to study an
+environmental resource through time. Change analysis is performed using
+the <code><a href="../reference/change_analysis.html">change_analysis()</a></code> function, and trend analysis is
+performed using the <code><a href="../reference/trend_analysis.html">trend_analysis()</a></code> function. The
+<code><a href="../reference/attrisk_analysis.html">attrisk_analysis()</a></code>, <code><a href="../reference/relrisk_analysis.html">relrisk_analysis()</a></code>,
+<code><a href="../reference/diffrisk_analysis.html">diffrisk_analysis()</a></code>, <code><a href="../reference/change_analysis.html">change_analysis()</a></code> and
+<code><a href="../reference/trend_analysis.html">trend_analysis()</a></code> functions all share very similar syntax
+with the <code><a href="../reference/cat_analysis.html">cat_analysis()</a></code> and <code><a href="../reference/cont_analysis.html">cont_analysis()</a></code>
+functions.</p>
 <div class="section level3">
 <h3 id="attributable-risk-relative-risk-and-risk-difference-analysis">Attributable Risk, Relative Risk, and Risk Difference Analysis<a class="anchor" aria-label="anchor" href="#attributable-risk-relative-risk-and-risk-difference-analysis"></a>
 </h3>
-<p>The attributable risk is defined as <span class="math display">\[1 -  \frac{P(Response = Poor | Stressor = Good)}{P(Response = Poor)},\]</span> where <span class="math inline">\(P(\cdot)\)</span> is a probability and <span class="math inline">\(P(\cdot | \cdot)\)</span> is a conditional probability. The attributable risk measures the proportion of the response variable in poor condition that could be eliminated if the stressor was always in good condition. To estimate the attributable risk of benthic macroinvertebrates with a phosphorous condition stressor, run</p>
+<p>The attributable risk is defined as <span class="math display">\[1
+-  \frac{P(Response = Poor | Stressor = Good)}{P(Response =
+Poor)},\]</span> where <span class="math inline">\(P(\cdot)\)</span> is
+a probability and <span class="math inline">\(P(\cdot | \cdot)\)</span>
+is a conditional probability. The attributable risk measures the
+proportion of the response variable in poor condition that could be
+eliminated if the stressor was always in good condition. To estimate the
+attributable risk of benthic macroinvertebrates with a phosphorous
+condition stressor, run</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">attrisk_ests</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/attrisk_analysis.html">attrisk_analysis</a></span><span class="op">(</span>
-  <span class="va">NLA_PNW</span>, 
-  siteID <span class="op">=</span> <span class="st">"SITE_ID"</span>,
-  vars_response <span class="op">=</span> <span class="st">"BMMI_COND"</span>,
-  vars_stressor <span class="op">=</span> <span class="st">"PHOS_COND"</span>,
-  weight <span class="op">=</span> <span class="st">"WEIGHT"</span>
-<span class="op">)</span>
-<span class="va">attrisk_ests</span>
-<span class="co">#&gt;        Type Subpopulation  Response  Stressor nResp  Estimate StdError_log</span>
-<span class="co">#&gt; 1 All_Sites     All Sites BMMI_COND PHOS_COND    96 0.6201042     0.624808</span>
-<span class="co">#&gt;   MarginofError_log  LCB95Pct  UCB95Pct WeightTotal Count_RespPoor_StressPoor</span>
-<span class="co">#&gt; 1          1.224601 -0.292713 0.8883582    10679.65                         5</span>
-<span class="co">#&gt;   Count_RespPoor_StressGood Count_RespGood_StressPoor Count_RespGood_StressGood</span>
-<span class="co">#&gt; 1                         7                        18                        66</span>
-<span class="co">#&gt;   Prop_RespPoor_StressPoor Prop_RespPoor_StressGood Prop_RespGood_StressPoor</span>
-<span class="co">#&gt; 1               0.03971418               0.01738181                 0.158931</span>
-<span class="co">#&gt;   Prop_RespGood_StressGood</span>
-<span class="co">#&gt; 1                 0.783973</span></code></pre></div>
-<p>The relative risk is defined as <span class="math display">\[\frac{P(Response = Poor | Stressor = Poor)}{P(Response = Poor | Stressor = Good)},\]</span> which measures the risk of the response variable being in poor condition relative to the stressor’s condition. To estimate the relative risk of benthic macroinvertebrates being in poor condition with a phosphorous condition category stressor, run</p>
+<code class="sourceCode R"><span><span class="va">attrisk_ests</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/attrisk_analysis.html">attrisk_analysis</a></span><span class="op">(</span></span>
+<span>  <span class="va">NLA_PNW</span>, </span>
+<span>  siteID <span class="op">=</span> <span class="st">"SITE_ID"</span>,</span>
+<span>  vars_response <span class="op">=</span> <span class="st">"BMMI_COND"</span>,</span>
+<span>  vars_stressor <span class="op">=</span> <span class="st">"PHOS_COND"</span>,</span>
+<span>  weight <span class="op">=</span> <span class="st">"WEIGHT"</span></span>
+<span><span class="op">)</span></span>
+<span><span class="va">attrisk_ests</span></span>
+<span><span class="co">#&gt;        Type Subpopulation  Response  Stressor nResp  Estimate StdError_log</span></span>
+<span><span class="co">#&gt; 1 All_Sites     All Sites BMMI_COND PHOS_COND    96 0.6201042     0.624808</span></span>
+<span><span class="co">#&gt;   MarginofError_log  LCB95Pct  UCB95Pct WeightTotal Count_RespPoor_StressPoor</span></span>
+<span><span class="co">#&gt; 1          1.224601 -0.292713 0.8883582    10679.65                         5</span></span>
+<span><span class="co">#&gt;   Count_RespPoor_StressGood Count_RespGood_StressPoor Count_RespGood_StressGood</span></span>
+<span><span class="co">#&gt; 1                         7                        18                        66</span></span>
+<span><span class="co">#&gt;   Prop_RespPoor_StressPoor Prop_RespPoor_StressGood Prop_RespGood_StressPoor</span></span>
+<span><span class="co">#&gt; 1               0.03971418               0.01738181                 0.158931</span></span>
+<span><span class="co">#&gt;   Prop_RespGood_StressGood</span></span>
+<span><span class="co">#&gt; 1                 0.783973</span></span></code></pre></div>
+<p>The relative risk is defined as <span class="math display">\[\frac{P(Response = Poor | Stressor =
+Poor)}{P(Response = Poor | Stressor = Good)},\]</span> which measures
+the risk of the response variable being in poor condition relative to
+the stressor’s condition. To estimate the relative risk of benthic
+macroinvertebrates being in poor condition with a phosphorous condition
+category stressor, run</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">relrisk_ests</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/relrisk_analysis.html">relrisk_analysis</a></span><span class="op">(</span>
-  <span class="va">NLA_PNW</span>, 
-  siteID <span class="op">=</span> <span class="st">"SITE_ID"</span>,
-  vars_response <span class="op">=</span> <span class="st">"BMMI_COND"</span>,
-  vars_stressor <span class="op">=</span> <span class="st">"PHOS_COND"</span>,
-  weight <span class="op">=</span> <span class="st">"WEIGHT"</span>
-<span class="op">)</span>
-<span class="va">relrisk_ests</span>
-<span class="co">#&gt;        Type Subpopulation  Response  Stressor nResp Estimate Estimate_num</span>
-<span class="co">#&gt; 1 All_Sites     All Sites BMMI_COND PHOS_COND    96 9.217166    0.1999252</span>
-<span class="co">#&gt;   Estimate_denom StdError_log MarginofError_log LCB95Pct UCB95Pct WeightTotal</span>
-<span class="co">#&gt; 1     0.02169053    0.8753855          1.715724 1.657555 51.25389    10679.65</span>
-<span class="co">#&gt;   Count_RespPoor_StressPoor Count_RespPoor_StressGood Count_RespGood_StressPoor</span>
-<span class="co">#&gt; 1                         5                         7                        18</span>
-<span class="co">#&gt;   Count_RespGood_StressGood Prop_RespPoor_StressPoor Prop_RespPoor_StressGood</span>
-<span class="co">#&gt; 1                        66               0.03971418               0.01738181</span>
-<span class="co">#&gt;   Prop_RespGood_StressPoor Prop_RespGood_StressGood</span>
-<span class="co">#&gt; 1                 0.158931                 0.783973</span></code></pre></div>
-<p>The risk difference is defined as <span class="math display">\[P(Response = Poor | Stressor = Poor) - P(Response = Poor | Stressor = Good),\]</span> which measures the risk of the response variable being in poor condition differenced by the stressor’s condition. To estimate the risk difference of benthic macroinvertebrates being in poor condition with a phosphorous condition category stressor, run</p>
+<code class="sourceCode R"><span><span class="va">relrisk_ests</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/relrisk_analysis.html">relrisk_analysis</a></span><span class="op">(</span></span>
+<span>  <span class="va">NLA_PNW</span>, </span>
+<span>  siteID <span class="op">=</span> <span class="st">"SITE_ID"</span>,</span>
+<span>  vars_response <span class="op">=</span> <span class="st">"BMMI_COND"</span>,</span>
+<span>  vars_stressor <span class="op">=</span> <span class="st">"PHOS_COND"</span>,</span>
+<span>  weight <span class="op">=</span> <span class="st">"WEIGHT"</span></span>
+<span><span class="op">)</span></span>
+<span><span class="va">relrisk_ests</span></span>
+<span><span class="co">#&gt;        Type Subpopulation  Response  Stressor nResp Estimate Estimate_num</span></span>
+<span><span class="co">#&gt; 1 All_Sites     All Sites BMMI_COND PHOS_COND    96 9.217166    0.1999252</span></span>
+<span><span class="co">#&gt;   Estimate_denom StdError_log MarginofError_log LCB95Pct UCB95Pct WeightTotal</span></span>
+<span><span class="co">#&gt; 1     0.02169053    0.8753855          1.715724 1.657555 51.25389    10679.65</span></span>
+<span><span class="co">#&gt;   Count_RespPoor_StressPoor Count_RespPoor_StressGood Count_RespGood_StressPoor</span></span>
+<span><span class="co">#&gt; 1                         5                         7                        18</span></span>
+<span><span class="co">#&gt;   Count_RespGood_StressGood Prop_RespPoor_StressPoor Prop_RespPoor_StressGood</span></span>
+<span><span class="co">#&gt; 1                        66               0.03971418               0.01738181</span></span>
+<span><span class="co">#&gt;   Prop_RespGood_StressPoor Prop_RespGood_StressGood</span></span>
+<span><span class="co">#&gt; 1                 0.158931                 0.783973</span></span></code></pre></div>
+<p>The risk difference is defined as <span class="math display">\[P(Response = Poor | Stressor = Poor) - P(Response
+= Poor | Stressor = Good),\]</span> which measures the risk of the
+response variable being in poor condition differenced by the stressor’s
+condition. To estimate the risk difference of benthic macroinvertebrates
+being in poor condition with a phosphorous condition category stressor,
+run</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">diffrisk_ests</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/diffrisk_analysis.html">diffrisk_analysis</a></span><span class="op">(</span>
-  <span class="va">NLA_PNW</span>, 
-  siteID <span class="op">=</span> <span class="st">"SITE_ID"</span>,
-  vars_response <span class="op">=</span> <span class="st">"BMMI_COND"</span>,
-  vars_stressor <span class="op">=</span> <span class="st">"PHOS_COND"</span>,
-  weight <span class="op">=</span> <span class="st">"WEIGHT"</span>
-<span class="op">)</span>
-<span class="va">diffrisk_ests</span>
-<span class="co">#&gt;        Type Subpopulation  Response  Stressor nResp  Estimate</span>
-<span class="co">#&gt; 1 All_Sites     All Sites BMMI_COND PHOS_COND    96 0.1782347</span>
-<span class="co">#&gt;   Estimate_StressPoor Estimate_StressGood  StdError MarginofError   LCB95Pct</span>
-<span class="co">#&gt; 1           0.1999252          0.02169053 0.1139557      0.223349 -0.0451143</span>
-<span class="co">#&gt;    UCB95Pct WeightTotal Count_RespPoor_StressPoor Count_RespPoor_StressGood</span>
-<span class="co">#&gt; 1 0.4015837    10679.65                         5                         7</span>
-<span class="co">#&gt;   Count_RespGood_StressPoor Count_RespGood_StressGood Prop_RespPoor_StressPoor</span>
-<span class="co">#&gt; 1                        18                        66               0.03971418</span>
-<span class="co">#&gt;   Prop_RespPoor_StressGood Prop_RespGood_StressPoor Prop_RespGood_StressGood</span>
-<span class="co">#&gt; 1               0.01738181                 0.158931                 0.783973</span></code></pre></div>
-<p>By default, the levels of the variables in <code>vars_response</code> and <code>vars_stressor</code> are assumed to equal <code>"Poor"</code> (event occurs) or <code>"Good"</code> (event does not occur). If those default levels do not match the levels of the variables in <code>vars_response</code> and <code>vars_stressor</code>, the levels of <code>vars_response</code> and <code>vars_stressor</code> must be explicitly stated using the <code>response_levels</code> and <code>stressor_levels</code> arguments, respectively. Similar to <code><a href="../reference/cat_analysis.html">cat_analysis()</a></code> and <code><a href="../reference/cont_analysis.html">cont_analysis()</a></code> from the previous sections, subpopulations and stratification are incorporated using <code>subpops</code> and <code>stratumID</code>, respectively. For more on attributable and relative risk in an environmental resource context, see Van Sickle and Paulsen (2008).</p>
+<code class="sourceCode R"><span><span class="va">diffrisk_ests</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/diffrisk_analysis.html">diffrisk_analysis</a></span><span class="op">(</span></span>
+<span>  <span class="va">NLA_PNW</span>, </span>
+<span>  siteID <span class="op">=</span> <span class="st">"SITE_ID"</span>,</span>
+<span>  vars_response <span class="op">=</span> <span class="st">"BMMI_COND"</span>,</span>
+<span>  vars_stressor <span class="op">=</span> <span class="st">"PHOS_COND"</span>,</span>
+<span>  weight <span class="op">=</span> <span class="st">"WEIGHT"</span></span>
+<span><span class="op">)</span></span>
+<span><span class="va">diffrisk_ests</span></span>
+<span><span class="co">#&gt;        Type Subpopulation  Response  Stressor nResp  Estimate</span></span>
+<span><span class="co">#&gt; 1 All_Sites     All Sites BMMI_COND PHOS_COND    96 0.1782347</span></span>
+<span><span class="co">#&gt;   Estimate_StressPoor Estimate_StressGood  StdError MarginofError   LCB95Pct</span></span>
+<span><span class="co">#&gt; 1           0.1999252          0.02169053 0.1139557      0.223349 -0.0451143</span></span>
+<span><span class="co">#&gt;    UCB95Pct WeightTotal Count_RespPoor_StressPoor Count_RespPoor_StressGood</span></span>
+<span><span class="co">#&gt; 1 0.4015837    10679.65                         5                         7</span></span>
+<span><span class="co">#&gt;   Count_RespGood_StressPoor Count_RespGood_StressGood Prop_RespPoor_StressPoor</span></span>
+<span><span class="co">#&gt; 1                        18                        66               0.03971418</span></span>
+<span><span class="co">#&gt;   Prop_RespPoor_StressGood Prop_RespGood_StressPoor Prop_RespGood_StressGood</span></span>
+<span><span class="co">#&gt; 1               0.01738181                 0.158931                 0.783973</span></span></code></pre></div>
+<p>By default, the levels of the variables in <code>vars_response</code>
+and <code>vars_stressor</code> are assumed to equal <code>"Poor"</code>
+(event occurs) or <code>"Good"</code> (event does not occur). If those
+default levels do not match the levels of the variables in
+<code>vars_response</code> and <code>vars_stressor</code>, the levels of
+<code>vars_response</code> and <code>vars_stressor</code> must be
+explicitly stated using the <code>response_levels</code> and
+<code>stressor_levels</code> arguments, respectively. Similar to
+<code><a href="../reference/cat_analysis.html">cat_analysis()</a></code> and <code><a href="../reference/cont_analysis.html">cont_analysis()</a></code> from the
+previous sections, subpopulations and stratification are incorporated
+using <code>subpops</code> and <code>stratumID</code>, respectively. For
+more on attributable and relative risk in an environmental resource
+context, see Van Sickle and Paulsen (2008).</p>
 </div>
 <div class="section level3">
 <h3 id="change-and-trend-analysis">Change and Trend Analysis<a class="anchor" aria-label="anchor" href="#change-and-trend-analysis"></a>
 </h3>
-<p>To demonstrate change analysis, we use the <code>NRSA_EPA7</code> data. There are several variables in <code>NRSA_EPA7</code> you will use next:</p>
+<p>To demonstrate change analysis, we use the <code>NRSA_EPA7</code>
+data. There are several variables in <code>NRSA_EPA7</code> you will use
+next:</p>
 <ul>
 <li>
 <code>SITE_ID</code>: a unique site identifier</li>
 <li>
 <code>WEIGHT</code>: the survey design weights</li>
 <li>
-<code>NITR_COND</code>: nitrogen condition category (<code>Good</code>, <code>Fair</code>, and <code>Poor</code>)</li>
+<code>NITR_COND</code>: nitrogen condition category
+(<code>Good</code>, <code>Fair</code>, and <code>Poor</code>)</li>
 <li>
 <code>BMMI</code>: benthic macroinvertebrate multi-metric index</li>
 <li>
 <code>YEAR</code>: probability sample (survey) year</li>
 </ul>
-<p>To estimate the change between samples (time points) for <code>BMMI</code> (a continuous variable) and <code>NITR_COND</code> (a categorical variable), run</p>
+<p>To estimate the change between samples (time points) for
+<code>BMMI</code> (a continuous variable) and <code>NITR_COND</code> (a
+categorical variable), run</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">change_ests</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/change_analysis.html">change_analysis</a></span><span class="op">(</span>
-  <span class="va">NRSA_EPA7</span>,
-  siteID <span class="op">=</span> <span class="st">"SITE_ID"</span>,
-  vars_cont <span class="op">=</span> <span class="st">"BMMI"</span>,
-  vars_cat <span class="op">=</span> <span class="st">"NITR_COND"</span>,
-  surveyID <span class="op">=</span> <span class="st">"YEAR"</span>,
-  weight <span class="op">=</span> <span class="st">"WEIGHT"</span>
-<span class="op">)</span></code></pre></div>
-<p>The <code>surveyID</code> argument is the variable in the data distinguishing the different samples (<code>YEAR</code> in the previous example).</p>
-<p>To view the analysis results for <code>NITR_COND</code> (the categorical variable), run</p>
+<code class="sourceCode R"><span><span class="va">change_ests</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/change_analysis.html">change_analysis</a></span><span class="op">(</span></span>
+<span>  <span class="va">NRSA_EPA7</span>,</span>
+<span>  siteID <span class="op">=</span> <span class="st">"SITE_ID"</span>,</span>
+<span>  vars_cont <span class="op">=</span> <span class="st">"BMMI"</span>,</span>
+<span>  vars_cat <span class="op">=</span> <span class="st">"NITR_COND"</span>,</span>
+<span>  surveyID <span class="op">=</span> <span class="st">"YEAR"</span>,</span>
+<span>  weight <span class="op">=</span> <span class="st">"WEIGHT"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>The <code>surveyID</code> argument is the variable in the data
+distinguishing the different samples (<code>YEAR</code> in the previous
+example).</p>
+<p>To view the analysis results for <code>NITR_COND</code> (the
+categorical variable), run</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">change_ests</span><span class="op">$</span><span class="va">catsum</span>
-<span class="co">#&gt;   Survey_1 Survey_2      Type Subpopulation Indicator     Category  DiffEst.P</span>
-<span class="co">#&gt; 1  2008-09  2013-14 All_Sites     All Sites NITR_COND         Fair -1.8867976</span>
-<span class="co">#&gt; 2  2008-09  2013-14 All_Sites     All Sites NITR_COND         Good -2.9648182</span>
-<span class="co">#&gt; 3  2008-09  2013-14 All_Sites     All Sites NITR_COND Not Assessed -0.2447633</span>
-<span class="co">#&gt; 4  2008-09  2013-14 All_Sites     All Sites NITR_COND         Poor  5.0963791</span>
-<span class="co">#&gt;   StdError.P MarginofError.P  LCB95Pct.P UCB95Pct.P  DiffEst.U StdError.U</span>
-<span class="co">#&gt; 1  3.5366139       6.9316358  -8.8184334  5.0448382 -2919.8839  4990.4714</span>
-<span class="co">#&gt; 2  4.7633367       9.3359683 -12.3007865  6.3711502 -4597.9365  6772.4175</span>
-<span class="co">#&gt; 3  0.2072643       0.4062305  -0.6509938  0.1614672  -363.1305   306.1656</span>
-<span class="co">#&gt; 4  5.8020788      11.3718655  -6.2754864 16.4682446  6598.4548 19777.9218</span>
-<span class="co">#&gt;   MarginofError.U LCB95Pct.U UCB95Pct.U nResp_1 Estimate.P_1 StdError.P_1</span>
-<span class="co">#&gt; 1       9781.1441 -12701.028   6861.260      37   11.2929433    2.7579622</span>
-<span class="co">#&gt; 2      13273.6943 -17871.631   8675.758      22   18.5076549    3.6712147</span>
-<span class="co">#&gt; 3        600.0735   -963.204    236.943       1    0.2447633    0.2072643</span>
-<span class="co">#&gt; 4      38764.0144 -32165.560  45362.469     119   69.9546385    4.3636869</span>
-<span class="co">#&gt;   MarginofError.P_1 LCB95Pct.P_1 UCB95Pct.P_1 Estimate.U_1 StdError.U_1</span>
-<span class="co">#&gt; 1         5.4055067     5.887437   16.6984500   16754.1954    3998.9767</span>
-<span class="co">#&gt; 2         7.1954486    11.312206   25.7031034   27457.9317    5388.5407</span>
-<span class="co">#&gt; 3         0.4062305     0.000000    0.6509938     363.1305     306.1656</span>
-<span class="co">#&gt; 4         8.5526691    61.401969   78.5073076  103784.6070   12266.4461</span>
-<span class="co">#&gt;   MarginofError.U_1 LCB95Pct.U_1 UCB95Pct.U_1 nResp_2 Estimate.P_2 StdError.P_2</span>
-<span class="co">#&gt; 1         7837.8504     8916.345    24592.046      28     9.406146     2.213884</span>
-<span class="co">#&gt; 2        10561.3456    16896.586    38019.277      34    15.542837     3.035055</span>
-<span class="co">#&gt; 3          600.0735        0.000      963.204       0     0.000000     0.000000</span>
-<span class="co">#&gt; 4        24041.7926    79742.814   127826.400     112    75.051018     3.823919</span>
-<span class="co">#&gt;   MarginofError.P_2 LCB95Pct.P_2 UCB95Pct.P_2 Estimate.U_2 StdError.U_2</span>
-<span class="co">#&gt; 1          4.339133     5.067013     13.74528     13834.31     2985.463</span>
-<span class="co">#&gt; 2          5.948599     9.594238     21.49144     22860.00     4102.349</span>
-<span class="co">#&gt; 3          0.000000     0.000000      0.00000         0.00        0.000</span>
-<span class="co">#&gt; 4          7.494743    67.556274     82.54576    110383.06    15514.525</span>
-<span class="co">#&gt;   MarginofError.U_2 LCB95Pct.U_2 UCB95Pct.U_2</span>
-<span class="co">#&gt; 1          5851.400     7982.911     19685.71</span>
-<span class="co">#&gt; 2          8040.456    14819.539     30900.45</span>
-<span class="co">#&gt; 3             0.000        0.000         0.00</span>
-<span class="co">#&gt; 4         30407.911    79975.151    140790.97</span></code></pre></div>
-<p>Estimates are provided for the difference between the two samples and for each of the two individual samples (the <code>_1</code> and <code>_2</code> suffixes).</p>
-<p>To view the analysis results for <code>BMMI</code> (the continuous variable), run</p>
+<code class="sourceCode R"><span><span class="va">change_ests</span><span class="op">$</span><span class="va">catsum</span></span>
+<span><span class="co">#&gt;   Survey_1 Survey_2      Type Subpopulation Indicator     Category  DiffEst.P</span></span>
+<span><span class="co">#&gt; 1  2008-09  2013-14 All_Sites     All Sites NITR_COND         Fair -1.8867976</span></span>
+<span><span class="co">#&gt; 2  2008-09  2013-14 All_Sites     All Sites NITR_COND         Good -2.9648182</span></span>
+<span><span class="co">#&gt; 3  2008-09  2013-14 All_Sites     All Sites NITR_COND Not Assessed -0.2447633</span></span>
+<span><span class="co">#&gt; 4  2008-09  2013-14 All_Sites     All Sites NITR_COND         Poor  5.0963791</span></span>
+<span><span class="co">#&gt;   StdError.P MarginofError.P  LCB95Pct.P UCB95Pct.P  DiffEst.U StdError.U</span></span>
+<span><span class="co">#&gt; 1  3.5366139       6.9316358  -8.8184334  5.0448382 -2919.8839  4990.4714</span></span>
+<span><span class="co">#&gt; 2  4.7633367       9.3359683 -12.3007865  6.3711502 -4597.9365  6772.4175</span></span>
+<span><span class="co">#&gt; 3  0.2072643       0.4062305  -0.6509938  0.1614672  -363.1305   306.1656</span></span>
+<span><span class="co">#&gt; 4  5.8020788      11.3718655  -6.2754864 16.4682446  6598.4548 19777.9218</span></span>
+<span><span class="co">#&gt;   MarginofError.U LCB95Pct.U UCB95Pct.U nResp_1 Estimate.P_1 StdError.P_1</span></span>
+<span><span class="co">#&gt; 1       9781.1441 -12701.028   6861.260      37   11.2929433    2.7579622</span></span>
+<span><span class="co">#&gt; 2      13273.6943 -17871.631   8675.758      22   18.5076549    3.6712147</span></span>
+<span><span class="co">#&gt; 3        600.0735   -963.204    236.943       1    0.2447633    0.2072643</span></span>
+<span><span class="co">#&gt; 4      38764.0144 -32165.560  45362.469     119   69.9546385    4.3636869</span></span>
+<span><span class="co">#&gt;   MarginofError.P_1 LCB95Pct.P_1 UCB95Pct.P_1 Estimate.U_1 StdError.U_1</span></span>
+<span><span class="co">#&gt; 1         5.4055067     5.887437   16.6984500   16754.1954    3998.9767</span></span>
+<span><span class="co">#&gt; 2         7.1954486    11.312206   25.7031034   27457.9317    5388.5407</span></span>
+<span><span class="co">#&gt; 3         0.4062305     0.000000    0.6509938     363.1305     306.1656</span></span>
+<span><span class="co">#&gt; 4         8.5526691    61.401969   78.5073076  103784.6070   12266.4461</span></span>
+<span><span class="co">#&gt;   MarginofError.U_1 LCB95Pct.U_1 UCB95Pct.U_1 nResp_2 Estimate.P_2 StdError.P_2</span></span>
+<span><span class="co">#&gt; 1         7837.8504     8916.345    24592.046      28     9.406146     2.213884</span></span>
+<span><span class="co">#&gt; 2        10561.3456    16896.586    38019.277      34    15.542837     3.035055</span></span>
+<span><span class="co">#&gt; 3          600.0735        0.000      963.204       0     0.000000     0.000000</span></span>
+<span><span class="co">#&gt; 4        24041.7926    79742.814   127826.400     112    75.051018     3.823919</span></span>
+<span><span class="co">#&gt;   MarginofError.P_2 LCB95Pct.P_2 UCB95Pct.P_2 Estimate.U_2 StdError.U_2</span></span>
+<span><span class="co">#&gt; 1          4.339133     5.067013     13.74528     13834.31     2985.463</span></span>
+<span><span class="co">#&gt; 2          5.948599     9.594238     21.49144     22860.00     4102.349</span></span>
+<span><span class="co">#&gt; 3          0.000000     0.000000      0.00000         0.00        0.000</span></span>
+<span><span class="co">#&gt; 4          7.494743    67.556274     82.54576    110383.06    15514.525</span></span>
+<span><span class="co">#&gt;   MarginofError.U_2 LCB95Pct.U_2 UCB95Pct.U_2</span></span>
+<span><span class="co">#&gt; 1          5851.400     7982.911     19685.71</span></span>
+<span><span class="co">#&gt; 2          8040.456    14819.539     30900.45</span></span>
+<span><span class="co">#&gt; 3             0.000        0.000         0.00</span></span>
+<span><span class="co">#&gt; 4         30407.911    79975.151    140790.97</span></span></code></pre></div>
+<p>Estimates are provided for the difference between the two samples and
+for each of the two individual samples (the <code>_1</code> and
+<code>_2</code> suffixes).</p>
+<p>To view the analysis results for <code>BMMI</code> (the continuous
+variable), run</p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">change_ests</span><span class="op">$</span><span class="va">contsum_mean</span>
-<span class="co">#&gt;   Survey_1 Survey_2      Type Subpopulation Indicator  DiffEst StdError</span>
-<span class="co">#&gt; 1  2008-09  2013-14 All_Sites     All Sites      BMMI 3.971559 2.561155</span>
-<span class="co">#&gt;   MarginofError  LCB95Pct UCB95Pct nResp_1 Estimate_1 StdError_1</span>
-<span class="co">#&gt; 1      5.019771 -1.048211  8.99133     179   25.88274   1.468744</span>
-<span class="co">#&gt;   MarginofError_1 LCB95Pct_1 UCB95Pct_1 nResp_2 Estimate_2 StdError_2</span>
-<span class="co">#&gt; 1        2.878686   23.00405   28.76142     174    29.8543   2.098166</span>
-<span class="co">#&gt;   MarginofError_2 LCB95Pct_2 UCB95Pct_2</span>
-<span class="co">#&gt; 1        4.112331   25.74196   33.96663</span></code></pre></div>
-<p>Though we don’t show an example here, the median can be estimated using the <code>test</code> argument in <code>change_anlaysis()</code>.</p>
-<p>Trend analysis generalizes change analysis to more than two samples (usually time points). Though we omit an example here, the arguments to <code><a href="../reference/trend_analysis.html">trend_analysis()</a></code> are very similar to the arguments for <code><a href="../reference/change_analysis.html">change_analysis()</a></code>. One difference is that <code><a href="../reference/trend_analysis.html">trend_analysis()</a></code> contains arguments that specify which statistical model to apply to the estimates from each sample.</p>
+<code class="sourceCode R"><span><span class="va">change_ests</span><span class="op">$</span><span class="va">contsum_mean</span></span>
+<span><span class="co">#&gt;   Survey_1 Survey_2      Type Subpopulation Indicator  DiffEst StdError</span></span>
+<span><span class="co">#&gt; 1  2008-09  2013-14 All_Sites     All Sites      BMMI 3.971559 2.561155</span></span>
+<span><span class="co">#&gt;   MarginofError  LCB95Pct UCB95Pct nResp_1 Estimate_1 StdError_1</span></span>
+<span><span class="co">#&gt; 1      5.019771 -1.048211  8.99133     179   25.88274   1.468744</span></span>
+<span><span class="co">#&gt;   MarginofError_1 LCB95Pct_1 UCB95Pct_1 nResp_2 Estimate_2 StdError_2</span></span>
+<span><span class="co">#&gt; 1        2.878686   23.00405   28.76142     174    29.8543   2.098166</span></span>
+<span><span class="co">#&gt;   MarginofError_2 LCB95Pct_2 UCB95Pct_2</span></span>
+<span><span class="co">#&gt; 1        4.112331   25.74196   33.96663</span></span></code></pre></div>
+<p>Though we don’t show an example here, the median can be estimated
+using the <code>test</code> argument in
+<code>change_anlaysis()</code>.</p>
+<p>Trend analysis generalizes change analysis to more than two samples
+(usually time points). Though we omit an example here, the arguments to
+<code><a href="../reference/trend_analysis.html">trend_analysis()</a></code> are very similar to the arguments for
+<code><a href="../reference/change_analysis.html">change_analysis()</a></code>. One difference is that
+<code><a href="../reference/trend_analysis.html">trend_analysis()</a></code> contains arguments that specify which
+statistical model to apply to the estimates from each sample.</p>
 </div>
 </div>
 <div class="section level2">
 <h2 id="variance-estimation">Variance Estimation<a class="anchor" aria-label="anchor" href="#variance-estimation"></a>
 </h2>
-<p>The default variance estimator in spsurvey is the local neighborhood variance estimator (Stevens and Olsen, 2003). The local neighborhood variance estimator incorporates the spatial locations of design sites into the variance estimation process. Because the local neighborhood variance estimator incorporates spatial locations, the resulting variance estimate tends to be smaller than variance estimates from approaches ignoring spatial locations. The local neighborhood variance estimator requires x-coordinates and y-coordinates of the design sites. When the analysis data is an <code>sf</code> object, the coordinates from the data’s geometry are used. When the analysis data is just a data frame, x-coordinates and y-coordinates (from an appropriate coordinate reference system) must be provided using the <code>xcoord</code> and <code>ycoord</code> arguments, respectively, of the analysis function being used.</p>
-<p>Several additional variance estimation options are available in spsurvey’s analysis functions through the <code>vartype</code> and <code>jointprob</code> arguments.</p>
+<p>The default variance estimator in spsurvey is the local neighborhood
+variance estimator (Stevens and Olsen, 2003). The local neighborhood
+variance estimator incorporates the spatial locations of design sites
+into the variance estimation process. Because the local neighborhood
+variance estimator incorporates spatial locations, the resulting
+variance estimate tends to be smaller than variance estimates from
+approaches ignoring spatial locations. The local neighborhood variance
+estimator requires x-coordinates and y-coordinates of the design sites.
+When the analysis data is an <code>sf</code> object, the coordinates
+from the data’s geometry are used. When the analysis data is just a data
+frame, x-coordinates and y-coordinates (from an appropriate coordinate
+reference system) must be provided using the <code>xcoord</code> and
+<code>ycoord</code> arguments, respectively, of the analysis function
+being used.</p>
+<p>Several additional variance estimation options are available in
+spsurvey’s analysis functions through the <code>vartype</code> and
+<code>jointprob</code> arguments.</p>
 </div>
 <div class="section level2">
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
-<p>Sickle, J. V., &amp; Paulsen, S. G. (2008). Assessing the attributable risks, relative risks, and regional extents of aquatic stressors. <em>Journal of the North American Benthological Society</em>, 27(4), 920-931.</p>
-<p>Stevens Jr, D. L., &amp; Olsen, A. R. (2003). Variance estimation for spatially balanced samples of environmental resources. <em>Environmetrics</em>, 14(6), 593-610.</p>
+<p>Sickle, J. V., &amp; Paulsen, S. G. (2008). Assessing the
+attributable risks, relative risks, and regional extents of aquatic
+stressors. <em>Journal of the North American Benthological Society</em>,
+27(4), 920-931.</p>
+<p>Stevens Jr, D. L., &amp; Olsen, A. R. (2003). Variance estimation for
+spatially balanced samples of environmental resources.
+<em>Environmetrics</em>, 14(6), 593-610.</p>
 </div>
   </div>
 
@@ -627,7 +788,7 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer>

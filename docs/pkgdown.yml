@@ -1,10 +1,10 @@
-pandoc: 2.11.4
-pkgdown: 2.0.6
+pandoc: 2.19.2
+pkgdown: 2.0.7
 pkgdown_sha: ~
 articles:
   analysis: analysis.html
   EDA: EDA.html
   sampling: sampling.html
   start-here: start-here.html
-last_built: 2023-05-16T23:11Z
+last_built: 2024-01-09T17:57Z
 

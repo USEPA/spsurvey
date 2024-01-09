@@ -19,7 +19,7 @@ Confidence limits for the CDF also are plotted.'><!-- mathjax --><script src="ht
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">spsurvey</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">5.5.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">5.5.1</span>
       </span>
     </div>
 
@@ -76,25 +76,25 @@ Confidence limits for the CDF also are plotted.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">cdf_plot</span><span class="op">(</span>
-  <span class="va">cdfest</span>,
-  var <span class="op">=</span> <span class="cn">NULL</span>,
-  subpop <span class="op">=</span> <span class="cn">NULL</span>,
-  subpop_level <span class="op">=</span> <span class="cn">NULL</span>,
-  units_cdf <span class="op">=</span> <span class="st">"Percent"</span>,
-  type_cdf <span class="op">=</span> <span class="st">"Continuous"</span>,
-  log <span class="op">=</span> <span class="st">""</span>,
-  xlab <span class="op">=</span> <span class="cn">NULL</span>,
-  ylab <span class="op">=</span> <span class="cn">NULL</span>,
-  ylab_r <span class="op">=</span> <span class="cn">NULL</span>,
-  main <span class="op">=</span> <span class="cn">NULL</span>,
-  legloc <span class="op">=</span> <span class="cn">NULL</span>,
-  confcut <span class="op">=</span> <span class="fl">0</span>,
-  conflev <span class="op">=</span> <span class="fl">95</span>,
-  cex.main <span class="op">=</span> <span class="fl">1.2</span>,
-  cex.legend <span class="op">=</span> <span class="fl">1</span>,
-  <span class="va">...</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">cdf_plot</span><span class="op">(</span></span>
+<span>  <span class="va">cdfest</span>,</span>
+<span>  var <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  subpop <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  subpop_level <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  units_cdf <span class="op">=</span> <span class="st">"Percent"</span>,</span>
+<span>  type_cdf <span class="op">=</span> <span class="st">"Continuous"</span>,</span>
+<span>  log <span class="op">=</span> <span class="st">""</span>,</span>
+<span>  xlab <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  ylab <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  ylab_r <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  main <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  legloc <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  confcut <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  conflev <span class="op">=</span> <span class="fl">95</span>,</span>
+<span>  cex.main <span class="op">=</span> <span class="fl">1.2</span>,</span>
+<span>  cex.legend <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -236,42 +236,42 @@ limits. The default is 95.</p></dd>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in"><span class="va">dframe</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
-<span class="r-in">  siteID <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"Site"</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">100</span><span class="op">)</span>,</span>
-<span class="r-in">  wgt <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fl">10</span>, <span class="fl">100</span><span class="op">)</span>,</span>
-<span class="r-in">  xcoord <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">100</span><span class="op">)</span>,</span>
-<span class="r-in">  ycoord <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">100</span><span class="op">)</span>,</span>
-<span class="r-in">  stratum <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Stratum1"</span>, <span class="st">"Stratum2"</span><span class="op">)</span>, <span class="fl">50</span><span class="op">)</span>,</span>
-<span class="r-in">  ContVar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fl">10</span>, <span class="fl">1</span><span class="op">)</span>,</span>
-<span class="r-in">  All_Sites <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"All Sites"</span>, <span class="fl">100</span><span class="op">)</span>,</span>
-<span class="r-in">  Resource_Class <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Good"</span>, <span class="st">"Poor"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">55</span>, <span class="fl">45</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">)</span></span>
-<span class="r-in"><span class="va">myvars</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ContVar"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">mysubpops</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"All_Sites"</span>, <span class="st">"Resource_Class"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">mypopsize</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
-<span class="r-in">  Resource_Class <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Good"</span>, <span class="st">"Poor"</span><span class="op">)</span>,</span>
-<span class="r-in">  Total <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4000</span>, <span class="fl">1500</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">)</span></span>
-<span class="r-in"><span class="va">myanalysis</span> <span class="op">&lt;-</span> <span class="fu"><a href="cont_analysis.html">cont_analysis</a></span><span class="op">(</span><span class="va">dframe</span>,</span>
-<span class="r-in">  vars <span class="op">=</span> <span class="va">myvars</span>, subpops <span class="op">=</span> <span class="va">mysubpops</span>,</span>
-<span class="r-in">  siteID <span class="op">=</span> <span class="st">"siteID"</span>, weight <span class="op">=</span> <span class="st">"wgt"</span>, xcoord <span class="op">=</span> <span class="st">"xcoord"</span>, ycoord <span class="op">=</span> <span class="st">"ycoord"</span>,</span>
-<span class="r-in">  stratumID <span class="op">=</span> <span class="st">"stratum"</span>, popsize <span class="op">=</span> <span class="va">mypopsize</span></span>
-<span class="r-in"><span class="op">)</span></span>
-<span class="r-in"><span class="va">keep</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/with.html" class="external-link">with</a></span><span class="op">(</span><span class="va">myanalysis</span><span class="op">$</span><span class="va">CDF</span>, <span class="va">Type</span> <span class="op">==</span> <span class="st">"Resource_Class"</span> <span class="op">&amp;</span></span>
-<span class="r-in">  <span class="va">Subpopulation</span> <span class="op">==</span> <span class="st">"Good"</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu">cdf_plot</span><span class="op">(</span><span class="va">myanalysis</span><span class="op">$</span><span class="va">CDF</span><span class="op">[</span><span class="va">keep</span>, <span class="op">]</span>,</span>
-<span class="r-in">  xlab <span class="op">=</span> <span class="st">"ContVar"</span>,</span>
-<span class="r-in">  ylab <span class="op">=</span> <span class="st">"Percent of Stream Length"</span>, ylab_r <span class="op">=</span> <span class="st">"Stream Length (km)"</span>,</span>
-<span class="r-in">  main <span class="op">=</span> <span class="st">"Estimates for Resource Class: Good"</span></span>
-<span class="r-in"><span class="op">)</span></span>
-<span class="r-in"><span class="fu">cdf_plot</span><span class="op">(</span><span class="va">myanalysis</span><span class="op">$</span><span class="va">CDF</span><span class="op">[</span><span class="va">keep</span>, <span class="op">]</span>,</span>
-<span class="r-in">  xlab <span class="op">=</span> <span class="st">"ContVar"</span>,</span>
-<span class="r-in">  ylab <span class="op">=</span> <span class="st">"Percent of Stream Length"</span>, ylab_r <span class="op">=</span> <span class="st">"Same"</span>,</span>
-<span class="r-in">  main <span class="op">=</span> <span class="st">"Estimates for Resource Class: Good"</span></span>
-<span class="r-in"><span class="op">)</span></span>
-<span class="r-in"><span class="op">}</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span><span class="va">dframe</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  siteID <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"Site"</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">100</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  wgt <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fl">10</span>, <span class="fl">100</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  xcoord <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">100</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  ycoord <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">100</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  stratum <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Stratum1"</span>, <span class="st">"Stratum2"</span><span class="op">)</span>, <span class="fl">50</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  ContVar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fl">10</span>, <span class="fl">1</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  All_Sites <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"All Sites"</span>, <span class="fl">100</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  Resource_Class <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Good"</span>, <span class="st">"Poor"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">55</span>, <span class="fl">45</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">myvars</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ContVar"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">mysubpops</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"All_Sites"</span>, <span class="st">"Resource_Class"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">mypopsize</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  Resource_Class <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Good"</span>, <span class="st">"Poor"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  Total <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4000</span>, <span class="fl">1500</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">myanalysis</span> <span class="op">&lt;-</span> <span class="fu"><a href="cont_analysis.html">cont_analysis</a></span><span class="op">(</span><span class="va">dframe</span>,</span></span>
+<span class="r-in"><span>  vars <span class="op">=</span> <span class="va">myvars</span>, subpops <span class="op">=</span> <span class="va">mysubpops</span>,</span></span>
+<span class="r-in"><span>  siteID <span class="op">=</span> <span class="st">"siteID"</span>, weight <span class="op">=</span> <span class="st">"wgt"</span>, xcoord <span class="op">=</span> <span class="st">"xcoord"</span>, ycoord <span class="op">=</span> <span class="st">"ycoord"</span>,</span></span>
+<span class="r-in"><span>  stratumID <span class="op">=</span> <span class="st">"stratum"</span>, popsize <span class="op">=</span> <span class="va">mypopsize</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">keep</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/with.html" class="external-link">with</a></span><span class="op">(</span><span class="va">myanalysis</span><span class="op">$</span><span class="va">CDF</span>, <span class="va">Type</span> <span class="op">==</span> <span class="st">"Resource_Class"</span> <span class="op">&amp;</span></span></span>
+<span class="r-in"><span>  <span class="va">Subpopulation</span> <span class="op">==</span> <span class="st">"Good"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">cdf_plot</span><span class="op">(</span><span class="va">myanalysis</span><span class="op">$</span><span class="va">CDF</span><span class="op">[</span><span class="va">keep</span>, <span class="op">]</span>,</span></span>
+<span class="r-in"><span>  xlab <span class="op">=</span> <span class="st">"ContVar"</span>,</span></span>
+<span class="r-in"><span>  ylab <span class="op">=</span> <span class="st">"Percent of Stream Length"</span>, ylab_r <span class="op">=</span> <span class="st">"Stream Length (km)"</span>,</span></span>
+<span class="r-in"><span>  main <span class="op">=</span> <span class="st">"Estimates for Resource Class: Good"</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">cdf_plot</span><span class="op">(</span><span class="va">myanalysis</span><span class="op">$</span><span class="va">CDF</span><span class="op">[</span><span class="va">keep</span>, <span class="op">]</span>,</span></span>
+<span class="r-in"><span>  xlab <span class="op">=</span> <span class="st">"ContVar"</span>,</span></span>
+<span class="r-in"><span>  ylab <span class="op">=</span> <span class="st">"Percent of Stream Length"</span>, ylab_r <span class="op">=</span> <span class="st">"Same"</span>,</span></span>
+<span class="r-in"><span>  main <span class="op">=</span> <span class="st">"Estimates for Resource Class: Good"</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -286,7 +286,7 @@ limits. The default is 95.</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>
