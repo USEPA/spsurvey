@@ -1,13 +1,17 @@
+# spsurvey <img src="man/figures/logo.png" align="right" height="130" alt="" />
+
 <!-- badges: start -->
-[![R-CMD-check](https://github.com/USEPA/spsurvey/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/USEPA/spsurvey/actions/workflows/R-CMD-check.yaml)
+[![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
 [![CRAN](http://www.r-pkg.org/badges/version/spsurvey)](https://cran.r-project.org/package=spsurvey)
 [![cran checks](https://badges.cranchecks.info/worst/spsurvey.svg)](https://cran.r-project.org/web/checks/check_results_spsurvey.html)
+[![R-CMD-check](https://github.com/USEPA/spsurvey/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/USEPA/spsurvey/actions/workflows/R-CMD-check.yaml)
 [![Downloads](https://cranlogs.r-pkg.org/badges/grand-total/spsurvey)](https://cran.r-project.org/package=spsurvey)
+
 <!-- badges: end -->
 
-# spsurvey
+# Overview
 
-spsurvey is an R package that implements a design-based approach to statistical inference,
+`spsurvey` is an R package that implements a design-based approach to statistical inference,
 with a focus on spatial data.
 Spatially balanced samples are selected using the
 Generalized Random Tessellation Stratified (GRTS) algorithm.
@@ -20,7 +24,7 @@ sites, and two options for replacement sites (reverse hierarchical order and
 nearest neighbor). Data are analyzed using a wide
 range of analysis functions that perform categorical variable analysis, continuous
 variable analysis, attributable risk analysis, risk difference analysis, relative
-risk analysis, change analysis, and trend analysis. spsurvey can also be used to
+risk analysis, change analysis, and trend analysis. `spsurvey` can also be used to
 summarize objects, visualize objects, select samples that are not spatially balanced,
 select panel samples, measure the amount of spatial balance in a sample,
 adjust design weights, and more. For additional details, see Dumelle et al. (2023) <doi:10.18637/jss.v105.i03>.
@@ -64,12 +68,12 @@ vignette("analysis", "spsurvey") # for analyzing data
 
 To view the vignettes in a web format, visit [here](https://cran.r-project.org/package=spsurvey).
 
-Further detail regarding spsurvey is contained in the package's documentation manual available for download [here](https://cran.r-project.org/package=spsurvey).
+Further detail regarding `spsurvey` is contained in the package's documentation manual available for download [here](https://cran.r-project.org/package=spsurvey).
 
 
 ## Citation
 
-If you used spsurvey in your work, please cite it. You can view the most recent citation by running
+If you used `spsurvey` in your work, please cite it. You can view the most recent citation by running
 ```r
 citation(package = "spsurvey")
 ```
@@ -98,10 +102,14 @@ citation(package = "spsurvey")
 ## Package Contributions
 
 We encourage users to submit issues and enhancement requests so we may
-continue to improve spsurvey.
+continue to improve `spsurvey`.
 
-## EPA Disclaimer
+## Acknowledgements
+
 The United States Environmental Protection Agency (EPA) GitHub project code is provided on an "as is" basis and the user assumes responsibility for its use. EPA has relinquished control of the information and no longer has responsibility to protect the integrity , confidentiality, or availability of the information. Any reference to specific commercial products, processes, or services by service mark, trademark, manufacturer, or otherwise, does not constitute or imply their endorsement, recommendation or favoring by EPA. The EPA seal and logo shall not be used in any manner to imply endorsement of any commercial product or activity by EPA or the United States Government.
+
+
+A special thank you to Virginia Vichi-Miller for creating the `spsurvey` hex sticker (i.e., graphic identifier). The sticker represents the environmental sampling context for which `spsurvey` was created, with an emphasis on aquatic resources. The sticker shows a sunny day filled with a fish swimming in water, aquatic vegetation, and rolling hills and trees. The word `spsurvey` is set against the backdrop of the clear sky.
 
 ### License
 

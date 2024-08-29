@@ -1,0 +1,13 @@
+url: https://usepa.github.io/spsurvey/
+template:
+  bootstrap: 3
+
+articles:
+- title: Articles
+  navbar: ~
+  contents:
+  - start-here
+  - EDA
+  - sampling
+  - analysis
+

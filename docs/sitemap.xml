@@ -1,171 +1,171 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>/404.html</loc>
+    <loc>https://usepa.github.io/spsurvey/404.html</loc>
   </url>
   <url>
-    <loc>/articles/analysis.html</loc>
+    <loc>https://usepa.github.io/spsurvey/articles/analysis.html</loc>
   </url>
   <url>
-    <loc>/articles/EDA.html</loc>
+    <loc>https://usepa.github.io/spsurvey/articles/EDA.html</loc>
   </url>
   <url>
-    <loc>/articles/index.html</loc>
+    <loc>https://usepa.github.io/spsurvey/articles/index.html</loc>
   </url>
   <url>
-    <loc>/articles/sampling.html</loc>
+    <loc>https://usepa.github.io/spsurvey/articles/sampling.html</loc>
   </url>
   <url>
-    <loc>/articles/start-here.html</loc>
+    <loc>https://usepa.github.io/spsurvey/articles/start-here.html</loc>
   </url>
   <url>
-    <loc>/authors.html</loc>
+    <loc>https://usepa.github.io/spsurvey/authors.html</loc>
   </url>
   <url>
-    <loc>/index.html</loc>
+    <loc>https://usepa.github.io/spsurvey/index.html</loc>
   </url>
   <url>
-    <loc>/LICENSE.html</loc>
+    <loc>https://usepa.github.io/spsurvey/LICENSE.html</loc>
   </url>
   <url>
-    <loc>/news/index.html</loc>
+    <loc>https://usepa.github.io/spsurvey/news/index.html</loc>
   </url>
   <url>
-    <loc>/reference/adjwgt.html</loc>
+    <loc>https://usepa.github.io/spsurvey/reference/adjwgt.html</loc>
   </url>
   <url>
-    <loc>/reference/adjwgtNR.html</loc>
+    <loc>https://usepa.github.io/spsurvey/reference/adjwgtNR.html</loc>
   </url>
   <url>
-    <loc>/reference/ash1_wgt.html</loc>
+    <loc>https://usepa.github.io/spsurvey/reference/ash1_wgt.html</loc>
   </url>
   <url>
-    <loc>/reference/attrisk_analysis.html</loc>
+    <loc>https://usepa.github.io/spsurvey/reference/attrisk_analysis.html</loc>
   </url>
   <url>
-    <loc>/reference/cat_analysis.html</loc>
+    <loc>https://usepa.github.io/spsurvey/reference/cat_analysis.html</loc>
   </url>
   <url>
-    <loc>/reference/cdf_plot.html</loc>
+    <loc>https://usepa.github.io/spsurvey/reference/cdf_plot.html</loc>
   </url>
   <url>
-    <loc>/reference/change_analysis.html</loc>
+    <loc>https://usepa.github.io/spsurvey/reference/change_analysis.html</loc>
   </url>
   <url>
-    <loc>/reference/cont_analysis.html</loc>
+    <loc>https://usepa.github.io/spsurvey/reference/cont_analysis.html</loc>
   </url>
   <url>
-    <loc>/reference/cont_cdfplot.html</loc>
+    <loc>https://usepa.github.io/spsurvey/reference/cont_cdfplot.html</loc>
   </url>
   <url>
-    <loc>/reference/cont_cdftest.html</loc>
+    <loc>https://usepa.github.io/spsurvey/reference/cont_cdftest.html</loc>
   </url>
   <url>
-    <loc>/reference/cov_panel_dsgn.html</loc>
+    <loc>https://usepa.github.io/spsurvey/reference/cov_panel_dsgn.html</loc>
   </url>
   <url>
-    <loc>/reference/diffrisk_analysis.html</loc>
+    <loc>https://usepa.github.io/spsurvey/reference/diffrisk_analysis.html</loc>
   </url>
   <url>
-    <loc>/reference/errorprnt.html</loc>
+    <loc>https://usepa.github.io/spsurvey/reference/errorprnt.html</loc>
   </url>
   <url>
-    <loc>/reference/grts.html</loc>
+    <loc>https://usepa.github.io/spsurvey/reference/grts.html</loc>
   </url>
   <url>
-    <loc>/reference/Illinois_River.html</loc>
+    <loc>https://usepa.github.io/spsurvey/reference/Illinois_River.html</loc>
   </url>
   <url>
-    <loc>/reference/Illinois_River_Legacy.html</loc>
+    <loc>https://usepa.github.io/spsurvey/reference/Illinois_River_Legacy.html</loc>
   </url>
   <url>
-    <loc>/reference/index.html</loc>
+    <loc>https://usepa.github.io/spsurvey/reference/index.html</loc>
   </url>
   <url>
-    <loc>/reference/irs.html</loc>
+    <loc>https://usepa.github.io/spsurvey/reference/irs.html</loc>
   </url>
   <url>
-    <loc>/reference/Lake_Ontario.html</loc>
+    <loc>https://usepa.github.io/spsurvey/reference/Lake_Ontario.html</loc>
   </url>
   <url>
-    <loc>/reference/localmean_cov.html</loc>
+    <loc>https://usepa.github.io/spsurvey/reference/localmean_cov.html</loc>
   </url>
   <url>
-    <loc>/reference/localmean_var.html</loc>
+    <loc>https://usepa.github.io/spsurvey/reference/localmean_var.html</loc>
   </url>
   <url>
-    <loc>/reference/localmean_weight.html</loc>
+    <loc>https://usepa.github.io/spsurvey/reference/localmean_weight.html</loc>
   </url>
   <url>
-    <loc>/reference/NE_Lakes.html</loc>
+    <loc>https://usepa.github.io/spsurvey/reference/NE_Lakes.html</loc>
   </url>
   <url>
-    <loc>/reference/NE_Lakes_df.html</loc>
+    <loc>https://usepa.github.io/spsurvey/reference/NE_Lakes_df.html</loc>
   </url>
   <url>
-    <loc>/reference/NE_Lakes_Legacy.html</loc>
+    <loc>https://usepa.github.io/spsurvey/reference/NE_Lakes_Legacy.html</loc>
   </url>
   <url>
-    <loc>/reference/NLA_PNW.html</loc>
+    <loc>https://usepa.github.io/spsurvey/reference/NLA_PNW.html</loc>
   </url>
   <url>
-    <loc>/reference/NRSA_EPA7.html</loc>
+    <loc>https://usepa.github.io/spsurvey/reference/NRSA_EPA7.html</loc>
   </url>
   <url>
-    <loc>/reference/pd_summary.html</loc>
+    <loc>https://usepa.github.io/spsurvey/reference/pd_summary.html</loc>
   </url>
   <url>
-    <loc>/reference/plot.html</loc>
+    <loc>https://usepa.github.io/spsurvey/reference/plot.html</loc>
   </url>
   <url>
-    <loc>/reference/plot.sp_CDF.html</loc>
+    <loc>https://usepa.github.io/spsurvey/reference/plot.sp_CDF.html</loc>
   </url>
   <url>
-    <loc>/reference/power_dsgn.html</loc>
+    <loc>https://usepa.github.io/spsurvey/reference/power_dsgn.html</loc>
   </url>
   <url>
-    <loc>/reference/ppd_plot.html</loc>
+    <loc>https://usepa.github.io/spsurvey/reference/ppd_plot.html</loc>
   </url>
   <url>
-    <loc>/reference/relrisk_analysis.html</loc>
+    <loc>https://usepa.github.io/spsurvey/reference/relrisk_analysis.html</loc>
   </url>
   <url>
-    <loc>/reference/revisit_bibd.html</loc>
+    <loc>https://usepa.github.io/spsurvey/reference/revisit_bibd.html</loc>
   </url>
   <url>
-    <loc>/reference/revisit_dsgn.html</loc>
+    <loc>https://usepa.github.io/spsurvey/reference/revisit_dsgn.html</loc>
   </url>
   <url>
-    <loc>/reference/revisit_rand.html</loc>
+    <loc>https://usepa.github.io/spsurvey/reference/revisit_rand.html</loc>
   </url>
   <url>
-    <loc>/reference/spsurvey-package.html</loc>
+    <loc>https://usepa.github.io/spsurvey/reference/spsurvey-package.html</loc>
   </url>
   <url>
-    <loc>/reference/sp_balance.html</loc>
+    <loc>https://usepa.github.io/spsurvey/reference/sp_balance.html</loc>
   </url>
   <url>
-    <loc>/reference/sp_frame.html</loc>
+    <loc>https://usepa.github.io/spsurvey/reference/sp_frame.html</loc>
   </url>
   <url>
-    <loc>/reference/sp_plot.html</loc>
+    <loc>https://usepa.github.io/spsurvey/reference/sp_plot.html</loc>
   </url>
   <url>
-    <loc>/reference/sp_rbind.html</loc>
+    <loc>https://usepa.github.io/spsurvey/reference/sp_rbind.html</loc>
   </url>
   <url>
-    <loc>/reference/sp_summary.html</loc>
+    <loc>https://usepa.github.io/spsurvey/reference/sp_summary.html</loc>
   </url>
   <url>
-    <loc>/reference/stopprnt.html</loc>
+    <loc>https://usepa.github.io/spsurvey/reference/stopprnt.html</loc>
   </url>
   <url>
-    <loc>/reference/summary.html</loc>
+    <loc>https://usepa.github.io/spsurvey/reference/summary.html</loc>
   </url>
   <url>
-    <loc>/reference/trend_analysis.html</loc>
+    <loc>https://usepa.github.io/spsurvey/reference/trend_analysis.html</loc>
   </url>
   <url>
-    <loc>/reference/warnprnt.html</loc>
+    <loc>https://usepa.github.io/spsurvey/reference/warnprnt.html</loc>
   </url>
 </urlset>
