@@ -8,6 +8,7 @@
 
 * Removed the error from `adjwgtNR()` that occurred when at least one level of `MARClass` did not have a value from `TRClass` in `EvalStatus` and replaced it with a warning.
 * `MARClass` in `adjwgtNR()` now has a default value that assumes all sample units are from the same MAR class.
+* Added an error message when at least one value of `caty_var` in `sframe` is not among the names of the `caty_n` variable [#42](https://github.com/USEPA/spsurvey/issues/42).
 
 # spsurvey 5.5.1
 
