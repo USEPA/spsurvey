@@ -13,14 +13,15 @@ test_that("adjust weight non-response works no extra Eval", {
   wgtzeros <- sum(wgt_new[EvalStatus == "Target_Not_Sampled"])
   expect_equal(sum(wgt), wgtsums)
   expect_equal(0, wgtzeros)
-  
+
   # error returned
   EvalStatus[EvalStatus == "Target_Sampled"] <- "Target_Not_Sampled"
-  expect_error(adjwgtNR(wgt, MARClass, EvalStatus, TNRClass, TRClass))
+  # expect_error(adjwgtNR(wgt, MARClass, EvalStatus, TNRClass, TRClass))
+  expect_warning(adjwgtNR(wgt, MARClass, EvalStatus, TNRClass, TRClass))
 })
 
 test_that("adjust weight non-response works extra Eval", {
-  
+
   wgt <- runif(30)
   MARClass <- rep(c("A", "B"), rep(15, 2))
   EvalStatus <- rep(c("Not_Target", "Target_Sampled", "Target_Not_Sampled"), 10)
@@ -33,9 +34,10 @@ test_that("adjust weight non-response works extra Eval", {
   expect_equal(0, wgtzeros)
   wgtzeros_extra <- sum(wgt_new[!EvalStatus %in% c("Target_Not_Sampled", "Target_Sampled")])
   expect_equal(0, wgtzeros)
-  
+
   # error returned
   EvalStatus[EvalStatus == "Target_Sampled"] <- "Not_Target"
-  expect_error(adjwgtNR(wgt, MARClass, EvalStatus, TNRClass, TRClass))
+  # expect_error(adjwgtNR(wgt, MARClass, EvalStatus, TNRClass, TRClass))
+  expect_warning(adjwgtNR(wgt, MARClass, EvalStatus, TNRClass, TRClass))
 })
 
