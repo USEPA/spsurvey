@@ -1,3 +1,14 @@
+# spsurvey 5.6.0
+
+## Major Updates
+
+* Removed startup message that warned users about the major changes to spsurvey resulting from the upgrade to version 5.0.0.
+
+## Minor Updates
+
+* Removed the error from `adjwgtNR()` that occurred when at least one level of `MARClass` did not have a value from `TRClass` in `EvalStatus` and replaced it with a warning.
+* `MARClass` in `adjwgtNR()` now has a default value that assumes all sample units are from the same MAR class.
+
 # spsurvey 5.5.1
 
 ## Bug Fixes
