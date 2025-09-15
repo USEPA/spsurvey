@@ -4,39 +4,41 @@
 \alias{adjwgtNR}
 \title{Adjust survey design weights for non-response by categories}
 \usage{
-adjwgtNR(wgt, MARClass, EvalStatus, TNRClass, TRClass)
+adjwgtNR(wgt, MARClass = NULL, EvalStatus, TNRClass, TRClass)
 }
 \arguments{
 \item{wgt}{vector of weights for each sample unit that will be adjusted
 for non-response. Weights must be weights for the design as implemented.
 All weights must be greater than zero.}
 
-\item{MARClass}{vector that identifies for each sample unit the category
-that will be used in non-response weight adjustment for sample units 
-that are known to be target. Within each missing at random (MAR) 
-category, the missing sample units that are not sampled are assumed to
-be missing at random.}
+\item{MARClass}{vector that identifies for each sample unit the class
+(i.e., category, level)
+that will be used in non-response weight adjustment for sample units
+that are known to be target. Within each missing at random (MAR)
+class, the missing sample units that are not sampled are assumed to
+be missing at random. If MARClass is not specified, all sample units
+are assumed to be from the same MAR class.}
 
 \item{EvalStatus}{vector of the evaluation status for each sample unit.
-Values must include the values given in TNRclass and TRClass. May 
+Values must include the values given in TNRclass and TRClass. May
 include other values not required for the non-response adjustment.}
 
 \item{TNRClass}{subset of values in EvalStatus that identify sample units
-whose target status is known and that do not respond (i.e., are not 
+whose target status is known and that do not respond (i.e., are not
 sampled).}
 
-\item{TRClass}{Subset of values in EvalStatus that identify sample units 
+\item{TRClass}{Subset of values in EvalStatus that identify sample units
 whose target status is known and that respond (i.e., are target and
 sampled).}
 }
 \value{
 Vector of sample unit weights that are adjusted for non-response
- and that is the same length of input weights. Weights for sample 
+ and that is the same length of input weights. Weights for sample
  units that did not response but were known to be eligible are set
  to zero. Weights for all other sample units are also set to zero.
 }
 \description{
-Adjust weights for target sample units that do not respond 
+Adjust weights for target sample units that do not respond
 and are missing at random within categories. The missing at random
 assumption implies that their sample weight may be assigned to
 specific categories of units that have responded (i.e., have been
