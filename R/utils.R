@@ -180,8 +180,7 @@ match_sf_defaults <- function(varsf, list_args) {
 # CRAN release questions
 release_questions <- function() {
   c(
-    "Have you changed version numbers in DESCRIPTION, CITATION, and README?",
-    "Have you run pkgdown::build_site() and committed?"
+    "Have you changed version numbers in DESCRIPTION"
   )
 }
 
