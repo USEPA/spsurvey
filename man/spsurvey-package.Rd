@@ -42,9 +42,9 @@ Useful links:
 
 Authors:
 \itemize{
-  \item Tom Kincaid \email{Kincaid.Tom@epa.gov}
-  \item Tony Olsen \email{Olsen.Tony@epa.gov}
-  \item Marc Weber \email{Weber.Marc@epa.gov}
+  \item Tom Kincaid
+  \item Anthony (Tony) Olsen
+  \item Marc Weber
 }
 
 Other contributors:

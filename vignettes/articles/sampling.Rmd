@@ -3,18 +3,8 @@ title: "Spatially Balanced Sampling"
 author: "Michael Dumelle, Tom Kincaid, Anthony Olsen, and Marc Weber"
 output: 
   html_document:
-    theme: flatly
-    number_sections: true
-    highlighted: default 
-    toc: yes
-    toc_float:
-      collapsed: no
-      smooth_scroll: no
-    toc_depth: 3
-vignette: >
-  %\VignetteIndexEntry{Spatially Balanced Sampling}
-  %\VignetteEngine{knitr::rmarkdown}
-  \usepackage[utf8]{inputenc}
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r, include = FALSE}

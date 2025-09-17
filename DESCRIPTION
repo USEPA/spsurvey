@@ -4,12 +4,9 @@ Version: 5.6.0
 Authors@R: c(
     person("Michael", "Dumelle", role=c("aut","cre"),
            email = "Dumelle.Michael@epa.gov", comment = c(ORCID = "0000-0002-3393-5529")),
-    person("Tom", "Kincaid", role="aut",
-           email = "Kincaid.Tom@epa.gov"),
-    person("Tony", "Olsen",  role="aut",
-           email = "Olsen.Tony@epa.gov"),
-    person("Marc", "Weber",  role="aut",,
-           email = "Weber.Marc@epa.gov"),
+    person("Tom", "Kincaid", role="aut"),
+    person("Anthony (Tony)", "Olsen",  role="aut"),
+    person("Marc", "Weber",  role="aut"),
     person("Don", "Stevens",  role="ctb"),
     person("Denis", "White",  role="ctb")
     )

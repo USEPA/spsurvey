@@ -3,6 +3,8 @@
 ## Major Updates
 
 * Removed startup message that warned users about the major changes to spsurvey resulting from the upgrade to version 5.0.0.
+* Added two new vignettes, one providing an overview of statistical surveys and another providing some details about survey design weighting.
+* Removed all vignettes from the CRAN webpage except the "Start Here" vignette. All vignettes are now hosted on the `spsurvey` website available [here](https://usepa.github.io/spsurvey/) in the "Articles" tab.
 
 ## Minor Updates
 

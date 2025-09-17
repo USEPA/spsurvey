@@ -1,0 +1,107 @@
+---
+title: "Weight Adjustments"
+author: "Michael Dumelle, Tom Kincaid, Anthony Olsen, and Marc Weber"
+output: 
+  html_document:
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>", 
+  warning = FALSE, 
+  message = FALSE
+)
+```
+
+
+If you have yet not read the "Start Here" vignette, please do so by running
+```{r, eval = FALSE}
+vignette("start-here", "spsurvey")
+```
+
+Before proceeding, we load spsurvey by running
+```{r}
+library(spsurvey)
+set.seed(51)
+```
+
+```{r}
+NE_Lakes <- sp_frame(NE_Lakes)
+plot(NE_Lakes, pch = 19)
+```
+
+```{r}
+samp <- grts(NE_Lakes, n_base = 10, n_over = 10)
+```
+
+```{r}
+plot(samp, sframe = NE_Lakes, pch = 19)
+```
+
+```{r}
+samp
+```
+
+```{r}
+sum(samp$sites_base$wgt)
+```
+
+
+```{r}
+samp_out <- sp_rbind(samp)
+```
+
+```{r}
+samp_out
+```
+
+```{r}
+samp_out$EVAL_CAT <- c(
+  rep("Target_Sampled", 3),
+  "Target_Not_Sampled",
+  "Not_Target", 
+  "Target_Sampled", 
+  "Not_Target",
+  rep("Target_Sampled", 2),
+  "Not_Target", 
+  rep("Target_Sampled", 3),
+  "Target_Not_Sampled",
+  "Target_Sampled", 
+  rep("Not_Needed", 5)
+)
+table(samp_out$EVAL_CAT)
+```
+
+```{r}
+samp_out <- samp_out[samp_out$EVAL_CAT != "Not_Needed", ]
+```
+
+```{r}
+samp_out$adjwgt <- adjwgt(
+  samp_out$wgt,
+  framesize = 195
+)
+```
+
+```{r}
+tapply(samp_out$adjwgt, samp_out$EVAL_CAT, sum)
+```
+
+
+```{r}
+samp_out$adjwgt_nr <- adjwgtNR(
+  samp_out$adjwgt,
+  MARClass = rep("1", NROW(samp_out)),
+  EvalStatus = samp_out$EVAL_CAT,
+  TNRClass = c("Target_Not_Sampled"),
+  TRClass = "Target_Sampled"
+)
+```
+
+```{r}
+
+```
+
