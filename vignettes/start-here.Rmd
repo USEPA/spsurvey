@@ -61,7 +61,7 @@ spsurvey implements a design-based approach to statistical inference, with a foc
 
 There are five additional vignettes in `spsurvey` that are available on our website [here](https://usepa.github.io/spsurvey/) under the "Articles" tab:
 
-1. 
+1. An Overview of Statistical Surveys: An introductory overview of the structure of a statistical survey design
 2. Exploratory Data Analysis: Summarizing and Visualizing Sampling Frames, Design Sites, and Analysis Data
     * Use the `summary()` and `plot()` functions to summarize and visualize sampling frames, design sites, and analysis data
 3. Spatially Balanced Sampling

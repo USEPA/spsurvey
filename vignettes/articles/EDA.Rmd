@@ -42,7 +42,7 @@ The `NE_Lakes` data in spsurvey is a sampling frame (as an `sf` object) that con
 2. `ELEV`: lake elevation (a continuous variable)
 3. `ELEV_CAT`: lake elevation categories (low and high)
 
-Before summarizing or visualizing a sampling frame, turn it into an \code{sp_frame} object using `sp_frame()`:
+Before summarizing or visualizing a sampling frame, turn it into an `sp_frame` object using `sp_frame()`:
 ```{r}
 NE_Lakes <- sp_frame(NE_Lakes)
 ```
