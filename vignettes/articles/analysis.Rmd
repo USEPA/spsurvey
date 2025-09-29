@@ -1,6 +1,6 @@
 ---
 title: "Analyzing Data"
-author: "Michael Dumelle, Tom Kincaid, Anthony Olsen, and Marc Weber"
+author: "Michael Dumelle and Tom Kincaid"
 output: 
   html_document:
 editor_options: 

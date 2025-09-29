@@ -43,7 +43,7 @@ Useful links:
 Authors:
 \itemize{
   \item Tom Kincaid
-  \item Anthony (Tony) Olsen
+  \item Anthony (Tony) R. Olsen
   \item Marc Weber
 }
 
@@ -51,6 +51,8 @@ Other contributors:
 \itemize{
   \item Don Stevens [contributor]
   \item Denis White [contributor]
+  \item Amanda M. Nahlik [contributor]
+  \item Sarah Lehmann [contributor]
 }
 
 }

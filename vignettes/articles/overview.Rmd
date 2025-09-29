@@ -1,9 +1,10 @@
 ---
 title: "An Overview of Statistical Surveys for Ecological Applications"
-author: "Michael Dumelle, Tom Kincaid, Anthony Olsen, Marc Weber"
-output: 
-  html_document:
-editor_options: 
+author: "Michael Dumelle, Amanda M. Nahlik, and Sarah Lehmann"
+output:
+  word_document: default
+  html_document: null
+editor_options:
   chunk_output_type: console
 ---
 
@@ -32,7 +33,7 @@ The target population (i.e., population of interest) is the set of units we want
 
 When developing a statistical survey, statisticians refer to the units available for sampling as "sample units" (i.e., individual lakes). For use in the statistical survey process, these units are contained in a sampling frame.
 
-Sampling frames for natural resources are often represented using a Geographic Information System (GIS) with spatial information like latitude and longitude coordinates. Ideally, the sampling frame and target population coincide (i.e., the GIS coverage contains all lakes in the region of interest that meet the aforementioned target population definition and omits all lakes that do not). In practice, however, it is common for a portion of sample units identified in the sampling frame to not meet the target population definition. For example, the target population definition excludes stormwater ponds, but these ponds may incorrectly appear as lakes in a GIS coverage. This is called "overcoverage." On the other hand, a portion of sample units that exist on the landscape and meet the target population definition may be missing from the GIS coverage because coverage is imperfect. This is called "undercoverage." Handling overcoverage and undercoverage requires subject matter expertise and additional analysis and interpretation techniques.
+Sampling frames for natural resources are often represented using a Geographic Information System (GIS) with spatial information like latitude and longitude coordinates. Ideally, the sampling frame and target population coincide (i.e., the GIS coverage contains all lakes in the region of interest that meet the aforementioned target population definition and omits all lakes that do not). In practice, however, it is common for a portion of sample units identified in the sampling frame to not meet the target population definition. For example, the target population definition excludes stormwater ponds, but these ponds may incorrectly appear as lakes in a GIS coverage. This is called "overcoverage." On the other hand, a portion of sample units that exist on the landscape and meet the target population definition may be missing from the GIS coverage because coverage is imperfect. This is called "undercoverage." Handling overcoverage and undercoverage requires subject matter expertise and additional analysis and interpretation techniques, though overcoverage is generally easier to accommodate in an ecological survey design.
 
 ## Selecting a Random Sample
 
@@ -48,7 +49,7 @@ knitr::include_graphics("survey1.png")
 
 ## Design Weights
 
-A design weight is a continuous, numeric value assigned to each unit in the sample that represents similarity to other units not selected in the sample. For example, if a unit sampled has a design weight of 10, it represents ten similar units from the sampling frame (and more broadly, the target population). When each sample unit has an equal chance of being selected, all weights are equal.
+A design weight is a continuous, numeric value assigned to each unit in the sample that represents similarity to other units not selected in the sample. For example, if a unit sampled has a design weight of 10, it represents ten similar units from the sampling frame. When each sample unit has an equal chance of being selected, all weights are equal.
 
 ## Target Population Parameter Estimates
 
@@ -101,6 +102,7 @@ Survey design principles are consistent regardless of resource type. However, th
 # Conclusion
 
 Ecological and environmental monitoring efforts can significantly benefit from incorporating statistical surveys. Statistical surveys leverage a target population definition, a sampling frame, a random sampling mechanism that may be spatially balanced, design weights, and target population parameter estimates to answer scientific questions of interest. `spsurvey` provides tools for users to select spatially balanced GRTS samples of point, linear, and areal resources, construct design weights, and estimate target population parameters (Dumelle et al., 2023). Please see the other vignettes on our website ([at this link](https://usepa.github.io/spsurvey/) in the "Articles" tab) to learn more. 
+
 # References
 
 Dumelle, Michael and Kincaid, Tom and Olsen, Anthony R., and Weber, Marc. (2023). spsurvey: Spatial Sampling Design and Analysis in R. *Journal of Statistical Software*, 105(3), 1-29.

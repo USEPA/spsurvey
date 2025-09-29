@@ -1,6 +1,6 @@
 ---
 title: "Summarizing and Visualizing Sampling Frames, Design Sites, and Analysis Data"
-author: "Michael Dumelle, Tom Kincaid, Anthony Olsen, and Marc Weber"
+author: "Michael Dumelle"
 output: 
   html_document:
 editor_options: 

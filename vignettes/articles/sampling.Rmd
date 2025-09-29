@@ -1,6 +1,6 @@
 ---
 title: "Spatially Balanced Sampling"
-author: "Michael Dumelle, Tom Kincaid, Anthony Olsen, and Marc Weber"
+author: "Michael Dumelle and Anthony R. Olsen"
 output: 
   html_document:
 editor_options: 

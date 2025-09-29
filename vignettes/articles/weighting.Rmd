@@ -1,9 +1,10 @@
 ---
 title: "Weight Adjustments in Practice"
-author: "Michael Dumelle, Tom Kincaid, Anthony Olsen, and Marc Weber"
-output: 
-  html_document:
-editor_options: 
+author: "Michael Dumelle and Anthony R. Olsen"
+output:
+  word_document: default
+  html_document: null
+editor_options:
   chunk_output_type: console
 ---
 
@@ -24,7 +25,7 @@ vignette("start-here", "spsurvey")
 
 # Introduction
 
-An important part of a statistical survey design is constructing design weights that are representative of the broader population of interest (i.e., target population). Appropriate design weights are combined with data collected in the field to estimate population parameters like means and totals. At the start of a survey design, weights at a site typically equal the reciprocal of the site's inclusion probability (i.e., the probability the site was selected from the sampling frame as part of the random sample). Thus, these weights characterize how many "similar units" the site represents in the broader population. An important property of these weights is that they generally sum to $N$, the population size (more rigorously, the sampling frame size). However, these initial weights are often adjusted prior to analysis. There are several reasons to adjust weights, the primary reasons being 1) a change to the survey design (i.e., the sample size changed part way through), 2) nonresponse (data are not able to be collected at a site in the population), and/or 3) to increase efficiency of estimators (i.e., reduce standard errors) by enforcing constraints on the weights to sum to certain (known) population totals (Särndal et al., 2003). Enforcing constraints on weights in this manner is sometimes called poststratification or raking (Lumley, 2011). Here we outline some strategies for weight adjustments using a few practical examples that reflect common ecological survey designs.
+An important part of a statistical survey design is constructing design weights that are representative of the target population (i.e., population of interest). Appropriate design weights are combined with data collected in the field to estimate population parameters like means and totals. At the start of a survey design, weights at a site typically equal the reciprocal of the site's inclusion probability (i.e., the probability the site was selected from the sampling frame as part of the random sample). Thus, these weights characterize how many "similar units" the site represents in the target population. An important property of these weights is that they generally sum to $N$, the known population size (more rigorously, the sampling frame size). However, these initial weights are often adjusted prior to analysis, for myriad reasons that include a change to the survey design (i.e., the sample size changed partway through the survey, nonresponse, and/or to improve the performance of statistical estimators). Here we outline some strategies for weight adjustments using a few practical examples that reflect common ecological applications. For an introduction to survey design and weighting, see Lumley (2011) and Lohr (2021); for a more technical treatment, see Särndal et al. (2003).
 
 Before proceeding, we load `spsurvey` and set a reproducible seed by running
 ```{r}
@@ -43,11 +44,11 @@ NE_Lakes <- sp_frame(NE_Lakes)
 plot(NE_Lakes, pch = 19)
 ```
 
-Throughout, we will select both unstratified and stratified samples from the `NE_Lakes` data and show how weights are constructed and adjusted, step-by-step.
+Throughout, we will select both unstratified and stratified samples from the `NE_Lakes` data and show how weights are constructed and adjusted, step-by-step. We assume the sampling frame and target population are the same, though we eventually relax this assumption to accommodate overcoverage, which occurs when the target population is actually a subset of the sampling frame.
 
 # Weighting in Unstratified Sampling
 
-Suppose our goal is to use a spatially balanced random sample of 10 sites from `NE_Lakes` to estimate the proportion of all 195 lakes in "good" benthic macroinvertebrate condition. To accomplish this goal, we must sample 10 lakes and determine whether the lake is in good condition, assign weights to each of the 10 sampled lakes, and combine the weights with the data to estimate this proportion for all lakes. Ideally, we would select a sample of size 10 and each of these lakes could be sampled. In practice, however, there are many scenarios where field crews cannot sample a site, a few of which include:
+Suppose our goal is to use a spatially balanced random sample of 10 sites from `NE_Lakes` to estimate the proportion of all 195 lakes in "Good" benthic macroinvertebrate condition. To accomplish this goal, we must sample 10 lakes and determine whether the lake is in good condition, assign weights to each of the 10 sampled lakes, and combine the weights with the data to estimate this proportion for all lakes. Ideally, we would select a sample of size 10 and each of these lakes could be sampled. In practice, however, there are many scenarios where field crews cannot sample a site, a few of which include:
 
 * An endangered species is detected at the site
 * The site is not safely accessible at the time of sampling
@@ -79,7 +80,7 @@ The base and oversample sites are combined into a single `sf` object using `sp_r
 sites_unstrat <- sp_rbind(samp)
 ```
 
-Suppose that the first four sites were sampleable, the fifth site the crew lacked permission, and so on (we store this information in a variable called `EVAL_CAT`, short for evaluation category):
+Suppose that field crews determined that first four sites were sampleable, the fifth site was inaccessible, and so on. We store the evaluation status of each site in a variable called `EVAL_CAT`, short for evaluation category: 
 ```{r}
 sites_unstrat$EVAL_CAT <- c(
   rep("Sampleable", 4),
@@ -98,13 +99,13 @@ print(sites_unstrat[, c("siteID", "siteuse", "EVAL_CAT")], n = 20)
 table(sites_unstrat$EVAL_CAT)
 ```
 
-In total, 17 sites were evaluated. In between the first and tenth sampled site, seven sites were not sampleable for various reasons. The final three oversample sites were not needed because the goal of ten samples was reached. These three oversample sites that were not needed are the final three in the list, because as a general rule, spatially balanced oversample sites should be evaluated sequentially in `siteID` order. Next we remove those sites that were not needed:
+In this example, 17 total sites were evaluated. In between the first and tenth sampled site, seven sites were not sampleable (inaccessible, lacking permission, endangered species). Sites should always be evaluated in `siteID` order, as this is important to maximize spatial balance of the sampled sites when `n_base` and `n_over` are both used. Because the goal of 10 sampleable sites was reached after evaluating 17 sites, the final three oversample sites are not needed and can be removed:
 ```{r}
 sites_unstrat <- sites_unstrat[sites_unstrat$EVAL_CAT != "Not_Needed", ]
 print(sites_unstrat[, c("siteID", "siteuse", "EVAL_CAT")], n = 17)
 ```
 
-While our primary goal is to estimate the proportion of lakes in good BMI condition, a secondary goal may be to estimate the proportion of lakes that are able to be sampled. To accomplish this goal, we must first our original weights to reflect the fact that 17 sites were evaluated in order to sample 10 sites. The weights must still sum to 195, the population size, and they still must be equal (as all sites had the same probability of being included in the sample). This implies that each weight is 195/17, or 11.47. The original weights are adjusted by a scaling factor that represents the ratio of the original sample size to the number of evaluated sites, or 10/17. This type of weight adjustment is available in `spsurvey` using the `adjwgt()` function:
+Recall our primary goal is to estimate the proportion of lakes in good BMI condition. However, a secondary goal may be to estimate the proportion of lakes that are able to be sampled. To accomplish this goal, we must first adjust our original weights to reflect the fact that 17 sites were evaluated. These adjusted weights must still sum to 195, the population size, and they still must be equal (as all sites had the same probability of being included in the sample). This implies that each weight is 195/17, or 11.47. The original weights are adjusted by a scaling factor that represents the ratio of the original sample size to the number of evaluated sites, or 10/17. This type of weight adjustment is available in `spsurvey` using the `adjwgt()` function:
 
 ```{r}
 sites_unstrat$adjwgt <- adjwgt(
@@ -119,13 +120,13 @@ The first argument, `wgt`, is the vector of weights, and the second argument, `f
 sum(sites_unstrat$adjwgt)
 ```
 
-Then we could use these weights to estimate the proportion of the population that is sampleable or not sampleable due to endangered species, inaccessibility, or a lack of landowner permission (and appropriate standard errors):
+Then we could use these weights to estimate the proportion of the population that is sampleable or not sampleable due to endangered species, inaccessibility, or a lack of landowner permission:
 ```{r}
 out <- cat_analysis(sites_unstrat, vars = "EVAL_CAT", weight = "adjwgt")
 out[, c("Indicator", "Category", "nResp", "Estimate.P", "StdError.P")]
 ```
 
-Though some sites could not be sampled, we still presume these sites are units in the population of interest and have either a "Good" or "Not Good" BMI condition. To reflect this assumption, we must adjust the weights of the sampled sites to account for nonresponse (here, due to endangered species, inaccessibility, or a lack of landowner permission). This adjustment involves two parts. First, the sampled site weights are scaled by the reciprocal of the probability an evaluated site was sampled, or 17/10). Second, the weights for the evaluated sites that were not sampled are set to zero. This type of nonresponse weight adjustment is available in `spsurvey` using the `adjwgtNR()` function:
+Though some sites could not be sampled, we still presume these sites are in the target population and are either in "Good" or "Not Good" BMI condition. To reflect this assumption, we must adjust the weights of the sampled sites to account for nonresponse (here, due to endangered species, inaccessibility, or a lack of landowner permission) in the target population. This weight adjustment involves two parts. First, the weights are scaled by the reciprocal of the probability an evaluated site was sampled, or 17/10. Second, the the weights for sites that were not sampled are set to zero. This type of nonresponse weight adjustment is available in `spsurvey` using the `adjwgtNR()` function:
 ```{r}
 sites_unstrat$adjwgt_nr <- adjwgtNR(
   wgt = sites_unstrat$adjwgt,
@@ -136,7 +137,7 @@ sites_unstrat$adjwgt_nr <- adjwgtNR(
 print(sites_unstrat[, c("siteID", "siteuse", "EVAL_CAT", "adjwgt", "adjwgt_nr")], n = 17)
 ```
 
-The first argument, `wgt`, is the vector of weights; the second argument, `EvalStatus` is the evaluation status (here, `EVAL_CAT`); the third argument, `TNRClass`, are the `EVAL_CAT` values that indicate the site was not sampled; and the fourth argument, `TRClass`, is the `EVAL_CAT` value that indicates the site was sampled. The sum of these nonresponse adjusted weights equals 195, the known population size:
+The first argument, `wgt`, is the vector of weights; the second argument, `EvalStatus` is the evaluation status (here, `EVAL_CAT`); the third argument, `TNRClass`, are the `EVAL_CAT` values that indicate the site was not able to be sampled; and the fourth argument, `TRClass`, is the `EVAL_CAT` value that indicates the site was sampled. The sum of these nonresponse adjusted weights equals 195, the known population size:
 
 ```{r}
 sum(sites_unstrat$adjwgt_nr)
@@ -155,7 +156,7 @@ sites_unstrat_samp$BMI_COND <- c(
 print(sites_unstrat_samp[, c("siteID", "siteuse", "EVAL_CAT", "adjwgt_nr", "BMI_COND")])
 ```
 
-Then we could use these nonresponse weights to estimate the proportion of lakes from `NE_Lakes` in "Good" BMI condition (and appropriate standard errors):
+Then we could use these nonresponse weights to estimate the proportion of lakes from `NE_Lakes` in "Good" BMI condition:
 ```{r}
 out <- cat_analysis(sites_unstrat_samp, vars = "BMI_COND", weight = "adjwgt_nr")
 out[, c("Indicator", "Category", "nResp", "Estimate.P", "StdError.P")]
@@ -164,14 +165,14 @@ out[, c("Indicator", "Category", "nResp", "Estimate.P", "StdError.P")]
 
 # Weighting in Stratified Sampling
 
-Sometimes it is desired to select separate samples from distinct subsets of the population, called strata. Consider the size of lakes in `NE_Lakes`, represented by the `AREA_CAT` variable with two levels, "small" and "large":
+Sometimes it is desired to select separate samples from distinct subsets of the population, called strata. This type of sample is called a stratified sample. Consider the size of lakes in `NE_Lakes`, represented by the `AREA_CAT` variable with two levels, "small" and "large":
 
 ```{r}
 table(NE_Lakes$AREA_CAT)
 plot(NE_Lakes, ~ AREA_CAT, pch = 19)
 ```
 
-There are 135 small lakes and 60 large lakes. Because there are more small lakes, a random sample of size 10 may not yield sufficient large lakes. We could instead use a stratified sample to select five spatially balanced sites from small lakes and five spatially balanced sites from large lakes (with five oversamples in each strata):
+There are 135 small lakes and 60 large lakes. Because there are more small lakes than large lakes, a random sample of size 10 may not yield any large lakes! We could instead use a stratified sample to select five spatially balanced sites from small lakes and five spatially balanced sites from large lakes (with five oversamples in each strata):
 ```{r}
 samp <- grts(
   NE_Lakes,
@@ -181,14 +182,14 @@ samp <- grts(
 )
 ```
 
-Now, `n_base` and `n_over` are vectors whose names are the strata and values are the desired sample sizes. The `stratum_var` argument specifies the variable in `NE_Lakes` that contains the strata.
+In a stratified sample, `n_base` and `n_over` are vectors whose names represent strata and values represent sample sizes. The `stratum_var` argument specifies the variable in `NE_Lakes` that contains the strata.
 
 We may visualize the spatial distribution of sites alongside the `NE_Lakes` population (separately for each strata):
 ```{r}
 plot(samp, siteuse ~ AREA_CAT, sframe = NE_Lakes, pch = 19)
 ```
 
-Each small (large) lake has a probability 5/135 (5/60) of being included in the sample, which implies that each base site is assigned a weight of 135/5 (60/5), or 27 (12).  Within each strata, the weights must sum to $N_{small}$ (135) and $N_{large}$ (60), the known population size of small lakes and large lakes, respectively.
+Each small (large) lake has a probability 5/135 (5/60) of being included in the sample, which implies that each base site is assigned a weight of 135/5 (60/5), or 27 (12).  Within each strata, the weights must sum to $N_{small}$ (135) and $N_{large}$ (60), the target population size of small lakes and large lakes, respectively.
 ```{r}
 samp$sites_base[, c("siteID", "siteuse", "AREA_CAT", "wgt")]
 ```
@@ -202,7 +203,7 @@ tapply(
 )
 ```
 
-The base and oversample sites are combined into a single sf object using `sp_rbind()`:
+The base and oversample sites are combined into a single `sf` object using `sp_rbind()`:
 ```{r}
 sites_strat <- sp_rbind(samp)
 ```
@@ -244,7 +245,7 @@ sites_strat$adjwgt <- adjwgt(
 print(sites_strat[, c("siteID", "siteuse", "AREA_CAT", "EVAL_CAT", "adjwgt")], n = 17)
 ```
 
-The `wgtcat` argument (which stands for weight categories) is required to adjust weights separately for each lake size category, and `framesize` now is a vector with names equal to the lake size category and value equal to the known population size within lake size category.
+The `wgtcat` argument (which stands for weight categories) is required to adjust weights separately for each lake size category, and `framesize` now has names representing lake size category and values equaling the known target population size (within lake size category).
 
 We can check that the adjusted weights sum to the appropriate population sizes:
 ```{r}
@@ -255,8 +256,7 @@ tapply(
 )
 ```
 
-We can use these weights to estimate the proportion of the population that is sampleable or not sampleable due to endangered species, inaccessibility, or a lack of landowner permission (and appropriate standard errors). We can do this separately for each strata
-
+We can use these weights to estimate the proportion of the population that is sampleable or not sampleable due to endangered species, inaccessibility, or a lack of landowner permission. We can do this separately for each strata:
 ```{r}
 out <- cat_analysis(
   sites_strat,
@@ -287,12 +287,13 @@ sites_strat$adjwgt_nr <- adjwgtNR(
   TNRClass = c("Endangered", "Inaccessible", "Lack_Permission"),
   TRClass = "Sampleable"
 )
-print(sites_strat[, c("siteID", "siteuse", "AREA_CAT", "EVAL_CAT", "adjwgt_nr")], n = 17)
+print(sites_strat[, c("siteID", "siteuse", "AREA_CAT", "EVAL_CAT",
+                      "adjwgt", "adjwgt_nr")], n = 17)
 ```
 
-Here, the `MARClass` variable indicates the stratification variables, by which weight adjustments should be applied separately to each level (MAR is short for missing at random, an assumption that implies within each area category, the evaluation status is unrelated to BMI condition).
+Here, the `MARClass` variable contains the values of the stratification variable (Technical Note: MAR is short for missing at random, an assumption implying that within each area category, the evaluation status is unrelated to BMI condition).
 
-The nonresponse adjusted weights sum to the appropriate population totals, as expected:
+The nonresponse adjusted weights sum to the appropriate population totals:
 ```{r}
 tapply(
   X = sites_strat$adjwgt_nr,
@@ -315,7 +316,7 @@ sites_strat_samp$BMI_COND <- c(
 print(sites_strat_samp[, c("siteID", "siteuse", "EVAL_CAT", "adjwgt_nr", "BMI_COND")])
 ```
 
-Then we can use these nonresponse estimate the proportion of lakes from NE_Lakes in “Good” BMI condition (and appropriate standard errors) separately for each strata:
+Then we can use these nonresponse estimate the proportion of lakes from NE_Lakes in “Good” BMI condition separately for each strata:
 ```{r}
 out <- cat_analysis(
   sites_strat_samp,
@@ -340,22 +341,26 @@ out[, c("Indicator", "Subpopulation", "Category", "nResp", "Estimate.P", "StdErr
 
 # Weighting with Additional Variable(s)
 
-It is possible to require weight totals to sum to known population sizes based on variables that were not used in the survey design (i.e., as stratification or unequal probability variables). This approach is known as poststratification or raking, and it can improve the performance of resulting estimators by emulating what weights would look like had a stratified design been implemented. An advantage of poststratification (as opposed to stratifying in the design) is that poststratification variables can be accounted for in the weights even if they were included in the original design, which may occur because of logistical constraints, a lack of data, or some other reason. for logistical reasons or some other reason.
+Poststratification is the practice of constraining weights to sum to known target population totals based on auxiliary variable(s). Poststratifying can improve the performance of resulting estimators by forcing the sample to be more representative of the target population. Additionally, poststrata can be determined from any variable, even if it was not used in the original design because of logistical constraints, a lack of data, or some other reason.
 
-Suppose that we revist the original unstratified sample of size 10 (with 10 oversamples) from `NE_Lakes` (called `sites_unstrat`) and now want to poststratify by lake size and lake elevation. This postratification ensures that within each lake size (small, large) and lake elevation (low, high) category, the weights sum to the appropriate population totals:
+Let's revisit the original unstratified sample of size 10 (with 10 oversamples) from `NE_Lakes` (called `sites_unstrat`). Now suppose we want to poststratify by lake size and lake elevation. This postratification ensures that within each lake size (small, large) and lake elevation (low, high) category, the weights sum to the appropriate population totals:
+
+We can create a variable in both `NE_Lakes` and `sites_unstrat` that represents the combination of lake size and elevation:
 ```{r}
-table(NE_Lakes$AREA_CAT, NE_Lakes$ELEV_CAT)
+NE_Lakes$AREA_ELEV_CAT <- interaction(NE_Lakes$AREA_CAT, NE_Lakes$ELEV_CAT)
+table(NE_Lakes$AREA_ELEV_CAT)
 ```
 
-There are 82 lakes in the small/low category, 53 lakes in the small/high category, 30 lakes in the large/low category, and 30 lakes in the large/high category. 
+In `NE_Lakes`, there are 82 lakes in the small/low category, 53 lakes in the small/high category, 30 lakes in the large/low category, and 30 lakes in the large/high category. 
 
-We can create a variable in `sites_unstrat` that represents the combination of lake size and elevation:
 ```{r}
 sites_unstrat$AREA_ELEV_CAT <- interaction(sites_unstrat$AREA_CAT, sites_unstrat$ELEV_CAT)
 table(sites_unstrat$AREA_ELEV_CAT)
 ```
 
-Then we can adjust the weights using the combination of lake size and elevation as the weight category variable:
+Of the base sites in `sites_unstrat`, there are 7 lakes in the small/low category, 1 lake in the small/high category, 6 lakes in the large/low category, and 3 lakes in the large/high category. 
+
+We can adjust the weights using poststratification based on the combination of lake size and elevation:
 ```{r}
 sites_unstrat$adjwgt2 <- adjwgt(
   wgt = sites_unstrat$wgt,
@@ -365,12 +370,13 @@ sites_unstrat$adjwgt2 <- adjwgt(
 )
 ```
 
+The `wgtcat` argument is the postratification (i.e., weight category) variable.
 We can compare these weights to the first set of adjusted weights from the unstratified sample:
 ```{r}
 print(sites_unstrat[, c("siteID", "siteuse", "AREA_ELEV_CAT", "EVAL_CAT", "adjwgt", "adjwgt2")], n = 17)
 ```
 
-These weights sum to the known population totals:
+These weights sum to the known population totals and hence, are generally more representative of the target population than weights that do not sum to the appropriate totals:
 ```{r}
 tapply(sites_unstrat$adjwgt2, sites_unstrat$AREA_ELEV_CAT, sum)
 ```
@@ -398,13 +404,14 @@ tapply(sites_unstrat$adjwgt2_nr, sites_unstrat$AREA_ELEV_CAT, sum)
 
 # Additional Scenarios
 
+Sometimes additional nuances require special solutions. Here we cover three such scenarios. First, we discuss approaches when there are no evaluated sites in a weight category. Second, we discuss approaches when there are no sampled sites in a weight category. Third, we discuss approaches when the target population (i.e., population of interest) is actually a subset of the sampling frame used to select sites. 
+
 ## No Evaluated Sites in a Category
 
+In the first scenario, we select an unstratified sample but would like to poststratify on the lake area and elevation variables. Suppose we select a new sample of size 10 with 10 oversamples from `NE_Lakes` using `grts()`:
 ```{r}
-table(NE_Lakes$AREA_ELEV_CAT)
 set.seed(34)
 sites <- sp_rbind(grts(NE_Lakes, n_base = 10, n_over = 10))
-sites$AREA_ELEV_CAT[sites$AREA_ELEV_CAT == "large.low"] <- "large.high"
 sites$EVAL_CAT <- c(
   rep("Sampleable", 3),
   rep("Lack_Permission", 3),
@@ -419,6 +426,22 @@ sites$EVAL_CAT <- c(
   rep("Sampleable", 2)
 )
 sites <- sites[sites$EVAL_CAT != "Not_Needed", ]
+```
+
+The `large.low` weight category has no evaluated sites:
+```{r}
+table(sites$AREA_ELEV_CAT)
+```
+
+Because there are no `large.low` evaluated sites, we cannot adjust the weights to sum to the appropriate `large.low` total in `NE_Lakes`. Thus, we must collapse weight categories. We choose to do so in a way that preserves marginal target population totals with respect to the area variable. We assign the weights representing 30 total sites from the `large.low` category to the `large.high` category:
+
+```{r}
+sites$AREA_ELEV_CAT[sites$AREA_ELEV_CAT == "large.low"] <- "large.high"
+table(sites$AREA_ELEV_CAT)
+```
+
+The totals for the `small.low` and `small.high` categories remain 82 and 53, respectively, but the new total for the `large.high` variable is now 60 (30 + 30). This adjustment ensures that the weight totals for the small lakes still sums to 135 and the weight totals for the large lakes still sums to 60:
+```{r}
 sites$adjwgt <- adjwgt(
   wgt = sites$wgt,
   wgtcat = sites$AREA_ELEV_CAT,
@@ -430,14 +453,13 @@ tapply(sites$adjwgt, sites$AREA_ELEV_CAT, sum)
 
 ## No Sampleable Sites in a Category
 
+In the second scenario, we again select an unstratified sample but would like to poststratify on the lake area elevation variables. Suppose we select a new sample of size 10 with 10 oversamples from `NE_Lakes` using `grts()`:
 ```{r}
-table(NE_Lakes$AREA_ELEV_CAT)
+set.seed(35)
 sites <- sp_rbind(grts(NE_Lakes, n_base = 10, n_over = 10))
-
 sites$EVAL_CAT <- c(
-  rep("Sampleable", 5),
+  rep("Sampleable", 6),
   "Inaccessible",
-  "Sampleable",
   "Endangered",
   rep("Lack_Permission", 2),
   rep("Sampleable", 2),
@@ -448,9 +470,12 @@ sites$EVAL_CAT <- c(
   "Sampleable",
   rep("Not_Needed", 1)
 )
-
 sites <- sites[sites$EVAL_CAT != "Not_Needed", ]
+table(sites$AREA_ELEV_CAT)
+```
 
+Fortunately, there are sites evaluated in all of the weight categories:
+```{r}
 sites$adjwgt <- adjwgt(
   wgt = sites$wgt,
   wgtcat = sites$AREA_ELEV_CAT,
@@ -458,10 +483,21 @@ sites$adjwgt <- adjwgt(
                 "large.low" = 30, "large.high" = 30)
 )
 tapply(sites$adjwgt, sites$AREA_ELEV_CAT, sum)
+```
 
+However, when trying to adjust for nonresponse we observe that no sites in the `small.high` category were sampleable:
 
-sites$AREA_ELEV_CAT[sites$AREA_ELEV_CAT == "large.high"] <- "large.low"
+```{r}
+table(sites$AREA_ELEV_CAT, sites$EVAL_CAT)
+```
 
+Hence, we cannot adjust the weights to sum to the appropriate `small.high` total in `NE_Lakes` and must collapse weight categories. We choose to do so in a way that preserves marginal totals in the area variable. We assign the weights representing 53 total sites from the `small.high` category to the `small.low` category::
+```{r}
+sites$AREA_ELEV_CAT[sites$AREA_ELEV_CAT == "small.high"] <- "small.low"
+```
+
+Finally, we can adjust the weights for nonresponse, ensuring that the small lake weights sum to 135 and the large lake weights sum to 60:
+```{r}
 sites$adjwgt_nr <- adjwgtNR(
   sites$adjwgt,
   MARClass = sites$AREA_ELEV_CAT,
@@ -475,9 +511,17 @@ tapply(sites$adjwgt_nr, sites$AREA_ELEV_CAT, sum)
 
 ## The Target Population as a Subset of the Sampling Frame
 
+Sometimes it is not known whether a site is in the target population until it is evaluated. Consider USEPA's National Lakes Assessment (NLA), a program designed to monitor the physical, chemical, and biological integrity of lakes in the conterminous US (CONUS). The target population of NLA lakes includes all lakes and reservoirs at least one meter deep and one hectare in area. They use a version of the National Hydrogrpahy Dataset (NHD) as the GIS layer for the sampling frame. While there are variables in NHD that quantify modeled lake depth and area, the most accurate measurements are obtained by field crews when they evaluate sites (on the ground). For example, a lake may be in the sampling frame based on modeled lake depth being deeper than one meter but the actual lake depth is shallower than one meter, and hence, should be excluded from the target population. Here, the target population is actually a subset of the sampling frame, an example of overcoverage. Overcoverage occurs when there are elements in the sampling frame that are not in the target population. In contrast, undercoverge occurs when there are elements in the target population that are not in the sampling frame. Undercoverage is challenging to overcome because the target population elements missing from the sampling frame are not easily identified or recovered. Thus, overcoverage is much easier to accommodate in a survey design, so plan accordingly. Next, we discuss one approach to handling overcoverage, via weigh adjustments. 
+
+We select an unstratified sample of size 10 with 10 oversamples from `NE_Lakes` using `grts()`:
 ```{r}
 set.seed(5)
 sites <- sp_rbind(grts(NE_Lakes, n_base = 10, n_over = 10))
+```
+
+
+Now suppose that some lakes are evaluated and deemed to not be in the target population; an evaluation category list may look like:
+```{r}
 sites$EVAL_CAT <- c(
   "Sampleable",
   "Lack_Permission",
@@ -495,21 +539,48 @@ sites$EVAL_CAT <- c(
   "Not_Needed"
 )
 sites <- sites[sites$EVAL_CAT != "Not_Needed", ]
+```
+
+First we may adjust the weights to reflect the evaluated sites:
+
+```{r}
 sites$adjwgt <- adjwgt(
   wgt = sites$wgt,
   framesize = 195
 )
+tapply(sites$adjwgt, sites$EVAL_CAT, sum)
+```
+
+These weights sum to the sampling frame size, as expected:
+```{r}
 sum(sites$adjwgt)
 
+```
+
+Recall that sites whose evaluation status are "Endangered", "Inaccessible", or "Lack_Permission" are assumed to be in the target population but were not sampleable. So based on evaluation category, we create a new variable that represents whether sites are in the target population or not:
+```{r}
 sites$TNT_CAT <- ifelse(sites$EVAL_CAT == "Not_Target", "Not_Target", "Target")
+tapply(sites$adjwgt, sites$TNT_CAT, sum)
+```
+
+We could then estimate the proportion of the sampling frame that is target or not target:
+```{r}
+out <- cat_analysis(sites, vars = "TNT_CAT", weight = "adjwgt")
+out[, c("Indicator", "Category", "nResp", "Estimate.P", "StdError.P")]
+```
+
+Next we create a new variable, `TNT_CAT2`, that breaks the "Target" category into "Target_Not_Sampleable" and "Target_Sampleable" with the goal of estimating how much of the target population is actually sampleable:
+```{r}
 sites$TNT_CAT2 <- sites$TNT_CAT
 sites$TNT_CAT2[sites$EVAL_CAT %in% c("Endangered", "Inaccessible", "Lack_Permission")] <- "Target_Not_Sampleable"
 sites$TNT_CAT2[sites$EVAL_CAT %in% c("Sampleable")] <- "Target_Sampleable"
-
-tapply(sites$adjwgt, sites$EVAL_CAT, sum)
-tapply(sites$adjwgt, sites$TNT_CAT, sum)
 tapply(sites$adjwgt, sites$TNT_CAT2, sum)
+out <- cat_analysis(sites, vars = "TNT_CAT2", weight = "adjwgt")
+out[, c("Indicator", "Category", "nResp", "Estimate.P", "StdError.P")]
+```
 
+Next we ensure that the target population weights for the sampleable sites are adjusted for nonresponse. That is, they must sum to the weight totals from the "Target" sites in `TNT_CAT`:
+```{r}
 sites$adjwgt_nr <- adjwgtNR(
   sites$adjwgt,
   EvalStatus = sites$EVAL_CAT,
@@ -522,8 +593,36 @@ tapply(sites$adjwgt_nr, sites$TNT_CAT, sum)
 tapply(sites$adjwgt_nr, sites$TNT_CAT2, sum)
 ```
 
+The weights for the target sampleable sites equals 143.6842, the sum of the weights for the "Target" sites in `TNT_CAT`:
+```{r}
+tapply(sites$adjwgt, sites$TNT_CAT, sum)
+```
+
+Now suppose we observe the following BMI Condition samples:
+```{r}
+sites_samp <- sites[sites$EVAL_CAT == "Sampleable", ]
+sites_samp$BMI_COND <- c(
+  "Good", 
+  "Not_Good",
+  rep("Good", 2),
+  "Not_Good",
+  rep("Good", 5)
+)
+print(sites_samp[, c("siteID", "siteuse", "EVAL_CAT", "adjwgt_nr", "BMI_COND")])
+```
+
+Using these data, we can estimate the proportion of the target population in "Good" `BMI_COND`:
+```{r}
+out <- cat_analysis(sites_unstrat_samp, vars = "BMI_COND", weight = "adjwgt_nr")
+out[, c("Indicator", "Category", "nResp", "Estimate.P", "StdError.P")]
+```
+
+Inherent in these estimates are two sources of variability: variability in the estimate of "Good" condition, and variability in the size of the target population (whose true size is estimated rather than known).
+
 # References
 
 Särndal, C.E., Swensson, B. and Wretman, J. (2003). Model assisted survey sampling. Springer Science \& Business Media.
+
+Lohr, S.L., (2021). Sampling: Design and analysis. Chapman and Hall/CRC.
 
 Lumley, T., (2011). Complex surveys: A guide to analysis using R. John Wiley \& Sons.
