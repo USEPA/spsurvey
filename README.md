@@ -52,21 +52,18 @@ remotes::install_github("USEPA/spsurvey", ref = "main")
 library(spsurvey)
 ```
 
-You can install the most recent development version of `spsurvey` from GitHub with package vignettes by running:
+You can install the most recent development version of `spsurvey` from GitHub with the package vignette by running:
 ```r
 install the most recent development version from GitHub with package vignettes
 devtools::install_github("USEPA/spsurvey", build_vignettes=TRUE)
 ```
 
-To view the vignettes in RStudio, run
+To view the vignette in RStudio, run
 ```r
 vignette("start-here", "spsurvey") # start with this vignette for an spsurvey overview
-vignette("EDA", "spsurvey") # for summaries and visualizations (exploratory data analysis)
-vignette("sampling", "spsurvey") # for spatially balanced sampling
-vignette("analysis", "spsurvey") # for analyzing data
 ```
 
-To view the vignettes in a web format, visit [here](https://cran.r-project.org/package=spsurvey).
+There are several additional vignettes (six in total) in web format. To access these vignettes, visit the "Articles" tab on our website [here](https://usepa.github.io/spsurvey/).
 
 Further detail regarding `spsurvey` is contained in the package's documentation manual available for download [here](https://cran.r-project.org/package=spsurvey).
 

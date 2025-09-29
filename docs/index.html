@@ -40,7 +40,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">spsurvey</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">5.5.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">5.6.0</span>
       </span>
     </div>
 
@@ -60,10 +60,16 @@
       <a href="articles/start-here.html">Start Here</a>
     </li>
     <li>
+      <a href="articles/overview.html">An Overview of Statistical Surveys for Ecological Applications</a>
+    </li>
+    <li>
       <a href="articles/EDA.html">Summarizing and Visualizing Sampling Frames, Design Sites, and Analysis Data</a>
     </li>
     <li>
       <a href="articles/sampling.html">Spatially Balanced Sampling</a>
+    </li>
+    <li>
+      <a href="articles/weighting.html">Weight Adjustments in Practice</a>
     </li>
     <li>
       <a href="articles/analysis.html">Analyzing Data</a>
@@ -123,16 +129,13 @@
 <span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"USEPA/spsurvey"</span>, ref <span class="op">=</span> <span class="st">"main"</span><span class="op">)</span></span>
 <span><span class="co"># load the most recent development version from GitHub</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://usepa.github.io/spsurvey/">spsurvey</a></span><span class="op">)</span></span></code></pre></div>
-<p>You can install the most recent development version of <code>spsurvey</code> from GitHub with package vignettes by running:</p>
+<p>You can install the most recent development version of <code>spsurvey</code> from GitHub with the package vignette by running:</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>install the most recent development version from GitHub with package vignettes</span>
 <span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">"USEPA/spsurvey"</span>, <span class="at">build_vignettes=</span><span class="cn">TRUE</span>)</span></code></pre></div>
-<p>To view the vignettes in RStudio, run</p>
+<p>To view the vignette in RStudio, run</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/vignette.html" class="external-link">vignette</a></span><span class="op">(</span><span class="st">"start-here"</span>, <span class="st">"spsurvey"</span><span class="op">)</span> <span class="co"># start with this vignette for an spsurvey overview</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/vignette.html" class="external-link">vignette</a></span><span class="op">(</span><span class="st">"EDA"</span>, <span class="st">"spsurvey"</span><span class="op">)</span> <span class="co"># for summaries and visualizations (exploratory data analysis)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/vignette.html" class="external-link">vignette</a></span><span class="op">(</span><span class="st">"sampling"</span>, <span class="st">"spsurvey"</span><span class="op">)</span> <span class="co"># for spatially balanced sampling</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/vignette.html" class="external-link">vignette</a></span><span class="op">(</span><span class="st">"analysis"</span>, <span class="st">"spsurvey"</span><span class="op">)</span> <span class="co"># for analyzing data</span></span></code></pre></div>
-<p>To view the vignettes in a web format, visit <a href="https://cran.r-project.org/package=spsurvey" class="external-link">here</a>.</p>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/vignette.html" class="external-link">vignette</a></span><span class="op">(</span><span class="st">"start-here"</span>, <span class="st">"spsurvey"</span><span class="op">)</span> <span class="co"># start with this vignette for an spsurvey overview</span></span></code></pre></div>
+<p>There are several additional vignettes (six in total) in web format. To access these vignettes, visit the “Articles” tab on our website <a href="https://usepa.github.io/spsurvey/">here</a>.</p>
 <p>Further detail regarding <code>spsurvey</code> is contained in the package’s documentation manual available for download <a href="https://cran.r-project.org/package=spsurvey" class="external-link">here</a>.</p>
 </div>
 <div class="section level2">
@@ -211,7 +214,7 @@
 <ul class="list-unstyled">
 <li>Michael Dumelle <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0002-3393-5529" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
 <li>Tom Kincaid <br><small class="roles"> Author </small>  </li>
-<li>Tony Olsen <br><small class="roles"> Author </small>  </li>
+<li>Anthony (Tony) R. Olsen <br><small class="roles"> Author </small>  </li>
 <li>Marc Weber <br><small class="roles"> Author </small>  </li>
 <li><a href="authors.html">More about authors...</a></li>
 </ul>
@@ -234,7 +237,7 @@
 
       <footer><div class="copyright">
   <p></p>
-<p>Developed by Michael Dumelle, Tom Kincaid, Tony Olsen, Marc Weber.</p>
+<p>Developed by Michael Dumelle, Tom Kincaid, Anthony (Tony) R. Olsen, Marc Weber.</p>
 </div>
 
 <div class="pkgdown">

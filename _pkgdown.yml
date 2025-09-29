@@ -7,7 +7,9 @@ articles:
   navbar: ~
   contents:
   - start-here
-  - EDA
-  - sampling
-  - analysis
+  - articles/overview
+  - articles/EDA
+  - articles/sampling
+  - articles/weighting
+  - articles/analysis
 

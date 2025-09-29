@@ -1,20 +1,10 @@
 ---
 title: "Summarizing and Visualizing Sampling Frames, Design Sites, and Analysis Data"
-author: "Michael Dumelle, Tom Kincaid, Anthony Olsen, and Marc Weber"
+author: "Michael Dumelle"
 output: 
   html_document:
-    theme: flatly
-    number_sections: true
-    highlighted: default 
-    toc: yes
-    toc_float:
-      collapsed: no
-      smooth_scroll: no
-    toc_depth: 2
-vignette: >
-  %\VignetteIndexEntry{Summaries and Visualizations}
-  %\VignetteEngine{knitr::rmarkdown}
-  \usepackage[utf8]{inputenc}
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r, include = FALSE}
@@ -52,7 +42,7 @@ The `NE_Lakes` data in spsurvey is a sampling frame (as an `sf` object) that con
 2. `ELEV`: lake elevation (a continuous variable)
 3. `ELEV_CAT`: lake elevation categories (low and high)
 
-Before summarizing or visualizing a sampling frame, turn it into an \code{sp_frame} object using `sp_frame()`:
+Before summarizing or visualizing a sampling frame, turn it into an `sp_frame` object using `sp_frame()`:
 ```{r}
 NE_Lakes <- sp_frame(NE_Lakes)
 ```

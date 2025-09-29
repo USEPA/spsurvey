@@ -42,15 +42,17 @@ Useful links:
 
 Authors:
 \itemize{
-  \item Tom Kincaid \email{Kincaid.Tom@epa.gov}
-  \item Tony Olsen \email{Olsen.Tony@epa.gov}
-  \item Marc Weber \email{Weber.Marc@epa.gov}
+  \item Tom Kincaid
+  \item Anthony (Tony) R. Olsen
+  \item Marc Weber
 }
 
 Other contributors:
 \itemize{
   \item Don Stevens [contributor]
   \item Denis White [contributor]
+  \item Amanda M. Nahlik [contributor]
+  \item Sarah Lehmann [contributor]
 }
 
 }

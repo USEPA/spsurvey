@@ -1,20 +1,10 @@
 ---
 title: "Analyzing Data"
-author: "Michael Dumelle, Tom Kincaid, Anthony Olsen, and Marc Weber"
+author: "Michael Dumelle and Tom Kincaid"
 output: 
   html_document:
-    theme: flatly
-    number_sections: true
-    highlighted: default 
-    toc: yes
-    toc_float:
-      collapsed: no
-      smooth_scroll: no
-    toc_depth: 2
-vignette: >
-  %\VignetteIndexEntry{Analyzing Data}
-  %\VignetteEngine{knitr::rmarkdown}
-  \usepackage[utf8]{inputenc}
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r, include = FALSE}

@@ -1,3 +1,17 @@
+# spsurvey 5.6.0
+
+## Major Updates
+
+* Removed startup message that warned users about the major changes to spsurvey resulting from the upgrade to version 5.0.0.
+* Added two new vignettes, one providing an overview of statistical surveys and another providing some details about survey design weighting.
+* Removed all vignettes from the CRAN webpage except the "Start Here" vignette. All vignettes are now hosted on the `spsurvey` website available [here](https://usepa.github.io/spsurvey/) in the "Articles" tab.
+
+## Minor Updates
+
+* Removed the error from `adjwgtNR()` that occurred when at least one level of `MARClass` did not have a value from `TRClass` in `EvalStatus` and replaced it with a warning.
+* `MARClass` in `adjwgtNR()` now has a default value that assumes all sample units are from the same MAR class.
+* Added an error message when at least one value of `caty_var` in `sframe` is not among the names of the `caty_n` variable [#42](https://github.com/USEPA/spsurvey/issues/42).
+
 # spsurvey 5.5.1
 
 ## Bug Fixes

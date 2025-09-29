@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">spsurvey</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">5.5.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">5.6.0</span>
       </span>
     </div>
 
@@ -35,10 +35,16 @@
       <a href="../articles/start-here.html">Start Here</a>
     </li>
     <li>
+      <a href="../articles/overview.html">An Overview of Statistical Surveys for Ecological Applications</a>
+    </li>
+    <li>
       <a href="../articles/EDA.html">Summarizing and Visualizing Sampling Frames, Design Sites, and Analysis Data</a>
     </li>
     <li>
       <a href="../articles/sampling.html">Spatially Balanced Sampling</a>
+    </li>
+    <li>
+      <a href="../articles/weighting.html">Weight Adjustments in Practice</a>
     </li>
     <li>
       <a href="../articles/analysis.html">Analyzing Data</a>
@@ -66,6 +72,22 @@
       <small>Source: <a href="https://github.com/USEPA/spsurvey/blob/HEAD/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="5.6.0" id="spsurvey-560">spsurvey 5.6.0<a class="anchor" aria-label="anchor" href="#spsurvey-560"></a></h2>
+<div class="section level3">
+<h3 id="major-updates-5-6-0">Major Updates<a class="anchor" aria-label="anchor" href="#major-updates-5-6-0"></a></h3>
+<ul><li>Removed startup message that warned users about the major changes to spsurvey resulting from the upgrade to version 5.0.0.</li>
+<li>Added two new vignettes, one providing an overview of statistical surveys and another providing some details about survey design weighting.</li>
+<li>Removed all vignettes from the CRAN webpage except the “Start Here” vignette. All vignettes are now hosted on the <code>spsurvey</code> website available <a href="https://usepa.github.io/spsurvey/">here</a> in the “Articles” tab.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="minor-updates-5-6-0">Minor Updates<a class="anchor" aria-label="anchor" href="#minor-updates-5-6-0"></a></h3>
+<ul><li>Removed the error from <code><a href="../reference/adjwgtNR.html">adjwgtNR()</a></code> that occurred when at least one level of <code>MARClass</code> did not have a value from <code>TRClass</code> in <code>EvalStatus</code> and replaced it with a warning.</li>
+<li>
+<code>MARClass</code> in <code><a href="../reference/adjwgtNR.html">adjwgtNR()</a></code> now has a default value that assumes all sample units are from the same MAR class.</li>
+<li>Added an error message when at least one value of <code>caty_var</code> in <code>sframe</code> is not among the names of the <code>caty_n</code> variable <a href="https://github.com/USEPA/spsurvey/issues/42" class="external-link">#42</a>.</li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="5.5.1" id="spsurvey-551">spsurvey 5.5.1<small>2024-01-09</small><a class="anchor" aria-label="anchor" href="#spsurvey-551"></a></h2>
 <div class="section level3">
@@ -594,7 +616,7 @@
 
 
       <footer><div class="copyright">
-  <p></p><p>Developed by Michael Dumelle, Tom Kincaid, Tony Olsen, Marc Weber.</p>
+  <p></p><p>Developed by Michael Dumelle, Tom Kincaid, Anthony (Tony) R. Olsen, Marc Weber.</p>
 </div>
 
 <div class="pkgdown">

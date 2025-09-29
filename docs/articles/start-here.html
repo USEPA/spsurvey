@@ -40,7 +40,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">spsurvey</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">5.5.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">5.6.0</span>
       </span>
     </div>
 
@@ -60,10 +60,16 @@
       <a href="../articles/start-here.html">Start Here</a>
     </li>
     <li>
+      <a href="../articles/overview.html">An Overview of Statistical Surveys for Ecological Applications</a>
+    </li>
+    <li>
       <a href="../articles/EDA.html">Summarizing and Visualizing Sampling Frames, Design Sites, and Analysis Data</a>
     </li>
     <li>
       <a href="../articles/sampling.html">Spatially Balanced Sampling</a>
+    </li>
+    <li>
+      <a href="../articles/weighting.html">Weight Adjustments in Practice</a>
     </li>
     <li>
       <a href="../articles/analysis.html">Analyzing Data</a>
@@ -96,7 +102,7 @@
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Start Here</h1>
                         <h4 data-toc-skip class="author">Michael
-Dumelle, Tom Kincaid, Anthony Olsen, and Marc Weber</h4>
+Dumelle, Tom Kincaid, Anthony R. Olsen, and Marc Weber</h4>
             
       
       <small class="dont-index">Source: <a href="https://github.com/USEPA/spsurvey/blob/HEAD/vignettes/start-here.Rmd" class="external-link"><code>vignettes/start-here.Rmd</code></a></small>
@@ -107,23 +113,24 @@ Dumelle, Tom Kincaid, Anthony Olsen, and Marc Weber</h4>
     
     
 <div class="section level2">
-<h2 id="installing-and-loading-spsurvey">Installing and loading spsurvey<a class="anchor" aria-label="anchor" href="#installing-and-loading-spsurvey"></a>
+<h2 id="installing-and-loading-spsurvey">Installing and loading <code>spsurvey</code><a class="anchor" aria-label="anchor" href="#installing-and-loading-spsurvey"></a>
 </h2>
-<p>If this is your first time using the spsurvey package, run</p>
+<p>If this is your first time using the <code>spsurvey</code> package,
+run</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"spsurvey"</span><span class="op">)</span></span></code></pre></div>
 <p>to install the package. You only need to run this code once per
 version of R.</p>
-<p>After the spsurvey package is installed, load it into R each new R
-session by running</p>
+<p>After the <code>spsurvey</code> package is installed, load it into R
+each new R session by running</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://usepa.github.io/spsurvey/">spsurvey</a></span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="citation-information">Citation information<a class="anchor" aria-label="anchor" href="#citation-information"></a>
 </h2>
-<p>If you used spsurvey in your work, please cite it. You can view the
-most recent citation by running</p>
+<p>If you used <code>spsurvey</code> in your work, please cite it. You
+can view the most recent citation by running</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/citation.html" class="external-link">citation</a></span><span class="op">(</span><span class="st">"spsurvey"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; To cite spsurvey in publications use:</span></span>
@@ -146,12 +153,14 @@ most recent citation by running</p>
 <span><span class="co">#&gt;   }</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="spsurvey-terminology">spsurvey terminology<a class="anchor" aria-label="anchor" href="#spsurvey-terminology"></a>
+<h2 id="spsurvey-terminology">
+<code>spsurvey</code> terminology<a class="anchor" aria-label="anchor" href="#spsurvey-terminology"></a>
 </h2>
-<p>spsurvey implements a design-based approach to statistical inference,
-with a focus on spatial data. There are a few terms helpful to define
-before we move forward with spsurvey, as these terms will be used
-throughout the vignettes and documentation:</p>
+<p><code>spsurvey</code> implements a design-based approach to
+statistical inference, with a focus on spatial data. There are a few
+terms helpful to define before we move forward with
+<code>spsurvey</code>, as these terms will be used throughout the
+vignettes and documentation:</p>
 <ul>
 <li>Survey design: All aspects of a survey from establishment of a need
 for data to the production of final results.</li>
@@ -172,19 +181,19 @@ analysis of the analysis data.</li>
 </ul>
 </div>
 <div class="section level2">
-<h2 id="vignettes-in-spsurvey">Vignettes in spsurvey<a class="anchor" aria-label="anchor" href="#vignettes-in-spsurvey"></a>
+<h2 id="vignettes-in-spsurvey">Vignettes in <code>spsurvey</code><a class="anchor" aria-label="anchor" href="#vignettes-in-spsurvey"></a>
 </h2>
-<p>There are three additional vignettes in spsurvey:</p>
+<p>There are five additional vignettes in <code>spsurvey</code> that are
+available on our website <a href="https://usepa.github.io/spsurvey/">here</a> under the “Articles”
+tab:</p>
 <ol style="list-style-type: decimal">
+<li>An Overview of Statistical Surveys for Ecological Applications</li>
 <li>Exploratory Data Analysis: Summarizing and Visualizing Sampling
 Frames, Design Sites, and Analysis Data
 <ul>
 <li>Use the <code><a href="../reference/summary.html">summary()</a></code> and <code><a href="../reference/plot.html">plot()</a></code> functions to
 summarize and visualize sampling frames, design sites, and analysis
 data</li>
-<li>To view this vignette, run
-<code><a href="../articles/EDA.html">vignette("EDA", "spsurvey")</a></code>
-</li>
 </ul>
 </li>
 <li>Spatially Balanced Sampling
@@ -192,54 +201,59 @@ data</li>
 <li>Use the <code><a href="../reference/grts.html">grts()</a></code> function to implement the Generalized
 Random Tessellation Stratified (GRTS) algorithm (Stevens and Olsen,
 2004) to select spatially balanced samples</li>
-<li>To view this vignette, run
-<code><a href="../articles/sampling.html">vignette("sampling", "spsurvey")</a></code>.</li>
+</ul>
+</li>
+<li>Weight Adjustments in Practice
+<ul>
+<li>Use the <code><a href="../reference/adjwgt.html">adjwgt()</a></code> and <code><a href="../reference/adjwgtNR.html">adjwgtNR()</a></code> functions
+to adjust weights for changing sample sizes and nonresponse,
+respectively.</li>
 </ul>
 </li>
 <li>Analyzing Data
 <ul>
 <li>Use several analysis functions to analyze data</li>
-<li>To view this vignette, run
-<code><a href="../articles/analysis.html">vignette("analysis", "spsurvey")</a></code>.</li>
 </ul>
 </li>
 </ol>
 <p>These vignettes cover some of the core functions (and arguments
-within those functions) in spsurvey. To learn more about features of
-spsurvey that are not covered in these vignettes, we encourage you to
-read spsurvey’s documentation available for download <a href="https://cran.r-project.org/package=spsurvey" class="external-link">here</a> or viewable
+within those functions) in <code>spsurvey</code>. To learn more about
+features of <code>spsurvey</code> that are not covered in these
+vignettes, we encourage you to read <code>spsurvey</code>’s
+documentation available for download <a href="https://cran.r-project.org/package=spsurvey" class="external-link">here</a> or viewable
 interactively on our website <a href="https://usepa.github.io/spsurvey/">here</a>. Help files for a
 particular function are viewable by running <code>?function_name</code>
-after loading spsurvey. For example, to learn more about the
-<code><a href="../reference/grts.html">grts()</a></code> function, run <code><a href="../reference/grts.html">?grts</a></code>.</p>
+after loading <code>spsurvey</code>. For example, to learn more about
+the <code><a href="../reference/grts.html">grts()</a></code> function, run <code><a href="../reference/grts.html">?grts</a></code>.</p>
 </div>
 <div class="section level2">
-<h2 id="installing-a-previous-version-of-spsurvey">Installing a previous version of spsurvey<a class="anchor" aria-label="anchor" href="#installing-a-previous-version-of-spsurvey"></a>
+<h2 id="installing-a-previous-version-of-spsurvey">Installing a previous version of <code>spsurvey</code><a class="anchor" aria-label="anchor" href="#installing-a-previous-version-of-spsurvey"></a>
 </h2>
-<p>The version 5.0.0 update to spsurvey implemented many significant
-changes to existing functions. As a result, some of your old code may
-not run properly while using version 5.0.0. Though we recommend adapting
-your code to work with the version 5.0.0, you may also install a
-previous version of spsurvey. For information regarding the installation
-of previous version of R packages, please see the RStudio support page
-<a href="https://support.posit.co/hc/en-us/articles/219949047-Installing-older-versions-of-packages" class="external-link">here</a>.
-Additionally, old versions of spsurvey are also available for download
-in the release tags section of our GitHub repository <a href="https://github.com/USEPA/spsurvey/releases" class="external-link">here</a>.</p>
+<p>The version 5.0.0 update to <code>spsurvey</code> implemented many
+significant changes to existing functions. As a result, some of your old
+code may not run properly while using version 5.0.0. Though we recommend
+adapting your code to work with the version 5.0.0 update (and later),
+you may also install a previous version of <code>spsurvey</code>. For
+information regarding the installation of previous version of R
+packages, please see the RStudio support page <a href="https://support.posit.co/hc/en-us/articles/219949047-Installing-older-versions-of-packages" class="external-link">here</a>.
+Additionally, old versions of <code>spsurvey</code> are also available
+for download in the release tags section of our GitHub repository <a href="https://github.com/USEPA/spsurvey/releases" class="external-link">here</a>.</p>
 </div>
 <div class="section level2">
 <h2 id="sf-objects">
 <code>sf</code> objects<a class="anchor" aria-label="anchor" href="#sf-objects"></a>
 </h2>
-<p>The sampling functions in spsurvey (<code><a href="../reference/grts.html">grts()</a></code> and
-<code><a href="../reference/irs.html">irs()</a></code>) require that your sampling frame is an
+<p>The sampling functions in <code>spsurvey</code> (<code><a href="../reference/grts.html">grts()</a></code>
+and <code><a href="../reference/irs.html">irs()</a></code>) require that your sampling frame is an
 <code>sf</code> object. An <code>sf</code> object (shorthand for a
 “simple features” object) is an R object with a unique structure used to
 conveniently store spatial data. <code>sf</code> objects are constructed
 using the sf package (Pebesma, 2018). The sf package is loaded and
-installed alongside the spsurvey package, so you do not need to run
-<code>install.packages("sf")</code> or <code><a href="https://r-spatial.github.io/sf/" class="external-link">library(sf)</a></code> to
-access the sf package if spsurvey is already installed and loaded. For
-more on the sf package, see <a href="https://cran.r-project.org/package=sf" class="external-link">here</a>.</p>
+installed alongside the <code>spsurvey</code> package, so you do not
+need to run <code>install.packages("sf")</code> or
+<code><a href="https://r-spatial.github.io/sf/" class="external-link">library(sf)</a></code> to access the sf package if
+<code>spsurvey</code> is already installed and loaded. For more on the
+sf package, see <a href="https://cran.r-project.org/package=sf" class="external-link">here</a>.</p>
 <p>Next we discuss a few ways to construct <code>sf</code> objects in R.
 The first is to read a shapefile directly into R using
 <code><a href="https://r-spatial.github.io/sf/reference/st_read.html" class="external-link">sf::read_sf()</a></code>. The second is to use the
@@ -247,11 +261,12 @@ The first is to read a shapefile directly into R using
 function to combine an appropriate R object (most commonly a data frame)
 and an appropriate geometry object into an <code>sf</code> object. To
 illustrate one approach for turning a data frame into an <code>sf</code>
-object, we start with <code>NE_Lakes_df</code>, a data frame in spsurvey
-that contains variables and geographic coordinates (latitude and
-longitude coordinates) for lakes in the Northeastern United States. To
-turn <code>NE_Lakes_df</code> into <code>NE_Lakes_geo</code>, an
-<code>sf</code> object with geographic coordinates, run</p>
+object, we start with <code>NE_Lakes_df</code>, a data frame in
+<code>spsurvey</code> that contains variables and geographic coordinates
+(latitude and longitude coordinates) for lakes in the Northeastern
+United States. To turn <code>NE_Lakes_df</code> into
+<code>NE_Lakes_geo</code>, an <code>sf</code> object with geographic
+coordinates, run</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">NE_Lakes_geo</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_as_sf.html" class="external-link">st_as_sf</a></span><span class="op">(</span><span class="va">NE_Lakes_df</span>, coords <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"XCOORD"</span>, <span class="st">"YCOORD"</span><span class="op">)</span>, crs <span class="op">=</span> <span class="fl">4326</span><span class="op">)</span></span>
 <span><span class="va">NE_Lakes_geo</span></span>
@@ -329,10 +344,10 @@ and <code>proj4string</code>; and <code>wkt</code>, an open geospatial
 standard format. For more information on CRSs and EPSG codes, see
 Pebesma (2018) and Lovelace et al. (2019). To search for various CRSs
 and EPSG codes, see <a href="https://epsg.io/" class="external-link">here</a> and <a href="https://spatialreference.org" class="external-link">here</a>.</p>
-<p>spsurvey will use the CRS from your <code>sf</code> object, so it is
-your responsibility to make sure the <code>sf</code> object has an
-appropriate CRS. If the CRS is not specified correctly, you may get
-misleading results.</p>
+<p><code>spsurvey</code> will use the CRS from your <code>sf</code>
+object, so it is your responsibility to make sure the <code>sf</code>
+object has an appropriate CRS. If the CRS is not specified correctly,
+you may get misleading results.</p>
 </div>
 <div class="section level2">
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
@@ -359,7 +374,7 @@ Association</em>, 99(465):262-278.</p>
 
       <footer><div class="copyright">
   <p></p>
-<p>Developed by Michael Dumelle, Tom Kincaid, Tony Olsen, Marc Weber.</p>
+<p>Developed by Michael Dumelle, Tom Kincaid, Anthony (Tony) R. Olsen, Marc Weber.</p>
 </div>
 
 <div class="pkgdown">

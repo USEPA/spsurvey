@@ -40,7 +40,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">spsurvey</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">5.5.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">5.6.0</span>
       </span>
     </div>
 
@@ -60,10 +60,16 @@
       <a href="../articles/start-here.html">Start Here</a>
     </li>
     <li>
+      <a href="../articles/overview.html">An Overview of Statistical Surveys for Ecological Applications</a>
+    </li>
+    <li>
       <a href="../articles/EDA.html">Summarizing and Visualizing Sampling Frames, Design Sites, and Analysis Data</a>
     </li>
     <li>
       <a href="../articles/sampling.html">Spatially Balanced Sampling</a>
+    </li>
+    <li>
+      <a href="../articles/weighting.html">Weight Adjustments in Practice</a>
     </li>
     <li>
       <a href="../articles/analysis.html">Analyzing Data</a>
@@ -97,10 +103,10 @@
       <h1 data-toc-skip>Summarizing and Visualizing Sampling Frames,
 Design Sites, and Analysis Data</h1>
                         <h4 data-toc-skip class="author">Michael
-Dumelle, Tom Kincaid, Anthony Olsen, and Marc Weber</h4>
+Dumelle</h4>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/USEPA/spsurvey/blob/HEAD/vignettes/EDA.Rmd" class="external-link"><code>vignettes/EDA.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/USEPA/spsurvey/blob/HEAD/vignettes/articles/EDA.Rmd" class="external-link"><code>vignettes/articles/EDA.Rmd</code></a></small>
       <div class="hidden name"><code>EDA.Rmd</code></div>
 
     </div>
@@ -159,7 +165,7 @@ next:</p>
 <code>ELEV_CAT</code>: lake elevation categories (low and high)</li>
 </ol>
 <p>Before summarizing or visualizing a sampling frame, turn it into an
-object using <code><a href="../reference/sp_frame.html">sp_frame()</a></code>:</p>
+<code>sp_frame</code> object using <code><a href="../reference/sp_frame.html">sp_frame()</a></code>:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">NE_Lakes</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sp_frame.html">sp_frame</a></span><span class="op">(</span><span class="va">NE_Lakes</span><span class="op">)</span></span></code></pre></div>
 <div class="section level3">
@@ -491,7 +497,7 @@ run</p>
 
       <footer><div class="copyright">
   <p></p>
-<p>Developed by Michael Dumelle, Tom Kincaid, Tony Olsen, Marc Weber.</p>
+<p>Developed by Michael Dumelle, Tom Kincaid, Anthony (Tony) R. Olsen, Marc Weber.</p>
 </div>
 
 <div class="pkgdown">

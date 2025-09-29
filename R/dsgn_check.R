@@ -307,6 +307,11 @@ dsgn_check <- function(sframe, sf_type, legacy_sites, legacy_option, stratum, se
         stop_mess <- paste0("Not all caty_n values are in sample frame.")
         stop_df <- rbind(stop_df, data.frame(func = I("caty_n"), I(stop_mess)))
       }
+      if (any(unique(sframe[[caty_var]]) %in% names(caty_n) == FALSE)) {
+        stop_ind <- TRUE
+        stop_mess <- paste0("Not all caty_var values are in caty_n names.")
+        stop_df <- rbind(stop_df, data.frame(func = I("caty_n"), I(stop_mess)))
+      }
       tst <- function(x, caty_n) {
         x != sum(caty_n)
       }
@@ -324,6 +329,15 @@ dsgn_check <- function(sframe, sf_type, legacy_sites, legacy_option, stratum, se
         stop_mess <- paste0("For each stratum make sure caty_n values in 'caty_var' variable.")
         stop_df <- rbind(stop_df, data.frame(func = I("caty_n"), I(stop_mess)))
       }
+
+      if (any(stratum %in% names(caty_n) == FALSE)) {
+        stop_ind <- TRUE
+        stop_mess <- paste0("Values in 'stratum' variable are not names in caty_n list.")
+        stop_df <- rbind(stop_df, data.frame(func = I("caty_n"), I(stop_mess)))
+        stop_mess <- paste0("For each stratum make sure all 'caty_var' variable values are in caty_n.")
+        stop_df <- rbind(stop_df, data.frame(func = I("caty_n"), I(stop_mess)))
+      }
+
       if (any(sapply(stratum, function(x) sum(caty_n[[x]]) != n_base[[x]]))) {
         stop_ind <- TRUE
         stop_mess <- paste0("The sum of the 'caty_n' values in each strata must match the value in n_base that corresponds to the respective strata")
@@ -362,7 +376,7 @@ dsgn_check <- function(sframe, sf_type, legacy_sites, legacy_option, stratum, se
             stop_mess <- paste0("n_over values must be zero or positive.")
             stop_df <- rbind(stop_df, data.frame(func = I("n_over"), I(stop_mess)))
           }
-          
+
           # fixes a bug downstream in checking sizes of n_base + n_over
           if (length(n_over) == 1) {
             n_over <- rep(n_over, length(stratum))
