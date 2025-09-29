@@ -4,9 +4,11 @@ pkgdown_sha: ~
 articles:
   analysis: analysis.html
   EDA: EDA.html
+  overview: overview.html
   sampling: sampling.html
   start-here: start-here.html
-last_built: 2024-08-29T15:02Z
+  weighting: weighting.html
+last_built: 2025-09-29T22:33Z
 urls:
   reference: https://usepa.github.io/spsurvey/reference
   article: https://usepa.github.io/spsurvey/articles
