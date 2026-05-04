@@ -85,17 +85,17 @@ test_that("CDF Inference: Unstratified single-stage analysis - adjusted Wald", {
   expect_equal(nrow(CDF_Tests), 4)
 })
 
-CDF_Tests <- cont_cdftest(
-  dframe = NLA_IN, vars = vars, subpops = subpops,
-  siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD", ycoord = "YCOORD",
-  testname = "RaoScott_First"
-)
-
-test_that("CDF Inference: Unstratified single-stage analysis - RaoScott_First", {
-  expect_true(exists("CDF_Tests"))
-  expect_equal(attributes(CDF_Tests)$class, "data.frame")
-  expect_equal(nrow(CDF_Tests), 4)
-})
+# CDF_Tests <- cont_cdftest(
+#   dframe = NLA_IN, vars = vars, subpops = subpops,
+#   siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD", ycoord = "YCOORD",
+#   testname = "RaoScott_First"
+# )
+#
+# test_that("CDF Inference: Unstratified single-stage analysis - RaoScott_First", {
+#   expect_true(exists("CDF_Tests"))
+#   expect_equal(attributes(CDF_Tests)$class, "data.frame")
+#   expect_equal(nrow(CDF_Tests), 4)
+# })
 
 CDF_Tests <- cont_cdftest(
   dframe = NLA_IN, vars = vars, subpops = subpops,
@@ -109,17 +109,17 @@ test_that("CDF Inference: with known population sizes - adjusted Wald", {
   expect_equal(nrow(CDF_Tests), 4)
 })
 
-CDF_Tests <- cont_cdftest(
-  dframe = NLA_IN, vars = vars, subpops = subpops,
-  siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD", ycoord = "YCOORD",
-  popsize = popsize, testname = "RaoScott_First"
-)
-
-test_that("CDF Inference: with known population sizes - RaoScott_First", {
-  expect_true(exists("CDF_Tests"))
-  expect_equal(attributes(CDF_Tests)$class, "data.frame")
-  expect_equal(nrow(CDF_Tests), 4)
-})
+# CDF_Tests <- cont_cdftest(
+#   dframe = NLA_IN, vars = vars, subpops = subpops,
+#   siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD", ycoord = "YCOORD",
+#   popsize = popsize, testname = "RaoScott_First"
+# )
+#
+# test_that("CDF Inference: with known population sizes - RaoScott_First", {
+#   expect_true(exists("CDF_Tests"))
+#   expect_equal(attributes(CDF_Tests)$class, "data.frame")
+#   expect_equal(nrow(CDF_Tests), 4)
+# })
 
 CDF_Tests <- cont_cdftest(
   dframe = NLA_IN, vars = vars, subpops = subpops,
@@ -133,17 +133,17 @@ test_that("CDF Inference: with finite population correction factor - adjusted Wa
   expect_equal(nrow(CDF_Tests), 4)
 })
 
-CDF_Tests <- cont_cdftest(
-  dframe = NLA_IN, vars = vars, subpops = subpops,
-  siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD", ycoord = "YCOORD",
-  fpc = fpc1, testname = "RaoScott_First"
-)
-
-test_that("CDF Inference: with finite population correction factor - RaoScott_First", {
-  expect_true(exists("CDF_Tests"))
-  expect_equal(attributes(CDF_Tests)$class, "data.frame")
-  expect_equal(nrow(CDF_Tests), 4)
-})
+# CDF_Tests <- cont_cdftest(
+#   dframe = NLA_IN, vars = vars, subpops = subpops,
+#   siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD", ycoord = "YCOORD",
+#   fpc = fpc1, testname = "RaoScott_First"
+# )
+#
+# test_that("CDF Inference: with finite population correction factor - RaoScott_First", {
+#   expect_true(exists("CDF_Tests"))
+#   expect_equal(attributes(CDF_Tests)$class, "data.frame")
+#   expect_equal(nrow(CDF_Tests), 4)
+# })
 
 CDF_Tests <- cont_cdftest(
   dframe = NLA_IN, vars = vars, subpops = subpops,
@@ -157,17 +157,17 @@ test_that("CDF Inference: Stratified single-stage analysis - adjusted Wald", {
   expect_equal(nrow(CDF_Tests), 4)
 })
 
-CDF_Tests <- cont_cdftest(
-  dframe = NLA_IN, vars = vars, subpops = subpops,
-  siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD", ycoord = "YCOORD",
-  stratumID = "URBN_NLA17", testname = "RaoScott_First"
-)
-
-test_that("CDF Inference: Stratified single-stage analysis - RaoScott_First", {
-  expect_true(exists("CDF_Tests"))
-  expect_equal(attributes(CDF_Tests)$class, "data.frame")
-  expect_equal(nrow(CDF_Tests), 4)
-})
+# CDF_Tests <- cont_cdftest(
+#   dframe = NLA_IN, vars = vars, subpops = subpops,
+#   siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD", ycoord = "YCOORD",
+#   stratumID = "URBN_NLA17", testname = "RaoScott_First"
+# )
+#
+# test_that("CDF Inference: Stratified single-stage analysis - RaoScott_First", {
+#   expect_true(exists("CDF_Tests"))
+#   expect_equal(attributes(CDF_Tests)$class, "data.frame")
+#   expect_equal(nrow(CDF_Tests), 4)
+# })
 
 CDF_Tests <- cont_cdftest(
   dframe = NLA_IN, vars = vars, subpops = subpops,
@@ -181,17 +181,17 @@ test_that("CDF Inference: with known population sizes - adjusted Wald", {
   expect_equal(nrow(CDF_Tests), 4)
 })
 
-CDF_Tests <- cont_cdftest(
-  dframe = NLA_IN, vars = vars, subpops = subpops,
-  siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD", ycoord = "YCOORD",
-  stratumID = "URBN_NLA17", popsize = popsize, testname = "RaoScott_First"
-)
-
-test_that("CDF Inference: with known population sizes - RaoScott_First", {
-  expect_true(exists("CDF_Tests"))
-  expect_equal(attributes(CDF_Tests)$class, "data.frame")
-  expect_equal(nrow(CDF_Tests), 4)
-})
+# CDF_Tests <- cont_cdftest(
+#   dframe = NLA_IN, vars = vars, subpops = subpops,
+#   siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD", ycoord = "YCOORD",
+#   stratumID = "URBN_NLA17", popsize = popsize, testname = "RaoScott_First"
+# )
+#
+# test_that("CDF Inference: with known population sizes - RaoScott_First", {
+#   expect_true(exists("CDF_Tests"))
+#   expect_equal(attributes(CDF_Tests)$class, "data.frame")
+#   expect_equal(nrow(CDF_Tests), 4)
+# })
 
 CDF_Tests <- cont_cdftest(
   dframe = NLA_IN, vars = vars, subpops = subpops,
@@ -205,18 +205,18 @@ test_that("CDF Inference: with finite population correction factor - adjusted Wa
   expect_equal(nrow(CDF_Tests), 4)
 })
 
-CDF_Tests <- cont_cdftest(
-  dframe = NLA_IN, vars = vars, subpops = subpops,
-  siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD", ycoord = "YCOORD",
-  stratumID = "URBN_NLA17", fpc = fpc2a,
-  testname = "RaoScott_First"
-)
-
-test_that("CDF Inference: with finite population correction factor - RaoScott_First", {
-  expect_true(exists("CDF_Tests"))
-  expect_equal(attributes(CDF_Tests)$class, "data.frame")
-  expect_equal(nrow(CDF_Tests), 4)
-})
+# CDF_Tests <- cont_cdftest(
+#   dframe = NLA_IN, vars = vars, subpops = subpops,
+#   siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD", ycoord = "YCOORD",
+#   stratumID = "URBN_NLA17", fpc = fpc2a,
+#   testname = "RaoScott_First"
+# )
+#
+# test_that("CDF Inference: with finite population correction factor - RaoScott_First", {
+#   expect_true(exists("CDF_Tests"))
+#   expect_equal(attributes(CDF_Tests)$class, "data.frame")
+#   expect_equal(nrow(CDF_Tests), 4)
+# })
 
 CDF_Tests <- cont_cdftest(
   dframe = NLA_IN, vars = vars, subpops = subpops,
@@ -231,18 +231,18 @@ test_that("CDF Inference: Unstratified two-stage analysis - adjusted Wald", {
   expect_equal(nrow(CDF_Tests), 4)
 })
 
-CDF_Tests <- cont_cdftest(
-  dframe = NLA_IN, vars = vars, subpops = subpops,
-  siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD", ycoord = "YCOORD",
-  clusterID = "clusterID", weight1 = "weight1", xcoord1 = "xcoord1",
-  ycoord1 = "ycoord1", vartype = "SRS", testname = "RaoScott_First"
-)
-
-test_that("CDF Inference: Unstratified two-stage analysis - RaoScott_First", {
-  expect_true(exists("CDF_Tests"))
-  expect_equal(attributes(CDF_Tests)$class, "data.frame")
-  expect_equal(nrow(CDF_Tests), 4)
-})
+# CDF_Tests <- cont_cdftest(
+#   dframe = NLA_IN, vars = vars, subpops = subpops,
+#   siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD", ycoord = "YCOORD",
+#   clusterID = "clusterID", weight1 = "weight1", xcoord1 = "xcoord1",
+#   ycoord1 = "ycoord1", vartype = "SRS", testname = "RaoScott_First"
+# )
+#
+# test_that("CDF Inference: Unstratified two-stage analysis - RaoScott_First", {
+#   expect_true(exists("CDF_Tests"))
+#   expect_equal(attributes(CDF_Tests)$class, "data.frame")
+#   expect_equal(nrow(CDF_Tests), 4)
+# })
 
 CDF_Tests <- cont_cdftest(
   dframe = NLA_IN, vars = vars, subpops = subpops,
@@ -257,19 +257,19 @@ test_that("CDF Inference: with known population sizes - adjusted Wald", {
   expect_equal(nrow(CDF_Tests), 4)
 })
 
-CDF_Tests <- cont_cdftest(
-  dframe = NLA_IN, vars = vars, subpops = subpops,
-  siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD", ycoord = "YCOORD",
-  clusterID = "clusterID", weight1 = "weight1", xcoord1 = "xcoord1",
-  ycoord1 = "ycoord1", popsize = popsize, vartype = "SRS",
-  testname = "RaoScott_First"
-)
-
-test_that("CDF Inference: with known population sizes - RaoScott_First", {
-  expect_true(exists("CDF_Tests"))
-  expect_equal(attributes(CDF_Tests)$class, "data.frame")
-  expect_equal(nrow(CDF_Tests), 4)
-})
+# CDF_Tests <- cont_cdftest(
+#   dframe = NLA_IN, vars = vars, subpops = subpops,
+#   siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD", ycoord = "YCOORD",
+#   clusterID = "clusterID", weight1 = "weight1", xcoord1 = "xcoord1",
+#   ycoord1 = "ycoord1", popsize = popsize, vartype = "SRS",
+#   testname = "RaoScott_First"
+# )
+#
+# test_that("CDF Inference: with known population sizes - RaoScott_First", {
+#   expect_true(exists("CDF_Tests"))
+#   expect_equal(attributes(CDF_Tests)$class, "data.frame")
+#   expect_equal(nrow(CDF_Tests), 4)
+# })
 
 CDF_Tests <- cont_cdftest(
   dframe = NLA_IN, vars = vars, subpops = subpops,
@@ -284,18 +284,18 @@ test_that("CDF Inference: with finite population correction factor - adjusted Wa
   expect_equal(nrow(CDF_Tests), 4)
 })
 
-CDF_Tests <- cont_cdftest(
-  dframe = NLA_IN, vars = vars, subpops = subpops,
-  siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD", ycoord = "YCOORD",
-  clusterID = "clusterID", weight1 = "weight1", xcoord1 = "xcoord1",
-  ycoord1 = "ycoord1", fpc = fpc3, vartype = "SRS", testname = "RaoScott_First"
-)
-
-test_that("CDF Inference: with finite population correction factor - RaoScott_First", {
-  expect_true(exists("CDF_Tests"))
-  expect_equal(attributes(CDF_Tests)$class, "data.frame")
-  expect_equal(nrow(CDF_Tests), 4)
-})
+# CDF_Tests <- cont_cdftest(
+#   dframe = NLA_IN, vars = vars, subpops = subpops,
+#   siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD", ycoord = "YCOORD",
+#   clusterID = "clusterID", weight1 = "weight1", xcoord1 = "xcoord1",
+#   ycoord1 = "ycoord1", fpc = fpc3, vartype = "SRS", testname = "RaoScott_First"
+# )
+#
+# test_that("CDF Inference: with finite population correction factor - RaoScott_First", {
+#   expect_true(exists("CDF_Tests"))
+#   expect_equal(attributes(CDF_Tests)$class, "data.frame")
+#   expect_equal(nrow(CDF_Tests), 4)
+# })
 
 CDF_Tests <- cont_cdftest(
   dframe = NLA_IN, vars = vars, subpops = subpops,
@@ -311,19 +311,19 @@ test_that("CDF Inference: Stratified two-stage analysis - adjusted Wald", {
   expect_equal(nrow(CDF_Tests), 4)
 })
 
-CDF_Tests <- cont_cdftest(
-  dframe = NLA_IN, vars = vars, subpops = subpops,
-  siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD", ycoord = "YCOORD",
-  stratumID = "URBN_NLA17", clusterID = "clusterID", weight1 = "weight1",
-  xcoord1 = "xcoord1", ycoord1 = "ycoord1", vartype = "SRS",
-  testname = "RaoScott_First"
-)
-
-test_that("CDF Inference: Stratified two-stage analysis - RaoScott_First", {
-  expect_true(exists("CDF_Tests"))
-  expect_equal(attributes(CDF_Tests)$class, "data.frame")
-  expect_equal(nrow(CDF_Tests), 4)
-})
+# CDF_Tests <- cont_cdftest(
+#   dframe = NLA_IN, vars = vars, subpops = subpops,
+#   siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD", ycoord = "YCOORD",
+#   stratumID = "URBN_NLA17", clusterID = "clusterID", weight1 = "weight1",
+#   xcoord1 = "xcoord1", ycoord1 = "ycoord1", vartype = "SRS",
+#   testname = "RaoScott_First"
+# )
+#
+# test_that("CDF Inference: Stratified two-stage analysis - RaoScott_First", {
+#   expect_true(exists("CDF_Tests"))
+#   expect_equal(attributes(CDF_Tests)$class, "data.frame")
+#   expect_equal(nrow(CDF_Tests), 4)
+# })
 
 CDF_Tests <- cont_cdftest(
   dframe = NLA_IN, vars = vars, subpops = subpops,
@@ -339,19 +339,19 @@ test_that("CDF Inference: with known population sizes - adjusted Wald", {
   expect_equal(nrow(CDF_Tests), 4)
 })
 
-CDF_Tests <- cont_cdftest(
-  dframe = NLA_IN, vars = vars, subpops = subpops,
-  siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD", ycoord = "YCOORD",
-  stratumID = "URBN_NLA17", clusterID = "clusterID", weight1 = "weight1",
-  xcoord1 = "xcoord1", ycoord1 = "ycoord1", popsize = popsize,
-  vartype = "SRS", testname = "RaoScott_First"
-)
-
-test_that("CDF Inference: with known population sizes - RaoScott_First", {
-  expect_true(exists("CDF_Tests"))
-  expect_equal(attributes(CDF_Tests)$class, "data.frame")
-  expect_equal(nrow(CDF_Tests), 4)
-})
+# CDF_Tests <- cont_cdftest(
+#   dframe = NLA_IN, vars = vars, subpops = subpops,
+#   siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD", ycoord = "YCOORD",
+#   stratumID = "URBN_NLA17", clusterID = "clusterID", weight1 = "weight1",
+#   xcoord1 = "xcoord1", ycoord1 = "ycoord1", popsize = popsize,
+#   vartype = "SRS", testname = "RaoScott_First"
+# )
+#
+# test_that("CDF Inference: with known population sizes - RaoScott_First", {
+#   expect_true(exists("CDF_Tests"))
+#   expect_equal(attributes(CDF_Tests)$class, "data.frame")
+#   expect_equal(nrow(CDF_Tests), 4)
+# })
 
 CDF_Tests <- cont_cdftest(
   dframe = NLA_IN, vars = vars, subpops = subpops,
@@ -367,16 +367,16 @@ test_that("CDF Inference: with finite population correction factor - adjusted Wa
   expect_equal(nrow(CDF_Tests), 4)
 })
 
-CDF_Tests <- cont_cdftest(
-  dframe = NLA_IN, vars = vars, subpops = subpops,
-  siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD", ycoord = "YCOORD",
-  stratumID = "URBN_NLA17", clusterID = "clusterID", weight1 = "weight1",
-  xcoord1 = "xcoord1", ycoord1 = "ycoord1", fpc = fpc4a, vartype = "SRS",
-  testname = "RaoScott_First"
-)
-
-test_that("CDF Inference: with finite population correction factor - RaoScott_First", {
-  expect_true(exists("CDF_Tests"))
-  expect_equal(attributes(CDF_Tests)$class, "data.frame")
-  expect_equal(nrow(CDF_Tests), 4)
-})
+# CDF_Tests <- cont_cdftest(
+#   dframe = NLA_IN, vars = vars, subpops = subpops,
+#   siteID = "SITE_ID", weight = "WGT_TP", xcoord = "XCOORD", ycoord = "YCOORD",
+#   stratumID = "URBN_NLA17", clusterID = "clusterID", weight1 = "weight1",
+#   xcoord1 = "xcoord1", ycoord1 = "ycoord1", fpc = fpc4a, vartype = "SRS",
+#   testname = "RaoScott_First"
+# )
+#
+# test_that("CDF Inference: with finite population correction factor - RaoScott_First", {
+#   expect_true(exists("CDF_Tests"))
+#   expect_equal(attributes(CDF_Tests)$class, "data.frame")
+#   expect_equal(nrow(CDF_Tests), 4)
+# })

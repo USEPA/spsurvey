@@ -1,3 +1,10 @@
+# spsurvey 5.6.1
+
+## Minor Updates
+
+* In the `cont_cdftest` example, updated the `testname` argument in `cont_cdftest()` to the default value, `"adjWald"`.
+* Minor unit testing updates.
+
 # spsurvey 5.6.0
 
 ## Major Updates

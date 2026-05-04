@@ -301,7 +301,7 @@
 #' cont_cdftest(dframe,
 #'   vars = myvars, subpops = mysubpops, siteID = "siteID",
 #'   weight = "wgt", xcoord = "xcoord", ycoord = "ycoord",
-#'   stratumID = "stratum", popsize = mypopsize, testname = "RaoScott_First"
+#'   stratumID = "stratum", popsize = mypopsize
 #' )
 #' @export
 ################################################################################
