@@ -1,4 +1,4 @@
-This is a minor update that adds a few articles and bug fixes.
+This is a minor update that adds a minor update to an example and unit testing.
 
 -------
 
