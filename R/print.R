@@ -5,13 +5,13 @@
 #'
 #' @description \code{print()} prints summaries of sampling frames, design sites,
 #'   and analysis data.
-#' 
+#'
 #' @param x An object output from \code{grts()}, \code{irs()}, \code{summary()}, or \code{sp_summary()}.
 #' @param ... Additional print and summary arguments
 #'
 #' @details When \code{x} is output from \code{grts()} or \code{irs()}, \code{print()} returns
 #'   a summary of site counts for each sites object (\code{sites_legacy}, \code{sites_base},
-#'   \code{sites_near}, and \code{sites_over}). These site counts are tabled by strata and 
+#'   \code{sites_near}, and \code{sites_over}). These site counts are tabled by strata and
 #'   unequal probability levels if applicable. When \code{x} is output from \code{summary()}
 #'   or \code{sp_summary()}, relevant summaries by variables specified in a formula
 #'   are returned.
@@ -26,11 +26,10 @@
 #' }
 #' @noRd
 print.summary.sp_frame <- function(x, ...) {
-  
   if (inherits(x, "table")) {
     print.table(x, ...)
   }
-  
+
   if (inherits(x, "list")) {
     for (i in seq_along(x)) {
       cat(names(x)[i], ": ", sep = "")
@@ -61,7 +60,6 @@ print.sp_summary.sp_design <- print.summary.sp_design
 #' @export
 #' @noRd
 print.sp_design <- function(x, ...) {
-
   if (!is.null(x$design$stratum_var) & !is.null(x$design$caty_var)) {
     object <- summary(x, formula = siteuse ~ stratum * caty, ...)
   } else if (is.null(x$design$stratum_var) & !is.null(x$design$caty_var)) {

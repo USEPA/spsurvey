@@ -27,6 +27,14 @@
 ################################################################################
 
 bootfcn <- function(dframe, indices, ivar, siteID, yearID) {
+  # Called once per bootstrap replicate by boot::boot(): indices selects
+  # (with replacement) the rows of dframe for this replicate, and the model
+  # formula is built as text (rather than a literal formula) because ivar/
+  # siteID/yearID are column-name arguments rather than fixed identifiers.
+  # The mixed-effects model regresses ivar on a (weighted) year covariate
+  # (Wyear) with a random site-specific intercept and slope over time
+  # (1 + Wyear | siteID) and a random year effect (1 | yearID), following
+  # Piepho & Ogutu's (2002) mixed-model approach to trend estimation.
   dframe <- dframe[indices, ]
   eval(parse(text = paste0(
     "regest <- lmer(", ivar, " ~ Wyear + (1 + Wyear|",

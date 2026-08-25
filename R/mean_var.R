@@ -62,6 +62,17 @@
 #' @param warn_vec Vector that contains names of the population type, the
 #'   subpopulation, and an indicator.
 #'
+#' @param subset_local Logical value indicating whether the local mean
+#'   neighbor structure is built from domain members only (\code{TRUE},
+#'   the default behavior) or from all sites in the stratum
+#'   with the residual zeroed out for non-domain members via
+#'   \code{subpop_ind} (\code{FALSE}). The default value is \code{TRUE}.
+#'
+#' @param subpop_ind Numeric 0/1 vector, the same length as \code{z}, that
+#'   is 1 for members of the subpopulation (domain, in classical survey
+#'   sampling terminology) and 0 otherwise. Only used when
+#'   \code{subset_local} is \code{FALSE}.
+#'
 #' @return Object in list format composed of a vector named \code{varest}, which
 #'   contains variance estimates, a logical variable named \code{warn_ind},
 #'   which is the indicator for warning messges, and a data frame named
@@ -76,7 +87,22 @@
 
 mean_var <- function(z, wgt, x, y, mean_est, stratum_ind, stratum_level,
                      cluster_ind, cluster, wgt1, x1, y1, warn_ind, warn_df,
-                     warn_vec) {
+                     warn_vec, subset_local = TRUE, subpop_ind = NULL) {
+  # This implements the local mean (spatial neighborhood) variance
+  # estimator of Stevens & Olsen (2003, Environmetrics 14:593-610): instead
+  # of relying on joint inclusion probabilities (which are unstable for
+  # spatially balanced GRTS designs), variance is estimated by averaging
+  # squared contrasts between each site's weighted residual and a weighted
+  # average of its spatial neighbors' residuals. localmean_weight() builds
+  # the neighborhood weight matrix from the site coordinates and
+  # localmean_var() computes the resulting variance estimate. If there are
+  # too few sites (< 4) or localmean_weight() cannot find valid neighbor
+  # weights, this falls back to the simple random sampling (SRS) variance
+  # estimator instead. For two-stage (clustered) samples, the total
+  # variance is decomposed into a between-cluster piece (local mean
+  # variance of the per-cluster residual totals) plus the sum of the
+  # within-cluster local mean variances, following standard two-stage
+  # variance decomposition.
 
   # Assign the function name
 
@@ -91,7 +117,6 @@ mean_var <- function(z, wgt, x, y, mean_est, stratum_ind, stratum_level,
   #
 
   if (cluster_ind) {
-
     # Begin the section for a two-stage sample
 
     # Calculate additional required values
@@ -116,7 +141,6 @@ mean_var <- function(z, wgt, x, y, mean_est, stratum_ind, stratum_level,
     total2est <- numeric(ncluster)
     var2est <- numeric(ncluster)
     for (i in 1:ncluster) {
-
       # Calculate the weighted residuals vector
 
       n <- length(z_lst[[i]])
@@ -234,6 +258,9 @@ mean_var <- function(z, wgt, x, y, mean_est, stratum_ind, stratum_level,
         vartype <- "SRS"
         varest <- 0
       } else {
+        # variance of the weighted total, decomposed as between-cluster +
+        # within-cluster components; dividing by tw2 (squared total weight)
+        # converts that total's variance into the variance of the MEAN
         varest <- (
           localmean_var(total2est * wgt1_u, weight_lst) +
             sum(var2est * wgt1_u)
@@ -245,21 +272,26 @@ mean_var <- function(z, wgt, x, y, mean_est, stratum_ind, stratum_level,
 
     # End of section for a two-stage sample
   } else {
-
     # Begin the section for a single-stage sample
 
     # Calculate additional required values
 
     n <- length(z)
-    tw2 <- (sum(wgt))^2
+    dind <- if (subset_local) rep(1, n) else subpop_ind
+    n_eff <- if (subset_local) n else sum(subpop_ind)
+    tw2 <- if (subset_local) (sum(wgt))^2 else (sum(wgt * subpop_ind))^2
 
     # Calculate the weighted residuals vector
+    # (when subset_local = FALSE, x/y/z/wgt cover the full stratum rather
+    # than domain members only, and dind zeroes the residual for every
+    # site outside the domain; mean_est itself is still the domain-only
+    # mean estimate, computed upstream, unaffected by subset_local)
 
-    rv_mean <- wgt * (z - mean_est)
+    rv_mean <- dind * wgt * (z - mean_est)
 
     # Adjust the variance estimator for small sample size
 
-    if (n < 4) {
+    if (n_eff < 4) {
       warn_ind <- TRUE
       act <- "The simple random sampling variance estimator for an infinite population was used.\n"
       if (stratum_ind) {
@@ -278,6 +310,20 @@ mean_var <- function(z, wgt, x, y, mean_est, stratum_ind, stratum_level,
         ))
       }
       vartype <- "SRS"
+    }
+
+    # Above the benchmarked large-n threshold, subset_local = FALSE still
+    # proceeds as explicitly requested, but warns
+
+    if (!subset_local && n > 2000) {
+      warn_ind <- TRUE
+      act <- "Proceeding as requested; this computation may take a long time and use a large amount of memory.\n"
+      warn <- paste0("subset_local = FALSE requires building the local mean neighbor structure from all ", n, ifelse(stratum_ind, paste0(" sites in stratum \"", stratum_level, "\""), " sites in this design"), ", which exceeds the recommended threshold of 2,000 sites. This computation may take several minutes or longer and use several GB of memory.\n")
+      warn_df <- rbind(warn_df, data.frame(
+        func = I(fname), subpoptype = warn_vec[1], subpop = warn_vec[2],
+        indicator = warn_vec[3], stratum = if (stratum_ind) stratum_level else NA,
+        warning = I(warn), action = I(act)
+      ))
     }
 
     # Calculate the variance estimate
@@ -305,6 +351,8 @@ mean_var <- function(z, wgt, x, y, mean_est, stratum_ind, stratum_level,
         vartype <- "SRS"
         varest <- 0
       } else {
+        # variance of the weighted total of residuals, divided by tw2
+        # (squared total weight) to get the variance of the mean
         varest <- localmean_var(rv_mean, weight_lst) / tw2
       }
     } else {

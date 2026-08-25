@@ -22,7 +22,6 @@
 ###############################################################################
 
 cdf_nresp <- function(z, val) {
-
   # Calculate the number of response values for each CDF estimation value
 
   z <- z[!is.na(z)]

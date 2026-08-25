@@ -108,7 +108,7 @@ A plot of a variable's CDF estimates associated confidence limits.
 \description{
 This function creates a CDF plot.  Input data for the plots is provided by a
 data frame from the "CDF" output given by  \code{cont_analysis}.
-Confidence limits for the CDF also are plotted. Equivalent to \code{cdf_plot()}; 
+Confidence limits for the CDF also are plotted. Equivalent to \code{cdf_plot()};
 both are currently maintained for backwards compatibility.
 }
 \examples{

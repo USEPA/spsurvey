@@ -38,6 +38,11 @@ irs <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = N
                 legacy_caty_var = NULL, legacy_aux_var = NULL, mindis = NULL,
                 maxtry = 10, n_over = NULL, n_near = NULL, wgt_units = NULL,
                 pt_density = NULL, DesignID = "Site", SiteBegin = 1, sep = "-", projcrs_check = TRUE) {
+  # This mirrors grts() (see that file for the full pipeline description),
+  # but selects sites by independent random sampling (irs_stratum()) rather
+  # than the spatially balanced GRTS algorithm; useful as a non-spatial
+  # baseline design, e.g. for the comparisons in Dumelle et al. (2023)
+  # showing GRTS's efficiency gain over simple random sampling.
 
   if (inherits(sframe, c("tbl_df", "tbl"))) { # identify if tibble class elements are present
     class(sframe) <- setdiff(class(sframe), c("tbl_df", "tbl"))
@@ -598,11 +603,15 @@ irs <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = N
   )
 
   if (any(dsgn$legacy)) {
-    dsgn <- c(dsgn, list(legacy_stratum_var = initial_legacy_stratum_var, legacy_caty_var = initial_legacy_caty_var,
-                         legacy_aux_var = initial_legacy_aux_var))
-    dsgn <- dsgn[c("call", "stratum_var", "stratum", "n_base", "seltype", "caty_var",
-                   "caty_n", "aux_var", "legacy", "legacy_stratum_var", "legacy_caty_var", "legacy_aux_var",
-                   "mindis", "n_over", "n_near")]
+    dsgn <- c(dsgn, list(
+      legacy_stratum_var = initial_legacy_stratum_var, legacy_caty_var = initial_legacy_caty_var,
+      legacy_aux_var = initial_legacy_aux_var
+    ))
+    dsgn <- dsgn[c(
+      "call", "stratum_var", "stratum", "n_base", "seltype", "caty_var",
+      "caty_n", "aux_var", "legacy", "legacy_stratum_var", "legacy_caty_var", "legacy_aux_var",
+      "mindis", "n_over", "n_near"
+    )]
   }
 
   # create output list

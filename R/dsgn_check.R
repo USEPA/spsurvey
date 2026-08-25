@@ -101,7 +101,12 @@ dsgn_check <- function(sframe, sf_type, legacy_sites, legacy_option, stratum, se
                        legacy_stratum_var, legacy_caty_var, legacy_aux_var,
                        legacy_var, mindis,
                        DesignID, SiteBegin, maxtry, projcrs_check) {
-
+  # This function runs a long sequence of independent validation checks on
+  # the design arguments and sframe/legacy_sites. Rather than stopping at
+  # the first problem found, every failed check appends a row to stop_df
+  # (and sets stop_ind <- TRUE) so that all problems are collected and
+  # reported to the user together; execution only stops once, at the very
+  # end, if stop_ind is TRUE (see stopprnt() for how stop_df is displayed).
   # Create a data frame for stop messages
   stop_ind <- FALSE
   stop_df <- NULL
@@ -410,7 +415,7 @@ dsgn_check <- function(sframe, sf_type, legacy_sites, legacy_option, stratum, se
             stop_df <- rbind(stop_df, data.frame(func = I("n_base + n_over"), I(stop_mess)))
           }
         } else {
-           if (any(sapply(stratum, function(x) (n_base[[x]] + sum(n_over[[x]])) > NROW(sframe[sframe[[stratum_var]] == x, , drop = FALSE])))) {
+          if (any(sapply(stratum, function(x) (n_base[[x]] + sum(n_over[[x]])) > NROW(sframe[sframe[[stratum_var]] == x, , drop = FALSE])))) {
             stop_ind <- TRUE
             stop_mess <- paste0("For each stratum, the sum of the base sites and 'Over' replacement sites must be no larger than the number of rows in 'sframe' representing that stratum.")
             stop_df <- rbind(stop_df, data.frame(func = I("n_base + n_over"), I(stop_mess)))

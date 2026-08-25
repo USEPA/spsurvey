@@ -64,6 +64,23 @@
 grts_stratum <- function(stratum, dsgn, sframe, sf_type, wgt_units = NULL, pt_density = NULL,
                          legacy_option = FALSE, legacy_sites = NULL, maxtry = 10,
                          warn_ind = FALSE, warn_df = NULL) {
+  # Overall approach (see grts() / the GRTS algorithm):
+  #  1. For linear and area frames, first draw a dense systematic point
+  #     sample (the "Step 1" density sample) to approximate the linear/area
+  #     resource with points; point frames skip this and go straight to
+  #     step 2. ip_step1 records the inclusion probability of this step so
+  #     it can be combined with the step-2 probability below.
+  #  2. Compute each candidate point's inclusion probability (equal,
+  #     unequal/category-based, or proportional-to-size), inflated to 1 for
+  #     legacy sites that must be retained.
+  #  3. Order the candidate points along the randomized, hierarchically
+  #     recursive address (get_address()) and draw the sample via pivotal
+  #     sampling (UPpivotal), optionally enforcing a minimum distance
+  #     between sites (grtspts_mindis/irspts_mindis).
+  #  4. Re-order the drawn sites into reverse hierarchical order (rho()) so
+  #     that the first n_base - n_legacy sites (in that order) form a
+  #     spatially balanced base sample, and any remaining sites form a
+  #     spatially balanced over sample, regardless of how many are kept.
 
   # Sample sizes required
   n_base <- dsgn[["n_base"]][[stratum]]
@@ -331,8 +348,11 @@ grts_stratum <- function(stratum, dsgn, sframe, sf_type, wgt_units = NULL, pt_de
   }
 
 
-
   # save base sites
+  # sites[["sites"]] is in reverse hierarchical order, so taking the first
+  # (n_base - n_legacy) rows (after legacy sites were split off above) keeps
+  # a spatially balanced subset for the base sample; remaining rows become
+  # the over sample below
   sites_base <- NULL
   if (n_base > n_legacy) {
     sites_base <- sites[["sites"]][1:(n_base - n_legacy), ]

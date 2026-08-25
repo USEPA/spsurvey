@@ -102,10 +102,18 @@ changevar_prop <- function(catvar_levels, catvar1, catvar2, wgt, x, y,
                            revisitwgt, prop1, prop2, stratum_ind, stratum_level,
                            cluster_ind, clusterID, wgt1, x1, y1, vartype,
                            warn_ind, warn_df, warn_vec) {
-
   # Assign the function name
 
   fname <- "changevar_prop"
+
+  # Parallels changevar_mean() (see that file for the Var(change) =
+  # Var(t1) + Var(t2) - 2*Cov(t1, t2) motivation and why covariance vs.
+  # correlation is returned), but computed separately for each category in
+  # catvar_levels using the one-hot category-membership indicator approach
+  # of catvar_prop(): for category k, a two-column residual matrix of
+  # (indicator - prop1[k], indicator - prop2[k]) across the two surveys is
+  # passed to localmean_cov(), and rslt[k] is that 2x2 result's off-diagonal
+  # entry (as a covariance, or normalized to a correlation).
 
   #
   # Calculate covariance or correlation using the repeat visit sites
@@ -114,7 +122,6 @@ changevar_prop <- function(catvar_levels, catvar1, catvar2, wgt, x, y,
   # Begin the section for a two-stage sample
 
   if (cluster_ind) {
-
     # Calculate additional required values
 
     m <- length(catvar_levels)
@@ -138,7 +145,6 @@ changevar_prop <- function(catvar_levels, catvar1, catvar2, wgt, x, y,
 
     rslt <- rep(NA, m)
     for (k in 1:m) {
-
       # Determine whether the categorical level is present in both surveys
 
       if (is.na(prop1[k]) | is.na(prop2[k])) {
@@ -172,7 +178,6 @@ changevar_prop <- function(catvar_levels, catvar1, catvar2, wgt, x, y,
       var2est <- matrix(0, ncluster, 4)
       phat <- c(prop1[k], prop2[k])
       for (i in 1:ncluster) {
-
         # Calculate the weighted residuals matrix
 
         n <- length(catvar1_lst[[i]])
@@ -371,7 +376,6 @@ changevar_prop <- function(catvar_levels, catvar1, catvar2, wgt, x, y,
 
     # End of section for a two-stage sample
   } else {
-
     # Begin the section for a single-stage sample
 
     # Calculate additional required values
@@ -384,7 +388,6 @@ changevar_prop <- function(catvar_levels, catvar1, catvar2, wgt, x, y,
 
     rslt <- rep(NA, m)
     for (i in 1:m) {
-
       # Determine whether the categorical level is present in both surveys
 
       if (is.na(prop1[i]) | is.na(prop2[i])) {

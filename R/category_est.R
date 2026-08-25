@@ -61,10 +61,10 @@
 #'   variables in the design argument.
 #'
 #' @param vartype Character value providing the choice of the variance
-#'   estimator, where "Local" = the local mean estimator, \code{"SRS"} is the
+#'   estimator, where "local" = the local mean estimator, \code{"SRS"} is the
 #'   simple random sampling estimator, \code{"HT"} is the Horvitz-Thompson
 #'   estimator, and \code{"YG"} is the Yates-Grundy estimator.  The default value
-#'   is \code{"Local"}.
+#'   is \code{"local"}.
 #'
 #' @param conf Numeric value for the confidence level.
 #'
@@ -75,6 +75,13 @@
 #'   generated.
 #'
 #' @param warn_df Data frame for storing warning messages.
+#'
+#' @param subset_local Logical value indicating whether the local mean
+#'   variance estimator (\code{vartype = "local"}) builds its neighbor
+#'   structure from domain members only (\code{TRUE}, the
+#'   default) or from all sites in the relevant stratum (\code{FALSE}).
+#'   Has no effect when \code{vartype} is not \code{"Local"}. The default
+#'   value is \code{TRUE}.
 #'
 #' @return A list composed of the following objects:
 #'   \itemize{
@@ -94,11 +101,20 @@
 
 category_est <- function(catsum, dframe, itype, lev_itype, nlev_itype, ivar,
                          lev_ivar, nlev_ivar, design, design_names,
-                         vartype, conf, mult, warn_ind, warn_df) {
-
+                         vartype, conf, mult, warn_ind, warn_df,
+                         subset_local = TRUE) {
   # Assign a value to the function name variable
 
   fname <- "category_est"
+
+  # This function has two structurally parallel sections: first proportion
+  # estimates (rslt_P/stderr_P/confval_P, via svymean()/svyby()), then total
+  # (size) estimates (rslt_U/stderr_U/confval_U, via svytotal()/svyby()).
+  # Within each section, there are four cases depending on whether there is
+  # one subpopulation or several (nlev_itype) and whether the response has
+  # one category or several (nlev_ivar), because svymean/svytotal/svyby all
+  # require at least two factor levels to operate on. The two sections'
+  # results are combined into the catsum data frame at the end.
 
   # Calculate category proportion estimates, standard error estimates, and
   # confidence bound estimates for each combination of subpopulation and response
@@ -125,7 +141,8 @@ category_est <- function(catsum, dframe, itype, lev_itype, nlev_itype, ivar,
       if (vartype == "Local") {
         temp <- cat_localmean_prop(
           itype, lev_itype, nlev_itype, ivar, lev_ivar, nlev_ivar, design,
-          design_names, rslt_P, mult, warn_ind, warn_df
+          design_names, rslt_P, mult, warn_ind, warn_df,
+          subset_local = subset_local
         )
         stderr_P <- temp$stderr_P
         confval_P <- temp$confval_P
@@ -171,7 +188,8 @@ category_est <- function(catsum, dframe, itype, lev_itype, nlev_itype, ivar,
       if (vartype == "Local") {
         temp <- cat_localmean_prop(
           itype, lev_itype, nlev_itype, ivar, lev_ivar, nlev_ivar, design,
-          design_names, rslt_P, mult, warn_ind, warn_df
+          design_names, rslt_P, mult, warn_ind, warn_df,
+          subset_local = subset_local
         )
         stderr_P <- temp$stderr_P
         confval_P <- temp$confval_P
@@ -198,6 +216,11 @@ category_est <- function(catsum, dframe, itype, lev_itype, nlev_itype, ivar,
   # confidence bound estimates for each combination of subpopulation and response
   # variable
 
+  # zzz is a synthetic 0/1 (well, NA/1) indicator variable equal to 1 for
+  # every site with a non-missing response and NA otherwise; svytotal(~zzz)
+  # below then estimates the "Total" column, i.e. the total size of the
+  # resource (or subpopulation) having a non-missing response, the
+  # denominator against which each category's total is a part.
   if ("postStrata" %in% names(design)) {
     zzz <- ifelse(is.na(design$variables[, ivar]), NA, 1)
   } else {
@@ -212,7 +235,8 @@ category_est <- function(catsum, dframe, itype, lev_itype, nlev_itype, ivar,
       if (vartype == "Local") {
         temp <- cat_localmean_total(
           itype, lev_itype, nlev_itype, ivar, lev_ivar, nlev_ivar, design,
-          design_names, rslt_U, mult, warn_ind, warn_df
+          design_names, rslt_U, mult, warn_ind, warn_df,
+          subset_local = subset_local
         )
         stderr_U <- temp$stderr_U
         confval_U <- temp$confval_U
@@ -237,7 +261,8 @@ category_est <- function(catsum, dframe, itype, lev_itype, nlev_itype, ivar,
       if (vartype == "Local") {
         temp <- cat_localmean_total(
           itype, lev_itype, nlev_itype, ivar, lev_ivar, nlev_ivar, design,
-          design_names, rslt_U, mult, warn_ind, warn_df
+          design_names, rslt_U, mult, warn_ind, warn_df,
+          subset_local = subset_local
         )
         stderr_U <- temp$stderr_U
         confval_U <- temp$confval_U
@@ -261,7 +286,8 @@ category_est <- function(catsum, dframe, itype, lev_itype, nlev_itype, ivar,
       if (vartype == "Local") {
         temp <- cat_localmean_total(
           itype, lev_itype, nlev_itype, ivar, lev_ivar, nlev_ivar, design,
-          design_names, rslt_U, mult, warn_ind, warn_df
+          design_names, rslt_U, mult, warn_ind, warn_df,
+          subset_local = subset_local
         )
         stderr_U <- temp$stderr_U
         confval_U <- temp$confval_U
@@ -288,7 +314,8 @@ category_est <- function(catsum, dframe, itype, lev_itype, nlev_itype, ivar,
       if (vartype == "Local") {
         temp <- cat_localmean_total(
           itype, lev_itype, nlev_itype, ivar, lev_ivar, nlev_ivar, design,
-          design_names, rslt_U, mult, warn_ind, warn_df
+          design_names, rslt_U, mult, warn_ind, warn_df,
+          subset_local = subset_local
         )
         stderr_U <- temp$stderr_U
         confval_U <- temp$confval_U
@@ -311,6 +338,11 @@ category_est <- function(catsum, dframe, itype, lev_itype, nlev_itype, ivar,
   }
 
   # Assign identifiers and estimates to the catsum data frame
+  # (proportion estimates/bounds are rescaled from a 0-1 fraction to a
+  # percent by multiplying by 100; proportion confidence bounds are clipped
+  # to the valid [0, 100] percent (equivalently [0, 1] fraction) range,
+  # since the Normal-approximation bounds computed above can otherwise fall
+  # slightly outside it)
 
   snames <- dimnames(rslt_P)[[1]]
   inames <- rep(ivar, nlev_ivar + 1)

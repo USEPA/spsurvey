@@ -287,7 +287,20 @@
 #'   where \code{"Local"} = the local mean estimator, \code{"SRS"} = the simple
 #'   random sampling estimator, \code{"HT"} = the Horvitz-Thompson estimator,
 #'   and \code{"YG"} = the Yates-Grundy estimator.  The default value is
-#'   \code{"Local"}.
+#'   \code{"local"}.
+#'
+#' @param subset_local Logical value that controls how the local mean
+#'   variance estimator (the default \code{vartype = "local"}) handles
+#'   subpopulations for the per-year category/mean estimates that feed the
+#'   \code{"SLR"}/\code{"WLR"} trend models. See \code{\link{cat_analysis}}
+#'   for the full explanation. Only affects \code{model_cat}/\code{model_cont
+#'   = "WLR"}: for \code{"SLR"}, the per-year variance estimate is computed
+#'   but never used (an unweighted \code{lm()} trend line is fit through the
+#'   point estimates alone), so \code{subset_local} has no effect on
+#'   \code{"SLR"} results. Has no effect on \code{"GLMM"}/\code{"LMM"}
+#'   models, which do not use these functions.
+#'   `subset_local` only applies when `vartype = "local"`.
+#'   The default value is \code{TRUE}.
 #'
 #' @param jointprob Character value providing choice of joint inclusion
 #'   probability approximation for use with Horvitz-Thompson and Yates-Grundy
@@ -462,9 +475,9 @@ trend_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL, subpops = 
                            yearID = "year", weight = "weight", xcoord = NULL, ycoord = NULL,
                            stratumID = NULL, clusterID = NULL, weight1 = NULL, xcoord1 = NULL,
                            ycoord1 = NULL, sizeweight = FALSE, sweight = NULL, sweight1 = NULL,
-                           fpc = NULL, popsize = NULL, invprboot = TRUE, nboot = 1000, vartype = "Local",
-                           jointprob = "overton", conf = 95, All_Sites = FALSE) {
-
+                           fpc = NULL, popsize = NULL, invprboot = TRUE, nboot = 1000, vartype = "local",
+                           jointprob = "overton", conf = 95, All_Sites = FALSE,
+                           subset_local = TRUE) {
   # Create a vector for error messages
 
   error_ind <- FALSE
@@ -763,6 +776,15 @@ trend_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL, subpops = 
 
   cluster_ind <- !is.null(clusterID)
 
+  # subset_local = FALSE is not yet implemented for two-stage designs (the
+  # cluster_ind branches of category_est()/mean_est()'s underlying local
+  # mean variance estimators still build a domain-only neighbor structure,
+  # which would look like subset_local silently having no effect)
+
+  if (!subset_local && cluster_ind) {
+    stop("\nsubset_local = FALSE is not yet supported for two-stage (clustered) samples.\n")
+  }
+
   # Create the survey design object
 
   design <- survey_design(
@@ -840,7 +862,6 @@ trend_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL, subpops = 
   #
 
   if (!is.null(vars_cat)) {
-
     # Assign values to the site ID variable in the dframe data frame
 
     if (model_cat %in% c("SLR", "WLR")) {
@@ -864,12 +885,10 @@ trend_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL, subpops = 
         # Loop through all levels of a subpopulation
 
         for (isubpop in lev_itype) {
-
           # Section for the simple linear regression and weighted linear
           # regression models
 
           if (model_cat %in% c("SLR", "WLR")) {
-
             # Determine the set of years for this subpopulation
 
             subpop_ind <- dframe[, itype] %in% isubpop
@@ -885,7 +904,6 @@ trend_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL, subpops = 
             # Loop through all time periods for this subpopulation
 
             for (iyear in 1:nyears) {
-
               # Select sites in a year for this subpopulation
 
               subpop_ind <- dframe[, itype] %in% isubpop &
@@ -919,13 +937,36 @@ trend_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL, subpops = 
               }
 
               # Estimate category proportions for the response variable
+              # (under subset_local = TRUE, tempdf/design_use are restricted
+              # to this domain and year, exactly as before. Under FALSE,
+              # they are restricted to this YEAR only, a hard restriction,
+              # since mixing sites across years would conflate distinct
+              # sampling occasions, with itype blanked to NA for
+              # non-domain rows rather than dropped, so
+              # cat_localmean_prop()/cat_localmean_total() can build the
+              # local mean neighbor structure from the full stratum for
+              # this year rather than just this subpopulation, while every
+              # itype-based computation in category_est() still sees
+              # exactly this subpopulation because non-members are NA, not
+              # dropped)
 
-              tempdf <- subset(dframe, subpop_ind)
+              if (subset_local) {
+                tempdf <- subset(dframe, subpop_ind)
+                design_use <- subset(design, subpop_ind)
+              } else {
+                tst_year <- dframe$Wyear %in% years[iyear]
+                tempdf <- subset(dframe, tst_year)
+                tempdf[!(tempdf[, itype] %in% isubpop), itype] <- NA
+                tempdf[, itype] <- droplevels(tempdf[, itype])
+                design_use <- subset(design, tst_year)
+                design_use$variables[!(design_use$variables[, itype] %in% isubpop), itype] <- NA
+              }
               templev <- levels(tempdf[, ivar])
               temp <- category_est(
                 NULL, tempdf, itype, isubpop, 1, ivar, templev,
-                length(templev), subset(design, subpop_ind), design_names,
-                vartype, conf, mult, warn_ind, warn_df
+                length(templev), design_use, design_names,
+                vartype, conf, mult, warn_ind, warn_df,
+                subset_local = subset_local
               )
               temp_cat <- temp$catsum
               warn_ind <- temp$warn_ind
@@ -1004,7 +1045,6 @@ trend_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL, subpops = 
 
             # Section for a generalized linear mixed-effects model
           } else if (invprboot == TRUE) {
-
             # Fit the model
 
             if (stratum_ind) {
@@ -1076,7 +1116,6 @@ trend_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL, subpops = 
               itype, isubpop, ivar, estimates
             ))))
           } else {
-
             # Fit the model
 
             if (stratum_ind) {
@@ -1160,7 +1199,6 @@ trend_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL, subpops = 
   #
 
   if (!is.null(vars_cont)) {
-
     # Assign values to the site ID variable in the dframe data frame
 
     if (model_cont %in% c("SLR", "WLR")) {
@@ -1178,16 +1216,13 @@ trend_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL, subpops = 
       # Loop through all  response variables
 
       for (ivar in vars_cont) {
-
         # Loop through all levels of a subpopulation
 
         for (isubpop in lev_itype) {
-
           # Section for the simple linear regression and weighted linear
           # regression models
 
           if (model_cont %in% c("SLR", "WLR")) {
-
             # Determine the set of years for this subpopulation
 
             subpop_ind <- dframe[, itype] %in% isubpop
@@ -1203,7 +1238,6 @@ trend_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL, subpops = 
             # Loop through all time periods for this subpopulation
 
             for (iyear in 1:nyears) {
-
               # Select sites in a year for this subpopulation
 
               subpop_ind <- dframe[, itype] %in% isubpop &
@@ -1238,11 +1272,26 @@ trend_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL, subpops = 
               }
 
               # Estimate the mean for the response variable
+              # (see the analogous subset_local = FALSE branch in the
+              # categorical section above for why tempdf/design_use are
+              # constructed this way)
 
+              if (subset_local) {
+                tempdf <- droplevels(subset(dframe, subpop_ind))
+                design_use <- subset(design, subpop_ind)
+              } else {
+                tst_year <- dframe$Wyear %in% years[iyear]
+                tempdf <- subset(dframe, tst_year)
+                tempdf[!(tempdf[, itype] %in% isubpop), itype] <- NA
+                tempdf <- droplevels(tempdf)
+                design_use <- subset(design, tst_year)
+                design_use$variables[!(design_use$variables[, itype] %in% isubpop), itype] <- NA
+              }
               temp <- mean_est(
-                NULL, droplevels(subset(dframe, subpop_ind)),
-                itype, isubpop, 1, ivar, subset(design, subpop_ind),
-                design_names, NULL, vartype, conf, mult, warn_ind, warn_df
+                NULL, tempdf,
+                itype, isubpop, 1, ivar, design_use,
+                design_names, NULL, vartype, conf, mult, warn_ind, warn_df,
+                subset_local = subset_local
               )
               temp_cont <- temp$meansum
               warn_ind <- temp$warn_ind
@@ -1290,7 +1339,6 @@ trend_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL, subpops = 
 
             # Section for a linear mixed-effects model
           } else if (invprboot == TRUE) {
-
             # Fit the model
 
             if (stratum_ind) {
@@ -1365,7 +1413,6 @@ trend_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL, subpops = 
               )))
             )
           } else {
-
             # Fit the model
 
             if (stratum_ind) {

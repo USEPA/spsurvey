@@ -93,10 +93,24 @@
 changevar_mean <- function(z1, z2, wgt, x, y, revisitwgt, mean1, mean2,
                            stratum_ind, stratum_level, cluster_ind, clusterID,
                            wgt1, x1, y1, vartype, warn_ind, warn_df, warn_vec) {
-
   # Assign the function name
 
   fname <- "changevar_mean"
+
+  # Change estimation needs Var(mean2 - mean1) = Var(mean1) + Var(mean2) -
+  # 2*Cov(mean1, mean2); mean_var() (elsewhere) supplies the two individual
+  # variances, and this function supplies the Cov(mean1, mean2) (or, in some
+  # branches, Corr(mean1, mean2)) term, which can only be estimated from
+  # sites visited in BOTH surveys ("repeat visit" sites, z1/z2 here). It
+  # does so by forming a two-column residual matrix, cbind(z1, z2) -
+  # c(mean1, mean2), weighting it, and passing it to localmean_cov() (or an
+  # SRS covariance formula), whose 2x2 output (varest) has Var(mean1) and
+  # Var(mean2) on the diagonal and Cov(mean1, mean2) off the diagonal;
+  # varest[1, 2] (optionally normalized to a correlation using the diagonal)
+  # is the value returned to callers. When revisitwgt is FALSE, repeat visit
+  # sites are weighted equally (their survey design weights may otherwise
+  # differ between the two surveys, which would bias a covariance estimate
+  # that mixes them).
 
   #
   # Calculate covariance or correlation using the repeat visit sites
@@ -105,7 +119,6 @@ changevar_mean <- function(z1, z2, wgt, x, y, revisitwgt, mean1, mean2,
   # Begin the section for a two-stage sample
 
   if (cluster_ind) {
-
     # Calculate additional required values
 
     cluster <- factor(clusterID)
@@ -147,7 +160,6 @@ changevar_mean <- function(z1, z2, wgt, x, y, revisitwgt, mean1, mean2,
       }
       rslt <- NA
     } else {
-
       # For each stage one sampling unit and each survey, calculate an estimate
       # of the total of the stage two sampling unit residuals; then calculate
       # the variance/covariance matrix of the totals
@@ -155,7 +167,6 @@ changevar_mean <- function(z1, z2, wgt, x, y, revisitwgt, mean1, mean2,
       var2est <- matrix(0, ncluster, 4)
       phat <- c(mean1, mean2)
       for (i in 1:ncluster) {
-
         # Calculate the weighted residuals matrix
 
         n <- length(z1_lst[[i]])
@@ -377,7 +388,6 @@ changevar_mean <- function(z1, z2, wgt, x, y, revisitwgt, mean1, mean2,
 
     # End of  section for a two-stage sample
   } else {
-
     # Begin the section for a single-stage sample
 
     # Calculate additional required values
@@ -409,7 +419,6 @@ changevar_mean <- function(z1, z2, wgt, x, y, revisitwgt, mean1, mean2,
       }
       rslt <- NA
     } else {
-
       # Calculate the weighted residuals matrix
       phat <- c(mean1, mean2)
       rm <- (cbind(z1, z2) - matrix(rep(phat, n), nrow = n, byrow = TRUE)) *

@@ -45,6 +45,10 @@
 ###############################################################################
 
 cdf_prop <- function(z, wgt, val, cluster_ind, cluster = NULL, wgt1 = NULL) {
+  # A direct (non-survey-package) computation of the Horvitz-Thompson ratio
+  # CDF estimate at each threshold in val, for use where the caller (e.g.
+  # cdf_localmean_prop()) already has the raw per-site z/weight vectors on
+  # hand rather than a survey.design object to pass to svymean()/svyby().
 
   # Calculate additional required values
 

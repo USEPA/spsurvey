@@ -20,7 +20,6 @@
 ###############################################################################
 
 uniqueID <- function(siteID) {
-
   # If siteID is a factor, convert the input vector to character data
 
   factor.ind <- FALSE
@@ -31,6 +30,9 @@ uniqueID <- function(siteID) {
 
   # Assign new site IDs
 
+  # for each distinct ID that occurs more than once (i.e., a site visited on
+  # multiple occasions), append ".1", ".2", etc. to make every occurrence
+  # unique while leaving IDs that already occur only once untouched
   for (id in unique(siteID)) {
     temp <- siteID == id
     if (sum(temp) > 1) {

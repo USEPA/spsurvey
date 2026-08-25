@@ -28,7 +28,6 @@
 #' @noRd
 ################################################################################
 replace_near <- function(n_near, sites, sframe) {
-
   # remove sampled sites from sframe
   sframe <- sframe[!(sframe$idpts %in% sites$idpts), , drop = FALSE]
 
@@ -41,21 +40,26 @@ replace_near <- function(n_near, sites, sframe) {
     "Near-6th", "Near-7th", "Near-8th", "Near-9th", "Near-10th"
   )
 
-  # split
+  # split the distance matrix into one row per sampled site, so each element
+  # of site_dist_list holds that site's distance to every remaining
+  # (unsampled) frame point
   site_dist_list <- split(site_dist, 1:nrow(site_dist))
-  # apply
-  sites_near <- mapply(function(x, y) {
-    sites_tmp_ind <- sframe$idpts[order(x)][seq_len(n_near)]
-    sites_tmp <- sframe[sframe$idpts %in% sites_tmp_ind, , drop = FALSE]
-    sites_tmp$siteuse <- names_siteuse[seq_len(nrow(sites_tmp))] # covers cases where there are less than n_near sites available
-    sites_tmp$replsite <- y
-    sites_tmp
-  },
-  x = site_dist_list,
-  y = sites$idpts,
-  SIMPLIFY = FALSE
+  # apply: for each sampled site (x = its distance vector, y = its ID), rank
+  # the remaining frame points by increasing distance and keep the closest
+  # n_near as replacement candidates, labeled Near-1st, Near-2nd, etc.
+  sites_near <- mapply(
+    function(x, y) {
+      sites_tmp_ind <- sframe$idpts[order(x)][seq_len(n_near)]
+      sites_tmp <- sframe[sframe$idpts %in% sites_tmp_ind, , drop = FALSE]
+      sites_tmp$siteuse <- names_siteuse[seq_len(nrow(sites_tmp))] # covers cases where there are less than n_near sites available
+      sites_tmp$replsite <- y
+      sites_tmp
+    },
+    x = site_dist_list,
+    y = sites$idpts,
+    SIMPLIFY = FALSE
   )
 
-  # combine
+  # combine each sampled site's replacement candidates into a single object
   sites_near <- do.call("rbind", sites_near)
 }

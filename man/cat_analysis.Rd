@@ -22,10 +22,11 @@ cat_analysis(
   sweight1 = NULL,
   fpc = NULL,
   popsize = NULL,
-  vartype = "Local",
+  vartype = "local",
   jointprob = "overton",
   conf = 95,
-  All_Sites = FALSE
+  All_Sites = FALSE,
+  subset_local = TRUE
 )
 }
 \arguments{
@@ -223,7 +224,7 @@ variable in \code{dframe}.  The default value is \code{NULL}.}
 estimator, where \code{"Local"} indicates the local mean estimator,
 \code{"SRS"} indicates the simple random sampling estimator, \code{"HT"}
 indicates the Horvitz-Thompson estimator, and \code{"YG"} indicates the
-Yates-Grundy estimator.  The default value is \code{"Local"}.}
+Yates-Grundy estimator.}
 
 \item{jointprob}{Character value providing the choice of joint inclusion
 probability approximation for use with Horvitz-Thompson and Yates-Grundy
@@ -242,6 +243,17 @@ returned for each variable in \code{vars}. If \code{All_Sites} is
 \code{FALSE}, then alongside the subpopulation output, output for all sites
 (ignoring subpopulations) is not returned for each variable in \code{vars}.
 The default is \code{FALSE}.}
+
+\item{subset_local}{When `subset_local = TRUE` (the default),
+subpopulations are subset to include only subpopulation members
+prior to variance estimation. When `subset_local = FALSE`,
+subpopulations are not subset prior to variance estimation.
+`subset_local = FALSE` follows standard design-based subpopulation
+(i.e., domain) estimation theory, especially relevant for variance estimates of totals,
+but is computationally more complex,
+requiring the neighborhood weights matrix of the full data
+(which scales cubically with the sample size).
+`subset_local only applies when `vartype = "local"`.}
 }
 \value{
 The analysis results. A data frame of population estimates for all combinations of

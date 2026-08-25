@@ -55,17 +55,26 @@
 #' TRClass <- "Target_Sampled"
 #' adjwgtNR(wgt, MARClass, EvalStatus, TNRClass, TRClass)
 #' # function that has an error check
-adjwgtNR  <- function(wgt, MARClass = NULL, EvalStatus, TNRClass, TRClass){
+adjwgtNR <- function(wgt, MARClass = NULL, EvalStatus, TNRClass, TRClass) {
   if (is.null(MARClass)) {
     MARClass <- rep("1", length(wgt))
   }
+  # Within each MAR class, inflate each responder's weight by the ratio of
+  # (total weight of all known-eligible units, i.e. both those that
+  # responded [TRClass] and those known eligible but non-responding
+  # [TNRClass]) to (total weight of responders only), so that responders'
+  # weights represent the non-responders assumed missing at random;
+  # non-responders themselves get weight 0 since they
+  # contribute no response.
   tstTNRClass <- EvalStatus %in% c(TNRClass)
   tstTRClass <- EvalStatus %in% c(TRClass)
-  num <- tapply(wgt[tstTNRClass | tstTRClass],
-                MARClass[tstTNRClass | tstTRClass], sum)
+  num <- tapply(
+    wgt[tstTNRClass | tstTRClass],
+    MARClass[tstTNRClass | tstTRClass], sum
+  )
   den <- tapply(wgt[tstTRClass], MARClass[tstTRClass], sum)
 
-  ar <- num/den[match(names(num), names(den))]
+  ar <- num / den[match(names(num), names(den))]
   wgt[tstTRClass] <- wgt[tstTRClass] *
     ar[match(MARClass, names(ar))][tstTRClass]
   wgt[!tstTRClass] <- 0

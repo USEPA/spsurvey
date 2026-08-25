@@ -75,6 +75,16 @@
 #' @param warn_vec Vector that contains names of the population type, the
 #'   subpopulation, and an indicator.
 #'
+#' @param subset_local Logical value indicating whether the local mean
+#'   neighbor structure is built from domain members only (\code{TRUE},
+#'   the default behavior) or from all sites in the stratum
+#'   with cell/margin contributions zeroed out for non-domain members via
+#'   \code{subpop_ind} (\code{FALSE}). The default value is \code{TRUE}.
+#'
+#' @param subpop_ind Numeric 0/1 vector, the same length as \code{response},
+#'   that is 1 for members of the subpopulation (domain) and 0 otherwise.
+#'   Only used when \code{subset_local} is \code{FALSE}.
+#'
 #' @return A list containing the following objects:
 #'   \itemize{
 #'     \item{\code{varest}}{vector containing variance estimates}
@@ -93,7 +103,17 @@
 relrisk_var <- function(response, stressor, response_levels, stressor_levels,
                         wgt, x, y, stratum_ind, stratum_level, cluster_ind,
                         cluster, wgt1, x1, y1, vartype, warn_ind, warn_df,
-                        warn_vec) {
+                        warn_vec, subset_local = TRUE, subpop_ind = NULL) {
+  # Relative risk RR = P(Event | Stressor) / P(Event | No Stressor) needs
+  # two joint cell totals and two margin totals, not the full 2x2 table:
+  # Ind1 = event & stressor present (joint cell, numerator's numerator),
+  # Ind2 = stressor present (margin, numerator's denominator),
+  # Ind3 = event & stressor absent (joint cell, denominator's numerator),
+  # Ind4 = stressor absent (margin, denominator's denominator). As in
+  # attrisk_var(), this function estimates the local mean (or SRS) 4x4
+  # covariance matrix of those four totals jointly (see mean_var() for the
+  # underlying method), which relrisk_analysis() combines via the delta
+  # method into the variance of the relative risk estimate.
 
   # Assign the function name
 
@@ -102,7 +122,6 @@ relrisk_var <- function(response, stressor, response_levels, stressor_levels,
   # Branch to handle two-stage and single-stage samples
 
   if (cluster_ind) {
-
     # Begin the section for a two-stage sample
 
     # Calculate additional required values
@@ -129,7 +148,6 @@ relrisk_var <- function(response, stressor, response_levels, stressor_levels,
     total2est <- matrix(0, ncluster, 4)
     var2est <- matrix(0, ncluster, 16)
     for (i in 1:ncluster) {
-
       # Calculate the number of response values
 
       nresp <- length(response_lst[[i]])
@@ -329,12 +347,13 @@ relrisk_var <- function(response, stressor, response_levels, stressor_levels,
 
     # End of section for a two-stage sample
   } else {
-
     # Begin the section for a single-stage sample
 
     # Calculate the number of response values
 
     nresp <- length(response)
+    dind <- if (subset_local) rep(1, nresp) else subpop_ind
+    n_eff <- if (subset_local) nresp else sum(subpop_ind)
 
     # Create indicator variables for required cells and margins
 
@@ -344,12 +363,33 @@ relrisk_var <- function(response, stressor, response_levels, stressor_levels,
     Ind4 <- (stressor == stressor_levels[2])
 
     # Calculate the matrix of weighted indicator variables
+    # (when subset_local = FALSE, x/y/response/stressor/wgt cover the full
+    # stratum rather than domain members only, and multiplying by dind
+    # zeroes out every column's contribution from sites outside the
+    # domain; the neighbor structure below is still built from the full
+    # stratum; see localmean_weight()
 
-    rm <- cbind(Ind1, Ind2, Ind3, Ind4) * wgt
+    rm <- cbind(Ind1, Ind2, Ind3, Ind4) * wgt * dind
+
+    # Above the benchmarked large-n threshold, subset_local = FALSE still
+    # proceeds as explicitly requested, but warns about the cost first --
+    # a warn-but-proceed check, not an automatic override, since FALSE is
+    # only ever in effect because a user deliberately asked for it
+
+    if (!subset_local && nresp > 2000) {
+      warn_ind <- TRUE
+      act <- "Proceeding as requested; this computation may take a long time and use a large amount of memory.\n"
+      warn <- paste0("subset_local = FALSE requires building the local mean neighbor structure from all ", nresp, ifelse(stratum_ind, paste0(" sites in stratum \"", stratum_level, "\""), " sites in this design"), ", which exceeds the recommended threshold of 2,000 sites. This computation may take several minutes or longer and use several GB of memory.\n")
+      warn_df <- rbind(warn_df, data.frame(
+        func = I(fname), subpoptype = warn_vec[1], subpop = warn_vec[2],
+        indicator = warn_vec[3], stratum = if (stratum_ind) stratum_level else NA,
+        warning = I(warn), action = I(act)
+      ))
+    }
 
     # Adjust the variance-covariance estimator for small sample size
 
-    if (vartype == "Local" && nresp < 4) {
+    if (vartype == "Local" && n_eff < 4) {
       warn_ind <- TRUE
       act <- "The simple random sampling covariance estimator for an infinite population was used.\n"
       if (stratum_ind) {
@@ -375,6 +415,18 @@ relrisk_var <- function(response, stressor, response_levels, stressor_levels,
     # Calculate the variance-covariance estimate for the cell and marginal
     # totals
 
+    # srs_var is the SRS fallback variance-covariance estimate, used both
+    # when localmean_weight()/localmean_cov() cannot produce a valid
+    # estimate and directly when vartype = "SRS". Under subset_local =
+    # FALSE, rm's many exact-zero rows for non-domain sites would otherwise
+    # deflate var(rm), so the SRS fallback is instead computed only from
+    # the domain-member rows.
+    srs_var <- if (subset_local) {
+      nresp * var(rm)
+    } else {
+      n_eff * var(rm[subpop_ind == 1, , drop = FALSE])
+    }
+
     if (vartype == "Local") {
       weight_lst <- localmean_weight(x = x, y = y, prb = 1 / wgt)
       if (is.null(weight_lst)) {
@@ -395,7 +447,7 @@ relrisk_var <- function(response, stressor, response_levels, stressor_levels,
             action = I(act)
           ))
         }
-        varest <- nresp * var(rm)
+        varest <- srs_var
       } else {
         varest <- localmean_cov(rm, weight_lst)
         temp <- diag(varest)
@@ -417,11 +469,11 @@ relrisk_var <- function(response, stressor, response_levels, stressor_levels,
               warning = I(warn), action = I(act)
             ))
           }
-          varest <- nresp * var(rm)
+          varest <- srs_var
         }
       }
     } else {
-      varest <- nresp * var(rm)
+      varest <- srs_var
     }
 
     # End of section for a single-stage sample

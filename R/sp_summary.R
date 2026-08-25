@@ -17,7 +17,7 @@
 #' an \code{sf}
 #' object. When summarizing design sites, an object created by \code{grts()} or
 #' \code{irs()} (which has class \code{sp_design}). When summarizing analysis data,
-#' a data frame or an \code{sf} object. 
+#' a data frame or an \code{sf} object.
 #'
 #' @param formula A formula. One-sided formulas are used to summarize the
 #' distribution of numeric or categorical variables. For one-sided formulas,
@@ -75,7 +75,6 @@ sp_summary <- function(object, ...) {
 #' @method sp_summary default
 #' @export
 sp_summary.default <- function(object, formula = ~1, onlyshow = NULL, ...) {
-
   # find system info
   on_solaris <- Sys.info()[["sysname"]] == "SunOS"
   if (on_solaris) {
@@ -134,6 +133,23 @@ sp_summary.sp_design <- function(object, formula = ~siteuse, siteuse = NULL, onl
 
 # Helpers -----------------------------------------------------------------
 
+#' Summarize a categorical (or the total/intercept) variable
+#'
+#' Used by \code{sp_summary.default} for one-sided formula terms (or the
+#' total column) that are categorical: drops geometry, optionally restricts
+#' to and re-levels the \code{onlyshow} subset of levels, and calls
+#' \code{summary.data.frame} to get a per-level count.
+#'
+#' @param formlist The list returned by \code{make_formlist}.
+#'
+#' @param varsf The object returned by \code{make_varsf}.
+#'
+#' @param ... Additional arguments passed to \code{summary.data.frame} (e.g.
+#'   \code{maxsum}, which defaults to \code{10} here).
+#'
+#' @return The object returned by \code{summary.data.frame}.
+#'
+#' @noRd
 cat_summary <- function(formlist, varsf, ...) {
   dotlist <- list(...)
   if (!("maxsum" %in% names(dotlist))) {
@@ -154,6 +170,25 @@ cat_summary <- function(formlist, varsf, ...) {
   output <- do.call("summary.data.frame", c(list(varsf_nogeom), dotlist))
 }
 
+#' Summarize a continuous left-hand-side variable by each right-hand-side
+#' variable
+#'
+#' Used by \code{sp_summary.default} for two-sided formulas (e.g.
+#' \code{cont_var ~ cat_var}): for each right-hand-side variable named in
+#' \code{formlist$varlabels}, splits the continuous response
+#' (\code{formlist$response}) by that variable's levels (via \code{tapply})
+#' and summarizes each level with \code{summary.default}.
+#'
+#' @param formlist The list returned by \code{make_formlist}.
+#'
+#' @param varsf The object returned by \code{make_varsf}.
+#'
+#' @param ... Additional arguments passed to \code{summary.default}.
+#'
+#' @return A named list, one element per right-hand-side variable, each a
+#'   matrix of per-level summary statistics.
+#'
+#' @noRd
 cont_summary <- function(formlist, varsf, ...) {
   dotlist <- list(...)
   if ("sf" %in% class(varsf)) {

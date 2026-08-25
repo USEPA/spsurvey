@@ -23,10 +23,11 @@ cont_cdftest(
   sweight1 = NULL,
   fpc = NULL,
   popsize = NULL,
-  vartype = "Local",
+  vartype = "local",
   jointprob = "overton",
   testname = "adjWald",
-  nclass = 3
+  nclass = 3,
+  subset_local = TRUE
 )
 }
 \arguments{
@@ -223,7 +224,7 @@ variable in the \code{dframe} data frame.  The default value is \code{NULL}.}
 estimator, where \code{"Local"} indicates the local mean estimator,
 \code{"SRS"} indicates the simple random sampling estimator, \code{"HT"}
 indicates the Horvitz-Thompson estimator, and \code{"YG"} indicates the
-Yates-Grundy estimator.  The default value is \code{"Local"}.}
+Yates-Grundy estimator.}
 
 \item{jointprob}{Character value providing the choice of joint inclusion
 probability approximation for use with Horvitz-Thompson and Yates-Grundy
@@ -241,6 +242,12 @@ respectively.  The default is \code{"adjWald"}.}
 
 \item{nclass}{Number of classes into which the CDFs will be divided
 (binned), which must equal at least \code{2}.  The default is \code{3}.}
+
+\item{subset_local}{Logical value that controls how the local mean
+variance estimator (the default \code{vartype = "local"}) handles
+the two subpopulations being compared. See \code{\link{cat_analysis}}
+for the full explanation. \code{subset_local} is not yet supported
+for two-stage (clustered) samples. The default value is \code{TRUE}.}
 }
 \value{
 Data frame of CDF test results for all pairs of subpopulations

@@ -125,7 +125,6 @@ cont_cdfplot <- function(pdffile = "cdf2x2.pdf", cdfest, units_cdf = "Percent",
                          ind_type = rep("Continuous", nind), log = rep("", nind), xlab = NULL,
                          ylab = NULL, ylab_r = NULL, legloc = NULL, cdf_page = 4, width = 10,
                          height = 8, confcut = 0, cex.main = 1.2, cex.legend = 1, ...) {
-
   # Open the PDF file
 
   pdf(file = pdffile, width = width, height = height)

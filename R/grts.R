@@ -340,6 +340,19 @@ grts <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = 
                  legacy_caty_var = NULL, legacy_aux_var = NULL, mindis = NULL,
                  maxtry = 10, n_over = NULL, n_near = NULL, wgt_units = NULL,
                  pt_density = NULL, DesignID = "Site", SiteBegin = 1, sep = "-", projcrs_check = TRUE) {
+  # This is the user-facing entry point for the GRTS algorithm (Stevens &
+  # Olsen 2004; see also grts_stratum.R/grtspts_ip.R/
+  # get_address.R/rho.R for the algorithm's internal steps). At a high
+  # level, this function: (1) normalizes/cleans sframe and legacy_sites and
+  # figures out the sample frame geometry type (point/linear/area);
+  # (2) checks all the design arguments together via dsgn_check();
+  # (3) assembles a per-stratum design specification list, dsgn (sample
+  # sizes, selection type, categories, over/near/mindis options); (4) calls
+  # grts_stratum() once per stratum (each call independently runs the
+  # actual GRTS selection for that stratum) via lapply(); and (5) combines
+  # the per-stratum results back into single sites_base/sites_over/
+  # sites_near/sites_legacy objects, assigns site IDs, and attaches
+  # lat/lon.
 
   if (inherits(sframe, c("tbl_df", "tbl"))) { # identify if tibble class elements are present
     class(sframe) <- setdiff(class(sframe), c("tbl_df", "tbl"))
@@ -902,11 +915,15 @@ grts <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = 
   )
 
   if (any(dsgn$legacy)) {
-    dsgn <- c(dsgn, list(legacy_stratum_var = initial_legacy_stratum_var, legacy_caty_var = initial_legacy_caty_var,
-                         legacy_aux_var = initial_legacy_aux_var))
-    dsgn <- dsgn[c("call", "stratum_var", "stratum", "n_base", "seltype", "caty_var",
-                   "caty_n", "aux_var", "legacy", "legacy_stratum_var", "legacy_caty_var", "legacy_aux_var",
-                   "mindis", "n_over", "n_near")]
+    dsgn <- c(dsgn, list(
+      legacy_stratum_var = initial_legacy_stratum_var, legacy_caty_var = initial_legacy_caty_var,
+      legacy_aux_var = initial_legacy_aux_var
+    ))
+    dsgn <- dsgn[c(
+      "call", "stratum_var", "stratum", "n_base", "seltype", "caty_var",
+      "caty_n", "aux_var", "legacy", "legacy_stratum_var", "legacy_caty_var", "legacy_aux_var",
+      "mindis", "n_over", "n_near"
+    )]
   }
 
   # create output list

@@ -111,8 +111,17 @@ svychisq_localmean <- function(formula, design, statistic = c(
                                  "Wald", "adjWald", "lincom", "saddlepoint"
                                ), vartype = "Local",
                                var_totals = NULL, var_means = NULL) {
+  # This is survey::svychisq() with one change: when vartype == "Local", the
+  # contingency table cell/margin variances used by each test statistic are
+  # taken from var_totals/var_means (pre-computed elsewhere using the local
+  # mean/spatial neighborhood variance estimator, see mean_var()/total_var())
+  # instead of being derived from design's built-in (HT/YG-style) variance
+  # estimator. See the "Details" section above for what each `statistic`
+  # choice tests.
   statistic <- match.arg(statistic)
 
+  # formula is of the form ~ rowvar + colvar; pick apart its parse tree to
+  # get the row and column variable names/values for the contingency table
   rows <- formula[[2]][[2]]
   cols <- formula[[2]][[3]]
   rowvar <- unique(design$variables[, as.character(rows)])

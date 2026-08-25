@@ -68,13 +68,17 @@
 
 revisit_bibd <- function(n_period, n_pnl, n_visit, nsamp, panel_name = "BIB",
                          begin = 1, skip = 1, iter = 30) {
-
   # check input parameters for meeting requirements
   if (!(n_period > n_visit & n_pnl >= n_period & n_visit > 1)) {
     stop("\nInput parameters do not satisfy minimal conditions")
   }
 
   # use crossdes package functions to generate BIB design
+  # find.BIB() returns a n_pnl x n_visit matrix where row i lists the
+  # n_visit period numbers (blocks) that panel i visits; the table() call
+  # below pivots that into an n_pnl x n_period indicator matrix (1 where
+  # panel i visits period j, 0 otherwise), which is then rescaled so each
+  # visited cell holds nsamp (the number of sampled units) rather than 1
   bib <- find.BIB(n_period, n_pnl, n_visit, iter = iter)
   pan_dsgn <- table(c(rep(1:n_pnl, rep(n_visit, n_pnl))), as.vector(t(bib)))
   pan_dsgn[pan_dsgn == 1] <- nsamp

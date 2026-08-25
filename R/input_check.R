@@ -86,11 +86,22 @@ input_check <- function(dframe, design_names, vars_cat, vars_cont,
                         vars_stressor, vars_nondetect, subpops, sizeweight,
                         fpc, popsize, vartype, jointprob, conf, cdfval = NULL,
                         pctval = NULL, error_ind, error_vec) {
+  # Like dsgn_check(), this function runs a long sequence of largely
+  # independent validation checks on the analysis arguments and dframe.
+  # Rather than stopping at the first problem found, each failed check
+  # appends a message to error_vec (and sets error_ind <- TRUE) so that
+  # all problems can be collected and reported to the user together; the
+  # calling analysis function (e.g. cat_analysis()) is responsible for
+  # actually stopping once error_ind is TRUE (see errorprnt()).
 
   # Ensure that character variables are processed as factors
 
   # options(stringsAsFactors = TRUE)
   ## set factors to character and then reassign as factor so default factor ordering is imposed
+  # (any existing factor levels/ordering are discarded here; re-coercing via
+  # as.data.frame(..., stringsAsFactors = TRUE) rebuilds factors using R's
+  # default alphabetical level ordering, so results don't depend on
+  # whatever factor levels happened to be set on the user's input)
   fac_index <- vapply(dframe, is.factor, logical(1))
   dframe[fac_index] <- vapply(dframe[fac_index], as.character, character(nrow(dframe)))
   dframe <- as.data.frame(unclass(dframe), stringsAsFactors = TRUE)

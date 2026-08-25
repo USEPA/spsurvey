@@ -51,6 +51,12 @@
 #'
 #' @param warn_df Data frame for storing warning messages.
 #'
+#' @param subset_local Logical value indicating whether the local mean
+#'   neighbor structure is built from domain members only (\code{TRUE},
+#'   the default behavior) or from all sites in the relevant stratum
+#'   (\code{FALSE}). The default value is
+#'   \code{TRUE}.
+#'
 #' @return A list containing the following objects:
 #'   \itemize{
 #'     \item{\code{stderr_U}}{data frame containing standard error estimates}
@@ -70,7 +76,13 @@
 
 cat_localmean_total <- function(itype, lev_itype, nlev_itype, ivar, lev_ivar,
                                 nlev_ivar, design, design_names, rslt_U,
-                                mult, warn_ind, warn_df) {
+                                mult, warn_ind, warn_df, subset_local = TRUE) {
+  # Parallels cat_localmean_prop(): loops over subpopulation levels and (for
+  # stratified designs) strata within each, calling catvar_total() for the
+  # local mean variance of the category total (size) vector. Unlike the
+  # proportion case, per-stratum variances here are simply summed (totals
+  # add directly across strata; there is no population-size-share
+  # weighting step).
 
   # Assign a value to the function name variable
 
@@ -126,6 +138,17 @@ cat_localmean_total <- function(itype, lev_itype, nlev_itype, ivar, lev_ivar,
     tst <- !is.na(dframe[, ivar]) &
       (dframe[, itype] %in% lev_itype[isubpop])
 
+    # tst_resp/subpop_ind_full support subset_local = FALSE: tst_resp is
+    # every site with a usable (non-missing) response, regardless of
+    # domain, and subpop_ind_full flags which of those sites are actually
+    # in this domain. tst itself is left untouched, since it is still used
+    # below to decide which strata this domain touches and to size
+    # post-stratification totals; neither of those should change under
+    # subset_local, only which rows are passed to the variance calculation.
+
+    tst_resp <- !is.na(dframe[, ivar])
+    subpop_ind_full <- as.numeric(dframe[, itype] %in% lev_itype[isubpop])
+
     # If post-stratification or calibration was applied to the design object,
     # then calculate the sum of weights for the subpopulation
 
@@ -161,15 +184,16 @@ cat_localmean_total <- function(itype, lev_itype, nlev_itype, ivar, lev_ivar,
     # Branch for a stratified sample
 
     if (stratum_ind) {
-
       # Begin the subsection for individual strata
 
       for (i in 1:nstrata) {
-
         # Calculate variance estimates
 
         stratum_i <- tst & stratumID == stratum_levels[i]
         if (cluster_ind) {
+          # subset_local = FALSE is not yet supported for two-stage
+          # designs (blocked upstream in cat_analysis()), so this branch
+          # is intentionally left passing domain-only data
           temp <- catvar_total(
             factor(catvar[stratum_i]), wgt2[stratum_i],
             xcoord[stratum_i], ycoord[stratum_i], size_names, stratum_ind,
@@ -178,12 +202,25 @@ cat_localmean_total <- function(itype, lev_itype, nlev_itype, ivar, lev_ivar,
             warn_df, warn_vec
           )
         } else {
+          # stratum_data_i is the row mask actually fed to catvar_total():
+          # under subset_local = TRUE it's identical to stratum_i (domain
+          # members only); under FALSE it widens to
+          # every responded site in this stratum, and subpop_ind_full
+          # tells catvar_total() which of those rows are real domain
+          # members so it can zero out the rest.
+          stratum_data_i <- if (subset_local) {
+            stratum_i
+          } else {
+            tst_resp & stratumID == stratum_levels[i]
+          }
           temp <- catvar_total(
-            factor(catvar[stratum_i]), wgt[stratum_i], xcoord[stratum_i],
-            ycoord[stratum_i], size_names, stratum_ind, stratum_levels[i],
+            factor(catvar[stratum_data_i]), wgt[stratum_data_i],
+            xcoord[stratum_data_i],
+            ycoord[stratum_data_i], size_names, stratum_ind, stratum_levels[i],
             cluster_ind,
             warn_ind = warn_ind, warn_df = warn_df,
-            warn_vec = warn_vec
+            warn_vec = warn_vec, subset_local = subset_local,
+            subpop_ind = subpop_ind_full[stratum_data_i]
           )
         }
         warn_ind <- temp$warn_ind
@@ -266,10 +303,12 @@ cat_localmean_total <- function(itype, lev_itype, nlev_itype, ivar, lev_ivar,
 
       # Branch for an unstratified sample
     } else {
-
       # Calculate the standard error estimates
 
       if (cluster_ind) {
+        # subset_local = FALSE is not yet supported for two-stage designs
+        # (blocked upstream in cat_analysis()), so this branch is
+        # intentionally left passing domain-only data
         temp <- catvar_total(
           factor(catvar[tst]), wgt2[tst], xcoord[tst],
           ycoord[tst], size_names, stratum_ind, NULL, cluster_ind,
@@ -277,10 +316,15 @@ cat_localmean_total <- function(itype, lev_itype, nlev_itype, ivar, lev_ivar,
           warn_df, warn_vec
         )
       } else {
+        # data_tst mirrors stratum_data_i above: domain-only under TRUE,
+        # every responded site (this design has no strata here) under
+        # FALSE, with subpop_ind_full marking the real domain members.
+        data_tst <- if (subset_local) tst else tst_resp
         temp <- catvar_total(
-          factor(catvar[tst]), wgt[tst], xcoord[tst],
-          ycoord[tst], size_names, stratum_ind, NULL, cluster_ind,
-          warn_ind = warn_ind, warn_df = warn_df, warn_vec = warn_vec
+          factor(catvar[data_tst]), wgt[data_tst], xcoord[data_tst],
+          ycoord[data_tst], size_names, stratum_ind, NULL, cluster_ind,
+          warn_ind = warn_ind, warn_df = warn_df, warn_vec = warn_vec,
+          subset_local = subset_local, subpop_ind = subpop_ind_full[data_tst]
         )
       }
       warn_ind <- temp$warn_ind

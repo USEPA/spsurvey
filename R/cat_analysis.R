@@ -225,7 +225,7 @@
 #'   estimator, where \code{"Local"} indicates the local mean estimator,
 #'   \code{"SRS"} indicates the simple random sampling estimator, \code{"HT"}
 #'   indicates the Horvitz-Thompson estimator, and \code{"YG"} indicates the
-#'   Yates-Grundy estimator.  The default value is \code{"Local"}.
+#'   Yates-Grundy estimator. 
 #'
 #' @param jointprob Character value providing the choice of joint inclusion
 #'   probability approximation for use with Horvitz-Thompson and Yates-Grundy
@@ -244,6 +244,18 @@
 #'   \code{FALSE}, then alongside the subpopulation output, output for all sites
 #'   (ignoring subpopulations) is not returned for each variable in \code{vars}.
 #'   The default is \code{FALSE}.
+#'
+#' @param subset_local When `subset_local = TRUE` (the default),
+#' subpopulations are subset to include only subpopulation members
+#' prior to variance estimation. When `subset_local = FALSE`,
+#' subpopulations are not subset prior to variance estimation.
+#' `subset_local = FALSE` follows standard design-based subpopulation
+#' (i.e., domain) estimation theory, especially relevant for variance estimates of totals,
+#' but is computationally more complex,
+#' requiring the neighborhood weights matrix of the full data
+#' (which scales cubically with the sample size).
+#' `subset_local only applies when `vartype = "local"`.
+
 #'
 #' @return The analysis results. A data frame of population estimates for all combinations of
 #'   subpopulations, categories within each subpopulation, response variables,
@@ -307,8 +319,8 @@ cat_analysis <- function(dframe, vars, subpops = NULL, siteID = NULL, weight = "
                          xcoord = NULL, ycoord = NULL, stratumID = NULL, clusterID = NULL,
                          weight1 = NULL, xcoord1 = NULL, ycoord1 = NULL, sizeweight = FALSE,
                          sweight = NULL, sweight1 = NULL, fpc = NULL, popsize = NULL,
-                         vartype = "Local", jointprob = "overton", conf = 95, All_Sites = FALSE) {
-
+                         vartype = "local", jointprob = "overton", conf = 95, All_Sites = FALSE,
+                         subset_local = TRUE) {
   # Create a vector for error messages
 
   error_ind <- FALSE
@@ -545,6 +557,14 @@ cat_analysis <- function(dframe, vars, subpops = NULL, siteID = NULL, weight = "
 
   cluster_ind <- !is.null(clusterID)
 
+  # subset_local = FALSE is not yet implemented for two-stage designs (the
+  # cluster_ind branches of catvar_total()/catvar_prop() still always
+  # subset to domain members); fail with a clear message.
+
+  if (!subset_local && cluster_ind) {
+    stop("\nsubset_local = FALSE is not yet supported for two-stage (clustered) samples.\n")
+  }
+
   # Create the survey design object
 
   design <- survey_design(
@@ -617,7 +637,8 @@ cat_analysis <- function(dframe, vars, subpops = NULL, siteID = NULL, weight = "
 
       temp <- category_est(
         catsum, dframe, itype, lev_itype, nlev_itype, ivar, lev_ivar, nlev_ivar,
-        design, design_names, vartype, conf, mult, warn_ind, warn_df
+        design, design_names, vartype, conf, mult, warn_ind, warn_df,
+        subset_local = subset_local
       )
       catsum <- temp$catsum
       warn_ind <- temp$warn_ind

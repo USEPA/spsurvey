@@ -80,6 +80,13 @@
 percentile_est <- function(pctsum, dframe, itype, lev_itype, nlev_itype, ivar,
                            design, design_names, var_nondetect, conf, mult,
                            pctval, warn_ind, warn_df) {
+  # Overall approach: compute design-weighted percentile (quantile)
+  # estimates of ivar at the requested pctval percentages, using the
+  # survey package's oldsvyquantile(), either overall or separately for
+  # each level of subpopulation variable itype. Unlike mean/total
+  # estimation, percentile standard errors/confidence bounds come directly
+  # from oldsvyquantile()'s built-in CI method rather than the local mean
+  # variance estimator.
 
   # Assign a value to the function name variable
 
@@ -94,7 +101,6 @@ percentile_est <- function(pctsum, dframe, itype, lev_itype, nlev_itype, ivar,
   #
 
   if (is.null(var_nondetect)) {
-
     # Calculate percentile estimates, standard error estimates, and confidence
     # bound estimates for each combination of subpopulation and response
     # variable for the case where nondetects are not present
@@ -116,14 +122,21 @@ percentile_est <- function(pctsum, dframe, itype, lev_itype, nlev_itype, ivar,
         lbound <- rep(NA, npctval)
         ubound <- rep(NA, npctval)
       } else {
+        # the "rounded" ties method (kept for backward compatibility, see
+        # file history above) can error for some data; if so, fall back to
+        # the "constant" method rather than letting the whole call fail
         options(warn = -1)
         rslt_svy <- tryCatch(
           oldsvyquantile(make.formula(ivar),
-          design = subset(design, tst), quantiles = pctval / 100,
-          alpha = (100 - conf) / 100, ci = TRUE, na.rm = TRUE, ties = "rounded"),
-          error = function(e) oldsvyquantile(make.formula(ivar),
-          design = subset(design, tst), quantiles = pctval / 100,
-          alpha = (100 - conf) / 100, ci = TRUE, na.rm = TRUE, ties = "rounded", method = "constant")
+            design = subset(design, tst), quantiles = pctval / 100,
+            alpha = (100 - conf) / 100, ci = TRUE, na.rm = TRUE, ties = "rounded"
+          ),
+          error = function(e) {
+            oldsvyquantile(make.formula(ivar),
+              design = subset(design, tst), quantiles = pctval / 100,
+              alpha = (100 - conf) / 100, ci = TRUE, na.rm = TRUE, ties = "rounded", method = "constant"
+            )
+          }
         )
         options(warn = 0)
         pctest <- rslt_svy$quantiles
@@ -157,16 +170,22 @@ percentile_est <- function(pctsum, dframe, itype, lev_itype, nlev_itype, ivar,
       if (any(subpop_ind)) {
         tst <- tst & dframe[, itype] %in% lev_itype[subpop_ind]
         levs <- (1:nlev_itype)[subpop_ind]
+        # as above, fall back from ties = "rounded" to method = "constant"
+        # if the former errors for this data
         options(warn = -1)
         rslt_svy <- tryCatch(
           svyby(make.formula(ivar), make.formula(itype),
-          design = subset(design, tst), oldsvyquantile,
-          quantiles = pctval / 100, alpha = (100 - conf) / 100, ci = TRUE,
-          na.rm = TRUE, ties = "rounded"),
-          error = function(e) svyby(make.formula(ivar), make.formula(itype),
-          design = subset(design, tst), oldsvyquantile,
-          quantiles = pctval / 100, alpha = (100 - conf) / 100, ci = TRUE,
-          na.rm = TRUE, ties = "rounded", method = "constant")
+            design = subset(design, tst), oldsvyquantile,
+            quantiles = pctval / 100, alpha = (100 - conf) / 100, ci = TRUE,
+            na.rm = TRUE, ties = "rounded"
+          ),
+          error = function(e) {
+            svyby(make.formula(ivar), make.formula(itype),
+              design = subset(design, tst), oldsvyquantile,
+              quantiles = pctval / 100, alpha = (100 - conf) / 100, ci = TRUE,
+              na.rm = TRUE, ties = "rounded", method = "constant"
+            )
+          }
         )
         options(warn = 0)
         j <- 1
@@ -197,7 +216,6 @@ percentile_est <- function(pctsum, dframe, itype, lev_itype, nlev_itype, ivar,
       }
     }
   } else {
-
     # To be implemented
   }
 
@@ -234,7 +252,6 @@ percentile_est <- function(pctsum, dframe, itype, lev_itype, nlev_itype, ivar,
       }
     }
   } else {
-
     # To be implemented
   }
 

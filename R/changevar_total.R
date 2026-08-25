@@ -102,9 +102,15 @@ changevar_total <- function(catvar_levels, catvar1, catvar2, wgt, x, y,
                             revisitwgt, size1, size2, stratum_ind,
                             stratum_level, cluster_ind, clusterID, wgt1, x1, y1,
                             vartype, warn_ind, warn_df, warn_vec) {
-
   # Assign the function name
   fname <- "changevar_total"
+
+  # Parallels changevar_prop() (see that file, and changevar_mean(), for the
+  # Var(change) = Var(t1) + Var(t2) - 2*Cov(t1, t2) motivation), but for
+  # category TOTALS (size) rather than proportions: for each category, the
+  # weighted category-membership indicator for the two surveys is used
+  # directly as the two-column residual matrix (no proportion is subtracted
+  # off), matching how catvar_total() differs from catvar_prop().
 
   #
   # Calculate covariance or correlation using the repeat visit sites
@@ -113,7 +119,6 @@ changevar_total <- function(catvar_levels, catvar1, catvar2, wgt, x, y,
   # Begin the section for a two-stage sample
 
   if (cluster_ind) {
-
     # Calculate additional required values
     m <- length(catvar_levels)
     cluster <- factor(clusterID)
@@ -135,7 +140,6 @@ changevar_total <- function(catvar_levels, catvar1, catvar2, wgt, x, y,
 
     rslt <- rep(NA, m)
     for (k in 1:m) {
-
       # Determine whether the categorical level is present in both surveys
 
       if (is.na(size1[k]) | is.na(size2[k])) {
@@ -168,7 +172,6 @@ changevar_total <- function(catvar_levels, catvar1, catvar2, wgt, x, y,
       total2est <- matrix(0, ncluster, 2)
       var2est <- matrix(0, ncluster, 4)
       for (i in 1:ncluster) {
-
         # Calculate the weighted indicator matrix
 
         n <- length(catvar1_lst[[i]])
@@ -365,7 +368,6 @@ changevar_total <- function(catvar_levels, catvar1, catvar2, wgt, x, y,
 
     # End of section for a two-stage sample
   } else {
-
     # Begin the section for a single-stage sample
 
     # Calculate additional required values
@@ -377,7 +379,6 @@ changevar_total <- function(catvar_levels, catvar1, catvar2, wgt, x, y,
 
     rslt <- rep(NA, m)
     for (i in 1:m) {
-
       # Determine whether the categorical level is present in both surveys
 
       if (is.na(size1[i]) | is.na(size2[i])) {

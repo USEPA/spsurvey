@@ -53,7 +53,6 @@
 ###############################################################################
 grtspts_ip <- function(type = "equal", n_base, Nstratum = NULL, caty = NULL,
                        aux = NULL, warn_ind = NULL, warn_df = NULL) {
-
   # equal inclusion probabilities
   if (type == "equal") {
     ip <- rep(sum(n_base, na.rm = TRUE) / Nstratum, Nstratum)

@@ -274,7 +274,6 @@ ppd_plot <- function(object, plot_type = "standard",
   ################################################################
   # Standard power plot section
   if (plot_type == "standard") {
-
     #########################
     # type of plot: type.comp: design
     if (comp_type == "design") {

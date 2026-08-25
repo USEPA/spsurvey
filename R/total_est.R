@@ -35,10 +35,10 @@
 #'   detected (nondetect) values for the response variable.
 #'
 #' @param vartype Character value providing the choice of the variance
-#'   estimator, where "Local" = the local total estimator, \code{"SRS"} = the
+#'   estimator, where "local" = the local total estimator, \code{"SRS"} = the
 #'   simple random sampling estimator, \code{"HT"} = the Horvitz-Thompson
 #'   estimator, and \code{"YG"} = the Yates-Grundy estimator.  The default value
-#'   is \code{"Local"}.
+#'   is \code{"local"}.
 #'
 #'
 #' @param conf Numeric value for the confidence level.
@@ -50,6 +50,13 @@
 #'   generated.
 #'
 #' @param warn_df Data frame for storing warning messages.
+#'
+#' @param subset_local Logical value indicating whether the local mean
+#'   variance estimator (\code{vartype = "local"}) builds its neighbor
+#'   structure from domain members only (\code{TRUE}, the
+#'   default) or from all sites in the relevant stratum (\code{FALSE}).
+#'   Has no effect when \code{vartype} is not \code{"Local"}. The default
+#'   value is \code{TRUE}.
 #'
 #' @return A list composed of the following objects:
 #'   \describe{
@@ -89,7 +96,12 @@
 
 total_est <- function(totalsum, dframe, itype, lev_itype, nlev_itype, ivar,
                       design, design_names, var_nondetect, vartype, conf, mult,
-                      warn_ind, warn_df) {
+                      warn_ind, warn_df, subset_local = TRUE) {
+  # Parallels mean_est(), but for svytotal()/total_localmean() rather than
+  # svymean()/mean_localmean(): compute the (design-weighted) total of
+  # ivar, either overall or per level of subpopulation variable itype, with
+  # standard errors/confidence bounds from the local mean variance
+  # estimator (vartype == "Local") or the survey package's SE()/confint().
 
   # Assign a value to the function name variable
 
@@ -100,7 +112,6 @@ total_est <- function(totalsum, dframe, itype, lev_itype, nlev_itype, ivar,
   #
 
   if (is.null(var_nondetect)) {
-
     # Calculate the total estimate, standard error estimate, and confidence
     # bound estimates for each combination of subpopulation and response
     # variable for the case where nondetects are not present
@@ -132,7 +143,8 @@ total_est <- function(totalsum, dframe, itype, lev_itype, nlev_itype, ivar,
         if (vartype == "Local") {
           temp <- total_localmean(
             itype, lev_itype, nlev_itype, c(1), ivar, design, design_names,
-            totalest[1], mult, warn_ind, warn_df
+            totalest[1], mult, warn_ind, warn_df,
+            subset_local = subset_local
           )
           stderr <- temp$stderr
           lbound <- unlist(temp$confval[1])
@@ -184,7 +196,8 @@ total_est <- function(totalsum, dframe, itype, lev_itype, nlev_itype, ivar,
         if (vartype == "Local") {
           temp <- total_localmean(
             itype, lev_itype, nlev_itype, levs, ivar, design, design_names,
-            totalest, mult, warn_ind, warn_df
+            totalest, mult, warn_ind, warn_df,
+            subset_local = subset_local
           )
           stderr[levs] <- temp$stderr[levs]
           lbound[levs] <- unlist(temp$confval[levs, 1])
@@ -200,7 +213,6 @@ total_est <- function(totalsum, dframe, itype, lev_itype, nlev_itype, ivar,
       }
     }
   } else {
-
     # To be implemented
   }
 
@@ -235,7 +247,6 @@ total_est <- function(totalsum, dframe, itype, lev_itype, nlev_itype, ivar,
       }
     }
   } else {
-
     # To be implemented
   }
 

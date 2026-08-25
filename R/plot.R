@@ -104,12 +104,12 @@
 plot.sp_frame <- function(x, formula = ~1, xcoord, ycoord, crs,
                           var_args = NULL, varlevel_args = NULL,
                           geom = FALSE, onlyshow = NULL, fix_bbox = TRUE, ...) {
-
   x <- sp_unframe(x)
-  sp_plot(x, formula, xcoord, ycoord, crs,
-          var_args, varlevel_args,
-          geom, onlyshow, fix_bbox, ...)
-  
+  sp_plot(
+    x, formula, xcoord, ycoord, crs,
+    var_args, varlevel_args,
+    geom, onlyshow, fix_bbox, ...
+  )
 }
 
 #' @name plot
@@ -118,10 +118,11 @@ plot.sp_frame <- function(x, formula = ~1, xcoord, ycoord, crs,
 plot.sp_design <- function(x, sframe = NULL, formula = ~siteuse, siteuse = NULL,
                            var_args = NULL, varlevel_args = NULL, geom = FALSE, onlyshow = NULL,
                            fix_bbox = TRUE, ...) {
-  
-  sp_plot.sp_design(x, sframe, formula, siteuse,
-                    var_args, varlevel_args, geom, onlyshow,
-                    fix_bbox, ...)
+  sp_plot.sp_design(
+    x, sframe, formula, siteuse,
+    var_args, varlevel_args, geom, onlyshow,
+    fix_bbox, ...
+  )
 }
 
 ################################################################################
@@ -134,9 +135,9 @@ plot.sp_design <- function(x, sframe = NULL, formula = ~siteuse, siteuse = NULL,
 #'
 #' This function creates a CDF plot.  Input data for the plots is provided by a
 #' data frame from the "CDF" output given by  \code{cont_analysis}.
-#' Confidence limits for the CDF also are plotted. Equivalent to \code{cdf_plot()}; 
+#' Confidence limits for the CDF also are plotted. Equivalent to \code{cdf_plot()};
 #' both are currently maintained for backwards compatibility.
-#' 
+#'
 #' @name plot.sp_CDF
 #' @method plot sp_CDF
 #'
@@ -273,10 +274,9 @@ plot.sp_CDF <- function(x, var = NULL, subpop = NULL, subpop_level = NULL,
                         units_cdf = "Percent", type_cdf = "Continuous", log = "",
                         xlab = NULL, ylab = NULL, ylab_r = NULL, main = NULL, legloc = NULL,
                         confcut = 0, conflev = 95, cex.main = 1.2, cex.legend = 1, ...) {
-  cdf_plot(x, var, subpop, subpop_level, units_cdf, type_cdf, log,
-           xlab, ylab, ylab_r, main, legloc, confcut, conflev, cex.main, 
-           cex.legend, ...)
+  cdf_plot(
+    x, var, subpop, subpop_level, units_cdf, type_cdf, log,
+    xlab, ylab, ylab_r, main, legloc, confcut, conflev, cex.main,
+    cex.legend, ...
+  )
 }
-
-
-

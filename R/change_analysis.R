@@ -266,7 +266,17 @@
 #' @param vartype Character value providing the choice of the variance
 #'   estimator, where \code{"Local"} indicates the local mean estimator and
 #'   \code{"SRS"} indicates the simple random sampling estimator.  The default
-#'   value is \code{"Local"}.
+#'   value is \code{"local"}.
+#'
+#' @param subset_local When `subset_local = TRUE` (the default),
+#' subpopulations are subset to include only subpopulation members
+#' prior to variance estimation. When `subset_local = FALSE`,
+#' subpopulations are not subset prior to variance estimation.
+#' `subset_local = FALSE` follows standard design-based subpopulation
+#' (i.e., domain) estimation theory but is computationally more complex,
+#' requiring the neighborhood weights matrix of the full data
+#' (which scales cubically with the sample size).
+#' `subset_local only applies when `vartype = "local"`.
 #'
 #' @param jointprob Character value providing the choice of joint inclusion
 #'   probability approximation for use with Horvitz-Thompson and Yates-Grundy
@@ -298,7 +308,7 @@
 #'   categorical variables and continuous variables using the median).  Change
 #'   estimates are provided plus standard error estimates and confidence
 #'   interval estimates.
-#'   
+#'
 #'   The \code{catsum} data frame contains the following variables:
 #'   \describe{
 #'     \item{Survey_1}{first survey name}
@@ -340,7 +350,7 @@
 #'     \item{LCBxxPct.U_2}{xx\% (default 95\%) lower confidence bound of total estimate from the second survey}
 #'     \item{UCBxxPct.U_2}{xx\% (default 95\%) upper confidence bound of total estimate from the second survey}
 #'   }
-#'   
+#'
 #'   The \code{contsum_mean} data frame contains the following variables:
 #'   \describe{
 #'     \item{Survey_1}{first survey name}
@@ -368,7 +378,7 @@
 #'     \item{LCBxxPct_2}{xx\% (default 95\%) lower confidence bound of mean estimate from the second survey}
 #'     \item{UCBxxPct_2}{xx\% (default 95\%) upper confidence bound of mean estimate from the second survey}
 #'   }
-#'   
+#'
 #'   The \code{contsum_total} data frame contains the following variables:
 #'   \describe{
 #'     \item{Survey_1}{first survey name}
@@ -396,7 +406,7 @@
 #'     \item{LCBxxPct_2}{xx\% (default 95\%) lower confidence bound of total estimate from the second survey}
 #'     \item{UCBxxPct_2}{xx\% (default 95\%) upper confidence bound of total estimate from the second survey}
 #'   }
-#'   
+#'
 #'   The \code{contsum_median} data frame contains the following variables:
 #'   \describe{
 #'     \item{Survey_1}{first survey name}
@@ -476,9 +486,8 @@ change_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL, test = "m
                             weight = "weight", revisitwgt = FALSE, xcoord = NULL, ycoord = NULL,
                             stratumID = NULL, clusterID = NULL, weight1 = NULL, xcoord1 = NULL,
                             ycoord1 = NULL, sizeweight = FALSE, sweight = NULL, sweight1 = NULL,
-                            fpc = NULL, popsize = NULL, vartype = "Local", jointprob = "overton",
-                            conf = 95, All_Sites = FALSE) {
-
+                            fpc = NULL, popsize = NULL, vartype = "local", jointprob = "overton",
+                            conf = 95, All_Sites = FALSE, subset_local = TRUE) {
   # Assign NULL to vars_nondetect
 
   vars_nondetect <- NULL
@@ -539,7 +548,6 @@ change_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL, test = "m
     msg <- paste0("The name provided for the surveyID argument, \"", surveyID, "\", does not occur among \nthe names for the dframe data frame.\n")
     error_vec <- c(error_vec, msg)
   } else {
-
     # Ensure that the survey names variable is a vector that has two unique values
     # and that those values match the categories used in the survey ID variable in
     # the dframe data frame
@@ -782,7 +790,6 @@ change_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL, test = "m
       msg <- paste("For the following subpopulation variables, at least one of the surveys contains only \nmissing values:\n", temp.str)
       error_vec <- c(error_vec, msg)
     } else {
-
       # For each subpopulation variable, remove levels that contain only missing
       #  values for one of the surveys
 
@@ -888,6 +895,16 @@ change_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL, test = "m
 
   cluster_ind <- !is.null(clusterID)
 
+  # subset_local = FALSE is not yet implemented for two-stage designs (the
+  # cluster_ind branches of category_est()/mean_est()/total_est()'s
+  # underlying local mean variance estimators still build a domain-only
+  # neighbor structure, which would look like subset_local silently having
+  # no effect)
+
+  if (!subset_local && cluster_ind) {
+    stop("\nsubset_local = FALSE is not yet supported for two-stage (clustered) samples.\n")
+  }
+
   # Create the survey design object for each survey
   ## give factors two levels if they only have one level
   for (x in vars_cat) {
@@ -961,7 +978,6 @@ change_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL, test = "m
   #
 
   if (!is.null(vars_cat)) {
-
     # Loop through all subpopulations (domains)
 
     for (itype in subpops) {
@@ -976,7 +992,6 @@ change_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL, test = "m
         # Loop through all levels of a subpopulation
 
         for (isubpop in lev_itype) {
-
           # Calculate change estimates, standard error estimates, and confidence
           # bound estimates for each combination of subpopulation, response
           # variable, and level of the subpopulation
@@ -986,7 +1001,8 @@ change_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL, test = "m
             dframe, survey_1, survey_2, itype, isubpop, ivar, lev_ivar,
             nlev_ivar, design_1, design_2, design_names, repeat_1[survey_1],
             repeat_2[survey_2], siteID, revisitwgt, NULL, NULL, vartype, conf,
-            mult, warn_ind, warn_df, warn_vec = c(itype, isubpop, ivar)
+            mult, warn_ind, warn_df,
+            warn_vec = c(itype, isubpop, ivar), subset_local = subset_local
           )
           changesum <- temp$changesum
           warn_ind <- temp$warn_ind
@@ -1009,7 +1025,6 @@ change_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL, test = "m
   #
 
   if (!is.null(vars_cont)) {
-
     # Loop through all subpopulations
 
     for (itype in subpops) {
@@ -1018,11 +1033,9 @@ change_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL, test = "m
       # Loop through all response variables
 
       for (ivar in vars_cont) {
-
         # Loop through all levels of a subpopulation
 
         for (isubpop in lev_itype) {
-
           # Calculate change estimates, standard error estimates, and confidence
           # bound estimates for each combination of subpopulation, response
           # variable, and level of the subpopulation
@@ -1034,7 +1047,7 @@ change_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL, test = "m
             design_1, design_2, design_names, repeat_1[survey_1],
             repeat_2[survey_2], siteID, revisitwgt, test, vars_nondetect[indx],
             vartype, conf, mult, warn_ind, warn_df,
-            warn_vec = c(itype, isubpop, ivar)
+            warn_vec = c(itype, isubpop, ivar), subset_local = subset_local
           )
           changesum <- temp$changesum
           warn_ind <- temp$warn_ind
@@ -1103,7 +1116,7 @@ change_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL, test = "m
       )
     )
   }
-  
+
   if (!is.null(changesum$contsum_total)) {
     dimnames(changesum$contsum_total) <- list(
       1:nrow(changesum$contsum_total),

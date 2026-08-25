@@ -18,6 +18,17 @@
 ###############################################################################
 
 rho <- function(sites) {
+  # This implements "reverse hierarchical order" (Stevens & Olsen 2004): sites arrive already in hierarchically-recursive GRTS
+  # order, where consecutive runs of sites share the same coarse quadrant
+  # of the population domain. This function re-sorts them so that ANY
+  # prefix of the new ordering (the first k sites, for any k) is itself
+  # spatially balanced, by treating each site's position as a base-4
+  # address (nlev digits, one per level of quadrant subdivision) and
+  # reversing the digit order before re-ranking, so what was the
+  # coarsest-quadrant digit becomes the finest, and vice versa. This
+  # reversal is what lets grts_stratum() take a contiguous prefix of the
+  # result as a spatially balanced base sample and the remainder as a
+  # spatially balanced over/replacement sample (see grts_stratum.R).
 
   # Construct sample hierarchical address
   np <- nrow(sites)

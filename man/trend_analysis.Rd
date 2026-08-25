@@ -30,10 +30,11 @@ trend_analysis(
   popsize = NULL,
   invprboot = TRUE,
   nboot = 1000,
-  vartype = "Local",
+  vartype = "local",
   jointprob = "overton",
   conf = 95,
-  All_Sites = FALSE
+  All_Sites = FALSE,
+  subset_local = TRUE
 )
 }
 \arguments{
@@ -279,7 +280,7 @@ default is \code{1000}.}
 where \code{"Local"} = the local mean estimator, \code{"SRS"} = the simple
 random sampling estimator, \code{"HT"} = the Horvitz-Thompson estimator,
 and \code{"YG"} = the Yates-Grundy estimator.  The default value is
-\code{"Local"}.}
+\code{"local"}.}
 
 \item{jointprob}{Character value providing choice of joint inclusion
 probability approximation for use with Horvitz-Thompson and Yates-Grundy
@@ -298,6 +299,19 @@ returned for each variable in \code{vars}. If \code{All_Sites} is
 \code{FALSE}, then alongside the subpopulation output, output for all sites
 (ignoring subpopulations) is not returned for each variable in \code{vars}.
 The default is \code{FALSE}.}
+
+\item{subset_local}{Logical value that controls how the local mean
+variance estimator (the default \code{vartype = "local"}) handles
+subpopulations for the per-year category/mean estimates that feed the
+\code{"SLR"}/\code{"WLR"} trend models. See \code{\link{cat_analysis}}
+for the full explanation. Only affects \code{model_cat}/\code{model_cont
+= "WLR"}: for \code{"SLR"}, the per-year variance estimate is computed
+but never used (an unweighted \code{lm()} trend line is fit through the
+point estimates alone), so \code{subset_local} has no effect on
+\code{"SLR"} results. Has no effect on \code{"GLMM"}/\code{"LMM"}
+models, which do not use these functions.
+`subset_local` only applies when `vartype = "local"`.
+The default value is \code{TRUE}.}
 }
 \value{
 The analysis results. A list composed of two data frames containing trend estimates for all
