@@ -161,16 +161,6 @@ total_localmean <- function(itype, lev_itype, nlev_itype, levs, ivar, design,
     # Branch for a stratified sample
 
     if (stratum_ind) {
-      # Calculate values required for weighting strata
-
-      if (cluster_ind) {
-        popsize_hat <- tapply(wgt1[tst] * wgt2[tst], stratum, sum)
-        sum_popsize_hat <- sum(wgt1[tst] * wgt2[tst])
-      } else {
-        popsize_hat <- tapply(wgt[tst], stratum, sum)
-        sum_popsize_hat <- sum(wgt[tst])
-      }
-
       # Begin the subsection for individual strata
 
       for (i in 1:nstrata) {
@@ -233,8 +223,11 @@ total_localmean <- function(itype, lev_itype, nlev_itype, levs, ivar, design,
             )
         }
         if (temp$vartype == "SRS") {
+          # the fallback estimate must cover only this stratum (stratum_i),
+          # not the whole subpopulation (tst); this loop contributes one
+          # stratum's variance at a time
           rslt_svy <- svytotal(make.formula(ivar),
-            design = subset(design, tst),
+            design = subset(design, stratum_i),
             na.rm = TRUE
           )
           varest <- SE(rslt_svy)^2
@@ -243,9 +236,20 @@ total_localmean <- function(itype, lev_itype, nlev_itype, levs, ivar, design,
         }
 
         # Add estimate to the stderr vector
+        # The estimated total for the subpopulation is the sum of the
+        # per-stratum totals, and strata are sampled independently, so the
+        # stratum variances add directly: Var(sum_h T_h) = sum_h Var(T_h).
+        # This differs from mean_localmean()/cat_localmean_prop(), where the
+        # combined estimate is a population-size-weighted average of the
+        # per-stratum estimates and the variances are therefore combined
+        # with appropriate weights. stderr[isubpop] temporarily holds a variance
+        # here and is converted to a standard error via sqrt() once all
+        # strata are done. Perhaps confusingly, stderr[isubpop] below
+        # is actually a variance until it its square root is taken a few
+        # lines below (in stderr[isubpop] <- sqrt(stderr[isubpop])).
+        # Consider making this more clear in the future.
 
-        stderr[isubpop] <- stderr[isubpop] +
-          ((popsize_hat[i] / sum_popsize_hat)^2) * varest
+        stderr[isubpop] <- stderr[isubpop] + varest
 
         # End the subsection for individual strata
       }

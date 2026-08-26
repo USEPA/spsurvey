@@ -123,16 +123,6 @@ cdftest_localmean_total <- function(design, design_names, warn_ind, warn_df,
   # Branch for a stratified sample
 
   if (stratum_ind) {
-    # Calculate values required for weighting strata
-
-    if (cluster_ind) {
-      popsize_hat <- tapply(wgt1 * wgt2, stratum, sum)
-      sum_popsize_hat <- sum(wgt1 * wgt2)
-    } else {
-      popsize_hat <- tapply(wgt, stratum, sum)
-      sum_popsize_hat <- sum(wgt)
-    }
-
     # Create the varest matrix
 
     lev_rowvar <- levels(design$variables$rowvar)
@@ -193,9 +183,14 @@ cdftest_localmean_total <- function(design, design_names, warn_ind, warn_df,
 
       # Add estimates to the varest matrix
 
+      # This matrix holds the variances and covariances of the contingency
+      # table's cell and margin totals. Each cell total for the whole
+      # design is the sum of that cell's per-stratum totals, and strata are
+      # sampled independently, so the per-stratum covariance matrices add
+      # directly
+
       tst <- colnames_varest %in% colnames(varest_st)
-      varest[tst, tst] <- varest[tst, tst] +
-        ((popsize_hat[i] / sum_popsize_hat)^2) * varest_st
+      varest[tst, tst] <- varest[tst, tst] + varest_st
       colnames(varest) <- colnames_varest
 
       # End the loop for strata

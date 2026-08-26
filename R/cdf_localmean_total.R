@@ -227,9 +227,12 @@ cdf_localmean_total <- function(itype, lev_itype, nlev_itype, ivar, design,
           ))
         }
         if (temp$vartype == "SRS") {
+          # the fallback estimate must cover only this stratum (stratum_i),
+          # not the whole subpopulation (tst); this loop contributes one
+          # stratum's variance at a time
           rslt_svy <- lapply(cdfval, function(x) {
             svytotal(make.formula(paste0("I(", ivar, " <= ", x, ")")),
-              design = subset(design, tst), na.rm = TRUE
+              design = subset(design, stratum_i), na.rm = TRUE
             )
           })
           varest <- sapply(rslt_svy, function(x) SE(x)[2])^2

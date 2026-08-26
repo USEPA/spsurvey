@@ -246,8 +246,11 @@ mean_localmean <- function(itype, lev_itype, nlev_itype, levs, ivar, design,
             )
         }
         if (temp$vartype == "SRS") {
+          # the fallback estimate must cover only this stratum (stratum_i),
+          # not the whole subpopulation (tst); this loop contributes one
+          # stratum's variance at a time
           rslt_svy <- svymean(make.formula(ivar),
-            design = subset(design, tst),
+            design = subset(design, stratum_i),
             na.rm = TRUE
           )
           varest <- SE(rslt_svy)^2

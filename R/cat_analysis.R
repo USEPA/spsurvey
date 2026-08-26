@@ -254,7 +254,7 @@
 #' but is computationally more complex,
 #' requiring the neighborhood weights matrix of the full data
 #' (which scales cubically with the sample size).
-#' `subset_local only applies when `vartype = "local"`.
+#' `subset_local` only applies when `vartype = "local"`.
 
 #'
 #' @return The analysis results. A data frame of population estimates for all combinations of

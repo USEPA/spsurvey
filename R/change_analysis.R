@@ -276,7 +276,7 @@
 #' (i.e., domain) estimation theory but is computationally more complex,
 #' requiring the neighborhood weights matrix of the full data
 #' (which scales cubically with the sample size).
-#' `subset_local only applies when `vartype = "local"`.
+#' `subset_local` only applies when `vartype = "local"`.
 #'
 #' @param jointprob Character value providing the choice of joint inclusion
 #'   probability approximation for use with Horvitz-Thompson and Yates-Grundy

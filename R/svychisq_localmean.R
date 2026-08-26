@@ -44,7 +44,7 @@
 #' The default test (statistic equals \code{"F"}) is the Rao-Scott second-order
 #' correction. The p-value is computed using a Satterthwaite approximation to
 #' the distribution with denominator degrees of freedom as recommended by Thomas
-#' and Rao (1990).
+#' and Rao (1987).
 #'
 #' The test specified by statistic equals \code{"Chisq"} adjusts the Pearson
 #' chi-squared statistic by a design effect estimate and then compares that
@@ -58,8 +58,8 @@
 #'
 #' The test specified by statistic equals \code{"adjWald"} reduces the Wald statistic
 #' when the number of sites is small compared to the number of degrees of
-#' freedom of the test. Thomas and Rao (1990) compared The two Wald tests and
-#' found the adjustment benefical.
+#' freedom of the test. Thomas and Rao (1987) compared the two Wald tests and
+#' found the adjustment beneficial.
 #'
 #' The test specified by statistic equals \code{"lincom"} replaces the numerator of the
 #' Rao-Scott F with the exact asymptotic distribution, which is a linear

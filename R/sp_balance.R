@@ -38,9 +38,9 @@
 #'     can take on a value between zero and infinity.}
 #'   \item{\code{mse}}{ Mean-Squared Error. This statistic
 #'     can take on a value between zero and infinity.}
-#'   \item{\code{mae}}{ Median-Absolute Error. This statistic
+#'   \item{\code{mae}}{ Mean-Absolute Error. This statistic
 #'     can take on a value between zero and infinity.}
-#'   \item{\code{medae}}{ Mean-Absolute Error. This statistic
+#'   \item{\code{medae}}{ Median-Absolute Error. This statistic
 #'     can take on a value between zero and infinity.}
 #'   \item{\code{chisq}}{ Chi-Squared Loss. This statistic
 #'     can take on a value between zero and infinity.}

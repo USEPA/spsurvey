@@ -30,7 +30,9 @@ library(spsurvey)
 
 The `summary()` and `plot()` functions in spsurvey are used to summarize and visualize sampling frames, design sites, and analysis data. Both functions use a formula argument that specifies the variables to summarize or visualize. These functions behave differently for one-sided and two-sided formulas. To learn more about formulas in R, run `?formula`. Only the core functionality of `summary()` and `plot()` will be covered in this vignette, so to learn more about these functions, run `?summary` and `?plot`. The `sp_summary()` and `sp_plot()` functions can equivalently be used in place of `plot()` and `summary()`, respectively (`sp_summary()` and `sp_plot()` are currently maintained for backwards compatibility with previous spsurvey versions).
 
-The `plot()` function in spsurvey is built on the `plot()` function in sf. spsurvey's `plot()` function accommodates all the arguments in sf's `plot()` function and adds a few additional features.  To learn more about the `plot()` function in sf, run `?plot.sf()`. 
+The `plot()` function in spsurvey is built on the `plot()` function in sf. spsurvey's `plot()` function accommodates all the arguments in sf's `plot()` function and adds a few additional features.  To learn more about the `plot()` function in sf, run `?plot.sf()`.
+
+These functions are exploratory tools, not estimation tools. They summarize and visualize the data without using design weights, so they describe the sampling frame or the sample itself rather than the entire population. Population estimates and their standard errors come from the analysis functions (see the `*_analysis()` functions discussed in the Analyzing Data vignette), which combine the data with the design weights.
 
 # Sampling frames
 
@@ -291,6 +293,8 @@ To summarize and visualize `NITR_COND` across all states, run
 ```{r}
 summary(NLA_PNW, formula = ~ NITR_COND)
 ```
+
+The counts returned here are counts of sampled sites, not estimates of how many lakes in the target population fall in each nitrogen condition category. Because the sites carry unequal design weights, the two generally differ. Use `cat_analysis()` to estimate the population proportions and totals, along with their standard errors and confidence intervals.
 
 ```{r, eval = FALSE}
 plot(NLA_PNW, formula = ~ NITR_COND, key.width = lcm(3))

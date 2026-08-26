@@ -286,7 +286,7 @@ subpopulations are not subset prior to variance estimation.
 (i.e., domain) estimation theory but is computationally more complex,
 requiring the neighborhood weights matrix of the full data
 (which scales cubically with the sample size).
-`subset_local only applies when `vartype = "local"`.}
+`subset_local` only applies when `vartype = "local"`.}
 }
 \value{
 List of change estimates composed of four items:
