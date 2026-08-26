@@ -59,15 +59,15 @@ citation(package = "spsurvey")
   \begin{split}
    N, \, n & = \text{Sampling frame (population) size; sample size} \\
    s_i & = \text{The } i\text{th site (sampling unit)} \\
-   \mathbb{1}(A) & = \text{Indicator function; one if } A \text{ holds and zero otherwise} \\
-   I_i & = \mathbb{1}(s_i \text{ is selected into the sample}) \\
+   \mathbf{I}(A) & = \text{Indicator function; one if } A \text{ holds and zero otherwise} \\
+   I_i & = \mathbf{I}(s_i \text{ is selected into the sample}) \\
    \pi_i, \, \pi_{ij} & = \text{Inclusion probability for } s_i \text{; joint inclusion probability for } s_i, s_j \\
    \Delta_{ij} = \pi_{ij} - \pi_i \pi_j & = \text{Covariance of the sample membership indicators } I_i \text{ and } I_j \\
    w_i = \pi_i^{-1} & = \text{Design weight for } s_i \\
    y_i & = \text{Response value at } s_i \\
    \tau, \, \hat\tau & = \text{Population total; its estimator} \\
    \bar y, \, \hat{\bar y} & = \text{Population mean; its estimator} \\
-   D, \, \delta_i = \mathbb{1}(s_i \in D) & = \text{Subpopulation (domain); its membership indicator} \\
+   D, \, \delta_i = \mathbf{I}(s_i \in D) & = \text{Subpopulation (domain); its membership indicator} \\
    \mathcal{N}(s_i) & = \text{Local neighborhood of } s_i \\
    w_{ij} & = \text{Local neighborhood weight for the pair } (i, j) \\
    \hat V_{\mathrm{lnb}}(\cdot) & = \text{The local neighborhood variance estimator} \\
@@ -196,11 +196,11 @@ $$
 Then the estimands used throughout the package are
 
 - **Totals**: $\hat\tau(g)$ with $g(y) = y$ for a continuous response, or
-  $g(y) = \mathbb{1}(y = c)$ for the size of category $c$ of a categorical
+  $g(y) = \mathbf{I}(y = c)$ for the size of category $c$ of a categorical
   response.
 - **Means**: $\hat R(g)$ with $g(y) = y$.
-- **Proportions**: $\hat R(g)$ with $g(y) = \mathbb{1}(y = c)$.
-- **Distribution functions**: $\hat R(g)$ with $g(y) = \mathbb{1}(y \le t)$,
+- **Proportions**: $\hat R(g)$ with $g(y) = \mathbf{I}(y = c)$.
+- **Distribution functions**: $\hat R(g)$ with $g(y) = \mathbf{I}(y \le t)$,
   giving the estimated cumulative distribution function
   $\hat F(t) = \widehat{\Pr}(y \le t)$ evaluated at a grid of $t$ values.
 
@@ -486,7 +486,7 @@ frame but observed only through the sample.
 
 #### The Domain Total and Its Variance {#sec:core-subpops-var}
 
-Let $\delta_i = \mathbb{1}(s_i \in D)$ record domain membership, which is a
+Let $\delta_i = \mathbf{I}(s_i \in D)$ record domain membership, which is a
 fixed property of the sampling frame. The domain total is
 $\tau_D = \sum_{i=1}^N \delta_i y_i$, and its HT estimator is obtained by
 applying \eqref{eq:ht-total} to the transformed response $\delta_i y_i$:
@@ -1289,7 +1289,7 @@ weighted variable, and combined across strata by
 For a categorical response with levels $c = 1, \ldots, C$, `cat_analysis()`
 estimates the size and the proportion of each level:
 $$
-\hat\tau_c = \sum_{i=1}^n w_i \mathbb{1}(y_i = c), \qquad
+\hat\tau_c = \sum_{i=1}^n w_i \mathbf{I}(y_i = c), \qquad
 \hat p_c = \frac{\hat\tau_c}{\hat N} .
 $$
 The total row that appears alongside each response variable's categories is
@@ -1308,11 +1308,11 @@ response, selected with the `statistics` argument.
 - **`"Total"`**: $\hat\tau = \sum_i w_i y_i$, the direct application of
   \eqref{eq:ht-total}.
 - **`"Mean"`**: $\hat{\bar y} = \hat\tau / \hat N$, the ratio estimator.
-- **`"CDF"`**: $\hat F(t) = \sum_i w_i \mathbb{1}(y_i \le t) / \hat N$ on the
-  proportion scale and $\sum_i w_i \mathbb{1}(y_i \le t)$ on the total scale,
+- **`"CDF"`**: $\hat F(t) = \sum_i w_i \mathbf{I}(y_i \le t) / \hat N$ on the
+  proportion scale and $\sum_i w_i \mathbf{I}(y_i \le t)$ on the total scale,
   evaluated at every distinct observed value of the response. The
   `var_nondetect` argument supports left-censored (nondetect) data by
-  restricting which comparisons $\mathbb{1}(y_i \le t)$ can be resolved.
+  restricting which comparisons $\mathbf{I}(y_i \le t)$ can be resolved.
 - **`"Pct"`**: Percentiles, at the probabilities given by `pctval`. The
   estimated $q$th percentile is
   $\hat y_q = \inf\{t : \hat F(t) \ge q\}$, obtained by inverting the
@@ -1331,7 +1331,7 @@ cumulative distribution function. The response is discretized into $C$ classes
 by cutting at a common set of values, giving a contingency table of
 subpopulation by class. Its cells are the estimated proportions
 $$
-\hat p_{kc} = \frac{1}{\hat N} \sum_{i=1}^n w_i \, \mathbb{1}(s_i \in \text{subpopulation } k) \, \mathbb{1}(y_i \in \text{class } c) ,
+\hat p_{kc} = \frac{1}{\hat N} \sum_{i=1}^n w_i \, \mathbf{I}(s_i \in \text{subpopulation } k) \, \mathbf{I}(y_i \in \text{class } c) ,
 $$
 with row and column margins $\hat p_{k\cdot}$ and $\hat p_{\cdot c}$. Equal
 distribution functions correspond to independence of row and column in this
@@ -1386,7 +1386,7 @@ adverse one is set by `response_levels` and `stressor_levels`.
 All three are built from the same $2 \times 2$ table of estimated totals.
 Writing $r$ for the response level and $c$ for the stressor level, with level
 $1$ adverse and level $2$ not, the cells are
-$\hat\tau_{rc} = \sum_i w_i \mathbb{1}(y_i = r)\mathbb{1}(x_i = c)$, and the
+$\hat\tau_{rc} = \sum_i w_i \mathbf{I}(y_i = r)\mathbf{I}(x_i = c)$, and the
 table is
 
 |  | Stressor poor | Stressor good | Total |
