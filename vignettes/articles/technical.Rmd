@@ -1208,7 +1208,7 @@ spatially balanced.
 The device is to reverse the digits of each site's address. Consider $16$
 selected sites, whose positions in address order are $0$ through $15$ and
 whose two-digit base-4 addresses run $00, 01, 02, \ldots, 33$. Reversing the
-digits and reading the result back as a base-4 number gives a new sort key:
+digits and reading the result back as a base-4 number gives a new key by which to order sites:
 
 | Position | Address | Reversed | Key |
 |---|---|---|---|
@@ -1236,9 +1236,13 @@ fourth, first, second, and so on. Any prefix of length four therefore visits
 every quadrant exactly once, any prefix of length eight visits every quadrant
 twice, and the same holds recursively at finer levels. Reversing the digits
 promotes the finest quadrant distinction to the most significant position,
-which is exactly what makes short prefixes spread out rather than cluster.
+which is exactly what makes short prefixes spread out rather than cluster. Sometimes
+the "key" by which observations are sorted is called site-ID order (a 
+list of sites in a specific order); site-ID order is especially important when sampling
+oversample sites (see
+[Replacement Sites](#sec:core-grts-replacement)).
 
-The number of address digits used is the smallest number sufficient to
+The number of hierarchical address digits used is the smallest number sufficient to
 distinguish the selected sites, so it grows with $\log_4$ of the number of
 sites selected.
 
@@ -1298,7 +1302,7 @@ cannot be visited: Oversample sites and nearest neighbor sites.
   distance and labeled `"Near-1st"`, `"Near-2nd"`, and so on, up to ten.
 
 Oversample sites must be used in the order they are listed, which is the
-order of their site identifiers. This is a direct consequence of reverse
+order of their site identifiers (i.e., they must be used in site-ID order). This is a direct consequence of reverse
 hierarchical ordering: What that ordering guarantees is that prefixes are
 spatially balanced, so taking the first three oversample sites gives a
 spatially balanced set of three, while taking three chosen for convenience
