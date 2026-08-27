@@ -63,13 +63,15 @@ There are five additional vignettes in ``spsurvey`` that are available on our we
 
 1. An Overview of Statistical Surveys for Ecological Applications
 2. Exploratory Data Analysis: Summarizing and Visualizing Sampling Frames, Design Sites, and Analysis Data
-    * Use the `summary()` and `plot()` functions to summarize and visualize sampling frames, design sites, and analysis data
+    * Use the `summary()` and `plot()` functions to summarize and visualize sampling frames, design sites, and analysis data.
 3. Spatially Balanced Sampling
-    * Use the `grts()` function to implement the Generalized Random Tessellation Stratified (GRTS) algorithm (Stevens and Olsen, 2004) to select spatially balanced samples
+    * Use the `grts()` function to implement the Generalized Random Tessellation Stratified (GRTS) algorithm (Stevens and Olsen, 2004) to select spatially balanced samples.
 4. Weight Adjustments in Practice
     * Use the `adjwgt()` and `adjwgtNR()` functions to adjust weights for changing sample sizes and nonresponse, respectively.
 5. Analyzing Data
-    * Use several analysis functions to analyze data
+    * Use several analysis functions to analyze data.
+6. Technical Details
+    * See the technical details underlying various functions in `spsurvey`.
 
 These vignettes cover some of the core functions (and arguments within those functions) in `spsurvey`. To learn more about features of `spsurvey` that are not covered in these vignettes, we encourage you to read `spsurvey`'s documentation available for download [here](https://cran.r-project.org/package=spsurvey) or viewable interactively on our website [here](https://usepa.github.io/spsurvey/). Help files for a particular function are viewable by running `?function_name` after loading `spsurvey`. For example, to learn more about the `grts()` function, run `?grts`.
 

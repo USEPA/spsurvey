@@ -465,6 +465,61 @@ The point estimates are identical under all four options, since they all
 follow from \eqref{eq:ht-total}. Only the reported standard errors differ.
 For GRTS samples, `"local"` is recommended and is the default.
 
+### From Standard Errors to Confidence Intervals {#sec:core-ci}
+
+Built from the data, a confidence interval quantifies a range of plausible values for some
+parameter $\theta$. Confidence intervals combine a point estimate,
+$\hat{\theta}$, with a standard error
+($\widehat{\mathrm{SE}}(\hat\theta) = \sqrt{\hat V(\hat\theta)}$)
+and a critical value. The critical value scales the standard error
+by the requested confidence level, based on the assumed distribution
+of $\hat{\theta}$. Generally in `spsurvey`, normal (i.e., Gaussian)
+confidence intervals are computed; a
+$100(1-\alpha)\%$ normal-based, equal-tailed, two-sided confidence interval is
+\begin{equation}\label{eq:ci}
+\hat\theta \pm z_{1-\alpha/2} \, \widehat{\mathrm{SE}}(\hat\theta) ,
+\end{equation}
+where $z_{1-\alpha/2}$ is a standard normal (mean zero, variance one) quantile
+(this type of interval is sometimes called a Wald interval).
+The `conf` argument sets
+the confidence level as a percentage and defaults to 95, so
+$z_{0.975} \approx 1.96$. The margin of error reported alongside each estimate
+is the product $z_{1-\alpha/2}\widehat{\mathrm{SE}}(\hat\theta)$ itself, so an
+interval can be reconstructed from the estimate and its margin of error alone.
+
+The justification for the normal-based form of \eqref{eq:ci} is asymptotic (i.e., applies for large sample sizes). Achieving proper (i.e., nominal)
+confidence interval coverage is an asymptotic property.  Under mild conditions, 
+Horvitz-Thompson estimators
+and smooth functions of them are approximately normal distributed as the
+sample size grows [@sarndal1992model; @lohr2022sampling].
+Intervals may be different from their stated level when the sampling distribution of $\hat\theta$ is
+not approximately normal. This can occur when the sample size is small, when
+the design weights are highly variable, or when the response is highly
+skewed.
+
+`spsurvey` has a few departures from the normal-based asymptotic (i.e., Wald) intervals:
+
+- **Bounded estimands are truncated**: A proportion's interval from \eqref{eq:ci} is clipped to
+  $[0, 1]$ before being reported on a percentage scale, and a risk
+  difference's to $[-1, 1]$. Near a boundary the reported interval is
+  therefore asymmetric, even though the interval implied by \eqref{eq:ci} is symmetric.
+- **Relative risk and attributable risk use the log scale**: As described in
+  [Risk Analysis](#sec:core-risk-analysis), \eqref{eq:ci} is applied to
+  $\log \widehat{RR}$ or to $\log \hat\theta$ and the endpoints are then
+  back-transformed, giving an interval that is asymmetric on the original
+  scale.
+- **Percentiles do not use \eqref{eq:ci}**: Their intervals come from
+  `survey`'s own quantile machinery, which constructs a Wald confidence interval
+  for the proportion below the quantile (the quantile is the value of the response at the
+  percentile). The inverse of the CDF is then used to map this interval back
+  to the quantile scale. [@woodruff1952confidence; @lumley2024survey].
+- **Regression-based trends do not always use \eqref{eq:ci}**: In
+  [trend_analysis()](#sec:core-trend-analysis), the interval for the fitted
+  trend (i.e., fixed effect, slope coefficient) is taken from the model object.
+  For `"SLR"` and `"WLR"`, this is a $t$
+  interval based on the regression's residual degrees of freedom. For `"LMM"` and
+  `"GLMM"`, this is a Wald interval \eqref{eq:ci}.
+
 ## Design Features {#sec:core-design-features}
 
 The remaining arguments to the `*_analysis()` functions describe features of
@@ -913,92 +968,135 @@ address $a_i$ recording which quadrant it fell in at each level. Sorting by
 address puts locations that share coarse quadrants next to one another, and
 within those, locations that share finer quadrants next to one another.
 
-Consider four sites on the unit square:
+Consider a sampling frame of $N = 10$ units on the unit square, from which we
+want a sample of size $n = 4$. Under an equal probability design, every unit has $\pi_i = n/N = 0.4$
+and design weight $w_i = 2.5$ (Figure \ref{fig:grts-frame}). At each level, record one bit per coordinate. The bit $b_x$ is $0$ if the unit
+lies in the lower half of the current $x$ interval and $1$ if it lies in the
+upper half ($b_y$ asks the same question of $y$). These bits are not
+coordinates, they are answers to two yes-or-no questions about which half the
+unit fell in, so the pair $(b_x, b_y)$ names one of four quadrants without
+locating anything inside it. Writing the digit as $2 b_y + b_x$ simply packs
+the pair into a single number, reading it as a two-bit binary value with $b_y$
+as the high bit, so $(0,0)$, $(1,0)$, $(0,1)$, and $(1,1)$ become $0$, $1$,
+$2$, and $3$, labeling the lower-left, lower-right, upper-left, and upper-right
+quadrants. Two levels give
 
-$$
-s_1 = (0.10,\, 0.20), \quad s_2 = (0.40,\, 0.80), \quad s_3 = (0.60,\, 0.30), \quad s_4 = (0.90,\, 0.70) .
-$$
+| Unit | $(x, y)$ | Level 1 $(b_x, b_y) \to$ digit | Level 2 $(b_x, b_y) \to$ digit | Address $a_i$ |
+|---|---|---|---|---|
+| $u_1$ | $(0.10,\, 0.20)$ | $(0, 0) \to 0$ | $(0, 0) \to 0$ | 00 |
+| $u_2$ | $(0.35,\, 0.10)$ | $(0, 0) \to 0$ | $(1, 0) \to 1$ | 01 |
+| $u_3$ | $(0.15,\, 0.30)$ | $(0, 0) \to 0$ | $(0, 1) \to 2$ | 02 |
+| $u_4$ | $(0.40,\, 0.45)$ | $(0, 0) \to 0$ | $(1, 1) \to 3$ | 03 |
+| $u_5$ | $(0.55,\, 0.10)$ | $(1, 0) \to 1$ | $(0, 0) \to 0$ | 10 |
+| $u_6$ | $(0.82,\, 0.08)$ | $(1, 0) \to 1$ | $(1, 0) \to 1$ | 11 |
+| $u_7$ | $(0.20,\, 0.70)$ | $(0, 1) \to 2$ | $(0, 0) \to 0$ | 20 |
+| $u_8$ | $(0.44,\, 0.64)$ | $(0, 1) \to 2$ | $(1, 0) \to 1$ | 21 |
+| $u_9$ | $(0.65,\, 0.60)$ | $(1, 1) \to 3$ | $(0, 0) \to 0$ | 30 |
+| $u_{10}$ | $(0.85,\, 0.95)$ | $(1, 1) \to 3$ | $(1, 1) \to 3$ | 33 |
 
-At each level, record one bit per coordinate, equal to $0$ in the lower half
-of the current interval and $1$ in the upper half, and combine the two bits
-into a base-4 digit as $2 b_y + b_x$. The first two levels give
+Two features of these digits are easy to misread. First, the halving restarts
+at every level inside whichever cell the unit already occupies, so a level-2
+digit of $0$ means the lower-left corner of that unit's own quadrant and
+refers to a different physical region depending on which quadrant that is.
+Second, the digits index a nested grid rather than measuring position, so
+digits that differ tell the reader far less than digits that agree. Units
+$u_1$ and $u_9$ carry level-1 bits $(0, 0)$ and $(1, 1)$, which sound like
+opposite corners of the square and therefore a distance of
+$\sqrt{2} \approx 1.41$ apart, yet the two units sit only about $0.7$ apart,
+because each lies near the corner of its own quadrant closest to the other.
+What the address does guarantee is the converse: Units agreeing on their first
+$k$ digits share a level-$k$ cell and so must be close together. Disagreement
+places no lower bound on the distance between them.
 
-| Site | Level 1 $(b_x, b_y)$ | Level 1 digit | Level 2 $(b_x, b_y)$ | Level 2 digit | Address $a_i$ |
-|---|---|---|---|---|---|
-| $s_1$ | $(0, 0)$ | 0 | $(0, 0)$ | 0 | 00 |
-| $s_2$ | $(0, 1)$ | 2 | $(1, 1)$ | 3 | 23 |
-| $s_3$ | $(1, 0)$ | 1 | $(0, 1)$ | 2 | 12 |
-| $s_4$ | $(1, 1)$ | 3 | $(1, 0)$ | 1 | 31 |
+The units are labeled here in address order so the table reads cleanly. In
+practice a sampling frame arrives in whatever order it was built in, and the
+addressing is what imposes this one.
 
-```{r address-diagram, echo = FALSE, fig.width = 7.2, fig.height = 3.9, fig.align = "center", fig.cap = "Quadrant-recursive addressing of four sites on the unit square. At level 1 the square is split into four quadrants, each labeled by combining the two coordinate bits. At level 2 every quadrant is split the same way, so each of the sixteen cells carries a two-digit base-4 address. Sorting by address groups sites first by quadrant and then by sub-quadrant."}
-sites <- data.frame(
-  x = c(0.10, 0.40, 0.60, 0.90),
-  y = c(0.20, 0.80, 0.30, 0.70),
-  lab = c("s1", "s2", "s3", "s4")
+```{r grts-frame, echo = FALSE, fig.width = 7.2, fig.height = 3.9, fig.align = "center", fig.cap = "Quadrant-recursive addressing of a sampling frame of ten units. At level 1 the square is split into four quadrants, labeled 0 to 3 by combining the two coordinate bits, which fixes each unit's first address digit. At level 2 every quadrant is split the same way, fixing the second digit and giving each unit the two-digit address shown beside it."}
+grts_frame <- data.frame(
+  x = c(0.10, 0.35, 0.15, 0.40, 0.55, 0.82, 0.20, 0.44, 0.65, 0.85),
+  y = c(0.20, 0.10, 0.30, 0.45, 0.10, 0.08, 0.70, 0.64, 0.60, 0.95),
+  addr = c("00", "01", "02", "03", "10", "11", "20", "21", "30", "33"),
+  sel = c(FALSE, FALSE, TRUE, FALSE, TRUE, FALSE, FALSE, TRUE, FALSE, TRUE)
 )
-lab_pos <- ifelse(sites$x > 0.5, 2, 4)
+grts_pos <- ifelse(grts_frame$x > 0.5, 2, 4)
 
-new_panel <- function(main) {
+grts_panel <- function(main) {
   plot(NA,
-    xlim = c(-0.08, 1.08), ylim = c(-0.08, 1.08),
+    xlim = c(-0.10, 1.10), ylim = c(-0.10, 1.10),
     asp = 1, axes = FALSE, ann = FALSE
   )
   title(main = main, cex.main = 1.05, font.main = 1, line = 0.4)
 }
 
-draw_quadrants <- function() {
+grts_grid <- function(level2 = TRUE, labels = "quadrant") {
+  if (level2) {
+    for (k in c(0.25, 0.75)) {
+      segments(k, 0, k, 1, col = "grey65", lwd = 0.7)
+      segments(0, k, 1, k, col = "grey65", lwd = 0.7)
+    }
+  }
   rect(0, 0, 1, 1, border = "grey25", lwd = 2)
   segments(0.5, 0, 0.5, 1, col = "grey25", lwd = 2)
   segments(0, 0.5, 1, 0.5, col = "grey25", lwd = 2)
+  if (labels == "quadrant") {
+    for (i in 0:1) {
+      for (j in 0:1) {
+        text(i * 0.5 + 0.05, j * 0.5 + 0.45,
+          labels = 2 * j + i, cex = 1.6, col = "black"
+        )
+      }
+    }
+  }
+  if (labels %in% c("cell", "both")) {
+    for (i in 0:3) {
+      for (j in 0:3) {
+        text(i * 0.25 + 0.04, j * 0.25 + 0.21,
+          labels = paste0(
+            2 * (j %/% 2) + (i %/% 2),
+            2 * (j %% 2) + (i %% 2)
+          ),
+          cex = 0.8, col = "black"
+        )
+      }
+    }
+  }
+  if (labels == "both") {
+    # level-1 digits sit outside the square, on the side of their own
+    # quadrant, so they cannot collide with the level-2 labels inside
+    for (i in 0:1) {
+      for (j in 0:1) {
+        text(ifelse(i == 0, -0.075, 1.075), j * 0.5 + 0.25,
+          labels = 2 * j + i, cex = 1.5, col = "black"
+        )
+      }
+    }
+  }
 }
 
-draw_sites <- function() {
-  points(sites$x, sites$y,
-    pch = 21, bg = "#c05746", col = "white", cex = 1.6, lwd = 1.2
+grts_points <- function(cex = 1.4) {
+  points(grts_frame$x, grts_frame$y,
+    pch = 21, bg = "white", col = "grey30", cex = cex, lwd = 1.1
   )
-  text(sites$x, sites$y, labels = sites$lab, pos = lab_pos, offset = 0.45, cex = 0.9)
 }
 
 op <- par(mfrow = c(1, 2), mar = c(0.4, 0.4, 1.8, 0.4))
 
-new_panel("Level 1")
-draw_quadrants()
-for (i in 0:1) {
-  for (j in 0:1) {
-    text(i * 0.5 + 0.07, j * 0.5 + 0.43,
-      labels = 2 * j + i, cex = 2.1, col = "grey78"
-    )
-  }
-}
-draw_sites()
+grts_panel("Level 1: four quadrants")
+grts_grid(level2 = FALSE, labels = "quadrant")
+grts_points()
 
-new_panel("Level 2")
-for (k in c(0.25, 0.75)) {
-  segments(k, 0, k, 1, col = "grey82", lwd = 0.7)
-  segments(0, k, 1, k, col = "grey82", lwd = 0.7)
-}
-draw_quadrants()
-for (i in 0:3) {
-  for (j in 0:3) {
-    text(i * 0.25 + 0.125, j * 0.25 + 0.125,
-      labels = paste0(2 * (j %/% 2) + (i %/% 2), 2 * (j %% 2) + (i %% 2)),
-      cex = 0.95, col = "grey70"
-    )
-  }
-}
-draw_sites()
+grts_panel("Level 2: sixteen cells")
+grts_grid(level2 = TRUE, labels = "cell")
+grts_points()
 
 par(op)
 ```
 
-Reading the addresses off the right-hand panel confirms the table: $s_1$ sits
-in cell 00, $s_3$ in cell 12, $s_2$ in cell 23, and $s_4$ in cell 31.
-
-Sorting by address gives the order $s_1, s_3, s_2, s_4$. The first digit does
-most of the work, placing the sites in quadrant order, and the second digit
-resolves ties within a quadrant. With more levels, the address distinguishes
-locations at finer and finer resolution, and the sort order becomes a genuine
-one-dimensional summary of two-dimensional position.
+The first digit does most of the work, grouping the units by quadrant, and the
+second digit resolves position within a quadrant. With more levels the address
+distinguishes locations at finer and finer resolution, so the sort order
+becomes a genuine one-dimensional summary of two-dimensional position.
 
 Two implementation details are worth knowing.
 
@@ -1034,6 +1132,59 @@ prescribed $\pi_i$ exactly and has fixed size. Applied to units already sorted
 by hierarchical address, competition is always between spatial neighbors, so
 two nearby units rarely both end up selected. This is the scheme
 analyzed by @chauvet2021inference.
+
+Running this on the ten-unit sampling frame of the previous section, with
+$\pi_i = 0.4$ for every unit, keeps four of the ten. One possible realization
+selects the units with addresses 02, 10, 21, and 33 (Figure \ref{fig:grts-sample}).
+
+```{r grts-sample, echo = FALSE, fig.width = 5.2, fig.height = 6.1, fig.align = "center", fig.cap = "Sorting by address collapses the two-dimensional sampling frame onto the one-dimensional ordering below the square, along which selection actually runs. Level-1 digits sit outside the square beside their own quadrant and level-2 addresses label each cell inside it. Filled points are selected and open points are not, and the connectors trace each selected unit from its position in the ordering back to its location in the sampling frame. Units adjacent on the line are near one another in the square, which is why selecting units that are spread along the line spreads them across the square."}
+line_x <- (seq_len(nrow(grts_frame)) - 0.5) / nrow(grts_frame)
+line_y <- -0.26
+
+op <- par(mar = c(0.4, 0.4, 1.8, 0.4))
+plot(NA,
+  xlim = c(-0.14, 1.14), ylim = c(-0.42, 1.10),
+  asp = 1, axes = FALSE, ann = FALSE
+)
+title(
+  main = "From two dimensions to one",
+  cex.main = 1.05, font.main = 1, line = 0.4
+)
+
+segments(
+  grts_frame$x[grts_frame$sel], grts_frame$y[grts_frame$sel],
+  line_x[grts_frame$sel], line_y,
+  col = "grey55", lwd = 0.9
+)
+
+grts_grid(level2 = TRUE, labels = "both")
+
+points(grts_frame$x[!grts_frame$sel], grts_frame$y[!grts_frame$sel],
+  pch = 21, bg = "white", col = "grey60", cex = 1.3, lwd = 1.1
+)
+points(grts_frame$x[grts_frame$sel], grts_frame$y[grts_frame$sel],
+  pch = 21, bg = "#c05746", col = "white", cex = 1.7, lwd = 1.2
+)
+
+segments(0, line_y, 1, line_y, col = "grey25", lwd = 1.5)
+points(line_x[!grts_frame$sel], rep(line_y, sum(!grts_frame$sel)),
+  pch = 21, bg = "white", col = "grey60", cex = 1.3, lwd = 1.1
+)
+points(line_x[grts_frame$sel], rep(line_y, sum(grts_frame$sel)),
+  pch = 21, bg = "#c05746", col = "white", cex = 1.7, lwd = 1.2
+)
+text(line_x, line_y - 0.085, labels = grts_frame$addr, cex = 0.7)
+
+par(op)
+```
+
+The selected units happen to land one in each quadrant. Nothing enforces that,
+and it will not hold for every sample: The four quadrants here contain four,
+two, two, and two units, so their expected selected counts are 1.6, 0.8, 0.8,
+and 0.8 rather than one apiece. What the ordering does deliver is that a
+sample doubling up in one corner while leaving another empty is far less
+likely than under selection that ignores position. Each selected site carries
+weight $w_i = 2.5$, so the four together represent the whole frame of ten.
 
 @stevens2004spatially instead map the addressed units onto a line of length
 $n$ and take a systematic sample from that line with a random start and unit (i.e., length-one)
