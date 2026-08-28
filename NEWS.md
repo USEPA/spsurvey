@@ -1,3 +1,12 @@
+# spsurvey 5.8.0
+
+## Major Updates
+
+* `grts()` and `irs()` now compute spatial balance automatically during
+  site selection and store the result as an `sp_balance` element of the
+  design object. The `sp_balance()` function is still used to pull the
+  spatial balance metric(s) from the design object.
+
 # spsurvey 5.7.0
 
 ## Minor Updates

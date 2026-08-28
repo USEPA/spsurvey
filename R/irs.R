@@ -37,7 +37,8 @@ irs <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = N
                 legacy_sites = NULL, legacy_stratum_var = NULL,
                 legacy_caty_var = NULL, legacy_aux_var = NULL, mindis = NULL,
                 maxtry = 10, n_over = NULL, n_near = NULL, wgt_units = NULL,
-                pt_density = NULL, DesignID = "Site", SiteBegin = 1, sep = "-", projcrs_check = TRUE) {
+                pt_density = NULL, DesignID = "Site", SiteBegin = 1, sep = "-", projcrs_check = TRUE,
+                sp_balance = TRUE) {
   # This mirrors grts() (see that file for the full pipeline description),
   # but selects sites by independent random sampling (irs_stratum()) rather
   # than the spatially balanced GRTS algorithm; useful as a non-spatial
@@ -316,6 +317,7 @@ irs <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = N
   sites_base <- NULL
   sites_over <- NULL
   sites_near <- NULL
+  sframe_bal <- NULL
   warn_ind <- FALSE
   warn_df <- NULL
   for (i in 1:length(rslts)) {
@@ -323,6 +325,7 @@ irs <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = N
     sites_base <- rbind(sites_base, rslts[[i]]$sites_base)
     sites_over <- rbind(sites_over, rslts[[i]]$sites_over)
     sites_near <- rbind(sites_near, rslts[[i]]$sites_near)
+    sframe_bal <- rbind(sframe_bal, rslts[[i]]$sframe_ip)
     if (rslts[[i]]$warn_ind) {
       warn_ind <- TRUE
       warn_df <- rbind(warn_df, rslts[[i]]$warn_df)
@@ -614,11 +617,33 @@ irs <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = N
     )]
   }
 
+  # calculate spatial balance of base and legacy sites (if used) together
+  sp_balance_out <- NULL
+  if (sp_balance) {
+    if (is.null(sites_legacy)) {
+      bal_sites <- sites_base
+    } else if (is.null(sites_base)) {
+      bal_sites <- sites_legacy
+    } else {
+      sl <- sites_legacy
+      sb <- sites_base
+      sl[setdiff(names(sb), names(sl))] <- NA
+      sb[setdiff(names(sl), names(sb))] <- NA
+      bal_sites <- rbind(sl, sb)
+    }
+    bal <- sp_balance_calc_safely(bal_sites, sframe_bal)
+    sp_balance_out <- bal$result
+    if (!is.null(bal$warning)) {
+      warn_ind <- TRUE
+      warn_df <- rbind(warn_df, data.frame(stratum = NA, func = I("irs"), Warning = bal$warning))
+    }
+  }
+
   # create output list
   sites <- list(
     sites_legacy = sites_legacy, sites_base = sites_base,
     sites_over = sites_over, sites_near = sites_near,
-    design = dsgn
+    design = dsgn, sp_balance = sp_balance_out
   )
 
   # As necessary, output a message indicating that warning messages were generated

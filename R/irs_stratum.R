@@ -65,6 +65,9 @@ irs_stratum <- function(stratum, dsgn, sframe, sf_type, wgt_units = NULL, pt_den
   # subset sframe to stratum
   sftmp <- sframe[sframe$stratum == stratum, , drop = FALSE]
 
+  # original (non-dense) frame for this stratum; linear/area sf_types will overwrite later
+  sftmp_orig_features <- sftmp
+
   # find legacy site number for points if legacy_var provided
   if (legacy_option == TRUE & is.null(legacy_sites)) {
     n_legacy <- sum(!is.na(sftmp$legacy))
@@ -167,6 +170,27 @@ irs_stratum <- function(stratum, dsgn, sframe, sf_type, wgt_units = NULL, pt_den
     sftmp$legacy <- FALSE
   }
 
+  # grab original frame and legacy points for spatial balance
+  if (sf_type == "sf_point") {
+    balframe <- sftmp
+  } else {
+    balframe <- sftmp_orig_features
+    if (legacy_option == TRUE & n_legacy > 0) {
+      tmp_leg <- legtmp
+      addtmp <- setdiff(names(tmp_leg), names(balframe))
+      addleg <- setdiff(names(balframe), names(tmp_leg))
+      balframe[, addtmp] <- NA
+      tmp_leg[, addleg] <- NA
+      tmp_leg$legacy <- TRUE
+      balframe <- rbind(tmp_leg, balframe)
+    }
+  }
+  if (!("legacy" %in% names(balframe))) {
+    balframe$legacy <- FALSE
+  } else {
+    balframe$legacy[is.na(balframe$legacy)] <- FALSE
+  }
+
   # check that number of legacy sites is less than or equal number of base sites
   # stop if not
   if (n_legacy > n_base) {
@@ -212,6 +236,13 @@ irs_stratum <- function(stratum, dsgn, sframe, sf_type, wgt_units = NULL, pt_den
     warn_df <- ip$warn_df
     warn_df$stratum <- ifelse(is.na(warn_df$stratum), stratum, warn_df$stratum)
   }
+
+  # grab original spatial balance probability (before legacy adjustment)
+  balframe$density <- balance_ip_density(
+    sftmp, balframe, sf_type, dsgn[["seltype"]][[stratum]],
+    ip_step1, n_base, n_total
+  )
+  balframe$ip <- balframe$density * sp_balance_dens(balframe)
 
   # If legacy sites, adjust inclusion probabilities to use
   # legacy inclusion probabilities
@@ -345,6 +376,7 @@ irs_stratum <- function(stratum, dsgn, sframe, sf_type, wgt_units = NULL, pt_den
   rslts <- list(
     sites_legacy = sites_legacy, sites_base = sites_base,
     sites_over = sites_over, sites_near = sites_near,
+    sframe_ip = balframe[, c("stratum", "ip")],
     warn_ind = warn_ind, warn_df = warn_df
   )
 

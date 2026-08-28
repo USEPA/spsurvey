@@ -2,19 +2,30 @@
 % Please edit documentation in R/sp_balance.R
 \name{sp_balance}
 \alias{sp_balance}
+\alias{sp_balance.default}
+\alias{sp_balance.sp_design}
 \title{Calculate spatial balance metrics}
 \usage{
-sp_balance(
+sp_balance(object, ...)
+
+\method{sp_balance}{default}(
   object,
   sframe,
   stratum_var = NULL,
   ip = NULL,
   metrics = "pielou",
-  extents = FALSE
+  extents = FALSE,
+  ...
 )
+
+\method{sp_balance}{sp_design}(object, metrics = "pielou", extents = FALSE, ...)
 }
 \arguments{
-\item{object}{An \code{sf} object containing some design sites.}
+\item{object}{An object returned by \code{grts()} or \code{irs()}
+or and \code{sf} object containing some design sites,.}
+
+\item{...}{Additional arguments passed to the method for \code{object}'s
+class.}
 
 \item{sframe}{The sampling frame as an \code{sf} object. The coordinate
 system for \code{sframe} must be one where distance for coordinates is meaningful.}
@@ -28,9 +39,9 @@ named "object" and corresponds to the name of the stratum variable
 in \code{object}, while the other element must be named "sframe" and
 corresponds to the name of the stratum variable in \code{sframe}.}
 
-\item{ip}{Inclusion probabilities associated with each row of \code{sframe}.
-If these are not provided, an equal probability design is assumed (within
-strata).}
+\item{ip}{A character string giving the name of the column in
+\code{sframe} that holds each row's inclusion probability. If not
+provided, an equal probability design is assumed (within strata).}
 
 \item{metrics}{A character vector of spatial balance metrics:
 \describe{
@@ -58,19 +69,34 @@ be returned? Defaults to \code{FALSE}.}
 \value{
 A data frame with columns providing the stratum (\code{stratum}),
   spatial balance metric (\code{metric}), and spatial balance (\code{value}).
+  If \code{extents} is \code{TRUE}, a list with elements \code{metrics}
+  (the data frame of metrics) and \code{extents} (an \code{sf} object of per-site
+  Voronoi polygon extents).
 }
 \description{
 This function measures the spatial balance (with respect to the
 sampling frame) of design sites using
-Voronoi polygons (Dirichlet tessellations).
+Voronoi polygons (Dirichlet tessellations). \code{sp_balance()} is
+generic: for design objects returned by \code{grts()} or \code{irs()}
+(class \code{sp_design}), \code{sp_balance.sp_design()} return the spatial
+balance already computed and stored during sampling using the design's
+true inclusion probabilities (here, \code{sframe} and \code{ip} are not needed).
+For any other \code{sf} object,
+\code{sp_balance.default()} computes spatial balance as described below.
+}
+\details{
+For \code{sp_balance.sp_design()}, spatial balance is computed
+for the legacy and base sites together (the site set \code{n_base} and
+the design weights correspond to -- see \code{?grts}), using original
+(not legacy-adjusted) inclusion probabilities.
 }
 \examples{
 \dontrun{
 sample <- grts(NE_Lakes, 30)
-sp_balance(sample$sites_base, NE_Lakes)
+sp_balance(sample)
 strata_n <- c(low = 25, high = 30)
 sample_strat <- grts(NE_Lakes, n_base = strata_n, stratum_var = "ELEV_CAT")
-sp_balance(sample_strat$sites_base, NE_Lakes, stratum_var = "ELEV_CAT", metric = "rmse")
+sp_balance(sample_strat, metrics = "rmse")
 }
 }
 \author{

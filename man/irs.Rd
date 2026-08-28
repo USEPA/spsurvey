@@ -26,7 +26,8 @@ irs(
   DesignID = "Site",
   SiteBegin = 1,
   sep = "-",
-  projcrs_check = TRUE
+  projcrs_check = TRUE,
+  sp_balance = TRUE
 )
 }
 \arguments{
@@ -223,9 +224,12 @@ site identifiers are \code{Site-01} to \code{Site-50}}
 \item{projcrs_check}{A check for whether the coordinates are projected. If \code{TRUE},
 an error is returned if coordinates are not projected  (i.e., they are geographic or NA). If \code{FALSE}, the
 check is not performed, which means that the crs in \code{sframe} (and \code{legacy_sites} if provided) can be projected, geographic, or NA.}
+
+\item{sp_balance}{Should spatial balance be computed for base (and legacy, if used) sites?
+The default is \code{TRUE}.}
 }
 \value{
-The sampling design sites and additional information about the sampling design. More specifically, it is, a list with five elements:
+The sampling design sites and additional information about the sampling design. More specifically, it is, a list with six elements:
   \itemize{
     \item \code{sites_legacy} An sf object containing legacy sites. This is
       \code{NULL} if legacy sites were not included in the sample.
@@ -237,6 +241,8 @@ The sampling design sites and additional information about the sampling design. 
     \item \code{sites_near} An sf object containing the nearest neighbor
       replacement sites. This is \code{NULL} if no nearest neighbor replacement
       sites were included in the sample.
+    \item \code{sp_balance} Spatial balance for the base (and legacy, if used) sites
+      for use by \code{sp_balance()}.
     \item \code{design} A list documenting the specifications of this sampling design.
       This can be checked to verify your sampling design ran as intended.
       \itemize{

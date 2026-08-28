@@ -210,6 +210,9 @@
 #'    an error is returned if coordinates are not projected  (i.e., they are geographic or NA). If \code{FALSE}, the
 #'    check is not performed, which means that the crs in \code{sframe} (and \code{legacy_sites} if provided) can be projected, geographic, or NA.
 #'
+#' @param sp_balance Should spatial balance be computed for base (and legacy, if used) sites?
+#'   The default is \code{TRUE}.
+#'
 #' @details \code{n_base} is the number of sites used to calculate
 #'   the design weights, which is typically the number of sites used in an analysis. When a panel sampling design is implemented, \code{n_base} is typically the
 #'   number of sites in all panels that will be sampled in the same temporal period --
@@ -217,7 +220,7 @@
 #'   \code{n_over} is equal to the total number of sites to be visited for all panels plus
 #'   any replacement sites that may be required.
 #'
-#' @return The sampling design sites and additional information about the sampling design. More specifically, it is, a list with five elements:
+#' @return The sampling design sites and additional information about the sampling design. More specifically, it is, a list with six elements:
 #'   \itemize{
 #'     \item \code{sites_legacy} An sf object containing legacy sites. This is
 #'       \code{NULL} if legacy sites were not included in the sample.
@@ -229,6 +232,8 @@
 #'     \item \code{sites_near} An sf object containing the nearest neighbor
 #'       replacement sites. This is \code{NULL} if no nearest neighbor replacement
 #'       sites were included in the sample.
+#'     \item \code{sp_balance} Spatial balance for the base (and legacy, if used) sites
+#'       for use by \code{sp_balance()}.
 #'     \item \code{design} A list documenting the specifications of this sampling design.
 #'       This can be checked to verify your sampling design ran as intended.
 #'       \itemize{
@@ -339,7 +344,8 @@ grts <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = 
                  legacy_sites = NULL, legacy_stratum_var = NULL,
                  legacy_caty_var = NULL, legacy_aux_var = NULL, mindis = NULL,
                  maxtry = 10, n_over = NULL, n_near = NULL, wgt_units = NULL,
-                 pt_density = NULL, DesignID = "Site", SiteBegin = 1, sep = "-", projcrs_check = TRUE) {
+                 pt_density = NULL, DesignID = "Site", SiteBegin = 1, sep = "-", projcrs_check = TRUE,
+                 sp_balance = TRUE) {
   # This is the user-facing entry point for the GRTS algorithm (Stevens &
   # Olsen 2004; see also grts_stratum.R/grtspts_ip.R/
   # get_address.R/rho.R for the algorithm's internal steps). At a high
@@ -627,6 +633,7 @@ grts <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = 
   sites_base <- NULL
   sites_over <- NULL
   sites_near <- NULL
+  sframe_bal <- NULL
   warn_ind <- FALSE
   warn_df <- NULL
   for (i in 1:length(rslts)) {
@@ -634,6 +641,7 @@ grts <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = 
     sites_base <- rbind(sites_base, rslts[[i]]$sites_base)
     sites_over <- rbind(sites_over, rslts[[i]]$sites_over)
     sites_near <- rbind(sites_near, rslts[[i]]$sites_near)
+    sframe_bal <- rbind(sframe_bal, rslts[[i]]$sframe_ip)
     if (rslts[[i]]$warn_ind) {
       warn_ind <- TRUE
       warn_df <- rbind(warn_df, rslts[[i]]$warn_df)
@@ -926,11 +934,33 @@ grts <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = 
     )]
   }
 
+  # calculate spatial balance of base and legacy sites (if used) together
+  sp_balance_out <- NULL
+  if (sp_balance) {
+    if (is.null(sites_legacy)) {
+      bal_sites <- sites_base
+    } else if (is.null(sites_base)) {
+      bal_sites <- sites_legacy
+    } else {
+      sl <- sites_legacy
+      sb <- sites_base
+      sl[setdiff(names(sb), names(sl))] <- NA
+      sb[setdiff(names(sl), names(sb))] <- NA
+      bal_sites <- rbind(sl, sb)
+    }
+    bal <- sp_balance_calc_safely(bal_sites, sframe_bal)
+    sp_balance_out <- bal$result
+    if (!is.null(bal$warning)) {
+      warn_ind <- TRUE
+      warn_df <- rbind(warn_df, data.frame(stratum = NA, func = I("grts"), Warning = bal$warning))
+    }
+  }
+
   # create output list
   sites <- list(
     sites_legacy = sites_legacy, sites_base = sites_base,
     sites_over = sites_over, sites_near = sites_near,
-    design = dsgn
+    design = dsgn, sp_balance = sp_balance_out
   )
 
   # As necessary, output a message indicating that warning messages were generated

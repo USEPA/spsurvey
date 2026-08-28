@@ -2,31 +2,25 @@
 # Function: sp_balance (exported)
 # Programmer: Michael Dumelle
 # Date: December 03, 2020
-# Last Revised: December 03, 2020
+# Last Revised: August 28, 2026
 #
 #' Calculate spatial balance metrics
 #'
 #' This function measures the spatial balance (with respect to the
 #' sampling frame) of design sites using
-#' Voronoi polygons (Dirichlet tessellations).
+#' Voronoi polygons (Dirichlet tessellations). \code{sp_balance()} is
+#' generic: for design objects returned by \code{grts()} or \code{irs()}
+#' (class \code{sp_design}), \code{sp_balance.sp_design()} return the spatial
+#' balance already computed and stored during sampling using the design's
+#' true inclusion probabilities (here, \code{sframe} and \code{ip} are not needed).
+#' For any other \code{sf} object,
+#' \code{sp_balance.default()} computes spatial balance as described below.
 #'
-#' @param object An \code{sf} object containing some design sites.
+#' @param object An object returned by \code{grts()} or \code{irs()}
+#'   or and \code{sf} object containing some design sites,.
 #'
-#' @param sframe The sampling frame as an \code{sf} object. The coordinate
-#'   system for \code{sframe} must be one where distance for coordinates is meaningful.
-#'
-#' @param stratum_var The name of the stratum variable in \code{object}
-#' and \code{sframe}. If \code{NULL} (the default), no strata is assumed.
-#' If a single character vector is provided, it is assumed this is the
-#' name of the stratum variable in \code{object} and \code{sframe}. If
-#' a two-dimensional character vector is provided, one element must be
-#' named "object" and corresponds to the name of the stratum variable
-#' in \code{object}, while the other element must be named "sframe" and
-#' corresponds to the name of the stratum variable in \code{sframe}.
-#'
-#' @param ip Inclusion probabilities associated with each row of \code{sframe}.
-#' If these are not provided, an equal probability design is assumed (within
-#' strata).
+#' @param ... Additional arguments passed to the method for \code{object}'s
+#'   class.
 #'
 #' @param metrics A character vector of spatial balance metrics:
 #' \describe{
@@ -53,8 +47,9 @@
 #'
 #' @return A data frame with columns providing the stratum (\code{stratum}),
 #'   spatial balance metric (\code{metric}), and spatial balance (\code{value}).
-#'
-#' @importFrom stats median
+#'   If \code{extents} is \code{TRUE}, a list with elements \code{metrics}
+#'   (the data frame of metrics) and \code{extents} (an \code{sf} object of per-site
+#'   Voronoi polygon extents).
 #'
 #' @author Michael Dumelle \email{Dumelle.Michael@@epa.gov}
 #'
@@ -63,14 +58,41 @@
 #' @examples
 #' \dontrun{
 #' sample <- grts(NE_Lakes, 30)
-#' sp_balance(sample$sites_base, NE_Lakes)
+#' sp_balance(sample)
 #' strata_n <- c(low = 25, high = 30)
 #' sample_strat <- grts(NE_Lakes, n_base = strata_n, stratum_var = "ELEV_CAT")
-#' sp_balance(sample_strat$sites_base, NE_Lakes, stratum_var = "ELEV_CAT", metric = "rmse")
+#' sp_balance(sample_strat, metrics = "rmse")
 #' }
-sp_balance <- function(object, sframe, stratum_var = NULL, ip = NULL, metrics = "pielou", extents = FALSE) {
-  if (inherits(object, "spdesign")) {
-    stop("object must be an sf object. If object is output from grts() or irs(), instead 1) use object$sites_legacy, object$sites_base, object$sites_over, or object$sites_near; or 2) use sp_rbind().")
+sp_balance <- function(object, ...) {
+  UseMethod("sp_balance")
+}
+
+#' @rdname sp_balance
+#'
+#' @param sframe The sampling frame as an \code{sf} object. The coordinate
+#'   system for \code{sframe} must be one where distance for coordinates is meaningful.
+#'
+#' @param stratum_var The name of the stratum variable in \code{object}
+#' and \code{sframe}. If \code{NULL} (the default), no strata is assumed.
+#' If a single character vector is provided, it is assumed this is the
+#' name of the stratum variable in \code{object} and \code{sframe}. If
+#' a two-dimensional character vector is provided, one element must be
+#' named "object" and corresponds to the name of the stratum variable
+#' in \code{object}, while the other element must be named "sframe" and
+#' corresponds to the name of the stratum variable in \code{sframe}.
+#'
+#' @param ip A character string giving the name of the column in
+#' \code{sframe} that holds each row's inclusion probability. If not
+#' provided, an equal probability design is assumed (within strata).
+#'
+#' @importFrom stats median
+#'
+#' @method sp_balance default
+#' @export
+sp_balance.default <- function(object, sframe, stratum_var = NULL, ip = NULL,
+                                metrics = "pielou", extents = FALSE, ...) {
+  if (inherits(object, "sp_design")) {
+    stop("object must be an sf object, not output from grts() or irs(). Instead 1) use sp_balance() directly on the design object; 2) use object$sites_legacy, object$sites_base, object$sites_over, or object$sites_near; or 3) use sp_rbind().")
   }
 
   # find system info
@@ -124,6 +146,75 @@ sp_balance <- function(object, sframe, stratum_var = NULL, ip = NULL, metrics = 
   }
 }
 
+#' @rdname sp_balance
+#'
+#' @details For \code{sp_balance.sp_design()}, spatial balance is computed
+#' for the legacy and base sites together (the site set \code{n_base} and
+#' the design weights correspond to -- see \code{?grts}), using original
+#' (not legacy-adjusted) inclusion probabilities.
+#'
+#' @method sp_balance sp_design
+#' @export
+sp_balance.sp_design <- function(object, metrics = "pielou", extents = FALSE, ...) {
+  bal <- object$sp_balance
+  if (is.null(bal)) {
+    stop("object has no stored spatial balance. Either sp_balance = FALSE was used when the design was created, or spatial balance could not be computed for this design (see any warning messages from grts()/irs()). Use sp_balance.default() to compute spatial balance manually instead, e.g. sp_balance.default(sp_rbind(object, c('Legacy', 'Base')), sframe).")
+  }
+
+  bad_metrics <- setdiff(metrics, spsurvey_balance_metrics)
+  if (length(bad_metrics) > 0) {
+    stop("an invalid metric was provided")
+  }
+
+  out <- bal$metrics[bal$metrics$metric %in% metrics, , drop = FALSE]
+  row.names(out) <- NULL
+
+  if (!extents) {
+    return(out)
+  }
+
+  sites <- sp_rbind(object, c("Legacy", "Base"))
+  sites <- sites[order(sites$stratum), , drop = FALSE]
+  sites$extent <- unname(bal$extents[sites$siteID])
+  extents_sf <- sites[, c("stratum", "extent")]
+  row.names(extents_sf) <- NULL
+
+  list(metrics = out, extents = extents_sf)
+}
+
+#' All spatial balance metric names, in the order \code{sp_balance()}
+#' computes and validates against.
+#'
+#' @noRd
+spsurvey_balance_metrics <- c("pielou", "simpsons", "mse", "rmse", "mae", "medae", "chisq")
+
+#' Row-wise geometric extent (count, length, or area)
+#'
+#' Returns each row's own extent: \code{1} for \code{POINT}/\code{MULTIPOINT}
+#' geometry, length for \code{LINESTRING}/\code{MULTILINESTRING}, and area for
+#' \code{POLYGON}/\code{MULTIPOLYGON}.
+#'
+#' @param x An \code{sf} object with \code{POINT}/\code{MULTIPOINT},
+#'   \code{LINESTRING}/\code{MULTILINESTRING}, or \code{POLYGON}/
+#'   \code{MULTIPOLYGON} geometry.
+#'
+#' @return A numeric vector the length of \code{x}.
+#'
+#' @noRd
+sp_balance_dens <- function(x) {
+  geom_type <- st_geometry_type(x)
+  dens <- rep(1, length(geom_type))
+  is_line <- geom_type %in% c("LINESTRING", "MULTILINESTRING")
+  is_poly <- geom_type %in% c("POLYGON", "MULTIPOLYGON")
+  if (any(is_line)) {
+    dens[is_line] <- as.numeric(st_length(x[is_line, ]))
+  }
+  if (any(is_poly)) {
+    dens[is_poly] <- as.numeric(st_area(x[is_poly, ]))
+  }
+  dens
+}
+
 #' Calculate spatial balance metrics for a single stratum
 #'
 #' This function computes the Voronoi-polygon-based spatial balance metrics
@@ -157,13 +248,7 @@ sp_balance <- function(object, sframe, stratum_var = NULL, ip = NULL, metrics = 
 #' @noRd
 calculate_sp_balance <- function(object_split, sframe_split, ip, metrics, extents) {
   # need to calculate the density of each row in sframe_split
-  if (all(st_geometry_type(sframe_split) %in% c("POINT", "MULTIPOINT"))) {
-    sframe_split$dens <- 1
-  } else if (all(st_geometry_type(sframe_split) %in% c("LINESTRING", "MULTILINESTRING"))) {
-    sframe_split$dens <- as.numeric(st_length(sframe_split))
-  } else if (all(st_geometry_type(sframe_split) %in% c("POLYGON", "MULTIPOLYGON"))) {
-    sframe_split$dens <- as.numeric(st_area(sframe_split))
-  }
+  sframe_split$dens <- sp_balance_dens(sframe_split)
 
   # these inclusion probabilities must be provided for the entire sampling frame
   if (is.null(ip)) {
@@ -207,18 +292,8 @@ calculate_sp_balance <- function(object_split, sframe_split, ip, metrics, extent
   # row of sframe is contained fully in the respective row of sframe
   # polydens can be less than one -- when the row of sframe is not contained
   # fully in the respective row of sframe
-  # for points, sframe geometry must be point or multipoint
-  if (all(st_geometry_type(sframe_split) %in% c("POINT", "MULTIPOINT"))) {
-    ## storing a dummy variable to index counts by
-    sftess$polydens <- 1
-    sftess$adjip <- sftess$ip
-  } else if (all(st_geometry_type(sframe_split) %in% c("LINESTRING", "MULTILINESTRING"))) {
-    sftess$polydens <- as.numeric(st_length(sftess))
-    sftess$adjip <- sftess$ip * sftess$polydens / sftess$dens
-  } else if (all(st_geometry_type(sframe_split) %in% c("POLYGON", "MULTIPOLYGON"))) {
-    sftess$polydens <- as.numeric(st_area(sftess))
-    sftess$adjip <- sftess$ip * sftess$polydens / sftess$dens
-  }
+  sftess$polydens <- sp_balance_dens(sftess)
+  sftess$adjip <- sftess$ip * sftess$polydens / sftess$dens
 
   ## summing over each polygon
   propextent <- with(sftess, tapply(adjip, poly, sum))
