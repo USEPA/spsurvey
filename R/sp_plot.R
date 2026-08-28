@@ -109,7 +109,6 @@ sp_plot <- function(object, ...) {
 sp_plot.default <- function(object, formula = ~1, xcoord, ycoord, crs,
                             var_args = NULL, varlevel_args = NULL,
                             geom = FALSE, onlyshow = NULL, fix_bbox = TRUE, ...) {
-
   # find system info
   on_solaris <- Sys.info()[["sysname"]] == "SunOS"
   if (on_solaris) {
@@ -310,9 +309,8 @@ sp_plot.default <- function(object, formula = ~1, xcoord, ycoord, crs,
 #' @method sp_plot sp_design
 #' @export
 sp_plot.sp_design <- function(object, sframe = NULL, formula = ~siteuse, siteuse = NULL,
-                             var_args = NULL, varlevel_args = NULL, geom = FALSE, onlyshow = NULL,
-                             fix_bbox = TRUE, ...) {
-
+                              var_args = NULL, varlevel_args = NULL, geom = FALSE, onlyshow = NULL,
+                              fix_bbox = TRUE, ...) {
   # find system info
   on_solaris <- Sys.info()[["sysname"]] == "SunOS"
   if (on_solaris) {

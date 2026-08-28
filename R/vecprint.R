@@ -39,6 +39,11 @@ vecprint <- function(x, n_char = 78) {
   n <- length(x)
   nc <- nchar(x)
 
+  # i tracks the start of the current line's run of elements and j scans
+  # forward accumulating elements (plus a ", " separator, hence "+ 2" below)
+  # into nc_sum until adding one more would exceed n_char; at that point
+  # elements i:(j-1) are flushed as one comma-separated line and a new line
+  # starts at j. An element longer than n_char on its own becomes its own line.
   i <- 1
   j <- 1
   nc_sum <- 0

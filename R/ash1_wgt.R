@@ -52,6 +52,14 @@
 #' @export
 ash1_wgt <- function(x, wgt = rep(1, length(x)), m = 5, nbin = 50, ab = NULL,
                      support = "Continuous") {
+  # The averaged shifted histogram approximates the average of
+  # many histograms of the same bin width but different origins, smoothing
+  # out the arbitrary-origin behavior of a single histogram
+  # without actually building multiple histograms. Instead, data are binned
+  # once finely (bin1_wgt(), bin width delta), and each fine bin's density
+  # height is a weighted average of the counts in the m bins to either side
+  # (wgt_lim()), which is mathematically
+  # equivalent to averaging m shifted coarser histograms.
 
   # Bin the possibly weighted data
   v <- bin1_wgt(x, wgt, nbin, ab, support = support)
@@ -116,9 +124,27 @@ ash1_wgt <- function(x, wgt = rep(1, length(x)), m = 5, nbin = 50, ab = NULL,
 # BIN algorithm for unequal-probability sample,
 #
 
+#' Bin (possibly weighted) data for the averaged shifted histogram
+#'
+#' @param x Vector used to estimate the density. \code{NA} values are
+#'   removed.
+#'
+#' @param wgt Vector of weights for each observation.
+#'
+#' @param nbin Number of bins.
+#'
+#' @param ab Range for support; \code{NA} elements are filled from
+#'   \code{nicerange(x)}.
+#'
+#' @param support \code{"Continuous"} or \code{"Ordinal"} (see
+#'   \code{ash1_wgt}).
+#'
+#' @return A numeric vector of per-bin weighted counts, with attributes
+#'   \code{nbin}, \code{ab}, \code{delta} (bin width), and \code{support}.
+#'
+#' @noRd
 bin1_wgt <- function(x, wgt = rep(1, length(x)), nbin = 50,
                      ab = nicerange(x), support = "Continuous") {
-
   # Remove any missing data
   x <- x[!is.na(x)]
   wgt <- wgt[!is.na(x)]
@@ -175,6 +201,22 @@ bin1_wgt <- function(x, wgt = rep(1, length(x)), nbin = 50,
 #
 # Define weight function
 #
+#' Biweight (quartic) kernel weight for the averaged shifted histogram
+#'
+#' @param i Signed bin offset (distance in bins from the bin being
+#'   estimated) to compute the weight for.
+#'
+#' @param m Number of bins to either side used in smoothing (see
+#'   \code{ash1_wgt}).
+#'
+#' @param mlow,mhi Lowest/highest offset actually available (differs from
+#'   \code{-(m - 1)}/\code{m - 1} near the edges of the binned range), used
+#'   to renormalize the kernel so weights near an edge still sum
+#'   appropriately.
+#'
+#' @return A single numeric weight.
+#'
+#' @noRd
 wgt_lim <- function(i, m, mlow = (1 - m), mhi = (m - 1)) {
   K <- function(t) {
     (15 / 16) * (1 - t^2)^2
@@ -189,6 +231,19 @@ wgt_lim <- function(i, m, mlow = (1 - m), mhi = (m - 1)) {
 # Find nice range for binning
 #
 
+#' Pad a data range for use as default histogram/density support
+#'
+#' Expands \code{range(x)} outward by \code{beta} (as a fraction of the
+#' range) on each side, so density estimates near the extremes of the data
+#' are not artificially truncated at the sample min/max.
+#'
+#' @param x Numeric vector.
+#'
+#' @param beta Fraction of the range to pad on each side. Default \code{0.1}.
+#'
+#' @return A length-2 numeric vector, the padded range.
+#'
+#' @noRd
 nicerange <- function(x, beta = 0.1) {
   ab <- range(x)
   del <- ((ab[2] - ab[1]) * beta) / 2

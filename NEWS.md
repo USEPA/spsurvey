@@ -1,3 +1,19 @@
+# spsurvey 5.7.0
+
+## Minor Updates
+
+* Added a `subset_local` argument to the `*_analysis()` functions. When `subset_local = TRUE` (the backwards compatible default), subpopulations are subset to include only subpopulation members prior to variance estimation. When `subset_local = FALSE`, subpopulations are not subset prior to variance estimation. `subset_local = FALSE` follows standard design-based subpopulation (i.e., domain) estimation theory, especially relevant for variance estimates of totals, but is computationally more complex, requiring the neighborhood weights matrix of the full data (which scales cubically with the sample size). `subset_local` only applies when `vartype = "local"`.
+    * For variance estimation, standard design-based subpopulation estimation theory zeros out the response variable for members outside the subpopulation but still includes these zero-values in the variance estimate.
+* Changed the default `vartype = "Local"` to `vartype = "local"` (lowercase). `"Local"` is still accepted for backwards compatibility but is no longer documented.
+* Added a "Technical Details" article to the package website that describes the technical (mathematical) details in the package.
+* Minor documentation updates.
+
+## Bug Fixes
+
+* Fixed a bug in `cont_analysis()` that caused standard errors of the total (`statistics = "Total"`) to be understated for stratified designs when using the local mean variance estimator (`vartype = "local"`). 
+* Fixed a bug in `cont_cdftest()` that caused the Wald and adjusted Wald test statistics (`testname = "Wald"` or `testname = "adjWald"`) to be too large for stratified designs when using the local mean variance estimator (`vartype = "local"`).
+* Fixed a bug in `cat_analysis()`, `cont_analysis()`, and `cont_cdftest()` that affected SRS variance estimates `vartype = "SRS"`) for stratified designs used when the local mean variance estimator (`vartype = "local"`) was requested but could not be computed.
+
 # spsurvey 5.6.1
 
 ## Minor Updates

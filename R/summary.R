@@ -60,7 +60,7 @@
 #' @author Michael Dumelle \email{Dumelle.Michael@@epa.gov}
 #'
 #' @export
-#' 
+#'
 #'
 #' @examples
 #' \dontrun{

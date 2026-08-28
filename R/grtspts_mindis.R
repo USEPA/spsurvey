@@ -43,6 +43,11 @@
 grtspts_mindis <- function(mindis, sframe, samplesize, stratum, maxtry = 10,
                            legacy_option = NULL, legacy_var = NULL,
                            warn_ind = NULL, warn_df = NULL) {
+  # Overall approach: draw a GRTS sample, then repeatedly identify any pair
+  # of selected sites closer than mindis and resample, giving sites that
+  # were already far enough apart ("probdis" sites, plus any legacy sites)
+  # an inclusion probability of 1 so they are kept in the next draw. This
+  # repeats until no sites are too close together or maxtry is reached.
 
   # select initial set of sites
   sites <- sframe[get_address(sframe$xcoord, sframe$ycoord, rand = TRUE), ]
@@ -67,7 +72,6 @@ grtspts_mindis <- function(mindis, sframe, samplesize, stratum, maxtry = 10,
   # see if any sites are less than mindis and check until none or max tries
   ntry <- 1
   while (any(!keep)) {
-
     # identify sites that will be treated as legacy probability sites in sample frame
     sframe$probdis <- FALSE
     sframe$probdis[sframe$idpts %in% sites_base$idpts[keep]] <- TRUE

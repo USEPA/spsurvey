@@ -25,6 +25,13 @@
 ################################################################################
 
 interp_cdf <- function(pctval, cdfest_p, cdf_value) {
+  # For each requested percentile pctval[j] (expressed as a percent of the
+  # CDF), find the two observed CDF points that bracket it (cdfest_p[low]
+  # <= pctval[j] <= cdfest_p[high]) and linearly interpolate cdf_value at
+  # that percentile. If pctval[j] is above the largest observed CDF value,
+  # no upper bracket exists (high is NA) and the result is NA; if it is at
+  # or below every observed CDF value (no lower bracket, low is NA), the
+  # cdf_value at the smallest qualifying cdfest_p is used directly.
   nvec <- 1:length(cdfest_p)
   rslt <- numeric(0)
   for (j in 1:length(pctval)) {

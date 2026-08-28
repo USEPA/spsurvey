@@ -1,19 +1,19 @@
 #' \code{sp_frame} objects
-#' 
+#'
 #' @description Turn sampling frames or analysis data into an \code{sp_frame} object
 #'   or transform \code{sp_frame} objects back into their original object.
 #'
-#' @name sp_frame 
+#' @name sp_frame
 #'
 #' @param frame A sampling frame or analysis data
 #'
 #' @return An \code{sp_frame} object.
-#' 
+#'
 #' @details The \code{sp_frame()} function assigns \code{frame} class \code{sp_frame}
 #'   to be used by \code{summary()} and \code{plot()}. \code{sp_frame()} objects
 #'   can sometimes clash with other sf and tidyverse generics, so \code{un_spframe()} removes
 #'   class \code{sp_frame()}, leaving the original classes of \code{frame} intact.
-#' 
+#'
 #' @export
 #'
 #' @examples

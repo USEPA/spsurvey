@@ -41,6 +41,11 @@ grtspts_ipleg <- function(ip, legacy) {
   nge1 <- sum(elem_nge1)
 
   # adjust non legacy ip to sum to n - nleg
+  # iteratively rescale the non-legacy (and non-capped) inclusion
+  # probabilities so the whole vector still sums to the target sample size
+  # n; rescaling can push additional elements to/above 1, so repeat until no
+  # new elements cross that threshold (tst tracks the count from the
+  # previous iteration; the loop stops once it stabilizes)
   tst <- 0
   while (nge1 != tst) {
     tmp <- ip[!elem_nge1]

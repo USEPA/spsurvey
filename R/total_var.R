@@ -54,6 +54,17 @@
 #' @param warn_vec Vector that contains names of the population type, the
 #'   subpopulation, and an indicator.
 #'
+#' @param subset_local Logical value indicating whether the local mean
+#'   neighbor structure is built from domain members only (\code{TRUE},
+#'   the default behavior) or from all sites in the stratum
+#'   with the response zeroed out for non-domain members via
+#'   \code{subpop_ind} (\code{FALSE}). The default value is \code{TRUE}.
+#'
+#' @param subpop_ind Numeric 0/1 vector, the same length as \code{z}, that
+#'   is 1 for members of the subpopulation (domain, in classical survey
+#'   sampling terminology) and 0 otherwise. Only used when
+#'   \code{subset_local} is \code{FALSE}.
+#'
 #' @return Object in list format composed of a vector named \code{varest}, which
 #'   contains variance estimates, a logical variable named \code{warn_ind},
 #'   which is the indicator for warning messges, and a data frame named
@@ -74,7 +85,15 @@
 ################################################################################
 
 total_var <- function(z, wgt, x, y, stratum_ind, stratum_level, cluster_ind,
-                      cluster, wgt1, x1, y1, warn_ind, warn_df, warn_vec) {
+                      cluster, wgt1, x1, y1, warn_ind, warn_df, warn_vec,
+                      subset_local = TRUE, subpop_ind = NULL) {
+  # This is the local mean (spatial neighborhood) variance estimator for a
+  # TOTAL, following the same approach as mean_var() (see that file for
+  # details on the neighborhood-contrast method of Stevens & Olsen 2003 and
+  # the two-stage between/within decomposition) but using the raw weighted
+  # response wgt * z as the residual (rather than subtracting the mean
+  # estimate) and skipping the final division by squared total weight,
+  # since the target here is Var(total) rather than Var(mean).
 
   # Assign the function name
 
@@ -89,7 +108,6 @@ total_var <- function(z, wgt, x, y, stratum_ind, stratum_level, cluster_ind,
   #
 
   if (cluster_ind) {
-
     # Begin the section for a two-stage sample
 
     # Calculate additional required values
@@ -113,7 +131,6 @@ total_var <- function(z, wgt, x, y, stratum_ind, stratum_level, cluster_ind,
     total2est <- numeric(ncluster)
     var2est <- numeric(ncluster)
     for (i in 1:ncluster) {
-
       # Calculate the weighted residuals vector
 
       n <- length(z_lst[[i]])
@@ -240,20 +257,24 @@ total_var <- function(z, wgt, x, y, stratum_ind, stratum_level, cluster_ind,
 
     # End of section for a two-stage sample
   } else {
-
     # Begin the section for a single-stage sample
 
     # Calculate additional required values
 
     n <- length(z)
+    dind <- if (subset_local) rep(1, n) else subpop_ind
+    n_eff <- if (subset_local) n else sum(subpop_ind)
 
     # Calculate the weighted residuals vector
+    # (when subset_local = FALSE, x/y/z/wgt cover the full stratum rather
+    # than domain members only, and dind zeroes the contribution of every
+    # site outside the domain)
 
-    rv_total <- wgt * z
+    rv_total <- dind * wgt * z
 
     # Adjust the variance estimator for small sample size
 
-    if (n < 4) {
+    if (n_eff < 4) {
       warn_ind <- TRUE
       act <- "The simple random sampling variance estimator for an infinite population was used.\n"
       if (stratum_ind) {
@@ -272,6 +293,20 @@ total_var <- function(z, wgt, x, y, stratum_ind, stratum_level, cluster_ind,
         ))
       }
       vartype <- "SRS"
+    }
+
+    # Above the benchmarked large-n threshold, subset_local = FALSE still
+    # proceeds as explicitly requested, but warns
+
+    if (!subset_local && n > 2000) {
+      warn_ind <- TRUE
+      act <- "Proceeding as requested; this computation may take a long time and use a large amount of memory.\n"
+      warn <- paste0("subset_local = FALSE requires building the local mean neighbor structure from all ", n, ifelse(stratum_ind, paste0(" sites in stratum \"", stratum_level, "\""), " sites in this design"), ", which exceeds the recommended threshold of 2,000 sites. This computation may take several minutes or longer and use several GB of memory.\n")
+      warn_df <- rbind(warn_df, data.frame(
+        func = I(fname), subpoptype = warn_vec[1], subpop = warn_vec[2],
+        indicator = warn_vec[3], stratum = if (stratum_ind) stratum_level else NA,
+        warning = I(warn), action = I(act)
+      ))
     }
 
     # Calculate the variance estimate

@@ -77,7 +77,7 @@
 #'   second levels, respectively, of each element in the \code{vars_stressor}
 #'   argument and that uses values in the \code{vars_stressor} argument as names
 #'   for the list.  If \code{stressor_levels} is provided without names,
-#'   then the names of \code{stressor_levels} are set to \code{vars_stressor}. 
+#'   then the names of \code{stressor_levels} are set to \code{vars_stressor}.
 #'   The default value is NULL.
 #'
 #' @param subpops Vector composed of character values that identify the
@@ -269,7 +269,7 @@
 #'
 #' @param vartype Character value providing the choice of the variance
 #'   estimator, where \code{"Local"} indicates the local mean estimator and \code{"SRS"} indicates the
-#'   simple random sampling estimator.  The default value is \code{"Local"}.
+#'   simple random sampling estimator.  The default value is \code{"local"}.
 #'
 #' @param conf Numeric value providing the Gaussian-based confidence level.  The default value
 #'   is \code{95}.
@@ -281,6 +281,16 @@
 #'   \code{FALSE}, then alongside the subpopulation output, output for all sites
 #'   (ignoring subpopulations) is not returned for each variable in \code{vars}.
 #'   The default is \code{FALSE}.
+#'
+#' @param subset_local When `subset_local = TRUE` (the default),
+#' subpopulations are subset to include only subpopulation members
+#' prior to variance estimation. When `subset_local = FALSE`,
+#' subpopulations are not subset prior to variance estimation.
+#' `subset_local = FALSE` follows standard design-based subpopulation
+#' (i.e., domain) estimation theory but is computationally more complex,
+#' requiring the neighborhood weights matrix of the full data
+#' (which scales cubically with the sample size).
+#' `subset_local` only applies when `vartype = "local"`.
 #'
 #' @section Details:
 #' Attributable risk measures the proportional reduction in the extent of poor
@@ -371,8 +381,8 @@ attrisk_analysis <- function(dframe, vars_response, vars_stressor, response_leve
                              xcoord = NULL, ycoord = NULL, stratumID = NULL, clusterID = NULL,
                              weight1 = NULL, xcoord1 = NULL, ycoord1 = NULL, sizeweight = FALSE,
                              sweight = NULL, sweight1 = NULL, fpc = NULL, popsize = NULL,
-                             vartype = "Local", conf = 95, All_Sites = FALSE) {
-
+                             vartype = "local", conf = 95, All_Sites = FALSE,
+                             subset_local = TRUE) {
   # Create a vector for error messages
 
   error_ind <- FALSE
@@ -726,6 +736,14 @@ attrisk_analysis <- function(dframe, vars_response, vars_stressor, response_leve
 
   cluster_ind <- !is.null(clusterID)
 
+  # subset_local = FALSE is not yet implemented for two-stage designs (the
+  # cluster_ind branches of attrisk_var() still always subset to domain
+  # members); fail with a clear message.
+
+  if (!subset_local && cluster_ind) {
+    stop("\nsubset_local = FALSE is not yet supported for two-stage (clustered) samples.\n")
+  }
+
   # Create the survey design object
 
   design <- survey_design(
@@ -812,16 +830,26 @@ attrisk_analysis <- function(dframe, vars_response, vars_stressor, response_leve
     # Loop through all response variables (vars_response)
 
     for (ivar_r in vars_response) {
-
       # Loop through all stressor variables (vars_stressor)
 
       for (ivar_s in vars_stressor) {
-
         # Loop through all levels of the subpopulation
 
         for (isubpop in lev_itype) {
           tst <- !is.na(dframe[, itype]) & dframe[, itype] == isubpop &
             !is.na(dframe[, ivar_r]) & !is.na(dframe[, ivar_s])
+
+          # tst_resp/subpop_ind_full support subset_local = FALSE: tst_resp
+          # is every site with non-missing response and stressor values,
+          # regardless of subpopulation, and subpop_ind_full flags which of
+          # those sites are actually in this subpopulation. tst itself is
+          # left untouched, since it still determines the point estimate
+          # (wgt_total/popsize_hat); only the rows fed to attrisk_var()
+          # for the variance calculation change under subset_local.
+
+          tst_resp <- !is.na(dframe[, ivar_r]) & !is.na(dframe[, ivar_s])
+          subpop_ind_full <- as.numeric(!is.na(dframe[, itype]) &
+            dframe[, itype] == isubpop)
 
           # Compute sum of the weights
 
@@ -849,7 +877,6 @@ attrisk_analysis <- function(dframe, vars_response, vars_stressor, response_leve
           #
 
           if (stratum_ind) {
-
             #
             # Begin the section for stratified data
             #
@@ -864,7 +891,6 @@ attrisk_analysis <- function(dframe, vars_response, vars_stressor, response_leve
             #
 
             for (i in 1:nstrata) {
-
               # Calculate required values
 
               stratum_i <- tst & stratumID == stratum_levels[i]
@@ -888,6 +914,9 @@ attrisk_analysis <- function(dframe, vars_response, vars_stressor, response_leve
               # marginal totals
 
               if (cluster_ind) {
+                # subset_local = FALSE is not yet supported for two-stage
+                # designs (blocked upstream), so this branch is
+                # intentionally left passing domain-only data
                 temp <- attrisk_var(
                   response[stratum_i], stressor[stratum_i],
                   response_levels[[ivar_r]], stressor_levels[[ivar_s]],
@@ -897,12 +926,27 @@ attrisk_analysis <- function(dframe, vars_response, vars_stressor, response_leve
                   ycoord1[stratum_i], vartype, warn_ind, warn_df, warn_vec
                 )
               } else {
-                temp <- attrisk_var(response[stratum_i], stressor[stratum_i],
+                # stratum_data_i is the row mask actually fed to
+                # attrisk_var(): under subset_local = TRUE it's identical to
+                # stratum_i (domain members only); under
+                # FALSE it widens to every site in this stratum with a
+                # usable response and stressor value, and subpop_ind_full
+                # tells attrisk_var() which of those rows are real domain
+                # members so it can zero out the rest.
+                stratum_data_i <- if (subset_local) {
+                  stratum_i
+                } else {
+                  tst_resp & stratumID == stratum_levels[i]
+                }
+                temp <- attrisk_var(response[stratum_data_i],
+                  stressor[stratum_data_i],
                   response_levels[[ivar_r]], stressor_levels[[ivar_s]],
-                  wgt[stratum_i], xcoord[stratum_i], ycoord[stratum_i],
+                  wgt[stratum_data_i], xcoord[stratum_data_i],
+                  ycoord[stratum_data_i],
                   stratum_ind, stratum_levels[i], cluster_ind,
                   vartype = vartype, warn_ind = warn_ind, warn_df = warn_df,
-                  warn_vec = warn_vec
+                  warn_vec = warn_vec, subset_local = subset_local,
+                  subpop_ind = subpop_ind_full[stratum_data_i]
                 )
               }
               varest.st <- temp$varest
@@ -1016,7 +1060,6 @@ attrisk_analysis <- function(dframe, vars_response, vars_stressor, response_leve
             # End the section for stratified data
             #
           } else {
-
             #
             # Begin the section for unstratified data
             #
@@ -1100,10 +1143,11 @@ attrisk_analysis <- function(dframe, vars_response, vars_stressor, response_leve
             if (total3 == 0 || (total1 + total3) == 0 || (total3 + total4) == 0) {
               arlog_se <- NA
             } else {
-
               # Calculate the variance-covariance estimate for the cell totals
 
               if (cluster_ind) {
+                # subset_local = FALSE is not yet supported for two-stage
+                # designs (blocked upstream)
                 temp <- attrisk_var(
                   response[tst], stressor[tst],
                   response_levels[[ivar_r]], stressor_levels[[ivar_s]],
@@ -1112,12 +1156,19 @@ attrisk_analysis <- function(dframe, vars_response, vars_stressor, response_leve
                   ycoord1[tst], vartype, warn_ind, warn_df, warn_vec
                 )
               } else {
-                temp <- attrisk_var(response[tst], stressor[tst],
+                # data_tst mirrors stratum_data_i above: domain-only under
+                # TRUE, every site with a usable response and stressor
+                # value under FALSE, with subpop_ind_full marking the real
+                # domain members.
+                data_tst <- if (subset_local) tst else tst_resp
+                temp <- attrisk_var(response[data_tst], stressor[data_tst],
                   response_levels[[ivar_r]], stressor_levels[[ivar_s]],
-                  wgt[tst], xcoord[tst], ycoord[tst], stratum_ind, NULL,
-                  cluster_ind,
+                  wgt[data_tst], xcoord[data_tst], ycoord[data_tst],
+                  stratum_ind, NULL, cluster_ind,
                   vartype = vartype, warn_ind = warn_ind,
-                  warn_df = warn_df, warn_vec = warn_vec
+                  warn_df = warn_df, warn_vec = warn_vec,
+                  subset_local = subset_local,
+                  subpop_ind = subpop_ind_full[data_tst]
                 )
               }
               varest <- temp$varest

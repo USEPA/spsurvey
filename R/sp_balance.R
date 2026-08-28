@@ -38,9 +38,9 @@
 #'     can take on a value between zero and infinity.}
 #'   \item{\code{mse}}{ Mean-Squared Error. This statistic
 #'     can take on a value between zero and infinity.}
-#'   \item{\code{mae}}{ Median-Absolute Error. This statistic
+#'   \item{\code{mae}}{ Mean-Absolute Error. This statistic
 #'     can take on a value between zero and infinity.}
-#'   \item{\code{medae}}{ Mean-Absolute Error. This statistic
+#'   \item{\code{medae}}{ Median-Absolute Error. This statistic
 #'     can take on a value between zero and infinity.}
 #'   \item{\code{chisq}}{ Chi-Squared Loss. This statistic
 #'     can take on a value between zero and infinity.}
@@ -124,6 +124,37 @@ sp_balance <- function(object, sframe, stratum_var = NULL, ip = NULL, metrics = 
   }
 }
 
+#' Calculate spatial balance metrics for a single stratum
+#'
+#' This function computes the Voronoi-polygon-based spatial balance metrics
+#' (Stevens & Olsen 2004) for one stratum's worth of design
+#' sites (\code{object_split}) against the sampling frame (\code{sframe_split}).
+#' For each sample site, it builds that site's Voronoi polygon (the region of
+#' the frame closer to it than to any other sample site), sums the frame's
+#' inclusion probability within that polygon to get the site's total
+#' inclusion probability \eqn{v_i} (which has expectation 1 under a
+#' perfectly balanced design), and passes the resulting proportions to
+#' \code{calculate_metric} for each requested metric.
+#'
+#' @param object_split The design sites (as an \code{sf} object) for a single
+#'   stratum.
+#'
+#' @param sframe_split The sampling frame (as an \code{sf} object), subset to
+#'   the same stratum.
+#'
+#' @param ip Name of the inclusion probability column in \code{sframe_split},
+#'   or \code{NULL} to assume equal probability.
+#'
+#' @param metrics Character vector of spatial balance metric names to
+#'   compute (see \code{sp_balance}).
+#'
+#' @param extents Logical value; if \code{TRUE}, also return the total frame
+#'   extent (count, length, or area) within each Voronoi polygon.
+#'
+#' @return A list with element \code{values} (a named vector of metric
+#'   estimates) and, if \code{extents} is \code{TRUE}, element \code{extent}.
+#'
+#' @noRd
 calculate_sp_balance <- function(object_split, sframe_split, ip, metrics, extents) {
   # need to calculate the density of each row in sframe_split
   if (all(st_geometry_type(sframe_split) %in% c("POINT", "MULTIPOINT"))) {
@@ -210,6 +241,18 @@ calculate_sp_balance <- function(object_split, sframe_split, ip, metrics, extent
   output
 }
 
+#' Convert a deldir tile into an sf polygon
+#'
+#' \code{deldir::tile.list()} returns each Voronoi tile as a list of x/y
+#' vertex coordinate vectors; this function closes the ring (reversing and
+#' repeating the first vertex) and wraps it as an \code{sf} \code{POLYGON}.
+#'
+#' @param tile A single tile element from \code{deldir::tile.list()}, with
+#'   components \code{x} and \code{y}.
+#'
+#' @return An \code{sfg} \code{POLYGON} object for the tile.
+#'
+#' @noRd
 get_sftess <- function(tile) {
   ## finding the number of points in the bounding polygon
   npol <- length(tile$x)
@@ -222,6 +265,20 @@ get_sftess <- function(tile) {
 }
 
 
+#' Dispatch to a single named spatial balance metric function
+#'
+#' @param metric Character value naming one metric (see \code{sp_balance}
+#'   for the available choices).
+#'
+#' @param proportions Vector of each sample site's share of total inclusion
+#'   probability within its Voronoi polygon (sums to 1).
+#'
+#' @param expected_proportions The value each element of \code{proportions}
+#'   would take under perfect spatial balance, \code{1 / n}.
+#'
+#' @return A single named numeric value: the requested metric's estimate.
+#'
+#' @noRd
 calculate_metric <- function(metric, proportions, expected_proportions) {
   switch(metric,
     pielou = calculate_pielou(proportions, expected_proportions),
@@ -235,18 +292,48 @@ calculate_metric <- function(metric, proportions, expected_proportions) {
   )
 }
 
+#' Pielou's evenness index
+#'
+#' \eqn{PEI = 1 + \sum_i proportions_i \ln(proportions_i) / \ln(n)}, where
+#' \code{n = 1 / expected_proportions}. Bounded in [0, 1]; 0 indicates
+#' perfect spatial balance.
+#'
+#' @param proportions Vector of each sample site's share of total inclusion
+#'   probability within its Voronoi polygon (sums to 1).
+#'
+#' @param expected_proportions The value each element of \code{proportions}
+#'   would take under perfect spatial balance, \code{1 / n}.
+#'
+#' @return A single named numeric value, the Pielou's evenness index estimate.
+#'
+#' @noRd
 calculate_pielou <- function(proportions, expected_proportions) {
   pielou <- 1 + sum(proportions * log(proportions)) / log(1 / expected_proportions) # 1/E(p) = n$
   names(pielou) <- "pielou"
   pielou
 }
 
+#' Simpson's evenness index
+#'
+#' @inheritParams calculate_pielou
+#'
+#' @return A single named numeric value, the Simpson's evenness index
+#'   estimate.
+#'
+#' @noRd
 calculate_simpsons <- function(proportions, expected_proportions) {
   simpsons <- sum(proportions^2) - expected_proportions
   names(simpsons) <- "simpsons"
   simpsons
 }
 
+#' Root-mean-squared error of the Voronoi proportions from their expectation
+#'
+#' @inheritParams calculate_pielou
+#'
+#' @return A single named numeric value, the RMSE estimate.
+#'
+#' @noRd
 calculate_rmse <- function(proportions, expected_proportions) {
   sqr_dev <- (proportions - expected_proportions)^2
   mse <- sum(sqr_dev) / length(sqr_dev)
@@ -255,6 +342,13 @@ calculate_rmse <- function(proportions, expected_proportions) {
   rmse
 }
 
+#' Mean-squared error of the Voronoi proportions from their expectation
+#'
+#' @inheritParams calculate_pielou
+#'
+#' @return A single named numeric value, the MSE estimate.
+#'
+#' @noRd
 calculate_mse <- function(proportions, expected_proportions) {
   sqr_dev <- (proportions - expected_proportions)^2
   mse <- sum(sqr_dev) / length(sqr_dev)
@@ -262,18 +356,41 @@ calculate_mse <- function(proportions, expected_proportions) {
   mse
 }
 
+#' Mean absolute relative error of the Voronoi proportions from their
+#' expectation
+#'
+#' @inheritParams calculate_pielou
+#'
+#' @return A single named numeric value, the MAE estimate.
+#'
+#' @noRd
 calculate_mae <- function(proportions, expected_proportions) {
   mae <- mean(abs(proportions - expected_proportions) / expected_proportions)
   names(mae) <- "mae"
   mae
 }
 
+#' Median absolute relative error of the Voronoi proportions from their
+#' expectation
+#'
+#' @inheritParams calculate_pielou
+#'
+#' @return A single named numeric value, the MEDAE estimate.
+#'
+#' @noRd
 calculate_medae <- function(proportions, expected_proportions) {
   medae <- median(abs(proportions - expected_proportions) / expected_proportions)
   names(medae) <- "medae"
   medae
 }
 
+#' Chi-squared loss of the Voronoi proportions from their expectation
+#'
+#' @inheritParams calculate_pielou
+#'
+#' @return A single named numeric value, the chi-squared loss estimate.
+#'
+#' @noRd
 calculate_chisq <- function(proportions, expected_proportions) {
   chisq <- sum((proportions - expected_proportions)^2 / expected_proportions)
   names(chisq) <- "chisq"

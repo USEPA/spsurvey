@@ -1,6 +1,14 @@
 url: https://usepa.github.io/spsurvey/
 template:
   bootstrap: 3
+  math-rendering: mathjax
+  includes:
+    in_header: |
+      <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        TeX: { equationNumbers: { autoNumber: "AMS" } }
+      });
+      </script>
 
 articles:
 - title: Articles
@@ -12,4 +20,5 @@ articles:
   - articles/sampling
   - articles/weighting
   - articles/analysis
+  - articles/technical
 

@@ -62,6 +62,19 @@
 #'   first subpopulation level, the second subpopulation level, and an
 #'   indicator name.
 #'
+#' @param subset_local Logical value indicating whether the local mean
+#'   neighbor structure is built from domain members only (\code{TRUE},
+#'   the default behavior) or from all sites in the stratum
+#'   with out-of-domain sites zeroed out via \code{subpop_ind}
+#'   (\code{FALSE}). Only affects the single-stage branch. The default
+#'   value is \code{TRUE}.
+#'
+#' @param subpop_ind Numeric 0/1 vector, aligned with the rows of
+#'   \code{design$variables} that have a non-missing \code{colvar}, that
+#'   is 1 for members of the subpopulation (domain, i.e. sites with a
+#'   non-missing \code{rowvar}) and 0 otherwise. Only used when
+#'   \code{subset_local} is \code{FALSE}.
+#'
 #' @return A list containing the following objects:
 #'   \itemize{
 #'     \item{\code{varest}}{matrix containing the variance/covariance estimates
@@ -81,8 +94,8 @@
 
 cdftestvar_total <- function(design, wgt, x, y, stratum_ind, stratum_level,
                              cluster_ind, clusterID, wgt1, x1, y1, warn_ind,
-                             warn_df, warn_vec) {
-
+                             warn_df, warn_vec, subset_local = TRUE,
+                             subpop_ind = NULL) {
   # Assign the function name
 
   fname <- "cdftestvar_total"
@@ -90,6 +103,13 @@ cdftestvar_total <- function(design, wgt, x, y, stratum_ind, stratum_level,
   # Assign the variance type
 
   vartype <- "Local"
+
+  # Parallels cdftestvar_prop() (see that file for the one-hot contingency
+  # table model matrix and the localmean_cov() joint-covariance approach),
+  # but for cell totals rather than proportions: the weighted model matrix
+  # is used directly as the residual (no cell means are subtracted off) and
+  # there is no final division by squared total weight, matching total_var()
+  # vs. mean_var().
 
   # Create the model matrix for the contingency table using all of the data
 
@@ -100,7 +120,17 @@ cdftestvar_total <- function(design, wgt, x, y, stratum_ind, stratum_level,
   mm_cells <- model.matrix(frm_cells, model.frame(frm_cells, design$variables,
     na.action = na.pass
   ))
-  rowlev <- unique(design$variables$rowvar)
+  # Under subset_local = FALSE, the caller blanks colvar (not rowvar) to
+  # signal "outside this stratum" (see cdftest_localmean_total()), so
+  # design$variables$rowvar is no longer restricted to this stratum on its
+  # own; restrict here via colvar so this degenerate-single-group check
+  # still reflects this stratum's actual domain composition rather than
+  # the whole design's rowvar levels
+  rowlev <- if (subset_local) {
+    unique(design$variables$rowvar)
+  } else {
+    unique(design$variables$rowvar[!is.na(design$variables$colvar)])
+  }
   if (length(rowlev) > 1) {
     frm_rows <- eval(bquote(~ factor(.(as.name("rowvar"))) - 1))
     mm_rows <- model.matrix(frm_rows, model.frame(frm_rows, design$variables,
@@ -128,7 +158,6 @@ cdftestvar_total <- function(design, wgt, x, y, stratum_ind, stratum_level,
   #
 
   if (cluster_ind) {
-
     # Begin the section for a two-stage sample
 
     # Calculate additional required values
@@ -152,7 +181,6 @@ cdftestvar_total <- function(design, wgt, x, y, stratum_ind, stratum_level,
     total2est <- matrix(0, ncluster, m)
     var2est <- matrix(0, ncluster, m^2)
     for (i in 1:ncluster) {
-
       # Create the model matrix for the contingency table using using a single
       # cluster
 
@@ -364,19 +392,47 @@ cdftestvar_total <- function(design, wgt, x, y, stratum_ind, stratum_level,
 
     # End of section for a two-stage sample
   } else {
-
     # Begin the section for a single-stage sample
 
     # Calculate the weighted residuals matrix
 
-    mm_table <- subset(mm_table, !(is.na(design$variables$rowvar) |
-      is.na(design$variables$colvar)))
-    n <- nrow(mm_table)
-    rm <- mm_table * matrix(rep(wgt, m), nrow = n)
+    if (subset_local) {
+      mm_table <- subset(mm_table, !(is.na(design$variables$rowvar) |
+        is.na(design$variables$colvar)))
+      n <- nrow(mm_table)
+      rm <- mm_table * matrix(rep(wgt, m), nrow = n)
+    } else {
+      # Keep every site with a valid response bin (colvar), regardless of
+      # domain (rowvar) membership, so localmean_weight() below is built
+      # from the full stratum rather than just the union of the two
+      # groups being compared. Cells for out-of-domain sites are NA
+      # (na.action = na.pass on a NA rowvar); replace with 0 so they
+      # contribute their spatial position without biasing the
+      # contingency-table totals, then zero their weighted row via
+      # subpop_ind for the same reason.
+      keep <- !is.na(design$variables$colvar)
+      mm_table <- subset(mm_table, keep)
+      mm_table[is.na(mm_table)] <- 0
+      n <- nrow(mm_table)
+      rm <- mm_table * matrix(rep(wgt, m), nrow = n) * subpop_ind
+    }
+    n_eff <- if (subset_local) n else sum(subpop_ind)
+
+    # SRS fallback covariance estimator, used both when the small-sample
+    # check trips and when the local mean estimator itself fails to
+    # produce valid weights. Restricted to domain rows when
+    # subset_local = FALSE, since rm's many exact-zero rows for
+    # out-of-domain sites would otherwise deflate var(rm)
+
+    srs_var <- if (subset_local) {
+      n * var(rm)
+    } else {
+      n_eff * var(rm[subpop_ind == 1, , drop = FALSE])
+    }
 
     # Adjust the variance/covariance estimator for small sample size
 
-    if (n < 4) {
+    if (n_eff < 4) {
       warn_ind <- TRUE
       act <- "The simple random sampling covariance estimator for an infinite population was used.\n"
       if (stratum_ind) {
@@ -395,6 +451,20 @@ cdftestvar_total <- function(design, wgt, x, y, stratum_ind, stratum_level,
         ))
       }
       vartype <- "SRS"
+    }
+
+    # Above the benchmarked large-n threshold, subset_local = FALSE still
+    # proceeds as explicitly requested, but warns
+
+    if (!subset_local && n > 2000) {
+      warn_ind <- TRUE
+      act <- "Proceeding as requested; this computation may take a long time and use a large amount of memory.\n"
+      warn <- paste0("subset_local = FALSE requires building the local mean neighbor structure from all ", n, ifelse(stratum_ind, paste0(" sites in stratum \"", stratum_level, "\""), " sites in this design"), ", which exceeds the recommended threshold of 2,000 sites. This computation may take several minutes or longer and use several GB of memory.\n")
+      warn_df <- rbind(warn_df, data.frame(
+        func = I(fname), subpoptype = warn_vec[1], subpop = warn_vec[2],
+        indicator = warn_vec[3], stratum = if (stratum_ind) stratum_level else NA,
+        warning = I(warn), action = I(act)
+      ))
     }
 
     # Calculate the variance/covariance estimate
@@ -419,7 +489,7 @@ cdftestvar_total <- function(design, wgt, x, y, stratum_ind, stratum_level,
             action = I(act)
           ))
         }
-        varest <- n * var(rm)
+        varest <- srs_var
       } else {
         varest <- localmean_cov(rm, weight_lst)
         temp <- diag(varest)
@@ -441,11 +511,11 @@ cdftestvar_total <- function(design, wgt, x, y, stratum_ind, stratum_level,
               action = I(act)
             ))
           }
-          varest <- n * var(rm)
+          varest <- srs_var
         }
       }
     } else {
-      varest <- n * var(rm)
+      varest <- srs_var
     }
     colnames(varest) <- names_totals
     if (length(rowlev) == 1) {

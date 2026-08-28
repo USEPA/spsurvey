@@ -45,7 +45,6 @@
 #' adjwgt(wgt, wgtcat, framesize, sites)
 #' @export
 adjwgt <- function(wgt, wgtcat = NULL, framesize, sites = NULL) {
-
   # set default wgtcat argument if omitted
 
   if (is.null(wgtcat)) {

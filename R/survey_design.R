@@ -95,7 +95,24 @@ survey_design <- function(dframe, siteID, weight, stratum_ind, stratumID,
                           cluster_ind, clusterID, weight1, sizeweight, sweight,
                           sweight1, fpcfactor_ind, fpcsize, Ncluster,
                           stage1size, vartype, jointprob) {
+  # This function is a large decision tree that assembles the right call to
+  # survey::svydesign() for the requested design. Every branch ultimately
+  # differs only in which svydesign() arguments are supplied; the branching
+  # variables are, from outermost to innermost:
+  #  - vartype: "Local"/"SRS" designs pass svydesign() *weights* (1/inclusion
+  #    probability) directly, because their variance estimators (computed
+  #    elsewhere) don't need survey's built-in PPS joint-probability
+  #    approximations. "HT"/"YG" designs instead pass *probs* (inclusion
+  #    probabilities) plus a `pps` argument selecting which joint-inclusion
+  #    approximation survey should use, since those estimators need it.
+  #  - jointprob (HT/YG branch only): "overton"/"hr" request an approximate
+  #    joint-inclusion method built into survey (pps = jointprob or HR());
+  #    any other value (e.g. "brewer") is passed straight through as `pps`.
+  #  - stratum_ind / cluster_ind / sizeweight / fpcfactor_ind: whether to add
+  #    strata=, a two-stage ids= formula, size-weighted weights/probs, and a
+  #    finite population correction (fpc=), respectively.
   if (vartype %in% c("Local", "SRS")) {
+    # weights-based designs (Local and SRS variance estimators)
     if (stratum_ind) {
       if (cluster_ind) {
         if (sizeweight) {
@@ -254,7 +271,9 @@ survey_design <- function(dframe, siteID, weight, stratum_ind, stratumID,
       }
     }
   } else {
+    # probs-based designs (HT and YG variance estimators)
     if (jointprob %in% c("overton", "hr")) {
+      # approximate joint-inclusion method built into the survey package
       if (stratum_ind) {
         if (cluster_ind) {
           if (sizeweight) {
@@ -437,6 +456,9 @@ survey_design <- function(dframe, siteID, weight, stratum_ind, stratumID,
         }
       }
     } else {
+      # jointprob names some other approximation (e.g. "brewer"); pass it
+      # straight through to svydesign()'s pps argument instead of using
+      # jointprob/HR() as above
       if (stratum_ind) {
         if (cluster_ind) {
           if (sizeweight) {

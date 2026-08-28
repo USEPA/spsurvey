@@ -47,6 +47,12 @@
 #'
 #' @param warn_df Data frame for storing warning messages.
 #'
+#' @param subset_local Logical value indicating whether the local mean
+#'   neighbor structure is built from domain members only (\code{TRUE},
+#'   the default behavior) or from all sites in the relevant stratum
+#'   (\code{FALSE}). The default value is
+#'   \code{TRUE}.
+#'
 #' @return A list containing the following objects:
 #'   \itemize{
 #'     \item{\code{stderr_U}}{data frame containing standard error estimates}
@@ -65,7 +71,12 @@
 
 cdf_localmean_total <- function(itype, lev_itype, nlev_itype, ivar, design,
                                 design_names, cdfval, ncdfval, cdfest_U,
-                                mult, warn_ind, warn_df) {
+                                mult, warn_ind, warn_df, subset_local = TRUE) {
+  # Parallels cat_localmean_total(): computes the local mean variance of
+  # the CDF total (size) estimate at each threshold in cdfval via
+  # cdfvar_total(). As with cat_localmean_total(), per-stratum variances
+  # are simply summed rather than population-share-weighted, since totals
+  # add directly across strata.
 
   # Assign a value to the function name variable
 
@@ -120,6 +131,16 @@ cdf_localmean_total <- function(itype, lev_itype, nlev_itype, ivar, design,
     tst <- !is.na(dframe[, ivar]) &
       (dframe[, itype] %in% lev_itype[isubpop])
 
+    # tst_resp/subpop_ind_full support subset_local = FALSE: tst_resp is
+    # every site with a usable (non-missing) response, regardless of
+    # subpopulation, and subpop_ind_full flags which of those sites are
+    # actually in this subpopulation (domain). tst itself is left
+    # untouched, since it still determines which strata this
+    # subpopulation touches and sizes the post-stratification total.
+
+    tst_resp <- !is.na(dframe[, ivar])
+    subpop_ind_full <- as.numeric(dframe[, itype] %in% lev_itype[isubpop])
+
     # If post-stratification or calibration was applied to the design object, then
     # calculate the sum of weights for the subpopulation
 
@@ -154,15 +175,16 @@ cdf_localmean_total <- function(itype, lev_itype, nlev_itype, ivar, design,
     # Branch for a stratified sample
 
     if (stratum_ind) {
-
       # Begin the subsection for individual strata
 
       for (i in 1:nstrata) {
-
         # Calculate variance estimates
 
         stratum_i <- tst & stratumID == stratum_levels[i]
         if (cluster_ind) {
+          # subset_local = FALSE is not yet supported for two-stage
+          # designs (blocked upstream in cont_analysis()), so this branch
+          # is intentionally left passing domain-only data
           temp <- cdfvar_total(
             contvar[stratum_i], wgt2[stratum_i],
             xcoord[stratum_i], ycoord[stratum_i], cdfval, stratum_ind,
@@ -171,11 +193,23 @@ cdf_localmean_total <- function(itype, lev_itype, nlev_itype, ivar, design,
             warn_df, warn_vec
           )
         } else {
-          temp <- cdfvar_total(contvar[stratum_i], wgt[stratum_i],
-            xcoord[stratum_i], ycoord[stratum_i], cdfval, stratum_ind,
+          # stratum_data_i is the row mask actually fed to cdfvar_total():
+          # under subset_local = TRUE it's identical to stratum_i (domain
+          # members only); under FALSE it widens to
+          # every responded site in this stratum, and subpop_ind_full
+          # tells cdfvar_total() which of those rows are real domain
+          # members so it can zero out the rest.
+          stratum_data_i <- if (subset_local) {
+            stratum_i
+          } else {
+            tst_resp & stratumID == stratum_levels[i]
+          }
+          temp <- cdfvar_total(contvar[stratum_data_i], wgt[stratum_data_i],
+            xcoord[stratum_data_i], ycoord[stratum_data_i], cdfval, stratum_ind,
             stratum_levels[i], cluster_ind,
             warn_ind = warn_ind,
-            warn_df = warn_df, warn_vec = warn_vec
+            warn_df = warn_df, warn_vec = warn_vec, subset_local = subset_local,
+            subpop_ind = subpop_ind_full[stratum_data_i]
           )
         }
         warn_ind <- temp$warn_ind
@@ -193,9 +227,12 @@ cdf_localmean_total <- function(itype, lev_itype, nlev_itype, ivar, design,
           ))
         }
         if (temp$vartype == "SRS") {
+          # the fallback estimate must cover only this stratum (stratum_i),
+          # not the whole subpopulation (tst); this loop contributes one
+          # stratum's variance at a time
           rslt_svy <- lapply(cdfval, function(x) {
             svytotal(make.formula(paste0("I(", ivar, " <= ", x, ")")),
-              design = subset(design, tst), na.rm = TRUE
+              design = subset(design, stratum_i), na.rm = TRUE
             )
           })
           varest <- sapply(rslt_svy, function(x) SE(x)[2])^2
@@ -233,20 +270,27 @@ cdf_localmean_total <- function(itype, lev_itype, nlev_itype, ivar, design,
 
       # Branch for an unstratified sample
     } else {
-
       # Calculate the standard error estimates
 
       if (cluster_ind) {
+        # subset_local = FALSE is not yet supported for two-stage designs
+        # (blocked upstream in cont_analysis()), so this branch is
+        # intentionally left passing domain-only data
         temp <- cdfvar_total(
           contvar[tst], wgt2[tst], xcoord[tst], ycoord[tst],
           cdfval, stratum_ind, NULL, cluster_ind, clusterID[tst], wgt1[tst],
           xcoord1[tst], ycoord1[tst], warn_ind, warn_df, warn_vec
         )
       } else {
-        temp <- cdfvar_total(contvar[tst], wgt[tst], xcoord[tst], ycoord[tst],
-          cdfval, stratum_ind, NULL, cluster_ind,
+        # data_tst mirrors stratum_data_i above: domain-only under TRUE,
+        # every responded site under FALSE, with subpop_ind_full marking
+        # the real domain members.
+        data_tst <- if (subset_local) tst else tst_resp
+        temp <- cdfvar_total(contvar[data_tst], wgt[data_tst], xcoord[data_tst],
+          ycoord[data_tst], cdfval, stratum_ind, NULL, cluster_ind,
           warn_ind = warn_ind,
-          warn_df = warn_df, warn_vec = warn_vec
+          warn_df = warn_df, warn_vec = warn_vec, subset_local = subset_local,
+          subpop_ind = subpop_ind_full[data_tst]
         )
       }
       warn_ind <- temp$warn_ind

@@ -33,6 +33,19 @@
 irs_stratum <- function(stratum, dsgn, sframe, sf_type, wgt_units = NULL, pt_density = NULL,
                         legacy_option = FALSE, legacy_sites = NULL, maxtry = 10,
                         warn_ind = FALSE, warn_df = NULL) {
+  # Overall approach: this mirrors grts_stratum(), except that sites are
+  # drawn by nonspatial (i.e., independent of spatial location) random sampling (via UPpivotal on a
+  # randomly shuffled frame, or, if the stratum is small, all frame points
+  # are taken) instead of the spatially balanced GRTS ordering. Steps:
+  #  1. For linear/area frames, draw a dense systematic point sample first
+  #     (ip_step1 records that step's inclusion probability); point frames
+  #     go straight to step 2.
+  #  2. Compute each candidate point's inclusion probability (equal,
+  #     unequal, or proportional-to-size), inflated to 1 for legacy sites.
+  #  3. Randomly draw the sample, optionally enforcing a minimum distance
+  #     between sites (irspts_mindis).
+  #  4. Split the drawn sites into base, over, and (if requested) nearest-
+  #     neighbor replacement sites.
 
   # Sample sizes required
   n_base <- dsgn[["n_base"]][[stratum]]

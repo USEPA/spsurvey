@@ -27,6 +27,12 @@
 #'   first subpopulation level, the second subpopulation level, and an indicator
 #'   name.
 #'
+#' @param subset_local Logical value indicating whether the local mean
+#'   neighbor structure is built from the union of the two compared groups
+#'   only (\code{TRUE}, the default behavior) or from the full
+#'   stratum, with out-of-domain sites zeroed out rather than dropped
+#'   (\code{FALSE}). The default value is \code{TRUE}.
+#'
 #' @return A list containing the following objects:
 #'   \itemize{
 #'     \item{\code{varest}}{matrix containing the variance/covariance estimates
@@ -44,7 +50,18 @@
 ################################################################################
 
 cdftest_localmean_prop <- function(design, design_names, warn_ind, warn_df,
-                                   warn_vec) {
+                                   warn_vec, subset_local = TRUE) {
+  # This supports the CDF comparison test (cont_cdftest()): rowvar
+  # identifies which of the groups being compared a site belongs to, and
+  # colvar identifies which CDF-threshold bin its response falls in, so
+  # rowvar x colvar forms a contingency table of group-by-bin proportions.
+  # This function computes the full variance-covariance matrix of that
+  # table's cell proportions (needed for the chi-squared-type test
+  # statistics in svychisq_localmean()) using the local mean estimator, via
+  # cdftestvar_prop(); this parallels cat_localmean_prop() but produces a
+  # covariance matrix rather than a vector of independent variances.
+  # Per-stratum covariance matrices are combined with the same
+  # population-size-share-weighted formula used elsewhere.
 
   # Assign a value to the function name variable
 
@@ -53,7 +70,17 @@ cdftest_localmean_prop <- function(design, design_names, warn_ind, warn_df,
   # For variables that exist in the design$variables data frame, assign survey
   # design variables
 
-  dframe <- subset(design$variables, !(is.na(rowvar) | is.na(colvar)))
+  # colvar is NA only for a genuinely missing response (item nonresponse),
+  # which is always dropped. rowvar is NA for sites outside the two groups
+  # being compared; under subset_local = TRUE those are dropped too
+  # (original behavior), but under subset_local = FALSE they are kept here
+  # so their location can inform the local mean neighbor structure below,
+  # and are zeroed out (not dropped) downstream via subpop_ind.
+  dframe <- if (subset_local) {
+    subset(design$variables, !(is.na(rowvar) | is.na(colvar)))
+  } else {
+    subset(design$variables, !is.na(colvar))
+  }
   for (i in names(design_names)) {
     if (is.null(design_names[[i]])) {
       eval(parse(text = paste0(i, " <- NULL")))
@@ -61,6 +88,13 @@ cdftest_localmean_prop <- function(design, design_names, warn_ind, warn_df,
       eval(parse(text = paste0(i, " <- dframe[, \"", design_names[[i]], "\"]")))
     }
   }
+
+  # Indicator (1/0) for domain (subpopulation) membership among the rows
+  # retained above; only used when subset_local = FALSE, to zero out
+  # out-of-domain rows' contribution to the contingency table while still
+  # using their location in the neighbor structure
+
+  subpop_ind_full <- as.numeric(!is.na(dframe$rowvar))
 
   # Assign a value to the indicator variable for a two-stage sample
 
@@ -94,7 +128,6 @@ cdftest_localmean_prop <- function(design, design_names, warn_ind, warn_df,
   # Branch for a stratified sample
 
   if (stratum_ind) {
-
     # Calculate values required for weighting strata
 
     if (cluster_ind) {
@@ -122,24 +155,42 @@ cdftest_localmean_prop <- function(design, design_names, warn_ind, warn_df,
     # Calculate variance estimates
 
     for (i in 1:nstrata) {
+      # restrict to stratum i by blanking out rowvar (subset_local = TRUE)
+      # or colvar (subset_local = FALSE) for every site outside it, so
+      # cdftestvar_prop() (which operates on the full design object)
+      # effectively sees only this stratum's rows of the contingency table.
+      # Blanking colvar instead of rowvar when subset_local = FALSE keeps
+      # rowvar's NA-ness meaning only "outside the domain" (rather than
+      # also "outside this stratum"), which cdftestvar_prop() relies on to
+      # zero out (rather than drop) out-of-domain sites while still using
+      # their location in the neighbor structure. The union
+      # is.na(rowvar) | is.na(colvar) used to drop rows is unaffected by
+      # which of the two carries the "outside this stratum" flag, so this
+      # leaves the subset_local = TRUE path unchanged.
       temp <- design_names$stratumID
       tst <- design$variables[, temp] != stratum_levels[i]
       design_temp <- design
-      design_temp$variables$rowvar[tst] <- NA
+      if (subset_local) {
+        design_temp$variables$rowvar[tst] <- NA
+      } else {
+        design_temp$variables$colvar[tst] <- NA
+      }
       stratum_i <- stratumID == stratum_levels[i]
       if (cluster_ind) {
         temp <- cdftestvar_prop(
           design_temp, wgt2[stratum_i], xcoord[stratum_i], ycoord[stratum_i],
           stratum_ind, stratum_levels[i], cluster_ind, clusterID[stratum_i],
           wgt1[stratum_i], xcoord1[stratum_i], ycoord1[stratum_i], warn_ind,
-          warn_df, warn_vec
+          warn_df, warn_vec,
+          subset_local = subset_local, subpop_ind = subpop_ind_full[stratum_i]
         )
       } else {
         temp <- cdftestvar_prop(
           design_temp, wgt[stratum_i], xcoord[stratum_i], ycoord[stratum_i],
           stratum_ind, stratum_levels[i], cluster_ind,
           warn_ind = warn_ind,
-          warn_df = warn_df, warn_vec = warn_vec
+          warn_df = warn_df, warn_vec = warn_vec,
+          subset_local = subset_local, subpop_ind = subpop_ind_full[stratum_i]
         )
       }
       varest_st <- temp$varest
@@ -165,18 +216,19 @@ cdftest_localmean_prop <- function(design, design_names, warn_ind, warn_df,
 
     # Branch for an unstratified sample
   } else {
-
     # Calculate the variance/covariance estimates
 
     if (cluster_ind) {
       results <- cdftestvar_prop(
         design, wgt2, xcoord, ycoord, stratum_ind, NULL, cluster_ind, clusterID,
-        wgt1, xcoord1, ycoord1, warn_ind, warn_df, warn_vec
+        wgt1, xcoord1, ycoord1, warn_ind, warn_df, warn_vec,
+        subset_local = subset_local, subpop_ind = subpop_ind_full
       )
     } else {
       results <- cdftestvar_prop(
         design, wgt, xcoord, ycoord, stratum_ind, NULL, cluster_ind,
-        warn_ind = warn_ind, warn_df = warn_df, warn_vec = warn_vec
+        warn_ind = warn_ind, warn_df = warn_df, warn_vec = warn_vec,
+        subset_local = subset_local, subpop_ind = subpop_ind_full
       )
     }
   }

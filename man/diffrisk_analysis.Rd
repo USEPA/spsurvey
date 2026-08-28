@@ -25,9 +25,10 @@ diffrisk_analysis(
   sweight1 = NULL,
   fpc = NULL,
   popsize = NULL,
-  vartype = "Local",
+  vartype = "local",
   conf = 95,
-  All_Sites = FALSE
+  All_Sites = FALSE,
+  subset_local = TRUE
 )
 }
 \arguments{
@@ -73,7 +74,7 @@ contains the values \code{"Poor"} and \code{"Good"} for the first and
 second levels, respectively, of each element in the \code{vars_stressor}
 argument and that uses values in the \code{vars_stressor} argument as names
 for the list.  If \code{stressor_levels} is provided without names,
-then the names of \code{stressor_levels} are set to \code{vars_stressor}. 
+then the names of \code{stressor_levels} are set to \code{vars_stressor}.
 The default value is NULL.}
 
 \item{subpops}{Vector composed of character values that identify the
@@ -265,7 +266,7 @@ weight variable in \code{dframe}.  The default value is
 
 \item{vartype}{Character value providing the choice of the variance
 estimator, where \code{"Local"} indicates the local mean estimator and \code{"SRS"} indicates the
-simple random sampling estimator.  The default value is \code{"Local"}.}
+simple random sampling estimator.  The default value is \code{"local"}.}
 
 \item{conf}{Numeric value providing the Gaussian-based confidence level.  The default value
 is \code{95}.}
@@ -277,6 +278,16 @@ returned for each variable in \code{vars}. If \code{All_Sites} is
 \code{FALSE}, then alongside the subpopulation output, output for all sites
 (ignoring subpopulations) is not returned for each variable in \code{vars}.
 The default is \code{FALSE}.}
+
+\item{subset_local}{When `subset_local = TRUE` (the default),
+subpopulations are subset to include only subpopulation members
+prior to variance estimation. When `subset_local = FALSE`,
+subpopulations are not subset prior to variance estimation.
+`subset_local = FALSE` follows standard design-based subpopulation
+(i.e., domain) estimation theory but is computationally more complex,
+requiring the neighborhood weights matrix of the full data
+(which scales cubically with the sample size).
+`subset_local` only applies when `vartype = "local"`.}
 }
 \value{
 The analysis results. A data frame of population estimates for all combinations of

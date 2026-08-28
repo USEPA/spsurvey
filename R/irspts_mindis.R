@@ -20,6 +20,12 @@
 irspts_mindis <- function(mindis, sframe, samplesize, stratum, maxtry = 10,
                           legacy_option = NULL, legacy_var = NULL,
                           warn_ind = NULL, warn_df = NULL) {
+  # Overall approach: draw an independent random sample, then repeatedly
+  # identify any pair of selected sites closer than mindis and resample,
+  # giving sites that were already far enough apart ("probdis" sites, plus
+  # any legacy sites) an inclusion probability of 1 so they are kept in the
+  # next draw. This repeats until no sites are too close together or maxtry
+  # is reached.
 
   # select initial set of sites
   if (nrow(sframe) <= samplesize) {

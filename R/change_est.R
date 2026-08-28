@@ -148,6 +148,17 @@
 #' @param warn_vec Vector that contains names of the population type, the
 #'   subpopulation, and an indicator.
 #'
+#' @param subset_local Logical value indicating whether the local mean
+#'   variance estimator (\code{vartype = "local"}) builds its neighbor
+#'   structure from domain members only (\code{TRUE}, the historical
+#'   default) or from all sites in the relevant stratum (\code{FALSE}).
+#'   Only affects each survey's own point/variance estimates
+#'   (category_est()/mean_est()/total_est()); the repeat-visit covariance
+#'   term (changevar_mean()/changevar_prop()/changevar_total()) always
+#'   uses domain members only, since it is a raw covariance estimate
+#'   among repeat-visit sites regardless of subset_local. The default
+#'   value is \code{TRUE}.
+#'
 #' @return A list composed of the following objects:
 #'   \itemize{
 #'     \item{\code{results}}{if resp_ind equals \code{"cat"}, a data frame named
@@ -171,7 +182,37 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
                        survey_2, itype, isubpop, ivar, lev_ivar, nlev_ivar,
                        design_1, design_2, design_names, repeat_1, repeat_2,
                        siteID, revisitwgt, test, var_nondetect, vartype, conf,
-                       mult, warn_ind, warn_df, warn_vec) {
+                       mult, warn_ind, warn_df, warn_vec, subset_local = TRUE) {
+  # ============================================================================
+  # Function map: individual computations reuse the mean/total/
+  # category estimators and the local mean variance estimator documented in
+  # mean_est.R/mean_var.R, category_est.R/catvar_prop.R, changevar_mean.R/
+  # changevar_prop.R/changevar_total.R, and percentile_est.R:
+  #
+  #   - resp_ind == "cat": change in category proportions between the two
+  #     surveys. For each category, estimate the proportion in survey 1 and
+  #     survey 2 (category_est()-style), take their difference as the change
+  #     estimate, and get Var(change) = Var(p1) + Var(p2) - 2*Cov(p1, p2)
+  #     using catvar_prop()/catvar_total() for the individual variances and
+  #     changevar_prop()/changevar_total() for the covariance (which needs
+  #     the repeat-visit sites, sites sampled in both surveys).
+  #
+  #   - resp_ind == "cont": change in continuous-variable summary statistics,
+  #     depending on which of "mean", "total", "median" are in `test`:
+  #       - "mean": change in the estimated mean (mean_est()-style estimates,
+  #         mean_var() variances, changevar_mean() covariance).
+  #       - "total": change in the estimated total, analogous to "mean" but
+  #         using total_est()/total_var()-style estimates and
+  #         changevar_total() for the covariance.
+  #       - "median": the estimated median of survey 1 is used to split
+  #         responses into two categories (<= median, > median) in BOTH
+  #         surveys, then change in the proportion in each category is
+  #         estimated exactly as in the resp_ind == "cat" branch above.
+  #     Within each of these, there is a further branch on whether any
+  #     repeat-visit sites exist (sum(repeat_1) == 0): with none, the
+  #     covariance term is undefined/zero and a warning is recorded; with
+  #     some, changevar_*() is called to estimate it.
+  # ============================================================================
 
   # Assign a value to the function name variable
 
@@ -186,6 +227,23 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
 
   subpop_1 <- dframe_1[, itype] %in% isubpop
   subpop_2 <- dframe_2[, itype] %in% isubpop
+
+  # dframe_1_full/dframe_2_full/design_1_full/design_2_full retain every
+  # site from their survey (not just subpopulation isubpop's members),
+  # captured here before the domain restriction below. They are only used
+  # when subset_local = FALSE, at the handful of call sites that compute
+  # each survey's OWN point/variance estimate for isubpop (not the
+  # repeat-visit covariance term, which always uses the domain-restricted
+  # dframe_1/dframe_2/design_1/design_2 below and is unaffected by
+  # subset_local); see the subset_local = FALSE branches near each
+  # category_est()/mean_est()/total_est() call for how they are used to
+  # let the local mean neighbor structure span the full stratum rather
+  # than just this subpopulation.
+
+  dframe_1_full <- dframe_1
+  dframe_2_full <- dframe_2
+  design_1_full <- design_1
+  design_2_full <- design_2
 
   # Subset the dframe_1 and dframe_2 objects
 
@@ -204,7 +262,6 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
       indicator = I(ivar), stratum = NA, warning = I(warn), action = I(act)
     ))
   } else {
-
     # Subset the design_1 and design_2 objects
 
     design_1 <- subset(design_1, subpop_1)
@@ -248,14 +305,31 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
     #
 
     if (resp_ind == "cat") {
-
       # Calculate estimates for all sites from survey one
+      # (dframe_1_use/design_1_use are dframe_1/design_1, domain-restricted,
+      # under subset_local = TRUE. Under
+      # subset_local = FALSE they are dframe_1_full/design_1_full instead,
+      # with itype blanked to NA for non-domain rows, so cat_localmean_prop()/
+      # cat_localmean_total() can build the local mean neighbor structure
+      # from the full stratum rather than just this subpopulation, while
+      # every itype-based computation in category_est() still sees exactly
+      # this subpopulation because non-members are NA, not dropped)
 
-      dframe_1[, itype] <- droplevels(dframe_1[, itype])
+      if (subset_local) {
+        dframe_1_use <- dframe_1
+        design_1_use <- design_1
+      } else {
+        dframe_1_use <- dframe_1_full
+        dframe_1_use[!subpop_1, itype] <- NA
+        design_1_use <- design_1_full
+        design_1_use$variables[!subpop_1, itype] <- NA
+      }
+      dframe_1_use[, itype] <- droplevels(dframe_1_use[, itype])
       temp <- category_est(
-        NULL, dframe_1, itype, isubpop, 1, ivar, lev_ivar,
-        nlev_ivar, design_1, design_names, vartype, conf, mult, warn_ind,
-        warn_df
+        NULL, dframe_1_use, itype, isubpop, 1, ivar, lev_ivar,
+        nlev_ivar, design_1_use, design_names, vartype, conf, mult, warn_ind,
+        warn_df,
+        subset_local = subset_local
       )
       temp_1 <- droplevels(subset(temp$catsum, Category != "Total"))
       warn_ind <- temp$warn_ind
@@ -264,11 +338,21 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
 
       # Calculate estimates for all sites from survey two
 
-      dframe_2[, itype] <- droplevels(dframe_2[, itype])
+      if (subset_local) {
+        dframe_2_use <- dframe_2
+        design_2_use <- design_2
+      } else {
+        dframe_2_use <- dframe_2_full
+        dframe_2_use[!subpop_2, itype] <- NA
+        design_2_use <- design_2_full
+        design_2_use$variables[!subpop_2, itype] <- NA
+      }
+      dframe_2_use[, itype] <- droplevels(dframe_2_use[, itype])
       temp <- category_est(
-        NULL, dframe_2, itype, isubpop, 1, ivar, lev_ivar,
-        nlev_ivar, design_2, design_names, vartype, conf, mult, warn_ind,
-        warn_df
+        NULL, dframe_2_use, itype, isubpop, 1, ivar, lev_ivar,
+        nlev_ivar, design_2_use, design_names, vartype, conf, mult, warn_ind,
+        warn_df,
+        subset_local = subset_local
       )
       temp_2 <- droplevels(subset(temp$catsum, Category != "Total"))
       warn_ind <- temp$warn_ind
@@ -336,7 +420,6 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
         # Calculate standard error of the change estimates for surveys with
         # repeat visit sites
       } else {
-
         # Subset the dframe_1 and dframe_2 objects to retain repeat visit sites
 
         dframe_1 <- subset(dframe_1, repeat_1)
@@ -532,7 +615,6 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
         # Branch to handle stratified and unstratified data
 
         if (stratum_ind) {
-
           # Begin the section for stratified data
 
           # Create the vectors of covariance or correlation estimates for all
@@ -557,11 +639,9 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
             # Begin section for nonempty vectors of categorical variable values
             # for revisit sites
           } else {
-
             # Begin the loop for individual strata
 
             for (i in 1:nstrata) {
-
               # Check whether the vectors of categorical variable values for
               # revisit sites are empty or contain a single value for a stratum
 
@@ -581,7 +661,6 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
                 # Begin section for nonempty vectors of categorical variable
                 # values for revisit sites for a stratum
               } else {
-
                 # Calculate proportion estimates
 
                 z1 <- factor(catvar_1[stratum_i], levels = catvar_levels)
@@ -666,7 +745,6 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
 
           # End the section for stratified data
         } else {
-
           # Begin the section for unstratified data
 
           # Check whether the vectors of categorical variable values for revisit
@@ -687,7 +765,6 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
             # Begin section for nonempty vectors of categorical variable values
             # for revisit sites
           } else {
-
             # Calculate proportion estimates
 
             z1 <- factor(catvar_1, levels = catvar_levels)
@@ -866,7 +943,6 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
       # End the section for a categorical variable
       #
     } else if (resp_ind == "cont") {
-
       #
       # Begin the section for a continuous variable
       #
@@ -876,7 +952,6 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
       #
 
       if ("mean" %in% test) {
-
         # As necessary, store original values for the dframe_1 and dframe_2 data
         # frames and the design_1 and design_2 objects
 
@@ -888,10 +963,23 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
         }
 
         # Calculate estimate for all sites from survey one
+        # (see the subset_local = FALSE branch in the "cat" section above
+        # for why dframe_1_use/design_1_use exist)
+
+        if (subset_local) {
+          dframe_1_use <- dframe_1
+          design_1_use <- design_1
+        } else {
+          dframe_1_use <- dframe_1_full
+          dframe_1_use[!subpop_1, itype] <- NA
+          design_1_use <- design_1_full
+          design_1_use$variables[!subpop_1, itype] <- NA
+        }
         temp <- mean_est(
-          NULL, dframe_1, itype, isubpop, 1, ivar,
-          design_1, design_names, var_nondetect, vartype, conf, mult, warn_ind,
-          warn_df
+          NULL, dframe_1_use, itype, isubpop, 1, ivar,
+          design_1_use, design_names, var_nondetect, vartype, conf, mult,
+          warn_ind, warn_df,
+          subset_local = subset_local
         )
         meanest_1 <- temp$meansum
         warn_ind <- temp$warn_ind
@@ -900,10 +988,20 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
 
         # Calculate estimate for all sites from survey two
 
+        if (subset_local) {
+          dframe_2_use <- dframe_2
+          design_2_use <- design_2
+        } else {
+          dframe_2_use <- dframe_2_full
+          dframe_2_use[!subpop_2, itype] <- NA
+          design_2_use <- design_2_full
+          design_2_use$variables[!subpop_2, itype] <- NA
+        }
         temp <- mean_est(
-          NULL, dframe_2, itype, isubpop, 1, ivar,
-          design_2, design_names, var_nondetect, vartype, conf, mult, warn_ind,
-          warn_df
+          NULL, dframe_2_use, itype, isubpop, 1, ivar,
+          design_2_use, design_names, var_nondetect, vartype, conf, mult,
+          warn_ind, warn_df,
+          subset_local = subset_local
         )
         meanest_2 <- temp$meansum
         warn_ind <- temp$warn_ind
@@ -940,7 +1038,6 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
 
           # Section for surveys with repeat visit sites
         } else {
-
           # Subset the dframe_1 and dframe_2 objects to retain repeat visit sites
 
           dframe_1 <- subset(dframe_1, repeat_1)
@@ -1127,7 +1224,6 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
           # Branch to handle stratified and unstratified data
 
           if (stratum_ind) {
-
             # Begin the section for stratified data
 
             # Create the object for covariance or correlation estimates for all
@@ -1151,11 +1247,9 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
               # Begin section for nonempty vectors of continuous variable values
               # for revisit sites
             } else {
-
               # Begin the loop for individual strata
 
               for (i in 1:nstrata) {
-
                 # Check whether the vectors of continuous variable values for
                 # revisit sites are empty or contain a single value for a stratum
 
@@ -1174,7 +1268,6 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
                   # Begin section for nonempty vectors of continuous variables
                   # values for revisit sites for a stratum
                 } else {
-
                   # Calculate mean estimates
 
                   stratum_i <- stratum == stratum_levels[i]
@@ -1227,7 +1320,6 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
 
             # End the section for stratified data
           } else {
-
             # Begin the section for unstratified data
 
             # Check whether the vectors of continuous variable values for revisit
@@ -1247,7 +1339,6 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
               # Begin section for nonempty vectors of continuous variable values
               # for revisit sites
             } else {
-
               # Calculate mean estimates
 
               z1 <- contvar_1
@@ -1360,97 +1451,118 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
         # End the section for a continuous variable using the mean
         #
       }
-      
+
       if ("total" %in% test) {
-        
         # As necessary, store original values for the dframe_1 and dframe_2 data
         # frames and the design_1 and design_2 objects
-        
+
         if (any(c("mean") %in% test)) {
           dframe_1 <- dframe_1_org
           dframe_2 <- dframe_2_org
           design_1 <- design_1_org
           design_2 <- design_2_org
         }
-        
+
         if (any(c("median") %in% test)) {
           dframe_1_org <- dframe_1
           dframe_2_org <- dframe_2
           design_1_org <- design_1
           design_2_org <- design_2
         }
-        
+
         # Calculate estimate for all sites from survey one
+        # (see the subset_local = FALSE branch in the "cat" section above
+        # for why dframe_1_use/design_1_use exist)
+
+        if (subset_local) {
+          dframe_1_use <- dframe_1
+          design_1_use <- design_1
+        } else {
+          dframe_1_use <- dframe_1_full
+          dframe_1_use[!subpop_1, itype] <- NA
+          design_1_use <- design_1_full
+          design_1_use$variables[!subpop_1, itype] <- NA
+        }
         temp <- total_est(
-          NULL, dframe_1, itype, isubpop, 1, ivar,
-          design_1, design_names, var_nondetect, vartype, conf, mult, warn_ind,
-          warn_df
+          NULL, dframe_1_use, itype, isubpop, 1, ivar,
+          design_1_use, design_names, var_nondetect, vartype, conf, mult,
+          warn_ind, warn_df,
+          subset_local = subset_local
         )
         totalest_1 <- temp$totalsum
         warn_ind <- temp$warn_ind
         warn_df <- temp$warn_df
         tw_1 <- sum(weights(design_1))
-        
+
         # Calculate estimate for all sites from survey two
-        
+
+        if (subset_local) {
+          dframe_2_use <- dframe_2
+          design_2_use <- design_2
+        } else {
+          dframe_2_use <- dframe_2_full
+          dframe_2_use[!subpop_2, itype] <- NA
+          design_2_use <- design_2_full
+          design_2_use$variables[!subpop_2, itype] <- NA
+        }
         temp <- total_est(
-          NULL, dframe_2, itype, isubpop, 1, ivar,
-          design_2, design_names, var_nondetect, vartype, conf, mult, warn_ind,
-          warn_df
+          NULL, dframe_2_use, itype, isubpop, 1, ivar,
+          design_2_use, design_names, var_nondetect, vartype, conf, mult,
+          warn_ind, warn_df,
+          subset_local = subset_local
         )
         totalest_2 <- temp$totalsum
         warn_ind <- temp$warn_ind
         warn_df <- temp$warn_df
         tw_2 <- sum(weights(design_2))
-        
+
         # Merge results for the two surveys
-        
+
         results <- merge(totalest_1, totalest_2,
-                         suffix = c("_1", "_2"),
-                         by = c("Type", "Subpopulation", "Indicator")
+          suffix = c("_1", "_2"),
+          by = c("Type", "Subpopulation", "Indicator")
         )
-        
+
         # Calculate the change estimate
-        
+
         results$DiffEst <- results$Estimate_2 - results$Estimate_1
-        
+
         # Calculate the confidence bound multiplier
-        
+
         mult <- qnorm(0.5 + (conf / 100) / 2)
-        
+
         #
         # Calculate standard error of the change estimate
         #
-        
+
         # Section for surveys with no repeat visit sites
-        
+
         if (sum(repeat_1) == 0) {
           results$StdError <- sqrt(results$StdError_1^2 + results$StdError_2^2)
           results$MarginofError <- mult * results$StdError
           results$LCB <- results$DiffEst - mult * results$StdError
           results$UCB <- results$DiffEst + mult * results$StdError
-          
-          
+
+
           # Section for surveys with repeat visit sites
         } else {
-          
           # Subset the dframe_1 and dframe_2 objects to retain repeat visit sites
-          
+
           dframe_1 <- subset(dframe_1, repeat_1)
           dframe_2 <- subset(dframe_2, repeat_2)
-          
+
           # Subset the design_1 and design_2 objects to retain repeat visit sites
           design_1 <- subset(design_1, repeat_1)
           design_2 <- subset(design_2, repeat_2)
-          
+
           # Assign values for the continuous variables
-          
+
           contvar_1 <- dframe_1[, ivar]
           contvar_2 <- dframe_2[, ivar]
-          
+
           # Assign values for survey design variables using the survey one design
           # object
-          
+
           tempdf <- design_1$variables
           for (i in names(design_names)) {
             if (is.null(design_names[[i]])) {
@@ -1462,13 +1574,13 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
               )))
             }
           }
-          
+
           # Assign a value to the indicator variable for a two-stage sample
-          
+
           cluster_ind <- !is.null(clusterID)
-          
+
           # Assign values to weight variables
-          
+
           if (revisitwgt) {
             if (cluster_ind) {
               wgt1 <- tempdf$wgt1
@@ -1484,23 +1596,23 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
               wgt <- rep(1, length(contvar_1))
             }
           }
-          
+
           # Assign a logical value to the indicator variable for a stratified
           # sample
-          
+
           stratum_ind <- !is.null(stratumID)
-          
+
           # If the sample is stratified, convert stratum to a factor, determine
           # stratum levels, and calculate number of strata
-          
+
           if (stratum_ind) {
             stratum <- factor(stratumID)
             stratum_levels <- levels(stratum)
             nstrata <- length(stratum_levels)
           }
-          
+
           # Remove missing values
-          
+
           indx <- 1:sum(repeat_1)
           indx[is.na(contvar_1) | is.na(contvar_2)] <- 0
           contvar_1 <- contvar_1[indx]
@@ -1536,9 +1648,9 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
               ycoord <- ycoord[indx]
             }
           }
-          
+
           # For a stratified sample, remove strata that contain a single site
-          
+
           if (stratum_ind) {
             ind <- FALSE
             for (i in 1:nstrata) {
@@ -1581,9 +1693,9 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
               nstrata <- length(stratum_levels)
             }
           }
-          
+
           # For a stratified sample, check whether the number of strata is one
-          
+
           if (stratum_ind) {
             if (nstrata == 1) {
               warn_ind <- TRUE
@@ -1597,9 +1709,9 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
               stratum_ind <- FALSE
             }
           }
-          
+
           # Calculate population size values
-          
+
           if (stratum_ind) {
             if (cluster_ind) {
               popsize_hat <- tapply(wgt1 * wgt2, stratum, sum)
@@ -1615,21 +1727,20 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
               popsize_hat <- sum(wgt)
             }
           }
-          
+
           # Branch to handle stratified and unstratified data
-          
+
           if (stratum_ind) {
-            
             # Begin the section for stratified data
-            
+
             # Create the object for covariance or correlation estimates for all
             # strata combined
-            
+
             rslt <- NA
-            
+
             # Check whether the vectors of continuous variable values for revisit
             # sites are empty or contain a single value
-            
+
             if (length(contvar_1) <= 1) {
               warn_ind <- TRUE
               act <- "Covariance among the revisited sites was not included in calculation of \nthe standard error estimate.\n"
@@ -1639,18 +1750,16 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
                 subpoptype = warn_vec[1], subpop = warn_vec[2], indicator = warn_vec[3],
                 stratum = NA, warning = I(warn), action = I(act)
               ))
-              
+
               # Begin section for nonempty vectors of continuous variable values
               # for revisit sites
             } else {
-              
               # Begin the loop for individual strata
-              
+
               for (i in 1:nstrata) {
-                
                 # Check whether the vectors of continuous variable values for
                 # revisit sites are empty or contain a single value for a stratum
-                
+
                 stratum_i <- stratum == stratum_levels[i]
                 if (length(contvar_1[stratum_i]) <= 1) {
                   warn_ind <- TRUE
@@ -1662,34 +1771,33 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
                     indicator = warn_vec[3], stratum = I(stratum_levels[i]),
                     warning = I(warn), action = I(act)
                   ))
-                  
+
                   # Begin section for nonempty vectors of continuous variables
                   # values for revisit sites for a stratum
                 } else {
-                  
                   # Calculate mean estimates
-                  
+
                   stratum_i <- stratum == stratum_levels[i]
                   z1 <- contvar_1[stratum_i]
                   z2 <- contvar_2[stratum_i]
                   total1 <- as.vector(svytotal(make.formula(ivar),
-                                             design = subset(design_1, stratum_i), na.rm = TRUE
+                    design = subset(design_1, stratum_i), na.rm = TRUE
                   ))
                   total2 <- as.vector(svytotal(make.formula(ivar),
-                                             design = subset(design_2, stratum_i), na.rm = TRUE
+                    design = subset(design_2, stratum_i), na.rm = TRUE
                   ))
-                  
+
                   # for local neighborhood variance
                   mean1 <- as.vector(svymean(make.formula(ivar),
-                                               design = subset(design_1, stratum_i), na.rm = TRUE
+                    design = subset(design_1, stratum_i), na.rm = TRUE
                   ))
                   mean2 <- as.vector(svymean(make.formula(ivar),
-                                               design = subset(design_2, stratum_i), na.rm = TRUE
+                    design = subset(design_2, stratum_i), na.rm = TRUE
                   ))
-                  
-                  
+
+
                   # Calculate covariance or correlation estimates
-                  
+
                   if (cluster_ind) {
                     temp <- changevar_mean(
                       z1, z2, wgt2[stratum_i],
@@ -1700,40 +1808,39 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
                     )
                   } else {
                     temp <- changevar_mean(z1, z2, wgt[stratum_i],
-                                           xcoord[stratum_i], ycoord[stratum_i], revisitwgt, mean1,
-                                           mean2, stratum_ind, stratum_levels[i], cluster_ind,
-                                           vartype = vartype, warn_ind = warn_ind, warn_df = warn_df,
-                                           warn_vec = warn_vec
+                      xcoord[stratum_i], ycoord[stratum_i], revisitwgt, mean1,
+                      mean2, stratum_ind, stratum_levels[i], cluster_ind,
+                      vartype = vartype, warn_ind = warn_ind, warn_df = warn_df,
+                      warn_vec = warn_vec
                     )
                   }
                   correst <- temp$rslt
                   warn_ind <- temp$warn_ind
                   warn_df <- temp$warn_df
-                  
+
                   # Add estimates to the object for all strata combined
-                  
+
                   rslt[!is.na(correst)] <- rslt[!is.na(correst)] +
                     (popsize_hat[i] / sum_popsize_hat) * correst[!is.na(correst)]
-                  
+
                   # End the section for nonempty vectors of continuous variable
                   # values for revisit sites for a stratum
                 }
-                
+
                 # End the loop for individual strata
               }
-              
+
               # End the section for nonempty vectors of continuous variable
               # values for revisit sites
             }
-            
+
             # End the section for stratified data
           } else {
-            
             # Begin the section for unstratified data
-            
+
             # Check whether the vectors of continuous variable values for revisit
             # sites are empty or contain a single value
-            
+
             if (length(contvar_1) <= 1) {
               rslt <- NA
               warn_ind <- TRUE
@@ -1744,35 +1851,34 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
                 indicator = warn_vec[3], stratum = NA, warning = I(warn),
                 action = I(act)
               ))
-              
+
               # Begin section for nonempty vectors of continuous variable values
               # for revisit sites
             } else {
-              
               # Calculate mean and total estimates
-              
+
               z1 <- contvar_1
               z2 <- contvar_2
               total1 <- as.vector(svytotal(make.formula(ivar),
-                                         design = design_1,
-                                         na.rm = TRUE
+                design = design_1,
+                na.rm = TRUE
               ))
               total2 <- as.vector(svytotal(make.formula(ivar),
-                                         design = design_2,
-                                         na.rm = TRUE
+                design = design_2,
+                na.rm = TRUE
               ))
-              
+
               mean1 <- as.vector(svymean(make.formula(ivar),
-                                           design = design_1,
-                                           na.rm = TRUE
+                design = design_1,
+                na.rm = TRUE
               ))
               mean2 <- as.vector(svymean(make.formula(ivar),
-                                           design = design_2,
-                                           na.rm = TRUE
+                design = design_2,
+                na.rm = TRUE
               ))
-              
+
               # Calculate covariance or correlation estimates
-              
+
               if (cluster_ind) {
                 temp <- changevar_mean(
                   z1, z2, wgt2, xcoord, ycoord, revisitwgt,
@@ -1781,24 +1887,24 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
                 )
               } else {
                 temp <- changevar_mean(z1, z2, wgt, xcoord, ycoord, revisitwgt,
-                                        mean1, mean2, stratum_ind, NULL, cluster_ind,
-                                       vartype = vartype, warn_ind = warn_ind, warn_df = warn_df,
-                                       warn_vec = warn_vec
+                  mean1, mean2, stratum_ind, NULL, cluster_ind,
+                  vartype = vartype, warn_ind = warn_ind, warn_df = warn_df,
+                  warn_vec = warn_vec
                 )
               }
               rslt <- temp$rslt
               warn_ind <- temp$warn_ind
               warn_df <- temp$warn_df
-              
+
               # End the section for nonempty vectors of continuous variable
               # values for revisit sites
             }
-            
+
             # End the section for unstratified data
           }
-          
+
           # Calculate standard errors
-          
+
           if (is.na(rslt)) {
             results$StdError <- sqrt(results$StdError_1^2 + results$StdError_2^2)
           } else {
@@ -1812,7 +1918,7 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
               }
               if (temp <= 0) {
                 results$StdError <- sqrt(results$StdError_1^2 +
-                                           results$StdError_2^2)
+                  results$StdError_2^2)
               } else {
                 results$StdError <- sqrt(temp)
               }
@@ -1841,38 +1947,37 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
               }
               if (temp <= 0) {
                 results$StdError <- sqrt(results$StdError_1^2 +
-                                           results$StdError_2^2)
+                  results$StdError_2^2)
               } else {
                 results$StdError <- sqrt(temp)
               }
             }
           }
-          
+
           # Calculate margins of error and confidence bounds for the change
           # estimate
-          
+
           results$MarginofError <- mult * results$StdError
           results$LCB <- results$DiffEst - mult * results$StdError
           results$UCB <- results$DiffEst + mult * results$StdError
-          
+
           # End the section for surveys with repeat visit sites
         }
-        
+
         # Add estimates to the contsum_mean data frame
-        
+
         changesum$contsum_total <- rbind(changesum$contsum_total, cbind(
           Survey_1 = survey_names[1],
           Survey_2 = survey_names[2],
           subset(results, select = c(1:3, 16:20, 4:9, 10:15))
         ))
-        
+
         #
         # End the section for a continuous variable using the total
         #
       }
 
       if ("median" %in% test) {
-
         #
         # Begin the section for a continuous variable using the median
         #
@@ -1919,7 +2024,6 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
             action = I(act)
           ))
         } else {
-
           # Create the categorical response variables
 
           p_1 <- factor(ifelse(dframe_1[, ivar] <= pctest_1$pctsum$Estimate,
@@ -1948,6 +2052,44 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
           } else {
             design_2 <- update(design_2, medcat = p_2)
           }
+
+          # As necessary, add the same medcat column (using survey one's
+          # median cutpoint, exactly as above) to the wide, non-domain-
+          # restricted dframe_1_full/dframe_2_full/design_1_full/
+          # design_2_full objects, so they can stand in for dframe_1/
+          # dframe_2/design_1/design_2 below when subset_local = FALSE
+          # (see the subset_local = FALSE branch in the "cat" section
+          # above for why this substitution happens)
+
+          if (!subset_local) {
+            dframe_1_full$medcat <- factor(ifelse(
+              dframe_1_full[, ivar] <= pctest_1$pctsum$Estimate,
+              "Less_Than_Median", "Greater_Than_Median"
+            ))
+            if ("postStrata" %in% names(design_1_full)) {
+              temp <- factor(ifelse(design_1_full$variables[, ivar] <=
+                pctest_1$pctsum$Estimate, "Less_Than_Median",
+              "Greater_Than_Median"
+              ))
+              design_1_full <- update(design_1_full, medcat = temp)
+            } else {
+              design_1_full <- update(design_1_full, medcat = dframe_1_full$medcat)
+            }
+            dframe_2_full$medcat <- factor(ifelse(
+              dframe_2_full[, ivar] <= pctest_1$pctsum$Estimate,
+              "Less_Than_Median", "Greater_Than_Median"
+            ))
+            if ("postStrata" %in% names(design_1_full)) {
+              temp <- factor(ifelse(design_2_full$variables[, ivar] <=
+                pctest_1$pctsum$Estimate, "Less_Than_Median",
+              "Greater_Than_Median"
+              ))
+              design_2_full <- update(design_2_full, medcat = temp)
+            } else {
+              design_2_full <- update(design_2_full, medcat = dframe_2_full$medcat)
+            }
+          }
+
           # save indicator name to replace later after medcat used for analysis
           ivar_name <- ivar
           ivar <- "medcat"
@@ -1956,10 +2098,20 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
 
           # Calculate estimates for all sites from survey one
 
-          dframe_1[, itype] <- droplevels(dframe_1[, itype])
+          if (subset_local) {
+            dframe_1_use <- dframe_1
+            design_1_use <- design_1
+          } else {
+            dframe_1_use <- dframe_1_full
+            dframe_1_use[!subpop_1, itype] <- NA
+            design_1_use <- design_1_full
+            design_1_use$variables[!subpop_1, itype] <- NA
+          }
+          dframe_1_use[, itype] <- droplevels(dframe_1_use[, itype])
           temp <- category_est(
-            NULL, dframe_1, itype, isubpop, 1, ivar, lev_ivar, nlev_ivar,
-            design_1, design_names, vartype, conf, mult, warn_ind, warn_df
+            NULL, dframe_1_use, itype, isubpop, 1, ivar, lev_ivar, nlev_ivar,
+            design_1_use, design_names, vartype, conf, mult, warn_ind, warn_df,
+            subset_local = subset_local
           )
           temp_1 <- droplevels(subset(temp$catsum, Category != "Total"))
           warn_ind <- temp$warn_ind
@@ -1968,10 +2120,20 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
 
           # Calculate estimates for all sites from survey two
 
-          dframe_2[, itype] <- droplevels(dframe_2[, itype])
+          if (subset_local) {
+            dframe_2_use <- dframe_2
+            design_2_use <- design_2
+          } else {
+            dframe_2_use <- dframe_2_full
+            dframe_2_use[!subpop_2, itype] <- NA
+            design_2_use <- design_2_full
+            design_2_use$variables[!subpop_2, itype] <- NA
+          }
+          dframe_2_use[, itype] <- droplevels(dframe_2_use[, itype])
           temp <- category_est(
-            NULL, dframe_2, itype, isubpop, 1, ivar, lev_ivar, nlev_ivar,
-            design_2, design_names, vartype, conf, mult, warn_ind, warn_df
+            NULL, dframe_2_use, itype, isubpop, 1, ivar, lev_ivar, nlev_ivar,
+            design_2_use, design_names, vartype, conf, mult, warn_ind, warn_df,
+            subset_local = subset_local
           )
           temp_2 <- droplevels(subset(temp$catsum, Category != "Total"))
           warn_ind <- temp$warn_ind
@@ -2039,7 +2201,6 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
             # Calculate standard error of the change estimates for surveys with
             # repeat visit sites
           } else {
-
             # Subset the dframe_1 and design_2 objects to retain repeat visit
             # sites
 
@@ -2233,7 +2394,6 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
             # Branch to handle stratified and unstratified data
 
             if (stratum_ind) {
-
               # Begin the section for stratified data
 
               # Create the vector of covariance or correlation estimates for all
@@ -2258,11 +2418,9 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
                 # Begin section for nonempty vectors of categorical variable
                 #  values for revisit sites
               } else {
-
                 # Begin the loop for individual strata
 
                 for (i in 1:nstrata) {
-
                   # Check whether the vectors of categorical variable values for
                   # revisit sites are empty or contain a single value for a
                   #  stratum
@@ -2283,7 +2441,6 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
                     # Begin section for nonempty vectors of categorical variable
                     # values for revisit sites for a stratum
                   } else {
-
                     # Calculate proportion estimates
 
                     z1 <- factor(catvar_1[stratum_i], levels = catvar_levels)
@@ -2372,7 +2529,6 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
 
               # End the section for stratified data
             } else {
-
               # Begin the section for unstratified data
 
               # Check whether the vectors of categorical variable values for
@@ -2393,7 +2549,6 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
                 # Begin section for nonempty vectors of categorical variable
                 #  values for revisit sites
               } else {
-
                 # Calculate proportion estimates
 
                 z1 <- factor(catvar_1, levels = catvar_levels)
@@ -2577,8 +2732,8 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
             ))
           ))
         }
-        
-        #replace medcat name with original variable name
+
+        # replace medcat name with original variable name
         changesum$contsum_median$Indicator_1 <- ivar_name
 
         #
@@ -2595,7 +2750,6 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
         ))
       }
     } else {
-
       # Print an error message for an unrecognized type of response variable
 
       stop(paste("\nThe value provided for argument resp_ind, ", resp_ind,

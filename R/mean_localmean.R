@@ -45,6 +45,12 @@
 #'
 #' @param warn_df Data frame for storing warning messages.
 #'
+#' @param subset_local Logical value indicating whether the local mean
+#'   neighbor structure is built from domain members only (\code{TRUE},
+#'   the hdefault behavior) or from all sites in the relevant stratum
+#'   (\code{FALSE}). The default value is
+#'   \code{TRUE}.
+#'
 #' @return A list containing the following objects:
 #'   \describe{
 #'     \item{\code{stderr}}{vector containing standard error estimates}
@@ -73,7 +79,18 @@
 ################################################################################
 
 mean_localmean <- function(itype, lev_itype, nlev_itype, levs, ivar, design,
-                           design_names, meanest, mult, warn_ind, warn_df) {
+                           design_names, meanest, mult, warn_ind, warn_df,
+                           subset_local = TRUE) {
+  # This function loops over each requested subpopulation level and (for
+  # stratified designs) each stratum within it, calling mean_var() to get
+  # the local mean variance of the mean for that stratum/subpopulation. Per
+  # -stratum variances are combined into an overall variance using the
+  # standard stratified-sampling formula: each stratum's variance is
+  # weighted by the square of its share of total estimated population size
+  # (popsize_hat[i] / sum_popsize_hat), then summed. If mean_var() returns
+  # a negative variance estimate (numerically invalid for the local mean
+  # estimator) or otherwise falls back to "SRS", the simple random sampling
+  # standard error from svymean()/SE() is used for that stratum instead.
 
   # Assign a value to the function name variable
 
@@ -123,6 +140,16 @@ mean_localmean <- function(itype, lev_itype, nlev_itype, levs, ivar, design,
     tst <- !is.na(dframe[, ivar]) &
       (dframe[, itype] %in% lev_itype[isubpop])
 
+    # tst_resp/subpop_ind_full support subset_local = FALSE: tst_resp is
+    # every site with a usable (non-missing) response, regardless of
+    # subpopulation, and subpop_ind_full flags which of those sites are
+    # actually in this subpopulation (domain). tst itself is left
+    # untouched, since it still determines which strata this
+    # subpopulation touches.
+
+    tst_resp <- !is.na(dframe[, ivar])
+    subpop_ind_full <- as.numeric(dframe[, itype] %in% lev_itype[isubpop])
+
     # Assign values to the warn_vec vector
 
     warn_vec <- c(itype, lev_itype[isubpop], ivar)
@@ -146,7 +173,6 @@ mean_localmean <- function(itype, lev_itype, nlev_itype, levs, ivar, design,
     # Branch for a stratified sample
 
     if (stratum_ind) {
-
       # Calculate values required for weighting strata
 
       if (cluster_ind) {
@@ -160,7 +186,6 @@ mean_localmean <- function(itype, lev_itype, nlev_itype, levs, ivar, design,
       # Begin the subsection for individual strata
 
       for (i in 1:nstrata) {
-
         # Calculate mean estimates for the stratum
 
         stratum_i <- tst & stratumID == stratum_levels[i]
@@ -172,6 +197,9 @@ mean_localmean <- function(itype, lev_itype, nlev_itype, levs, ivar, design,
         # Calculate variance estimates
 
         if (cluster_ind) {
+          # subset_local = FALSE is not yet supported for two-stage
+          # designs (blocked upstream in cont_analysis()), so this branch
+          # is intentionally left passing domain-only data
           temp <- mean_var(
             contvar[stratum_i], wgt2[stratum_i], xcoord[stratum_i],
             ycoord[stratum_i], meanest_st[1], stratum_ind, stratum_levels[i],
@@ -179,12 +207,25 @@ mean_localmean <- function(itype, lev_itype, nlev_itype, levs, ivar, design,
             xcoord1[stratum_i], ycoord1[stratum_i], warn_ind, warn_df, warn_vec
           )
         } else {
+          # stratum_data_i is the row mask actually fed to mean_var():
+          # under subset_local = TRUE it's identical to stratum_i (domain
+          # members only); under FALSE it widens to
+          # every responded site in this stratum, and subpop_ind_full
+          # tells mean_var() which of those rows are real domain members
+          # so it can zero out the rest.
+          stratum_data_i <- if (subset_local) {
+            stratum_i
+          } else {
+            tst_resp & stratumID == stratum_levels[i]
+          }
           temp <- mean_var(
-            contvar[stratum_i], wgt[stratum_i], xcoord[stratum_i],
-            ycoord[stratum_i], meanest_st[1], stratum_ind, stratum_levels[i],
-            cluster_ind,
+            contvar[stratum_data_i], wgt[stratum_data_i],
+            xcoord[stratum_data_i],
+            ycoord[stratum_data_i], meanest_st[1], stratum_ind,
+            stratum_levels[i], cluster_ind,
             warn_ind = warn_ind, warn_df = warn_df,
-            warn_vec = warn_vec
+            warn_vec = warn_vec, subset_local = subset_local,
+            subpop_ind = subpop_ind_full[stratum_data_i]
           )
         }
         warn_ind <- temp$warn_ind
@@ -205,8 +246,11 @@ mean_localmean <- function(itype, lev_itype, nlev_itype, levs, ivar, design,
             )
         }
         if (temp$vartype == "SRS") {
+          # the fallback estimate must cover only this stratum (stratum_i),
+          # not the whole subpopulation (tst); this loop contributes one
+          # stratum's variance at a time
           rslt_svy <- svymean(make.formula(ivar),
-            design = subset(design, tst),
+            design = subset(design, stratum_i),
             na.rm = TRUE
           )
           varest <- SE(rslt_svy)^2
@@ -215,6 +259,10 @@ mean_localmean <- function(itype, lev_itype, nlev_itype, levs, ivar, design,
         }
 
         # Add estimate to the stderr vector
+        # (accumulate this stratum's contribution to the combined variance,
+        # weighted by the square of its share of total population size;
+        # stderr[isubpop] temporarily holds a variance here and is
+        # converted to a standard error via sqrt() once all strata are done)
 
         stderr[isubpop] <- stderr[isubpop] +
           ((popsize_hat[i] / sum_popsize_hat)^2) * varest
@@ -235,20 +283,27 @@ mean_localmean <- function(itype, lev_itype, nlev_itype, levs, ivar, design,
 
       # Branch for an unstratified sample
     } else {
-
       # Calculate the standard error estimates
 
       if (cluster_ind) {
+        # subset_local = FALSE is not yet supported for two-stage designs
+        # (blocked upstream in cont_analysis()), so this branch is
+        # intentionally left passing domain-only data
         temp <- mean_var(
           contvar[tst], wgt2[tst], xcoord[tst], ycoord[tst],
           meanest[isubpop], stratum_ind, NULL, cluster_ind, clusterID[tst],
           wgt1[tst], xcoord1[tst], ycoord1[tst], warn_ind, warn_df, warn_vec
         )
       } else {
-        temp <- mean_var(contvar[tst], wgt[tst], xcoord[tst], ycoord[tst],
-          meanest[isubpop], stratum_ind, NULL, cluster_ind,
+        # data_tst mirrors stratum_data_i above: domain-only under TRUE,
+        # every responded site under FALSE, with subpop_ind_full marking
+        # the real domain members.
+        data_tst <- if (subset_local) tst else tst_resp
+        temp <- mean_var(contvar[data_tst], wgt[data_tst], xcoord[data_tst],
+          ycoord[data_tst], meanest[isubpop], stratum_ind, NULL, cluster_ind,
           warn_ind = warn_ind,
-          warn_df = warn_df, warn_vec = warn_vec
+          warn_df = warn_df, warn_vec = warn_vec, subset_local = subset_local,
+          subpop_ind = subpop_ind_full[data_tst]
         )
       }
       warn_ind <- temp$warn_ind

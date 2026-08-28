@@ -27,10 +27,11 @@ change_analysis(
   sweight1 = NULL,
   fpc = NULL,
   popsize = NULL,
-  vartype = "Local",
+  vartype = "local",
   jointprob = "overton",
   conf = 95,
-  All_Sites = FALSE
+  All_Sites = FALSE,
+  subset_local = TRUE
 )
 }
 \arguments{
@@ -257,7 +258,7 @@ variable in \code{dframe}.  The default value is \code{NULL}.}
 \item{vartype}{Character value providing the choice of the variance
 estimator, where \code{"Local"} indicates the local mean estimator and
 \code{"SRS"} indicates the simple random sampling estimator.  The default
-value is \code{"Local"}.}
+value is \code{"local"}.}
 
 \item{jointprob}{Character value providing the choice of joint inclusion
 probability approximation for use with Horvitz-Thompson and Yates-Grundy
@@ -276,6 +277,16 @@ returned for each variable in \code{vars}. If \code{All_Sites} is
 \code{FALSE}, then alongside the subpopulation output, output for all sites
 (ignoring subpopulations) is not returned for each variable in \code{vars}.
 The default is \code{FALSE}.}
+
+\item{subset_local}{When `subset_local = TRUE` (the default),
+subpopulations are subset to include only subpopulation members
+prior to variance estimation. When `subset_local = FALSE`,
+subpopulations are not subset prior to variance estimation.
+`subset_local = FALSE` follows standard design-based subpopulation
+(i.e., domain) estimation theory but is computationally more complex,
+requiring the neighborhood weights matrix of the full data
+(which scales cubically with the sample size).
+`subset_local` only applies when `vartype = "local"`.}
 }
 \value{
 List of change estimates composed of four items:
@@ -290,7 +301,7 @@ List of change estimates composed of four items:
   categorical variables and continuous variables using the median).  Change
   estimates are provided plus standard error estimates and confidence
   interval estimates.
-  
+
   The \code{catsum} data frame contains the following variables:
   \describe{
     \item{Survey_1}{first survey name}
@@ -332,7 +343,7 @@ List of change estimates composed of four items:
     \item{LCBxxPct.U_2}{xx\% (default 95\%) lower confidence bound of total estimate from the second survey}
     \item{UCBxxPct.U_2}{xx\% (default 95\%) upper confidence bound of total estimate from the second survey}
   }
-  
+
   The \code{contsum_mean} data frame contains the following variables:
   \describe{
     \item{Survey_1}{first survey name}
@@ -360,7 +371,7 @@ List of change estimates composed of four items:
     \item{LCBxxPct_2}{xx\% (default 95\%) lower confidence bound of mean estimate from the second survey}
     \item{UCBxxPct_2}{xx\% (default 95\%) upper confidence bound of mean estimate from the second survey}
   }
-  
+
   The \code{contsum_total} data frame contains the following variables:
   \describe{
     \item{Survey_1}{first survey name}
@@ -388,7 +399,7 @@ List of change estimates composed of four items:
     \item{LCBxxPct_2}{xx\% (default 95\%) lower confidence bound of total estimate from the second survey}
     \item{UCBxxPct_2}{xx\% (default 95\%) upper confidence bound of total estimate from the second survey}
   }
-  
+
   The \code{contsum_median} data frame contains the following variables:
   \describe{
     \item{Survey_1}{first survey name}

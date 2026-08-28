@@ -226,7 +226,6 @@ revisit_dsgn <- function(n_period, panels, begin = 1, skip = 1) {
 
     #### serially alternating panel type designS
     if (!is.na(pnl_type) & pnl_type > 0) {
-
       # determine number of panels
       n_panels <- sum(tmp_dsgn)
       n_cycle <- sum(tmp_dsgn)
@@ -294,7 +293,6 @@ revisit_dsgn <- function(n_period, panels, begin = 1, skip = 1) {
 
     #### rotating panel type designs
     if (is.na(pnl_type)) {
-
       # determine cycle length based on number of sampling occasions
       # from first through last sample visit
       n_cycle <- sum(tmp_dsgn, na.rm = TRUE)
@@ -377,5 +375,4 @@ revisit_dsgn <- function(n_period, panels, begin = 1, skip = 1) {
   # return final revisit panel design structure
   class(panels_dsgn) <- "paneldesign"
   return(panels_dsgn)
-  
 }

@@ -11,3 +11,4 @@
 ^pkgdown$
 ^CRAN-SUBMISSION$
 ^vignettes/articles$
+^\.claude$

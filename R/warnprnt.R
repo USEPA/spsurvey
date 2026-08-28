@@ -25,7 +25,6 @@
 
 warnprnt <- function(warn_df = get("warn_df", envir = .GlobalEnv),
                      m = 1:nrow(warn_df)) {
-
   # old front code in warndsgn
   # for (i in m) {
   #   cat(paste(

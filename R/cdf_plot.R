@@ -144,7 +144,6 @@ cdf_plot <- function(cdfest, var = NULL, subpop = NULL, subpop_level = NULL,
                      units_cdf = "Percent", type_cdf = "Continuous", log = "",
                      xlab = NULL, ylab = NULL, ylab_r = NULL, main = NULL, legloc = NULL,
                      confcut = 0, conflev = 95, cex.main = 1.2, cex.legend = 1, ...) {
-
   # Set graphical parameter values
 
   op <- par(mgp = c(1.7, 0.6, 0), mar = c(3, 3, 2, 4) + 0.1)

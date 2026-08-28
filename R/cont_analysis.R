@@ -41,6 +41,17 @@
 #'
 #' @inherit cat_analysis params
 #'
+#' @param subset_local When `subset_local = TRUE` (the default),
+#' subpopulations are subset to include only subpopulation members
+#' prior to variance estimation. When `subset_local = FALSE`,
+#' subpopulations are not subset prior to variance estimation.
+#' `subset_local = FALSE` follows standard design-based subpopulation
+#' (i.e., domain) estimation theory, especially relevant for variance estimates of totals,
+#' but is computationally more complex,
+#' requiring the neighborhood weights matrix of the full data
+#' (which scales cubically with the sample size).
+#' `subset_local` only applies when `vartype = "local"`.
+#'
 #' @param pctval  Vector of the set of values at which percentiles are
 #'   estimated.  The default set is: \code{c(5, 10, 25, 50, 75, 90, 95)}.
 #'
@@ -61,7 +72,7 @@
 #'     \item{\code{Mean}}{: a data frame containing mean estimates}
 #'     \item{\code{Total}}{: a data frame containing total estimates}
 #'   }
-#'   
+#'
 #'   The \code{CDF} data frame contains the following variables:
 #'   \describe{
 #'     \item{Type}{subpopulation (domain) name}
@@ -80,7 +91,7 @@
 #'     \item{LCBxxPct.U}{xx\% (default 95\%) lower confidence bound of CDF total estimate}
 #'     \item{UCBxxPct.U}{xx\% (default 95\%) upper confidence bound of CDF total estimate}
 #'   }
-#'   
+#'
 #'   The \code{Pct} data frame contains the following variables:
 #'   \describe{
 #'     \item{Type}{subpopulation (domain) name}
@@ -94,7 +105,7 @@
 #'     \item{LCBxxPct}{xx\% (default 95\%) lower confidence bound of percentile estimate}
 #'     \item{UCBxxPct}{xx\% (default 95\%) upper confidence bound of percentile estimate}
 #'   }
-#'   
+#'
 #'   The \code{Mean} data frame contains the following variables:
 #'   \describe{
 #'     \item{Type}{subpopulation (domain) name}
@@ -107,7 +118,7 @@
 #'     \item{LCBxxPct}{xx\% (default 95\%) lower confidence bound of mean estimate}
 #'     \item{UCBxxPct}{xx\% (default 95\%) upper confidence bound of mean estimate}
 #'   }
-#'   
+#'
 #'   The \code{Total} data frame contains the following variables:
 #'   \describe{
 #'     \item{Type}{subpopulation (domain) name}
@@ -160,12 +171,11 @@ cont_analysis <- function(dframe, vars, subpops = NULL, siteID = NULL,
                           stratumID = NULL, clusterID = NULL, weight1 = NULL,
                           xcoord1 = NULL, ycoord1 = NULL, sizeweight = FALSE,
                           sweight = NULL, sweight1 = NULL, fpc = NULL,
-                          popsize = NULL, vartype = "Local",
+                          popsize = NULL, vartype = "local",
                           jointprob = "overton", conf = 95,
                           pctval = c(5, 10, 25, 50, 75, 90, 95),
                           statistics = c("CDF", "Pct", "Mean", "Total"),
-                          All_Sites = FALSE) {
-
+                          All_Sites = FALSE, subset_local = TRUE) {
   # Assign NULL to vars_nondetect
 
   vars_nondetect <- NULL
@@ -427,6 +437,14 @@ cont_analysis <- function(dframe, vars, subpops = NULL, siteID = NULL,
 
   cluster_ind <- !is.null(clusterID)
 
+  # subset_local = FALSE is not yet implemented for two-stage designs (the
+  # cluster_ind branches of mean_var()/total_var()/cdfvar_total()/
+  # cdfvar_prop() still always subset to domain members); fail with a clear message
+
+  if (!subset_local && cluster_ind) {
+    stop("\nsubset_local = FALSE is not yet supported for two-stage (clustered) samples.\n")
+  }
+
   # Create the survey design object
 
   design <- survey_design(
@@ -505,7 +523,8 @@ cont_analysis <- function(dframe, vars, subpops = NULL, siteID = NULL,
         temp <- cdf_est(
           contsum$CDF, dframe, itype, lev_itype, nlev_itype, ivar, design,
           design_names, vars_nondetect[indx], vartype, conf, mult, warn_ind,
-          warn_df
+          warn_df,
+          subset_local = subset_local
         )
         contsum$CDF <- temp$cdfsum
         warn_ind <- temp$warn_ind
@@ -531,7 +550,8 @@ cont_analysis <- function(dframe, vars, subpops = NULL, siteID = NULL,
         temp <- mean_est(
           contsum$Mean, dframe, itype, lev_itype, nlev_itype, ivar, design,
           design_names, vars_nondetect[indx], vartype, conf, mult, warn_ind,
-          warn_df
+          warn_df,
+          subset_local = subset_local
         )
         contsum$Mean <- temp$meansum
         warn_ind <- temp$warn_ind
@@ -544,7 +564,8 @@ cont_analysis <- function(dframe, vars, subpops = NULL, siteID = NULL,
         temp <- total_est(
           contsum$Total, dframe, itype, lev_itype, nlev_itype, ivar, design,
           design_names, vars_nondetect[indx], vartype, conf, mult, warn_ind,
-          warn_df
+          warn_df,
+          subset_local = subset_local
         )
         contsum$Total <- temp$totalsum
         warn_ind <- temp$warn_ind

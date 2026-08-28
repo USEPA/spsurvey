@@ -238,7 +238,13 @@
 #'   estimator, where \code{"Local"} indicates the local mean estimator,
 #'   \code{"SRS"} indicates the simple random sampling estimator, \code{"HT"}
 #'   indicates the Horvitz-Thompson estimator, and \code{"YG"} indicates the
-#'   Yates-Grundy estimator.  The default value is \code{"Local"}.
+#'   Yates-Grundy estimator. 
+#'
+#' @param subset_local Logical value that controls how the local mean
+#'   variance estimator (the default \code{vartype = "local"}) handles
+#'   the two subpopulations being compared. See \code{\link{cat_analysis}}
+#'   for the full explanation. \code{subset_local} is not yet supported
+#'   for two-stage (clustered) samples. The default value is \code{TRUE}.
 #'
 #' @param jointprob Character value providing the choice of joint inclusion
 #'   probability approximation for use with Horvitz-Thompson and Yates-Grundy
@@ -310,9 +316,8 @@ cont_cdftest <- function(dframe, vars, subpops = NULL, surveyID = NULL, siteID =
                          weight = "weight", xcoord = NULL, ycoord = NULL, stratumID = NULL,
                          clusterID = NULL, weight1 = NULL, xcoord1 = NULL, ycoord1 = NULL,
                          sizeweight = FALSE, sweight = NULL, sweight1 = NULL, fpc = NULL,
-                         popsize = NULL, vartype = "Local", jointprob = "overton",
-                         testname = "adjWald", nclass = 3) {
-
+                         popsize = NULL, vartype = "local", jointprob = "overton",
+                         testname = "adjWald", nclass = 3, subset_local = TRUE) {
   # Create a vector for error messages
 
   error_ind <- FALSE
@@ -618,6 +623,15 @@ cont_cdftest <- function(dframe, vars, subpops = NULL, surveyID = NULL, siteID =
 
   cluster_ind <- !is.null(clusterID)
 
+  # subset_local = FALSE is not yet implemented for two-stage designs (the
+  # cluster_ind branches of cdftestvar_total()/cdftestvar_prop() still
+  # build the local mean neighbor structure from the union of the two
+  # compared groups only)
+
+  if (!subset_local && cluster_ind) {
+    stop("\nsubset_local = FALSE is not yet supported for two-stage (clustered) samples.\n")
+  }
+
   # Create the survey design object
 
   design <- survey_design(
@@ -673,7 +687,6 @@ cont_cdftest <- function(dframe, vars, subpops = NULL, surveyID = NULL, siteID =
   # Loop through all subpopulations (domains)
 
   for (itype in subpops) {
-
     # Identify levels of the subpopulation
 
     lev_itype <- levels(dframe[, itype])
@@ -695,8 +708,14 @@ cont_cdftest <- function(dframe, vars, subpops = NULL, surveyID = NULL, siteID =
     # Loop through all response variables (vars)
 
     for (ivar in vars) {
-
       # Determine the set of upper bounds for the response variable
+      # (bounds are chosen at roughly evenly spaced positions in the SORTED
+      # data, i.e. approximate quantile cut points, rather than evenly
+      # spaced across the data's range, so each of the nclass resulting
+      # bins has roughly the same number of observations; colvar, the
+      # bin each response value falls into, becomes the contingency
+      # table's column variable used by cdftestvar_prop()/
+      # cdftest_localmean_prop() and svychisq_localmean() below)
 
       temp <- dframe[!is.na(dframe[, ivar]), ivar]
       bounds <- sort(temp)[floor(seq(length(temp) / nclass, length(temp),
@@ -709,7 +728,6 @@ cont_cdftest <- function(dframe, vars, subpops = NULL, surveyID = NULL, siteID =
       # Begin the loop for the the first level of the combination
 
       for (isubpop1 in 1:(nlev_itype - 1)) {
-
         # Select sites in the first level
 
         subpop1_ind <- dframe[, itype] == lev_itype[isubpop1]
@@ -745,7 +763,6 @@ cont_cdftest <- function(dframe, vars, subpops = NULL, surveyID = NULL, siteID =
         # Begin the loop for the second level of the combination
 
         for (isubpop2 in (isubpop1 + 1):nlev_itype) {
-
           # Select sites in the second level
 
           subpop2_ind <- dframe[, itype] == lev_itype[isubpop2]
@@ -793,14 +810,16 @@ cont_cdftest <- function(dframe, vars, subpops = NULL, surveyID = NULL, siteID =
             warn_vec <- c(itype, lev_itype[isubpop1], lev_itype[isubpop2], ivar)
             if (testname %in% c("Wald", "adjWald")) {
               temp <- cdftest_localmean_total(
-                design, design_names, warn_ind, warn_df, warn_vec
+                design, design_names, warn_ind, warn_df, warn_vec,
+                subset_local = subset_local
               )
               var_totals <- temp$varest
               warn_ind <- temp$warn_ind
               warn_df <- temp$warn_df
             } else {
               temp <- cdftest_localmean_prop(
-                design, design_names, warn_ind, warn_df, warn_vec
+                design, design_names, warn_ind, warn_df, warn_vec,
+                subset_local = subset_local
               )
               var_means <- temp$varest
               warn_ind <- temp$warn_ind

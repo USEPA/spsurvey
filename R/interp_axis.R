@@ -27,6 +27,15 @@
 ################################################################################
 
 interp_axis <- function(yl_lab, cdfest_l, cdfest_r) {
+  # For each left-axis tick label yl_lab[j], find where it falls on the
+  # left-axis CDF curve (bracketed by the nearest cdfest_l values at or
+  # below it, "low", and at or above it, "high") and linearly interpolate
+  # the corresponding position (pdis, a 0-1 fraction between the bracket)
+  # on the right-axis CDF curve, so the two axes' tick marks line up at the
+  # same CDF values. If yl_lab[j] falls below the smallest cdfest_l (no
+  # "low" bracket found), it is instead interpolated between the origin
+  # (0, 0) and the smallest curve point, per the "assumes 0" behavior noted
+  # in the roxygen documentation above.
   nvec <- 1:length(cdfest_l)
   rslt <- numeric(0)
   for (j in 1:length(yl_lab)) {

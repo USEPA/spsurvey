@@ -5,4 +5,8 @@ spsurvey.Rproj
 inst/doc
 /doc/
 /Meta/
+.claude/
 
+
+/.quarto/
+**/*.quarto_ipynb

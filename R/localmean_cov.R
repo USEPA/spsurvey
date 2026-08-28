@@ -25,6 +25,15 @@
 ###############################################################################
 
 localmean_cov <- function(zmat, weight_1st) {
+  # Generalizes localmean_var() to the m columns of zmat jointly: cell
+  # (k, l) of the returned matrix is the same neighborhood-contrast formula
+  # as localmean_var(), but with column k's neighborhood-mean-centered
+  # values paired against column l's rather than a column against itself,
+  # giving Cov(total_k, total_l) for k != l and Var(total_k) on the
+  # diagonal (k == l). Used where variables/categories/surveys must be
+  # treated jointly (e.g. cdftestvar_prop(), changevar_mean()) so that
+  # downstream code can combine variances via a covariance matrix (e.g. the
+  # delta method) rather than assuming independence between columns.
 
   # Calculate additional required values
 
@@ -36,6 +45,8 @@ localmean_cov <- function(zmat, weight_1st) {
   lmvar <- array(0, c(m, m))
 
   # Begin loops for variance/covariance calculations
+  # (only the upper triangle, k <= l, is computed; the matrix is symmetric
+  # so the lower triangle is copied from it below)
 
   for (k in 1:m) {
     for (l in k:m) {
@@ -53,6 +64,7 @@ localmean_cov <- function(zmat, weight_1st) {
     }
 
     # Assign estimates that already have been calculated
+    # (mirror the upper triangle into the lower triangle)
 
     if (k > 1) {
       lmvar[k, 1:(k - 1)] <- lmvar[1:(k - 1), k]

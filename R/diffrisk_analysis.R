@@ -103,8 +103,8 @@ diffrisk_analysis <- function(dframe, vars_response, vars_stressor, response_lev
                               xcoord = NULL, ycoord = NULL, stratumID = NULL, clusterID = NULL,
                               weight1 = NULL, xcoord1 = NULL, ycoord1 = NULL, sizeweight = FALSE,
                               sweight = NULL, sweight1 = NULL, fpc = NULL, popsize = NULL,
-                              vartype = "Local", conf = 95, All_Sites = FALSE) {
-
+                              vartype = "local", conf = 95, All_Sites = FALSE,
+                              subset_local = TRUE) {
   # Create a vector for error messages
 
   error_ind <- FALSE
@@ -458,6 +458,14 @@ diffrisk_analysis <- function(dframe, vars_response, vars_stressor, response_lev
 
   cluster_ind <- !is.null(clusterID)
 
+  # subset_local = FALSE is not yet implemented for two-stage designs (the
+  # cluster_ind branches of category_est()'s internal chain still always
+  # subset to domain members); fail with a clear message
+
+  if (!subset_local && cluster_ind) {
+    stop("\nsubset_local = FALSE is not yet supported for two-stage (clustered) samples.\n")
+  }
+
   # Create the survey design object
 
   design <- survey_design(
@@ -548,7 +556,6 @@ diffrisk_analysis <- function(dframe, vars_response, vars_stressor, response_lev
       # Loop through all stressor variables (vars_stressor)
 
       for (ivar_s in vars_stressor) {
-
         # Loop through all levels of the subpopulation
 
         for (isubpop in lev_itype) {
@@ -563,15 +570,50 @@ diffrisk_analysis <- function(dframe, vars_response, vars_stressor, response_lev
 
           stressor <- dframe[, ivar_s]
 
+          # wide is the widened row set used only when subset_local = FALSE:
+          # every site with a usable response and stressor value, regardless
+          # of subpopulation (mirrors tst_resp in relrisk_analysis.R /
+          # attrisk_analysis.R).
+
+          wide <- !is.na(dframe[, ivar_r]) & !is.na(dframe[, ivar_s])
+
           # Calculate the first proportion estimate and variance of that
           # estimate, where the estimate is conditional on the first level of
           # the stressor variable
 
-          ind <- tst & stressor == stressor_levels[[ivar_s]][1]
+          if (subset_local) {
+            ind <- tst & stressor == stressor_levels[[ivar_s]][1]
+            dframe_use <- subset(dframe, ind)
+            design_use <- subset(design, ind)
+          } else {
+            # The domain here is compound: subpopulation isubpop AND
+            # stressor == stressor_levels[[ivar_s]][1]. Rather than
+            # subsetting to that intersection,
+            # encode it as a single temporary domain column that is
+            # "target" for members of the compound domain and NA (soft,
+            # not dropped) for every other site with a usable response and
+            # stressor value. category_est()'s own subset_local = FALSE
+            # machinery then builds the neighbor structure from all of
+            # `wide`, zeroing out the response contribution from sites
+            # outside the compound domain, the same treatment already
+            # for a single subpopulation, applied here to an
+            # intersection of two.
+            design_use <- design
+            design_use$variables$.diffrisk_domain <- factor(ifelse(
+              !is.na(dframe[, itype]) & dframe[, itype] == isubpop &
+                !is.na(dframe[, ivar_s]) &
+                dframe[, ivar_s] == stressor_levels[[ivar_s]][1],
+              "target", NA
+            ))
+            design_use <- subset(design_use, wide)
+            dframe_use <- design_use$variables
+          }
           temp <- category_est(
-            NULL, subset(dframe, ind), itype, isubpop, 1, ivar_r,
-            lev_ivar_r, 2, subset(design, ind), design_names, vartype, conf,
-            mult, warn_ind, warn_df
+            NULL, dframe_use,
+            if (subset_local) itype else ".diffrisk_domain",
+            if (subset_local) isubpop else "target", 1, ivar_r,
+            lev_ivar_r, 2, design_use, design_names, vartype, conf,
+            mult, warn_ind, warn_df, subset_local = subset_local
           )
           ind <- temp$catsum$Category == response_levels[[ivar_r]][1]
           prop1 <- temp$catsum$Estimate.P[ind] / 100
@@ -583,11 +625,27 @@ diffrisk_analysis <- function(dframe, vars_response, vars_stressor, response_lev
           # estimate, where the estimate is conditional on the second level of
           # the stressor variable
 
-          ind <- tst & stressor == stressor_levels[[ivar_s]][2]
+          if (subset_local) {
+            ind <- tst & stressor == stressor_levels[[ivar_s]][2]
+            dframe_use <- subset(dframe, ind)
+            design_use <- subset(design, ind)
+          } else {
+            design_use <- design
+            design_use$variables$.diffrisk_domain <- factor(ifelse(
+              !is.na(dframe[, itype]) & dframe[, itype] == isubpop &
+                !is.na(dframe[, ivar_s]) &
+                dframe[, ivar_s] == stressor_levels[[ivar_s]][2],
+              "target", NA
+            ))
+            design_use <- subset(design_use, wide)
+            dframe_use <- design_use$variables
+          }
           temp <- category_est(
-            NULL, subset(dframe, ind), itype, isubpop, 1, ivar_r,
-            lev_ivar_r, 2, subset(design, ind), design_names, vartype, conf,
-            mult, warn_ind, warn_df
+            NULL, dframe_use,
+            if (subset_local) itype else ".diffrisk_domain",
+            if (subset_local) isubpop else "target", 1, ivar_r,
+            lev_ivar_r, 2, design_use, design_names, vartype, conf,
+            mult, warn_ind, warn_df, subset_local = subset_local
           )
           ind <- temp$catsum$Category == response_levels[[ivar_r]][1]
           prop2 <- temp$catsum$Estimate.P[ind] / 100

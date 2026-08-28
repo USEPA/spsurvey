@@ -127,7 +127,6 @@ power_dsgn <- function(ind_names, ind_values, unit_var, period_var,
                        unitperiod_var, index_var, unit_rho = 1, period_rho = 0, paneldsgn,
                        nrepeats = NULL, trend_type = "mean", ind_pct = NULL, ind_tail = NULL,
                        trend = 2, alpha = 0.05) {
-
   # number of indicators for power comparison
   n_ind <- length(ind_names)
 
@@ -219,7 +218,6 @@ power_dsgn <- function(ind_names, ind_values, unit_var, period_var,
       for (j in names(paneldsgn)) {
         nperiod <- ncol(paneldsgn[[j]])
         npanel <- nrow(paneldsgn[[j]])
-
 
 
         # Assume increasing number of periods monitored to compute power
