@@ -96,7 +96,13 @@
 
 mean_est <- function(meansum, dframe, itype, lev_itype, nlev_itype, ivar,
                      design, design_names, var_nondetect, vartype, conf, mult,
-                     warn_ind, warn_df, subset_local = TRUE) {
+                     warn_ind, warn_df, subset_local = TRUE, greg = NULL) {
+  if (!is.null(greg)) {
+    ans <- greg_summary_est(meansum, dframe, itype, lev_itype, ivar, greg,
+      design_names, vartype, conf, mult, warn_df, ratio = TRUE)
+    names(ans)[1] <- "meansum"
+    return(ans)
+  }
   # Overall approach: compute the (design-weighted) mean of ivar, either
   # once overall (nlev_itype == 1, e.g. itype = "All Sites") or separately
   # for each level of the subpopulation variable itype (svyby()). Standard

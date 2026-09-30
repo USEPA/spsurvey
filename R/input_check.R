@@ -80,12 +80,14 @@
 #' @author Tom Kincaid \email{Kincaid.Tom@@epa.gov}
 #'
 #' @noRd
+#' @param preserve_factors Preserve supplied factor levels and contrasts on
+#'   the optional GREG path. Defaults to the legacy factor conversion.
 ################################################################################
 
 input_check <- function(dframe, design_names, vars_cat, vars_cont,
                         vars_stressor, vars_nondetect, subpops, sizeweight,
                         fpc, popsize, vartype, jointprob, conf, cdfval = NULL,
-                        pctval = NULL, error_ind, error_vec) {
+                        pctval = NULL, error_ind, error_vec, preserve_factors = FALSE) {
   # Like dsgn_check(), this function runs a long sequence of largely
   # independent validation checks on the analysis arguments and dframe.
   # Rather than stopping at the first problem found, each failed check
@@ -102,8 +104,10 @@ input_check <- function(dframe, design_names, vars_cat, vars_cont,
   # as.data.frame(..., stringsAsFactors = TRUE) rebuilds factors using R's
   # default alphabetical level ordering, so results don't depend on
   # whatever factor levels happened to be set on the user's input)
-  fac_index <- vapply(dframe, is.factor, logical(1))
-  dframe[fac_index] <- vapply(dframe[fac_index], as.character, character(nrow(dframe)))
+  if (!preserve_factors) {
+    fac_index <- vapply(dframe, is.factor, logical(1))
+    dframe[fac_index] <- vapply(dframe[fac_index], as.character, character(nrow(dframe)))
+  }
   dframe <- as.data.frame(unclass(dframe), stringsAsFactors = TRUE)
 
   # For variables that exist in the dframe data frame, assign survey design

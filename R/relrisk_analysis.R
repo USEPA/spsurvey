@@ -113,6 +113,8 @@
 #'   weight = "wgt", xcoord = "xcoord", ycoord = "ycoord",
 #'   stratumID = "stratum"
 #' )
+#' @inheritParams cat_analysis
+#' @inheritSection cat_analysis GREG estimation
 #' @export
 ################################################################################
 
@@ -120,9 +122,19 @@ relrisk_analysis <- function(dframe, vars_response, vars_stressor, response_leve
                              stressor_levels = NULL, subpops = NULL, siteID = NULL, weight = "weight",
                              xcoord = NULL, ycoord = NULL, stratumID = NULL, clusterID = NULL,
                              weight1 = NULL, xcoord1 = NULL, ycoord1 = NULL, sizeweight = FALSE,
-                             sweight = NULL, sweight1 = NULL, fpc = NULL, popsize = NULL,
+                             sweight = NULL, sweight1 = NULL, fpc = NULL, formula = NULL, popsize = NULL, subpopsize = NULL,
                              vartype = "local", conf = 95, All_Sites = FALSE,
-                             subset_local = TRUE) {
+                             subset_local = TRUE, subpop = NULL, jointprob = "overton") {
+  if (!missing(formula)) {
+    legacy_call <- greg_legacy_call(sys.call(), sys.function(), formula)
+    if (!is.null(legacy_call)) return(eval(legacy_call, parent.frame()))
+  }
+  if (!missing(subpop)) {
+    if (!missing(subpops)) stop("Supply only one of subpops and subpop.", call. = FALSE)
+    subpops <- subpop
+  }
+  greg_check_call(formula, subpopsize, clusterID)
+  if (!is.null(formula)) subset_local <- FALSE
   # Create a vector for error messages
 
   error_ind <- FALSE
@@ -169,7 +181,7 @@ relrisk_analysis <- function(dframe, vars_response, vars_stressor, response_leve
   # Ensure that unused levels are dropped from factor variables in the dframe
   # data frame
 
-  dframe <- droplevels(dframe)
+  if (is.null(formula)) dframe <- droplevels(dframe)
 
   # If no siteID is provided, set one that assumes each row is a unique site
 
@@ -298,15 +310,16 @@ relrisk_analysis <- function(dframe, vars_response, vars_stressor, response_leve
   # Check input arguments
 
   temp <- input_check(dframe, design_names, vars_response, NULL, vars_stressor,
-    NULL, subpops, sizeweight, fpc, popsize, vartype, NULL, conf,
-    error_ind = error_ind, error_vec = error_vec
+    NULL, subpops, sizeweight, fpc, if (is.null(formula)) popsize else NULL, vartype, if (is.null(formula)) NULL else jointprob, conf,
+    error_ind = error_ind, error_vec = error_vec, preserve_factors = !is.null(formula)
   )
   dframe <- temp$dframe
   vars_response <- temp$vars_cat
   vars_stressor <- temp$vars_stressor
   subpops <- temp$subpops
-  popsize <- temp$popsize
+  if (is.null(formula)) popsize <- temp$popsize
   vartype <- temp$vartype
+  if (!is.null(formula)) jointprob <- temp$jointprob
   error_ind <- temp$error_ind
   error_vec <- temp$error_vec
 
@@ -446,7 +459,7 @@ relrisk_analysis <- function(dframe, vars_response, vars_stressor, response_leve
 
   # For a stratified sample, remove strata that contain a single site
 
-  if (stratum_ind) {
+  if (stratum_ind && is.null(formula)) {
     dframe[, stratumID] <- factor(dframe[, stratumID])
     stratum_levels <- levels(dframe[, stratumID])
     nstrata <- length(stratum_levels)
@@ -489,11 +502,17 @@ relrisk_analysis <- function(dframe, vars_response, vars_stressor, response_leve
   design <- survey_design(
     dframe, siteID, weight, stratum_ind, stratumID, cluster_ind, clusterID,
     weight1, sizeweight, sweight, sweight1, fpcfactor_ind, fpcsize, Ncluster,
-    stage1size, vartype, NULL
+    stage1size, vartype, if (is.null(formula)) NULL else jointprob
   )
 
   # If popsize is not equal to NULL, then call either the postStratify or
   # calibrate function, as appropriate
+
+  if (!is.null(formula)) {
+    greg <- greg_prepare(design, formula, popsize, subpopsize, subpops, warn_df)
+    return(greg_risk(dframe, vars_response, vars_stressor, response_levels,
+      stressor_levels, subpops, greg, design_names, vartype, conf, "relrisk"))
+  }
 
   if (!is.null(popsize)) {
     if (all(class(popsize) %in% c("data.frame", "table", "xtabs"))) {
@@ -782,7 +801,7 @@ relrisk_analysis <- function(dframe, vars_response, vars_stressor, response_leve
               rrlog_se <- NA
             } else {
               pder <- 1 / c(total1, -total2, -total3, total4)
-              rrlog_se <- sqrt(t(pder) %*% varest %*% pder)
+              rrlog_se <- sqrt(risk_variance(t(pder) %*% varest %*% pder, pder, varest))
             }
 
             #
@@ -926,7 +945,7 @@ relrisk_analysis <- function(dframe, vars_response, vars_stressor, response_leve
               # risk
 
               pder <- 1 / c(total1, -total2, -total3, total4)
-              rrlog_se <- sqrt(t(pder) %*% varest %*% pder)
+              rrlog_se <- sqrt(risk_variance(t(pder) %*% varest %*% pder, pder, varest))
             }
 
             #

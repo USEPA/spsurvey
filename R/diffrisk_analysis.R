@@ -95,6 +95,8 @@
 #'   weight = "wgt", xcoord = "xcoord", ycoord = "ycoord",
 #'   stratumID = "stratum"
 #' )
+#' @inheritParams cat_analysis
+#' @inheritSection cat_analysis GREG estimation
 #' @export
 ################################################################################
 
@@ -102,9 +104,19 @@ diffrisk_analysis <- function(dframe, vars_response, vars_stressor, response_lev
                               stressor_levels = NULL, subpops = NULL, siteID = NULL, weight = "weight",
                               xcoord = NULL, ycoord = NULL, stratumID = NULL, clusterID = NULL,
                               weight1 = NULL, xcoord1 = NULL, ycoord1 = NULL, sizeweight = FALSE,
-                              sweight = NULL, sweight1 = NULL, fpc = NULL, popsize = NULL,
+                              sweight = NULL, sweight1 = NULL, fpc = NULL, formula = NULL, popsize = NULL, subpopsize = NULL,
                               vartype = "local", conf = 95, All_Sites = FALSE,
-                              subset_local = TRUE) {
+                              subset_local = TRUE, subpop = NULL, jointprob = "overton") {
+  if (!missing(formula)) {
+    legacy_call <- greg_legacy_call(sys.call(), sys.function(), formula)
+    if (!is.null(legacy_call)) return(eval(legacy_call, parent.frame()))
+  }
+  if (!missing(subpop)) {
+    if (!missing(subpops)) stop("Supply only one of subpops and subpop.", call. = FALSE)
+    subpops <- subpop
+  }
+  greg_check_call(formula, subpopsize, clusterID)
+  if (!is.null(formula)) subset_local <- FALSE
   # Create a vector for error messages
 
   error_ind <- FALSE
@@ -151,7 +163,7 @@ diffrisk_analysis <- function(dframe, vars_response, vars_stressor, response_lev
   # Ensure that unused levels are dropped from factor variables in the dframe
   # data frame
 
-  dframe <- droplevels(dframe)
+  if (is.null(formula)) dframe <- droplevels(dframe)
 
   # If no siteID is provided, set one that assumes each row is a unique site
 
@@ -280,15 +292,16 @@ diffrisk_analysis <- function(dframe, vars_response, vars_stressor, response_lev
   # Check input arguments
 
   temp <- input_check(dframe, design_names, vars_response, NULL, vars_stressor,
-    NULL, subpops, sizeweight, fpc, popsize, vartype, NULL, conf,
-    error_ind = error_ind, error_vec = error_vec
+    NULL, subpops, sizeweight, fpc, if (is.null(formula)) popsize else NULL, vartype, jointprob, conf,
+    error_ind = error_ind, error_vec = error_vec, preserve_factors = !is.null(formula)
   )
   dframe <- temp$dframe
   vars_response <- temp$vars_cat
   vars_stressor <- temp$vars_stressor
   subpops <- temp$subpops
-  popsize <- temp$popsize
+  if (is.null(formula)) popsize <- temp$popsize
   vartype <- temp$vartype
+  jointprob <- temp$jointprob
   error_ind <- temp$error_ind
   error_vec <- temp$error_vec
 
@@ -428,7 +441,7 @@ diffrisk_analysis <- function(dframe, vars_response, vars_stressor, response_lev
 
   # For a stratified sample, remove strata that contain a single site
 
-  if (stratum_ind) {
+  if (stratum_ind && is.null(formula)) {
     dframe[, stratumID] <- factor(dframe[, stratumID])
     stratum_levels <- levels(dframe[, stratumID])
     nstrata <- length(stratum_levels)
@@ -468,14 +481,27 @@ diffrisk_analysis <- function(dframe, vars_response, vars_stressor, response_lev
 
   # Create the survey design object
 
+  # Overton's survey constructor requires numeric stratum codes. Preserve
+  # labels for subpopulations and calibration model matrices.
+  survey_stratumID <- stratumID
+  if (stratum_ind && vartype %in% c("HT", "YG")) {
+    survey_stratumID <- utils::tail(make.unique(c(names(dframe), ".diffrisk_stratum")), 1)
+    dframe[[survey_stratumID]] <- as.integer(factor(dframe[[stratumID]]))
+  }
   design <- survey_design(
-    dframe, siteID, weight, stratum_ind, stratumID, cluster_ind, clusterID,
+    dframe, siteID, weight, stratum_ind, survey_stratumID, cluster_ind, clusterID,
     weight1, sizeweight, sweight, sweight1, fpcfactor_ind, fpcsize, Ncluster,
-    stage1size, vartype, NULL
+    stage1size, vartype, jointprob
   )
 
   # If popsize is not equal to NULL, then call either the postStratify or
   # calibrate function, as appropriate
+
+  if (!is.null(formula)) {
+    greg <- greg_prepare(design, formula, popsize, subpopsize, subpops, warn_df)
+    return(greg_risk(dframe, vars_response, vars_stressor, response_levels,
+      stressor_levels, subpops, greg, design_names, vartype, conf, "diffrisk"))
+  }
 
   if (!is.null(popsize)) {
     if (all(class(popsize) %in% c("data.frame", "table", "xtabs"))) {
@@ -514,26 +540,8 @@ diffrisk_analysis <- function(dframe, vars_response, vars_stressor, response_lev
     }
   }
 
-  # For variables that exist in the design$variables data frame, assign survey
-  # design variables
-
+  # Use the prepared design rows and weights for both groups.
   dframe <- design$variables
-  for (i in names(design_names)) {
-    if (is.null(design_names[[i]])) {
-      eval(parse(text = paste0(i, " <- NULL")))
-    } else {
-      eval(parse(text = paste0(i, " <- dframe[, \"", design_names[[i]], "\"]")))
-    }
-  }
-
-  # Assign values to weight variables
-
-  if (cluster_ind) {
-    wgt1 <- dframe$wgt1
-    wgt2 <- dframe$wgt2
-  } else {
-    wgt <- dframe$wgt
-  }
 
   # Create the drsum (results) data frame
 
@@ -551,8 +559,6 @@ diffrisk_analysis <- function(dframe, vars_response, vars_stressor, response_lev
     # Loop through all response variables (vars_response)
 
     for (ivar_r in vars_response) {
-      lev_ivar_r <- levels(dframe[, ivar_r])
-
       # Loop through all stressor variables (vars_stressor)
 
       for (ivar_s in vars_stressor) {
@@ -570,95 +576,20 @@ diffrisk_analysis <- function(dframe, vars_response, vars_stressor, response_lev
 
           stressor <- dframe[, ivar_s]
 
-          # wide is the widened row set used only when subset_local = FALSE:
-          # every site with a usable response and stressor value, regardless
-          # of subpopulation (mirrors tst_resp in relrisk_analysis.R /
-          # attrisk_analysis.R).
-
-          wide <- !is.na(dframe[, ivar_r]) & !is.na(dframe[, ivar_s])
-
-          # Calculate the first proportion estimate and variance of that
-          # estimate, where the estimate is conditional on the first level of
-          # the stressor variable
-
-          if (subset_local) {
-            ind <- tst & stressor == stressor_levels[[ivar_s]][1]
-            dframe_use <- subset(dframe, ind)
-            design_use <- subset(design, ind)
-          } else {
-            # The domain here is compound: subpopulation isubpop AND
-            # stressor == stressor_levels[[ivar_s]][1]. Rather than
-            # subsetting to that intersection,
-            # encode it as a single temporary domain column that is
-            # "target" for members of the compound domain and NA (soft,
-            # not dropped) for every other site with a usable response and
-            # stressor value. category_est()'s own subset_local = FALSE
-            # machinery then builds the neighbor structure from all of
-            # `wide`, zeroing out the response contribution from sites
-            # outside the compound domain, the same treatment already
-            # for a single subpopulation, applied here to an
-            # intersection of two.
-            design_use <- design
-            design_use$variables$.diffrisk_domain <- factor(ifelse(
-              !is.na(dframe[, itype]) & dframe[, itype] == isubpop &
-                !is.na(dframe[, ivar_s]) &
-                dframe[, ivar_s] == stressor_levels[[ivar_s]][1],
-              "target", NA
-            ))
-            design_use <- subset(design_use, wide)
-            dframe_use <- design_use$variables
-          }
-          temp <- category_est(
-            NULL, dframe_use,
-            if (subset_local) itype else ".diffrisk_domain",
-            if (subset_local) isubpop else "target", 1, ivar_r,
-            lev_ivar_r, 2, design_use, design_names, vartype, conf,
-            mult, warn_ind, warn_df, subset_local = subset_local
+          # Estimate both conditional risks jointly. The groups are disjoint,
+          # but their sampling errors need not be independent.
+          temp <- diffrisk_joint(
+            design, response, stressor, response_levels[[ivar_r]],
+            stressor_levels[[ivar_s]], dframe[, itype] %in% isubpop,
+            design_names, vartype, subset_local, warn_ind, warn_df,
+            c(itype, isubpop, ivar_r)
           )
-          ind <- temp$catsum$Category == response_levels[[ivar_r]][1]
-          prop1 <- temp$catsum$Estimate.P[ind] / 100
-          var1 <- (temp$catsum$StdError.P[ind] / 100)^2
+          prop1 <- temp$proportion[1]
+          prop2 <- temp$proportion[2]
           warn_ind <- temp$warn_ind
           warn_df <- temp$warn_df
-
-          # Calculate the second proportion estimate and variance of that
-          # estimate, where the estimate is conditional on the second level of
-          # the stressor variable
-
-          if (subset_local) {
-            ind <- tst & stressor == stressor_levels[[ivar_s]][2]
-            dframe_use <- subset(dframe, ind)
-            design_use <- subset(design, ind)
-          } else {
-            design_use <- design
-            design_use$variables$.diffrisk_domain <- factor(ifelse(
-              !is.na(dframe[, itype]) & dframe[, itype] == isubpop &
-                !is.na(dframe[, ivar_s]) &
-                dframe[, ivar_s] == stressor_levels[[ivar_s]][2],
-              "target", NA
-            ))
-            design_use <- subset(design_use, wide)
-            dframe_use <- design_use$variables
-          }
-          temp <- category_est(
-            NULL, dframe_use,
-            if (subset_local) itype else ".diffrisk_domain",
-            if (subset_local) isubpop else "target", 1, ivar_r,
-            lev_ivar_r, 2, design_use, design_names, vartype, conf,
-            mult, warn_ind, warn_df, subset_local = subset_local
-          )
-          ind <- temp$catsum$Category == response_levels[[ivar_r]][1]
-          prop2 <- temp$catsum$Estimate.P[ind] / 100
-          var2 <- (temp$catsum$StdError.P[ind] / 100)^2
-          warn_ind <- temp$warn_ind
-          warn_df <- temp$warn_df
-
-          # Calculate the difference estimate and standard error of the
-          # difference estimate
-
           diffest <- prop1 - prop2
-          stderr_est <- sqrt(var1 + var2)
-
+          stderr_est <- temp$se
           # Calculate the table of cell and margin counts
 
           cc <- addmargins(table(list(

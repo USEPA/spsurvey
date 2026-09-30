@@ -96,7 +96,13 @@
 
 total_est <- function(totalsum, dframe, itype, lev_itype, nlev_itype, ivar,
                       design, design_names, var_nondetect, vartype, conf, mult,
-                      warn_ind, warn_df, subset_local = TRUE) {
+                      warn_ind, warn_df, subset_local = TRUE, greg = NULL) {
+  if (!is.null(greg)) {
+    ans <- greg_summary_est(totalsum, dframe, itype, lev_itype, ivar, greg,
+      design_names, vartype, conf, mult, warn_df, ratio = FALSE)
+    names(ans)[1] <- "totalsum"
+    return(ans)
+  }
   # Parallels mean_est(), but for svytotal()/total_localmean() rather than
   # svymean()/mean_localmean(): compute the (design-weighted) total of
   # ivar, either overall or per level of subpopulation variable itype, with

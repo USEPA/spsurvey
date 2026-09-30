@@ -217,6 +217,18 @@
 #'   }
 #'
 #' @param popsize Object that provides values for the population argument of the
+#'   calibration function. With a GREG \code{formula}, supply a named list
+#'   matching the character values of \code{yearID}; each element contains
+#'   named model-matrix totals (or \code{NULL} when all subpopulation totals are
+#'   supplied). When \code{sizeweight = TRUE}, GREG calibrates design weight
+#'   times size weight. For each year, supply size-weighted totals: the
+#'   population sum of size times each model-matrix column, with total size
+#'   as the intercept. Use the same size units as \code{sweight}; totals are
+#'   used as supplied, without another size adjustment. Known subpopulation totals
+#'   in \code{subpopsize} must use the same scale within each subpopulation.
+#'   \code{subpopsize} adds the same outer year level to its
+#'   usual subpopulation-variable/subpopulation-level structure. The following formats
+#'   apply when \code{formula = NULL}: values for the population argument of the
 #'   \code{calibrate} or \code{postStratify} functions in the survey package. If
 #'   a value is provided for popsize, then either the \code{calibrate} or
 #'   \code{postStratify} function is used to modify the survey design object
@@ -468,6 +480,17 @@
 #'   ycoord = "ycoord"
 #' )
 #' @export
+#' @inheritParams cat_analysis
+#' @inheritSection cat_analysis GREG estimation
+#' @section GREG trends:
+#' GREG supports \code{SLR} and \code{WLR}, retaining the existing
+#' \code{lm()} trend calculation and regression-based t inference. Each
+#' year's point estimate and variance are computed independently using its
+#' calibration totals. SLR ignores the annual variances; WLR uses their
+#' inverses as regression weights. Neither model propagates covariance
+#' between years or uses repeat-site covariance. The intercept refers to the
+#' earliest year. GREG \code{LMM}/\code{GLMM} models are not supported;
+#' specify \code{model_cont = "SLR"} or \code{"WLR"} explicitly.
 ################################################################################
 
 trend_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL, subpops = NULL, model_cat = "SLR",
@@ -475,9 +498,27 @@ trend_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL, subpops = 
                            yearID = "year", weight = "weight", xcoord = NULL, ycoord = NULL,
                            stratumID = NULL, clusterID = NULL, weight1 = NULL, xcoord1 = NULL,
                            ycoord1 = NULL, sizeweight = FALSE, sweight = NULL, sweight1 = NULL,
-                           fpc = NULL, popsize = NULL, invprboot = TRUE, nboot = 1000, vartype = "local",
+                           fpc = NULL, formula = NULL, popsize = NULL, subpopsize = NULL,
+                           invprboot = TRUE, nboot = 1000, vartype = "local",
                            jointprob = "overton", conf = 95, All_Sites = FALSE,
-                           subset_local = TRUE) {
+                           subset_local = TRUE, subpop = NULL) {
+  if (!missing(formula)) {
+    legacy_call <- greg_legacy_call(sys.call(), sys.function(), formula)
+    if (!is.null(legacy_call)) return(eval(legacy_call, parent.frame()))
+  }
+  if (!missing(subpop)) {
+    if (!missing(subpops)) stop("Supply only one of subpops and subpop.", call. = FALSE)
+    subpops <- subpop
+  }
+  greg_check_call(formula, subpopsize, clusterID)
+  if (!is.null(formula)) {
+    if ((!is.null(vars_cat) && !model_cat %in% c("SLR", "WLR")) ||
+        (!is.null(vars_cont) && !model_cont %in% c("SLR", "WLR"))) {
+      stop("GREG trend inference supports SLR/WLR on calibrated occasion estimates; specify model_cont/model_cat explicitly. Site-level LMM/GLMM inference is not GREG inference.", call. = FALSE)
+    }
+    if (!is.null(cat_rhs) || !is.null(cont_rhs)) stop("GREG SLR/WLR trends do not use mixed-model RHS arguments.", call. = FALSE)
+    return(greg_trend(greg_time_args(environment()), vars_cat, vars_cont, yearID, model_cat, model_cont))
+  }
   # Create a vector for error messages
 
   error_ind <- FALSE

@@ -40,6 +40,7 @@
 #' object.
 #'
 #' @inherit cat_analysis params
+#' @inheritSection cat_analysis GREG estimation
 #'
 #' @param subset_local When `subset_local = TRUE` (the default),
 #' subpopulations are subset to include only subpopulation members
@@ -60,7 +61,7 @@
 #'   estimates, \code{"Mean"} specifies mean estimates, and "Total" specifies
 #'   total estimates.  Any combination of the four choices may be provided by
 #'   the user.  The default value is \code{c("CDF", "Pct", "Mean", "Total")}.
-#'
+#' 
 #' @return The analysis results. A list composed of one, two, three, or four
 #'   data frames that contain population estimates for all combinations of
 #'   subpopulations, categories within each subpopulation, and response
@@ -171,11 +172,20 @@ cont_analysis <- function(dframe, vars, subpops = NULL, siteID = NULL,
                           stratumID = NULL, clusterID = NULL, weight1 = NULL,
                           xcoord1 = NULL, ycoord1 = NULL, sizeweight = FALSE,
                           sweight = NULL, sweight1 = NULL, fpc = NULL,
-                          popsize = NULL, vartype = "local",
+                          formula = NULL, popsize = NULL, subpopsize = NULL,
+                          vartype = "local",
                           jointprob = "overton", conf = 95,
                           pctval = c(5, 10, 25, 50, 75, 90, 95),
                           statistics = c("CDF", "Pct", "Mean", "Total"),
-                          All_Sites = FALSE, subset_local = TRUE) {
+                          All_Sites = FALSE, subset_local = TRUE, subpop = NULL) {
+  if (!missing(formula)) {
+    legacy_call <- greg_legacy_call(sys.call(), sys.function(), formula)
+    if (!is.null(legacy_call)) return(eval(legacy_call, parent.frame()))
+  }
+  if (!missing(subpop)) {
+    if (!missing(subpops)) stop("Supply only one of subpops and subpop.", call. = FALSE)
+    subpops <- subpop
+  }
   # Assign NULL to vars_nondetect
 
   vars_nondetect <- NULL
@@ -190,6 +200,18 @@ cont_analysis <- function(dframe, vars, subpops = NULL, siteID = NULL,
   warn_ind <- FALSE
   warn_df <- NULL
   fname <- "cont_analysis"
+
+  greg_check_call(formula, subpopsize, clusterID)
+  greg <- NULL
+  if (!is.null(formula)) {
+    if (!missing(subset_local) && isTRUE(subset_local) &&
+        identical(tolower(vartype), "local")) {
+      warn_df <- greg_warning(warn_df, "GREG requires subset_local = FALSE.",
+        "The explicitly supplied subset_local = TRUE was overridden.")
+      warn_ind <- TRUE
+    }
+    subset_local <- FALSE
+  }
 
   # Ensure that the dframe argument was provided
 
@@ -226,7 +248,7 @@ cont_analysis <- function(dframe, vars, subpops = NULL, siteID = NULL,
   # Ensure that unused levels are dropped from factor variables in the dframe
   # data frame
 
-  dframe <- droplevels(dframe)
+  if (is.null(formula)) dframe <- droplevels(dframe)
 
   # If no siteID is provided, set one that assumes each row is a unique site
 
@@ -346,14 +368,15 @@ cont_analysis <- function(dframe, vars, subpops = NULL, siteID = NULL,
   # Check input arguments
 
   temp <- input_check(dframe, design_names, NULL, vars, NULL, vars_nondetect,
-    subpops, sizeweight, fpc, popsize, vartype, jointprob, conf,
-    pctval = pctval, error_ind = error_ind, error_vec = error_vec
+    subpops, sizeweight, fpc, if (is.null(formula)) popsize else NULL, vartype, jointprob, conf,
+    pctval = pctval, error_ind = error_ind, error_vec = error_vec,
+    preserve_factors = !is.null(formula)
   )
   dframe <- temp$dframe
   vars <- temp$vars_cont
   vars_nondetect <- temp$vars_nondetect
   subpops <- temp$subpops
-  popsize <- temp$popsize
+  if (is.null(formula)) popsize <- temp$popsize
   vartype <- temp$vartype
   jointprob <- temp$jointprob
   error_ind <- temp$error_ind
@@ -406,7 +429,7 @@ cont_analysis <- function(dframe, vars, subpops = NULL, siteID = NULL,
 
   # For a stratified sample, remove strata that contain a single site
 
-  if (stratum_ind) {
+  if (stratum_ind && is.null(formula)) {
     dframe[, stratumID] <- factor(dframe[, stratumID])
     stratum_levels <- levels(dframe[, stratumID])
     nstrata <- length(stratum_levels)
@@ -456,7 +479,13 @@ cont_analysis <- function(dframe, vars, subpops = NULL, siteID = NULL,
   # If popsize is not equal to NULL, then call either the postStratify or
   # calibrate function, as appropriate
 
-  if (!is.null(popsize)) {
+  if (!is.null(formula)) {
+    greg <- greg_prepare(design, formula, popsize, subpopsize, subpops, warn_df)
+    warn_df <- greg$warn_df
+    warn_ind <- !is.null(warn_df)
+  }
+
+  if (is.null(formula) && !is.null(popsize)) {
     if (all(class(popsize) %in% c("data.frame", "table", "xtabs"))) {
       if ("data.frame" %in% class(popsize)) {
         pnames <- names(popsize)[-ncol(popsize)]
@@ -485,7 +514,7 @@ cont_analysis <- function(dframe, vars, subpops = NULL, siteID = NULL,
   # adjusted weights to the appropriate weight variable(s) in the
   # design$variables data frame
 
-  if (!is.null(popsize) && vartype == "Local") {
+  if (is.null(formula) && !is.null(popsize) && vartype == "Local") {
     if (cluster_ind) {
       design$variables$wgt2 <- weights(design) / design$variables$wgt1
     } else {
@@ -524,7 +553,7 @@ cont_analysis <- function(dframe, vars, subpops = NULL, siteID = NULL,
           contsum$CDF, dframe, itype, lev_itype, nlev_itype, ivar, design,
           design_names, vars_nondetect[indx], vartype, conf, mult, warn_ind,
           warn_df,
-          subset_local = subset_local
+          subset_local = subset_local, greg = greg
         )
         contsum$CDF <- temp$cdfsum
         warn_ind <- temp$warn_ind
@@ -537,7 +566,7 @@ cont_analysis <- function(dframe, vars, subpops = NULL, siteID = NULL,
         temp <- percentile_est(
           contsum$Pct, dframe, itype, lev_itype, nlev_itype, ivar, design,
           design_names, vars_nondetect[indx], conf, mult, pctval, warn_ind,
-          warn_df
+          warn_df, greg = greg, vartype = vartype, subset_local = subset_local
         )
         contsum$Pct <- temp$pctsum
         warn_ind <- temp$warn_ind
@@ -551,7 +580,7 @@ cont_analysis <- function(dframe, vars, subpops = NULL, siteID = NULL,
           contsum$Mean, dframe, itype, lev_itype, nlev_itype, ivar, design,
           design_names, vars_nondetect[indx], vartype, conf, mult, warn_ind,
           warn_df,
-          subset_local = subset_local
+          subset_local = subset_local, greg = greg
         )
         contsum$Mean <- temp$meansum
         warn_ind <- temp$warn_ind
@@ -565,7 +594,7 @@ cont_analysis <- function(dframe, vars, subpops = NULL, siteID = NULL,
           contsum$Total, dframe, itype, lev_itype, nlev_itype, ivar, design,
           design_names, vars_nondetect[indx], vartype, conf, mult, warn_ind,
           warn_df,
-          subset_local = subset_local
+          subset_local = subset_local, greg = greg
         )
         contsum$Total <- temp$totalsum
         warn_ind <- temp$warn_ind

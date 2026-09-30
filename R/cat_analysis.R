@@ -164,8 +164,43 @@
 #'       Cluster_5 = 125))
 #'   }
 #'
+#' @param formula Optional one-sided GREG calibration formula, for example
+#'   \code{~ elevation + lake_area}. Only a non-\code{NULL} formula enables
+#'   GREG estimation. Responses are still selected with \code{vars}.
+#'   Auxiliary variables must be observed for every design row. Factors,
+#'   transformations, and interactions follow \code{model.matrix()}; include
+#'   stratum indicators and interactions explicitly to request separate
+#'   calibration within strata. An intercept requires an \code{"(Intercept)"}
+#'   total. Offsets and \code{~ .} are not supported. GREG uses
+#'   full-design residuals, equivalent to \code{subset_local = FALSE}.
+#'
+#' @param subpopsize A list of optional GREG totals by subpopulation (i.e., domain) variable
+#'   and their nested levels. For example
+#'   \code{list(region = list(North = c("(Intercept)" = 100, elevation = 25000)))}.
+#'   Each sublist is a named numeric vector matching the columns of the
+#'   model matrix. A missing or \code{NULL} leaf uses population
+#'   totals from \code{popsize} instead. Known subpopulation totals calibrate the
+#'   subpopulation-indicator model matrix, including its intercept. If totals are
+#'   supplied for all requested subpopulation, \code{popsize} may be omitted.
+#'   When \code{sizeweight = TRUE}, each leaf must contain size-weighted
+#'   totals within that subpopulation, using the same scale as \code{popsize}.
+#'   Requires a non-\code{NULL} \code{formula}.
+#'
+#' @param subpop Compatibility alias for \code{subpops}. This preserves
+#'   existing calls that used \code{subpop} as a partial argument name before
+#'   \code{subpopsize} was introduced. Use \code{subpops} in new calls.
+#'
 #' @param popsize Object that provides values for the population argument of the
-#'   \code{calibrate} or \code{postStratify} functions in the survey package. If
+#'   \code{calibrate} or \code{postStratify} functions in the survey package.
+#'   This is a named numeric vector containing
+#'   known population totals for every column of \code{model.matrix(formula)}.
+#'   When \code{sizeweight = TRUE}, GREG calibrates the product of the design
+#'   and size weights. Supply size-weighted population totals: the sum of
+#'   size times each model-matrix column over the population. The intercept
+#'   total is total size (for example, lake area), not the number of units.
+#'   Totals must use the same size units as \code{sweight}; they are used as
+#'   supplied and are not multiplied by size weights again.
+#'   The following legacy formats apply when \code{formula = NULL}. If
 #'   a value is provided for popsize, then either the \code{calibrate} or
 #'   \code{postStratify} function is used to modify the survey design object
 #'   that is required by functions in the survey package.  Whether to use the
@@ -283,6 +318,13 @@
 #'
 #' @author Tom Kincaid \email{Kincaid.Tom@@epa.gov}
 #'
+#' @section GREG estimation:
+#' With \code{formula}, linear model calibration and point estimates
+#' are calculated by \pkg{survey}. Nonlocal variances and confidence
+#' intervals also come from \pkg{survey}. Local variances use design-weighted
+#' regression residuals multiplied by the calibrated weights, with
+#' neighborhoods formed using all sites in each sampling stratum.
+#'
 #' @keywords survey univar
 #'
 #' @seealso
@@ -318,9 +360,18 @@
 cat_analysis <- function(dframe, vars, subpops = NULL, siteID = NULL, weight = "weight",
                          xcoord = NULL, ycoord = NULL, stratumID = NULL, clusterID = NULL,
                          weight1 = NULL, xcoord1 = NULL, ycoord1 = NULL, sizeweight = FALSE,
-                         sweight = NULL, sweight1 = NULL, fpc = NULL, popsize = NULL,
+                         sweight = NULL, sweight1 = NULL, fpc = NULL,
+                         formula = NULL, popsize = NULL, subpopsize = NULL,
                          vartype = "local", jointprob = "overton", conf = 95, All_Sites = FALSE,
-                         subset_local = TRUE) {
+                         subset_local = TRUE, subpop = NULL) {
+  if (!missing(formula)) {
+    legacy_call <- greg_legacy_call(sys.call(), sys.function(), formula)
+    if (!is.null(legacy_call)) return(eval(legacy_call, parent.frame()))
+  }
+  if (!missing(subpop)) {
+    if (!missing(subpops)) stop("Supply only one of subpops and subpop.", call. = FALSE)
+    subpops <- subpop
+  }
   # Create a vector for error messages
 
   error_ind <- FALSE
@@ -331,6 +382,18 @@ cat_analysis <- function(dframe, vars, subpops = NULL, siteID = NULL, weight = "
   warn_ind <- FALSE
   warn_df <- NULL
   fname <- "cat_analysis"
+
+  greg_check_call(formula, subpopsize, clusterID)
+  greg <- NULL
+  if (!is.null(formula)) {
+    if (!missing(subset_local) && isTRUE(subset_local) &&
+        identical(tolower(vartype), "local")) {
+      warn_df <- greg_warning(warn_df, "GREG requires subset_local = FALSE.",
+        "The explicitly supplied subset_local = TRUE was overridden.")
+      warn_ind <- TRUE
+    }
+    subset_local <- FALSE
+  }
 
   # Ensure that the dframe argument was provided
 
@@ -367,7 +430,7 @@ cat_analysis <- function(dframe, vars, subpops = NULL, siteID = NULL, weight = "
   # Ensure that unused levels are dropped from factor variables in the dframe
   # data frame
 
-  dframe <- droplevels(dframe)
+  if (is.null(formula)) dframe <- droplevels(dframe)
 
   # If no siteID is provided, set one that assumes each row is a unique site
 
@@ -486,14 +549,14 @@ cat_analysis <- function(dframe, vars, subpops = NULL, siteID = NULL, weight = "
 
   # Check input arguments
   temp <- input_check(dframe, design_names, vars, NULL, NULL, NULL, subpops,
-    sizeweight, fpc, popsize, vartype, jointprob, conf,
+    sizeweight, fpc, if (is.null(formula)) popsize else NULL, vartype, jointprob, conf,
     error_ind = error_ind,
-    error_vec = error_vec
+    error_vec = error_vec, preserve_factors = !is.null(formula)
   )
   dframe <- temp$dframe
   vars <- temp$vars_cat
   subpops <- temp$subpops
-  popsize <- temp$popsize
+  if (is.null(formula)) popsize <- temp$popsize
   vartype <- temp$vartype
   jointprob <- temp$jointprob
   error_ind <- temp$error_ind
@@ -527,7 +590,7 @@ cat_analysis <- function(dframe, vars, subpops = NULL, siteID = NULL, weight = "
 
   # For a stratified sample, remove strata that contain a single site
 
-  if (stratum_ind) {
+  if (stratum_ind && is.null(formula)) {
     dframe[, stratumID] <- factor(dframe[, stratumID])
     stratum_levels <- levels(dframe[, stratumID])
     nstrata <- length(stratum_levels)
@@ -576,7 +639,13 @@ cat_analysis <- function(dframe, vars, subpops = NULL, siteID = NULL, weight = "
   # If popsize is not equal to NULL, then call either the postStratify or
   # calibrate function, as appropriate
 
-  if (!is.null(popsize)) {
+  if (!is.null(formula)) {
+    greg <- greg_prepare(design, formula, popsize, subpopsize, subpops, warn_df)
+    warn_df <- greg$warn_df
+    warn_ind <- !is.null(warn_df)
+  }
+
+  if (is.null(formula) && !is.null(popsize)) {
     if (all(class(popsize) %in% c("data.frame", "table", "xtabs"))) {
       if ("data.frame" %in% class(popsize)) {
         pnames <- names(popsize)[-ncol(popsize)]
@@ -605,7 +674,7 @@ cat_analysis <- function(dframe, vars, subpops = NULL, siteID = NULL, weight = "
   # adjusted weights to the appropriate weight variable(s) in the
   # design$variables data frame
 
-  if (!is.null(popsize) && vartype == "Local") {
+  if (is.null(formula) && !is.null(popsize) && vartype == "Local") {
     if (cluster_ind) {
       design$variables$wgt2 <- weights(design) / design$variables$wgt1
     } else {
@@ -638,7 +707,7 @@ cat_analysis <- function(dframe, vars, subpops = NULL, siteID = NULL, weight = "
       temp <- category_est(
         catsum, dframe, itype, lev_itype, nlev_itype, ivar, lev_ivar, nlev_ivar,
         design, design_names, vartype, conf, mult, warn_ind, warn_df,
-        subset_local = subset_local
+        subset_local = subset_local, greg = greg
       )
       catsum <- temp$catsum
       warn_ind <- temp$warn_ind

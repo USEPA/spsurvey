@@ -178,7 +178,15 @@
 #'   }
 #'
 #' @param popsize Object that provides values for the population argument of the
-#'   \code{calibrate} or \code{postStratify} functions in the survey package. If
+#'   \code{calibrate} or \code{postStratify} functions in the survey package.
+#'   With a GREG \code{formula}, supply a named vector of known population
+#'   totals for every column of \code{model.matrix(formula)}. When
+#'   \code{sizeweight = TRUE}, GREG calibrates design weight times size weight,
+#'   and these must be size-weighted totals: the population sum of size times
+#'   each model-matrix column. The intercept is total size, not unit count.
+#'   Use the same size units as \code{sweight}; totals are used as supplied,
+#'   without another size adjustment. The following legacy formats apply
+#'   when \code{formula = NULL}. If
 #'   a value is provided for popsize, then either the \code{calibrate} or
 #'   \code{postStratify} function is used to modify the survey design object
 #'   that is required by functions in the survey package.  Whether to use the
@@ -310,14 +318,27 @@
 #'   stratumID = "stratum", popsize = mypopsize
 #' )
 #' @export
+#' @inheritParams cat_analysis
+#' @inheritSection cat_analysis GREG estimation
 ################################################################################
 
 cont_cdftest <- function(dframe, vars, subpops = NULL, surveyID = NULL, siteID = "siteID",
                          weight = "weight", xcoord = NULL, ycoord = NULL, stratumID = NULL,
                          clusterID = NULL, weight1 = NULL, xcoord1 = NULL, ycoord1 = NULL,
                          sizeweight = FALSE, sweight = NULL, sweight1 = NULL, fpc = NULL,
-                         popsize = NULL, vartype = "local", jointprob = "overton",
-                         testname = "adjWald", nclass = 3, subset_local = TRUE) {
+                         formula = NULL, popsize = NULL, subpopsize = NULL,
+                         vartype = "local", jointprob = "overton",
+                         testname = "adjWald", nclass = 3, subset_local = TRUE, subpop = NULL) {
+  if (!missing(formula)) {
+    legacy_call <- greg_legacy_call(sys.call(), sys.function(), formula)
+    if (!is.null(legacy_call)) return(eval(legacy_call, parent.frame()))
+  }
+  if (!missing(subpop)) {
+    if (!missing(subpops)) stop("Supply only one of subpops and subpop.", call. = FALSE)
+    subpops <- subpop
+  }
+  greg_check_call(formula, subpopsize, clusterID)
+  if (!is.null(formula)) subset_local <- FALSE
   # Create a vector for error messages
 
   error_ind <- FALSE
@@ -401,7 +422,7 @@ cont_cdftest <- function(dframe, vars, subpops = NULL, surveyID = NULL, siteID =
   # Ensure that unused levels are dropped from factor variables in the dframe
   # data frame
 
-  dframe <- droplevels(dframe)
+  if (is.null(formula)) dframe <- droplevels(dframe)
 
   # As necessary, ensure that the dframe data frame contains the survey ID
   # variable
@@ -481,10 +502,10 @@ cont_cdftest <- function(dframe, vars, subpops = NULL, surveyID = NULL, siteID =
 
   if (!is.null(surveyID)) {
     if (!is.null(stratumID)) {
-      dframe$stratumID <- paste(dframe[, surveyID], dframe[, stratumID],
-        sep = "."
-      )
-      stratumID <- "stratumID"
+      combined_stratum <- if (is.null(formula)) "stratumID" else
+        utils::tail(make.unique(c(names(dframe), ".greg_survey_stratum")), 1)
+      dframe[[combined_stratum]] <- paste(dframe[, surveyID], dframe[, stratumID], sep = ".")
+      stratumID <- combined_stratum
     } else {
       stratumID <- surveyID
     }
@@ -551,14 +572,14 @@ cont_cdftest <- function(dframe, vars, subpops = NULL, surveyID = NULL, siteID =
 
   # Check input arguments
   temp <- input_check(dframe, design_names, NULL, vars, NULL, NULL, subpops,
-    sizeweight, fpc, popsize, vartype, jointprob,
+    sizeweight, fpc, if (is.null(formula)) popsize else NULL, vartype, jointprob,
     conf = 95,
-    error_ind = error_ind, error_vec = error_vec
+    error_ind = error_ind, error_vec = error_vec, preserve_factors = !is.null(formula)
   )
   dframe <- temp$dframe
   vars <- temp$vars_cont
   subpops <- temp$subpops
-  popsize <- temp$popsize
+  if (is.null(formula)) popsize <- temp$popsize
   vartype <- temp$vartype
   jointprob <- temp$jointprob
   error_ind <- temp$error_ind
@@ -592,7 +613,7 @@ cont_cdftest <- function(dframe, vars, subpops = NULL, surveyID = NULL, siteID =
 
   # For a stratified sample, remove strata that contain a single site
 
-  if (stratum_ind) {
+  if (stratum_ind && is.null(formula)) {
     dframe[, stratumID] <- factor(dframe[, stratumID])
     stratum_levels <- levels(dframe[, stratumID])
     nstrata <- length(stratum_levels)
@@ -643,6 +664,11 @@ cont_cdftest <- function(dframe, vars, subpops = NULL, surveyID = NULL, siteID =
   # If popsize is not equal to NULL, then call either the postStratify or
   # calibrate function, as appropriate
 
+  if (!is.null(formula)) {
+    greg <- greg_prepare(design, formula, popsize, subpopsize, subpops, warn_df)
+    return(greg_cdftest(dframe, vars, subpops, greg, design, design_names,
+      vartype, testname, nclass))
+  }
   if (!is.null(popsize)) {
     if (all(class(popsize) %in% c("data.frame", "table", "xtabs"))) {
       if ("data.frame" %in% class(popsize)) {

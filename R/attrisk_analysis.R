@@ -211,7 +211,15 @@
 #'   }
 #'
 #' @param popsize Object that provides values for the population argument of the
-#'   \code{calibrate} or \code{postStratify} functions in the survey package. If
+#'   \code{calibrate} or \code{postStratify} functions in the survey package.
+#'   If \code{formula} is specified (for GREG estimation), supply a named vector of known population
+#'   totals for every column of \code{model.matrix(formula)}. When
+#'   \code{sizeweight = TRUE}, GREG calibrates design weight times size weight,
+#'   and these must be size-weighted totals: the population sum of size times
+#'   each model-matrix column. The intercept is total size, not unit count.
+#'   Use the same size units as \code{sweight}; totals are used as supplied,
+#'   without another size adjustment. The following legacy formats apply
+#'   when \code{formula = NULL}. If
 #'   a value is provided for popsize, then either the \code{calibrate} or
 #'   \code{postStratify} function is used to modify the survey design object
 #'   that is required by functions in the survey package.  Whether to use the
@@ -373,6 +381,8 @@
 #'   weight = "wgt", xcoord = "xcoord", ycoord = "ycoord",
 #'   stratumID = "stratum"
 #' )
+#' @inheritParams cat_analysis
+#' @inheritSection cat_analysis GREG estimation
 #' @export
 ################################################################################
 
@@ -380,9 +390,19 @@ attrisk_analysis <- function(dframe, vars_response, vars_stressor, response_leve
                              stressor_levels = NULL, subpops = NULL, siteID = NULL, weight = "weight",
                              xcoord = NULL, ycoord = NULL, stratumID = NULL, clusterID = NULL,
                              weight1 = NULL, xcoord1 = NULL, ycoord1 = NULL, sizeweight = FALSE,
-                             sweight = NULL, sweight1 = NULL, fpc = NULL, popsize = NULL,
+                             sweight = NULL, sweight1 = NULL, fpc = NULL, formula = NULL, popsize = NULL, subpopsize = NULL,
                              vartype = "local", conf = 95, All_Sites = FALSE,
-                             subset_local = TRUE) {
+                             subset_local = TRUE, subpop = NULL, jointprob = "overton") {
+  if (!missing(formula)) {
+    legacy_call <- greg_legacy_call(sys.call(), sys.function(), formula)
+    if (!is.null(legacy_call)) return(eval(legacy_call, parent.frame()))
+  }
+  if (!missing(subpop)) {
+    if (!missing(subpops)) stop("Supply only one of subpops and subpop.", call. = FALSE)
+    subpops <- subpop
+  }
+  greg_check_call(formula, subpopsize, clusterID)
+  if (!is.null(formula)) subset_local <- FALSE
   # Create a vector for error messages
 
   error_ind <- FALSE
@@ -429,7 +449,7 @@ attrisk_analysis <- function(dframe, vars_response, vars_stressor, response_leve
   # Ensure that unused levels are dropped from factor variables in the dframe
   # data frame
 
-  dframe <- droplevels(dframe)
+  if (is.null(formula)) dframe <- droplevels(dframe)
 
   # If no siteID is provided, set one that assumes each row is a unique site
 
@@ -558,15 +578,16 @@ attrisk_analysis <- function(dframe, vars_response, vars_stressor, response_leve
   # Check input arguments
 
   temp <- input_check(dframe, design_names, vars_response, NULL, vars_stressor,
-    NULL, subpops, sizeweight, fpc, popsize, vartype, NULL, conf,
-    error_ind = error_ind, error_vec = error_vec
+    NULL, subpops, sizeweight, fpc, if (is.null(formula)) popsize else NULL, vartype, if (is.null(formula)) NULL else jointprob, conf,
+    error_ind = error_ind, error_vec = error_vec, preserve_factors = !is.null(formula)
   )
   dframe <- temp$dframe
   vars_response <- temp$vars_cat
   vars_stressor <- temp$vars_stressor
   subpops <- temp$subpops
-  popsize <- temp$popsize
+  if (is.null(formula)) popsize <- temp$popsize
   vartype <- temp$vartype
+  if (!is.null(formula)) jointprob <- temp$jointprob
   error_ind <- temp$error_ind
   error_vec <- temp$error_vec
 
@@ -706,7 +727,7 @@ attrisk_analysis <- function(dframe, vars_response, vars_stressor, response_leve
 
   # For a stratified sample, remove strata that contain a single site
 
-  if (stratum_ind) {
+  if (stratum_ind && is.null(formula)) {
     dframe[, stratumID] <- factor(dframe[, stratumID])
     stratum_levels <- levels(dframe[, stratumID])
     nstrata <- length(stratum_levels)
@@ -749,11 +770,17 @@ attrisk_analysis <- function(dframe, vars_response, vars_stressor, response_leve
   design <- survey_design(
     dframe, siteID, weight, stratum_ind, stratumID, cluster_ind, clusterID,
     weight1, sizeweight, sweight, sweight1, fpcfactor_ind, fpcsize, Ncluster,
-    stage1size, vartype, NULL
+    stage1size, vartype, if (is.null(formula)) NULL else jointprob
   )
 
   # If popsize is not equal to NULL, then call either the postStratify or
   # calibrate function, as appropriate
+
+  if (!is.null(formula)) {
+    greg <- greg_prepare(design, formula, popsize, subpopsize, subpops, warn_df)
+    return(greg_risk(dframe, vars_response, vars_stressor, response_levels,
+      stressor_levels, subpops, greg, design_names, vartype, conf, "attrisk"))
+  }
 
   if (!is.null(popsize)) {
     if (all(class(popsize) %in% c("data.frame", "table", "xtabs"))) {
@@ -1053,7 +1080,7 @@ attrisk_analysis <- function(dframe, vars_response, vars_stressor, response_leve
                 1 / (total3 + total4)
               pder[4] <- 1 / popsize_hat - 1 / (total3 + total4)
               pder <- 1 / c(total1, -total2, -total3, total4)
-              arlog_se <- sqrt(t(pder) %*% varest %*% pder)
+              arlog_se <- sqrt(risk_variance(t(pder) %*% varest %*% pder, pder, varest))
             }
 
             #
@@ -1183,7 +1210,7 @@ attrisk_analysis <- function(dframe, vars_response, vars_stressor, response_leve
               pder[3] <- 1 / popsize_hat + 1 / total3 - 1 / (total1 + total3) -
                 1 / (total3 + total4)
               pder[4] <- 1 / popsize_hat - 1 / (total3 + total4)
-              arlog_se <- sqrt(t(pder) %*% varest %*% pder)
+              arlog_se <- sqrt(risk_variance(t(pder) %*% varest %*% pder, pder, varest))
             }
 
             #

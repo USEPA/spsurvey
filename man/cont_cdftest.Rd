@@ -22,12 +22,15 @@ cont_cdftest(
   sweight = NULL,
   sweight1 = NULL,
   fpc = NULL,
+  formula = NULL,
   popsize = NULL,
+  subpopsize = NULL,
   vartype = "local",
   jointprob = "overton",
   testname = "adjWald",
   nclass = 3,
-  subset_local = TRUE
+  subset_local = TRUE,
+  subpop = NULL
 )
 }
 \arguments{
@@ -163,8 +166,26 @@ variable in the \code{dframe} data frame.  The default value is \code{NULL}.}
       Cluster_5 = 125))
   }}
 
+\item{formula}{Optional one-sided GREG calibration formula, for example
+\code{~ elevation + lake_area}. Only a non-\code{NULL} formula enables
+GREG estimation. Responses are still selected with \code{vars}.
+Auxiliary variables must be observed for every design row. Factors,
+transformations, and interactions follow \code{model.matrix()}; include
+stratum indicators and interactions explicitly to request separate
+calibration within strata. An intercept requires an \code{"(Intercept)"}
+total. Offsets and \code{~ .} are not supported. GREG uses
+full-design residuals, equivalent to \code{subset_local = FALSE}.}
+
 \item{popsize}{Object that provides values for the population argument of the
-  \code{calibrate} or \code{postStratify} functions in the survey package. If
+  \code{calibrate} or \code{postStratify} functions in the survey package.
+  With a GREG \code{formula}, supply a named vector of known population
+  totals for every column of \code{model.matrix(formula)}. When
+  \code{sizeweight = TRUE}, GREG calibrates design weight times size weight,
+  and these must be size-weighted totals: the population sum of size times
+  each model-matrix column. The intercept is total size, not unit count.
+  Use the same size units as \code{sweight}; totals are used as supplied,
+  without another size adjustment. The following legacy formats apply
+  when \code{formula = NULL}. If
   a value is provided for popsize, then either the \code{calibrate} or
   \code{postStratify} function is used to modify the survey design object
   that is required by functions in the survey package.  Whether to use the
@@ -220,6 +241,18 @@ variable in the \code{dframe} data frame.  The default value is \code{NULL}.}
   \verb{popsize <- xtabs(~Ecoregion + Type,
     data = MySurveyFrame)}}
 
+\item{subpopsize}{A list of optional GREG totals by subpopulation (i.e., domain) variable
+and their nested levels. For example
+\code{list(region = list(North = c("(Intercept)" = 100, elevation = 25000)))}.
+Each sublist is a named numeric vector matching the columns of the
+model matrix. A missing or \code{NULL} leaf uses population
+totals from \code{popsize} instead. Known subpopulation totals calibrate the
+subpopulation-indicator model matrix, including its intercept. If totals are
+supplied for all requested subpopulation, \code{popsize} may be omitted.
+When \code{sizeweight = TRUE}, each leaf must contain size-weighted
+totals within that subpopulation, using the same scale as \code{popsize}.
+Requires a non-\code{NULL} \code{formula}.}
+
 \item{vartype}{Character value providing the choice of the variance
 estimator, where \code{"Local"} indicates the local mean estimator,
 \code{"SRS"} indicates the simple random sampling estimator, \code{"HT"}
@@ -248,6 +281,10 @@ variance estimator (the default \code{vartype = "local"}) handles
 the two subpopulations being compared. See \code{\link{cat_analysis}}
 for the full explanation. \code{subset_local} is not yet supported
 for two-stage (clustered) samples. The default value is \code{TRUE}.}
+
+\item{subpop}{Compatibility alias for \code{subpops}. This preserves
+existing calls that used \code{subpop} as a partial argument name before
+\code{subpopsize} was introduced. Use \code{subpops} in new calls.}
 }
 \value{
 Data frame of CDF test results for all pairs of subpopulations
@@ -275,6 +312,15 @@ used, coordinates are extracted from the geometry column in the object,
 arguments xcoord and ycoord are assigned values "xcoord" and "ycoord",
 respectively, and the geometry column is dropped from the object.
 }
+\section{GREG estimation}{
+
+With \code{formula}, linear model calibration and point estimates
+are calculated by \pkg{survey}. Nonlocal variances and confidence
+intervals also come from \pkg{survey}. Local variances use design-weighted
+regression residuals multiplied by the calibrated weights, with
+neighborhoods formed using all sites in each sampling stratum.
+}
+
 \examples{
 n <- 200
 mysiteID <- paste("Site", 1:n, sep = "")

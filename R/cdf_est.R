@@ -100,7 +100,13 @@
 
 cdf_est <- function(cdfsum, dframe, itype, lev_itype, nlev_itype, ivar, design,
                     design_names, var_nondetect, vartype, conf, mult, warn_ind,
-                    warn_df, subset_local = TRUE) {
+                    warn_df, subset_local = TRUE, greg = NULL) {
+  if (!is.null(greg)) {
+    ans <- greg_distribution_est(cdfsum, dframe, itype, lev_itype, ivar, greg,
+      design_names, vartype, conf, mult, warn_df, categorical = FALSE)
+    names(ans)[1] <- "cdfsum"
+    return(ans)
+  }
   # Overall approach: the CDF is estimated at each distinct observed value
   # of ivar (cdfval) by treating "response <= cdfval[k]" as a 0/1 indicator
   # and estimating its (design-weighted) proportion via svymean(), giving

@@ -102,7 +102,13 @@
 category_est <- function(catsum, dframe, itype, lev_itype, nlev_itype, ivar,
                          lev_ivar, nlev_ivar, design, design_names,
                          vartype, conf, mult, warn_ind, warn_df,
-                         subset_local = TRUE) {
+                         subset_local = TRUE, greg = NULL) {
+  if (!is.null(greg)) {
+    ans <- greg_distribution_est(catsum, dframe, itype, lev_itype, ivar, greg,
+      design_names, vartype, conf, mult, warn_df, categorical = TRUE)
+    names(ans)[1] <- "catsum"
+    return(ans)
+  }
   # Assign a value to the function name variable
 
   fname <- "category_est"

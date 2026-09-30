@@ -2,7 +2,7 @@
 title: "Analyzing Data"
 author: "Michael Dumelle and Tom Kincaid"
 output: 
-  html_document:
+  html_document: default
 editor_options: 
   chunk_output_type: console
 ---
@@ -197,9 +197,163 @@ To view the analysis results for the mean estimates, run
 strat_cont_ests_sp$Mean
 ```
 
+# Model-Assisted GREG Estimation
+
+When auxiliary information is available for the population, a generalized
+regression (GREG) estimator can improve precision of population estimates by incorporating this auxiliarty information into estimation. Supply a one-sided
+`formula` describing the auxiliaries and a named `popsize` vector containing
+their known population totals. The response is still selected by `vars`.
+Only a supplied formula selects GREG; omitting it retains the ordinary
+analysis. For more details on GREG estimation, see the Technical Details vignette.
+
+We continue with `NLA_PNW`. For this example, suppose an external inventory
+reports 10,700 lakes in the PNW population, including 3,300 urban lakes.
+(these totals are chosen for illustration and do not represent known NLA totals). These totals are close to the design-weighted estimates from `NLA_PNW`
+(about 10,680 lakes overall and 3,306 urban lakes). In an application, use
+actual frame or external totals; rounding estimates from the same sample
+does not supply additional population information.
+
+```{r greg-totals}
+greg_data <- NLA_PNW
+greg_data$URBAN <- factor(greg_data$URBAN, levels = c("Non-Urban", "Urban"))
+greg_data$STATE <- factor(greg_data$STATE,
+  levels = c("California", "Oregon", "Washington"))
+greg_formula <- ~ URBAN
+colnames(model.matrix(greg_formula, sf::st_drop_geometry(greg_data)))
+greg_popsize <- c("(Intercept)" = 10700, URBANUrban = 3300)
+```
+
+The intercept total is the population size; `URBANUrban` is the number of
+urban lakes (using **R**'s default treatment contrasts. Inspecting `model.matrix()`
+reveals the exact names required by `popsize`. Categorical auxiliaries work
+through their indicator columns, just as continuous auxiliaries work through
+their numerical columns, although a `-1` can be supplied to the formula to remove the overall intercept, in which case totals are defined through their natural values. Keep factor levels and contrasts consistent when
+constructing totals and analyzing the sample.
+
+## Population Estimates and Variance
+
+Now we construct the GREG estimates:
+```{r greg-population}
+greg_ests <- cont_analysis(
+  greg_data,
+  vars = "BMMI",
+  siteID = "SITE_ID",
+  weight = "WEIGHT",
+  formula = greg_formula,
+  popsize = greg_popsize,
+  statistics = c("Mean", "Total")
+)
+greg_ests$Mean
+```
+
+Similarly, `cat_analysis()` applies
+the calibration to category indicators:
+
+```{r greg-categories}
+greg_categories <- cat_analysis(
+  greg_data,
+  vars = "NITR_COND",
+  siteID = "SITE_ID",
+  weight = "WEIGHT",
+  formula = greg_formula,
+  popsize = greg_popsize
+)
+greg_categories
+```
+
+## Subpopulations with Unknown or Known Totals
+
+Recall we can specify `subpops` to request estimates by subpopulation. Without `subpopsize`, the
+population GREG calibration also applies to each state, though this is generally not as precise as supplying `subpopsize` (`subpopsize` values may not be available). 
+
+```{r greg-unknown-domains}
+greg_states <- cont_analysis(
+  greg_data,
+  vars = "BMMI",
+  subpops = "STATE",
+  siteID = "SITE_ID",
+  weight = "WEIGHT",
+  formula = greg_formula,
+  popsize = greg_popsize,
+  statistics = "Mean"
+)
+greg_states$Mean
+```
+
+If the auxiliary totals are known within each subpopulation level, place them in
+`subpopsize` as a nested list: the outer list names the subpopulation variable and the inner
+list names its levels. These are totals of the same model-matrix columns.
+For illustration, suppose the inventory provides the following state totals:
+
+| State | All lakes | Urban lakes |
+|:--|--:|--:|
+| California | 2,500 | 1,000 |
+| Oregon | 4,800 | 1,200 |
+| Washington | 3,400 | 1,100 |
+
+```{r greg-known-domains}
+greg_state_totals <- list(
+  California = c("(Intercept)" = 2500, URBANUrban = 1000),
+  Oregon = c("(Intercept)" = 4800, URBANUrban = 1200),
+  Washington = c("(Intercept)" = 3400, URBANUrban = 1100)
+)
+
+greg_states_known <- cont_analysis(
+  greg_data,
+  vars = "BMMI",
+  subpops = "STATE",
+  siteID = "SITE_ID",
+  weight = "WEIGHT",
+  formula = greg_formula,
+  popsize = greg_popsize,
+  subpopsize = list(STATE = greg_state_totals),
+  statistics = "Mean"
+)
+greg_states_known$Mean
+```
+
+Each state uses its own `subpopsize` to improve precision constraints. A state without
+an entry in `subpopsize` uses `popsize` if
+available.
+
+## Stratification in a Global Formula
+
+Sampling strata and GREG terms have different roles. `stratumID`
+identifies independently sampled strata for variance estimation. The
+formula determines which totals and GREG components
+are shared. Continuing the earlier illustration of a design stratified by
+`URBAN`, we can use urban-stratum-specific state effects:
+
+```{r greg-stratified}
+greg_counts <- data.frame(
+  STATE = factor(rep(levels(greg_data$STATE), each = 2),
+    levels = levels(greg_data$STATE)),
+  URBAN = factor(rep(levels(greg_data$URBAN), times = 3),
+    levels = levels(greg_data$URBAN)),
+  lakes = c(1500, 1000, 3600, 1200, 2300, 1100)
+)
+greg_strat_formula <- ~ URBAN + URBAN:STATE - 1
+greg_strat_popsize <- colSums(
+  model.matrix(greg_strat_formula, greg_counts) * greg_counts$lakes
+)
+greg_strat_popsize
+
+greg_strat_ests <- cont_analysis(
+  greg_data,
+  vars = "BMMI",
+  siteID = "SITE_ID",
+  weight = "WEIGHT",
+  stratumID = "URBAN",
+  formula = greg_strat_formula,
+  popsize = greg_strat_popsize,
+  statistics = "Mean"
+)
+greg_strat_ests$Mean
+```
+
 # Additional Analysis Approaches
 
-Alongside the `cat_analysis()` and `cont_analysis()` functions, spsurvey offers functions for estimating attributable risk, relative risk, risk difference, change, and trend. Attributable risk analysis, relative risk analysis, and risk difference analysis quantify the attributable risk, relative risk, and risk difference, respectively, of environmental resources being in poor condition after exposure to a stressor. Attributable risk analysis is performed using the `attrisk_analysis()` function, relative risk analysis is performed using the `relrisk_analysis()` function, and risk difference analysis is performed using the `diffrisk_analysis()` function. Change and trend analysis capture the behavior of environmental resources between two samples, while trend analysis generalizes this approach to include more than two samples. Often, change and trend analyses are performed to study an environmental resource through time.  Change analysis is performed using the `change_analysis()` function, and trend analysis is performed using the `trend_analysis()` function. The `attrisk_analysis()`, `relrisk_analysis()`, `diffrisk_analysis()`, `change_analysis()` and `trend_analysis()` functions all share very similar syntax with the `cat_analysis()` and `cont_analysis()` functions.
+Alongside the `cat_analysis()` and `cont_analysis()` functions, spsurvey offers functions for estimating attributable risk, relative risk, risk difference, change, and trend. Attributable risk analysis, relative risk analysis, and risk difference analysis quantify the attributable risk, relative risk, and risk difference, respectively, of environmental resources being in poor condition after exposure to a stressor. Attributable risk analysis is performed using the `attrisk_analysis()` function, relative risk analysis is performed using the `relrisk_analysis()` function, and risk difference analysis is performed using the `diffrisk_analysis()` function. Change and trend analysis capture the behavior of environmental resources between two samples, while trend analysis generalizes this approach to include more than two samples. Often, change and trend analyses are performed to study an environmental resource through time.  Change analysis is performed using the `change_analysis()` function, and trend analysis is performed using the `trend_analysis()` function. The `attrisk_analysis()`, `relrisk_analysis()`, `diffrisk_analysis()`, `change_analysis()` and `trend_analysis()` functions all support shared features like GREG estimation and share very similar syntax with the `cat_analysis()` and `cont_analysis()` functions.
 
 ## Attributable Risk, Relative Risk, and Risk Difference Analysis
 

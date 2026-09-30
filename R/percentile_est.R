@@ -79,14 +79,19 @@
 
 percentile_est <- function(pctsum, dframe, itype, lev_itype, nlev_itype, ivar,
                            design, design_names, var_nondetect, conf, mult,
-                           pctval, warn_ind, warn_df) {
+                           pctval, warn_ind, warn_df, greg = NULL, vartype = "SRS",
+                           subset_local = TRUE) {
+  if (!is.null(greg)) {
+    return(greg_percentile_est(pctsum, dframe, itype, lev_itype, ivar, greg,
+      design_names, vartype, conf, pctval, warn_df))
+  }
   # Overall approach: compute design-weighted percentile (quantile)
   # estimates of ivar at the requested pctval percentages, using the
   # survey package's oldsvyquantile(), either overall or separately for
   # each level of subpopulation variable itype. Unlike mean/total
-  # estimation, percentile standard errors/confidence bounds come directly
-  # from oldsvyquantile()'s built-in CI method rather than the local mean
-  # variance estimator.
+  # estimation, the rounded quantile convention is retained. For Local,
+  # replace only the CDF variance used in the legacy Wald inversion below.
+  quantile_method <- "linear"
 
   # Assign a value to the function name variable
 
@@ -132,6 +137,7 @@ percentile_est <- function(pctsum, dframe, itype, lev_itype, nlev_itype, ivar,
             alpha = (100 - conf) / 100, ci = TRUE, na.rm = TRUE, ties = "rounded"
           ),
           error = function(e) {
+            quantile_method <<- "constant"
             oldsvyquantile(make.formula(ivar),
               design = subset(design, tst), quantiles = pctval / 100,
               alpha = (100 - conf) / 100, ci = TRUE, na.rm = TRUE, ties = "rounded", method = "constant"
@@ -180,6 +186,7 @@ percentile_est <- function(pctsum, dframe, itype, lev_itype, nlev_itype, ivar,
             na.rm = TRUE, ties = "rounded"
           ),
           error = function(e) {
+            quantile_method <<- "constant"
             svyby(make.formula(ivar), make.formula(itype),
               design = subset(design, tst), oldsvyquantile,
               quantiles = pctval / 100, alpha = (100 - conf) / 100, ci = TRUE,
@@ -217,6 +224,27 @@ percentile_est <- function(pctsum, dframe, itype, lev_itype, nlev_itype, ivar,
     }
   } else {
     # To be implemented
+  }
+
+  # Keep the legacy point estimates above and only replace their
+  # uncertainty when Local was explicitly requested.
+  if (vartype == "Local" && is.null(var_nondetect)) {
+    for (i in seq_len(nlev_itype)) {
+      points <- if (nlev_itype == 1L) as.numeric(pctest) else pctest[i, ]
+      local <- percentile_local_interval(points, pctval / 100, design, design_names,
+        itype, lev_itype[i], ivar, conf, quantile_method, subset_local, warn_ind, warn_df)
+      warn_ind <- local$warn_ind
+      warn_df <- local$warn_df
+      if (nlev_itype == 1L) {
+        stderr <- local$se
+        lbound <- local$lower
+        ubound <- local$upper
+      } else {
+        stderr[i, ] <- local$se
+        lbound[i, ] <- local$lower
+        ubound[i, ] <- local$upper
+      }
+    }
   }
 
   # Assign identifiers and estimates to the pctsum data frame

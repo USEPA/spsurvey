@@ -6,7 +6,7 @@ inst/doc
 /doc/
 /Meta/
 .claude/
-
-
+CLAUDE.md
+dev/
 /.quarto/
 **/*.quarto_ipynb

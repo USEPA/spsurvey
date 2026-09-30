@@ -207,6 +207,18 @@
 #'   }
 #'
 #' @param popsize Object that provides values for the population argument of the
+#'   calibration function. With a GREG \code{formula}, supply a named list
+#'   keyed by \code{survey_names}; each element is a named model-matrix
+#'   totals vector (or \code{NULL} when all subpopulation totals are supplied).
+#'   When \code{sizeweight = TRUE}, GREG calibrates design weight times size
+#'   weight. For each occasion, supply size-weighted totals: the population
+#'   sum of size times each model-matrix column, with total size as the
+#'   intercept. Use the same size units as \code{sweight}; totals are used
+#'   as supplied, without another size adjustment. Known subpopulation totals
+#'   in \code{subpopsize} must use the same scale within each subpopulation level.
+#'   \code{subpopsize} adds the same outer occasion level to its usual
+#'   subpopulation-variable/subpopulation-level structure. The following formats apply
+#'   when \code{formula = NULL}: values for the population argument of the
 #'   \code{calibrate} or \code{postStratify} functions in the survey package. If
 #'   a value is provided for popsize, then either the \code{calibrate} or
 #'   \code{postStratify} function is used to modify the survey design object
@@ -479,6 +491,8 @@
 #'   xcoord = "xcoord", ycoord = "ycoord", stratumID = "stratum"
 #' )
 #' @export
+#' @inheritParams cat_analysis
+#' @inheritSection cat_analysis GREG estimation
 ################################################################################
 
 change_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL, test = "mean", subpops = NULL,
@@ -486,8 +500,21 @@ change_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL, test = "m
                             weight = "weight", revisitwgt = FALSE, xcoord = NULL, ycoord = NULL,
                             stratumID = NULL, clusterID = NULL, weight1 = NULL, xcoord1 = NULL,
                             ycoord1 = NULL, sizeweight = FALSE, sweight = NULL, sweight1 = NULL,
-                            fpc = NULL, popsize = NULL, vartype = "local", jointprob = "overton",
-                            conf = 95, All_Sites = FALSE, subset_local = TRUE) {
+                            fpc = NULL, formula = NULL, popsize = NULL, subpopsize = NULL,
+                            vartype = "local", jointprob = "overton",
+                            conf = 95, All_Sites = FALSE, subset_local = TRUE, subpop = NULL) {
+  if (!missing(formula)) {
+    legacy_call <- greg_legacy_call(sys.call(), sys.function(), formula)
+    if (!is.null(legacy_call)) return(eval(legacy_call, parent.frame()))
+  }
+  if (!missing(subpop)) {
+    if (!missing(subpops)) stop("Supply only one of subpops and subpop.", call. = FALSE)
+    subpops <- subpop
+  }
+  greg_check_call(formula, subpopsize, clusterID)
+  if (!is.null(formula)) {
+    return(greg_change(greg_time_args(environment()), vars_cat, vars_cont, test, surveyID, survey_names))
+  }
   # Assign NULL to vars_nondetect
 
   vars_nondetect <- NULL

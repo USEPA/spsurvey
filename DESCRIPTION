@@ -32,7 +32,8 @@ Imports:
 Suggests: 
     knitr,
     testthat,
-    rmarkdown
+    rmarkdown,
+    withr
 License: GPL (>= 3)
 URL: https://usepa.github.io/spsurvey/, https://github.com/USEPA/spsurvey
 BugReports: https://github.com/USEPA/spsurvey/issues

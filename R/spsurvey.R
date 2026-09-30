@@ -37,7 +37,7 @@
 #'             pnorm qnorm rnorm runif terms update var weights
 #' @importFrom units set_units
 #' @importFrom sampling UPpivotal
-#'
+#' @importFrom utils combn tail
 #'
 #'
 "_PACKAGE"
