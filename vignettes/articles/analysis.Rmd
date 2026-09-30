@@ -207,9 +207,9 @@ Only a supplied formula selects GREG; omitting it retains the ordinary
 analysis. For more details on GREG estimation, see the Technical Details vignette.
 
 We continue with `NLA_PNW`. For this example, suppose an external inventory
-reports 10,700 lakes in the PNW population, including 3,300 urban lakes.
+reports 10,700 lakes in the PNW population, including 7,400 nonurban lakes and 3,300 urban lakes.
 (these totals are chosen for illustration and do not represent known NLA totals). These totals are close to the design-weighted estimates from `NLA_PNW`
-(about 10,680 lakes overall and 3,306 urban lakes). In an application, use
+(about 10,680 lakes overall with 7,374 nonurban lakes and 3,306 urban lakes). In an application, use
 actual frame or external totals; rounding estimates from the same sample
 does not supply additional population information.
 
@@ -218,16 +218,15 @@ greg_data <- NLA_PNW
 greg_data$URBAN <- factor(greg_data$URBAN, levels = c("Non-Urban", "Urban"))
 greg_data$STATE <- factor(greg_data$STATE,
   levels = c("California", "Oregon", "Washington"))
-greg_formula <- ~ URBAN
+greg_formula <- ~ URBAN - 1
 colnames(model.matrix(greg_formula, sf::st_drop_geometry(greg_data)))
-greg_popsize <- c("(Intercept)" = 10700, URBANUrban = 3300)
+greg_popsize <- c("URBANNon-Urban" = 7400, "URBANUrban" = 3300)
 ```
 
-The intercept total is the population size; `URBANUrban` is the number of
-urban lakes (using **R**'s default treatment contrasts. Inspecting `model.matrix()`
-reveals the exact names required by `popsize`. Categorical auxiliaries work
+The column totals are the population sizes; inspecting `model.matrix()`
+reveals the exact names required by `popsize` (by default, **R** uses treatment contrasts). Categorical auxiliaries work
 through their indicator columns, just as continuous auxiliaries work through
-their numerical columns, although a `-1` can be supplied to the formula to remove the overall intercept, in which case totals are defined through their natural values. Keep factor levels and contrasts consistent when
+their numerical columns. Keep factor levels and contrasts consistent when
 constructing totals and analyzing the sample.
 
 ## Population Estimates and Variance
@@ -285,17 +284,17 @@ If the auxiliary totals are known within each subpopulation level, place them in
 list names its levels. These are totals of the same model-matrix columns.
 For illustration, suppose the inventory provides the following state totals:
 
-| State | All lakes | Urban lakes |
+| State | Nonurbank lakes | Urban lakes |
 |:--|--:|--:|
-| California | 2,500 | 1,000 |
-| Oregon | 4,800 | 1,200 |
-| Washington | 3,400 | 1,100 |
+| California | 1,500 | 1,000 |
+| Oregon | 3,600 | 1,200 |
+| Washington | 2,300 | 1,100 |
 
 ```{r greg-known-domains}
 greg_state_totals <- list(
-  California = c("(Intercept)" = 2500, URBANUrban = 1000),
-  Oregon = c("(Intercept)" = 4800, URBANUrban = 1200),
-  Washington = c("(Intercept)" = 3400, URBANUrban = 1100)
+  California = c("URBANNon-Urban" = 1500, "URBANUrban" = 1000),
+  Oregon = c("URBANNon-Urban" = 3600, "URBANUrban" = 1200),
+  Washington = c("URBANNon-Urban" = 2300, "URBANUrban" = 1100)
 )
 
 greg_states_known <- cont_analysis(
