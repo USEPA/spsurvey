@@ -284,7 +284,7 @@ If the auxiliary totals are known within each subpopulation level, place them in
 list names its levels. These are totals of the same model-matrix columns.
 For illustration, suppose the inventory provides the following state totals:
 
-| State | Nonurbank lakes | Urban lakes |
+| State | Nonurban lakes | Urban lakes |
 |:--|--:|--:|
 | California | 1,500 | 1,000 |
 | Oregon | 3,600 | 1,200 |
