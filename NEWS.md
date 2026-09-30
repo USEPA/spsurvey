@@ -6,6 +6,13 @@
   site selection and store the result as an `sp_balance` element of the
   design object. The `sp_balance()` function is still used to pull the
   spatial balance metric(s) from the design object.
+* Added support for generalized regression (GREG) estimation to the `*_analysis()` functions
+via the `formula`, `popsize`, and `subpopsize` arguments.
+
+## Bug Fixes
+
+* Fixed a bug in percentile estimation that ignored the local neighborhood variance when `vartype = "local"`.
+* Fixed a bug that omitted the covariance term in `diffrisk_analysis()`.
 
 # spsurvey 5.7.0
 
