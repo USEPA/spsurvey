@@ -4,6 +4,8 @@ skip_if_not(
   "set Sys.setenv(SPSURVEY_RUN_EXTRAS = 'true') before devtools::test() to run the extras suite"
 )
 
+source("tests-extras-greg-helper.R", local = TRUE)
+
 test_that("ordinary risk difference uses common local ratio contributions", {
   d <- greg_data()
   d$response <- factor(ifelse(seq_len(nrow(d)) %% 3 == 0, "Good", "Poor"))

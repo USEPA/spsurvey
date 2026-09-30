@@ -4,6 +4,8 @@ skip_if_not(
   "set Sys.setenv(SPSURVEY_RUN_EXTRAS = 'true') before devtools::test() to run the extras suite"
 )
 
+source("tests-extras-greg-helper.R", local = TRUE)
+
 test_that("GREG totals, ratios and nonlocal uncertainty agree with survey", {
   d <- greg_data()
   for (type in c("SRS", "HT", "YG")) {
@@ -134,7 +136,9 @@ test_that("known and unknown domain totals use distinct calibration contexts", {
   expect_equal(actual$Mean[2, ], unknown$Mean[2, ])
   # All requested domains may supply totals without population totals.
   a$popsize <- NULL
-  a$subpopsize$region$South <- c("(Intercept)" = 90, x = 20)
+  south <- d$region == "South"
+  a$subpopsize$region$South <- c("(Intercept)" = 90,
+    x = 90 * weighted.mean(d$x[south], d$weight[south]))
   expect_silent(do.call(cont_analysis, a))
 })
 
@@ -183,7 +187,7 @@ test_that("factor contrasts, transformations and structural zeros are preserved"
   d$zero <- 0
   a$dframe <- d
   a$formula <- ~x + zero
-  a$popsize <- c("(Intercept)" = 160, x = 25, zero = 0)
+  a$popsize <- c(colSums(model.matrix(~x, d) * d$weight), zero = 0)
   expect_silent(do.call(cont_analysis, a))
   a$popsize["zero"] <- 1
   expect_error(do.call(cont_analysis, a), "no sample support")
@@ -271,6 +275,8 @@ test_that("GREG input guards do not silently discard requested calibration", {
 
 test_that("only formula enables GREG and explicit subset override is reported", {
   a <- greg_args()
+  # Keep calibration weights positive so only the subset override is reported.
+  a$popsize <- colSums(model.matrix(a$formula, a$dframe) * a$dframe$weight)
   a$subset_local <- TRUE
   expect_message(actual <- do.call(cont_analysis, a), "warning")
   a$subset_local <- FALSE

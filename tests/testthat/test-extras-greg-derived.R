@@ -4,6 +4,8 @@ skip_if_not(
   "set Sys.setenv(SPSURVEY_RUN_EXTRAS = 'true') before devtools::test() to run the extras suite"
 )
 
+source("tests-extras-greg-helper.R", local = TRUE)
+
 test_that("GREG percentile inversion matches survey's normal Woodruff intervals", {
   d <- greg_data()
   a <- greg_args(d, "SRS")

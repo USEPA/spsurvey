@@ -4,6 +4,8 @@ skip_if_not(
   "set Sys.setenv(SPSURVEY_RUN_EXTRAS = 'true') before devtools::test() to run the extras suite"
 )
 
+source("tests-extras-greg-helper.R", local = TRUE)
+
 test_that("legacy local percentile inversion retains rounded points and t limits", {
   d <- greg_data()
   d$y <- round(d$y)

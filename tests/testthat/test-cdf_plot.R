@@ -1,4 +1,5 @@
 context("cdf_plot")
+source("tests-utils.R", local = TRUE)
 
 # find system info
 on_solaris <- Sys.info()[["sysname"]] == "SunOS"
