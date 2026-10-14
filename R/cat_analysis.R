@@ -280,16 +280,13 @@
 #'   (ignoring subpopulations) is not returned for each variable in \code{vars}.
 #'   The default is \code{FALSE}.
 #'
-#' @param subset_local When `subset_local = TRUE` (the default),
-#' subpopulations are subset to include only subpopulation members
-#' prior to variance estimation. When `subset_local = FALSE`,
-#' subpopulations are not subset prior to variance estimation.
-#' `subset_local = FALSE` follows standard design-based subpopulation
-#' (i.e., domain) estimation theory, especially relevant for variance estimates of totals,
-#' but is computationally more complex,
-#' requiring the neighborhood weights matrix of the full data
-#' (which scales cubically with the sample size).
-#' `subset_local` only applies when `vartype = "local"`.
+#' @param local_nbh Size of local neighborhoods used when `vartype = "local"`. The
+#'   default is 15.
+#'
+#' @param subset_local Controls local neighborhood variance estimation for subpopulations.
+#'   For typical designs, this defaults to \code{TRUE}, the neighbor pool contains all
+#'   sites in the stratum and the response for sites outside the subpopulation are set to zero.
+#'   For two-stage designs, this defaults to \code{FALSE}.
 
 #'
 #' @return The analysis results. A data frame of population estimates for all combinations of
@@ -363,11 +360,10 @@ cat_analysis <- function(dframe, vars, subpops = NULL, siteID = NULL, weight = "
                          sweight = NULL, sweight1 = NULL, fpc = NULL,
                          formula = NULL, popsize = NULL, subpopsize = NULL,
                          vartype = "local", jointprob = "overton", conf = 95, All_Sites = FALSE,
-                         subset_local = TRUE, subpop = NULL) {
-  if (!missing(formula)) {
-    legacy_call <- greg_legacy_call(sys.call(), sys.function(), formula)
-    if (!is.null(legacy_call)) return(eval(legacy_call, parent.frame()))
-  }
+                         subset_local = NULL, subpop = NULL, local_nbh = 15) {
+  local_context <- localmean_context(local_nbh)
+  if (is.null(subset_local)) subset_local <- !is.null(clusterID)
+
   if (!missing(subpop)) {
     if (!missing(subpops)) stop("Supply only one of subpops and subpop.", call. = FALSE)
     subpops <- subpop
@@ -551,8 +547,8 @@ cat_analysis <- function(dframe, vars, subpops = NULL, siteID = NULL, weight = "
   temp <- input_check(dframe, design_names, vars, NULL, NULL, NULL, subpops,
     sizeweight, fpc, if (is.null(formula)) popsize else NULL, vartype, jointprob, conf,
     error_ind = error_ind,
-    error_vec = error_vec, preserve_factors = !is.null(formula)
-  )
+    error_vec = error_vec, preserve_factors = !is.null(formula),
+    local_nbh = local_nbh)
   dframe <- temp$dframe
   vars <- temp$vars_cat
   subpops <- temp$subpops
@@ -624,7 +620,7 @@ cat_analysis <- function(dframe, vars, subpops = NULL, siteID = NULL, weight = "
   # cluster_ind branches of catvar_total()/catvar_prop() still always
   # subset to domain members); fail with a clear message.
 
-  if (!subset_local && cluster_ind) {
+  if (vartype == "Local" && !subset_local && cluster_ind) {
     stop("\nsubset_local = FALSE is not yet supported for two-stage (clustered) samples.\n")
   }
 
@@ -707,8 +703,8 @@ cat_analysis <- function(dframe, vars, subpops = NULL, siteID = NULL, weight = "
       temp <- category_est(
         catsum, dframe, itype, lev_itype, nlev_itype, ivar, lev_ivar, nlev_ivar,
         design, design_names, vartype, conf, mult, warn_ind, warn_df,
-        subset_local = subset_local, greg = greg
-      )
+        subset_local = subset_local, greg = greg,
+        local_nbh = local_nbh, local_context = local_context)
       catsum <- temp$catsum
       warn_ind <- temp$warn_ind
       warn_df <- temp$warn_df

@@ -6,7 +6,7 @@ greg_residual_contributions <- function(context, q) {
   qr.resid(context$qr, as.matrix(q) * sqrt(d)) / sqrt(d) * context$calibrated_weights
 }
 
-greg_joint_covariance <- function(context, z, vartype, design_names, warn_df = NULL) {
+greg_joint_covariance <- function(context, z, vartype, design_names, warn_df = NULL, local_nbh = 15, local_context = NULL) {
   base <- context$base
   # survey supplies every nonlocal design correction, including FPC and PPS.
   covariance <- stats::vcov(survey::svytotal(z / context$original_weights, base))
@@ -18,8 +18,9 @@ greg_joint_covariance <- function(context, z, vartype, design_names, warn_df = N
       fallback <- "A sampling stratum has fewer than four sites."
       break
     }
-    nb <- localmean_weight(base$variables[[design_names$xcoord]][idx],
-      base$variables[[design_names$ycoord]][idx], 1 / context$original_weights[idx])
+    nb <- localmean_weight_internal(base$variables[[design_names$xcoord]][idx],
+      base$variables[[design_names$ycoord]][idx], 1 / context$original_weights[idx], local_nbh = local_nbh,
+      local_context = localmean_group_context(local_context, base$strata[[1]][idx[1]]))
     if (is.null(nb)) {
       fallback <- "Local neighborhood construction failed."
       break
@@ -37,7 +38,7 @@ greg_joint_covariance <- function(context, z, vartype, design_names, warn_df = N
   list(covariance = covariance, warn_df = warn_df)
 }
 
-greg_joint_total <- function(contexts, responses, vartype, design_names, warn_df = NULL) {
+greg_joint_total <- function(contexts, responses, vartype, design_names, warn_df = NULL, local_nbh = 15, local_context = NULL) {
   estimate <- rep(0, ncol(responses[[1]]))
   z <- matrix(0, nrow(responses[[1]]), length(estimate))
   for (j in seq_along(contexts)) {
@@ -47,18 +48,19 @@ greg_joint_total <- function(contexts, responses, vartype, design_names, warn_df
     estimate <- estimate + as.numeric(stats::coef(survey::svytotal(q, contexts[[j]]$design)))
     z <- z + greg_residual_contributions(contexts[[j]], q)
   }
-  covariance <- greg_joint_covariance(contexts[[1]], z, vartype, design_names, warn_df)
+  covariance <- greg_joint_covariance(contexts[[1]], z, vartype, design_names, warn_df, local_nbh = local_nbh, local_context = local_context)
   list(stat = greg_stat(estimate, covariance$covariance, colnames(responses[[1]])),
     contributions = z, warn_df = covariance$warn_df)
 }
 
 # This internal survey-design adapter lets survey own nonlinear tests while
 # svytotal/svymean supply the appropriate joint calibration covariance.
-greg_as_design <- function(base, contexts, masks, vartype, design_names) {
+greg_as_design <- function(base, contexts, masks, vartype, design_names, local_nbh = 15, local_context = NULL) {
   base$prob <- 1 / Reduce(`+`, Map(function(ctx, mask) ctx$calibrated_weights * mask, contexts, masks))
   base$postStrata <- NULL
-  base$greg <- list(contexts = contexts, masks = masks, vartype = vartype, design_names = design_names)
-  class(base) <- c("greg_design", class(base))
+  base$greg <- list(contexts = contexts, masks = masks, vartype = vartype,
+    design_names = design_names, local_nbh = local_nbh, local_context = local_context)
+  class(base) <- c("greg_spsurvey", class(base))
   base
 }
 
@@ -81,9 +83,12 @@ greg_model_response <- function(x, design) {
 }
 
 #' @export
-#' @method svytotal greg_design
+#' @method svytotal greg_spsurvey
 #' @importFrom survey svytotal
-svytotal.greg_design <- function(x, design, na.rm = FALSE, ...) {
+svytotal.greg_spsurvey <- function(x, design, na.rm = FALSE, ...) {
+  local_nbh <- design$greg$local_nbh
+  local_context <- design$greg$local_context
+
   q <- greg_model_response(x, design)
   complete <- stats::complete.cases(q)
   if (!na.rm && any(!complete & Reduce(`|`, design$greg$masks))) {
@@ -91,21 +96,21 @@ svytotal.greg_design <- function(x, design, na.rm = FALSE, ...) {
   }
   q[!complete, ] <- 0
   responses <- lapply(design$greg$masks, function(mask) q * mask)
-  ans <- greg_joint_total(design$greg$contexts, responses, design$greg$vartype, design$greg$design_names)
+  ans <- greg_joint_total(design$greg$contexts, responses, design$greg$vartype, design$greg$design_names, local_nbh = local_nbh, local_context = local_context)
   greg_publish_warnings(ans$warn_df)
   ans$stat
 }
 
 #' @export
-#' @method svymean greg_design
+#' @method svymean greg_spsurvey
 #' @importFrom survey svymean
-svymean.greg_design <- function(x, design, na.rm = FALSE, ...) {
+svymean.greg_spsurvey <- function(x, design, na.rm = FALSE, ...) {
   q <- greg_model_response(x, design)
   complete <- stats::complete.cases(q)
   names <- colnames(q)
   q <- cbind(q, .denominator = as.numeric(complete))
   q[!complete, ] <- NA_real_
-  totals <- svytotal.greg_design(q, design, na.rm = na.rm)
+  totals <- svytotal.greg_spsurvey(q, design, na.rm = na.rm)
   k <- length(totals)
   denominator <- as.numeric(totals[k])
   estimate <- as.numeric(totals[-k]) / denominator

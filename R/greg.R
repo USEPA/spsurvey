@@ -5,20 +5,6 @@
 # weights. Calibration totals must be on that size-weighted scale; do not
 # multiply either the weights or supplied totals by size again here.
 
-greg_legacy_call <- function(call, fun, formula) {
-  # Recognize legacy positional calls where popsize occupies formula, and
-  # rematch them to the previous signature before evaluation. Explicitly
-  # named formula/subpopsize arguments and formula objects use the current structure.
-  supplied <- names(as.list(call)[-1])
-  named_new <- any(vapply(supplied[nzchar(supplied) & supplied != "subpop"], function(x) {
-    startsWith("formula", x) || startsWith("subpopsize", x)
-  }, logical(1)))
-  if (named_new || inherits(formula, "formula")) return(NULL)
-  formals(fun) <- formals(fun)[!names(formals(fun)) %in% c("formula", "subpopsize", "subpop")]
-  names(call)[names(call) == "subpop"] <- "subpops"
-  match.call(definition = fun, call = call)
-}
-
 greg_warning <- function(warn_df, warning, action, labels = rep(NA_character_, 3)) {
   rbind(warn_df, data.frame(
     func = I("greg"), subpoptype = labels[1], subpop = labels[2],
@@ -163,7 +149,7 @@ greg_prepare <- function(design, formula, popsize, subpopsize, subpops, warn_df)
 }
 
 greg_estimate <- function(context, q, keep, ratio, vartype, design_names, conf,
-                          warn_df, labels) {
+                          warn_df, labels, local_nbh = 15, local_context = NULL) {
   q <- as.matrix(q)
   colnames(q) <- paste0("estimate", seq_len(ncol(q)))
   q[!keep, ] <- 0
@@ -200,13 +186,9 @@ greg_estimate <- function(context, q, keep, ratio, vartype, design_names, conf,
         fallback <- "A sampling stratum has fewer than four sites."
         break
       }
-      if (length(idx) > 2000L) {
-        warn_df <- greg_warning(warn_df,
-          "Local GREG variance requires neighborhoods for a stratum with more than 2,000 sites.",
-          "Proceeding with the full stratum; computation may take substantial time and memory.", labels)
-      }
-      nb <- localmean_weight(design$variables[[design_names$xcoord]][idx],
-        design$variables[[design_names$ycoord]][idx], prb = 1 / d[idx])
+      nb <- localmean_weight_internal(design$variables[[design_names$xcoord]][idx],
+        design$variables[[design_names$ycoord]][idx], prb = 1 / d[idx], local_nbh = local_nbh,
+        local_context = localmean_group_context(local_context, design$strata[[1]][idx[1]]))
       if (is.null(nb)) {
         fallback <- "Local neighborhood weights could not be calculated."
         break
@@ -242,12 +224,12 @@ greg_estimate <- function(context, q, keep, ratio, vartype, design_names, conf,
 }
 
 greg_summary_est <- function(result, dframe, itype, lev_itype, ivar, greg,
-                             design_names, vartype, conf, mult, warn_df, ratio) {
+                             design_names, vartype, conf, mult, warn_df, ratio, local_nbh = 15, local_context = NULL) {
   y <- dframe[[ivar]]
   for (domain in sort(lev_itype)) {
     keep <- dframe[[itype]] %in% domain & !is.na(y)
     est <- greg_estimate(greg$contexts[[itype]][[domain]], y, keep, ratio,
-      vartype, design_names, conf, warn_df, c(itype, domain, ivar))
+      vartype, design_names, conf, warn_df, c(itype, domain, ivar), local_nbh = local_nbh, local_context = local_context)
     warn_df <- est$warn_df
     result <- rbind(result, data.frame(Type = itype, Subpopulation = domain,
       Indicator = ivar, nResp = sum(keep), Estimate = est$estimate,
@@ -259,11 +241,13 @@ greg_summary_est <- function(result, dframe, itype, lev_itype, ivar, greg,
 
 greg_distribution_est <- function(result, dframe, itype, lev_itype, ivar, greg,
                                   design_names, vartype, conf, mult, warn_df,
-                                  categorical) {
+                                  categorical, local_nbh = 15, local_context = NULL) {
   y <- dframe[[ivar]]
   values <- if (categorical) levels(y) else sort(unique(y[!is.na(y)]))
   if (!length(values)) stop("No observed values for GREG indicator ", ivar, ".", call. = FALSE)
   if (categorical) values <- c(values, "Total")
+  if (!categorical && vartype == "Local") warn_df <- localmean_cdf_warning(
+    nrow(dframe), length(values), warn_df, local_context, c(itype, NA, ivar), greg = TRUE)
   for (domain in sort(lev_itype)) {
     keep <- dframe[[itype]] %in% domain & !is.na(y)
     for (j in seq_along(values)) {
@@ -272,9 +256,9 @@ greg_distribution_est <- function(result, dframe, itype, lev_itype, ivar, greg,
       } else as.numeric(y <= values[j])
       context <- greg$contexts[[itype]][[domain]]
       prop <- greg_estimate(context, q, keep, TRUE, vartype, design_names,
-        conf, warn_df, c(itype, domain, ivar))
+        conf, warn_df, c(itype, domain, ivar), local_nbh = local_nbh, local_context = local_context)
       total <- greg_estimate(context, q, keep, FALSE, vartype, design_names,
-        conf, prop$warn_df, c(itype, domain, ivar))
+        conf, prop$warn_df, c(itype, domain, ivar), local_nbh = local_nbh, local_context = local_context)
       warn_df <- total$warn_df
       row <- data.frame(Type = itype, Subpopulation = domain, Indicator = ivar,
         Value = values[j], nResp = sum(q[keep]), Estimate.P = 100 * prop$estimate,

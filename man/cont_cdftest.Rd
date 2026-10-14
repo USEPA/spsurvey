@@ -29,8 +29,9 @@ cont_cdftest(
   jointprob = "overton",
   testname = "adjWald",
   nclass = 3,
-  subset_local = TRUE,
-  subpop = NULL
+  subset_local = NULL,
+  subpop = NULL,
+  local_nbh = 15
 )
 }
 \arguments{
@@ -276,15 +277,17 @@ respectively.  The default is \code{"adjWald"}.}
 \item{nclass}{Number of classes into which the CDFs will be divided
 (binned), which must equal at least \code{2}.  The default is \code{3}.}
 
-\item{subset_local}{Logical value that controls how the local mean
-variance estimator (the default \code{vartype = "local"}) handles
-the two subpopulations being compared. See \code{\link{cat_analysis}}
-for the full explanation. \code{subset_local} is not yet supported
-for two-stage (clustered) samples. The default value is \code{TRUE}.}
+\item{subset_local}{Controls local neighborhood variance estimation for subpopulations.
+For typical designs, this defaults to \code{TRUE}, the neighbor pool contains all
+sites in the stratum and the response for sites outside the subpopulation are set to zero.
+For two-stage designs, this defaults to \code{FALSE}.}
 
 \item{subpop}{Compatibility alias for \code{subpops}. This preserves
 existing calls that used \code{subpop} as a partial argument name before
 \code{subpopsize} was introduced. Use \code{subpops} in new calls.}
+
+\item{local_nbh}{Size of local neighborhoods used when `vartype = "local"`. The
+default is 15.}
 }
 \value{
 Data frame of CDF test results for all pairs of subpopulations

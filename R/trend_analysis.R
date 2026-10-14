@@ -311,8 +311,10 @@
 #'   point estimates alone), so \code{subset_local} has no effect on
 #'   \code{"SLR"} results. Has no effect on \code{"GLMM"}/\code{"LMM"}
 #'   models, which do not use these functions.
-#'   `subset_local` only applies when `vartype = "local"`.
-#'   The default value is \code{TRUE}.
+#'   \code{subset_local} only applies when \code{vartype = "local"}.
+#'   The default, \code{NULL}, selects \code{FALSE} for single-stage designs
+#'   (when \code{clusterID} is not supplied) and \code{TRUE} for two-stage designs
+#'   (when \code{clusterID} is supplied).
 #'
 #' @param jointprob Character value providing choice of joint inclusion
 #'   probability approximation for use with Horvitz-Thompson and Yates-Grundy
@@ -501,11 +503,10 @@ trend_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL, subpops = 
                            fpc = NULL, formula = NULL, popsize = NULL, subpopsize = NULL,
                            invprboot = TRUE, nboot = 1000, vartype = "local",
                            jointprob = "overton", conf = 95, All_Sites = FALSE,
-                           subset_local = TRUE, subpop = NULL) {
-  if (!missing(formula)) {
-    legacy_call <- greg_legacy_call(sys.call(), sys.function(), formula)
-    if (!is.null(legacy_call)) return(eval(legacy_call, parent.frame()))
-  }
+                           subset_local = NULL, subpop = NULL, local_nbh = 15) {
+  local_context <- localmean_context(local_nbh)
+  if (is.null(subset_local)) subset_local <- !is.null(clusterID)
+
   if (!missing(subpop)) {
     if (!missing(subpops)) stop("Supply only one of subpops and subpop.", call. = FALSE)
     subpops <- subpop
@@ -517,7 +518,7 @@ trend_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL, subpops = 
       stop("GREG trend inference supports SLR/WLR on calibrated occasion estimates; specify model_cont/model_cat explicitly. Site-level LMM/GLMM inference is not GREG inference.", call. = FALSE)
     }
     if (!is.null(cat_rhs) || !is.null(cont_rhs)) stop("GREG SLR/WLR trends do not use mixed-model RHS arguments.", call. = FALSE)
-    return(greg_trend(greg_time_args(environment()), vars_cat, vars_cont, yearID, model_cat, model_cont))
+    return(greg_trend(greg_time_args(environment()), vars_cat, vars_cont, yearID, model_cat, model_cont, local_nbh = local_nbh, local_context = local_context))
   }
   # Create a vector for error messages
 
@@ -732,8 +733,8 @@ trend_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL, subpops = 
 
   temp <- input_check(dframe, design_names, vars_cat, vars_cont, NULL, NULL,
     subpops, sizeweight, fpc, popsize, vartype, jointprob, conf,
-    error_ind = error_ind, error_vec = error_vec
-  )
+    error_ind = error_ind, error_vec = error_vec,
+    local_nbh = local_nbh)
   dframe <- temp$dframe
   vars <- temp$vars_cat
   subpops <- temp$subpops
@@ -822,7 +823,7 @@ trend_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL, subpops = 
   # mean variance estimators still build a domain-only neighbor structure,
   # which would look like subset_local silently having no effect)
 
-  if (!subset_local && cluster_ind) {
+  if (vartype == "Local" && !subset_local && cluster_ind) {
     stop("\nsubset_local = FALSE is not yet supported for two-stage (clustered) samples.\n")
   }
 
@@ -1007,8 +1008,8 @@ trend_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL, subpops = 
                 NULL, tempdf, itype, isubpop, 1, ivar, templev,
                 length(templev), design_use, design_names,
                 vartype, conf, mult, warn_ind, warn_df,
-                subset_local = subset_local
-              )
+                subset_local = subset_local,
+                local_nbh = local_nbh, local_context = localmean_group_context(local_context, years[iyear]))
               temp_cat <- temp$catsum
               warn_ind <- temp$warn_ind
               warn_df <- temp$warn_df
@@ -1332,8 +1333,8 @@ trend_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL, subpops = 
                 NULL, tempdf,
                 itype, isubpop, 1, ivar, design_use,
                 design_names, NULL, vartype, conf, mult, warn_ind, warn_df,
-                subset_local = subset_local
-              )
+                subset_local = subset_local,
+                local_nbh = local_nbh, local_context = localmean_group_context(local_context, years[iyear]))
               temp_cont <- temp$meansum
               warn_ind <- temp$warn_ind
               warn_df <- temp$warn_df

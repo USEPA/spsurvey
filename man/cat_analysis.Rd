@@ -28,8 +28,9 @@ cat_analysis(
   jointprob = "overton",
   conf = 95,
   All_Sites = FALSE,
-  subset_local = TRUE,
-  subpop = NULL
+  subset_local = NULL,
+  subpop = NULL,
+  local_nbh = 15
 )
 }
 \arguments{
@@ -278,20 +279,17 @@ returned for each variable in \code{vars}. If \code{All_Sites} is
 (ignoring subpopulations) is not returned for each variable in \code{vars}.
 The default is \code{FALSE}.}
 
-\item{subset_local}{When `subset_local = TRUE` (the default),
-subpopulations are subset to include only subpopulation members
-prior to variance estimation. When `subset_local = FALSE`,
-subpopulations are not subset prior to variance estimation.
-`subset_local = FALSE` follows standard design-based subpopulation
-(i.e., domain) estimation theory, especially relevant for variance estimates of totals,
-but is computationally more complex,
-requiring the neighborhood weights matrix of the full data
-(which scales cubically with the sample size).
-`subset_local` only applies when `vartype = "local"`.}
+\item{subset_local}{Controls local neighborhood variance estimation for subpopulations.
+For typical designs, this defaults to \code{TRUE}, the neighbor pool contains all
+sites in the stratum and the response for sites outside the subpopulation are set to zero.
+For two-stage designs, this defaults to \code{FALSE}.}
 
 \item{subpop}{Compatibility alias for \code{subpops}. This preserves
 existing calls that used \code{subpop} as a partial argument name before
 \code{subpopsize} was introduced. Use \code{subpops} in new calls.}
+
+\item{local_nbh}{Size of local neighborhoods used when `vartype = "local"`. The
+default is 15.}
 }
 \value{
 The analysis results. A data frame of population estimates for all combinations of

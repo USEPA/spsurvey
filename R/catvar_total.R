@@ -64,11 +64,10 @@
 #' @param warn_vec A vector that contains names of the population type, the
 #'   subpopulation, and an indicator.
 #'
-#' @param subset_local Logical value indicating whether the local mean
-#'   neighbor structure is built from domain members only (\code{TRUE},
-#'   the default behavior) or from all sites in the stratum
-#'   with the response zeroed out for non-domain members via
-#'   \code{subpop_ind} (\code{FALSE}). The default value is \code{TRUE}.
+#' @param subset_local If \code{TRUE}, construct neighborhoods using only
+#'   domain members. The internal default, \code{FALSE}, retains eligible
+#'   responding sites in the sampling stratum and zeros contributions outside
+#'   the domain. Used only for local variance estimation.
 #'
 #' @param subpop_ind Numeric 0/1 vector, the same length as \code{z}, that
 #'   is 1 for members of the subpopulation (domain, in classical survey
@@ -95,8 +94,10 @@
 
 catvar_total <- function(z, wgt, x, y, size_names, stratum_ind, stratum_level,
                          cluster_ind, clusterID, wgt1, x1, y1, warn_ind,
-                         warn_df, warn_vec, subset_local = TRUE,
-                         subpop_ind = NULL) {
+                         warn_df, warn_vec, subset_local = FALSE,
+                         subpop_ind = NULL, local_nbh = 15, local_context = NULL) {
+  local_context <- localmean_group_context(local_context,
+    if (is.null(stratum_level)) "unstratified" else paste0("stratum:", stratum_level))
   # This parallels catvar_prop() (see that file for the underlying local
   # mean/neighborhood variance method and the one-hot category-indicator
   # trick), but for category TOTALS (size) rather than proportions: the
@@ -186,10 +187,10 @@ catvar_total <- function(z, wgt, x, y, size_names, stratum_ind, stratum_level,
 
       if (var_ind[i]) {
         if (vartype == "Local") {
-          weight_lst <- localmean_weight(
+          weight_lst <- localmean_weight_internal(
             x2_lst[[i]], y2_lst[[i]],
-            1 / wgt2_lst[[i]]
-          )
+            1 / wgt2_lst[[i]],
+            local_nbh = local_nbh, local_context = localmean_group_context(local_context, paste0("stage2:", i)))
           if (is.null(weight_lst)) {
             warn_ind <- TRUE
             act <- "The simple random sampling variance estimator for an infinite population was used.\n"
@@ -265,7 +266,7 @@ catvar_total <- function(z, wgt, x, y, size_names, stratum_ind, stratum_level,
     # Calculate the variance estimate
 
     if (vartype == "Local") {
-      weight_lst <- localmean_weight(x1_u, y1_u, 1 / wgt1_u)
+      weight_lst <- localmean_weight_internal(x1_u, y1_u, 1 / wgt1_u, local_nbh = local_nbh, local_context = localmean_group_context(local_context, "stage1"))
       if (is.null(weight_lst)) {
         warn_ind <- TRUE
         act <- "The simple random sampling variance estimator for an infinite population was used.\n"
@@ -349,24 +350,10 @@ catvar_total <- function(z, wgt, x, y, size_names, stratum_ind, stratum_level,
       vartype <- "SRS"
     }
 
-    # Above the benchmarked large-n threshold, subset_local = FALSE still
-    # proceeds as explicitly requested, but warns
-
-    if (!subset_local && n > 2000) {
-      warn_ind <- TRUE
-      act <- "Proceeding as requested; this computation may take a long time and use a large amount of memory.\n"
-      warn <- paste0("subset_local = FALSE requires building the local mean neighbor structure from all ", n, ifelse(stratum_ind, paste0(" sites in stratum \"", stratum_level, "\""), " sites in this design"), ", which exceeds the recommended threshold of 2,000 sites. This computation may take several minutes or longer and use several GB of memory.\n")
-      warn_df <- rbind(warn_df, data.frame(
-        func = I(fname), subpoptype = warn_vec[1], subpop = warn_vec[2],
-        indicator = warn_vec[3], stratum = if (stratum_ind) stratum_level else NA,
-        warning = I(warn), action = I(act)
-      ))
-    }
-
     # Calculate the variance estimate
 
     if (vartype == "Local") {
-      weight_lst <- localmean_weight(x, y, 1 / wgt)
+      weight_lst <- localmean_weight_internal(x, y, 1 / wgt, local_nbh = local_nbh, local_context = local_context)
       if (is.null(weight_lst)) {
         warn_ind <- TRUE
         act <- "The simple random sampling variance estimator for an infinite population was used.\n"

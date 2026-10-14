@@ -36,8 +36,9 @@ trend_analysis(
   jointprob = "overton",
   conf = 95,
   All_Sites = FALSE,
-  subset_local = TRUE,
-  subpop = NULL
+  subset_local = NULL,
+  subpop = NULL,
+  local_nbh = 15
 )
 }
 \arguments{
@@ -347,12 +348,17 @@ but never used (an unweighted \code{lm()} trend line is fit through the
 point estimates alone), so \code{subset_local} has no effect on
 \code{"SLR"} results. Has no effect on \code{"GLMM"}/\code{"LMM"}
 models, which do not use these functions.
-`subset_local` only applies when `vartype = "local"`.
-The default value is \code{TRUE}.}
+\code{subset_local} only applies when \code{vartype = "local"}.
+The default, \code{NULL}, selects \code{FALSE} for single-stage designs
+(when \code{clusterID} is not supplied) and \code{TRUE} for two-stage designs
+(when \code{clusterID} is supplied).}
 
 \item{subpop}{Compatibility alias for \code{subpops}. This preserves
 existing calls that used \code{subpop} as a partial argument name before
 \code{subpopsize} was introduced. Use \code{subpops} in new calls.}
+
+\item{local_nbh}{Size of local neighborhoods used when `vartype = "local"`. The
+default is 15.}
 }
 \value{
 The analysis results. A list composed of two data frames containing trend estimates for all

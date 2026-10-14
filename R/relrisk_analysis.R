@@ -124,11 +124,10 @@ relrisk_analysis <- function(dframe, vars_response, vars_stressor, response_leve
                              weight1 = NULL, xcoord1 = NULL, ycoord1 = NULL, sizeweight = FALSE,
                              sweight = NULL, sweight1 = NULL, fpc = NULL, formula = NULL, popsize = NULL, subpopsize = NULL,
                              vartype = "local", conf = 95, All_Sites = FALSE,
-                             subset_local = TRUE, subpop = NULL, jointprob = "overton") {
-  if (!missing(formula)) {
-    legacy_call <- greg_legacy_call(sys.call(), sys.function(), formula)
-    if (!is.null(legacy_call)) return(eval(legacy_call, parent.frame()))
-  }
+                             subset_local = NULL, subpop = NULL, jointprob = "overton", local_nbh = 15) {
+  local_context <- localmean_context(local_nbh)
+  if (is.null(subset_local)) subset_local <- !is.null(clusterID)
+
   if (!missing(subpop)) {
     if (!missing(subpops)) stop("Supply only one of subpops and subpop.", call. = FALSE)
     subpops <- subpop
@@ -311,8 +310,8 @@ relrisk_analysis <- function(dframe, vars_response, vars_stressor, response_leve
 
   temp <- input_check(dframe, design_names, vars_response, NULL, vars_stressor,
     NULL, subpops, sizeweight, fpc, if (is.null(formula)) popsize else NULL, vartype, if (is.null(formula)) NULL else jointprob, conf,
-    error_ind = error_ind, error_vec = error_vec, preserve_factors = !is.null(formula)
-  )
+    error_ind = error_ind, error_vec = error_vec, preserve_factors = !is.null(formula),
+    local_nbh = local_nbh)
   dframe <- temp$dframe
   vars_response <- temp$vars_cat
   vars_stressor <- temp$vars_stressor
@@ -493,7 +492,7 @@ relrisk_analysis <- function(dframe, vars_response, vars_stressor, response_leve
   # cluster_ind branches of relrisk_var() still always subset to domain
   # members); fail here with a clear message.
 
-  if (!subset_local && cluster_ind) {
+  if (vartype == "Local" && !subset_local && cluster_ind) {
     stop("\nsubset_local = FALSE is not yet supported for two-stage (clustered) samples.\n")
   }
 
@@ -511,7 +510,7 @@ relrisk_analysis <- function(dframe, vars_response, vars_stressor, response_leve
   if (!is.null(formula)) {
     greg <- greg_prepare(design, formula, popsize, subpopsize, subpops, warn_df)
     return(greg_risk(dframe, vars_response, vars_stressor, response_levels,
-      stressor_levels, subpops, greg, design_names, vartype, conf, "relrisk"))
+      stressor_levels, subpops, greg, design_names, vartype, conf, "relrisk", local_nbh = local_nbh, local_context = local_context))
   }
 
   if (!is.null(popsize)) {
@@ -674,8 +673,8 @@ relrisk_analysis <- function(dframe, vars_response, vars_stressor, response_leve
                   wgt2[stratum_i], xcoord[stratum_i], ycoord[stratum_i],
                   stratum_ind, stratum_levels[i], cluster_ind,
                   clusterID[stratum_i], wgt1[stratum_i], xcoord1[stratum_i],
-                  ycoord1[stratum_i], vartype, warn_ind, warn_df, warn_vec
-                )
+                  ycoord1[stratum_i], vartype, warn_ind, warn_df, warn_vec,
+                  local_nbh = local_nbh, local_context = local_context)
               } else {
                 # stratum_data_i is the row mask actually fed to
                 # relrisk_var(): under subset_local = TRUE it's identical to
@@ -697,8 +696,8 @@ relrisk_analysis <- function(dframe, vars_response, vars_stressor, response_leve
                   stratum_ind, stratum_levels[i], cluster_ind,
                   vartype = vartype, warn_ind = warn_ind, warn_df = warn_df,
                   warn_vec = warn_vec, subset_local = subset_local,
-                  subpop_ind = subpop_ind_full[stratum_data_i]
-                )
+                  subpop_ind = subpop_ind_full[stratum_data_i],
+                  local_nbh = local_nbh, local_context = local_context)
               }
               varest_st <- temp$varest
               warn_ind <- temp$warn_ind
@@ -919,8 +918,8 @@ relrisk_analysis <- function(dframe, vars_response, vars_stressor, response_leve
                   response_levels[[ivar_r]], stressor_levels[[ivar_s]],
                   wgt2[tst], xcoord[tst], ycoord[tst], stratum_ind, NULL,
                   cluster_ind, clusterID[tst], wgt1[tst], xcoord1[tst],
-                  ycoord1[tst], vartype, warn_ind, warn_df, warn_vec
-                )
+                  ycoord1[tst], vartype, warn_ind, warn_df, warn_vec,
+                  local_nbh = local_nbh, local_context = local_context)
               } else {
                 # data_tst mirrors stratum_data_i above: domain-only under
                 # TRUE, every site with a usable response and stressor
@@ -934,8 +933,8 @@ relrisk_analysis <- function(dframe, vars_response, vars_stressor, response_leve
                   vartype = vartype, warn_ind = warn_ind,
                   warn_df = warn_df, warn_vec = warn_vec,
                   subset_local = subset_local,
-                  subpop_ind = subpop_ind_full[data_tst]
-                )
+                  subpop_ind = subpop_ind_full[data_tst],
+                  local_nbh = local_nbh, local_context = local_context)
               }
               varest <- temp$varest
               warn_ind <- temp$warn_ind

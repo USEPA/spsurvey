@@ -3,7 +3,7 @@
 # clamping. Only the CDF variance comes from the existing local CDF machinery.
 percentile_local_interval <- function(points, probabilities, design, design_names,
                                       type, domain, variable, conf, method,
-                                      subset_local, warn_ind, warn_df) {
+                                      subset_local, warn_ind, warn_df, local_nbh = 15, local_context = NULL) {
   lower <- upper <- se <- rep(NA_real_, length(points))
   valid <- is.finite(points)
   y <- design$variables[[variable]]
@@ -18,10 +18,12 @@ percentile_local_interval <- function(points, probabilities, design, design_name
     return(list(se = se, lower = lower, upper = upper, warn_ind = TRUE, warn_df = warn_df))
   }
   thresholds <- points[valid]
+  warn_df <- localmean_cdf_check_size(design, design_names, variable, type, domain,
+    length(thresholds), subset_local, warn_df, local_context)
   p_cdf <- vapply(thresholds, function(q) sum(w * (y[keep] <= q)) / sum(w), numeric(1))
   local <- cdf_localmean_prop(type, domain, 1L, variable, design, design_names,
     thresholds, length(thresholds), as.data.frame(t(p_cdf)), stats::qnorm(.5 + conf / 200),
-    warn_ind, warn_df, subset_local = subset_local)
+    warn_ind, warn_df, subset_local = subset_local, local_nbh = local_nbh, local_context = local_context)
   domain_design <- design[keep, ]
   critical <- stats::qt(.5 + conf / 200, df = survey::degf(domain_design))
   sd_cdf <- as.numeric(local$stderr_P[1, ])

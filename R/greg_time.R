@@ -3,13 +3,13 @@
 greg_time_args <- function(env) {
   fields <- c("dframe", "subpops", "siteID", "weight", "xcoord", "ycoord", "stratumID",
     "clusterID", "weight1", "xcoord1", "ycoord1", "sizeweight", "sweight", "sweight1",
-    "fpc", "formula", "popsize", "subpopsize", "vartype", "jointprob", "conf", "All_Sites")
+    "fpc", "formula", "popsize", "subpopsize", "vartype", "jointprob", "conf", "All_Sites", "local_nbh")
   args <- mget(fields, envir = env, inherits = FALSE)
   args$revisitwgt <- if (exists("revisitwgt", env, inherits = FALSE)) get("revisitwgt", env) else FALSE
   args
 }
 
-greg_build_occasion <- function(args, vars_cat, vars_cont) {
+greg_build_occasion <- function(args, vars_cat, vars_cont, local_nbh = 15, local_context = NULL) {
   data <- args$dframe
   if (inherits(data, "sf")) {
     xy <- sf::st_coordinates(data)
@@ -37,7 +37,7 @@ greg_build_occasion <- function(args, vars_cat, vars_cont) {
   design_names$Ncluster <- design_names$stage1size <- NULL
   checked <- input_check(data, design_names, vars_cat, vars_cont, NULL, NULL,
     args$subpops, args$sizeweight, args$fpc, NULL, args$vartype, args$jointprob,
-    args$conf, error_ind = FALSE, error_vec = NULL, preserve_factors = TRUE)
+    args$conf, error_ind = FALSE, error_vec = NULL, preserve_factors = TRUE, local_nbh = local_nbh)
   if (checked$error_ind) stop(paste(checked$error_vec, collapse = "\n"), call. = FALSE)
   data <- checked$dframe
   ids <- as.character(data[[args$siteID]])
@@ -48,10 +48,10 @@ greg_build_occasion <- function(args, vars_cat, vars_cont) {
   greg <- greg_prepare(design, args$formula, args$popsize, args$subpopsize, checked$subpops, NULL)
   list(data = data, base = design, greg = greg, ids = ids,
     design_names = design_names, vartype = checked$vartype, subpops = checked$subpops,
-    revisitwgt = args$revisitwgt)
+    revisitwgt = args$revisitwgt, local_context = local_context)
 }
 
-greg_occasions <- function(args, occasionID, occasions, vars_cat, vars_cont, check_revisits = TRUE) {
+greg_occasions <- function(args, occasionID, occasions, vars_cat, vars_cont, check_revisits = TRUE, local_nbh = 15, local_context = NULL) {
   if (length(occasionID) != 1L || !occasionID %in% names(args$dframe) ||
       length(args$siteID) != 1L || !args$siteID %in% names(args$dframe)) {
     stop("GREG change/trend requires occasion and site ID columns.", call. = FALSE)
@@ -70,7 +70,8 @@ greg_occasions <- function(args, occasionID, occasions, vars_cat, vars_cont, che
     one$dframe <- one$dframe[order(as.character(one$dframe[[args$siteID]])), , drop = FALSE]
     one$popsize <- args$popsize[[occasion]]
     one$subpopsize <- args$subpopsize[[occasion]]
-    result[[occasion]] <- greg_build_occasion(one, vars_cat, vars_cont)
+    result[[occasion]] <- greg_build_occasion(one, vars_cat, vars_cont,
+      local_nbh = local_nbh, local_context = localmean_group_context(local_context, occasion))
   }
   # Partial overlaps use the existing repeat-site covariance approximation.
   # The original design strata identify independent covariance components.
@@ -92,7 +93,7 @@ greg_occasions <- function(args, occasionID, occasions, vars_cat, vars_cont, che
   result
 }
 
-greg_time_estimate <- function(occasions, responses, type, domain, ratio, conf, revisit_covariance = TRUE) {
+greg_time_estimate <- function(occasions, responses, type, domain, ratio, conf, revisit_covariance = TRUE, local_nbh = 15, local_context = NULL) {
   k <- length(occasions)
   estimates <- counts <- numeric(k)
   covariance <- matrix(0, k, k)
@@ -105,7 +106,7 @@ greg_time_estimate <- function(occasions, responses, type, domain, ratio, conf, 
     context <- one$greg$contexts[[type]][[domain]]
     if (is.null(context)) stop("Every requested domain must be represented in each occasion's factor levels.", call. = FALSE)
     ans <- greg_estimate(context, q, keep, ratio, one$vartype, one$design_names,
-      conf, warn_df, c(type, domain, NA))
+      conf, warn_df, c(type, domain, NA), local_nbh = local_nbh, local_context = one$local_context)
     warn_df <- ans$warn_df
     estimates[j] <- ans$estimate
     counts[j] <- sum(keep)
@@ -121,7 +122,8 @@ greg_time_estimate <- function(occasions, responses, type, domain, ratio, conf, 
   if (revisit_covariance) for (j in seq_len(k)) for (i in seq_len(j - 1L)) {
     if (any(!is.finite(estimates[c(i, j)]))) next
     cross <- greg_revisit_covariance(occasions[[i]], occasions[[j]],
-      contributions[[i]], contributions[[j]], contexts[[i]], warn_df)
+      contributions[[i]], contributions[[j]], contexts[[i]], warn_df,
+      local_nbh = local_nbh, local_context = localmean_group_context(local_context, paste("revisit", i, j)))
     bound <- min(sqrt(covariance[i, i] * covariance[j, j]),
       (covariance[i, i] + covariance[j, j]) / 2)
     if (is.finite(bound) && abs(cross$covariance) > bound &&
@@ -164,7 +166,7 @@ greg_change_row <- function(ans, occasions, type, domain, variable, conf, scale 
   row
 }
 
-greg_change <- function(args, vars_cat, vars_cont, test, surveyID, survey_names) {
+greg_change <- function(args, vars_cat, vars_cont, test, surveyID, survey_names, local_nbh = 15, local_context = NULL) {
   available <- unique(as.character(args$dframe[[surveyID]]))
   if (is.null(survey_names)) survey_names <- available
   survey_names <- as.character(survey_names)
@@ -172,7 +174,7 @@ greg_change <- function(args, vars_cat, vars_cont, test, surveyID, survey_names)
     stop("GREG change requires two named survey occasions.", call. = FALSE)
   }
   if (!all(test %in% c("mean", "total", "median"))) stop("Unknown change statistic.", call. = FALSE)
-  occasions <- greg_occasions(args, surveyID, survey_names, vars_cat, vars_cont)
+  occasions <- greg_occasions(args, surveyID, survey_names, vars_cat, vars_cont, local_nbh = local_nbh, local_context = local_context)
   out <- list(catsum = NULL, contsum_mean = NULL, contsum_total = NULL, contsum_median = NULL)
   warn_df <- do.call(rbind, lapply(occasions, function(x) x$greg$warn_df))
   for (type in occasions[[1]]$subpops) for (domain in levels(occasions[[1]]$data[[type]])) {
@@ -181,7 +183,7 @@ greg_change <- function(args, vars_cat, vars_cont, test, surveyID, survey_names)
       ids <- data.frame(Survey_1 = survey_names[1], Survey_2 = survey_names[2],
         Type = type, Subpopulation = domain, Indicator = variable)
       if (variable %in% vars_cont) for (statistic in intersect(test, c("mean", "total"))) {
-        ans <- greg_time_estimate(occasions, y, type, domain, statistic == "mean", args$conf)
+        ans <- greg_time_estimate(occasions, y, type, domain, statistic == "mean", args$conf, local_nbh = local_nbh, local_context = local_context)
         row <- cbind(ids, greg_change_row(ans, occasions, type, domain, variable, args$conf))
         target <- paste0("contsum_", statistic)
         out[[target]] <- rbind(out[[target]], row)
@@ -206,8 +208,8 @@ greg_change <- function(args, vars_cat, vars_cont, test, surveyID, survey_names)
           target <- "contsum_median"
         }
         for (j in seq_along(categories)) {
-          p <- greg_time_estimate(occasions, indicators[[j]], type, domain, TRUE, args$conf)
-          u <- greg_time_estimate(occasions, indicators[[j]], type, domain, FALSE, args$conf)
+          p <- greg_time_estimate(occasions, indicators[[j]], type, domain, TRUE, args$conf, local_nbh = local_nbh, local_context = local_context)
+          u <- greg_time_estimate(occasions, indicators[[j]], type, domain, FALSE, args$conf, local_nbh = local_nbh, local_context = local_context)
           rp <- greg_change_row(p, occasions, type, domain, variable, args$conf, 100, ".P")
           ru <- greg_change_row(u, occasions, type, domain, variable, args$conf, 1, ".U")
           row <- cbind(ids, Category = categories[j], rp, ru[, !names(ru) %in% c("nResp_1", "nResp_2")])
@@ -228,10 +230,10 @@ greg_change <- function(args, vars_cat, vars_cont, test, surveyID, survey_names)
   out
 }
 
-greg_trend <- function(args, vars_cat, vars_cont, yearID, model_cat, model_cont) {
+greg_trend <- function(args, vars_cat, vars_cont, yearID, model_cat, model_cont, local_nbh = 15, local_context = NULL) {
   years <- sort(unique(as.numeric(as.character(args$dframe[[yearID]]))))
   if (length(years) < 3L || any(!is.finite(years))) stop("GREG trends require at least three finite numeric occasions.", call. = FALSE)
-  occasions <- greg_occasions(args, yearID, as.character(years), vars_cat, vars_cont, check_revisits = FALSE)
+  occasions <- greg_occasions(args, yearID, as.character(years), vars_cat, vars_cont, check_revisits = FALSE, local_nbh = local_nbh, local_context = local_context)
   out <- list(catsum = NULL, contsum = NULL)
   warn_df <- do.call(rbind, lapply(occasions, function(x) x$greg$warn_df))
   elapsed <- years - min(years)
@@ -243,7 +245,7 @@ greg_trend <- function(args, vars_cat, vars_cont, yearID, model_cat, model_cont)
       model <- if (categorical) model_cat else model_cont
       for (category in categories) {
         response <- if (categorical) lapply(y, function(z) as.numeric(z == category)) else y
-        ans <- greg_time_estimate(occasions, response, type, domain, TRUE, args$conf, revisit_covariance = FALSE)
+        ans <- greg_time_estimate(occasions, response, type, domain, TRUE, args$conf, revisit_covariance = FALSE, local_nbh = local_nbh, local_context = local_context)
         warn_df <- rbind(warn_df, ans$warn_df)
         if (categorical) ans$stat <- greg_stat(as.numeric(ans$stat) * 100, stats::vcov(ans$stat) * 10000, names(ans$stat))
         variance <- diag(stats::vcov(ans$stat))

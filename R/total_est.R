@@ -51,12 +51,10 @@
 #'
 #' @param warn_df Data frame for storing warning messages.
 #'
-#' @param subset_local Logical value indicating whether the local mean
-#'   variance estimator (\code{vartype = "local"}) builds its neighbor
-#'   structure from domain members only (\code{TRUE}, the
-#'   default) or from all sites in the relevant stratum (\code{FALSE}).
-#'   Has no effect when \code{vartype} is not \code{"Local"}. The default
-#'   value is \code{TRUE}.
+#' @param subset_local If \code{TRUE}, construct neighborhoods using only
+#'   domain members. The internal default, \code{FALSE}, retains eligible
+#'   responding sites in the sampling stratum and zeros contributions outside
+#'   the domain. Used only for local variance estimation.
 #'
 #' @return A list composed of the following objects:
 #'   \describe{
@@ -96,10 +94,10 @@
 
 total_est <- function(totalsum, dframe, itype, lev_itype, nlev_itype, ivar,
                       design, design_names, var_nondetect, vartype, conf, mult,
-                      warn_ind, warn_df, subset_local = TRUE, greg = NULL) {
+                      warn_ind, warn_df, subset_local = FALSE, greg = NULL, local_nbh = 15, local_context = NULL) {
   if (!is.null(greg)) {
     ans <- greg_summary_est(totalsum, dframe, itype, lev_itype, ivar, greg,
-      design_names, vartype, conf, mult, warn_df, ratio = FALSE)
+      design_names, vartype, conf, mult, warn_df, ratio = FALSE, local_nbh = local_nbh, local_context = local_context)
     names(ans)[1] <- "totalsum"
     return(ans)
   }
@@ -145,13 +143,13 @@ total_est <- function(totalsum, dframe, itype, lev_itype, nlev_itype, ivar,
           design = subset(design, tst), na.rm = TRUE
         )
         totalest <- rslt
-        nresp <- sum(!is.na(dframe[, ivar]))
+        nresp <- sum(!is.na(dframe[tst, ivar]))
         if (vartype == "Local") {
           temp <- total_localmean(
             itype, lev_itype, nlev_itype, c(1), ivar, design, design_names,
             totalest[1], mult, warn_ind, warn_df,
-            subset_local = subset_local
-          )
+            subset_local = subset_local,
+            local_nbh = local_nbh, local_context = local_context)
           stderr <- temp$stderr
           lbound <- unlist(temp$confval[1])
           ubound <- unlist(temp$confval[2])
@@ -203,8 +201,8 @@ total_est <- function(totalsum, dframe, itype, lev_itype, nlev_itype, ivar,
           temp <- total_localmean(
             itype, lev_itype, nlev_itype, levs, ivar, design, design_names,
             totalest, mult, warn_ind, warn_df,
-            subset_local = subset_local
-          )
+            subset_local = subset_local,
+            local_nbh = local_nbh, local_context = local_context)
           stderr[levs] <- temp$stderr[levs]
           lbound[levs] <- unlist(temp$confval[levs, 1])
           ubound[levs] <- unlist(temp$confval[levs, 2])

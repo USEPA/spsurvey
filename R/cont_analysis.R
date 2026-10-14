@@ -42,16 +42,10 @@
 #' @inherit cat_analysis params
 #' @inheritSection cat_analysis GREG estimation
 #'
-#' @param subset_local When `subset_local = TRUE` (the default),
-#' subpopulations are subset to include only subpopulation members
-#' prior to variance estimation. When `subset_local = FALSE`,
-#' subpopulations are not subset prior to variance estimation.
-#' `subset_local = FALSE` follows standard design-based subpopulation
-#' (i.e., domain) estimation theory, especially relevant for variance estimates of totals,
-#' but is computationally more complex,
-#' requiring the neighborhood weights matrix of the full data
-#' (which scales cubically with the sample size).
-#' `subset_local` only applies when `vartype = "local"`.
+#' @param subset_local Controls local neighborhood variance estimation for subpopulations.
+#'   For typical designs, this defaults to \code{TRUE}, the neighbor pool contains all
+#'   sites in the stratum and the response for sites outside the subpopulation are set to zero.
+#'   For two-stage designs, this defaults to \code{FALSE}.
 #'
 #' @param pctval  Vector of the set of values at which percentiles are
 #'   estimated.  The default set is: \code{c(5, 10, 25, 50, 75, 90, 95)}.
@@ -177,11 +171,10 @@ cont_analysis <- function(dframe, vars, subpops = NULL, siteID = NULL,
                           jointprob = "overton", conf = 95,
                           pctval = c(5, 10, 25, 50, 75, 90, 95),
                           statistics = c("CDF", "Pct", "Mean", "Total"),
-                          All_Sites = FALSE, subset_local = TRUE, subpop = NULL) {
-  if (!missing(formula)) {
-    legacy_call <- greg_legacy_call(sys.call(), sys.function(), formula)
-    if (!is.null(legacy_call)) return(eval(legacy_call, parent.frame()))
-  }
+                          All_Sites = FALSE, subset_local = NULL, subpop = NULL, local_nbh = 15) {
+  local_context <- localmean_context(local_nbh)
+  if (is.null(subset_local)) subset_local <- !is.null(clusterID)
+
   if (!missing(subpop)) {
     if (!missing(subpops)) stop("Supply only one of subpops and subpop.", call. = FALSE)
     subpops <- subpop
@@ -370,8 +363,8 @@ cont_analysis <- function(dframe, vars, subpops = NULL, siteID = NULL,
   temp <- input_check(dframe, design_names, NULL, vars, NULL, vars_nondetect,
     subpops, sizeweight, fpc, if (is.null(formula)) popsize else NULL, vartype, jointprob, conf,
     pctval = pctval, error_ind = error_ind, error_vec = error_vec,
-    preserve_factors = !is.null(formula)
-  )
+    preserve_factors = !is.null(formula),
+    local_nbh = local_nbh)
   dframe <- temp$dframe
   vars <- temp$vars_cont
   vars_nondetect <- temp$vars_nondetect
@@ -464,7 +457,7 @@ cont_analysis <- function(dframe, vars, subpops = NULL, siteID = NULL,
   # cluster_ind branches of mean_var()/total_var()/cdfvar_total()/
   # cdfvar_prop() still always subset to domain members); fail with a clear message
 
-  if (!subset_local && cluster_ind) {
+  if (vartype == "Local" && !subset_local && cluster_ind) {
     stop("\nsubset_local = FALSE is not yet supported for two-stage (clustered) samples.\n")
   }
 
@@ -553,8 +546,8 @@ cont_analysis <- function(dframe, vars, subpops = NULL, siteID = NULL,
           contsum$CDF, dframe, itype, lev_itype, nlev_itype, ivar, design,
           design_names, vars_nondetect[indx], vartype, conf, mult, warn_ind,
           warn_df,
-          subset_local = subset_local, greg = greg
-        )
+          subset_local = subset_local, greg = greg,
+          local_nbh = local_nbh, local_context = local_context)
         contsum$CDF <- temp$cdfsum
         warn_ind <- temp$warn_ind
         warn_df <- temp$warn_df
@@ -566,8 +559,8 @@ cont_analysis <- function(dframe, vars, subpops = NULL, siteID = NULL,
         temp <- percentile_est(
           contsum$Pct, dframe, itype, lev_itype, nlev_itype, ivar, design,
           design_names, vars_nondetect[indx], conf, mult, pctval, warn_ind,
-          warn_df, greg = greg, vartype = vartype, subset_local = subset_local
-        )
+          warn_df, greg = greg, vartype = vartype, subset_local = subset_local,
+          local_nbh = local_nbh, local_context = local_context)
         contsum$Pct <- temp$pctsum
         warn_ind <- temp$warn_ind
         warn_df <- temp$warn_df
@@ -580,8 +573,8 @@ cont_analysis <- function(dframe, vars, subpops = NULL, siteID = NULL,
           contsum$Mean, dframe, itype, lev_itype, nlev_itype, ivar, design,
           design_names, vars_nondetect[indx], vartype, conf, mult, warn_ind,
           warn_df,
-          subset_local = subset_local, greg = greg
-        )
+          subset_local = subset_local, greg = greg,
+          local_nbh = local_nbh, local_context = local_context)
         contsum$Mean <- temp$meansum
         warn_ind <- temp$warn_ind
         warn_df <- temp$warn_df
@@ -594,8 +587,8 @@ cont_analysis <- function(dframe, vars, subpops = NULL, siteID = NULL,
           contsum$Total, dframe, itype, lev_itype, nlev_itype, ivar, design,
           design_names, vars_nondetect[indx], vartype, conf, mult, warn_ind,
           warn_df,
-          subset_local = subset_local, greg = greg
-        )
+          subset_local = subset_local, greg = greg,
+          local_nbh = local_nbh, local_context = local_context)
         contsum$Total <- temp$totalsum
         warn_ind <- temp$warn_ind
         warn_df <- temp$warn_df

@@ -76,12 +76,10 @@
 #'
 #' @param warn_df Data frame for storing warning messages.
 #'
-#' @param subset_local Logical value indicating whether the local mean
-#'   variance estimator (\code{vartype = "local"}) builds its neighbor
-#'   structure from domain members only (\code{TRUE}, the
-#'   default) or from all sites in the relevant stratum (\code{FALSE}).
-#'   Has no effect when \code{vartype} is not \code{"Local"}. The default
-#'   value is \code{TRUE}.
+#' @param subset_local If \code{TRUE}, construct neighborhoods using only
+#'   domain members. The internal default, \code{FALSE}, retains eligible
+#'   responding sites in the sampling stratum and zeros contributions outside
+#'   the domain. Used only for local variance estimation.
 #'
 #' @return A list composed of the following objects:
 #'   \itemize{
@@ -102,10 +100,10 @@
 category_est <- function(catsum, dframe, itype, lev_itype, nlev_itype, ivar,
                          lev_ivar, nlev_ivar, design, design_names,
                          vartype, conf, mult, warn_ind, warn_df,
-                         subset_local = TRUE, greg = NULL) {
+                         subset_local = FALSE, greg = NULL, local_nbh = 15, local_context = NULL) {
   if (!is.null(greg)) {
     ans <- greg_distribution_est(catsum, dframe, itype, lev_itype, ivar, greg,
-      design_names, vartype, conf, mult, warn_df, categorical = TRUE)
+      design_names, vartype, conf, mult, warn_df, categorical = TRUE, local_nbh = local_nbh, local_context = local_context)
     names(ans)[1] <- "catsum"
     return(ans)
   }
@@ -148,8 +146,8 @@ category_est <- function(catsum, dframe, itype, lev_itype, nlev_itype, ivar,
         temp <- cat_localmean_prop(
           itype, lev_itype, nlev_itype, ivar, lev_ivar, nlev_ivar, design,
           design_names, rslt_P, mult, warn_ind, warn_df,
-          subset_local = subset_local
-        )
+          subset_local = subset_local,
+          local_nbh = local_nbh, local_context = local_context)
         stderr_P <- temp$stderr_P
         confval_P <- temp$confval_P
         warn_ind <- temp$warn_ind
@@ -195,8 +193,8 @@ category_est <- function(catsum, dframe, itype, lev_itype, nlev_itype, ivar,
         temp <- cat_localmean_prop(
           itype, lev_itype, nlev_itype, ivar, lev_ivar, nlev_ivar, design,
           design_names, rslt_P, mult, warn_ind, warn_df,
-          subset_local = subset_local
-        )
+          subset_local = subset_local,
+          local_nbh = local_nbh, local_context = local_context)
         stderr_P <- temp$stderr_P
         confval_P <- temp$confval_P
         warn_ind <- temp$warn_ind
@@ -242,8 +240,8 @@ category_est <- function(catsum, dframe, itype, lev_itype, nlev_itype, ivar,
         temp <- cat_localmean_total(
           itype, lev_itype, nlev_itype, ivar, lev_ivar, nlev_ivar, design,
           design_names, rslt_U, mult, warn_ind, warn_df,
-          subset_local = subset_local
-        )
+          subset_local = subset_local,
+          local_nbh = local_nbh, local_context = local_context)
         stderr_U <- temp$stderr_U
         confval_U <- temp$confval_U
         warn_ind <- temp$warn_ind
@@ -268,8 +266,8 @@ category_est <- function(catsum, dframe, itype, lev_itype, nlev_itype, ivar,
         temp <- cat_localmean_total(
           itype, lev_itype, nlev_itype, ivar, lev_ivar, nlev_ivar, design,
           design_names, rslt_U, mult, warn_ind, warn_df,
-          subset_local = subset_local
-        )
+          subset_local = subset_local,
+          local_nbh = local_nbh, local_context = local_context)
         stderr_U <- temp$stderr_U
         confval_U <- temp$confval_U
         warn_ind <- temp$warn_ind
@@ -293,8 +291,8 @@ category_est <- function(catsum, dframe, itype, lev_itype, nlev_itype, ivar,
         temp <- cat_localmean_total(
           itype, lev_itype, nlev_itype, ivar, lev_ivar, nlev_ivar, design,
           design_names, rslt_U, mult, warn_ind, warn_df,
-          subset_local = subset_local
-        )
+          subset_local = subset_local,
+          local_nbh = local_nbh, local_context = local_context)
         stderr_U <- temp$stderr_U
         confval_U <- temp$confval_U
         warn_ind <- temp$warn_ind
@@ -321,8 +319,8 @@ category_est <- function(catsum, dframe, itype, lev_itype, nlev_itype, ivar,
         temp <- cat_localmean_total(
           itype, lev_itype, nlev_itype, ivar, lev_ivar, nlev_ivar, design,
           design_names, rslt_U, mult, warn_ind, warn_df,
-          subset_local = subset_local
-        )
+          subset_local = subset_local,
+          local_nbh = local_nbh, local_context = local_context)
         stderr_U <- temp$stderr_U
         confval_U <- temp$confval_U
         warn_ind <- temp$warn_ind

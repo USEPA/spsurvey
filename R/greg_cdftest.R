@@ -1,5 +1,5 @@
 greg_cdftest <- function(data, vars, subpops, greg, base, design_names,
-                         vartype, testname, nclass) {
+                         vartype, testname, nclass, local_nbh = 15, local_context = NULL) {
   rows <- list()
   warn_df <- greg$warn_df
   for (type in subpops) {
@@ -23,7 +23,7 @@ greg_cdftest <- function(data, vars, subpops, greg, base, design_names,
       for (pair in pairs) {
         masks <- lapply(pair, function(domain) data[[type]] %in% domain)
         contexts <- greg$contexts[[type]][pair]
-        design <- greg_as_design(base, contexts, masks, vartype, design_names)
+        design <- greg_as_design(base, contexts, masks, vartype, design_names, local_nbh = local_nbh, local_context = local_context)
         group <- rep(NA_character_, nrow(data))
         for (j in 1:2) group[masks[[j]]] <- pair[j]
         design$variables$.greg_group <- factor(group, levels = pair)

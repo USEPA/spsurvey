@@ -106,11 +106,10 @@ diffrisk_analysis <- function(dframe, vars_response, vars_stressor, response_lev
                               weight1 = NULL, xcoord1 = NULL, ycoord1 = NULL, sizeweight = FALSE,
                               sweight = NULL, sweight1 = NULL, fpc = NULL, formula = NULL, popsize = NULL, subpopsize = NULL,
                               vartype = "local", conf = 95, All_Sites = FALSE,
-                              subset_local = TRUE, subpop = NULL, jointprob = "overton") {
-  if (!missing(formula)) {
-    legacy_call <- greg_legacy_call(sys.call(), sys.function(), formula)
-    if (!is.null(legacy_call)) return(eval(legacy_call, parent.frame()))
-  }
+                              subset_local = NULL, subpop = NULL, jointprob = "overton", local_nbh = 15) {
+  local_context <- localmean_context(local_nbh)
+  if (is.null(subset_local)) subset_local <- !is.null(clusterID)
+
   if (!missing(subpop)) {
     if (!missing(subpops)) stop("Supply only one of subpops and subpop.", call. = FALSE)
     subpops <- subpop
@@ -293,8 +292,8 @@ diffrisk_analysis <- function(dframe, vars_response, vars_stressor, response_lev
 
   temp <- input_check(dframe, design_names, vars_response, NULL, vars_stressor,
     NULL, subpops, sizeweight, fpc, if (is.null(formula)) popsize else NULL, vartype, jointprob, conf,
-    error_ind = error_ind, error_vec = error_vec, preserve_factors = !is.null(formula)
-  )
+    error_ind = error_ind, error_vec = error_vec, preserve_factors = !is.null(formula),
+    local_nbh = local_nbh)
   dframe <- temp$dframe
   vars_response <- temp$vars_cat
   vars_stressor <- temp$vars_stressor
@@ -475,7 +474,7 @@ diffrisk_analysis <- function(dframe, vars_response, vars_stressor, response_lev
   # cluster_ind branches of category_est()'s internal chain still always
   # subset to domain members); fail with a clear message
 
-  if (!subset_local && cluster_ind) {
+  if (vartype == "Local" && !subset_local && cluster_ind) {
     stop("\nsubset_local = FALSE is not yet supported for two-stage (clustered) samples.\n")
   }
 
@@ -500,7 +499,7 @@ diffrisk_analysis <- function(dframe, vars_response, vars_stressor, response_lev
   if (!is.null(formula)) {
     greg <- greg_prepare(design, formula, popsize, subpopsize, subpops, warn_df)
     return(greg_risk(dframe, vars_response, vars_stressor, response_levels,
-      stressor_levels, subpops, greg, design_names, vartype, conf, "diffrisk"))
+      stressor_levels, subpops, greg, design_names, vartype, conf, "diffrisk", local_nbh = local_nbh, local_context = local_context))
   }
 
   if (!is.null(popsize)) {
@@ -582,8 +581,8 @@ diffrisk_analysis <- function(dframe, vars_response, vars_stressor, response_lev
             design, response, stressor, response_levels[[ivar_r]],
             stressor_levels[[ivar_s]], dframe[, itype] %in% isubpop,
             design_names, vartype, subset_local, warn_ind, warn_df,
-            c(itype, isubpop, ivar_r)
-          )
+            c(itype, isubpop, ivar_r),
+            local_nbh = local_nbh, local_context = local_context)
           prop1 <- temp$proportion[1]
           prop2 <- temp$proportion[2]
           warn_ind <- temp$warn_ind

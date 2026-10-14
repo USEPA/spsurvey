@@ -248,11 +248,10 @@
 #'   indicates the Horvitz-Thompson estimator, and \code{"YG"} indicates the
 #'   Yates-Grundy estimator. 
 #'
-#' @param subset_local Logical value that controls how the local mean
-#'   variance estimator (the default \code{vartype = "local"}) handles
-#'   the two subpopulations being compared. See \code{\link{cat_analysis}}
-#'   for the full explanation. \code{subset_local} is not yet supported
-#'   for two-stage (clustered) samples. The default value is \code{TRUE}.
+#' @param subset_local Controls local neighborhood variance estimation for subpopulations.
+#'   For typical designs, this defaults to \code{TRUE}, the neighbor pool contains all
+#'   sites in the stratum and the response for sites outside the subpopulation are set to zero.
+#'   For two-stage designs, this defaults to \code{FALSE}.
 #'
 #' @param jointprob Character value providing the choice of joint inclusion
 #'   probability approximation for use with Horvitz-Thompson and Yates-Grundy
@@ -328,11 +327,10 @@ cont_cdftest <- function(dframe, vars, subpops = NULL, surveyID = NULL, siteID =
                          sizeweight = FALSE, sweight = NULL, sweight1 = NULL, fpc = NULL,
                          formula = NULL, popsize = NULL, subpopsize = NULL,
                          vartype = "local", jointprob = "overton",
-                         testname = "adjWald", nclass = 3, subset_local = TRUE, subpop = NULL) {
-  if (!missing(formula)) {
-    legacy_call <- greg_legacy_call(sys.call(), sys.function(), formula)
-    if (!is.null(legacy_call)) return(eval(legacy_call, parent.frame()))
-  }
+                         testname = "adjWald", nclass = 3, subset_local = NULL, subpop = NULL, local_nbh = 15) {
+  local_context <- localmean_context(local_nbh)
+  if (is.null(subset_local)) subset_local <- !is.null(clusterID)
+
   if (!missing(subpop)) {
     if (!missing(subpops)) stop("Supply only one of subpops and subpop.", call. = FALSE)
     subpops <- subpop
@@ -574,8 +572,8 @@ cont_cdftest <- function(dframe, vars, subpops = NULL, surveyID = NULL, siteID =
   temp <- input_check(dframe, design_names, NULL, vars, NULL, NULL, subpops,
     sizeweight, fpc, if (is.null(formula)) popsize else NULL, vartype, jointprob,
     conf = 95,
-    error_ind = error_ind, error_vec = error_vec, preserve_factors = !is.null(formula)
-  )
+    error_ind = error_ind, error_vec = error_vec, preserve_factors = !is.null(formula),
+    local_nbh = local_nbh)
   dframe <- temp$dframe
   vars <- temp$vars_cont
   subpops <- temp$subpops
@@ -649,7 +647,7 @@ cont_cdftest <- function(dframe, vars, subpops = NULL, surveyID = NULL, siteID =
   # build the local mean neighbor structure from the union of the two
   # compared groups only)
 
-  if (!subset_local && cluster_ind) {
+  if (vartype == "Local" && !subset_local && cluster_ind) {
     stop("\nsubset_local = FALSE is not yet supported for two-stage (clustered) samples.\n")
   }
 
@@ -667,7 +665,7 @@ cont_cdftest <- function(dframe, vars, subpops = NULL, surveyID = NULL, siteID =
   if (!is.null(formula)) {
     greg <- greg_prepare(design, formula, popsize, subpopsize, subpops, warn_df)
     return(greg_cdftest(dframe, vars, subpops, greg, design, design_names,
-      vartype, testname, nclass))
+      vartype, testname, nclass, local_nbh = local_nbh, local_context = local_context))
   }
   if (!is.null(popsize)) {
     if (all(class(popsize) %in% c("data.frame", "table", "xtabs"))) {
@@ -837,16 +835,16 @@ cont_cdftest <- function(dframe, vars, subpops = NULL, surveyID = NULL, siteID =
             if (testname %in% c("Wald", "adjWald")) {
               temp <- cdftest_localmean_total(
                 design, design_names, warn_ind, warn_df, warn_vec,
-                subset_local = subset_local
-              )
+                subset_local = subset_local,
+                local_nbh = local_nbh, local_context = local_context)
               var_totals <- temp$varest
               warn_ind <- temp$warn_ind
               warn_df <- temp$warn_df
             } else {
               temp <- cdftest_localmean_prop(
                 design, design_names, warn_ind, warn_df, warn_vec,
-                subset_local = subset_local
-              )
+                subset_local = subset_local,
+                local_nbh = local_nbh, local_context = local_context)
               var_means <- temp$varest
               warn_ind <- temp$warn_ind
               warn_df <- temp$warn_df

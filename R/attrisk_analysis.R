@@ -290,15 +290,10 @@
 #'   (ignoring subpopulations) is not returned for each variable in \code{vars}.
 #'   The default is \code{FALSE}.
 #'
-#' @param subset_local When `subset_local = TRUE` (the default),
-#' subpopulations are subset to include only subpopulation members
-#' prior to variance estimation. When `subset_local = FALSE`,
-#' subpopulations are not subset prior to variance estimation.
-#' `subset_local = FALSE` follows standard design-based subpopulation
-#' (i.e., domain) estimation theory but is computationally more complex,
-#' requiring the neighborhood weights matrix of the full data
-#' (which scales cubically with the sample size).
-#' `subset_local` only applies when `vartype = "local"`.
+#' @param subset_local Controls local neighborhood variance estimation for subpopulations.
+#'   For typical designs, this defaults to \code{TRUE}, the neighbor pool contains all
+#'   sites in the stratum and the response for sites outside the subpopulation are set to zero.
+#'   For two-stage designs, this defaults to \code{FALSE}.
 #'
 #' @section Details:
 #' Attributable risk measures the proportional reduction in the extent of poor
@@ -392,11 +387,10 @@ attrisk_analysis <- function(dframe, vars_response, vars_stressor, response_leve
                              weight1 = NULL, xcoord1 = NULL, ycoord1 = NULL, sizeweight = FALSE,
                              sweight = NULL, sweight1 = NULL, fpc = NULL, formula = NULL, popsize = NULL, subpopsize = NULL,
                              vartype = "local", conf = 95, All_Sites = FALSE,
-                             subset_local = TRUE, subpop = NULL, jointprob = "overton") {
-  if (!missing(formula)) {
-    legacy_call <- greg_legacy_call(sys.call(), sys.function(), formula)
-    if (!is.null(legacy_call)) return(eval(legacy_call, parent.frame()))
-  }
+                             subset_local = NULL, subpop = NULL, jointprob = "overton", local_nbh = 15) {
+  local_context <- localmean_context(local_nbh)
+  if (is.null(subset_local)) subset_local <- !is.null(clusterID)
+
   if (!missing(subpop)) {
     if (!missing(subpops)) stop("Supply only one of subpops and subpop.", call. = FALSE)
     subpops <- subpop
@@ -579,8 +573,8 @@ attrisk_analysis <- function(dframe, vars_response, vars_stressor, response_leve
 
   temp <- input_check(dframe, design_names, vars_response, NULL, vars_stressor,
     NULL, subpops, sizeweight, fpc, if (is.null(formula)) popsize else NULL, vartype, if (is.null(formula)) NULL else jointprob, conf,
-    error_ind = error_ind, error_vec = error_vec, preserve_factors = !is.null(formula)
-  )
+    error_ind = error_ind, error_vec = error_vec, preserve_factors = !is.null(formula),
+    local_nbh = local_nbh)
   dframe <- temp$dframe
   vars_response <- temp$vars_cat
   vars_stressor <- temp$vars_stressor
@@ -761,7 +755,7 @@ attrisk_analysis <- function(dframe, vars_response, vars_stressor, response_leve
   # cluster_ind branches of attrisk_var() still always subset to domain
   # members); fail with a clear message.
 
-  if (!subset_local && cluster_ind) {
+  if (vartype == "Local" && !subset_local && cluster_ind) {
     stop("\nsubset_local = FALSE is not yet supported for two-stage (clustered) samples.\n")
   }
 
@@ -779,7 +773,7 @@ attrisk_analysis <- function(dframe, vars_response, vars_stressor, response_leve
   if (!is.null(formula)) {
     greg <- greg_prepare(design, formula, popsize, subpopsize, subpops, warn_df)
     return(greg_risk(dframe, vars_response, vars_stressor, response_levels,
-      stressor_levels, subpops, greg, design_names, vartype, conf, "attrisk"))
+      stressor_levels, subpops, greg, design_names, vartype, conf, "attrisk", local_nbh = local_nbh, local_context = local_context))
   }
 
   if (!is.null(popsize)) {
@@ -950,8 +944,8 @@ attrisk_analysis <- function(dframe, vars_response, vars_stressor, response_leve
                   wgt2[stratum_i], xcoord[stratum_i], ycoord[stratum_i],
                   stratum_ind, stratum_levels[i], cluster_ind,
                   clusterID[stratum_i], wgt1[stratum_i], xcoord1[stratum_i],
-                  ycoord1[stratum_i], vartype, warn_ind, warn_df, warn_vec
-                )
+                  ycoord1[stratum_i], vartype, warn_ind, warn_df, warn_vec,
+                  local_nbh = local_nbh, local_context = local_context)
               } else {
                 # stratum_data_i is the row mask actually fed to
                 # attrisk_var(): under subset_local = TRUE it's identical to
@@ -973,8 +967,8 @@ attrisk_analysis <- function(dframe, vars_response, vars_stressor, response_leve
                   stratum_ind, stratum_levels[i], cluster_ind,
                   vartype = vartype, warn_ind = warn_ind, warn_df = warn_df,
                   warn_vec = warn_vec, subset_local = subset_local,
-                  subpop_ind = subpop_ind_full[stratum_data_i]
-                )
+                  subpop_ind = subpop_ind_full[stratum_data_i],
+                  local_nbh = local_nbh, local_context = local_context)
               }
               varest.st <- temp$varest
               warn_ind <- temp$warn_ind
@@ -1180,8 +1174,8 @@ attrisk_analysis <- function(dframe, vars_response, vars_stressor, response_leve
                   response_levels[[ivar_r]], stressor_levels[[ivar_s]],
                   wgt2[tst], xcoord[tst], ycoord[tst], stratum_ind, NULL,
                   cluster_ind, clusterID[tst], wgt1[tst], xcoord1[tst],
-                  ycoord1[tst], vartype, warn_ind, warn_df, warn_vec
-                )
+                  ycoord1[tst], vartype, warn_ind, warn_df, warn_vec,
+                  local_nbh = local_nbh, local_context = local_context)
               } else {
                 # data_tst mirrors stratum_data_i above: domain-only under
                 # TRUE, every site with a usable response and stressor
@@ -1195,8 +1189,8 @@ attrisk_analysis <- function(dframe, vars_response, vars_stressor, response_leve
                   vartype = vartype, warn_ind = warn_ind,
                   warn_df = warn_df, warn_vec = warn_vec,
                   subset_local = subset_local,
-                  subpop_ind = subpop_ind_full[data_tst]
-                )
+                  subpop_ind = subpop_ind_full[data_tst],
+                  local_nbh = local_nbh, local_context = local_context)
               }
               varest <- temp$varest
               warn_ind <- temp$warn_ind

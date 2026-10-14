@@ -4,19 +4,19 @@
 \alias{localmean_weight}
 \title{Internal Function: Local Mean Variance Neighbors and Weights}
 \usage{
-localmean_weight(x, y, prb, nbh = 4)
+localmean_weight(x, y, prb, nbh = 15)
 }
 \arguments{
 \item{x}{Vector of x-coordinates for location of the sample points.}
 
 \item{y}{Vector of y-coordinates for location of the sample points.}
 
-\item{prb}{Vector of inclusion probabilities for the sample points.}
+\item{prb}{Vector of inclusion probabilities for the sample points (pre calibration, if relevant).}
 
-\item{nbh}{Number of neighboring points to use in the calculations.}
+\item{nbh}{Number of neighboring points to use in the calculations (including the site of interest).}
 }
 \value{
-If ginv fails to return valid output, a NULL object.  Otherwise, a
+If the generalized inverse fails to return valid output, a NULL object.  Otherwise, a
   list containing two elements: a matrix named \code{ij} composed of the
   index values of neighboring points and a vector named \code{gwt}
   composed of weights.

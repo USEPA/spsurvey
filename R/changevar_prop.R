@@ -101,7 +101,9 @@
 changevar_prop <- function(catvar_levels, catvar1, catvar2, wgt, x, y,
                            revisitwgt, prop1, prop2, stratum_ind, stratum_level,
                            cluster_ind, clusterID, wgt1, x1, y1, vartype,
-                           warn_ind, warn_df, warn_vec) {
+                           warn_ind, warn_df, warn_vec, local_nbh = 15, local_context = NULL) {
+  local_context <- localmean_group_context(local_context,
+    if (is.null(stratum_level)) "unstratified" else paste0("stratum:", stratum_level))
   # Assign the function name
 
   fname <- "changevar_prop"
@@ -220,10 +222,10 @@ changevar_prop <- function(catvar_levels, catvar1, catvar2, wgt, x, y,
 
         if (var_ind[i]) {
           if (vartype == "Local") {
-            weight_lst <- localmean_weight(
+            weight_lst <- localmean_weight_internal(
               x2_lst[[i]], y2_lst[[i]],
-              1 / wgt2_lst[[i]]
-            )
+              1 / wgt2_lst[[i]],
+              local_nbh = local_nbh, local_context = localmean_group_context(local_context, paste0("stage2:", i)))
             if (is.null(weight_lst)) {
               warn_ind <- TRUE
               act <- "The simple random sampling covariance estimator for an infinite population was used.\n"
@@ -303,7 +305,7 @@ changevar_prop <- function(catvar_levels, catvar1, catvar2, wgt, x, y,
       # Calculate the covariance or correlation estimates
 
       if (vartype == "Local") {
-        weight_lst <- localmean_weight(x1_u, y1_u, 1 / wgt1_u)
+        weight_lst <- localmean_weight_internal(x1_u, y1_u, 1 / wgt1_u, local_nbh = local_nbh, local_context = localmean_group_context(local_context, "stage1"))
         if (is.null(weight_lst)) {
           warn_ind <- TRUE
           act <- "The simple random sampling covariance estimator for an infinite population was used.\n"
@@ -445,7 +447,7 @@ changevar_prop <- function(catvar_levels, catvar1, catvar2, wgt, x, y,
       # Calculate covariance or correlation estimates
 
       if (vartype == "Local") {
-        weight_lst <- localmean_weight(x, y, 1 / wgt)
+        weight_lst <- localmean_weight_internal(x, y, 1 / wgt, local_nbh = local_nbh, local_context = local_context)
         if (is.null(weight_lst)) {
           warn_ind <- TRUE
           act <- "The simple random sampling covariance estimator for an infinite population was used.\n"

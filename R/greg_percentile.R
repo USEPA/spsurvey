@@ -12,7 +12,7 @@ greg_quantiles <- function(y, w, p) {
 }
 
 greg_percentile_est <- function(result, dframe, itype, domains, ivar, greg,
-                                design_names, vartype, conf, pctval, warn_df) {
+                                design_names, vartype, conf, pctval, warn_df, local_nbh = 15, local_context = NULL) {
   y <- dframe[[ivar]]
   critical <- stats::qnorm(.5 + conf / 200)
   for (domain in sort(domains)) {
@@ -30,7 +30,7 @@ greg_percentile_est <- function(result, dframe, itype, domains, ivar, greg,
       estimate <- greg_quantiles(y[keep], a, pctval / 100)
       for (j in seq_along(estimate)) {
         cdf <- greg_estimate(context, as.numeric(y <= estimate[j]), keep,
-          TRUE, vartype, design_names, conf, warn_df, c(itype, domain, ivar))
+          TRUE, vartype, design_names, conf, warn_df, c(itype, domain, ivar), local_nbh = local_nbh, local_context = local_context)
         warn_df <- cdf$warn_df
         bounds <- greg_quantiles(y[keep], a, c(cdf$lower, cdf$upper))
         lower[j] <- bounds[1]

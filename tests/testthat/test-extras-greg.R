@@ -289,15 +289,15 @@ test_that("only formula enables GREG and explicit subset override is reported", 
   explicit <- cont_analysis(d, "y", subpops = "region", xcoord = "xcoord",
     ycoord = "ycoord", formula = NULL, popsize = p, statistics = "Mean")
   expect_identical(named, explicit)
-  # Full legacy positional call, including arguments after popsize.
+  # Test positional calls using the current argument order.
   positional <- cont_analysis(d, "y", "region", NULL, "weight", "xcoord",
     "ycoord", NULL, NULL, NULL, NULL, NULL, FALSE, NULL, NULL, NULL,
-    p, "local", "overton", 95, c(5, 50, 95), "Mean", FALSE, TRUE)
+    NULL, p, NULL, "local", "overton", 95, c(5, 50, 95), "Mean", FALSE, NULL)
   expect_identical(named, positional)
-  positional_alias <- cont_analysis(d, "y", subpop = "region", NULL, "weight", "xcoord",
+  # The legacy argument order places popsize in formula and should error.
+  expect_error(cont_analysis(d, "y", "region", NULL, "weight", "xcoord",
     "ycoord", NULL, NULL, NULL, NULL, NULL, FALSE, NULL, NULL, NULL,
-    p, "local", "overton", 95, c(5, 50, 95), "Mean", FALSE, TRUE)
-  expect_identical(named, positional_alias)
+    p, "local", "overton", 95, c(5, 50, 95), "Mean", FALSE, NULL), "one-sided")
   abbreviated <- cont_analysis(d, "y", subpop = "region", xcoord = "xcoord",
     ycoord = "ycoord", popsize = p, statistics = "Mean")
   expect_identical(named, abbreviated)

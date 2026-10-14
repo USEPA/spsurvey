@@ -47,11 +47,10 @@
 #'
 #' @param warn_df Data frame for storing warning messages.
 #'
-#' @param subset_local Logical value indicating whether the local mean
-#'   neighbor structure is built from domain members only (\code{TRUE},
-#'   the default behavior) or from all sites in the relevant stratum
-#'   (\code{FALSE}). The default value is
-#'   \code{TRUE}.
+#' @param subset_local If \code{TRUE}, construct neighborhoods using only
+#'   domain members. The internal default, \code{FALSE}, retains eligible
+#'   responding sites in the sampling stratum and zeros contributions outside
+#'   the domain. Used only for local variance estimation.
 #'
 #' @return A list containing the following objects:
 #'   \itemize{
@@ -71,7 +70,7 @@
 
 cdf_localmean_total <- function(itype, lev_itype, nlev_itype, ivar, design,
                                 design_names, cdfval, ncdfval, cdfest_U,
-                                mult, warn_ind, warn_df, subset_local = TRUE) {
+                                mult, warn_ind, warn_df, subset_local = FALSE, local_nbh = 15, local_context = NULL) {
   # Parallels cat_localmean_total(): computes the local mean variance of
   # the CDF total (size) estimate at each threshold in cdfval via
   # cdfvar_total(). As with cat_localmean_total(), per-stratum variances
@@ -93,6 +92,10 @@ cdf_localmean_total <- function(itype, lev_itype, nlev_itype, ivar, design,
       eval(parse(text = paste0(i, " <- dframe[, \"", design_names[[i]], "\"]")))
     }
   }
+
+  # Time analyses may blank a domain column that is also the stratum column.
+  # The survey design retains the original sampling strata independently.
+  if (!is.null(stratumID)) stratumID <- design$strata[[1]]
 
   # Assign values to the continuous response variable vector, contvar
 
@@ -190,8 +193,8 @@ cdf_localmean_total <- function(itype, lev_itype, nlev_itype, ivar, design,
             xcoord[stratum_i], ycoord[stratum_i], cdfval, stratum_ind,
             stratum_levels[i], cluster_ind, clusterID[stratum_i],
             wgt1[stratum_i], xcoord1[stratum_i], ycoord1[stratum_i], warn_ind,
-            warn_df, warn_vec
-          )
+            warn_df, warn_vec,
+            local_nbh = local_nbh, local_context = local_context)
         } else {
           # stratum_data_i is the row mask actually fed to cdfvar_total():
           # under subset_local = TRUE it's identical to stratum_i (domain
@@ -209,8 +212,8 @@ cdf_localmean_total <- function(itype, lev_itype, nlev_itype, ivar, design,
             stratum_levels[i], cluster_ind,
             warn_ind = warn_ind,
             warn_df = warn_df, warn_vec = warn_vec, subset_local = subset_local,
-            subpop_ind = subpop_ind_full[stratum_data_i]
-          )
+            subpop_ind = subpop_ind_full[stratum_data_i],
+            local_nbh = local_nbh, local_context = local_context)
         }
         warn_ind <- temp$warn_ind
         warn_df <- temp$warn_df
@@ -278,20 +281,24 @@ cdf_localmean_total <- function(itype, lev_itype, nlev_itype, ivar, design,
         # intentionally left passing domain-only data
         temp <- cdfvar_total(
           contvar[tst], wgt2[tst], xcoord[tst], ycoord[tst],
-          cdfval, stratum_ind, NULL, cluster_ind, clusterID[tst], wgt1[tst],
-          xcoord1[tst], ycoord1[tst], warn_ind, warn_df, warn_vec
-        )
+          cdfval, stratum_ind,
+          if (is.null(stratumID)) NULL else stratum_levels[1], cluster_ind, clusterID[tst], wgt1[tst],
+          xcoord1[tst], ycoord1[tst], warn_ind, warn_df, warn_vec,
+          local_nbh = local_nbh, local_context = local_context)
       } else {
         # data_tst mirrors stratum_data_i above: domain-only under TRUE,
         # every responded site under FALSE, with subpop_ind_full marking
         # the real domain members.
-        data_tst <- if (subset_local) tst else tst_resp
+        data_tst <- if (subset_local) tst else if (!is.null(stratumID)) {
+          tst_resp & stratumID == stratum_levels[1]
+        } else tst_resp
         temp <- cdfvar_total(contvar[data_tst], wgt[data_tst], xcoord[data_tst],
-          ycoord[data_tst], cdfval, stratum_ind, NULL, cluster_ind,
+          ycoord[data_tst], cdfval, stratum_ind,
+          if (is.null(stratumID)) NULL else stratum_levels[1], cluster_ind,
           warn_ind = warn_ind,
           warn_df = warn_df, warn_vec = warn_vec, subset_local = subset_local,
-          subpop_ind = subpop_ind_full[data_tst]
-        )
+          subpop_ind = subpop_ind_full[data_tst],
+          local_nbh = local_nbh, local_context = local_context)
       }
       warn_ind <- temp$warn_ind
       warn_df <- temp$warn_df

@@ -11,7 +11,7 @@ greg_stat <- function(estimate, covariance, names = base::names(estimate)) {
 }
 
 greg_risk <- function(data, responses, stressors, response_levels, stressor_levels,
-                      subpops, greg, design_names, vartype, conf, kind) {
+                      subpops, greg, design_names, vartype, conf, kind, local_nbh = 15, local_context = NULL) {
   rows <- list()
   warn_df <- greg$warn_df
   critical <- stats::qnorm(.5 + conf / 200)
@@ -31,7 +31,7 @@ greg_risk <- function(data, responses, stressors, response_levels, stressor_leve
       q <- cbind(r == rl[1] & s == sl[1], r == rl[1] & s == sl[2],
         r == rl[2] & s == sl[1], r == rl[2] & s == sl[2]) * 1
       est <- greg_estimate(greg$contexts[[type]][[domain]], q, keep, FALSE,
-        vartype, design_names, conf, warn_df, c(type, domain, response))
+        vartype, design_names, conf, warn_df, c(type, domain, response), local_nbh = local_nbh, local_context = local_context)
       warn_df <- est$warn_df
       cells <- est$estimate
       total <- sum(cells)

@@ -280,15 +280,10 @@
 #'   \code{"SRS"} indicates the simple random sampling estimator.  The default
 #'   value is \code{"local"}.
 #'
-#' @param subset_local When `subset_local = TRUE` (the default),
-#' subpopulations are subset to include only subpopulation members
-#' prior to variance estimation. When `subset_local = FALSE`,
-#' subpopulations are not subset prior to variance estimation.
-#' `subset_local = FALSE` follows standard design-based subpopulation
-#' (i.e., domain) estimation theory but is computationally more complex,
-#' requiring the neighborhood weights matrix of the full data
-#' (which scales cubically with the sample size).
-#' `subset_local` only applies when `vartype = "local"`.
+#' @param subset_local Controls local neighborhood variance estimation for subpopulations.
+#'   For typical designs, this defaults to \code{TRUE}, the neighbor pool contains all
+#'   sites in the stratum and the response for sites outside the subpopulation are set to zero.
+#'   For two-stage designs, this defaults to \code{FALSE}.
 #'
 #' @param jointprob Character value providing the choice of joint inclusion
 #'   probability approximation for use with Horvitz-Thompson and Yates-Grundy
@@ -502,18 +497,17 @@ change_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL, test = "m
                             ycoord1 = NULL, sizeweight = FALSE, sweight = NULL, sweight1 = NULL,
                             fpc = NULL, formula = NULL, popsize = NULL, subpopsize = NULL,
                             vartype = "local", jointprob = "overton",
-                            conf = 95, All_Sites = FALSE, subset_local = TRUE, subpop = NULL) {
-  if (!missing(formula)) {
-    legacy_call <- greg_legacy_call(sys.call(), sys.function(), formula)
-    if (!is.null(legacy_call)) return(eval(legacy_call, parent.frame()))
-  }
+                            conf = 95, All_Sites = FALSE, subset_local = NULL, subpop = NULL, local_nbh = 15) {
+  local_context <- localmean_context(local_nbh)
+  if (is.null(subset_local)) subset_local <- !is.null(clusterID)
+
   if (!missing(subpop)) {
     if (!missing(subpops)) stop("Supply only one of subpops and subpop.", call. = FALSE)
     subpops <- subpop
   }
   greg_check_call(formula, subpopsize, clusterID)
   if (!is.null(formula)) {
-    return(greg_change(greg_time_args(environment()), vars_cat, vars_cont, test, surveyID, survey_names))
+    return(greg_change(greg_time_args(environment()), vars_cat, vars_cont, test, surveyID, survey_names, local_nbh = local_nbh, local_context = local_context))
   }
   # Assign NULL to vars_nondetect
 
@@ -852,8 +846,8 @@ change_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL, test = "m
   # Check input arguments
   temp <- input_check(dframe, design_names, vars_cat, vars_cont, NULL, NULL,
     subpops, sizeweight, fpc, popsize, vartype, jointprob, conf,
-    error_ind = error_ind, error_vec = error_vec
-  )
+    error_ind = error_ind, error_vec = error_vec,
+    local_nbh = local_nbh)
   dframe <- temp$dframe
   vars_cat <- temp$vars_cat
   vars_cont <- temp$vars_cont
@@ -928,7 +922,7 @@ change_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL, test = "m
   # neighbor structure, which would look like subset_local silently having
   # no effect)
 
-  if (!subset_local && cluster_ind) {
+  if (vartype == "Local" && !subset_local && cluster_ind) {
     stop("\nsubset_local = FALSE is not yet supported for two-stage (clustered) samples.\n")
   }
 
@@ -1029,8 +1023,8 @@ change_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL, test = "m
             nlev_ivar, design_1, design_2, design_names, repeat_1[survey_1],
             repeat_2[survey_2], siteID, revisitwgt, NULL, NULL, vartype, conf,
             mult, warn_ind, warn_df,
-            warn_vec = c(itype, isubpop, ivar), subset_local = subset_local
-          )
+            warn_vec = c(itype, isubpop, ivar), subset_local = subset_local,
+            local_nbh = local_nbh, local_context = local_context)
           changesum <- temp$changesum
           warn_ind <- temp$warn_ind
           warn_df <- temp$warn_df
@@ -1074,8 +1068,8 @@ change_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL, test = "m
             design_1, design_2, design_names, repeat_1[survey_1],
             repeat_2[survey_2], siteID, revisitwgt, test, vars_nondetect[indx],
             vartype, conf, mult, warn_ind, warn_df,
-            warn_vec = c(itype, isubpop, ivar), subset_local = subset_local
-          )
+            warn_vec = c(itype, isubpop, ivar), subset_local = subset_local,
+            local_nbh = local_nbh, local_context = local_context)
           changesum <- temp$changesum
           warn_ind <- temp$warn_ind
           warn_df <- temp$warn_df

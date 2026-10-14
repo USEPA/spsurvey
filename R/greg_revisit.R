@@ -3,7 +3,7 @@
 # already divided by the FULL calibrated domain size for ratios. Consequently
 # the legacy overlap/full-size multipliers are already incorporated: they
 # should not be applied a second time. Never refit on just the repeat sites.
-greg_revisit_covariance <- function(first, second, z1, z2, context, warn_df) {
+greg_revisit_covariance <- function(first, second, z1, z2, context, warn_df, local_nbh = 15, local_context = NULL) {
   ids <- intersect(first$ids, second$ids)
   if (!length(ids)) return(list(covariance = 0, warn_df = warn_df))
   i <- match(ids, first$ids)
@@ -21,7 +21,7 @@ greg_revisit_covariance <- function(first, second, z1, z2, context, warn_df) {
   if (same) {
     # The complete common design identifies covariance directly, including
     # survey FPC/PPS corrections; no overlap approximation is necessary.
-    ans <- greg_joint_covariance(context, cbind(z1, z2), first$vartype, first$design_names, warn_df)
+    ans <- greg_joint_covariance(context, cbind(z1, z2), first$vartype, first$design_names, warn_df, local_nbh = local_nbh, local_context = local_context)
     return(list(covariance = ans$covariance[1, 2], warn_df = ans$warn_df))
   }
   covariance <- 0
@@ -45,7 +45,8 @@ greg_revisit_covariance <- function(first, second, z1, z2, context, warn_df) {
     # Use a single operator choice for all parts of this stratum's covariance.
     ds <- if (isTRUE(first$revisitwgt)) list(d1[ii]) else list(rep(1, length(ii)), d1[ii], d2[jj])
     nb <- if (first$vartype == "Local" && length(ii) >= 4L)
-      lapply(ds, function(d) localmean_weight(x, y, 1 / d)) else list(NULL)
+      lapply(ds, function(d) localmean_weight_internal(x, y, 1 / d, local_nbh = local_nbh,
+        local_context = localmean_group_context(local_context, h))) else list(NULL)
     local <- first$vartype == "Local" && !any(vapply(nb, is.null, logical(1)))
     if (first$vartype == "Local" && !local) {
       warn_df <- greg_warning(warn_df, paste0("Too few repeat sites or unavailable local neighborhoods in stratum ", h, "."),

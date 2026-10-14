@@ -27,11 +27,10 @@
 #'   first subpopulation level, the second subpopulation level, and an indicator
 #'   name.
 #'
-#' @param subset_local Logical value indicating whether the local mean
-#'   neighbor structure is built from the union of the two compared groups
-#'   only (\code{TRUE}, the default behavior) or from the full
-#'   stratum, with out-of-domain sites zeroed out rather than dropped
-#'   (\code{FALSE}). The default value is \code{TRUE}.
+#' @param subset_local If \code{TRUE}, construct neighborhoods using only
+#'   domain members. The internal default, \code{FALSE}, retains eligible
+#'   responding sites in the sampling stratum and zeros contributions outside
+#'   the domain. Used only for local variance estimation.
 #'
 #' @return A list containing the following objects:
 #'   \itemize{
@@ -50,7 +49,7 @@
 ################################################################################
 
 cdftest_localmean_total <- function(design, design_names, warn_ind, warn_df,
-                                    warn_vec, subset_local = TRUE) {
+                                    warn_vec, subset_local = FALSE, local_nbh = 15, local_context = NULL) {
   # Parallels cdftest_localmean_prop() (see that file for what rowvar/colvar
   # represent and the per-stratum masking trick), but computes the
   # variance-covariance matrix of the group-by-bin contingency table's cell
@@ -145,6 +144,9 @@ cdftest_localmean_total <- function(design, design_names, warn_ind, warn_df,
     # Calculate variance estimates
 
     for (i in 1:nstrata) {
+      stratum_i <- stratumID == stratum_levels[i]
+      # A stratum outside both compared domains has identically zero totals.
+      if (!subset_local && !any(subpop_ind_full[stratum_i] == 1)) next
       temp <- design_names$stratumID
       tst <- design$variables[, temp] != stratum_levels[i]
       design_temp <- design
@@ -168,14 +170,14 @@ cdftest_localmean_total <- function(design, design_names, warn_ind, warn_df,
           xcoord[stratum_i], ycoord[stratum_i], stratum_ind, stratum_levels[i],
           cluster_ind, clusterID[stratum_i], wgt1[stratum_i],
           xcoord1[stratum_i], ycoord1[stratum_i], warn_ind, warn_df, warn_vec,
-          subset_local = subset_local, subpop_ind = subpop_ind_full[stratum_i]
-        )
+          subset_local = subset_local, subpop_ind = subpop_ind_full[stratum_i],
+          local_nbh = local_nbh, local_context = local_context)
       } else {
         temp <- cdftestvar_total(design_temp, wgt[stratum_i], xcoord[stratum_i],
           ycoord[stratum_i], stratum_ind, stratum_levels[i], cluster_ind,
           warn_ind = warn_ind, warn_df = warn_df, warn_vec = warn_vec,
-          subset_local = subset_local, subpop_ind = subpop_ind_full[stratum_i]
-        )
+          subset_local = subset_local, subpop_ind = subpop_ind_full[stratum_i],
+          local_nbh = local_nbh, local_context = local_context)
       }
       varest_st <- temp$varest
       warn_ind <- temp$warn_ind
@@ -212,15 +214,15 @@ cdftest_localmean_total <- function(design, design_names, warn_ind, warn_df,
       results <- cdftestvar_total(
         design, wgt2, xcoord, ycoord, stratum_ind, NULL, cluster_ind, clusterID,
         wgt1, xcoord1, ycoord1, warn_ind, warn_df, warn_vec,
-        subset_local = subset_local, subpop_ind = subpop_ind_full
-      )
+        subset_local = subset_local, subpop_ind = subpop_ind_full,
+        local_nbh = local_nbh, local_context = local_context)
     } else {
       results <- cdftestvar_total(design, wgt, xcoord, ycoord, stratum_ind,
         NULL, cluster_ind,
         warn_ind = warn_ind, warn_df = warn_df,
         warn_vec = warn_vec,
-        subset_local = subset_local, subpop_ind = subpop_ind_full
-      )
+        subset_local = subset_local, subpop_ind = subpop_ind_full,
+        local_nbh = local_nbh, local_context = local_context)
     }
   }
 

@@ -148,16 +148,10 @@
 #' @param warn_vec Vector that contains names of the population type, the
 #'   subpopulation, and an indicator.
 #'
-#' @param subset_local Logical value indicating whether the local mean
-#'   variance estimator (\code{vartype = "local"}) builds its neighbor
-#'   structure from domain members only (\code{TRUE}, the historical
-#'   default) or from all sites in the relevant stratum (\code{FALSE}).
-#'   Only affects each survey's own point/variance estimates
-#'   (category_est()/mean_est()/total_est()); the repeat-visit covariance
-#'   term (changevar_mean()/changevar_prop()/changevar_total()) always
-#'   uses domain members only, since it is a raw covariance estimate
-#'   among repeat-visit sites regardless of subset_local. The default
-#'   value is \code{TRUE}.
+#' @param subset_local If \code{TRUE}, construct neighborhoods using only
+#'   domain members. The internal default, \code{FALSE}, retains eligible
+#'   responding sites in the sampling stratum and zeros contributions outside
+#'   the domain. Used only for local variance estimation.
 #'
 #' @return A list composed of the following objects:
 #'   \itemize{
@@ -182,7 +176,7 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
                        survey_2, itype, isubpop, ivar, lev_ivar, nlev_ivar,
                        design_1, design_2, design_names, repeat_1, repeat_2,
                        siteID, revisitwgt, test, var_nondetect, vartype, conf,
-                       mult, warn_ind, warn_df, warn_vec, subset_local = TRUE) {
+                       mult, warn_ind, warn_df, warn_vec, subset_local = FALSE, local_nbh = 15, local_context = NULL) {
   # ============================================================================
   # Function map: individual computations reuse the mean/total/
   # category estimators and the local mean variance estimator documented in
@@ -329,8 +323,8 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
         NULL, dframe_1_use, itype, isubpop, 1, ivar, lev_ivar,
         nlev_ivar, design_1_use, design_names, vartype, conf, mult, warn_ind,
         warn_df,
-        subset_local = subset_local
-      )
+        subset_local = subset_local,
+        local_nbh = local_nbh, local_context = localmean_group_context(local_context, survey_names[1]))
       temp_1 <- droplevels(subset(temp$catsum, Category != "Total"))
       warn_ind <- temp$warn_ind
       warn_df <- temp$warn_df
@@ -352,8 +346,8 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
         NULL, dframe_2_use, itype, isubpop, 1, ivar, lev_ivar,
         nlev_ivar, design_2_use, design_names, vartype, conf, mult, warn_ind,
         warn_df,
-        subset_local = subset_local
-      )
+        subset_local = subset_local,
+        local_nbh = local_nbh, local_context = localmean_group_context(local_context, survey_names[2]))
       temp_2 <- droplevels(subset(temp$catsum, Category != "Total"))
       warn_ind <- temp$warn_ind
       warn_df <- temp$warn_df
@@ -681,15 +675,15 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
                     xcoord[stratum_i], ycoord[stratum_i], revisitwgt, prop1,
                     prop2, stratum_ind, stratum_levels[i], cluster_ind,
                     clusterID[stratum_i], wgt1[stratum_i], xcoord1[stratum_i],
-                    ycoord1[stratum_i], vartype, warn_ind, warn_df, warn_vec
-                  )
+                    ycoord1[stratum_i], vartype, warn_ind, warn_df, warn_vec,
+                    local_nbh = local_nbh, local_context = localmean_group_context(local_context, "revisit"))
                 } else {
                   temp <- changevar_prop(catvar_levels, z1, z2, wgt[stratum_i],
                     xcoord[stratum_i], ycoord[stratum_i], revisitwgt, prop1,
                     prop2, stratum_ind, stratum_levels[i], cluster_ind,
                     vartype = vartype, warn_ind = warn_ind, warn_df = warn_df,
-                    warn_vec = warn_vec
-                  )
+                    warn_vec = warn_vec,
+                    local_nbh = local_nbh, local_context = localmean_group_context(local_context, "revisit"))
                 }
                 correst <- temp$rslt
                 warn_ind <- temp$warn_ind
@@ -713,15 +707,15 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
                     xcoord[stratum_i], ycoord[stratum_i], revisitwgt, size1,
                     size2, stratum_ind, stratum_levels[i], cluster_ind,
                     clusterID[stratum_i], wgt1[stratum_i], xcoord1[stratum_i],
-                    ycoord1[stratum_i], vartype, warn_ind, warn_df, warn_vec
-                  )
+                    ycoord1[stratum_i], vartype, warn_ind, warn_df, warn_vec,
+                    local_nbh = local_nbh, local_context = localmean_group_context(local_context, "revisit"))
                 } else {
                   temp <- changevar_total(catvar_levels, z1, z2, wgt[stratum_i],
                     xcoord[stratum_i], ycoord[stratum_i], revisitwgt, size1,
                     size2, stratum_ind, stratum_levels[i], cluster_ind,
                     vartype = vartype, warn_ind = warn_ind, warn_df = warn_df,
-                    warn_vec = warn_vec
-                  )
+                    warn_vec = warn_vec,
+                    local_nbh = local_nbh, local_context = localmean_group_context(local_context, "revisit"))
                 }
                 correst <- temp$rslt
                 warn_ind <- temp$warn_ind
@@ -783,14 +777,14 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
                 catvar_levels, z1, z2, wgt2, xcoord, ycoord,
                 revisitwgt, prop1, prop2, stratum_ind, NULL, cluster_ind,
                 clusterID, wgt1, xcoord1, ycoord1, vartype, warn_ind, warn_df,
-                warn_vec
-              )
+                warn_vec,
+                local_nbh = local_nbh, local_context = localmean_group_context(local_context, "revisit"))
             } else {
               temp <- changevar_prop(catvar_levels, z1, z2, wgt, xcoord, ycoord,
                 revisitwgt, prop1, prop2, stratum_ind, NULL, cluster_ind,
                 vartype = vartype, warn_ind = warn_ind, warn_df = warn_df,
-                warn_vec = warn_vec
-              )
+                warn_vec = warn_vec,
+                local_nbh = local_nbh, local_context = localmean_group_context(local_context, "revisit"))
             }
             rslt_P <- temp$rslt
             warn_ind <- temp$warn_ind
@@ -808,14 +802,14 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
                 catvar_levels, z1, z2, wgt2, xcoord, ycoord,
                 revisitwgt, size1, size2, stratum_ind, NULL, cluster_ind,
                 clusterID, wgt1, xcoord1, ycoord1, vartype, warn_ind, warn_df,
-                warn_vec
-              )
+                warn_vec,
+                local_nbh = local_nbh, local_context = localmean_group_context(local_context, "revisit"))
             } else {
               temp <- changevar_total(catvar_levels, z1, z2, wgt, xcoord, ycoord,
                 revisitwgt, size1, size2, stratum_ind, NULL, cluster_ind,
                 vartype = vartype, warn_ind = warn_ind, warn_df = warn_df,
-                warn_vec = warn_vec
-              )
+                warn_vec = warn_vec,
+                local_nbh = local_nbh, local_context = localmean_group_context(local_context, "revisit"))
             }
             rslt_U <- temp$rslt
             warn_ind <- temp$warn_ind
@@ -859,8 +853,8 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
             se_1_u <- rep(NA, nlevels)
             temp <- category_est(
               NULL, dframe_1, itype, isubpop, 1, ivar, lev_ivar, nlev_ivar,
-              design_1, design_names, vartype, conf, mult, warn_ind, warn_df
-            )
+              design_1, design_names, vartype, conf, mult, warn_ind, warn_df,
+              local_nbh = local_nbh, local_context = localmean_group_context(local_context, survey_names[1]))
             warn_ind <- temp$warn_ind
             warn_df <- temp$warn_df
             temp$results <- droplevels(subset(temp$catsum, Category != "Total"))
@@ -871,8 +865,8 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
             se_2_u <- rep(NA, nlevels)
             temp <- category_est(
               NULL, dframe_2, itype, isubpop, 1, ivar, lev_ivar, nlev_ivar,
-              design_2, design_names, vartype, conf, mult, warn_ind, warn_df
-            )
+              design_2, design_names, vartype, conf, mult, warn_ind, warn_df,
+              local_nbh = local_nbh, local_context = localmean_group_context(local_context, survey_names[2]))
             warn_ind <- temp$warn_ind
             warn_df <- temp$warn_df
             temp$results <- droplevels(subset(temp$catsum, Category != "Total"))
@@ -979,8 +973,8 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
           NULL, dframe_1_use, itype, isubpop, 1, ivar,
           design_1_use, design_names, var_nondetect, vartype, conf, mult,
           warn_ind, warn_df,
-          subset_local = subset_local
-        )
+          subset_local = subset_local,
+          local_nbh = local_nbh, local_context = localmean_group_context(local_context, survey_names[1]))
         meanest_1 <- temp$meansum
         warn_ind <- temp$warn_ind
         warn_df <- temp$warn_df
@@ -1001,8 +995,8 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
           NULL, dframe_2_use, itype, isubpop, 1, ivar,
           design_2_use, design_names, var_nondetect, vartype, conf, mult,
           warn_ind, warn_df,
-          subset_local = subset_local
-        )
+          subset_local = subset_local,
+          local_nbh = local_nbh, local_context = localmean_group_context(local_context, survey_names[2]))
         meanest_2 <- temp$meansum
         warn_ind <- temp$warn_ind
         warn_df <- temp$warn_df
@@ -1288,15 +1282,15 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
                       xcoord[stratum_i], ycoord[stratum_i], revisitwgt, mean1,
                       mean2, stratum_ind, stratum_levels[i], cluster_ind,
                       clusterID[stratum_i], wgt1[stratum_i], xcoord1[stratum_i],
-                      ycoord1[stratum_i], vartype, warn_ind, warn_df, warn_vec
-                    )
+                      ycoord1[stratum_i], vartype, warn_ind, warn_df, warn_vec,
+                      local_nbh = local_nbh, local_context = localmean_group_context(local_context, "revisit"))
                   } else {
                     temp <- changevar_mean(z1, z2, wgt[stratum_i],
                       xcoord[stratum_i], ycoord[stratum_i], revisitwgt, mean1,
                       mean2, stratum_ind, stratum_levels[i], cluster_ind,
                       vartype = vartype, warn_ind = warn_ind, warn_df = warn_df,
-                      warn_vec = warn_vec
-                    )
+                      warn_vec = warn_vec,
+                      local_nbh = local_nbh, local_context = localmean_group_context(local_context, "revisit"))
                   }
                   correst <- temp$rslt
                   warn_ind <- temp$warn_ind
@@ -1358,14 +1352,14 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
                 temp <- changevar_mean(
                   z1, z2, wgt2, xcoord, ycoord, revisitwgt,
                   mean1, mean2, stratum_ind, NULL, cluster_ind, clusterID, wgt1,
-                  xcoord1, ycoord1, vartype, warn_ind, warn_df, warn_vec
-                )
+                  xcoord1, ycoord1, vartype, warn_ind, warn_df, warn_vec,
+                  local_nbh = local_nbh, local_context = localmean_group_context(local_context, "revisit"))
               } else {
                 temp <- changevar_mean(z1, z2, wgt, xcoord, ycoord, revisitwgt,
                   mean1, mean2, stratum_ind, NULL, cluster_ind,
                   vartype = vartype, warn_ind = warn_ind, warn_df = warn_df,
-                  warn_vec = warn_vec
-                )
+                  warn_vec = warn_vec,
+                  local_nbh = local_nbh, local_context = localmean_group_context(local_context, "revisit"))
               }
               rslt <- temp$rslt
               warn_ind <- temp$warn_ind
@@ -1401,16 +1395,16 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
               temp <- mean_est(
                 NULL, dframe_1, itype, isubpop, 1, ivar,
                 design_1, design_names, var_nondetect, vartype, conf, mult,
-                warn_ind, warn_df
-              )
+                warn_ind, warn_df,
+                local_nbh = local_nbh, local_context = localmean_group_context(local_context, survey_names[1]))
               warn_ind <- temp$warn_ind
               warn_df <- temp$warn_df
               se_1 <- temp$meansum$StdError
               temp <- mean_est(
                 NULL, dframe_2, itype, isubpop, 1, ivar,
                 design_2, design_names, var_nondetect, vartype, conf, mult,
-                warn_ind, warn_df
-              )
+                warn_ind, warn_df,
+                local_nbh = local_nbh, local_context = localmean_group_context(local_context, survey_names[2]))
               warn_ind <- temp$warn_ind
               warn_df <- temp$warn_df
               se_2 <- temp$meansum$StdError
@@ -1487,8 +1481,8 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
           NULL, dframe_1_use, itype, isubpop, 1, ivar,
           design_1_use, design_names, var_nondetect, vartype, conf, mult,
           warn_ind, warn_df,
-          subset_local = subset_local
-        )
+          subset_local = subset_local,
+          local_nbh = local_nbh, local_context = localmean_group_context(local_context, survey_names[1]))
         totalest_1 <- temp$totalsum
         warn_ind <- temp$warn_ind
         warn_df <- temp$warn_df
@@ -1509,8 +1503,8 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
           NULL, dframe_2_use, itype, isubpop, 1, ivar,
           design_2_use, design_names, var_nondetect, vartype, conf, mult,
           warn_ind, warn_df,
-          subset_local = subset_local
-        )
+          subset_local = subset_local,
+          local_nbh = local_nbh, local_context = localmean_group_context(local_context, survey_names[2]))
         totalest_2 <- temp$totalsum
         warn_ind <- temp$warn_ind
         warn_df <- temp$warn_df
@@ -1804,15 +1798,15 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
                       xcoord[stratum_i], ycoord[stratum_i], revisitwgt, mean1,
                       mean2, stratum_ind, stratum_levels[i], cluster_ind,
                       clusterID[stratum_i], wgt1[stratum_i], xcoord1[stratum_i],
-                      ycoord1[stratum_i], vartype, warn_ind, warn_df, warn_vec
-                    )
+                      ycoord1[stratum_i], vartype, warn_ind, warn_df, warn_vec,
+                      local_nbh = local_nbh, local_context = localmean_group_context(local_context, "revisit"))
                   } else {
                     temp <- changevar_mean(z1, z2, wgt[stratum_i],
                       xcoord[stratum_i], ycoord[stratum_i], revisitwgt, mean1,
                       mean2, stratum_ind, stratum_levels[i], cluster_ind,
                       vartype = vartype, warn_ind = warn_ind, warn_df = warn_df,
-                      warn_vec = warn_vec
-                    )
+                      warn_vec = warn_vec,
+                      local_nbh = local_nbh, local_context = localmean_group_context(local_context, "revisit"))
                   }
                   correst <- temp$rslt
                   warn_ind <- temp$warn_ind
@@ -1883,14 +1877,14 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
                 temp <- changevar_mean(
                   z1, z2, wgt2, xcoord, ycoord, revisitwgt,
                   mean1, mean2, stratum_ind, NULL, cluster_ind, clusterID, wgt1,
-                  xcoord1, ycoord1, vartype, warn_ind, warn_df, warn_vec
-                )
+                  xcoord1, ycoord1, vartype, warn_ind, warn_df, warn_vec,
+                  local_nbh = local_nbh, local_context = localmean_group_context(local_context, "revisit"))
               } else {
                 temp <- changevar_mean(z1, z2, wgt, xcoord, ycoord, revisitwgt,
                   mean1, mean2, stratum_ind, NULL, cluster_ind,
                   vartype = vartype, warn_ind = warn_ind, warn_df = warn_df,
-                  warn_vec = warn_vec
-                )
+                  warn_vec = warn_vec,
+                  local_nbh = local_nbh, local_context = localmean_group_context(local_context, "revisit"))
               }
               rslt <- temp$rslt
               warn_ind <- temp$warn_ind
@@ -1926,16 +1920,16 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
               temp <- total_est(
                 NULL, dframe_1, itype, isubpop, 1, ivar,
                 design_1, design_names, var_nondetect, vartype, conf, mult,
-                warn_ind, warn_df
-              )
+                warn_ind, warn_df,
+                local_nbh = local_nbh, local_context = localmean_group_context(local_context, survey_names[1]))
               warn_ind <- temp$warn_ind
               warn_df <- temp$warn_df
               se_1 <- temp$totalsum$StdError
               temp <- total_est(
                 NULL, dframe_2, itype, isubpop, 1, ivar,
                 design_2, design_names, var_nondetect, vartype, conf, mult,
-                warn_ind, warn_df
-              )
+                warn_ind, warn_df,
+                local_nbh = local_nbh, local_context = localmean_group_context(local_context, survey_names[2]))
               warn_ind <- temp$warn_ind
               warn_df <- temp$warn_df
               se_2 <- temp$totalsum$StdError
@@ -1997,8 +1991,8 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
         pctest_1 <- percentile_est(NULL, dframe_1, itype, isubpop, 1, ivar,
           design_1, design_names, var_nondetect, conf, mult,
           pctval = c(50),
-          warn_ind, warn_df
-        )
+          warn_ind, warn_df,
+          local_nbh = local_nbh, local_context = local_context)
         warn_ind <- pctest_1$warn_ind
         warn_df <- pctest_1$warn_df
 
@@ -2007,8 +2001,8 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
         pctest_2 <- percentile_est(NULL, dframe_2, itype, isubpop, 1, ivar,
           design_2, design_names, var_nondetect, conf, mult,
           pctval = c(50),
-          warn_ind, warn_df
-        )
+          warn_ind, warn_df,
+          local_nbh = local_nbh, local_context = local_context)
         warn_ind <- pctest_2$warn_ind
         warn_df <- pctest_2$warn_df
 
@@ -2111,8 +2105,8 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
           temp <- category_est(
             NULL, dframe_1_use, itype, isubpop, 1, ivar, lev_ivar, nlev_ivar,
             design_1_use, design_names, vartype, conf, mult, warn_ind, warn_df,
-            subset_local = subset_local
-          )
+            subset_local = subset_local,
+            local_nbh = local_nbh, local_context = localmean_group_context(local_context, survey_names[1]))
           temp_1 <- droplevels(subset(temp$catsum, Category != "Total"))
           warn_ind <- temp$warn_ind
           warn_df <- temp$warn_df
@@ -2133,8 +2127,8 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
           temp <- category_est(
             NULL, dframe_2_use, itype, isubpop, 1, ivar, lev_ivar, nlev_ivar,
             design_2_use, design_names, vartype, conf, mult, warn_ind, warn_df,
-            subset_local = subset_local
-          )
+            subset_local = subset_local,
+            local_nbh = local_nbh, local_context = localmean_group_context(local_context, survey_names[2]))
           temp_2 <- droplevels(subset(temp$catsum, Category != "Total"))
           warn_ind <- temp$warn_ind
           warn_df <- temp$warn_df
@@ -2462,16 +2456,16 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
                         prop2, stratum_ind, stratum_levels[i], cluster_ind,
                         clusterID[stratum_i], wgt1[stratum_i],
                         xcoord1[stratum_i], ycoord1[stratum_i], vartype,
-                        warn_ind, warn_df, warn_vec
-                      )
+                        warn_ind, warn_df, warn_vec,
+                        local_nbh = local_nbh, local_context = localmean_group_context(local_context, "revisit"))
                     } else {
                       temp <- changevar_prop(catvar_levels, z1, z2,
                         wgt[stratum_i],
                         xcoord[stratum_i], ycoord[stratum_i], revisitwgt, prop1,
                         prop2, stratum_ind, stratum_levels[i], cluster_ind,
                         vartype = vartype, warn_ind = warn_ind,
-                        warn_df = warn_df, warn_vec = warn_vec
-                      )
+                        warn_df = warn_df, warn_vec = warn_vec,
+                        local_nbh = local_nbh, local_context = localmean_group_context(local_context, "revisit"))
                     }
                     correst <- temp$rslt
                     warn_ind <- temp$warn_ind
@@ -2496,16 +2490,16 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
                         size2, stratum_ind, stratum_levels[i], cluster_ind,
                         clusterID[stratum_i], wgt1[stratum_i],
                         xcoord1[stratum_i], ycoord1[stratum_i], vartype,
-                        warn_ind, warn_df, warn_vec
-                      )
+                        warn_ind, warn_df, warn_vec,
+                        local_nbh = local_nbh, local_context = localmean_group_context(local_context, "revisit"))
                     } else {
                       temp <- changevar_total(catvar_levels, z1, z2,
                         wgt[stratum_i], xcoord[stratum_i], ycoord[stratum_i],
                         revisitwgt, size1, size2, stratum_ind, stratum_levels[i],
                         cluster_ind,
                         vartype = vartype, warn_ind = warn_ind,
-                        warn_df = warn_df, warn_vec = warn_vec
-                      )
+                        warn_df = warn_df, warn_vec = warn_vec,
+                        local_nbh = local_nbh, local_context = localmean_group_context(local_context, "revisit"))
                     }
                     correst <- temp$rslt
                     warn_ind <- temp$warn_ind
@@ -2566,15 +2560,15 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
                   temp <- changevar_prop(
                     catvar_levels, z1, z2, wgt2, xcoord, ycoord, revisitwgt,
                     prop1, prop2, stratum_ind, NULL, cluster_ind, clusterID,
-                    wgt1, xcoord1, ycoord1, vartype, warn_ind, warn_df, warn_vec
-                  )
+                    wgt1, xcoord1, ycoord1, vartype, warn_ind, warn_df, warn_vec,
+                    local_nbh = local_nbh, local_context = localmean_group_context(local_context, "revisit"))
                 } else {
                   temp <- changevar_prop(catvar_levels, z1, z2, wgt, xcoord,
                     ycoord, revisitwgt, prop1, prop2, stratum_ind, NULL,
                     cluster_ind,
                     vartype = vartype, warn_ind = warn_ind,
-                    warn_df = warn_df, warn_vec = warn_vec
-                  )
+                    warn_df = warn_df, warn_vec = warn_vec,
+                    local_nbh = local_nbh, local_context = localmean_group_context(local_context, "revisit"))
                 }
                 rslt_P <- temp$rslt
                 warn_ind <- temp$warn_ind
@@ -2592,15 +2586,15 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
                     catvar_levels, z1, z2, wgt2, xcoord, ycoord,
                     revisitwgt, size1, size2, stratum_ind, NULL, cluster_ind,
                     clusterID, wgt1, xcoord1, ycoord1, vartype, warn_ind,
-                    warn_df, warn_vec
-                  )
+                    warn_df, warn_vec,
+                    local_nbh = local_nbh, local_context = localmean_group_context(local_context, "revisit"))
                 } else {
                   temp <- changevar_total(
                     catvar_levels, z1, z2, wgt, xcoord, ycoord, revisitwgt,
                     size1, size2, stratum_ind, NULL, cluster_ind,
                     vartype = vartype, warn_ind = warn_ind, warn_df = warn_df,
-                    warn_vec = warn_vec
-                  )
+                    warn_vec = warn_vec,
+                    local_nbh = local_nbh, local_context = localmean_group_context(local_context, "revisit"))
                 }
                 rslt_U <- temp$rslt
                 warn_ind <- temp$warn_ind
@@ -2645,8 +2639,8 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
                 se_1_u <- rep(NA, nlevels)
                 temp <- category_est(
                   NULL, dframe_1, itype, isubpop, 1, ivar, lev_ivar, nlev_ivar,
-                  design_1, design_names, vartype, conf, mult, warn_ind, warn_df
-                )
+                  design_1, design_names, vartype, conf, mult, warn_ind, warn_df,
+                  local_nbh = local_nbh, local_context = localmean_group_context(local_context, survey_names[1]))
                 warn_ind <- temp$warn_ind
                 warn_df <- temp$warn_df
                 temp$results <- droplevels(subset(
@@ -2660,8 +2654,8 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
                 se_2_u <- rep(NA, nlevels)
                 temp <- category_est(
                   NULL, dframe_2, itype, isubpop, 1, ivar, lev_ivar, nlev_ivar,
-                  design_2, design_names, vartype, conf, mult, warn_ind, warn_df
-                )
+                  design_2, design_names, vartype, conf, mult, warn_ind, warn_df,
+                  local_nbh = local_nbh, local_context = localmean_group_context(local_context, survey_names[2]))
                 warn_ind <- temp$warn_ind
                 warn_df <- temp$warn_df
                 temp$results <- droplevels(subset(

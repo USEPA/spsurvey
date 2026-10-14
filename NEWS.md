@@ -1,13 +1,20 @@
-# spsurvey 5.8.0
+# spsurvey 6.0.0
 
 ## Major Updates
 
+
+* Added a `local_nbh` argument to specify the number of neighbors to use in the local neighborhood variance estimator. The default is now `15` (up from `4` in prior `spsurvey` versions).
 * `grts()` and `irs()` now compute spatial balance automatically during
   site selection and store the result as an `sp_balance` element of the
   design object. The `sp_balance()` function is still used to pull the
   spatial balance metric(s) from the design object.
 * Added support for generalized regression (GREG) estimation to the `*_analysis()` functions
 via the `formula`, `popsize`, and `subpopsize` arguments.
+* Added a `subset_local` argument to the `*_analysis()` functions. When `FALSE` (the default), variance estimators for subpopulations incorporate variability in subpopulation membership. When `TRUE` (the behavior for prior `spsurvey` versions), variability in subpopulation membership is ignored.
+
+## Minor Updates
+
+* Improved computational efficiency of the local neighborhood variance estimator by leveraging sparse matrix results and reusing neighborhoods across subpopulation estimators.
 
 ## Bug Fixes
 

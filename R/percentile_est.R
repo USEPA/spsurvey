@@ -80,10 +80,10 @@
 percentile_est <- function(pctsum, dframe, itype, lev_itype, nlev_itype, ivar,
                            design, design_names, var_nondetect, conf, mult,
                            pctval, warn_ind, warn_df, greg = NULL, vartype = "SRS",
-                           subset_local = TRUE) {
+                           subset_local = FALSE, local_nbh = 15, local_context = NULL) {
   if (!is.null(greg)) {
     return(greg_percentile_est(pctsum, dframe, itype, lev_itype, ivar, greg,
-      design_names, vartype, conf, pctval, warn_df))
+      design_names, vartype, conf, pctval, warn_df, local_nbh = local_nbh, local_context = local_context))
   }
   # Overall approach: compute design-weighted percentile (quantile)
   # estimates of ivar at the requested pctval percentages, using the
@@ -232,7 +232,7 @@ percentile_est <- function(pctsum, dframe, itype, lev_itype, nlev_itype, ivar,
     for (i in seq_len(nlev_itype)) {
       points <- if (nlev_itype == 1L) as.numeric(pctest) else pctest[i, ]
       local <- percentile_local_interval(points, pctval / 100, design, design_names,
-        itype, lev_itype[i], ivar, conf, quantile_method, subset_local, warn_ind, warn_df)
+        itype, lev_itype[i], ivar, conf, quantile_method, subset_local, warn_ind, warn_df, local_nbh = local_nbh, local_context = local_context)
       warn_ind <- local$warn_ind
       warn_df <- local$warn_df
       if (nlev_itype == 1L) {
