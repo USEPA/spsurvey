@@ -1,5 +1,5 @@
 ###############################################################################
-# Function: localmean_var (not exported)
+# Function: localmean_var (exported)
 # Programmers: Don Stevens and Tom Kincaid
 # Date: October 17, 2000
 #
@@ -37,7 +37,10 @@ localmean_var <- function(z, weight_1st) {
 
   # Calculate local means
 
-  zb <- sapply(split(z[weight_1st$ij[, 2]] * weight_1st$gwt, weight_1st$ij[, 1]), sum)
+  zb <- localmean_site_sums(
+    z[weight_1st$ij[, 2]] * weight_1st$gwt,
+    weight_1st$ij[, 1], length(z)
+  )
 
   # Calculate the variance estimate
 

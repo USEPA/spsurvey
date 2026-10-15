@@ -1,5 +1,5 @@
 ###############################################################################
-# Function: localmean_cov (not exported)
+# Function: localmean_cov (exported)
 # Programmer: Tom Kincaid
 # Date: March 10, 2020
 #
@@ -44,6 +44,15 @@ localmean_cov <- function(zmat, weight_1st) {
 
   lmvar <- array(0, c(m, m))
 
+  # Save each column's local means
+  local_means <- lapply(seq_len(m), function(k) {
+    z <- zmat[, k]
+    localmean_site_sums(
+      z[weight_1st$ij[, 2]] * weight_1st$gwt,
+      weight_1st$ij[, 1], nrow(zmat)
+    )
+  })
+
   # Begin loops for variance/covariance calculations
   # (only the upper triangle, k <= l, is computed; the matrix is symmetric
   # so the lower triangle is copied from it below)
@@ -52,15 +61,16 @@ localmean_cov <- function(zmat, weight_1st) {
     for (l in k:m) {
       z1 <- zmat[, k]
       z2 <- zmat[, l]
-
-      # Calculate local means
-
-      zb1 <- sapply(split(z1[weight_1st$ij[, 2]] * weight_1st$gwt, weight_1st$ij[, 1]), sum)
-      zb2 <- sapply(split(z2[weight_1st$ij[, 2]] * weight_1st$gwt, weight_1st$ij[, 1]), sum)
+      zb1 <- local_means[[k]]
+      zb2 <- local_means[[l]]
 
       # Calculate the variance or covariance estimate
 
-      lmvar[k, l] <- sum(weight_1st$gwt * (z1[weight_1st$ij[, 2]] - zb1[weight_1st$ij[, 1]]) * (z2[weight_1st$ij[, 2]] - zb2[weight_1st$ij[, 1]]))
+      lmvar[k, l] <- sum(
+        weight_1st$gwt *
+          (z1[weight_1st$ij[, 2]] - zb1[weight_1st$ij[, 1]]) *
+          (z2[weight_1st$ij[, 2]] - zb2[weight_1st$ij[, 1]])
+      )
     }
 
     # Assign estimates that already have been calculated
