@@ -249,9 +249,10 @@
 #'   Yates-Grundy estimator. 
 #'
 #' @param subset_local Controls local neighborhood variance estimation for subpopulations.
-#'   For typical designs, this defaults to \code{TRUE}, the neighbor pool contains all
-#'   sites in the stratum and the response for sites outside the subpopulation are set to zero.
-#'   For two-stage designs, this defaults to \code{FALSE}.
+#'   For single-stage designs (the typical case), this defaults to \code{FALSE}.
+#'   The neighbor pool contains all eligible sites in the stratum; for direct
+#'   estimation, contributions outside the subpopulation are set to zero.
+#'   For two-stage designs, this defaults to \code{TRUE}.
 #'
 #' @param jointprob Character value providing the choice of joint inclusion
 #'   probability approximation for use with Horvitz-Thompson and Yates-Grundy
