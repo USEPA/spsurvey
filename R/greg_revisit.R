@@ -18,11 +18,29 @@ greg_revisit_covariance <- function(first, second, z1, z2, context, warn_df, loc
         second$data[[second$design_names[[coordinate]]]]))
     }
   }
+  if (same && !is.null(first$design_names$clusterID)) {
+    # Equal final weights alone do not identify the two-stage operator.
+    same <- isTRUE(all.equal(first$base$cluster, second$base$cluster)) &&
+      isTRUE(all.equal(first$base$strata, second$base$strata)) &&
+      isTRUE(all.equal(first$base$allprob, second$base$allprob)) &&
+      isTRUE(all.equal(first$base$variables$wgt1, second$base$variables$wgt1)) &&
+      isTRUE(all.equal(first$base$variables$wgt2, second$base$variables$wgt2))
+    for (field in c("xcoord1", "ycoord1", "sweight1", "Ncluster", "stage1size")) {
+      a <- first$design_names[[field]]
+      b <- second$design_names[[field]]
+      same <- same && identical(is.null(a), is.null(b)) &&
+        (is.null(a) || isTRUE(all.equal(first$data[[a]], second$data[[b]])))
+    }
+  }
   if (same) {
     # The complete common design identifies covariance directly, including
     # survey FPC/PPS corrections; no overlap approximation is necessary.
     ans <- greg_joint_covariance(context, cbind(z1, z2), first$vartype, first$design_names, warn_df, local_nbh = local_nbh, local_context = local_context)
     return(list(covariance = ans$covariance[1, 2], warn_df = ans$warn_df))
+  }
+  if (!is.null(first$design_names$clusterID)) {
+    return(greg_cluster_revisit(first, second, z1, z2, i, j, warn_df,
+      local_nbh, local_context))
   }
   covariance <- 0
   strata <- as.character(first$base$strata[[1]][i])

@@ -36,7 +36,7 @@ trend_analysis(
   jointprob = "overton",
   conf = 95,
   All_Sites = FALSE,
-  subset_local = NULL,
+  subset_local = FALSE,
   subpop = NULL,
   local_nbh = 15
 )
@@ -221,7 +221,11 @@ transformations, and interactions follow \code{model.matrix()}; include
 stratum indicators and interactions explicitly to request separate
 calibration within strata. An intercept requires an \code{"(Intercept)"}
 total. Offsets and \code{~ .} are not supported. GREG uses
-full-design residuals, equivalent to \code{subset_local = FALSE}.}
+full-design residuals, equivalent to \code{subset_local = FALSE}.
+Two-stage GREG supports single-occasion analyses, change, and SLR/WLR
+trends. Two-stage GREG CDF comparisons across survey occasions are not supported.
+Calibration is at the population or domain level; within-PSU and
+cluster-constant calibration adjustments are not provided.}
 
 \item{popsize}{Object that provides values for the population argument of the
   calibration function. With a GREG \code{formula}, supply a named list
@@ -349,9 +353,9 @@ point estimates alone), so \code{subset_local} has no effect on
 \code{"SLR"} results. Has no effect on \code{"GLMM"}/\code{"LMM"}
 models, which do not use these functions.
 \code{subset_local} only applies when \code{vartype = "local"}.
-The default, \code{NULL}, selects \code{FALSE} for single-stage designs
-(when \code{clusterID} is not supplied) and \code{TRUE} for two-stage designs
-(when \code{clusterID} is supplied).}
+The default is \code{FALSE} for both single-stage and two-stage designs.
+An explicit \code{NULL} also resolves to \code{FALSE}. Explicit
+\code{TRUE} retains the earlier domain-only direct calculation.}
 
 \item{subpop}{Compatibility alias for \code{subpops}. This preserves
 existing calls that used \code{subpop} as a partial argument name before
@@ -491,7 +495,9 @@ are calculated using the object returned by the \code{boot} function.
 GREG supports \code{SLR} and \code{WLR}, retaining the existing
 \code{lm()} trend calculation and regression-based t inference. Each
 year's point estimate and variance are computed independently using its
-calibration totals. SLR ignores the annual variances; WLR uses their
+calibration totals and original single-stage or two-stage design.
+Two-stage local variances retain the existing stage combination.
+SLR ignores the annual variances; WLR uses their
 inverses as regression weights. Neither model propagates covariance
 between years or uses repeat-site covariance. The intercept refers to the
 earliest year. GREG \code{LMM}/\code{GLMM} models are not supported;
@@ -504,7 +510,12 @@ With \code{formula}, linear model calibration and point estimates
 are calculated by \pkg{survey}. Nonlocal variances and confidence
 intervals also come from \pkg{survey}. Local variances use design-weighted
 regression residuals multiplied by the calibrated weights, with
-neighborhoods formed using all sites in each sampling stratum.
+neighborhoods formed using all sites in each sampling stratum. For
+supported two-stage analyses, neighborhoods are formed among PSUs and
+separately within each PSU using the original stage weights. The existing
+two-stage local combination and its singleton, census and small-PSU
+limitations are retained; no additional finite population correction is
+applied to a successful local calculation.
 }
 
 \examples{

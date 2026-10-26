@@ -61,6 +61,11 @@ cdftest_localmean_total <- function(design, design_names, warn_ind, warn_df,
 
   fname <- "cdftest_localmean_total"
 
+  if (!is.null(design_names$clusterID) && !subset_local) {
+    return(localmean_cluster_cdftest(design, design_names, TRUE,
+      warn_df, warn_vec, local_nbh, local_context))
+  }
+
   # For variables that exist in the design$variables data frame, assign survey
   # design variables
 

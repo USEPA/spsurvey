@@ -115,6 +115,13 @@ attrisk_var <- function(response, stressor, response_levels, stressor_levels,
   # Assign the function name
   fname <- "attrisk_var"
 
+  if (cluster_ind && vartype == "Local" && !subset_local &&
+      !is.null(subpop_ind) && any(subpop_ind == 0)) {
+    return(localmean_cluster_risk(response, stressor, response_levels,
+      stressor_levels, subpop_ind, wgt, cluster, wgt1, x, y, x1, y1,
+      warn_df, warn_vec, local_nbh, local_context, margins = FALSE))
+  }
+
   #
   # Branch to handle two-stage and single-stage samples
   #
@@ -202,7 +209,7 @@ attrisk_var <- function(response, stressor, response_levels, stressor_levels,
           weight_lst <- localmean_weight_internal(
             x2_lst[[i]], y2_lst[[i]],
             1 / wgt2_lst[[i]],
-            local_nbh = local_nbh, local_context = localmean_group_context(local_context, paste0("stage2:", i)))
+            local_nbh = local_nbh, local_context = localmean_group_context(local_context, paste0("stage2:", cluster_levels[i])))
           if (is.null(weight_lst)) {
             if (stratum_ind) {
               warn_ind <- TRUE
@@ -308,10 +315,8 @@ attrisk_var <- function(response, stressor, response_levels, stressor_levels,
           nrow = ncluster
         ), 2, sum), nrow = 4)
       } else {
-        varest <- localmean_cov(total2est * matrix(rep(wgt1_u, 4),
-          nrow = ncluster
-        ), weight_lst) + matrix(apply(var2est *
-          matrix(rep(wgt1_u, 16), nrow = ncluster), 2, sum), nrow = 4)
+        varest <- localmean_cluster_combine(total2est, var2est, wgt1_u,
+          weight_lst, "covariance")
         temp <- diag(varest)
         if (any(temp < 0)) {
           warn_ind <- TRUE

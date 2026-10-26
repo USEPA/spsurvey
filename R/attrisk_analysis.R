@@ -291,10 +291,9 @@
 #'   The default is \code{FALSE}.
 #'
 #' @param subset_local Controls local neighborhood variance estimation for subpopulations.
-#'   For single-stage designs (the typical case), this defaults to \code{FALSE}.
 #'   The neighbor pool contains all eligible sites in the stratum; for direct
 #'   estimation, contributions outside the subpopulation are set to zero.
-#'   For two-stage designs, this defaults to \code{TRUE}.
+#'   The default is \code{FALSE}.
 #'
 #' @section Details:
 #' Attributable risk measures the proportional reduction in the extent of poor
@@ -388,15 +387,15 @@ attrisk_analysis <- function(dframe, vars_response, vars_stressor, response_leve
                              weight1 = NULL, xcoord1 = NULL, ycoord1 = NULL, sizeweight = FALSE,
                              sweight = NULL, sweight1 = NULL, fpc = NULL, formula = NULL, popsize = NULL, subpopsize = NULL,
                              vartype = "local", conf = 95, All_Sites = FALSE,
-                             subset_local = NULL, subpop = NULL, jointprob = "overton", local_nbh = 15) {
+                             subset_local = FALSE, subpop = NULL, jointprob = "overton", local_nbh = 15) {
   local_context <- localmean_context(local_nbh)
-  if (is.null(subset_local)) subset_local <- !is.null(clusterID)
+  if (is.null(subset_local)) subset_local <- FALSE
 
   if (!missing(subpop)) {
     if (!missing(subpops)) stop("Supply only one of subpops and subpop.", call. = FALSE)
     subpops <- subpop
   }
-  greg_check_call(formula, subpopsize, clusterID)
+  greg_check_call(formula, subpopsize)
   if (!is.null(formula)) subset_local <- FALSE
   # Create a vector for error messages
 
@@ -752,13 +751,6 @@ attrisk_analysis <- function(dframe, vars_response, vars_stressor, response_leve
 
   cluster_ind <- !is.null(clusterID)
 
-  # subset_local = FALSE is not yet implemented for two-stage designs (the
-  # cluster_ind branches of attrisk_var() still always subset to domain
-  # members); fail with a clear message.
-
-  if (vartype == "Local" && !subset_local && cluster_ind) {
-    stop("\nsubset_local = FALSE is not yet supported for two-stage (clustered) samples.\n")
-  }
 
   # Create the survey design object
 
@@ -936,16 +928,16 @@ attrisk_analysis <- function(dframe, vars_response, vars_stressor, response_leve
               # marginal totals
 
               if (cluster_ind) {
-                # subset_local = FALSE is not yet supported for two-stage
-                # designs (blocked upstream), so this branch is
-                # intentionally left passing domain-only data
+                cluster_data <- if (subset_local || vartype != "Local") stratum_i else tst_resp & stratumID == stratum_levels[i]
                 temp <- attrisk_var(
-                  response[stratum_i], stressor[stratum_i],
+                  response[cluster_data], stressor[cluster_data],
                   response_levels[[ivar_r]], stressor_levels[[ivar_s]],
-                  wgt2[stratum_i], xcoord[stratum_i], ycoord[stratum_i],
+                  wgt2[cluster_data], xcoord[cluster_data], ycoord[cluster_data],
                   stratum_ind, stratum_levels[i], cluster_ind,
-                  clusterID[stratum_i], wgt1[stratum_i], xcoord1[stratum_i],
-                  ycoord1[stratum_i], vartype, warn_ind, warn_df, warn_vec,
+                  clusterID[cluster_data], wgt1[cluster_data], xcoord1[cluster_data],
+                  ycoord1[cluster_data], vartype, warn_ind, warn_df, warn_vec,
+                  subset_local = subset_local,
+                  subpop_ind = subpop_ind_full[cluster_data],
                   local_nbh = local_nbh, local_context = local_context)
               } else {
                 # stratum_data_i is the row mask actually fed to
@@ -1168,14 +1160,15 @@ attrisk_analysis <- function(dframe, vars_response, vars_stressor, response_leve
               # Calculate the variance-covariance estimate for the cell totals
 
               if (cluster_ind) {
-                # subset_local = FALSE is not yet supported for two-stage
-                # designs (blocked upstream)
+                cluster_data <- if (subset_local || vartype != "Local") tst else tst_resp
                 temp <- attrisk_var(
-                  response[tst], stressor[tst],
+                  response[cluster_data], stressor[cluster_data],
                   response_levels[[ivar_r]], stressor_levels[[ivar_s]],
-                  wgt2[tst], xcoord[tst], ycoord[tst], stratum_ind, NULL,
-                  cluster_ind, clusterID[tst], wgt1[tst], xcoord1[tst],
-                  ycoord1[tst], vartype, warn_ind, warn_df, warn_vec,
+                  wgt2[cluster_data], xcoord[cluster_data], ycoord[cluster_data], stratum_ind, NULL,
+                  cluster_ind, clusterID[cluster_data], wgt1[cluster_data], xcoord1[cluster_data],
+                  ycoord1[cluster_data], vartype, warn_ind, warn_df, warn_vec,
+                  subset_local = subset_local,
+                  subpop_ind = subpop_ind_full[cluster_data],
                   local_nbh = local_nbh, local_context = local_context)
               } else {
                 # data_tst mirrors stratum_data_i above: domain-only under

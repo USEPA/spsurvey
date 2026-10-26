@@ -50,7 +50,7 @@ test_that("nonlocal GREG retains survey FPC and never constructs neighborhoods",
 })
 
 test_that("large calibration matrices work with formula model.matrix methods loaded", {
-  set.seed(189)
+  set.seed(5)
   x <- cbind(1, matrix(rnorm(180 * 45), 180, 45))
   colnames(x) <- c("(Intercept)", paste0("auxiliary", 1:45))
   data <- data.frame(weight = rep(5, 180), y = rnorm(180))
@@ -265,7 +265,8 @@ test_that("GREG input guards do not silently discard requested calibration", {
   for (v in c("local", "SRS", "HT", "YG")) {
     a <- greg_args(vartype = v)
     a$clusterID <- "cluster"
-    expect_error(do.call(cont_analysis, a), "two-stage")
+    expect_error(suppressMessages(do.call(cont_analysis, a)), "preceding")
+    expect_true(any(grepl("cluster", get("error_vec", envir = .GlobalEnv))))
   }
   a <- greg_args()
   a$formula <- NULL

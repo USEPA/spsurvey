@@ -32,9 +32,11 @@ greg_build_occasion <- function(args, vars_cat, vars_cont, local_nbh = 15, local
   fields <- c("siteID", "weight", "xcoord", "ycoord", "stratumID", "clusterID",
     "weight1", "xcoord1", "ycoord1", "sweight", "sweight1")
   design_names <- args[fields]
-  # input_check() writes the validated single-stage FPC to fpcsize.
-  design_names$fpcsize <- if (!is.null(args$fpc)) "fpcsize" else NULL
-  design_names$Ncluster <- design_names$stage1size <- NULL
+  # Use the same FPC fields and stage structure as status estimation.
+  cluster <- !is.null(args$clusterID)
+  design_names$fpcsize <- if (!is.null(args$fpc) && !cluster) "fpcsize" else NULL
+  design_names$Ncluster <- if (!is.null(args$fpc) && cluster) "Ncluster" else NULL
+  design_names$stage1size <- if (!is.null(args$fpc) && cluster) "stage1size" else NULL
   checked <- input_check(data, design_names, vars_cat, vars_cont, NULL, NULL,
     args$subpops, args$sizeweight, args$fpc, NULL, args$vartype, args$jointprob,
     args$conf, error_ind = FALSE, error_vec = NULL, preserve_factors = TRUE, local_nbh = local_nbh)
@@ -43,8 +45,9 @@ greg_build_occasion <- function(args, vars_cat, vars_cont, local_nbh = 15, local
   ids <- as.character(data[[args$siteID]])
   if (anyNA(ids) || anyDuplicated(ids)) stop("Site IDs must be unique and nonmissing within each GREG occasion.", call. = FALSE)
   design <- survey_design(data, args$siteID, args$weight, !is.null(args$stratumID),
-    args$stratumID, FALSE, NULL, NULL, args$sizeweight, args$sweight, NULL,
-    !is.null(args$fpc), design_names$fpcsize, NULL, NULL, checked$vartype, checked$jointprob)
+    args$stratumID, cluster, args$clusterID, args$weight1, args$sizeweight,
+    args$sweight, args$sweight1, !is.null(args$fpc), design_names$fpcsize,
+    design_names$Ncluster, design_names$stage1size, checked$vartype, checked$jointprob)
   greg <- greg_prepare(design, args$formula, args$popsize, args$subpopsize, checked$subpops, NULL)
   list(data = data, base = design, greg = greg, ids = ids,
     design_names = design_names, vartype = checked$vartype, subpops = checked$subpops,

@@ -2,7 +2,6 @@
 
 ## Major Updates
 
-
 * Added a `local_nbh` argument to specify the number of neighbors to use in the local neighborhood variance estimator. The default is now `15` (up from `4` in prior `spsurvey` versions).
 * `grts()` and `irs()` now compute spatial balance automatically during
   site selection and store the result as an `sp_balance` element of the
@@ -15,9 +14,11 @@ via the `formula`, `popsize`, and `subpopsize` arguments.
 ## Minor Updates
 
 * Improved computational efficiency of the local neighborhood variance estimator by leveraging sparse matrix results and reusing neighborhoods across subpopulation estimators.
+* Minor warning message updates.
 
 ## Bug Fixes
 
+* Fixed a bug in `change_analysis()` that could incorrectly scale repeat-visit covariance for stratified designs and continuous totals.
 * Fixed a bug in percentile estimation that ignored the local neighborhood variance when `vartype = "local"`.
 * Fixed a bug that omitted the covariance term in `diffrisk_analysis()`.
 

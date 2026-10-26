@@ -281,10 +281,9 @@
 #'   value is \code{"local"}.
 #'
 #' @param subset_local Controls local neighborhood variance estimation for subpopulations.
-#'   For single-stage designs (the typical case), this defaults to \code{FALSE}.
 #'   The neighbor pool contains all eligible sites in the stratum; for direct
 #'   estimation, contributions outside the subpopulation are set to zero.
-#'   For two-stage designs, this defaults to \code{TRUE}.
+#'   The default is \code{FALSE}.
 #'
 #' @param jointprob Character value providing the choice of joint inclusion
 #'   probability approximation for use with Horvitz-Thompson and Yates-Grundy
@@ -498,15 +497,15 @@ change_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL, test = "m
                             ycoord1 = NULL, sizeweight = FALSE, sweight = NULL, sweight1 = NULL,
                             fpc = NULL, formula = NULL, popsize = NULL, subpopsize = NULL,
                             vartype = "local", jointprob = "overton",
-                            conf = 95, All_Sites = FALSE, subset_local = NULL, subpop = NULL, local_nbh = 15) {
+                            conf = 95, All_Sites = FALSE, subset_local = FALSE, subpop = NULL, local_nbh = 15) {
   local_context <- localmean_context(local_nbh)
-  if (is.null(subset_local)) subset_local <- !is.null(clusterID)
+  if (is.null(subset_local)) subset_local <- FALSE
 
   if (!missing(subpop)) {
     if (!missing(subpops)) stop("Supply only one of subpops and subpop.", call. = FALSE)
     subpops <- subpop
   }
-  greg_check_call(formula, subpopsize, clusterID)
+  greg_check_call(formula, subpopsize)
   if (!is.null(formula)) {
     return(greg_change(greg_time_args(environment()), vars_cat, vars_cont, test, surveyID, survey_names, local_nbh = local_nbh, local_context = local_context))
   }
@@ -917,15 +916,6 @@ change_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL, test = "m
 
   cluster_ind <- !is.null(clusterID)
 
-  # subset_local = FALSE is not yet implemented for two-stage designs (the
-  # cluster_ind branches of category_est()/mean_est()/total_est()'s
-  # underlying local mean variance estimators still build a domain-only
-  # neighbor structure, which would look like subset_local silently having
-  # no effect)
-
-  if (vartype == "Local" && !subset_local && cluster_ind) {
-    stop("\nsubset_local = FALSE is not yet supported for two-stage (clustered) samples.\n")
-  }
 
   # Create the survey design object for each survey
   ## give factors two levels if they only have one level

@@ -106,15 +106,15 @@ diffrisk_analysis <- function(dframe, vars_response, vars_stressor, response_lev
                               weight1 = NULL, xcoord1 = NULL, ycoord1 = NULL, sizeweight = FALSE,
                               sweight = NULL, sweight1 = NULL, fpc = NULL, formula = NULL, popsize = NULL, subpopsize = NULL,
                               vartype = "local", conf = 95, All_Sites = FALSE,
-                              subset_local = NULL, subpop = NULL, jointprob = "overton", local_nbh = 15) {
+                              subset_local = FALSE, subpop = NULL, jointprob = "overton", local_nbh = 15) {
   local_context <- localmean_context(local_nbh)
-  if (is.null(subset_local)) subset_local <- !is.null(clusterID)
+  if (is.null(subset_local)) subset_local <- FALSE
 
   if (!missing(subpop)) {
     if (!missing(subpops)) stop("Supply only one of subpops and subpop.", call. = FALSE)
     subpops <- subpop
   }
-  greg_check_call(formula, subpopsize, clusterID)
+  greg_check_call(formula, subpopsize)
   if (!is.null(formula)) subset_local <- FALSE
   # Create a vector for error messages
 
@@ -470,13 +470,6 @@ diffrisk_analysis <- function(dframe, vars_response, vars_stressor, response_lev
 
   cluster_ind <- !is.null(clusterID)
 
-  # subset_local = FALSE is not yet implemented for two-stage designs (the
-  # cluster_ind branches of category_est()'s internal chain still always
-  # subset to domain members); fail with a clear message
-
-  if (vartype == "Local" && !subset_local && cluster_ind) {
-    stop("\nsubset_local = FALSE is not yet supported for two-stage (clustered) samples.\n")
-  }
 
   # Create the survey design object
 

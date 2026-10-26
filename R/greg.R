@@ -1,4 +1,4 @@
-# Shared preparation and linearization for single-stage GREG analysis.
+# Shared preparation and linearization for single- and two-stage GREG analysis.
 # Calibration remains owned by survey. Only the local covariance operator
 # is replaced; neighborhoods use the uncalibrated analysis weights. With
 # sizeweight = TRUE, survey_design() has already multiplied design and size
@@ -13,13 +13,10 @@ greg_warning <- function(warn_df, warning, action, labels = rep(NA_character_, 3
   ))
 }
 
-greg_check_call <- function(formula, subpopsize, clusterID) {
+greg_check_call <- function(formula, subpopsize) {
   if (is.null(formula)) {
     if (!is.null(subpopsize)) stop("subpopsize requires a GREG formula.", call. = FALSE)
     return(invisible(NULL))
-  }
-  if (!is.null(clusterID)) {
-    stop("GREG estimation is not yet supported for two-stage (clustered) samples.", call. = FALSE)
   }
   if (!inherits(formula, "formula") || length(formula) != 2L) {
     stop("formula must be a one-sided GREG formula, for example ~ x1 + x2.", call. = FALSE)
@@ -181,7 +178,12 @@ greg_estimate <- function(context, q, keep, ratio, vartype, design_names, conf,
     strata <- split(seq_len(nrow(q)), design$strata[[1]], drop = TRUE)
     local_cov <- matrix(0, ncol(q), ncol(q))
     fallback <- NULL
-    for (idx in strata) {
+    if (!is.null(design_names$clusterID)) {
+      part <- localmean_cluster_design(context$base, z, design_names, local_nbh, local_context)
+      local_cov <- part$covariance
+      if (length(part$notes)) warn_df <- localmean_cluster_warning(warn_df, part$notes, labels)
+      if (is.null(local_cov)) fallback <- "The two-stage local covariance could not be calculated."
+    } else for (idx in strata) {
       if (length(idx) < 4L) {
         fallback <- "A sampling stratum has fewer than four sites."
         break

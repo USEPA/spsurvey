@@ -171,7 +171,7 @@ total_var <- function(z, wgt, x, y, stratum_ind, stratum_level, cluster_ind,
           weight_lst <- localmean_weight_internal(
             x2_lst[[i]], y2_lst[[i]],
             1 / wgt2_lst[[i]],
-            local_nbh = local_nbh, local_context = localmean_group_context(local_context, paste0("stage2:", i)))
+            local_nbh = local_nbh, local_context = localmean_group_context(local_context, paste0("stage2:", cluster_levels[i])))
           if (is.null(weight_lst)) {
             warn_ind <- TRUE
             act <- "The simple random sampling variance estimator for an infinite population was used.\n"
@@ -249,8 +249,7 @@ total_var <- function(z, wgt, x, y, stratum_ind, stratum_level, cluster_ind,
         vartype <- "SRS"
         varest <- 0
       } else {
-        varest <- localmean_var(total2est * wgt1_u, weight_lst) +
-          sum(var2est * wgt1_u)
+        varest <- localmean_cluster_combine(total2est, var2est, wgt1_u, weight_lst, "variance")
       }
     } else {
       varest <- 0

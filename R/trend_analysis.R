@@ -312,9 +312,7 @@
 #'   \code{"SLR"} results. Has no effect on \code{"GLMM"}/\code{"LMM"}
 #'   models, which do not use these functions.
 #'   \code{subset_local} only applies when \code{vartype = "local"}.
-#'   The default, \code{NULL}, selects \code{FALSE} for single-stage designs
-#'   (when \code{clusterID} is not supplied) and \code{TRUE} for two-stage designs
-#'   (when \code{clusterID} is supplied).
+#'   The default is \code{FALSE}.
 #'
 #' @param jointprob Character value providing choice of joint inclusion
 #'   probability approximation for use with Horvitz-Thompson and Yates-Grundy
@@ -488,7 +486,8 @@
 #' GREG supports \code{SLR} and \code{WLR}, retaining the existing
 #' \code{lm()} trend calculation and regression-based t inference. Each
 #' year's point estimate and variance are computed independently using its
-#' calibration totals. SLR ignores the annual variances; WLR uses their
+#' calibration totals and original single-stage or two-stage design.
+#' SLR ignores the annual variances; WLR uses their
 #' inverses as regression weights. Neither model propagates covariance
 #' between years or uses repeat-site covariance. The intercept refers to the
 #' earliest year. GREG \code{LMM}/\code{GLMM} models are not supported;
@@ -503,15 +502,15 @@ trend_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL, subpops = 
                            fpc = NULL, formula = NULL, popsize = NULL, subpopsize = NULL,
                            invprboot = TRUE, nboot = 1000, vartype = "local",
                            jointprob = "overton", conf = 95, All_Sites = FALSE,
-                           subset_local = NULL, subpop = NULL, local_nbh = 15) {
+                           subset_local = FALSE, subpop = NULL, local_nbh = 15) {
   local_context <- localmean_context(local_nbh)
-  if (is.null(subset_local)) subset_local <- !is.null(clusterID)
+  if (is.null(subset_local)) subset_local <- FALSE
 
   if (!missing(subpop)) {
     if (!missing(subpops)) stop("Supply only one of subpops and subpop.", call. = FALSE)
     subpops <- subpop
   }
-  greg_check_call(formula, subpopsize, clusterID)
+  greg_check_call(formula, subpopsize)
   if (!is.null(formula)) {
     if ((!is.null(vars_cat) && !model_cat %in% c("SLR", "WLR")) ||
         (!is.null(vars_cont) && !model_cont %in% c("SLR", "WLR"))) {
@@ -818,14 +817,6 @@ trend_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL, subpops = 
 
   cluster_ind <- !is.null(clusterID)
 
-  # subset_local = FALSE is not yet implemented for two-stage designs (the
-  # cluster_ind branches of category_est()/mean_est()'s underlying local
-  # mean variance estimators still build a domain-only neighbor structure,
-  # which would look like subset_local silently having no effect)
-
-  if (vartype == "Local" && !subset_local && cluster_ind) {
-    stop("\nsubset_local = FALSE is not yet supported for two-stage (clustered) samples.\n")
-  }
 
   # Create the survey design object
 

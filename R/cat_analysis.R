@@ -52,7 +52,7 @@
 #'
 #' @param weight Character value providing name of the design weight
 #'   variable in \code{dframe}.  For a two-stage sample, the
-#'   weight variable identifies stage two weights.  The default value is
+#'   weight variable identifies stage-two weights.  The default value is
 #'   \code{"weight"}.
 #'
 #' @param xcoord Character value providing name of the x-coordinate variable in
@@ -284,10 +284,9 @@
 #'   default is 15.
 #'
 #' @param subset_local Controls local neighborhood variance estimation for subpopulations.
-#'   For single-stage designs (the typical case), this defaults to \code{FALSE}.
 #'   The neighbor pool contains all eligible sites in the stratum; for direct
 #'   estimation, contributions outside the subpopulation are set to zero.
-#'   For two-stage designs, this defaults to \code{TRUE}.
+#'   The default is \code{FALSE}.
 
 #'
 #' @return The analysis results. A data frame of population estimates for all combinations of
@@ -321,7 +320,11 @@
 #' are calculated by \pkg{survey}. Nonlocal variances and confidence
 #' intervals also come from \pkg{survey}. Local variances use design-weighted
 #' regression residuals multiplied by the calibrated weights, with
-#' neighborhoods formed using all sites in each sampling stratum.
+#' neighborhoods formed using all sites in each sampling stratum. For
+#' two-stage designs, neighborhoods are formed among PSUs (between-cluster variance) and
+#' separately within PSU's (within-cluster variance). Also for two-stage designs,
+#' calibration is at the population or subpopulation level (i.e., within-PSU calibration
+#' adjustments are not provided unless they coincide with subpopulations).
 #'
 #' @keywords survey univar
 #'
@@ -361,9 +364,9 @@ cat_analysis <- function(dframe, vars, subpops = NULL, siteID = NULL, weight = "
                          sweight = NULL, sweight1 = NULL, fpc = NULL,
                          formula = NULL, popsize = NULL, subpopsize = NULL,
                          vartype = "local", jointprob = "overton", conf = 95, All_Sites = FALSE,
-                         subset_local = NULL, subpop = NULL, local_nbh = 15) {
+                         subset_local = FALSE, subpop = NULL, local_nbh = 15) {
   local_context <- localmean_context(local_nbh)
-  if (is.null(subset_local)) subset_local <- !is.null(clusterID)
+  if (is.null(subset_local)) subset_local <- FALSE
 
   if (!missing(subpop)) {
     if (!missing(subpops)) stop("Supply only one of subpops and subpop.", call. = FALSE)
@@ -380,7 +383,7 @@ cat_analysis <- function(dframe, vars, subpops = NULL, siteID = NULL, weight = "
   warn_df <- NULL
   fname <- "cat_analysis"
 
-  greg_check_call(formula, subpopsize, clusterID)
+  greg_check_call(formula, subpopsize)
   greg <- NULL
   if (!is.null(formula)) {
     if (!missing(subset_local) && isTRUE(subset_local) &&
@@ -616,16 +619,6 @@ cat_analysis <- function(dframe, vars, subpops = NULL, siteID = NULL, weight = "
   # Assign a logical value to the indicator variable for a two-stage sample
 
   cluster_ind <- !is.null(clusterID)
-
-  # subset_local = FALSE is not yet implemented for two-stage designs (the
-  # cluster_ind branches of catvar_total()/catvar_prop() still always
-  # subset to domain members); fail with a clear message.
-
-  if (vartype == "Local" && !subset_local && cluster_ind) {
-    stop("\nsubset_local = FALSE is not yet supported for two-stage (clustered) samples.\n")
-  }
-
-  # Create the survey design object
 
   design <- survey_design(
     dframe, siteID, weight, stratum_ind, stratumID, cluster_ind, clusterID,

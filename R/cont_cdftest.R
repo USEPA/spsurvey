@@ -249,10 +249,9 @@
 #'   Yates-Grundy estimator. 
 #'
 #' @param subset_local Controls local neighborhood variance estimation for subpopulations.
-#'   For single-stage designs (the typical case), this defaults to \code{FALSE}.
 #'   The neighbor pool contains all eligible sites in the stratum; for direct
 #'   estimation, contributions outside the subpopulation are set to zero.
-#'   For two-stage designs, this defaults to \code{TRUE}.
+#'   The default is \code{FALSE}.
 #'
 #' @param jointprob Character value providing the choice of joint inclusion
 #'   probability approximation for use with Horvitz-Thompson and Yates-Grundy
@@ -328,15 +327,19 @@ cont_cdftest <- function(dframe, vars, subpops = NULL, surveyID = NULL, siteID =
                          sizeweight = FALSE, sweight = NULL, sweight1 = NULL, fpc = NULL,
                          formula = NULL, popsize = NULL, subpopsize = NULL,
                          vartype = "local", jointprob = "overton",
-                         testname = "adjWald", nclass = 3, subset_local = NULL, subpop = NULL, local_nbh = 15) {
+                         testname = "adjWald", nclass = 3, subset_local = FALSE, subpop = NULL, local_nbh = 15) {
   local_context <- localmean_context(local_nbh)
-  if (is.null(subset_local)) subset_local <- !is.null(clusterID)
+  if (is.null(subset_local)) subset_local <- FALSE
 
   if (!missing(subpop)) {
     if (!missing(subpops)) stop("Supply only one of subpops and subpop.", call. = FALSE)
     subpops <- subpop
   }
-  greg_check_call(formula, subpopsize, clusterID)
+  greg_check_call(formula, subpopsize)
+  if (!is.null(formula) && !is.null(clusterID) && !is.null(surveyID)) {
+    stop("GREG CDF comparisons across surveys are not currently supported for two-stage designs; comparisons must be within a single survey (i.e., surveyID = NULL).",
+      call. = FALSE)
+  }
   if (!is.null(formula)) subset_local <- FALSE
   # Create a vector for error messages
 
@@ -643,14 +646,6 @@ cont_cdftest <- function(dframe, vars, subpops = NULL, surveyID = NULL, siteID =
 
   cluster_ind <- !is.null(clusterID)
 
-  # subset_local = FALSE is not yet implemented for two-stage designs (the
-  # cluster_ind branches of cdftestvar_total()/cdftestvar_prop() still
-  # build the local mean neighbor structure from the union of the two
-  # compared groups only)
-
-  if (vartype == "Local" && !subset_local && cluster_ind) {
-    stop("\nsubset_local = FALSE is not yet supported for two-stage (clustered) samples.\n")
-  }
 
   # Create the survey design object
 

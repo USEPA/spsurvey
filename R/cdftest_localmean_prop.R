@@ -66,6 +66,11 @@ cdftest_localmean_prop <- function(design, design_names, warn_ind, warn_df,
 
   fname <- "cdftest_localmean_prop"
 
+  if (!is.null(design_names$clusterID) && !subset_local) {
+    return(localmean_cluster_cdftest(design, design_names, FALSE,
+      warn_df, warn_vec, local_nbh, local_context))
+  }
+
   # For variables that exist in the design$variables data frame, assign survey
   # design variables
 

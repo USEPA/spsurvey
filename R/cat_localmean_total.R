@@ -168,6 +168,23 @@ cat_localmean_total <- function(itype, lev_itype, nlev_itype, ivar, lev_ivar,
 
     warn_vec <- c(itype, lev_itype[isubpop], ivar)
 
+    if (cluster_ind && !subset_local && any(subpop_ind_full[tst_resp] == 0)) {
+      response <- cbind(outer(as.character(catvar), lev_ivar, `==`), Total = 1)
+      full <- localmean_cluster_domain(design, response, subpop_ind_full,
+        tst_resp, FALSE, design_names, warn_df, warn_vec,
+        local_nbh, local_context, estimate = size)
+      sdest <- sqrt(full$covariance)
+      if ("postStrata" %in% names(design)) sdest[size == totalwgt] <- 0
+      stderr_U[isubpop, ] <- sdest
+      upper <- size + mult * sdest
+      if ("postStrata" %in% names(design)) upper <- pmin(upper, totalwgt)
+      rows <- paste(lev_itype[isubpop], size_names, sep = ":")
+      confval_U[rows, ] <- cbind(pmax(size - mult * sdest, 0), upper)
+      warn_df <- full$warn_df
+      warn_ind <- warn_ind || full$warn_ind
+      next
+    }
+
     # Assign a value to the indicator variable for a stratified sample
 
     stratum_ind <- !is.null(stratumID)
@@ -194,9 +211,6 @@ cat_localmean_total <- function(itype, lev_itype, nlev_itype, ivar, lev_ivar,
 
         stratum_i <- tst & stratumID == stratum_levels[i]
         if (cluster_ind) {
-          # subset_local = FALSE is not yet supported for two-stage
-          # designs (blocked upstream in cat_analysis()), so this branch
-          # is intentionally left passing domain-only data
           temp <- catvar_total(
             factor(catvar[stratum_i]), wgt2[stratum_i],
             xcoord[stratum_i], ycoord[stratum_i], size_names, stratum_ind,
@@ -309,9 +323,6 @@ cat_localmean_total <- function(itype, lev_itype, nlev_itype, ivar, lev_ivar,
       # Calculate the standard error estimates
 
       if (cluster_ind) {
-        # subset_local = FALSE is not yet supported for two-stage designs
-        # (blocked upstream in cat_analysis()), so this branch is
-        # intentionally left passing domain-only data
         temp <- catvar_total(
           factor(catvar[tst]), wgt2[tst], xcoord[tst],
           ycoord[tst], size_names, stratum_ind,

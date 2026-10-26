@@ -157,6 +157,17 @@ mean_localmean <- function(itype, lev_itype, nlev_itype, levs, ivar, design,
 
     warn_vec <- c(itype, lev_itype[isubpop], ivar)
 
+    if (cluster_ind && !subset_local && any(subpop_ind_full[tst_resp] == 0)) {
+      full <- localmean_cluster_domain(design, contvar, subpop_ind_full,
+        tst_resp, TRUE, design_names, warn_df, warn_vec,
+        local_nbh, local_context, estimate = meanest[isubpop])
+      stderr[isubpop] <- sqrt(full$covariance)
+      confval[isubpop, ] <- meanest[isubpop] + c(-1, 1) * mult * stderr[isubpop]
+      warn_df <- full$warn_df
+      warn_ind <- warn_ind || full$warn_ind
+      next
+    }
+
     # Assign a value to the indicator variable for a stratified sample
 
     stratum_ind <- !is.null(stratumID)
@@ -200,9 +211,6 @@ mean_localmean <- function(itype, lev_itype, nlev_itype, levs, ivar, design,
         # Calculate variance estimates
 
         if (cluster_ind) {
-          # subset_local = FALSE is not yet supported for two-stage
-          # designs (blocked upstream in cont_analysis()), so this branch
-          # is intentionally left passing domain-only data
           temp <- mean_var(
             contvar[stratum_i], wgt2[stratum_i], xcoord[stratum_i],
             ycoord[stratum_i], meanest_st[1], stratum_ind, stratum_levels[i],
@@ -289,9 +297,6 @@ mean_localmean <- function(itype, lev_itype, nlev_itype, levs, ivar, design,
       # Calculate the standard error estimates
 
       if (cluster_ind) {
-        # subset_local = FALSE is not yet supported for two-stage designs
-        # (blocked upstream in cont_analysis()), so this branch is
-        # intentionally left passing domain-only data
         temp <- mean_var(
           contvar[tst], wgt2[tst], xcoord[tst], ycoord[tst],
           meanest[isubpop], stratum_ind,

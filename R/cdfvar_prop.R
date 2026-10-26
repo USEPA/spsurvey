@@ -191,7 +191,7 @@ cdfvar_prop <- function(z, wgt, x, y, val, cdfest, stratum_ind, stratum_level,
           weight_lst <- localmean_weight_internal(
             x2_lst[[i]], y2_lst[[i]],
             1 / wgt2_lst[[i]],
-            local_nbh = local_nbh, local_context = localmean_group_context(local_context, paste0("stage2:", i)))
+            local_nbh = local_nbh, local_context = localmean_group_context(local_context, paste0("stage2:", cluster_levels[i])))
           if (is.null(weight_lst)) {
             warn_ind <- TRUE
             act <- "The simple random sampling variance estimator for an infinite population was used.\n"
@@ -289,13 +289,8 @@ cdfvar_prop <- function(z, wgt, x, y, val, cdfest, stratum_ind, stratum_level,
         vartype <- "SRS"
         varest <- 0
       } else {
-        varest <- (
-          apply(
-            total2est * matrix(rep(wgt1_u, m), nrow = ncluster), 2,
-            localmean_var, weight_lst
-          ) +
-            apply(var2est * matrix(rep(wgt1_u, m), nrow = ncluster), 2, sum)
-        ) / tw2
+        varest <- localmean_cluster_combine(total2est, var2est, wgt1_u,
+          weight_lst, "diagonal") / tw2
       }
     } else {
       varest <- 0

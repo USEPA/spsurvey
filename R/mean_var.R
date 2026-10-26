@@ -181,7 +181,7 @@ mean_var <- function(z, wgt, x, y, mean_est, stratum_ind, stratum_level,
           weight_lst <- localmean_weight_internal(
             x2_lst[[i]], y2_lst[[i]],
             1 / wgt2_lst[[i]],
-            local_nbh = local_nbh, local_context = localmean_group_context(local_context, paste0("stage2:", i)))
+            local_nbh = local_nbh, local_context = localmean_group_context(local_context, paste0("stage2:", cluster_levels[i])))
           if (is.null(weight_lst)) {
             warn_ind <- TRUE
             act <- "The simple random sampling variance estimator for an infinite population was used.\n"
@@ -263,8 +263,7 @@ mean_var <- function(z, wgt, x, y, mean_est, stratum_ind, stratum_level,
         # within-cluster components; dividing by tw2 (squared total weight)
         # converts that total's variance into the variance of the MEAN
         varest <- (
-          localmean_var(total2est * wgt1_u, weight_lst) +
-            sum(var2est * wgt1_u)
+          localmean_cluster_combine(total2est, var2est, wgt1_u, weight_lst, "variance")
         ) / tw2
       }
     } else {

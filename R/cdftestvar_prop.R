@@ -211,7 +211,7 @@ cdftestvar_prop <- function(design, wgt, x, y, stratum_ind, stratum_level,
           weight_lst <- localmean_weight_internal(
             x2_lst[[i]], y2_lst[[i]],
             1 / wgt2_lst[[i]],
-            local_nbh = local_nbh, local_context = localmean_group_context(local_context, paste0("stage2:", i)))
+            local_nbh = local_nbh, local_context = localmean_group_context(local_context, paste0("stage2:", cluster_levels[i])))
           if (is.null(weight_lst)) {
             warn_ind <- TRUE
             act <- "The simple random sampling covariance estimator for an infinite population was used.\n"
@@ -313,11 +313,8 @@ cdftestvar_prop <- function(design, wgt, x, y, stratum_ind, stratum_level,
           nrow = ncluster
         ), 2, sum), nrow = m_cl)) / tw2
       } else {
-        varest <- (localmean_cov(total2est * matrix(rep(wgt1_u, m_cl),
-          nrow = ncluster
-        ), weight_lst) + matrix(apply(var2est *
-          matrix(rep(wgt1_u, m_cl^2), nrow = ncluster), 2, sum), nrow = m_cl)) /
-          tw2
+        varest <- localmean_cluster_combine(total2est, var2est, wgt1_u,
+          weight_lst, "covariance") / tw2
         temp <- diag(varest)
         if (any(temp < 0)) {
           warn_ind <- TRUE

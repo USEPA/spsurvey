@@ -73,5 +73,5 @@ test_that("legacy two-stage percentile intervals use the supported local CDF pat
   expect_true(all(is.finite(local$StdError)))
   a$vartype <- "local"
   a$subset_local <- FALSE
-  expect_error(do.call(cont_analysis, a), "two-stage")
+  expect_identical(suppressMessages(do.call(cont_analysis, a))$Pct, local)
 })

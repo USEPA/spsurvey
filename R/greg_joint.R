@@ -13,7 +13,12 @@ greg_joint_covariance <- function(context, z, vartype, design_names, warn_df = N
   if (vartype != "Local") return(list(covariance = covariance, warn_df = warn_df))
   local <- matrix(0, ncol(z), ncol(z))
   fallback <- NULL
-  for (idx in split(seq_len(nrow(z)), base$strata[[1]], drop = TRUE)) {
+  if (!is.null(design_names$clusterID)) {
+    part <- localmean_cluster_design(base, z, design_names, local_nbh, local_context)
+    local <- part$covariance
+    if (length(part$notes)) warn_df <- localmean_cluster_warning(warn_df, part$notes)
+    if (is.null(local)) fallback <- "The two-stage local covariance could not be calculated."
+  } else for (idx in split(seq_len(nrow(z)), base$strata[[1]], drop = TRUE)) {
     if (length(idx) < 4L) {
       fallback <- "A sampling stratum has fewer than four sites."
       break

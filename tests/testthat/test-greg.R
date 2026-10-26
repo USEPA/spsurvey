@@ -23,11 +23,9 @@ test_that("local GREG removes an exact auxiliary response", {
   expect_lt(actual$StdError, 1e-10)
 })
 
-test_that("GREG requires a formula and rejects two-stage designs", {
+test_that("a NULL formula retains direct estimation", {
   d <- data.frame(siteID = 1:16, weight = 5, y = cos(1:16))
   expected <- cont_analysis(d, vars = "y", vartype = "SRS", statistics = "Mean")
   actual <- cont_analysis(d, vars = "y", formula = NULL, vartype = "SRS", statistics = "Mean")
   expect_identical(actual, expected)
-  expect_error(cont_analysis(d, vars = "y", formula = ~1, popsize = c("(Intercept)" = 80),
-    clusterID = "cluster", vartype = "SRS"), "two-stage")
 })

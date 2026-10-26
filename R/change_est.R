@@ -661,10 +661,10 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
                 z2 <- factor(catvar_2[stratum_i], levels = catvar_levels)
                 m <- length(catvar_levels)
                 prop1 <- as.vector(svymean(make.formula(ivar),
-                  design = subset(design_1, stratum_i), na.rm = TRUE
+                  design = design_1[design_1$variables[[design_names$stratumID]] == stratum_levels[i], ], na.rm = TRUE
                 ))
                 prop2 <- as.vector(svymean(make.formula(ivar),
-                  design = subset(design_2, stratum_i), na.rm = TRUE
+                  design = design_2[design_2$variables[[design_names$stratumID]] == stratum_levels[i], ], na.rm = TRUE
                 ))
 
                 # Calculate covariance or correlation estimates
@@ -691,8 +691,36 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
 
                 # Add estimates to the vector for all strata combined
 
-                rslt_P[!is.na(correst)] <- rslt_P[!is.na(correst)] +
-                  (popsize_hat[i] / sum_popsize_hat) * correst[!is.na(correst)]
+                if (!revisitwgt) {
+                  revisit_1 <- change_revisit_se(
+                    design_1, design_names, stratum_levels[i], "category",
+                    itype, isubpop, ivar,
+                    catvar_levels = catvar_levels,
+                    vartype = vartype, conf = conf, mult = mult,
+                    warn_ind = warn_ind, warn_df = warn_df, local_nbh = local_nbh,
+                    local_context = localmean_group_context(local_context, survey_names[1]))
+                  warn_ind <- revisit_1$warn_ind
+                  warn_df <- revisit_1$warn_df
+                  revisit_2 <- change_revisit_se(
+                    design_2, design_names, stratum_levels[i], "category",
+                    itype, isubpop, ivar,
+                    catvar_levels = catvar_levels,
+                    vartype = vartype, conf = conf, mult = mult,
+                    warn_ind = warn_ind, warn_df = warn_df, local_nbh = local_nbh,
+                    local_context = localmean_group_context(local_context, survey_names[2]))
+                  warn_ind <- revisit_2$warn_ind
+                  warn_df <- revisit_2$warn_df
+                }
+                if (revisitwgt) {
+                  covariance <- (popsize_hat[i] / sum_popsize_hat)^2 * correst
+                } else {
+                  covariance <- correst * revisit_1$se$P * revisit_2$se$P
+                  covariance <- covariance * revisit_1$share * revisit_2$share
+                }
+                # Initialize only entries with a usable contribution; otherwise retain NA.
+                rslt_P[is.na(rslt_P) & !is.na(covariance)] <- 0
+                rslt_P[!is.na(covariance)] <- rslt_P[!is.na(covariance)] +
+                  covariance[!is.na(covariance)]
 
                 # Estimate the size of each category
 
@@ -723,8 +751,15 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
 
                 # Add estimates to the vector for all strata combined
 
-                rslt_U[!is.na(correst)] <- rslt_U[!is.na(correst)] +
-                  correst[!is.na(correst)]
+                if (revisitwgt) {
+                  covariance <- 1 * correst
+                } else {
+                  covariance <- correst * revisit_1$se$U * revisit_2$se$U
+                }
+                # Initialize only entries with a usable contribution; otherwise retain NA.
+                rslt_U[is.na(rslt_U) & !is.na(covariance)] <- 0
+                rslt_U[!is.na(covariance)] <- rslt_U[!is.na(covariance)] +
+                  covariance[!is.na(covariance)]
 
                 # End the section for nonempty vectors of categorical variable
                 # values for revisit sites for a stratum
@@ -834,7 +869,7 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
         if (any(!ind)) {
           tw_1r <- sum(weights(design_1))
           tw_2r <- sum(weights(design_2))
-          if (revisitwgt) {
+          if (revisitwgt || stratum_ind) {
             temp <- results$StdError.P_1^2 + results$StdError.P_2^2 -
               ((2 * tw_1r * tw_2r) / (tw_1 * tw_2)) * rslt_P
             ind <- !is.na(rslt_P) & temp <= 0
@@ -1268,10 +1303,10 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
                   z1 <- contvar_1[stratum_i]
                   z2 <- contvar_2[stratum_i]
                   mean1 <- as.vector(svymean(make.formula(ivar),
-                    design = subset(design_1, stratum_i), na.rm = TRUE
+                    design = design_1[design_1$variables[[design_names$stratumID]] == stratum_levels[i], ], na.rm = TRUE
                   ))
                   mean2 <- as.vector(svymean(make.formula(ivar),
-                    design = subset(design_2, stratum_i), na.rm = TRUE
+                    design = design_2[design_2$variables[[design_names$stratumID]] == stratum_levels[i], ], na.rm = TRUE
                   ))
 
                   # Calculate covariance or correlation estimates
@@ -1298,8 +1333,36 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
 
                   # Add estimates to the object for all strata combined
 
-                  rslt[!is.na(correst)] <- rslt[!is.na(correst)] +
-                    (popsize_hat[i] / sum_popsize_hat) * correst[!is.na(correst)]
+                  if (!revisitwgt) {
+                    revisit_1 <- change_revisit_se(
+                      design_1, design_names, stratum_levels[i], "mean",
+                      itype, isubpop, ivar,
+                      var_nondetect = var_nondetect,
+                      vartype = vartype, conf = conf, mult = mult,
+                      warn_ind = warn_ind, warn_df = warn_df, local_nbh = local_nbh,
+                      local_context = localmean_group_context(local_context, survey_names[1]))
+                    warn_ind <- revisit_1$warn_ind
+                    warn_df <- revisit_1$warn_df
+                    revisit_2 <- change_revisit_se(
+                      design_2, design_names, stratum_levels[i], "mean",
+                      itype, isubpop, ivar,
+                      var_nondetect = var_nondetect,
+                      vartype = vartype, conf = conf, mult = mult,
+                      warn_ind = warn_ind, warn_df = warn_df, local_nbh = local_nbh,
+                      local_context = localmean_group_context(local_context, survey_names[2]))
+                    warn_ind <- revisit_2$warn_ind
+                    warn_df <- revisit_2$warn_df
+                  }
+                  if (revisitwgt) {
+                    covariance <- (popsize_hat[i] / sum_popsize_hat)^2 * correst
+                  } else {
+                    covariance <- correst * revisit_1$se * revisit_2$se
+                    covariance <- covariance * revisit_1$share * revisit_2$share
+                  }
+                  # Initialize only entries with a usable contribution; otherwise retain NA.
+                  rslt[is.na(rslt) & !is.na(covariance)] <- 0
+                  rslt[!is.na(covariance)] <- rslt[!is.na(covariance)] +
+                    covariance[!is.na(covariance)]
 
                   # End the section for nonempty vectors of continuous variable
                   # values for revisit sites for a stratum
@@ -1379,7 +1442,7 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
           } else {
             tw_1r <- sum(weights(design_1))
             tw_2r <- sum(weights(design_2))
-            if (revisitwgt) {
+            if (revisitwgt || stratum_ind) {
               temp <- results$StdError_1^2 + results$StdError_2^2 -
                 ((2 * tw_1r * tw_2r) / (tw_1 * tw_2)) * rslt
               if (is.na(temp)) {
@@ -1775,18 +1838,18 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
                   z1 <- contvar_1[stratum_i]
                   z2 <- contvar_2[stratum_i]
                   total1 <- as.vector(svytotal(make.formula(ivar),
-                    design = subset(design_1, stratum_i), na.rm = TRUE
+                    design = design_1[design_1$variables[[design_names$stratumID]] == stratum_levels[i], ], na.rm = TRUE
                   ))
                   total2 <- as.vector(svytotal(make.formula(ivar),
-                    design = subset(design_2, stratum_i), na.rm = TRUE
+                    design = design_2[design_2$variables[[design_names$stratumID]] == stratum_levels[i], ], na.rm = TRUE
                   ))
 
                   # for local neighborhood variance
                   mean1 <- as.vector(svymean(make.formula(ivar),
-                    design = subset(design_1, stratum_i), na.rm = TRUE
+                    design = design_1[design_1$variables[[design_names$stratumID]] == stratum_levels[i], ], na.rm = TRUE
                   ))
                   mean2 <- as.vector(svymean(make.formula(ivar),
-                    design = subset(design_2, stratum_i), na.rm = TRUE
+                    design = design_2[design_2$variables[[design_names$stratumID]] == stratum_levels[i], ], na.rm = TRUE
                   ))
 
 
@@ -1799,14 +1862,14 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
                       mean2, stratum_ind, stratum_levels[i], cluster_ind,
                       clusterID[stratum_i], wgt1[stratum_i], xcoord1[stratum_i],
                       ycoord1[stratum_i], vartype, warn_ind, warn_df, warn_vec,
-                      local_nbh = local_nbh, local_context = localmean_group_context(local_context, "revisit"))
+                      local_nbh = local_nbh, local_context = localmean_group_context(local_context, "revisit"), total = TRUE)
                   } else {
                     temp <- changevar_mean(z1, z2, wgt[stratum_i],
                       xcoord[stratum_i], ycoord[stratum_i], revisitwgt, mean1,
                       mean2, stratum_ind, stratum_levels[i], cluster_ind,
                       vartype = vartype, warn_ind = warn_ind, warn_df = warn_df,
                       warn_vec = warn_vec,
-                      local_nbh = local_nbh, local_context = localmean_group_context(local_context, "revisit"))
+                      local_nbh = local_nbh, local_context = localmean_group_context(local_context, "revisit"), total = TRUE)
                   }
                   correst <- temp$rslt
                   warn_ind <- temp$warn_ind
@@ -1814,8 +1877,35 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
 
                   # Add estimates to the object for all strata combined
 
-                  rslt[!is.na(correst)] <- rslt[!is.na(correst)] +
-                    (popsize_hat[i] / sum_popsize_hat) * correst[!is.na(correst)]
+                  if (!revisitwgt) {
+                    revisit_1 <- change_revisit_se(
+                      design_1, design_names, stratum_levels[i], "total",
+                      itype, isubpop, ivar,
+                      var_nondetect = var_nondetect,
+                      vartype = vartype, conf = conf, mult = mult,
+                      warn_ind = warn_ind, warn_df = warn_df, local_nbh = local_nbh,
+                      local_context = localmean_group_context(local_context, survey_names[1]))
+                    warn_ind <- revisit_1$warn_ind
+                    warn_df <- revisit_1$warn_df
+                    revisit_2 <- change_revisit_se(
+                      design_2, design_names, stratum_levels[i], "total",
+                      itype, isubpop, ivar,
+                      var_nondetect = var_nondetect,
+                      vartype = vartype, conf = conf, mult = mult,
+                      warn_ind = warn_ind, warn_df = warn_df, local_nbh = local_nbh,
+                      local_context = localmean_group_context(local_context, survey_names[2]))
+                    warn_ind <- revisit_2$warn_ind
+                    warn_df <- revisit_2$warn_df
+                  }
+                  if (revisitwgt) {
+                    covariance <- 1 * correst
+                  } else {
+                    covariance <- correst * revisit_1$se * revisit_2$se
+                  }
+                  # Initialize only entries with a usable contribution; otherwise retain NA.
+                  rslt[is.na(rslt) & !is.na(covariance)] <- 0
+                  rslt[!is.na(covariance)] <- rslt[!is.na(covariance)] +
+                    covariance[!is.na(covariance)]
 
                   # End the section for nonempty vectors of continuous variable
                   # values for revisit sites for a stratum
@@ -1878,13 +1968,13 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
                   z1, z2, wgt2, xcoord, ycoord, revisitwgt,
                   mean1, mean2, stratum_ind, NULL, cluster_ind, clusterID, wgt1,
                   xcoord1, ycoord1, vartype, warn_ind, warn_df, warn_vec,
-                  local_nbh = local_nbh, local_context = localmean_group_context(local_context, "revisit"))
+                  local_nbh = local_nbh, local_context = localmean_group_context(local_context, "revisit"), total = TRUE)
               } else {
                 temp <- changevar_mean(z1, z2, wgt, xcoord, ycoord, revisitwgt,
                   mean1, mean2, stratum_ind, NULL, cluster_ind,
                   vartype = vartype, warn_ind = warn_ind, warn_df = warn_df,
                   warn_vec = warn_vec,
-                  local_nbh = local_nbh, local_context = localmean_group_context(local_context, "revisit"))
+                  local_nbh = local_nbh, local_context = localmean_group_context(local_context, "revisit"), total = TRUE)
               }
               rslt <- temp$rslt
               warn_ind <- temp$warn_ind
@@ -1904,9 +1994,9 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
           } else {
             tw_1r <- sum(weights(design_1))
             tw_2r <- sum(weights(design_2))
-            if (revisitwgt) {
+            if (revisitwgt || stratum_ind) {
               temp <- results$StdError_1^2 + results$StdError_2^2 -
-                ((2 * tw_1r * tw_2r) / (tw_1 * tw_2)) * rslt
+                2 * rslt
               if (is.na(temp)) {
                 temp <- 0
               }
@@ -1935,7 +2025,7 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
               se_2 <- temp$totalsum$StdError
               covest <- rslt * se_1 * se_2
               temp <- results$StdError_1^2 + results$StdError_2^2 -
-                ((2 * tw_1r * tw_2r) / (tw_1 * tw_2)) * covest
+                2 * covest
               if (is.na(temp)) {
                 temp <- 0
               }
@@ -2441,10 +2531,10 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
                     z2 <- factor(catvar_2[stratum_i], levels = catvar_levels)
                     m <- length(catvar_levels)
                     prop1 <- as.vector(svymean(make.formula(ivar),
-                      design = subset(design_1, stratum_i), na.rm = TRUE
+                      design = design_1[design_1$variables[[design_names$stratumID]] == stratum_levels[i], ], na.rm = TRUE
                     ))
                     prop2 <- as.vector(svymean(make.formula(ivar),
-                      design = subset(design_2, stratum_i), na.rm = TRUE
+                      design = design_2[design_2$variables[[design_names$stratumID]] == stratum_levels[i], ], na.rm = TRUE
                     ))
 
                     # Calculate covariance or correlation estimates
@@ -2473,8 +2563,36 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
 
                     # Add estimates to the vector for all strata combined
 
-                    rslt_P[!is.na(correst)] <- rslt_P[!is.na(correst)] +
-                      (popsize_hat[i] / sum_popsize_hat) * correst[!is.na(correst)]
+                    if (!revisitwgt) {
+                      revisit_1 <- change_revisit_se(
+                        design_1, design_names, stratum_levels[i], "category",
+                        itype, isubpop, ivar,
+                        catvar_levels = catvar_levels,
+                        vartype = vartype, conf = conf, mult = mult,
+                        warn_ind = warn_ind, warn_df = warn_df, local_nbh = local_nbh,
+                        local_context = localmean_group_context(local_context, survey_names[1]))
+                      warn_ind <- revisit_1$warn_ind
+                      warn_df <- revisit_1$warn_df
+                      revisit_2 <- change_revisit_se(
+                        design_2, design_names, stratum_levels[i], "category",
+                        itype, isubpop, ivar,
+                        catvar_levels = catvar_levels,
+                        vartype = vartype, conf = conf, mult = mult,
+                        warn_ind = warn_ind, warn_df = warn_df, local_nbh = local_nbh,
+                        local_context = localmean_group_context(local_context, survey_names[2]))
+                      warn_ind <- revisit_2$warn_ind
+                      warn_df <- revisit_2$warn_df
+                    }
+                    if (revisitwgt) {
+                      covariance <- (popsize_hat[i] / sum_popsize_hat)^2 * correst
+                    } else {
+                      covariance <- correst * revisit_1$se$P * revisit_2$se$P
+                      covariance <- covariance * revisit_1$share * revisit_2$share
+                    }
+                    # Initialize only entries with a usable contribution; otherwise retain NA.
+                    rslt_P[is.na(rslt_P) & !is.na(covariance)] <- 0
+                    rslt_P[!is.na(covariance)] <- rslt_P[!is.na(covariance)] +
+                      covariance[!is.na(covariance)]
 
                     # Estimate the size of each category
 
@@ -2507,8 +2625,15 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
 
                     # Add estimates to the vector for all strata combined
 
-                    rslt_U[!is.na(correst)] <- rslt_U[!is.na(correst)] +
-                      correst[!is.na(correst)]
+                    if (revisitwgt) {
+                      covariance <- 1 * correst
+                    } else {
+                      covariance <- correst * revisit_1$se$U * revisit_2$se$U
+                    }
+                    # Initialize only entries with a usable contribution; otherwise retain NA.
+                    rslt_U[is.na(rslt_U) & !is.na(covariance)] <- 0
+                    rslt_U[!is.na(covariance)] <- rslt_U[!is.na(covariance)] +
+                      covariance[!is.na(covariance)]
 
                     # End the section for nonempty vectors of categorical
                     # variable values for revisit sites for a stratum
@@ -2619,7 +2744,7 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
             if (any(!ind)) {
               tw_1r <- sum(weights(design_1))
               tw_2r <- sum(weights(design_2))
-              if (revisitwgt) {
+              if (revisitwgt || stratum_ind) {
                 temp <- results$StdError.P_1^2 + results$StdError.P_2^2 -
                   ((2 * tw_1r * tw_2r) / (tw_1 * tw_2)) * rslt_P
                 ind <- !is.na(rslt_P) & temp <= 0

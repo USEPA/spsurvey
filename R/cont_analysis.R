@@ -43,10 +43,9 @@
 #' @inheritSection cat_analysis GREG estimation
 #'
 #' @param subset_local Controls local neighborhood variance estimation for subpopulations.
-#'   For single-stage designs (the typical case), this defaults to \code{FALSE}.
 #'   The neighbor pool contains all eligible sites in the stratum; for direct
 #'   estimation, contributions outside the subpopulation are set to zero.
-#'   For two-stage designs, this defaults to \code{TRUE}.
+#'   The default is \code{FALSE}.
 #'
 #' @param pctval  Vector of the set of values at which percentiles are
 #'   estimated.  The default set is: \code{c(5, 10, 25, 50, 75, 90, 95)}.
@@ -172,9 +171,9 @@ cont_analysis <- function(dframe, vars, subpops = NULL, siteID = NULL,
                           jointprob = "overton", conf = 95,
                           pctval = c(5, 10, 25, 50, 75, 90, 95),
                           statistics = c("CDF", "Pct", "Mean", "Total"),
-                          All_Sites = FALSE, subset_local = NULL, subpop = NULL, local_nbh = 15) {
+                          All_Sites = FALSE, subset_local = FALSE, subpop = NULL, local_nbh = 15) {
   local_context <- localmean_context(local_nbh)
-  if (is.null(subset_local)) subset_local <- !is.null(clusterID)
+  if (is.null(subset_local)) subset_local <- FALSE
 
   if (!missing(subpop)) {
     if (!missing(subpops)) stop("Supply only one of subpops and subpop.", call. = FALSE)
@@ -195,7 +194,7 @@ cont_analysis <- function(dframe, vars, subpops = NULL, siteID = NULL,
   warn_df <- NULL
   fname <- "cont_analysis"
 
-  greg_check_call(formula, subpopsize, clusterID)
+  greg_check_call(formula, subpopsize)
   greg <- NULL
   if (!is.null(formula)) {
     if (!missing(subset_local) && isTRUE(subset_local) &&
@@ -453,16 +452,6 @@ cont_analysis <- function(dframe, vars, subpops = NULL, siteID = NULL,
   # Assign a logical value to the indicator variable for a two-stage sample
 
   cluster_ind <- !is.null(clusterID)
-
-  # subset_local = FALSE is not yet implemented for two-stage designs (the
-  # cluster_ind branches of mean_var()/total_var()/cdfvar_total()/
-  # cdfvar_prop() still always subset to domain members); fail with a clear message
-
-  if (vartype == "Local" && !subset_local && cluster_ind) {
-    stop("\nsubset_local = FALSE is not yet supported for two-stage (clustered) samples.\n")
-  }
-
-  # Create the survey design object
 
   design <- survey_design(
     dframe, siteID, weight, stratum_ind, stratumID, cluster_ind, clusterID,
