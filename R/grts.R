@@ -74,7 +74,9 @@
 #'   Larger values of the auxiliary variable result in higher inclusion probabilities.
 #'
 #' @param legacy_sites An sf object with a \code{POINT} or \code{MULTIPOINT}
-#'   geometry representing the legacy sites. spsurvey assumes that
+#'   geometry representing the legacy sites. Each row must contain exactly one
+#'   nonempty point; single-point \code{MULTIPOINT} features are converted to
+#'   \code{POINT} features. spsurvey assumes that
 #'   the legacy sites were selected from a previous sampling design that
 #'   incorporated randomness into site selection and that the legacy sites
 #'   are elements of the current sampling frame. If \code{sframe} has a
@@ -447,6 +449,11 @@ grts <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = 
     SiteBegin = SiteBegin, maxtry = maxtry, projcrs_check = projcrs_check
   )
 
+  # Validation ensures this conversion preserves one point per legacy row.
+  if (!is.null(legacy_sites) && any(st_geometry_type(legacy_sites) == "MULTIPOINT")) {
+    st_geometry(legacy_sites) <- st_cast(st_cast(st_geometry(legacy_sites), "MULTIPOINT"), "POINT")
+  }
+
   # preserve original sframe names
   sframe_names <- names(sframe)
 
@@ -680,7 +687,7 @@ grts <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = 
   }
 
   # create siteID for n_over sites if any
-  if (!is.null(n_over)) {
+  if (!is.null(sites_over)) {
     row.names(sites_over) <- 1:nrow(sites_over)
     sites_over$siteID <- siteID[(nlast + 1):(nlast + nrow(sites_over))]
     nlast <- nlast + nrow(sites_over)

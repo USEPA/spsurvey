@@ -188,6 +188,10 @@ grts_stratum <- function(stratum, dsgn, sframe, sf_type, wgt_units = NULL, pt_de
     sftmp[, addtmp] <- NA
     tmp[, addleg] <- NA
     sftmp <- rbind(tmp, sftmp)
+    # Include legacy locations in spatial addressing for every frame type.
+    coordinates <- st_coordinates(st_cast(st_geometry(sftmp), "MULTIPOINT"))
+    sftmp$xcoord <- coordinates[, "X"]
+    sftmp$ycoord <- coordinates[, "Y"]
     # Determine number of elements in stratum
     Nstratum <- nrow(sftmp)
   }

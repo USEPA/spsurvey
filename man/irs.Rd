@@ -104,7 +104,9 @@ a previous sampling design that incorporated randomness into site selection
 and that the legacy sites are elements of the current sampling frame.}
 
 \item{legacy_sites}{An sf object with a \code{POINT} or \code{MULTIPOINT}
-geometry representing the legacy sites. spsurvey assumes that
+geometry representing the legacy sites. Each row must contain exactly one
+nonempty point; single-point \code{MULTIPOINT} features are converted to
+\code{POINT} features. spsurvey assumes that
 the legacy sites were selected from a previous sampling design that
 incorporated randomness into site selection and that the legacy sites
 are elements of the current sampling frame. If \code{sframe} has a
@@ -119,7 +121,8 @@ and y-coordinates are preserved).}
 This argument is required when the sampling design is stratified and its levels
 must be contained in the levels of the \code{stratum_var} variable. The default value of \code{legacy_stratum_var}
 is \code{stratum_var}, so \code{legacy_stratum_var} need only be specified explicitly when
-the name of the stratification variable in \code{legacy_sites} differs from \code{stratum_var}.}
+the name of the stratification variable in \code{legacy_sites} differs from \code{stratum_var}.
+Stratum membership must not be missing for any legacy site.}
 
 \item{legacy_caty_var}{A character string containing the name of the column from
 \code{legacy_sites} that identifies the unequal probability variable for each element of \code{legacy_sites}.

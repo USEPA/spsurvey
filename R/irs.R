@@ -130,6 +130,11 @@ irs <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = N
     SiteBegin = SiteBegin, maxtry = maxtry, projcrs_check = projcrs_check
   )
 
+  # Validation ensures this conversion preserves one point per legacy row.
+  if (!is.null(legacy_sites) && any(st_geometry_type(legacy_sites) == "MULTIPOINT")) {
+    st_geometry(legacy_sites) <- st_cast(st_cast(st_geometry(legacy_sites), "MULTIPOINT"), "POINT")
+  }
+
   # preserve original sframe names
   sframe_names <- names(sframe)
 
@@ -363,7 +368,7 @@ irs <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = N
   }
 
   # create siteID for n_over sites if any
-  if (!is.null(n_over)) {
+  if (!is.null(sites_over)) {
     row.names(sites_over) <- 1:nrow(sites_over)
     sites_over$siteID <- siteID[(nlast + 1):(nlast + nrow(sites_over))]
     nlast <- nlast + nrow(sites_over)

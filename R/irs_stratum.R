@@ -364,7 +364,7 @@ irs_stratum <- function(stratum, dsgn, sframe, sf_type, wgt_units = NULL, pt_den
   if (n_over != 0) {
     sites_over <- sites[["sites"]][(n_base - n_legacy + 1):(n_total - n_legacy), ]
     sites_over$siteuse <- "Over"
-    sites_base[, setdiff(names(legacy_sites), names(sites_base))] <- NA
+    sites_over[, setdiff(names(legacy_sites), names(sites_over))] <- NA
   }
 
   # if no legacy sites match in strata then put in appropriate column
