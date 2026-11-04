@@ -106,10 +106,10 @@ grtspts_mindis <- function(mindis, sframe, samplesize, stratum, maxtry = 10,
     }
 
     # check if maxtry reached. If so write out warning message
-    if (ntry >= maxtry) {
+    if (ntry >= maxtry && any(!keep)) {
       keep <- rep(TRUE, nr)
       warn <- paste0("Minimum distance between sites not attained after ", maxtry, " attempts.")
-      if (warn_ind) { # this code has a bug but is never called (the rbind fails because warn_df has a column warn and the bind has a column warning)
+      if (isTRUE(warn_ind)) {
         warn_df <- rbind(warn_df, data.frame(
           stratum = stratum, func = I("grtspts_mindis"),
           warning = warn

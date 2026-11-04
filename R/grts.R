@@ -454,6 +454,17 @@ grts <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = 
     st_geometry(legacy_sites) <- st_cast(st_cast(st_geometry(legacy_sites), "MULTIPOINT"), "POINT")
   }
 
+  # Keep original auxiliary values for output; sampling uses numeric aux.
+  aux_original <- NULL
+  legacy_aux_original <- NULL
+  if (!is.null(aux_var) && inherits(sframe[[aux_var]], "units")) {
+    aux_original <- sframe[[aux_var]]
+    if (!is.null(legacy_sites)) {
+      legacy_aux <- if (is.null(legacy_aux_var)) aux_var else legacy_aux_var
+      legacy_aux_original <- legacy_sites[[legacy_aux]]
+    }
+  }
+
   # preserve original sframe names
   sframe_names <- names(sframe)
 
@@ -478,7 +489,9 @@ grts <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = 
 
   # set caty, aux and legacy variables in sampling frame if needed
   if (!is.null(caty_var)) sframe$caty <- as.character(sframe[[caty_var]])
-  if (!is.null(aux_var)) sframe$aux <- sframe[[aux_var]]
+  if (!is.null(aux_var)) {
+    sframe$aux <- if (is.null(aux_original)) sframe[[aux_var]] else as.numeric(aux_original)
+  }
   if (!is.null(legacy_var)) sframe$legacy <- sframe[[legacy_var]]
 
   # set stratum, caty, aux and legacy variables in legacy_sites if needed
@@ -504,7 +517,13 @@ grts <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = 
       if (is.null(legacy_aux_var)) {
         legacy_aux_var <- aux_var
       }
-      legacy_sites$aux <- legacy_sites[[legacy_aux_var]]
+      if (is.null(legacy_aux_original)) {
+        legacy_sites$aux <- legacy_sites[[legacy_aux_var]]
+      } else {
+        legacy_sites$aux <- as.numeric(units::set_units(
+          legacy_aux_original, units(aux_original), mode = "standard"
+        ))
+      }
     }
     if (is.null(legacy_var)) {
       legacy_sites$legacy <- TRUE
@@ -781,6 +800,19 @@ grts <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = 
 
   dsgn_names_extra <- c(dsgn_names, "xcoord", "ycoord", "idpts")
 
+  # Save values by source-row identity before the internal IDs are removed.
+  # Row binding can change units or drop them on original attribute columns.
+  aux_output <- NULL
+  if (!is.null(aux_original)) {
+    aux_output <- list(
+      sites_base = aux_original[sites_base$id],
+      sites_over = aux_original[sites_over$id],
+      sites_near = aux_original[sites_near$id],
+      sites_legacy = if (is.null(legacy_aux_original)) aux_original[sites_legacy$id] else
+        legacy_aux_original[sites_legacy$idpts]
+    )
+  }
+
   if (geom_col_name != "geometry") {
     # sframe prefix if necessary
     if (geom_col_name %in% dsgn_names_extra) {
@@ -969,6 +1001,23 @@ grts <- function(sframe, n_base, stratum_var = NULL, seltype = NULL, caty_var = 
     sites_over = sites_over, sites_near = sites_near,
     design = dsgn, sp_balance = sp_balance_out
   )
+
+  # Restore the original auxiliary column, including its units, after sampling
+  # and balance calculations, only where output formatting retained the column.
+  # Keep the internal aux column plain numeric.
+  for (component in names(aux_output)) {
+    if (!is.null(sites[[component]])) {
+      separate_legacy <- component == "sites_legacy" && !is.null(legacy_aux_original)
+      column <- if (separate_legacy) legacy_aux_var else aux_var
+      if (column %in% dsgn_names_extra) {
+        prefix <- if (separate_legacy && sf_type != "sf_point") "legacy_sites" else "sframe"
+        column <- paste(prefix, column, sep = "_")
+      }
+      if (column %in% names(sites[[component]])) {
+        sites[[component]][[column]] <- aux_output[[component]]
+      }
+    }
+  }
 
   # As necessary, output a message indicating that warning messages were generated
   # during execution of the program

@@ -16,10 +16,13 @@ via the `formula`, `popsize`, and `subpopsize` arguments.
 * Improved computational efficiency of the local neighborhood variance estimator by leveraging sparse matrix results and reusing neighborhoods across subpopulation estimators.
 * Minor documentation updates.
 * Minor internal consistency updates.
+* Minor error message updates.
 * Minor warning message updates.
 
 ## Bug Fixes
 
+* Fixed a bug that prevented `grts()` and `irs()` from accepting auxiliary columns with units from `units`.
+* Fixed a bug in `irs()` that prevented minimum-distance retries from updating the selected sample.
 * Fixed a bug in sample-size checks for `grts()` and `irs()` that occurred when `legacy_sites` was specified and `sframe` had `POINT` geometry (#51).
 * Fixed a bug in `grts()` ordering when `legacy_sites` was specified. For designs with `legacy_sites`, the same seed may now select different sites compared to prior `spsurvey` versions.
 * Fixed a bug that caused an error in `irs()` when legacy sites filled the base sample and oversample sites were requested.

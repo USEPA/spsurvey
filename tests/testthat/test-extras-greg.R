@@ -4,8 +4,6 @@ skip_if_not(
   "set Sys.setenv(SPSURVEY_RUN_EXTRAS = 'true') before devtools::test() to run the extras suite"
 )
 
-source("tests-extras-greg-helper.R", local = TRUE)
-
 test_that("GREG totals, ratios and nonlocal uncertainty agree with survey", {
   d <- greg_data()
   for (type in c("SRS", "HT", "YG")) {

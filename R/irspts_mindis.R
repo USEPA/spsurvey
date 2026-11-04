@@ -1,5 +1,5 @@
 ###############################################################################
-# Function: grtspts_mindis (not exported)
+# Function: irspts_mindis (not exported)
 # Programmer:  Tony Olsen
 # Date: January 22, 2021
 #
@@ -29,15 +29,12 @@ irspts_mindis <- function(mindis, sframe, samplesize, stratum, maxtry = 10,
 
   # select initial set of sites
   if (nrow(sframe) <= samplesize) {
-    samp_id <- sframe$idpts
+    sites_base <- sframe
   } else {
-    # randomly shuffle site order
-    sframe <- sframe[sample(1:nrow(sframe)), ]
-    s <- UPpivotal(sframe$ip)
-    samp_id <- sframe$idpts[round(s) == 1]
+    sites <- sframe[sample(seq_len(nrow(sframe))), ]
+    s <- UPpivotal(sites$ip)
+    sites_base <- sites[round(s) == 1, ]
   }
-  # extract sites from sample frame
-  sites_base <- sframe[sframe$idpts %in% samp_id, ]
 
   # calculate distance between sites
   site_dist <- st_distance(sites_base)
@@ -71,9 +68,9 @@ irspts_mindis <- function(mindis, sframe, samplesize, stratum, maxtry = 10,
     sframe$ip <- grtspts_ipleg(sframe$ip_init, sframe$probdis)
 
     # select new sites that include legacy sites
-    samp_id <- sample(sframe$idpts, samplesize, prob = sframe$ip)
-    # extract sites from sample frame
-    sites <- sframe[sframe$idpts %in% samp_id, ]
+    sites <- sframe[sample(seq_len(nrow(sframe))), ]
+    s <- UPpivotal(sites$ip)
+    sites_base <- sites[round(s) == 1, ]
 
     # calculate distance between sites
     site_dist <- st_distance(sites_base)
@@ -91,17 +88,17 @@ irspts_mindis <- function(mindis, sframe, samplesize, stratum, maxtry = 10,
     }
 
     # check if maxtry reached. If so write out warning message
-    if (ntry >= maxtry) {
+    if (ntry >= maxtry && any(!keep)) {
       keep <- rep(TRUE, nr)
       warn <- paste0("Minimum distance between sites not attained after ", maxtry, " attempts.")
-      if (warn_ind) { # this code has a bug but is never called (the rbind fails because warn_df has a column warn and the bind has a column warning)
+      if (isTRUE(warn_ind)) {
         warn_df <- rbind(warn_df, data.frame(
-          stratum = stratum, func = I("grtspts_mindis"),
+          stratum = stratum, func = I("irspts_mindis"),
           warning = warn
         ))
       } else {
         warn_ind <- TRUE
-        warn_df <- data.frame(stratum = stratum, func = I("grtspts_mindis"), warning = warn)
+        warn_df <- data.frame(stratum = stratum, func = I("irspts_mindis"), warning = warn)
       }
     } else {
       ntry <- ntry + 1

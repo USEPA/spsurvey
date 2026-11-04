@@ -121,8 +121,7 @@ and y-coordinates are preserved).}
 This argument is required when the sampling design is stratified and its levels
 must be contained in the levels of the \code{stratum_var} variable. The default value of \code{legacy_stratum_var}
 is \code{stratum_var}, so \code{legacy_stratum_var} need only be specified explicitly when
-the name of the stratification variable in \code{legacy_sites} differs from \code{stratum_var}.
-Stratum membership must not be missing for any legacy site.}
+the name of the stratification variable in \code{legacy_sites} differs from \code{stratum_var}.}
 
 \item{legacy_caty_var}{A character string containing the name of the column from
 \code{legacy_sites} that identifies the unequal probability variable for each element of \code{legacy_sites}.

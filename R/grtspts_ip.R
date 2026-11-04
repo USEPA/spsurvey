@@ -73,41 +73,6 @@ grtspts_ip <- function(type = "equal", n_base, Nstratum = NULL, caty = NULL,
   # proportional inclusion probabilities
   if (type == "proportional") {
     ip <- aux
-    # check for "0" and negative values. if negative set to "0".
-    nnull <- sum(aux == 0)
-    nneg <- sum(aux < 0)
-    if (nnull > 0) {
-      warn <- "Proportional vector has zero values and their inclusion probabilities are set to 0."
-      if (is.null(warn_ind)) {
-        warn_df <- data.frame(stratum = NA, func = I("grtspts_ip"), warning = warn)
-        warn_ind <- TRUE
-      } else {
-        if (warn_ind) {
-          warn_df <- rbind(warn_df, data.frame(
-            stratum = NA, func = I("grtspts_ip"),
-            warning = warn
-          ))
-        } else {
-          warn_df <- data.frame(stratum = NA, func = I("grtspts_ip"), warning = warn)
-          warn_ind <- TRUE
-        }
-      }
-    }
-
-    if (nneg > 0) {
-      ip[ip < 0] <- 0
-      warn <- paste0("Proportional vector has ", nneg, " negative value(s) and
-              their inclusion probabilities are set to 0.")
-      if (warn_ind) {
-        warn_df <- data.frame(stratum = NA, func = I("grtspts_ip"), warning = warn)
-      } else {
-        warn_df <- rbind(warn_df, data.frame(
-          stratum = NA, func = I("grtspts_ip"),
-          warning = warn
-        ))
-        warn_ind <- TRUE
-      }
-    }
     # initialize inclusion probabilities
     ip <- n_base * ip / sum(ip)
 

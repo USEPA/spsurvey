@@ -162,17 +162,16 @@ dsgn_check <- function(sframe, sf_type, legacy_sites, legacy_option, stratum, se
       stop_ind <- TRUE
       stop_mess <- "The value provided for the auxillary variable for proportional sampling does not exist as a variable in sframe."
       stop_df <- rbind(stop_df, data.frame(func = I("aux_var"), I(stop_mess)))
-    }
-    # ensure class for aux variable is numeric
-    if (!is.numeric(sframe[[aux_var]])) {
+    } else if (!is.numeric(sframe[[aux_var]]) || is.complex(sframe[[aux_var]])) {
       stop_ind <- TRUE
-      stop_mess <- "The auxillary variable in sample frame for proportional sampling must be numeric."
+      stop_mess <- "The auxiliary variable in sframe for proportional sampling must be real numeric."
       stop_df <- rbind(stop_df, data.frame(func = I("aux_var"), I(stop_mess)))
     } else {
-      # check that values are > 0.
-      if (any(sframe[[aux_var]] <= 0)) {
+      aux_values <- sframe[[aux_var]]
+      if (inherits(aux_values, "units")) aux_values <- as.numeric(aux_values)
+      if (any(!is.finite(aux_values)) || any(aux_values <= 0)) {
         stop_ind <- TRUE
-        stop_mess <- "The auxillary variable for proportional sampling must have all values greater than zero"
+        stop_mess <- "The auxiliary variable in sframe for proportional sampling must contain finite numeric values greater than zero."
         stop_df <- rbind(stop_df, data.frame(func = I("aux_var"), I(stop_mess)))
       }
     }
@@ -217,15 +216,52 @@ dsgn_check <- function(sframe, sf_type, legacy_sites, legacy_option, stratum, se
       if (match(caty_var, names(legacy_sites), nomatch = 0) == 0) {
         stop_ind <- TRUE
         stop_mess <- "The value provided for caty variable does not exist as a variable in legacy_sites."
-        stop_df <- rbind(stop_df, data.frame(func = I("stratum_var"), I(stop_mess)))
+        stop_df <- rbind(stop_df, data.frame(func = I("legacy_caty_var"), I(stop_mess)))
       }
     }
-    # If aux_var is provided, does the attribute exist
-    if (!is.null(aux_var) & is.null(legacy_aux_var)) {
-      if (match(aux_var, names(legacy_sites), nomatch = 0) == 0) {
+    # Validate only the effective legacy auxiliary column, when aux_var is used.
+    if (!is.null(aux_var)) {
+      legacy_aux <- if (is.null(legacy_aux_var)) aux_var else legacy_aux_var
+      if (!(legacy_aux %in% names(legacy_sites))) {
         stop_ind <- TRUE
-        stop_mess <- "The value provided for aux variable does not exist as a variable in legacy_sites."
-        stop_df <- rbind(stop_df, data.frame(func = I("stratum_var"), I(stop_mess)))
+        stop_mess <- paste0("The auxiliary variable '", legacy_aux, "' does not exist in legacy_sites.")
+        stop_df <- rbind(stop_df, data.frame(func = I("legacy_aux_var"), I(stop_mess)))
+      } else if (!is.numeric(legacy_sites[[legacy_aux]]) || is.complex(legacy_sites[[legacy_aux]])) {
+        stop_ind <- TRUE
+        stop_mess <- paste0("The auxiliary variable '", legacy_aux, "' in legacy_sites must be real numeric.")
+        stop_df <- rbind(stop_df, data.frame(func = I("legacy_aux_var"), I(stop_mess)))
+      } else {
+        legacy_values <- legacy_sites[[legacy_aux]]
+        if (inherits(legacy_values, "units")) legacy_values <- as.numeric(legacy_values)
+        if (any(!is.finite(legacy_values)) || any(legacy_values <= 0)) {
+          stop_ind <- TRUE
+          stop_mess <- paste0("The auxiliary variable '", legacy_aux,
+                              "' in legacy_sites must contain finite numeric values greater than zero.")
+          stop_df <- rbind(stop_df, data.frame(func = I("legacy_aux_var"), I(stop_mess)))
+        }
+        if (aux_var %in% names(sframe) && is.numeric(sframe[[aux_var]]) && !is.complex(sframe[[aux_var]])) {
+          frame_units <- inherits(sframe[[aux_var]], "units")
+          legacy_units <- inherits(legacy_sites[[legacy_aux]], "units")
+          if (frame_units != legacy_units) {
+            stop_ind <- TRUE
+            stop_mess <- "The auxiliary columns in sframe and legacy_sites must either both have units or both have no units."
+            stop_df <- rbind(stop_df, data.frame(func = I("legacy_aux_var"), I(stop_mess)))
+          } else if (frame_units) {
+            converted <- tryCatch(
+              units::set_units(legacy_sites[[legacy_aux]], units(sframe[[aux_var]]), mode = "standard"),
+              error = function(e) NULL
+            )
+            if (is.null(converted)) {
+              stop_ind <- TRUE
+              stop_mess <- "The auxiliary units in legacy_sites must be convertible to the auxiliary units in sframe."
+              stop_df <- rbind(stop_df, data.frame(func = I("legacy_aux_var"), I(stop_mess)))
+            } else if (any(!is.finite(as.numeric(converted))) || any(as.numeric(converted) <= 0)) {
+              stop_ind <- TRUE
+              stop_mess <- "The auxiliary values in legacy_sites must be finite and greater than zero after conversion to the units in sframe."
+              stop_df <- rbind(stop_df, data.frame(func = I("legacy_aux_var"), I(stop_mess)))
+            }
+          }
+        }
       }
     }
     # If legacy_var is provided, does the attribute exist
