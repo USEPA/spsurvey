@@ -12,7 +12,7 @@ greg_quantiles <- function(y, w, p) {
 }
 
 greg_percentile_est <- function(result, dframe, itype, domains, ivar, greg,
-                                design_names, vartype, conf, pctval, warn_df, local_nbh = 15, local_context = NULL) {
+                                design_names, vartype, conf, pctval, warn_df, local_nbh = 10, local_context = NULL) {
   y <- dframe[[ivar]]
   critical <- stats::qnorm(.5 + conf / 200)
   for (domain in sort(domains)) {

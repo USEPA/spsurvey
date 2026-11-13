@@ -88,7 +88,7 @@
 cdfvar_total <- function(z, wgt, x, y, val, stratum_ind, stratum_level,
                          cluster_ind, clusterID, wgt1, x1, y1, warn_ind,
                          warn_df, warn_vec, subset_local = FALSE,
-                         subpop_ind = NULL, local_nbh = 15, local_context = NULL) {
+                         subpop_ind = NULL, local_nbh = 10, local_context = NULL) {
   local_context <- localmean_group_context(local_context,
     if (is.null(stratum_level)) "unstratified" else paste0("stratum:", stratum_level))
   # Parallels cdfvar_prop() (see that file for the underlying local mean

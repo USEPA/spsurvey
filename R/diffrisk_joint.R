@@ -2,7 +2,7 @@
 # fitted here. The four columns are poor-response totals and stressor margins.
 diffrisk_joint <- function(design, response, stressor, response_levels,
                           stressor_levels, domain, design_names, vartype,
-                          subset_local, warn_ind, warn_df, labels, local_nbh = 15, local_context = NULL) {
+                          subset_local, warn_ind, warn_df, labels, local_nbh = 10, local_context = NULL) {
   observed <- !is.na(response) & !is.na(stressor)
   member <- domain & observed
   poor <- response %in% response_levels[1]

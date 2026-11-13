@@ -176,7 +176,7 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
                        survey_2, itype, isubpop, ivar, lev_ivar, nlev_ivar,
                        design_1, design_2, design_names, repeat_1, repeat_2,
                        siteID, revisitwgt, test, var_nondetect, vartype, conf,
-                       mult, warn_ind, warn_df, warn_vec, subset_local = FALSE, local_nbh = 15, local_context = NULL) {
+                       mult, warn_ind, warn_df, warn_vec, subset_local = FALSE, local_nbh = 10, local_context = NULL) {
   # ============================================================================
   # Function map: individual computations reuse the mean/total/
   # category estimators and the local mean variance estimator documented in

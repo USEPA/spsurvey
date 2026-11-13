@@ -29,3 +29,21 @@ test_that("a NULL formula retains direct estimation", {
   actual <- cont_analysis(d, vars = "y", formula = NULL, vartype = "SRS", statistics = "Mean")
   expect_identical(actual, expected)
 })
+
+test_that("cached GREG residuals agree with lm.wfit on the response scale", {
+  d <- data.frame(w = seq(2, 5, length.out = 12), x = seq(-1, 2, length.out = 12))
+  base <- survey::svydesign(~1, weights = ~w, data = d)
+  X <- model.matrix(~x, d)
+  context <- greg_calibrate(base, X, c("(Intercept)" = 45, x = 20), "test")
+  y <- sin(seq_len(nrow(d)))
+  y[c(2, 8)] <- NA
+  v <- as.numeric(!is.na(y) & d$x > 0)
+  q <- y
+  q[v == 0] <- 0
+  ratio <- sum(context$calibrated_weights * q) / sum(context$calibrated_weights * v)
+  u <- cbind(total = q, mean = q - ratio * v)
+  expected <- lm.wfit(x = X, y = u, w = d$w)$residuals
+  expect_equal(unname(greg_residual(context, u)), unname(expected), tolerance = 1e-12)
+  expect_equal(as.numeric(greg_residual(context, u)[, 2]),
+    as.numeric(greg_residual(context, q) - ratio * greg_residual(context, v)), tolerance = 1e-12)
+})

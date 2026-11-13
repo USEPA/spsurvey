@@ -3,7 +3,7 @@
 # design weights, then let changevar_mean() supply both stages and its
 # established singleton, small-PSU and failed-neighborhood conventions.
 greg_cluster_revisit <- function(first, second, z1, z2, i, j, warn_df,
-                                 local_nbh = 15, local_context = NULL) {
+                                 local_nbh = 10, local_context = NULL) {
   covariance <- 0
   strata <- as.character(first$base$strata[[1]][i])
   for (h in unique(strata)) {

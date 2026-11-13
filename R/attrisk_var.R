@@ -100,7 +100,7 @@
 attrisk_var <- function(response, stressor, response_levels, stressor_levels,
                         wgt, x, y, stratum_ind, stratum_level, cluster_ind,
                         cluster, wgt1, x1, y1, vartype, warn_ind, warn_df,
-                        warn_vec, subset_local = FALSE, subpop_ind = NULL, local_nbh = 15, local_context = NULL) {
+                        warn_vec, subset_local = FALSE, subpop_ind = NULL, local_nbh = 10, local_context = NULL) {
   local_context <- localmean_group_context(local_context,
     if (is.null(stratum_level)) "unstratified" else paste0("stratum:", stratum_level))
   # Attributable risk is built from a 2x2 contingency table crossing the

@@ -9,7 +9,7 @@ greg_time_args <- function(env) {
   args
 }
 
-greg_build_occasion <- function(args, vars_cat, vars_cont, local_nbh = 15, local_context = NULL) {
+greg_build_occasion <- function(args, vars_cat, vars_cont, local_nbh = 10, local_context = NULL) {
   data <- args$dframe
   if (inherits(data, "sf")) {
     xy <- sf::st_coordinates(data)
@@ -54,7 +54,7 @@ greg_build_occasion <- function(args, vars_cat, vars_cont, local_nbh = 15, local
     revisitwgt = args$revisitwgt, local_context = local_context)
 }
 
-greg_occasions <- function(args, occasionID, occasions, vars_cat, vars_cont, check_revisits = TRUE, local_nbh = 15, local_context = NULL) {
+greg_occasions <- function(args, occasionID, occasions, vars_cat, vars_cont, check_revisits = TRUE, local_nbh = 10, local_context = NULL) {
   if (length(occasionID) != 1L || !occasionID %in% names(args$dframe) ||
       length(args$siteID) != 1L || !args$siteID %in% names(args$dframe)) {
     stop("GREG change/trend requires occasion and site ID columns.", call. = FALSE)
@@ -96,7 +96,7 @@ greg_occasions <- function(args, occasionID, occasions, vars_cat, vars_cont, che
   result
 }
 
-greg_time_estimate <- function(occasions, responses, type, domain, ratio, conf, revisit_covariance = TRUE, local_nbh = 15, local_context = NULL) {
+greg_time_estimate <- function(occasions, responses, type, domain, ratio, conf, revisit_covariance = TRUE, local_nbh = 10, local_context = NULL) {
   k <- length(occasions)
   estimates <- counts <- numeric(k)
   covariance <- matrix(0, k, k)
@@ -169,7 +169,7 @@ greg_change_row <- function(ans, occasions, type, domain, variable, conf, scale 
   row
 }
 
-greg_change <- function(args, vars_cat, vars_cont, test, surveyID, survey_names, local_nbh = 15, local_context = NULL) {
+greg_change <- function(args, vars_cat, vars_cont, test, surveyID, survey_names, local_nbh = 10, local_context = NULL) {
   available <- unique(as.character(args$dframe[[surveyID]]))
   if (is.null(survey_names)) survey_names <- available
   survey_names <- as.character(survey_names)
@@ -233,7 +233,7 @@ greg_change <- function(args, vars_cat, vars_cont, test, surveyID, survey_names,
   out
 }
 
-greg_trend <- function(args, vars_cat, vars_cont, yearID, model_cat, model_cont, local_nbh = 15, local_context = NULL) {
+greg_trend <- function(args, vars_cat, vars_cont, yearID, model_cat, model_cont, local_nbh = 10, local_context = NULL) {
   years <- sort(unique(as.numeric(as.character(args$dframe[[yearID]]))))
   if (length(years) < 3L || any(!is.finite(years))) stop("GREG trends require at least three finite numeric occasions.", call. = FALSE)
   occasions <- greg_occasions(args, yearID, as.character(years), vars_cat, vars_cont, check_revisits = FALSE, local_nbh = local_nbh, local_context = local_context)

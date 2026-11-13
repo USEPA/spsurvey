@@ -1,7 +1,7 @@
 # Each analysis uses its prepared neighborhoods. Entries retain the exact ordered
 # construction inputs: response missingness, strata and adjusted weights therefore
 # should not accidentally share an incompatible neighborhood.
-localmean_context <- function(local_nbh = 15) {
+localmean_context <- function(local_nbh = 10) {
   context <- new.env(parent = emptyenv())
   context$nbh <- local_nbh
   context$neighborhoods <- list()
@@ -19,7 +19,7 @@ localmean_group_context <- function(context, key) {
   context$group_contexts[[key]]
 }
 
-localmean_weight_internal <- function(x, y, prb, local_nbh = 15, local_context = NULL) {
+localmean_weight_internal <- function(x, y, prb, local_nbh = 10, local_context = NULL) {
   if (is.null(local_context)) return(localmean_weight(x, y, prb, nbh = local_nbh))
   if (!identical(as.numeric(local_nbh), as.numeric(local_context$nbh))) {
     stop("Internal local_nbh does not match the neighborhood context.", call. = FALSE)

@@ -135,7 +135,7 @@ test_that("negative repeat covariance increases the change variance", {
   }
 })
 
-test_that("stratum-indicator GREG and direct local change agree on All Sites ratios", {
+test_that("stratum calibration preserves the retained repeat covariance", {
   for (clustered in c(FALSE, TRUE)) for (partial in c(FALSE, TRUE)) for (equal in c(FALSE, TRUE)) {
     a <- change_covariance_fixture(clustered, TRUE, partial, equal, "Local")$args
     a$test <- "mean"; a$dframe$stratum <- factor(a$dframe$stratum)
@@ -144,8 +144,17 @@ test_that("stratum-indicator GREG and direct local change agree on All Sites rat
     a$popsize <- lapply(split(a$dframe, a$dframe$year), function(d)
       colSums(model.matrix(~0 + stratum, d) * d$weight * if (clustered) d$weight1 else 1))
     greg <- change_covariance_run(a)
-    expect_equal(greg$contsum_mean$StdError, direct$contsum_mean$StdError, tolerance = 1e-10)
-    expect_equal(greg$catsum$StdError.P, direct$catsum$StdError.P, tolerance = 1e-10)
+    for (item in c("contsum_mean", "catsum")) {
+      field <- if (item == "catsum") "StdError.P" else "StdError"
+      repeat_cov <- function(x) (x[[paste0(field, "_1")]]^2 +
+        x[[paste0(field, "_2")]]^2 - x[[field]]^2) / 2
+      expect_equal(repeat_cov(greg[[item]]), repeat_cov(direct[[item]]), tolerance = 1e-10)
+      # Equal within-stratum weights make the All Sites stratum shares fixed,
+      # so calibrating to those sizes preserves both occasion and change SEs.
+      if (equal) for (se in c(field, paste0(field, c("_1", "_2")))) {
+        expect_equal(greg[[item]][[se]], direct[[item]][[se]], tolerance = 1e-10)
+      }
+    }
   }
 })
 

@@ -70,12 +70,10 @@
 
 cdf_localmean_prop <- function(itype, lev_itype, nlev_itype, ivar, design,
                                design_names, cdfval, ncdfval, cdfest_P, mult,
-                               warn_ind, warn_df, subset_local = FALSE, local_nbh = 15, local_context = NULL) {
-  # Parallels cat_localmean_prop(), but computes the local mean variance of
-  # the CDF proportion estimate at each threshold in cdfval (rather than of
-  # a fixed set of category proportions), via cdfvar_prop(). Per-stratum
-  # variances are combined using the same population-size-share-weighted
-  # formula as mean_localmean()/cat_localmean_prop().
+                               warn_ind, warn_df, subset_local = FALSE, local_nbh = 10, local_context = NULL) {
+  # Stratified ratios use the overall estimate and denominator. Summing
+  # local variances of these contributions retains uncertainty in the
+  # estimated stratum sizes, including for All Sites.
 
   # Assign a value to the function name variable
 
@@ -184,116 +182,16 @@ cdf_localmean_prop <- function(itype, lev_itype, nlev_itype, ivar, design,
     # Branch for a stratified sample
 
     if (stratum_ind) {
-      # Calculate values required for weighting strata
-
-      if (cluster_ind) {
-        popsize_hat <- tapply(wgt1[tst] * wgt2[tst], stratum, sum)
-        sum_popsize_hat <- sum(wgt1[tst] * wgt2[tst])
-      } else {
-        popsize_hat <- tapply(wgt[tst], stratum, sum)
-        sum_popsize_hat <- sum(wgt[tst])
-      }
-
-      # Begin the subsection for individual strata
-
-      for (i in 1:nstrata) {
-        # Calculate CDF estimates for the stratum
-
-        stratum_i <- tst & stratumID == stratum_levels[i]
-        if (cluster_ind) {
-          cdfest_st <- cdf_prop(
-            contvar[stratum_i], wgt2[stratum_i], cdfval,
-            cluster_ind, clusterID[stratum_i], wgt1[stratum_i]
-          )
-        } else {
-          # cdfest_st is the domain's own CDF point estimate for this
-          # stratum and is unaffected by subset_local, always computed from
-          # domain members only (stratum_i), regardless of what feeds the
-          # variance call below.
-          cdfest_st <- cdf_prop(
-            contvar[stratum_i], wgt[stratum_i], cdfval,
-            cluster_ind
-          )
-        }
-
-        # Calculate variance estimates
-
-        if (cluster_ind) {
-          temp <- cdfvar_prop(
-            contvar[stratum_i], wgt2[stratum_i],
-            xcoord[stratum_i], ycoord[stratum_i], cdfval, cdfest_st,
-            stratum_ind, stratum_levels[i], cluster_ind, clusterID[stratum_i],
-            wgt1[stratum_i], xcoord1[stratum_i], ycoord1[stratum_i], warn_ind,
-            warn_df, warn_vec,
-            local_nbh = local_nbh, local_context = local_context)
-        } else {
-          # stratum_data_i is the row mask actually fed to cdfvar_prop():
-          # under subset_local = TRUE it's identical to stratum_i (domain
-          # members only); under FALSE it widens to
-          # every responded site in this stratum, and subpop_ind_full
-          # tells cdfvar_prop() which of those rows are real domain
-          # members so it can zero out the rest.
-          stratum_data_i <- if (subset_local) {
-            stratum_i
-          } else {
-            tst_resp & stratumID == stratum_levels[i]
-          }
-          temp <- cdfvar_prop(contvar[stratum_data_i], wgt[stratum_data_i],
-            xcoord[stratum_data_i], ycoord[stratum_data_i], cdfval, cdfest_st,
-            stratum_ind, stratum_levels[i], cluster_ind,
-            warn_ind = warn_ind,
-            warn_df = warn_df, warn_vec = warn_vec, subset_local = subset_local,
-            subpop_ind = subpop_ind_full[stratum_data_i],
-            local_nbh = local_nbh, local_context = local_context)
-        }
-        warn_ind <- temp$warn_ind
-        warn_df <- temp$warn_df
-        if (any(temp$varest < 0)) {
-          temp$vartype <- "SRS"
-          warn_ind <- TRUE
-          act <- "The simple random sampling variance estimator for an infinite population was used.\n"
-          warn <- paste0("The local mean variance estimator produced one or more  negative variance estimates in \nstratum \"", stratum_levels[i], "\", the simple random sampling variance estimator for an infinite \npopulation was used to calculate variance of the CDF proportion estimates.\n")
-          warn_df <- rbind(warn_df, data.frame(
-            func = I(fname),
-            subpoptype = warn_vec[1], subpop = warn_vec[2],
-            indicator = warn_vec[3], stratum = I(stratum_levels[i]),
-            warning = I(warn), action = I(act)
-          ))
-        }
-        if (temp$vartype == "SRS") {
-          # the fallback estimate must cover only this stratum (stratum_i),
-          # not the whole subpopulation (tst); this loop contributes one
-          # stratum's variance at a time
-          rslt_svy <- lapply(cdfval, function(x) {
-            svymean(make.formula(paste0("I(", ivar, " <= ", x, ")")),
-              design = subset(design, stratum_i), na.rm = TRUE
-            )
-          })
-          varest <- sapply(rslt_svy, function(x) SE(x)[2])^2
-        } else {
-          varest <- temp$varest
-        }
-
-        # Add estimates to the stderr_P data frame
-
-        stderr_P[isubpop, ] <- stderr_P[isubpop, ] +
-          ((popsize_hat[i] / sum_popsize_hat)^2) * varest
-
-        # End the subsection for individual strata
-      }
-
-      # Begin the subsection for all strata combined
-
-      # Add estimates to the data frames for results
-
-      stderr_P[isubpop, ] <- sqrt(stderr_P[isubpop, ])
-      lbound <- unlist(pmax(prop - mult * stderr_P[isubpop, ], 0))
-      ubound <- unlist(pmin(prop + mult * stderr_P[isubpop, ], 1))
-      temp <- paste(lev_itype[isubpop], 1:ncdfval, sep = ":")
-      ind <- rownames(confval_P) %in% temp
-      confval_P[ind, ] <- cbind(lbound, ubound)
-
-      # End the subsection for all strata combined
+      response <- outer(contvar, cdfval, `<=`)
+      full <- localmean_ratio(design, response, subpop_ind_full,
+        tst_resp, prop, design_names, warn_df, warn_vec,
+        subset_local, local_nbh, local_context)
+      sdest <- sqrt(full$covariance)
+      stderr_P[isubpop, seq_along(sdest)] <- sdest
+      rows <- paste(lev_itype[isubpop], seq_len(ncdfval), sep = ":")
+      confval_P[rows, ] <- cbind(pmax(prop - mult * sdest, 0), pmin(prop + mult * sdest, 1))
+      warn_df <- full$warn_df
+      warn_ind <- warn_ind || full$warn_ind
 
       # Branch for an unstratified sample
     } else {

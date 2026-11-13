@@ -4,7 +4,7 @@
 \alias{localmean_weight}
 \title{Internal Function: Local Mean Variance Neighbors and Weights}
 \usage{
-localmean_weight(x, y, prb, nbh = 15)
+localmean_weight(x, y, prb, nbh = 10)
 }
 \arguments{
 \item{x}{Vector of x-coordinates for location of the sample points.}

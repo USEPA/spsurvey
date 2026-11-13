@@ -2,7 +2,7 @@
 # zeroed before linearization; genuine item nonresponse is handled separately.
 localmean_cluster_domain <- function(design, response, member, responded, ratio,
                                      design_names, warn_df, labels,
-                                     local_nbh = 15, local_context = NULL,
+                                     local_nbh = 10, local_context = NULL,
                                      estimate = NULL, type = "diagonal") {
   response <- as.matrix(response)
   q <- response

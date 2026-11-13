@@ -85,7 +85,7 @@
 
 total_var <- function(z, wgt, x, y, stratum_ind, stratum_level, cluster_ind,
                       cluster, wgt1, x1, y1, warn_ind, warn_df, warn_vec,
-                      subset_local = FALSE, subpop_ind = NULL, local_nbh = 15, local_context = NULL) {
+                      subset_local = FALSE, subpop_ind = NULL, local_nbh = 10, local_context = NULL) {
   local_context <- localmean_group_context(local_context,
     if (is.null(stratum_level)) "unstratified" else paste0("stratum:", stratum_level))
   # This is the local mean (spatial neighborhood) variance estimator for a

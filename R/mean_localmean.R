@@ -79,17 +79,10 @@
 
 mean_localmean <- function(itype, lev_itype, nlev_itype, levs, ivar, design,
                            design_names, meanest, mult, warn_ind, warn_df,
-                           subset_local = FALSE, local_nbh = 15, local_context = NULL) {
-  # This function loops over each requested subpopulation level and (for
-  # stratified designs) each stratum within it, calling mean_var() to get
-  # the local mean variance of the mean for that stratum/subpopulation. Per
-  # -stratum variances are combined into an overall variance using the
-  # standard stratified-sampling formula: each stratum's variance is
-  # weighted by the square of its share of total estimated population size
-  # (popsize_hat[i] / sum_popsize_hat), then summed. If mean_var() returns
-  # a negative variance estimate (numerically invalid for the local mean
-  # estimator) or otherwise falls back to "SRS", the simple random sampling
-  # standard error from svymean()/SE() is used for that stratum instead.
+                           subset_local = FALSE, local_nbh = 10, local_context = NULL) {
+  # Stratified ratios use the overall estimate and denominator. Summing
+  # local variances of these contributions retains uncertainty in the
+  # estimated stratum sizes, including for All Sites.
 
   # Assign a value to the function name variable
 
@@ -187,110 +180,13 @@ mean_localmean <- function(itype, lev_itype, nlev_itype, levs, ivar, design,
     # Branch for a stratified sample
 
     if (stratum_ind) {
-      # Calculate values required for weighting strata
-
-      if (cluster_ind) {
-        popsize_hat <- tapply(wgt1[tst] * wgt2[tst], stratum, sum)
-        sum_popsize_hat <- sum(wgt1[tst] * wgt2[tst])
-      } else {
-        popsize_hat <- tapply(wgt[tst], stratum, sum)
-        sum_popsize_hat <- sum(wgt[tst])
-      }
-
-      # Begin the subsection for individual strata
-
-      for (i in 1:nstrata) {
-        # Calculate mean estimates for the stratum
-
-        stratum_i <- tst & stratumID == stratum_levels[i]
-        meanest_st <- svymean(make.formula(ivar),
-          design = subset(design, stratum_i),
-          na.rm = TRUE
-        )
-
-        # Calculate variance estimates
-
-        if (cluster_ind) {
-          temp <- mean_var(
-            contvar[stratum_i], wgt2[stratum_i], xcoord[stratum_i],
-            ycoord[stratum_i], meanest_st[1], stratum_ind, stratum_levels[i],
-            cluster_ind, clusterID[stratum_i], wgt1[stratum_i],
-            xcoord1[stratum_i], ycoord1[stratum_i], warn_ind, warn_df, warn_vec,
-            local_nbh = local_nbh, local_context = local_context)
-        } else {
-          # stratum_data_i is the row mask actually fed to mean_var():
-          # under subset_local = TRUE it's identical to stratum_i (domain
-          # members only); under FALSE it widens to
-          # every responded site in this stratum, and subpop_ind_full
-          # tells mean_var() which of those rows are real domain members
-          # so it can zero out the rest.
-          stratum_data_i <- if (subset_local) {
-            stratum_i
-          } else {
-            tst_resp & stratumID == stratum_levels[i]
-          }
-          temp <- mean_var(
-            contvar[stratum_data_i], wgt[stratum_data_i],
-            xcoord[stratum_data_i],
-            ycoord[stratum_data_i], meanest_st[1], stratum_ind,
-            stratum_levels[i], cluster_ind,
-            warn_ind = warn_ind, warn_df = warn_df,
-            warn_vec = warn_vec, subset_local = subset_local,
-            subpop_ind = subpop_ind_full[stratum_data_i],
-            local_nbh = local_nbh, local_context = local_context)
-        }
-        warn_ind <- temp$warn_ind
-        warn_df <- temp$warn_df
-        if (temp$varest < 0) {
-          temp$vartype <- "SRS"
-          warn_ind <- TRUE
-          act <- "The simple random sampling variance estimator for an infinite population was used.\n"
-          warn <- paste0("The local mean variance estimator produced a  negative variance estimate in stratum \n\"", stratum_levels[i], "\", the simple random sampling variance estimator for an infinite \npopulation was used to calculate variance of the mean estimate.\n")
-          warn_df <-
-            rbind(
-              warn_df,
-              data.frame(
-                func = I(fname), subpoptype = warn_vec[1], subpop = warn_vec[2],
-                indicator = warn_vec[3], stratum = I(stratum_levels[i]),
-                warning = I(warn), action = I(act)
-              )
-            )
-        }
-        if (temp$vartype == "SRS") {
-          # the fallback estimate must cover only this stratum (stratum_i),
-          # not the whole subpopulation (tst); this loop contributes one
-          # stratum's variance at a time
-          rslt_svy <- svymean(make.formula(ivar),
-            design = subset(design, stratum_i),
-            na.rm = TRUE
-          )
-          varest <- SE(rslt_svy)^2
-        } else {
-          varest <- temp$varest
-        }
-
-        # Add estimate to the stderr vector
-        # (accumulate this stratum's contribution to the combined variance,
-        # weighted by the square of its share of total population size;
-        # stderr[isubpop] temporarily holds a variance here and is
-        # converted to a standard error via sqrt() once all strata are done)
-
-        stderr[isubpop] <- stderr[isubpop] +
-          ((popsize_hat[i] / sum_popsize_hat)^2) * varest
-
-        # End the subsection for individual strata
-      }
-
-      # Begin the subsection for all strata combined
-
-      # Add estimates to the data frames for results
-
-      stderr[isubpop] <- sqrt(stderr[isubpop])
-      lbound <- meanest[isubpop] - mult * stderr[isubpop]
-      ubound <- meanest[isubpop] + mult * stderr[isubpop]
-      confval[isubpop, ] <- c(lbound, ubound)
-
-      # End the subsection for all strata combined
+      full <- localmean_ratio(design, contvar, subpop_ind_full,
+        tst_resp, meanest[isubpop], design_names, warn_df, warn_vec,
+        subset_local, local_nbh, local_context)
+      stderr[isubpop] <- sqrt(full$covariance)
+      confval[isubpop, ] <- meanest[isubpop] + c(-1, 1) * mult * stderr[isubpop]
+      warn_df <- full$warn_df
+      warn_ind <- warn_ind || full$warn_ind
 
       # Branch for an unstratified sample
     } else {

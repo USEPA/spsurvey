@@ -49,18 +49,10 @@
 ################################################################################
 
 cdftest_localmean_prop <- function(design, design_names, warn_ind, warn_df,
-                                   warn_vec, subset_local = FALSE, local_nbh = 15, local_context = NULL) {
-  # This supports the CDF comparison test (cont_cdftest()): rowvar
-  # identifies which of the groups being compared a site belongs to, and
-  # colvar identifies which CDF-threshold bin its response falls in, so
-  # rowvar x colvar forms a contingency table of group-by-bin proportions.
-  # This function computes the full variance-covariance matrix of that
-  # table's cell proportions (needed for the chi-squared-type test
-  # statistics in svychisq_localmean()) using the local mean estimator, via
-  # cdftestvar_prop(); this parallels cat_localmean_prop() but produces a
-  # covariance matrix rather than a vector of independent variances.
-  # Per-stratum covariance matrices are combined with the same
-  # population-size-share-weighted formula used elsewhere.
+                                   warn_vec, subset_local = FALSE, local_nbh = 10, local_context = NULL) {
+  # Stratified ratios use the overall estimate and denominator. Summing
+  # local variances of these contributions retains uncertainty in the
+  # estimated stratum sizes, including for All Sites.
 
   # Assign a value to the function name variable
 
@@ -132,93 +124,21 @@ cdftest_localmean_prop <- function(design, design_names, warn_ind, warn_df,
   # Branch for a stratified sample
 
   if (stratum_ind) {
-    # Calculate values required for weighting strata
-
-    if (cluster_ind) {
-      popsize_hat <- tapply(wgt1 * wgt2, stratum, sum)
-      sum_popsize_hat <- sum(wgt1 * wgt2)
-    } else {
-      popsize_hat <- tapply(wgt, stratum, sum)
-      sum_popsize_hat <- sum(wgt)
-    }
-
-    # Create the varest matrix
-
-    m <- with(dframe, length(levels(rowvar)) * length(levels(colvar)))
-    varest <- matrix(0, m, m)
-    temp <- paste(
-      "interaction(factor(rowvar), factor(colvar))Subpopulation",
-      1:2
-    )
-    colnames_varest <- paste(rep(temp, length(levels(dframe$colvar))),
-      rep(levels(dframe$colvar), each = 2),
-      sep = "."
-    )
-    colnames(varest) <- colnames_varest
-
-    # Calculate variance estimates
-
-    for (i in 1:nstrata) {
-      stratum_i <- stratumID == stratum_levels[i]
-      if (!subset_local && !any(subpop_ind_full[stratum_i] == 1)) next
-      # restrict to stratum i by blanking out rowvar (subset_local = TRUE)
-      # or colvar (subset_local = FALSE) for every site outside it, so
-      # cdftestvar_prop() (which operates on the full design object)
-      # effectively sees only this stratum's rows of the contingency table.
-      # Blanking colvar instead of rowvar when subset_local = FALSE keeps
-      # rowvar's NA-ness meaning only "outside the domain" (rather than
-      # also "outside this stratum"), which cdftestvar_prop() relies on to
-      # zero out (rather than drop) out-of-domain sites while still using
-      # their location in the neighbor structure. The union
-      # is.na(rowvar) | is.na(colvar) used to drop rows is unaffected by
-      # which of the two carries the "outside this stratum" flag, so this
-      # leaves the subset_local = TRUE path unchanged.
-      temp <- design_names$stratumID
-      tst <- design$variables[, temp] != stratum_levels[i]
-      design_temp <- design
-      if (subset_local) {
-        design_temp$variables$rowvar[tst] <- NA
-      } else {
-        design_temp$variables$colvar[tst] <- NA
-      }
-      stratum_i <- stratumID == stratum_levels[i]
-      if (cluster_ind) {
-        temp <- cdftestvar_prop(
-          design_temp, wgt2[stratum_i], xcoord[stratum_i], ycoord[stratum_i],
-          stratum_ind, stratum_levels[i], cluster_ind, clusterID[stratum_i],
-          wgt1[stratum_i], xcoord1[stratum_i], ycoord1[stratum_i], warn_ind,
-          warn_df, warn_vec,
-          subset_local = subset_local, subpop_ind = subpop_ind_full[stratum_i],
-          local_nbh = local_nbh, local_context = local_context)
-      } else {
-        temp <- cdftestvar_prop(
-          design_temp, wgt[stratum_i], xcoord[stratum_i], ycoord[stratum_i],
-          stratum_ind, stratum_levels[i], cluster_ind,
-          warn_ind = warn_ind,
-          warn_df = warn_df, warn_vec = warn_vec,
-          subset_local = subset_local, subpop_ind = subpop_ind_full[stratum_i],
-          local_nbh = local_nbh, local_context = local_context)
-      }
-      varest_st <- temp$varest
-      warn_ind <- temp$warn_ind
-      warn_df <- temp$warn_df
-
-      # Add estimates to the varest matrix
-
-      tst <- colnames_varest %in% colnames(varest_st)
-      varest[tst, tst] <- varest[tst, tst] +
-        ((popsize_hat[i] / sum_popsize_hat)^2) * varest_st
-
-      # End the loop for strata
-    }
-
-    # Create the results list
-
-    results <- list(
-      varest = varest,
-      warn_ind = warn_ind,
-      warn_df = warn_df
-    )
+    form <- ~ interaction(factor(rowvar), factor(colvar)) - 1
+    response <- model.matrix(form,
+      model.frame(form, design$variables, na.action = na.pass))
+    member <- !is.na(design$variables$rowvar)
+    responded <- !is.na(design$variables$colvar)
+    response[!(member & responded), ] <- 0
+    d <- as.numeric(weights(design))
+    estimate <- colSums(response * d) / sum(d * (member & responded))
+    labels <- c(warn_vec[1], paste(warn_vec[2:3], collapse = " / "), warn_vec[4])
+    full <- localmean_ratio(design, response, member, responded, estimate,
+      design_names, warn_df, labels, subset_local, local_nbh, local_context,
+      type = "covariance")
+    colnames(full$covariance) <- colnames(response)
+    results <- list(varest = full$covariance,
+      warn_ind = warn_ind || full$warn_ind, warn_df = full$warn_df)
 
     # Branch for an unstratified sample
   } else {

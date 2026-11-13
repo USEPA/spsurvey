@@ -158,7 +158,7 @@ greg_residual <- function(context, u) {
 }
 
 greg_estimate <- function(context, q, keep, ratio, vartype, design_names, conf,
-                          warn_df, labels, local_nbh = 15, local_context = NULL) {
+                          warn_df, labels, local_nbh = 10, local_context = NULL) {
   q <- as.matrix(q)
   colnames(q) <- paste0("estimate", seq_len(ncol(q)))
   q[!keep, ] <- 0
@@ -182,6 +182,8 @@ greg_estimate <- function(context, q, keep, ratio, vartype, design_names, conf,
   estimate <- as.numeric(stats::coef(stat))
   covariance <- stats::vcov(stat)
   if (vartype == "Local") {
+    # Weighted least squares is linear in the response. Fitting q - estimate*v
+    # gives e_q - estimate*e_v using the same cached design-matrix QR.
     u <- if (ratio) q - outer(v, estimate) else q
     d <- context$original_weights
     residual <- greg_residual(context, u)
@@ -238,7 +240,7 @@ greg_estimate <- function(context, q, keep, ratio, vartype, design_names, conf,
 }
 
 greg_summary_est <- function(result, dframe, itype, lev_itype, ivar, greg,
-                             design_names, vartype, conf, mult, warn_df, ratio, local_nbh = 15, local_context = NULL) {
+                             design_names, vartype, conf, mult, warn_df, ratio, local_nbh = 10, local_context = NULL) {
   y <- dframe[[ivar]]
   for (domain in sort(lev_itype)) {
     keep <- dframe[[itype]] %in% domain & !is.na(y)
@@ -255,7 +257,7 @@ greg_summary_est <- function(result, dframe, itype, lev_itype, ivar, greg,
 
 greg_distribution_est <- function(result, dframe, itype, lev_itype, ivar, greg,
                                   design_names, vartype, conf, mult, warn_df,
-                                  categorical, local_nbh = 15, local_context = NULL) {
+                                  categorical, local_nbh = 10, local_context = NULL) {
   y <- dframe[[ivar]]
   values <- if (categorical) levels(y) else sort(unique(y[!is.na(y)]))
   if (!length(values)) stop("No observed values for GREG indicator ", ivar, ".", call. = FALSE)

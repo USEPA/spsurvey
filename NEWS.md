@@ -2,7 +2,8 @@
 
 ## Major Updates
 
-* Added a `local_nbh` argument to specify the number of neighbors to use in the local neighborhood variance estimator. The default is now `15` (up from `4` in prior `spsurvey` versions).
+* Added a `contrast_analysis()` function to compute contrasts between subpopulations.
+* Added a `local_nbh` argument to specify the number of neighbors to use in the local neighborhood variance estimator. The default is now `10` (up from `4` in prior `spsurvey` versions).
 * `grts()` and `irs()` now compute spatial balance automatically during
   site selection and store the result as an `sp_balance` element of the
   design object. The `sp_balance()` function is still used to pull the
@@ -21,6 +22,7 @@ via the `formula`, `popsize`, and `subpopsize` arguments.
 
 ## Bug Fixes
 
+* Fixed a bug that did not account for estimated stratum sizes when estimating means with the local neighborhood variance. 
 * Fixed a bug that prevented `grts()` and `irs()` from accepting auxiliary columns with units from `units`.
 * Fixed a bug in `irs()` that prevented minimum-distance retries from updating the selected sample.
 * Fixed a bug in sample-size checks for `grts()` and `irs()` that occurred when `legacy_sites` was specified and `sframe` had `POINT` geometry (#51).

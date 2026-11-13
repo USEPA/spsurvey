@@ -80,7 +80,7 @@
 percentile_est <- function(pctsum, dframe, itype, lev_itype, nlev_itype, ivar,
                            design, design_names, var_nondetect, conf, mult,
                            pctval, warn_ind, warn_df, greg = NULL, vartype = "SRS",
-                           subset_local = FALSE, local_nbh = 15, local_context = NULL) {
+                           subset_local = FALSE, local_nbh = 10, local_context = NULL) {
   if (!is.null(greg)) {
     return(greg_percentile_est(pctsum, dframe, itype, lev_itype, ivar, greg,
       design_names, vartype, conf, pctval, warn_df, local_nbh = local_nbh, local_context = local_context))

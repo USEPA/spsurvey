@@ -3,7 +3,7 @@
 # clamping. Only the CDF variance comes from the existing local CDF machinery.
 percentile_local_interval <- function(points, probabilities, design, design_names,
                                       type, domain, variable, conf, method,
-                                      subset_local, warn_ind, warn_df, local_nbh = 15, local_context = NULL) {
+                                      subset_local, warn_ind, warn_df, local_nbh = 10, local_context = NULL) {
   lower <- upper <- se <- rep(NA_real_, length(points))
   valid <- is.finite(points)
   y <- design$variables[[variable]]

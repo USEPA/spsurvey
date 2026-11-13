@@ -87,7 +87,7 @@
 input_check <- function(dframe, design_names, vars_cat, vars_cont,
                         vars_stressor, vars_nondetect, subpops, sizeweight,
                         fpc, popsize, vartype, jointprob, conf, cdfval = NULL,
-                        pctval = NULL, error_ind, error_vec, preserve_factors = FALSE, local_nbh = 15) {
+                        pctval = NULL, error_ind, error_vec, preserve_factors = FALSE, local_nbh = 10) {
   if (identical(tolower(vartype), "local") &&
       (!is.numeric(local_nbh) || length(local_nbh) != 1L ||
        !is.finite(local_nbh) || local_nbh < 2 || local_nbh != floor(local_nbh))) {

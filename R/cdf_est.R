@@ -98,7 +98,7 @@
 
 cdf_est <- function(cdfsum, dframe, itype, lev_itype, nlev_itype, ivar, design,
                     design_names, var_nondetect, vartype, conf, mult, warn_ind,
-                    warn_df, subset_local = FALSE, greg = NULL, local_nbh = 15, local_context = NULL) {
+                    warn_df, subset_local = FALSE, greg = NULL, local_nbh = 10, local_context = NULL) {
   if (vartype == "Local" && is.null(greg)) {
     warn_df <- localmean_cdf_check_size(design, design_names, ivar, itype, lev_itype,
       length(unique(dframe[[ivar]][!is.na(dframe[[ivar]])])), subset_local, warn_df, local_context)

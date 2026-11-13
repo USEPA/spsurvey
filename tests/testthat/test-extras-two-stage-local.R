@@ -508,7 +508,7 @@ cluster_occasion_args <- function(d, stratified = FALSE, formula = ~x) {
     sizeweight = FALSE, sweight = NULL, sweight1 = NULL, fpc = NULL,
     formula = formula, popsize = colSums(model.matrix(formula, d) * d$weight * d$weight1),
     subpopsize = NULL, vartype = "Local", jointprob = "overton", conf = 95,
-    All_Sites = FALSE, revisitwgt = TRUE, local_nbh = 15)
+    All_Sites = FALSE, revisitwgt = TRUE, local_nbh = 10)
 }
 
 test_that("GREG occasions retain two-stage FPC and size weights", {
@@ -650,7 +650,7 @@ test_that("unstratified GREG change matches direct ratios with matching centerin
   }
 })
 
-test_that("two-stage GREG trends match direct annual ratio centering", {
+test_that("two-stage trends use the variances of their own annual estimators", {
   for (stratified in c(FALSE, TRUE)) for (model in c("SLR", "WLR")) {
     d <- cluster_fixture(stratified)
     d$stratum <- factor(d$stratum)
@@ -666,7 +666,27 @@ test_that("two-stage GREG trends match direct annual ratio centering", {
     a$formula <- a$popsize <- NULL
     direct <- do.call(trend_analysis, a)
     rownames(actual$contsum) <- rownames(direct$contsum) <- NULL
-    expect_equal(actual$contsum, direct$contsum, tolerance = 1e-10)
+    if (!stratified) expect_equal(actual$contsum, direct$contsum, tolerance = 1e-10)
+    # Known stratum totals remove estimated-share variation from GREG.
+    for (greg in c(FALSE, TRUE)) {
+      annual <- lapply(1:4, function(year) {
+        b <- cluster_args(a$dframe[a$dframe$year == year, ])
+        b$subpops <- NULL
+        if (stratified) b$stratumID <- "stratum"
+        if (greg) {
+          b$formula <- formula
+          b$popsize <- cluster_occasion_args(d, stratified, formula)$popsize
+        }
+        do.call(cont_analysis, b)$Mean
+      })
+      y <- vapply(annual, function(x) x$Estimate, numeric(1))
+      variance <- vapply(annual, function(x) x$StdError^2, numeric(1))
+      year <- 1:4
+      ref <- if (model == "SLR") lm(y ~ year) else lm(y ~ year, weights = 1 / variance)
+      result <- if (greg) actual$contsum else direct$contsum
+      expect_equal(result$Trend_Estimate, unname(coef(ref)[2]), tolerance = 1e-10)
+      expect_equal(result$Trend_Std_Error, unname(summary(ref)$coefficients[2, 2]), tolerance = 1e-10)
+    }
   }
 })
 

@@ -33,7 +33,7 @@ diffrisk_analysis(
   subset_local = FALSE,
   subpop = NULL,
   jointprob = "overton",
-  local_nbh = 15
+  local_nbh = 10
 )
 }
 \arguments{
@@ -220,11 +220,7 @@ transformations, and interactions follow \code{model.matrix()}; include
 stratum indicators and interactions explicitly to request separate
 calibration within strata. An intercept requires an \code{"(Intercept)"}
 total. Offsets and \code{~ .} are not supported. GREG uses
-full-design residuals, equivalent to \code{subset_local = FALSE}.
-Two-stage GREG supports single-occasion analyses, change, and SLR/WLR
-trends. Two-stage GREG CDF comparisons across survey occasions are not supported.
-Calibration is at the population or domain level; within-PSU and
-cluster-constant calibration adjustments are not provided.}
+full-design residuals, equivalent to \code{subset_local = FALSE}.}
 
 \item{popsize}{Object that provides values for the population argument of the
   \code{calibrate} or \code{postStratify} functions in the survey package.
@@ -319,15 +315,9 @@ returned for each variable in \code{vars}. If \code{All_Sites} is
 The default is \code{FALSE}.}
 
 \item{subset_local}{Controls local neighborhood variance estimation for subpopulations.
-The default is \code{FALSE} for single-stage designs (the typical case)
-and two-stage designs.
 The neighbor pool contains all eligible sites in the stratum; for direct
 estimation, contributions outside the subpopulation are set to zero.
-In two-stage designs, responding sites outside the domain and PSUs with
-no domain members remain in their stage-specific neighborhoods. Explicit
-\code{TRUE} retains the earlier domain-only direct estimates. GREG always
-uses full-design residuals regardless of this argument. This argument
-affects only local variance; the two-stage variance formula is unchanged.}
+The default is \code{FALSE}.}
 
 \item{subpop}{Compatibility alias for \code{subpops}. This preserves
 existing calls that used \code{subpop} as a partial argument name before
@@ -341,7 +331,7 @@ approximation, \code{"hr"} indicates the Hartley-Rao approximation, and
 \code{"overton"}.}
 
 \item{local_nbh}{Size of local neighborhoods used when `vartype = "local"`. The
-default is 15.}
+default is 10.}
 }
 \value{
 The analysis results. A data frame of population estimates for all combinations of
@@ -408,11 +398,10 @@ are calculated by \pkg{survey}. Nonlocal variances and confidence
 intervals also come from \pkg{survey}. Local variances use design-weighted
 regression residuals multiplied by the calibrated weights, with
 neighborhoods formed using all sites in each sampling stratum. For
-supported two-stage analyses, neighborhoods are formed among PSUs and
-separately within each PSU using the original stage weights. The existing
-two-stage local combination and its singleton, census and small-PSU
-limitations are retained; no additional finite population correction is
-applied to a successful local calculation.
+two-stage designs, neighborhoods are formed among PSUs (between-cluster variance) and
+separately within PSU's (within-cluster variance). Also for two-stage designs,
+calibration is at the population or subpopulation level (i.e., within-PSU calibration
+adjustments are not provided unless they coincide with subpopulations).
 }
 
 \examples{

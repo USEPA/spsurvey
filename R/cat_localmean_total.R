@@ -75,7 +75,7 @@
 
 cat_localmean_total <- function(itype, lev_itype, nlev_itype, ivar, lev_ivar,
                                 nlev_ivar, design, design_names, rslt_U,
-                                mult, warn_ind, warn_df, subset_local = FALSE, local_nbh = 15, local_context = NULL) {
+                                mult, warn_ind, warn_df, subset_local = FALSE, local_nbh = 10, local_context = NULL) {
   # Parallels cat_localmean_prop(): loops over subpopulation levels and (for
   # stratified designs) strata within each, calling catvar_total() for the
   # local mean variance of the category total (size) vector. Unlike the

@@ -5,13 +5,13 @@ greg_publish_warnings <- function(warn_df) {
   }
 }
 
-greg_stat <- function(estimate, covariance, names = base::names(estimate)) {
+greg_stat <- function(estimate, covariance, names = base::names(estimate), statistic = "total") {
   structure(as.numeric(estimate), names = names, var = covariance,
-    statistic = "total", class = "svystat")
+    statistic = statistic, class = "svystat")
 }
 
 greg_risk <- function(data, responses, stressors, response_levels, stressor_levels,
-                      subpops, greg, design_names, vartype, conf, kind, local_nbh = 15, local_context = NULL) {
+                      subpops, greg, design_names, vartype, conf, kind, local_nbh = 10, local_context = NULL) {
   rows <- list()
   warn_df <- greg$warn_df
   critical <- stats::qnorm(.5 + conf / 200)

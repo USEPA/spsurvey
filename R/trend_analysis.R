@@ -502,7 +502,7 @@ trend_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL, subpops = 
                            fpc = NULL, formula = NULL, popsize = NULL, subpopsize = NULL,
                            invprboot = TRUE, nboot = 1000, vartype = "local",
                            jointprob = "overton", conf = 95, All_Sites = FALSE,
-                           subset_local = FALSE, subpop = NULL, local_nbh = 15) {
+                           subset_local = FALSE, subpop = NULL, local_nbh = 10) {
   local_context <- localmean_context(local_nbh)
   if (is.null(subset_local)) subset_local <- FALSE
 

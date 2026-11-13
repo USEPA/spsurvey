@@ -74,12 +74,10 @@
 
 cat_localmean_prop <- function(itype, lev_itype, nlev_itype, ivar, lev_ivar,
                                nlev_ivar, design, design_names, rslt_P,
-                               mult, warn_ind, warn_df, subset_local = FALSE, local_nbh = 15, local_context = NULL) {
-  # Parallels mean_localmean(): loops over subpopulation levels and (for
-  # stratified designs) strata within each, calling catvar_prop() for the
-  # local mean variance of the category proportion vector, then combining
-  # per-stratum variances with the same population-size-share-weighted
-  # formula used for means/totals (see mean_localmean() for details).
+                               mult, warn_ind, warn_df, subset_local = FALSE, local_nbh = 10, local_context = NULL) {
+  # Stratified ratios use the overall estimate and denominator. Summing
+  # local variances of these contributions retains uncertainty in the
+  # estimated stratum sizes, including for All Sites.
 
   # Assign a value to the function name variable
 
@@ -191,107 +189,16 @@ cat_localmean_prop <- function(itype, lev_itype, nlev_itype, ivar, lev_ivar,
     # Branch for a stratified sample
 
     if (stratum_ind) {
-      # Calculate values required for weighting strata
-
-      if (cluster_ind) {
-        popsize_hat <- tapply(wgt1[tst] * wgt2[tst], stratum, sum)
-        sum_popsize_hat <- sum(wgt1[tst] * wgt2[tst])
-      } else {
-        popsize_hat <- tapply(wgt[tst], stratum, sum)
-        sum_popsize_hat <- sum(wgt[tst])
-      }
-
-      # Begin the subsection for individual strata
-
-      for (i in 1:nstrata) {
-        # Calculate proportion estimates for the stratum
-
-        stratum_i <- tst & stratumID == stratum_levels[i]
-        prop_st <- t(as.data.frame(svymean(make.formula(ivar),
-          design = subset(design, stratum_i), na.rm = TRUE
-        ))[1])
-
-        # Calculate variance estimates
-
-        if (cluster_ind) {
-          temp <- catvar_prop(
-            factor(catvar[stratum_i]), wgt2[stratum_i],
-            xcoord[stratum_i], ycoord[stratum_i], prop_st, prop_names,
-            stratum_ind, stratum_levels[i], cluster_ind, clusterID[stratum_i],
-            wgt1[stratum_i], xcoord1[stratum_i], ycoord1[stratum_i],
-            warn_ind, warn_df, warn_vec,
-            local_nbh = local_nbh, local_context = local_context)
-        } else {
-          # stratum_data_i mirrors cat_localmean_total(): domain-only under
-          # TRUE, every responded site in this stratum under FALSE, with
-          # subpop_ind_full marking the real domain members within it.
-          stratum_data_i <- if (subset_local) {
-            stratum_i
-          } else {
-            tst_resp & stratumID == stratum_levels[i]
-          }
-          temp <- catvar_prop(factor(catvar[stratum_data_i]), wgt[stratum_data_i],
-            xcoord[stratum_data_i], ycoord[stratum_data_i], prop_st, prop_names,
-            stratum_ind, stratum_levels[i], cluster_ind,
-            warn_ind = warn_ind, warn_df = warn_df, warn_vec = warn_vec,
-            subset_local = subset_local,
-            subpop_ind = subpop_ind_full[stratum_data_i],
-            local_nbh = local_nbh, local_context = local_context)
-        }
-        warn_ind <- temp$warn_ind
-        warn_df <- temp$warn_df
-        if (any(temp$varest < 0)) {
-          temp$vartype <- "SRS"
-          warn_ind <- TRUE
-          act <- "The simple random sampling variance estimator for an infinite population was used.\n"
-          warn <- paste0("The local mean variance estimator produced one or more  negative variance estimates in \nstratum \"", stratum_levels[i], "\", the simple random sampling variance estimator for an infinite \npopulation was used to calculate variance of the category proportion estimates.\n")
-          warn_df <-
-            rbind(
-              warn_df,
-              data.frame(
-                func = I(fname), subpoptype = warn_vec[1], subpop = warn_vec[2],
-                indicator = warn_vec[3], stratum = I(stratum_levels[i]),
-                warning = I(warn), action = I(act)
-              )
-            )
-        }
-        if (temp$vartype == "SRS") {
-          rslt_svy <- svymean(make.formula(ivar),
-            design = subset(design, stratum_i), na.rm = TRUE
-          )
-          varest <- SE(rslt_svy)^2
-          names(varest) <- prop_names
-        } else {
-          varest <- temp$varest
-        }
-
-        # Add estimates to the stderr_P data frame
-
-        ind <- prop_names %in% names(varest)
-        indx <- (1:nlev_ivar)[ind]
-        stderr_P[isubpop, indx] <- stderr_P[isubpop, indx] +
-          ((popsize_hat[i] / sum_popsize_hat)^2) * varest
-
-        # End the subsection for individual strata
-      }
-
-      # Begin the subsection for all strata combined
-
-      # Add estimates to the data frames for results
-
-      names_sdest <- names(stderr_P)[stderr_P[isubpop, ] > 0]
-      ind <- prop_names %in% names_sdest
-      indx <- (1:nlev_ivar)[ind]
-      stderr_P[isubpop, indx] <- sqrt(stderr_P[isubpop, indx])
-      lbound <- unlist(pmax(prop[ind] - mult * stderr_P[isubpop, indx], 0))
-      ubound <- unlist(pmin(prop[ind] + mult * stderr_P[isubpop, indx], 1))
-      temp <- paste(rep(lev_itype[isubpop], length(names_sdest)), names_sdest,
-        sep = ":"
-      )
-      ind <- rownames(confval_P) %in% temp
-      confval_P[ind, ] <- cbind(lbound, ubound)
-
-      # End the subsection for all strata combined
+      response <- outer(as.character(catvar), lev_ivar, `==`)
+      full <- localmean_ratio(design, response, subpop_ind_full,
+        tst_resp, prop, design_names, warn_df, warn_vec,
+        subset_local, local_nbh, local_context)
+      sdest <- sqrt(full$covariance)
+      stderr_P[isubpop, seq_along(sdest)] <- sdest
+      rows <- paste(lev_itype[isubpop], lev_ivar, sep = ":")
+      confval_P[rows, ] <- cbind(pmax(prop - mult * sdest, 0), pmin(prop + mult * sdest, 1))
+      warn_df <- full$warn_df
+      warn_ind <- warn_ind || full$warn_ind
 
       # Branch for an unstratified sample
     } else {

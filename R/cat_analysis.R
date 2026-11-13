@@ -281,7 +281,7 @@
 #'   The default is \code{FALSE}.
 #'
 #' @param local_nbh Size of local neighborhoods used when `vartype = "local"`. The
-#'   default is 15.
+#'   default is 10.
 #'
 #' @param subset_local Controls local neighborhood variance estimation for subpopulations.
 #'   The neighbor pool contains all eligible sites in the stratum; for direct
@@ -364,7 +364,7 @@ cat_analysis <- function(dframe, vars, subpops = NULL, siteID = NULL, weight = "
                          sweight = NULL, sweight1 = NULL, fpc = NULL,
                          formula = NULL, popsize = NULL, subpopsize = NULL,
                          vartype = "local", jointprob = "overton", conf = 95, All_Sites = FALSE,
-                         subset_local = FALSE, subpop = NULL, local_nbh = 15) {
+                         subset_local = FALSE, subpop = NULL, local_nbh = 10) {
   local_context <- localmean_context(local_nbh)
   if (is.null(subset_local)) subset_local <- FALSE
 
