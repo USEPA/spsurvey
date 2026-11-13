@@ -145,6 +145,18 @@ greg_prepare <- function(design, formula, popsize, subpopsize, subpops, warn_df)
   list(contexts = contexts, warn_df = warn_df)
 }
 
+greg_residual <- function(context, u) {
+  d <- context$original_weights
+  # These are the same weighted least-squares residuals as
+  # lm.wfit(x = X, y = u, w = d)$residuals, where X = context$matrix.
+  # Weighted least squares is ordinary least squares on sqrt(d) * X and
+  # sqrt(d) * u. The cached QR of sqrt(d) * X gives residuals on that
+  # transformed scale; dividing by sqrt(d) returns them to the response scale.
+  # Reuse the QR across responses instead of refitting the same model matrix.
+  # The regression uses original positive weights, not calibrated weights.
+  qr.resid(context$qr, as.matrix(u) * sqrt(d)) / sqrt(d)
+}
+
 greg_estimate <- function(context, q, keep, ratio, vartype, design_names, conf,
                           warn_df, labels, local_nbh = 15, local_context = NULL) {
   q <- as.matrix(q)
@@ -172,7 +184,7 @@ greg_estimate <- function(context, q, keep, ratio, vartype, design_names, conf,
   if (vartype == "Local") {
     u <- if (ratio) q - outer(v, estimate) else q
     d <- context$original_weights
-    residual <- qr.resid(context$qr, u * sqrt(d)) / sqrt(d)
+    residual <- greg_residual(context, u)
     z <- residual * a
     if (ratio) z <- z / sum(a * v)
     strata <- split(seq_len(nrow(q)), design$strata[[1]], drop = TRUE)

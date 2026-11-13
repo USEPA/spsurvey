@@ -2,8 +2,7 @@
 # columns must be combined before computing covariance, including outside-
 # domain contributions from every population-calibrated context.
 greg_residual_contributions <- function(context, q) {
-  d <- context$original_weights
-  qr.resid(context$qr, as.matrix(q) * sqrt(d)) / sqrt(d) * context$calibrated_weights
+  greg_residual(context, q) * context$calibrated_weights
 }
 
 greg_joint_covariance <- function(context, z, vartype, design_names, warn_df = NULL, local_nbh = 15, local_context = NULL) {
