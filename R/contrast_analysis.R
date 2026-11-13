@@ -172,7 +172,9 @@ contrast_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL,
   for (table in names(answer)) if (!is.null(answer[[table]])) rownames(answer[[table]]) <- NULL
   if (return_joint) answer$joint <- joint
   if (!is.null(prepared$warn_df) && nrow(prepared$warn_df)) {
-    assign("warn_df", prepared$warn_df, envir = .GlobalEnv)
+    warn_df <- NULL
+    warn_df <- prepared$warn_df
+    warn_df <<- warn_df
     message("Contrast analysis produced warning messages; use warnprnt() to inspect warn_df.")
   }
   answer

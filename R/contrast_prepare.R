@@ -41,7 +41,9 @@ contrast_prepare <- function(dframe, vars_cat, vars_cont, subpops, siteID,
     vartype, jointprob, conf, error_ind = FALSE, error_vec = NULL,
     preserve_factors = !is.null(formula), local_nbh = local_nbh)
   if (checked$error_ind) {
-    assign("error_vec", checked$error_vec, envir = .GlobalEnv)
+    error_vec <- NULL
+    error_vec <- checked$error_vec
+    error_vec <<- error_vec
     stop(paste(checked$error_vec, collapse = "\n"), call. = FALSE)
   }
   dframe <- checked$dframe
