@@ -52,16 +52,14 @@ names of continuous response variables in \code{dframe}.
 The default value is \code{NULL}.}
 
 \item{subpops}{Character vector naming subpopulation variables in
-\code{dframe}. A contrast compares levels within one variable; this
-argument is required.}
+\code{dframe}. Contrasts compare levels within one variable and
+are pointwise (i.e., not simultaneous across all comparisons). This argument
+is required.}
 
-\item{contrasts}{Named list with one element for each variable in
-\code{subpops}. Each element is a named list of contrasts. A contrast is
-either a named numeric coefficient vector, such as
-\code{c(East = 1, West = -1)}, or a quoted expression, such as
-\code{quote(East / West)}. Names in a coefficient vector and variables in
-an expression must identify domain levels. Omitted coefficients are assigned a value of zero.
-Expressions use the functions supported by \code{survey::svycontrast()}.}
+\item{contrasts}{Character string specifying the comparison. Currently only
+\code{"difference"} is supported, which computes the pairwise differences.
+Custom coefficients and expressions use \code{sp_svycontrast()} followed
+by \code{survey::svycontrast()}.}
 
 \item{siteID}{Character value providing name of the site ID variable in
 the \code{dframe} data frame.  For a two-stage sample, the site ID variable
@@ -286,9 +284,8 @@ approximation, \code{"hr"} indicates the Hartley-Rao approximation, and
 \item{conf}{Numeric value providing the Gaussian-based confidence level.  The default value
 is \code{95}.}
 
-\item{statistics}{Character vector selecting \code{"Mean"} and/or
-\code{"Total"} for continuous responses. Categorical responses always
-produce both proportions and totals.}
+\item{statistics}{For continuous responses, a character vector selecting
+the \code{"Mean"} and/or \code{"Total"} statistics.}
 
 \item{subset_local}{Controls local neighborhood variance estimation for subpopulations.
 The neighbor pool contains all eligible sites in the stratum; for direct
@@ -319,15 +316,7 @@ A list with \code{catsum}, \code{contsum_mean}, and
   \code{subset_independence} attribute identifying the subset approximation was used with \code{subset_local = TRUE}.
 }
 \description{
-Estimate linear combinations and nonlinear comparisons (i.e., contrasts) of domain means,
-totals, and category proportions.
-}
-\details{
-Each contrast is applied separately to each continuous response and each
-  category of each categorical response. Contrasts across response variables,
-  categories, different subpopulation variables, or survey occasions are
-  not currently supported. The \code{formula} argument specifies GREG auxiliaries,
-  as in \code{cont_analysis()}, rather than the contrast.
+Estimate all pairwise contrasts for subpopulation means and totals.
 }
 \examples{
 set.seed(5)
@@ -335,6 +324,6 @@ dat <- data.frame(y = rnorm(80), weight = 4,
   region = rep(c("East", "West"), 40),
   xc = runif(80), yc = runif(80))
 contrast_analysis(dat, vars_cont = "y", subpops = "region",
-  contrasts = list(region = list(difference = c(East = 1, West = -1))),
+  contrasts = "difference",
   weight = "weight", xcoord = "xc", ycoord = "yc", statistics = "Mean")
 }

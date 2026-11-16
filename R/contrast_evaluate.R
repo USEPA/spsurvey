@@ -1,34 +1,19 @@
-contrast_check <- function(contrasts, subpops, data) {
-  named_list <- function(x) is.list(x) && !is.data.frame(x) && length(x) > 0L &&
-    !is.null(names(x)) && !anyNA(names(x)) && all(nzchar(names(x))) && !anyDuplicated(names(x))
-  if (!named_list(contrasts) || !setequal(names(contrasts), subpops)) {
-    stop("contrasts must be a named list with one element for every subpops variable.", call. = FALSE)
-  }
+contrast_pairs <- function(subpops, data, original) {
+  contrasts <- stats::setNames(vector("list", length(subpops)), subpops)
   for (type in subpops) {
-    if (!named_list(contrasts[[type]])) {
-      stop("contrasts$", type, " must be a nonempty list with unique contrast names.", call. = FALSE)
+    # Input validation may recreate factors. Preserve the user's pair direction
+    # without changing the order of the existing numerical joint objects.
+    lev <- if (is.factor(original[[type]])) levels(original[[type]]) else levels(data[[type]])
+    lev <- lev[lev %in% data[[type]]]
+    if (length(lev) < 2L) {
+      stop("Subpopulation variable ", type, " must have at least two represented levels.", call. = FALSE)
     }
-    for (name in names(contrasts[[type]])) {
-      x <- contrasts[[type]][[name]]
-      label <- paste0("Contrast ", type, ": ", name)
-      if (is.numeric(x) && is.null(dim(x))) {
-        if (!length(x) || is.null(names(x)) || anyNA(names(x)) ||
-            any(!nzchar(names(x))) || anyDuplicated(names(x)) || any(!is.finite(x))) {
-          stop(label, " requires finite coefficients with unique domain names.", call. = FALSE)
-        }
-        variables <- names(x)
-      } else if (is.call(x) || is.symbol(x)) {
-        # all.vars excludes function-call heads, so log(A) refers to A only.
-        # Do not let misspelled variables resolve in the calling environment.
-        variables <- all.vars(x)
-      } else stop(label, " must be a named numeric vector or quoted expression.", call. = FALSE)
-      unknown <- setdiff(variables, levels(data[[type]]))
-      if (length(unknown)) stop(label, " names unknown domains: ",
-        paste(unknown, collapse = ", "), ".", call. = FALSE)
-    }
+    pairs <- utils::combn(lev, 2, simplify = FALSE)
+    contrasts[[type]] <- lapply(pairs, function(pair) stats::setNames(c(1, -1), pair))
+    names(contrasts[[type]]) <- make.unique(vapply(pairs, paste, character(1), collapse = " - "), sep = "..")
   }
+  contrasts
 }
-
 contrast_evaluate <- function(stat, specification, conf, warn_df, labels) {
   if (is.numeric(specification) && all(specification == 0)) {
     stat <- greg_stat(0, matrix(0), ".zero")

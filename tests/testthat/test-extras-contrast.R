@@ -15,9 +15,7 @@ contrast_fixture <- function() {
 
 contrast_args <- function(d, vartype = "SRS") {
   list(dframe = d, vars_cont = "y", subpops = "domain", siteID = "id",
-    contrasts = list(domain = list(difference = c(East = 1, West = -1),
-      combination = c(East = .3, West = .7), ratio = quote(East / West),
-      log_ratio = quote(log(East / West)))),
+    contrasts = "difference",
     weight = "w", xcoord = "xc", ycoord = "yc", vartype = vartype,
     return_joint = TRUE)
 }
@@ -41,8 +39,8 @@ test_that("direct joint estimates and contrasts reproduce survey", {
       expect_equal(unname(vcov(joint)), unname(vcov(ref)), tolerance = 1e-10)
       expect_identical(attr(joint, "statistic"), tolower(statistic))
       table <- actual[[paste0("contsum_", tolower(statistic))]]
-      for (name in names(a$contrasts$domain)) {
-        expected <- survey::svycontrast(ref, a$contrasts$domain[[name]])
+      for (name in "East - West") {
+        expected <- survey::svycontrast(ref, c(East = 1, West = -1))
         row <- table[table$Contrast == name, ]
         expect_equal(row$Estimate, as.numeric(coef(expected)), tolerance = 1e-12)
         expect_equal(row$StdError^2, as.numeric(vcov(expected)), tolerance = 1e-10)
@@ -128,48 +126,32 @@ test_that("two-stage joint estimation follows survey and the retained local form
   }
 })
 
-test_that("contrast names, expressions and unavailable domains are handled explicitly", {
+test_that("pairwise differences use represented levels and numeric labels", {
   d <- contrast_fixture()
-  d$domain <- factor(rep(c("log", "exp", "pi", "T", "two words"), length.out = nrow(d)))
+  d$domain <- factor(rep(c("c", "t", "EPA Region 1"), length.out = nrow(d)),
+    levels = c("t", "c", "EPA Region 1", "Unused"))
   a <- contrast_args(d)
-  a$contrasts <- list(domain = list(
-    named = c(log = 1, exp = -1),
-    constants = quote(pi / T),
-    non_syntactic = quote(pi / exp)))
-  actual <- do.call(contrast_analysis, a)
-  expect_true(all(is.finite(actual$contsum_mean$StdError)))
-  # Preserve survey's function-name collision behavior; numeric contrasts
-  # above still support these names. Do not introduce an expression rewrite.
-  expect_error(survey::svycontrast(actual$joint$domain$y$Mean, quote(log(log))),
-    "attempt to apply non-function")
-  a$contrasts$domain$functions <- quote(log(log))
-  expect_error(do.call(contrast_analysis, a), "attempt to apply non-function")
-  a$contrasts$domain$functions <- NULL
-  expect_error({
-    a$contrasts$domain$unknown <- quote(pi / West)
-    do.call(contrast_analysis, a)
-  }, "unknown domains: West")
-  a$contrasts$domain$unknown <- NULL
-  a$contrasts$domain$text <- "log / exp"
-  expect_error(do.call(contrast_analysis, a), "quoted expression")
-  a$contrasts$domain$text <- NULL
-  a$contrasts$domain$unknown_function <- quote(median(log))
-  expect_error(do.call(contrast_analysis, a), "derivatives table")
-  a$contrasts$domain$unknown_function <- NULL
-  a$dframe$y[a$dframe$domain == "T"] <- NA
+  for (greg in c(FALSE, TRUE)) {
+    if (greg) {
+      a$formula <- ~x
+      a$popsize <- colSums(model.matrix(~x, d) * d$w)
+    }
+    actual <- do.call(contrast_analysis, a)
+    expect_identical(actual$contsum_mean$Contrast, c("t - c", "t - EPA Region 1", "c - EPA Region 1"))
+    joint <- actual$joint$domain$y$Mean
+    for (pair in combn(c("t", "c", "EPA Region 1"), 2, simplify = FALSE)) {
+      expected <- survey::svycontrast(joint, setNames(c(1, -1), pair))
+      row <- actual$contsum_mean[actual$contsum_mean$Contrast == paste(pair, collapse = " - "), ]
+      expect_equal(row$Estimate, as.numeric(coef(expected)))
+      expect_equal(row$StdError, as.numeric(survey::SE(expected)))
+    }
+  }
+  a$dframe$y[d$domain == "c"] <- NA
   actual <- suppressMessages(do.call(contrast_analysis, a))
-  expect_true(all(is.na(actual$contsum_mean$Estimate[actual$contsum_mean$Contrast == "constants"])))
-  expect_true(all(is.finite(actual$contsum_mean$Estimate[actual$contsum_mean$Contrast != "constants"])))
-})
-
-test_that("invalid nonlinear values do not invalidate other contrasts", {
-  d <- contrast_fixture()
-  d$y[d$domain == "East"] <- -2
-  a <- contrast_args(d)
-  a$contrasts$domain$invalid <- quote(log(East))
-  actual <- suppressMessages(do.call(contrast_analysis, a))
-  expect_true(is.na(actual$contsum_mean$Estimate[actual$contsum_mean$Contrast == "invalid"]))
-  expect_true(is.finite(actual$contsum_mean$Estimate[actual$contsum_mean$Contrast == "difference"]))
+  expect_true(all(is.na(actual$contsum_mean$Estimate[c(1, 3)])))
+  expect_true(is.finite(actual$contsum_mean$Estimate[2]))
+  a$dframe$domain <- factor(rep("one", nrow(d)))
+  expect_error(do.call(contrast_analysis, a), "at least two represented levels")
 })
 
 test_that("joint indefinite covariance uses one survey fallback while singular PSD is valid", {
@@ -196,19 +178,17 @@ test_that("joint indefinite covariance uses one survey fallback while singular P
   expect_true(contrast_valid_covariance(matrix(0, 2, 2)))
 })
 
-test_that("zero and singular contrasts remain estimable", {
+test_that("zero and unavailable differences retain their meaning", {
   d <- contrast_fixture()
   a <- contrast_args(d, "Local")
   a$dframe$y <- 3
-  a$contrasts <- list(domain = list(difference = c(East = 1, West = -1),
-    zero = c(East = 0, West = 0)))
   a$statistics <- "Mean"
   actual <- do.call(contrast_analysis, a)
-  expect_equal(actual$contsum_mean$Estimate, c(0, 0), tolerance = 1e-12)
-  expect_lt(max(actual$contsum_mean$StdError), 1e-12)
+  expect_equal(actual$contsum_mean$Estimate, 0, tolerance = 1e-12)
+  expect_lt(actual$contsum_mean$StdError, 1e-12)
   a$dframe$y <- NA_real_
   actual <- suppressMessages(do.call(contrast_analysis, a))
-  expect_equal(actual$contsum_mean$Estimate[2], 0)
+  expect_true(is.na(actual$contsum_mean$Estimate))
 })
 
 test_that("local covariance uses independently constructed domain contributions", {
@@ -371,15 +351,14 @@ test_that("subset categorical variances are the standard category marginals", {
   }
 })
 
-test_that("API two-stage FPC and population calibration reproduce survey end to end", {
+test_that("Two-stage FPC and population calibration reproduce survey end to end", {
   data("api", package = "survey", envir = environment())
   d <- apiclus2
   d$w1 <- d$fpc1 / length(unique(d$dnum))
   d$w <- d$fpc2 / ave(d$snum, d$dnum, FUN = length)
   d$group <- factor(ifelse(d$stype == "E", "Elementary", "Other"))
   a <- list(dframe = d, vars_cont = "api00", subpops = "group",
-    contrasts = list(group = list(difference = c(Elementary = 1, Other = -1),
-      ratio = quote(Elementary / Other))), weight = "w", weight1 = "w1",
+    contrasts = "difference", weight = "w", weight1 = "w1",
     clusterID = "dnum", siteID = "snum", vartype = "SRS", return_joint = TRUE)
   sizes <- tapply(d$fpc2, d$dnum, function(x) x[1])
   a$fpc <- c(Ncluster = d$fpc1[1], sizes)
@@ -412,8 +391,8 @@ test_that("API two-stage FPC and population calibration reproduce survey end to 
       joint <- actual$joint$group$api00[[statistic]]
       expect_equal(as.numeric(coef(joint)), as.numeric(coef(ref)), tolerance = 1e-10)
       expect_equal(unname(vcov(joint)), unname(vcov(ref)), tolerance = 1e-10)
-      for (comparison in names(a$contrasts$group)) {
-        expected <- survey::svycontrast(ref, a$contrasts$group[[comparison]])
+      for (comparison in "Elementary - Other") {
+        expected <- survey::svycontrast(ref, c(Elementary = 1, Other = -1))
         table <- actual[[paste0("contsum_", tolower(statistic))]]
         row <- table[table$Contrast == comparison, ]
         expect_equal(row$Estimate, as.numeric(coef(expected)), tolerance = 1e-10)
@@ -454,12 +433,9 @@ test_that("several domain partitions and labels remain separate", {
   d$other <- factor(ifelse(d$x > .5, "Upper half", "Lower half"))
   a <- contrast_args(d)
   a$subpops <- c("domain", "other")
-  a$contrasts$other <- list(difference = setNames(c(1, -1), c("Upper half", "Lower half")))
-  a$contrasts$other$ratio <- call("/", as.name("Upper half"), as.name("Lower half"))
   actual <- do.call(contrast_analysis, a)
   expect_identical(names(actual$joint), a$subpops)
   a$subpops <- "other"
-  a$contrasts <- a$contrasts["other"]
   expected <- do.call(contrast_analysis, a)
   expect_identical(actual$joint$other, expected$joint$other)
   expect_identical(actual$catsum, NULL)
@@ -493,12 +469,12 @@ test_that("local categorical covariance and response masks agree with hand contr
   }
 })
 
-test_that("unknown symbols are rejected rather than found in an environment", {
-  d <- contrast_fixture()
-  a <- contrast_args(d)
-  for (symbol in c("pi", "T", "caller_value")) {
-    a$contrasts$domain$unknown <- call("/", as.name("East"), as.name(symbol))
-    expect_error(do.call(contrast_analysis, a), paste0("unknown domains: ", symbol))
+test_that("the wrapper accepts only the difference string", {
+  a <- contrast_args(contrast_fixture())
+  for (value in list("ratio", "dif", NA_character_, character(), c("difference", "difference"),
+    list(domain = list(difference = c(East = 1, West = -1))), quote(East - West))) {
+    a$contrasts <- value
+    expect_error(do.call(contrast_analysis, a, quote = TRUE), 'contrasts must be "difference"')
   }
 })
 

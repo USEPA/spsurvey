@@ -8,28 +8,13 @@ contrast_joint <- function(prepared, response, type, indicator, statistic,
   data <- design$variables
   domains <- levels(data[[type]])
   ratio <- statistic != "Total"
-  d <- as.numeric(weights(design))
-  observed <- !is.na(response)
-  estimate <- rep(NA_real_, length(domains))
-  counts <- integer(length(domains))
-  z <- matrix(0, nrow(data), length(domains), dimnames = list(NULL, domains))
+  columns <- contrast_contributions(prepared, response, type, statistic)
+  observed <- columns$observed
+  estimate <- columns$estimate
+  counts <- columns$counts
+  z <- columns$contributions
   warn_df <- prepared$warn_df
   label <- paste(c(indicator, category, statistic), collapse = ": ")
-  for (j in seq_along(domains)) {
-    v <- as.numeric(observed & data[[type]] %in% domains[j])
-    counts[j] <- sum(v)
-    if (!counts[j]) next
-    q <- response
-    q[v == 0] <- 0
-    ctx <- prepared$greg$contexts[[type]][[domains[j]]]
-    a <- if (is.null(ctx)) d else ctx$calibrated_weights
-    denominator <- if (ratio) sum(a * v) else 1
-    if (!is.finite(denominator) || denominator <= 0) next
-    estimate[j] <- sum(a * q) / denominator
-    u <- if (ratio) q - estimate[j] * v else q
-    z[, j] <- if (is.null(ctx)) d * u / denominator else
-      as.numeric(greg_residual_contributions(ctx, u)) / denominator
-  }
   available <- is.finite(estimate)
   covariance <- matrix(NA_real_, length(domains), length(domains))
   if (any(available)) {
@@ -53,19 +38,7 @@ contrast_joint <- function(prepared, response, type, indicator, statistic,
       }
       covariance[available, available] <- diag(se^2, nrow = sum(available))
     } else {
-      fallback <- NULL
-      if (is.null(prepared$greg) && prepared$vartype == "Local" && is.null(dn$clusterID)) {
-        # The direct marginal routines require four domain responses in each
-        # participating stratum. If any domain fails that rule, retain one
-        # coherent survey matrix rather than mixing fallback diagonals.
-        for (idx in split(which(observed), design$strata[[1]][observed], drop = TRUE)) {
-          n <- table(factor(data[[type]][idx], levels = domains[available]))
-          if (any(n > 0 & n < 4)) {
-            fallback <- "A domain has fewer than four responses in a participating stratum."
-            break
-          }
-        }
-      }
+      fallback <- contrast_domain_fallback(prepared, observed, type, domains[available])
       result <- contrast_covariance(design, z[, available, drop = FALSE],
         if (is.null(prepared$greg)) observed else rep(TRUE, nrow(data)),
         prepared$vartype, dn, warn_df, c(type, NA_character_, label),
@@ -90,7 +63,8 @@ contrast_joint <- function(prepared, response, type, indicator, statistic,
 }
 
 contrast_covariance <- function(design, z, observed, vartype, dn, warn_df,
-                                 labels, local_nbh, local_context, fallback = NULL) {
+                                 labels, local_nbh, local_context, fallback = NULL,
+                                 subset_local = FALSE) {
   # Z already contains the analysis weights. Let survey apply all design/FPC/
   # PPS corrections to the unweighted contributions, without weighting twice.
   reference <- stats::vcov(survey::svytotal(z / as.numeric(weights(design)), design))
@@ -102,18 +76,23 @@ contrast_covariance <- function(design, z, observed, vartype, dn, warn_df,
       warn_df <- contrast_warning(warn_df, "The joint survey covariance is unavailable or invalid.",
         "Contrast uncertainty was set to NA.", labels)
     }
-    return(list(covariance = reference, warn_df = warn_df))
+    return(list(covariance = reference, warn_df = warn_df,
+      method = if (contrast_valid_covariance(reference)) {
+        if (is.null(fallback)) vartype else "Survey fallback"
+      } else "Unavailable", reason = fallback, notes = character()))
   }
   rows <- which(observed)
   covariance <- matrix(0, ncol(z), ncol(z))
   failure <- NULL
+  notes <- character()
   if (!is.null(dn$clusterID)) {
-    if (length(unique(design$cluster[[1]][rows])) != length(unique(design$cluster[[1]]))) {
+    if (!subset_local && length(unique(design$cluster[[1]][rows])) != length(unique(design$cluster[[1]]))) {
       failure <- "A sampled PSU has no usable responses."
     } else {
       part <- localmean_cluster_design(design, z, dn, local_nbh,
         local_context, "covariance", rows)
       covariance <- part$covariance
+      notes <- part$notes
       if (length(part$notes)) warn_df <- localmean_cluster_warning(warn_df, part$notes, labels)
       if (is.null(covariance)) failure <- "The two-stage local covariance could not be calculated."
     }
@@ -145,7 +124,10 @@ contrast_covariance <- function(design, z, observed, vartype, dn, warn_df,
     warn_df <- contrast_warning(warn_df, "The joint survey covariance is unavailable or invalid.",
       "Contrast uncertainty was set to NA.", labels)
   }
-  list(covariance = covariance, warn_df = warn_df)
+  list(covariance = covariance, warn_df = warn_df,
+    method = if (!contrast_valid_covariance(covariance)) "Unavailable" else
+      if (is.null(failure)) "Local" else "Survey fallback",
+    reason = failure, notes = notes)
 }
 
 contrast_valid_covariance <- function(v) {

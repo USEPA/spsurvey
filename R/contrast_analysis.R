@@ -1,33 +1,22 @@
 #' Contrasts Between Subpopulations
 #'
-#' Estimate linear combinations and nonlinear comparisons (i.e., contrasts) of domain means,
-#' totals, and category proportions.
+#' Estimate all pairwise contrasts for subpopulation means and totals.
 #'
 #' @inheritParams cont_analysis
 #' @inheritParams trend_analysis
 #' @param subpops Character vector naming subpopulation variables in
-#'   \code{dframe}. A contrast compares levels within one variable; this
-#'   argument is required.
-#' @param contrasts Named list with one element for each variable in
-#'   \code{subpops}. Each element is a named list of contrasts. A contrast is
-#'   either a named numeric coefficient vector, such as
-#'   \code{c(East = 1, West = -1)}, or a quoted expression, such as
-#'   \code{quote(East / West)}. Names in a coefficient vector and variables in
-#'   an expression must identify domain levels. Omitted coefficients are assigned a value of zero.
-#'   Expressions use the functions supported by \code{survey::svycontrast()}.
-#' @param statistics Character vector selecting \code{"Mean"} and/or
-#'   \code{"Total"} for continuous responses. Categorical responses always
-#'   produce both proportions and totals.
+#'   \code{dframe}. Contrasts compare levels within one variable and
+#'   are pointwise (i.e., not simultaneous across all comparisons). This argument
+#'   is required.
+#' @param contrasts Character string specifying the comparison. Currently only
+#'   \code{"difference"} is supported, which computes the pairwise differences.
+#'   Custom coefficients and expressions use \code{sp_svycontrast()} followed
+#'   by \code{survey::svycontrast()}.
+#' @param statistics For continuous responses, a character vector selecting
+#'   the \code{"Mean"} and/or \code{"Total"} statistics.
 #' @param return_joint Logical value indicating whether to return the named
 #'   joint \code{svystat} objects, suitable for subsequent
 #'   \code{survey::svycontrast()} calls. The default is \code{FALSE}.
-#'
-#' @details
-#' Each contrast is applied separately to each continuous response and each
-#'   category of each categorical response. Contrasts across response variables,
-#'   categories, different subpopulation variables, or survey occasions are
-#'   not currently supported. The \code{formula} argument specifies GREG auxiliaries,
-#'   as in \code{cont_analysis()}, rather than the contrast.
 #'
 #' @return A list with \code{catsum}, \code{contsum_mean}, and
 #'   \code{contsum_total}. Rows identify
@@ -49,7 +38,7 @@
 #'   region = rep(c("East", "West"), 40),
 #'   xc = runif(80), yc = runif(80))
 #' contrast_analysis(dat, vars_cont = "y", subpops = "region",
-#'   contrasts = list(region = list(difference = c(East = 1, West = -1))),
+#'   contrasts = "difference",
 #'   weight = "weight", xcoord = "xc", ycoord = "yc", statistics = "Mean")
 #' @export
 contrast_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL,
@@ -66,6 +55,10 @@ contrast_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL,
   if (missing(subpops) || !is.character(subpops) || !length(subpops) ||
       anyNA(subpops) || any(!nzchar(subpops)) || anyDuplicated(subpops)) {
     stop("subpops must be a nonempty character vector of unique column names.", call. = FALSE)
+  }
+  if (missing(contrasts) || !is.character(contrasts) || length(contrasts) != 1L ||
+      is.na(contrasts) || contrasts != "difference") {
+    stop('contrasts must be "difference". For custom comparisons, use sp_svycontrast() and survey::svycontrast().', call. = FALSE)
   }
   if (is.null(vars_cat) && is.null(vars_cont)) {
     stop("Supply vars_cat, vars_cont, or both.", call. = FALSE)
@@ -89,7 +82,7 @@ contrast_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL,
     sizeweight, sweight, sweight1, fpc, formula, popsize, subpopsize,
     vartype, jointprob, conf, local_nbh)
   data <- prepared$design$variables
-  contrast_check(contrasts, subpops, data)
+  contrasts <- contrast_pairs(subpops, data, dframe)
   if (!is.null(formula) && subset_local) {
     if (prepared$vartype == "Local") prepared$warn_df <- contrast_warning(
       prepared$warn_df, "GREG requires subset_local = FALSE.",

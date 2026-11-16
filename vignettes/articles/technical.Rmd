@@ -1010,8 +1010,8 @@ weights $\omega_{ij}$ in three steps.
 
 - Nearest neighbors: For each site $s_i$, the neighborhood begins as $s_i$
   itself together with its `nbh - 1` nearest sampled sites by Euclidean
-  distance in the sample's coordinates. The default `nbh = 15` gives each site
-  fourteen other neighbors when locations are distinct. If fewer than `nbh`
+  distance in the sample's coordinates. The default `nbh = 10` gives each site
+  nine other neighbors when locations are distinct. If fewer than `nbh`
   sites are available, the initial neighborhood contains every site. The
   `local_nbh` argument to the `*_analysis()` functions changes the requested size.
 - Symmetrization: The neighborhoods are then made mutual. If $s_j$ belongs
@@ -1505,6 +1505,8 @@ The `subset_local` argument selects between the two constructions.
   very similar variance estimates compared to `subset_local = FALSE`, as the
   neighborhoods will be similar.
 
+For variance estimation with stratified means, proportions, and CDFs, both `subset_local` values use the same linearized contributions (see the [Stratification](#sec:core-stratification) section below). However, they differ in which sites form the local neighborhoods (only the sites which share a strata can be neighborhors).
+
 ## Stratification {#sec:core-stratification}
 
 This is the only section that uses stratification notation. A stratified
@@ -1520,12 +1522,21 @@ independence across strata gives
 \end{equation}
 an unweighted sum. For a mean or proportion, the strata estimates combine as a
 weighted average, $\hat{\bar y} = \sum_h (\hat N_h/\hat N) \hat{\bar y}_h$
-with $\hat N_h = \sum_{i \in h} w_i$, so the same independence gives
+with $\hat N_h = \sum_{i \in h} w_i$. These estimated shares can vary across
+samples, so they cannot generally be treated as fixed when computing variance.
+Linearizing the overall ratio gives
 \begin{equation}\label{eq:strat-mean}
-\hat V(\hat{\bar y}) = \sum_{h=1}^H \left(\frac{\hat N_h}{\hat N}\right)^2 \hat V(\hat{\bar y}_h) ,
+\hat V(\hat{\bar y}) = \sum_{h=1}^H
+\hat V_h\!\left(\left\{\frac{w_i(y_i-\hat{\bar y})}{\hat N}: i\in s_h\right\}\right) ,
 \end{equation}
-a sum weighted by squared population shares. Both rules follow from the estimand, not from the variance estimator, so they
-hold whichever `vartype` produced each $\hat V_h$.
+where $\hat V_h$ applies the chosen variance operator to the weighted
+linearized contributions within stratum $h$. The center and denominator are
+the overall mean and size, not their within-stratum counterparts. For a domain,
+replace each contribution by
+$w_i\delta_i(y_i-\hat{\bar y}_D)/\hat N_D$; indicator responses give
+proportions and CDFs. When stratum sizes are
+fixed and known (or implied by calibration constraints), the familiar variance of a weighted sum of stratum means,
+$\sum_h(N_h/N)^2\hat V(\hat{\bar y}_h)$, applies instead. See @sarndal1992model and @lumley2024survey for more.
 
 Stratification also changes what the local neighborhoods are. They are built
 and truncated separately within each stratum, so a site's neighbors always
@@ -2013,6 +2024,20 @@ In both paths, the reported percentile standard error is derived from the
 interval width, divided by twice the applicable critical value. See these
 survey functions for the interpolation and boundary conventions
 [@lumley2024survey].
+
+## Contrasts {#sec:core-contrasts}
+
+`contrast_analysis()` computes all pairwise differences between subpopulation
+means and totals. If there are $K$ subpopulation levels, there are  $K(K-1)/2$
+unique pairwise combinations. Comparisons are computed separately for each 
+variable-subpopulation group. The arguments to `contrast_analysis()` follow
+closely from `change_analysis()`. 
+
+For more general contrasts that may vary across variables and subpopulations,
+we provdide the `sp_svycontrast()` constructor function for `survey::svycontrast()`.
+Let $\hat{\boldsymbol\theta}$ be a vector of estimates with covariance matrix 
+$\hat{V}$, where $\hat{V}$ is typically computed using linearized variables (e.g., weighted GREG residuals). Then for a smooth function $f(\boldsymbol\theta)$, the estimator is $f(\hat{\boldsymbol\theta})$ with delta-method variance $V(f(\hat{\boldsymbol\theta})) \approx f'(\hat{\boldsymbol\theta})^\top \hat{V} f'(\hat{\boldsymbol\theta})$, where $f'(\hat{\boldsymbol\theta})$ is the derivitave of $f(\cdot)$ evaluated at $\hat{\boldsymbol\theta}$. `sp_svycontrast()` provides $\hat{\boldsymbol\theta}$ and $\hat{V}$ to`survey::svycontrast()`, which then computes $f(\boldsymbol\theta)$ and $V(f(\hat{\boldsymbol\theta}))$. For a pairwise difference (as in `contrast_analysis()`) of $\boldsymbol\theta = \{\theta_1, \theta_2\}$, $f(\boldsymbol{\theta}) = \hat{\theta}_1 - \hat{\theta_2}$, $f'(\boldsymbol{\theta}) = \{1, -1\}$, and hence $V(f(\hat{\boldsymbol\theta})) = V(\hat{\theta}_1) + V(\hat{\theta}_2) - 2V(\hat{\theta}_1, \hat{\theta}_2)$. See @lumley2024survey for more.
+
 
 ## Risk Analysis {#sec:core-risk-analysis}
 

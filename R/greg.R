@@ -138,11 +138,14 @@ greg_prepare <- function(design, formula, popsize, subpopsize, subpops, warn_df)
   }
   negative <- any(vapply(unlist(contexts, recursive = FALSE),
     function(x) any(x$calibrated_weights < 0), logical(1)))
+  if (!length(contexts) && !is.null(population)) {
+    negative <- any(population$calibrated_weights < 0)
+  }
   if (negative) {
     warn_df <- greg_warning(warn_df, "Linear calibration produced negative weights.",
       "Weights were retained; GREG totals and ratios use the survey calibration convention.")
   }
-  list(contexts = contexts, warn_df = warn_df)
+  list(contexts = contexts, population = population, warn_df = warn_df)
 }
 
 greg_residual <- function(context, u) {
