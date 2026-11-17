@@ -272,7 +272,7 @@ approximation, \code{"hr"} indicates the Hartley-Rao approximation, and
 \code{"overton"}.}
 
 \item{statistics}{For continuous responses, a character vector selecting
-the \code{"Mean"} and/or \code{"Total"} statistics.}
+the \code{"Mean"} or \code{"Total"} statistic. The default is \code{"Mean"}.}
 
 \item{subset_local}{Controls local neighborhood variance estimation for subpopulations.
 The neighbor pool contains all eligible sites in the stratum; for direct

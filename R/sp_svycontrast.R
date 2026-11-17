@@ -7,7 +7,7 @@
 #' @param subpops A single subpopulation column name (or \code{NULL} for
 #'   population estimates).
 #' @param statistics For continuous responses, a character vector selecting
-#'   the \code{"Mean"} and/or \code{"Total"} statistics.
+#'   the \code{"Mean"} or \code{"Total"} statistic. The default is \code{"Mean"}.
 #'
 #' @details
 #' This function constructs a \code{svystat} object to be used
