@@ -24,7 +24,7 @@ localmean_cluster_combine <- function(totals, within, weight1, neighborhood,
 # This deliberately retains the existing two-stage combination, including
 # zero within-PSU variance for singletons and SRS substitution for 2-3 sites.
 localmean_cluster_covariance <- function(q, cluster, weight1, weight2,
-                                         x, y, x1, y1, local_nbh = 10,
+                                         x, y, x1, y1, local_nbh = 8,
                                          local_context = NULL,
                                          type = c("covariance", "diagonal")) {
   type <- match.arg(type)
@@ -68,7 +68,7 @@ localmean_cluster_covariance <- function(q, cluster, weight1, weight2,
 
 # Apply the cluster operator to complete contributions on a survey design.
 # The original clustered design supplies the fallback and stage structure.
-localmean_cluster_design <- function(design, z, design_names, local_nbh = 10,
+localmean_cluster_design <- function(design, z, design_names, local_nbh = 8,
                                      local_context = NULL, type = "covariance",
                                      rows = seq_len(nrow(design$variables))) {
   data <- design$variables

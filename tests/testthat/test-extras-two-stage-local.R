@@ -508,7 +508,7 @@ cluster_occasion_args <- function(d, stratified = FALSE, formula = ~x) {
     sizeweight = FALSE, sweight = NULL, sweight1 = NULL, fpc = NULL,
     formula = formula, popsize = colSums(model.matrix(formula, d) * d$weight * d$weight1),
     subpopsize = NULL, vartype = "Local", jointprob = "overton", conf = 95,
-    All_Sites = FALSE, revisitwgt = TRUE, local_nbh = 10)
+    All_Sites = FALSE, revisitwgt = TRUE, local_nbh = 8)
 }
 
 test_that("GREG occasions retain two-stage FPC and size weights", {

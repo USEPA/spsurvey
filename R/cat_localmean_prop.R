@@ -74,7 +74,7 @@
 
 cat_localmean_prop <- function(itype, lev_itype, nlev_itype, ivar, lev_ivar,
                                nlev_ivar, design, design_names, rslt_P,
-                               mult, warn_ind, warn_df, subset_local = FALSE, local_nbh = 10, local_context = NULL) {
+                               mult, warn_ind, warn_df, subset_local = FALSE, local_nbh = 8, local_context = NULL) {
   # Stratified ratios use the overall estimate and denominator. Summing
   # local variances of these contributions retains uncertainty in the
   # estimated stratum sizes, including for All Sites.

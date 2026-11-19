@@ -7,7 +7,7 @@
 #' @param subpops A single subpopulation column name (or \code{NULL} for
 #'   population estimates).
 #' @param statistics For continuous responses, a character vector selecting
-#'   the \code{"Mean"} or \code{"Total"} statistic. The default is \code{"Mean"}.
+#'   the \code{"Mean"} and/or \code{"Total"} statistics.
 #'
 #' @details
 #' This function constructs a \code{svystat} object to be used
@@ -37,7 +37,7 @@ sp_svycontrast <- function(dframe, vars_cat = NULL, vars_cont = NULL,
                            formula = NULL, popsize = NULL, subpopsize = NULL,
                            vartype = "local", jointprob = "overton",
                            statistics = "Mean", subset_local = FALSE,
-                           local_nbh = 10) {
+                           local_nbh = 8) {
   for (name in c("vars_cont", "vars_cat")) {
     value <- get(name)
     if (!is.null(value) && (!is.character(value) || !length(value) ||

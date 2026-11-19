@@ -29,7 +29,7 @@ sp_svycontrast(
   jointprob = "overton",
   statistics = "Mean",
   subset_local = FALSE,
-  local_nbh = 10
+  local_nbh = 8
 )
 }
 \arguments{
@@ -272,7 +272,7 @@ approximation, \code{"hr"} indicates the Hartley-Rao approximation, and
 \code{"overton"}.}
 
 \item{statistics}{For continuous responses, a character vector selecting
-the \code{"Mean"} or \code{"Total"} statistic. The default is \code{"Mean"}.}
+the \code{"Mean"} and/or \code{"Total"} statistics.}
 
 \item{subset_local}{Controls local neighborhood variance estimation for subpopulations.
 The neighbor pool contains all eligible sites in the stratum; for direct
@@ -280,7 +280,7 @@ estimation, contributions outside the subpopulation are set to zero.
 The default is \code{FALSE}.}
 
 \item{local_nbh}{Size of local neighborhoods used when `vartype = "local"`. The
-default is 10.}
+default is 8.}
 }
 \value{
 A \code{svystat} vector with \code{coef()} and \code{vcov()} methods.

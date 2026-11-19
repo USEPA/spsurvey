@@ -49,7 +49,7 @@
 ################################################################################
 
 cdftest_localmean_total <- function(design, design_names, warn_ind, warn_df,
-                                    warn_vec, subset_local = FALSE, local_nbh = 10, local_context = NULL) {
+                                    warn_vec, subset_local = FALSE, local_nbh = 8, local_context = NULL) {
   # Parallels cdftest_localmean_prop() (see that file for what rowvar/colvar
   # represent and the per-stratum masking trick), but computes the
   # variance-covariance matrix of the group-by-bin contingency table's cell

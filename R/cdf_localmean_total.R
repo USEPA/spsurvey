@@ -70,7 +70,7 @@
 
 cdf_localmean_total <- function(itype, lev_itype, nlev_itype, ivar, design,
                                 design_names, cdfval, ncdfval, cdfest_U,
-                                mult, warn_ind, warn_df, subset_local = FALSE, local_nbh = 10, local_context = NULL) {
+                                mult, warn_ind, warn_df, subset_local = FALSE, local_nbh = 8, local_context = NULL) {
   # Parallels cat_localmean_total(): computes the local mean variance of
   # the CDF total (size) estimate at each threshold in cdfval via
   # cdfvar_total(). As with cat_localmean_total(), per-stratum variances

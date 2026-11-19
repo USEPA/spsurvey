@@ -97,7 +97,7 @@
 
 changevar_mean <- function(z1, z2, wgt, x, y, revisitwgt, mean1, mean2,
                            stratum_ind, stratum_level, cluster_ind, clusterID,
-                           wgt1, x1, y1, vartype, warn_ind, warn_df, warn_vec, local_nbh = 10, local_context = NULL, total = FALSE) {
+                           wgt1, x1, y1, vartype, warn_ind, warn_df, warn_vec, local_nbh = 8, local_context = NULL, total = FALSE) {
   local_context <- localmean_group_context(local_context,
     if (is.null(stratum_level)) "unstratified" else paste0("stratum:", stratum_level))
   # Assign the function name

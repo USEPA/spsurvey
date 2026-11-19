@@ -4,7 +4,7 @@
 
 * Added the `contrast_analysis()` function to compute pairwise contrasts between subpopulations.
 * Added the `sp_svycontrast()` constructor function to provide  the necessary context for `survey::svycontrast()` to compute custom contrasts.
-* Added the `local_nbh` argument to specify the number of neighbors to use in the local neighborhood variance estimator. The default is now `10` (up from `4` in prior `spsurvey` versions).
+* Added the `local_nbh` argument to specify the number of neighbors to use in the local neighborhood variance estimator. The default is now `8` (up from `4` in prior `spsurvey` versions).
 * `grts()` and `irs()` now compute spatial balance automatically during
   site selection and store the result as an `sp_balance` element of the
   design object. The `sp_balance()` function is still used to pull the

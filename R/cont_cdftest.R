@@ -327,7 +327,7 @@ cont_cdftest <- function(dframe, vars, subpops = NULL, surveyID = NULL, siteID =
                          sizeweight = FALSE, sweight = NULL, sweight1 = NULL, fpc = NULL,
                          formula = NULL, popsize = NULL, subpopsize = NULL,
                          vartype = "local", jointprob = "overton",
-                         testname = "adjWald", nclass = 3, subset_local = FALSE, subpop = NULL, local_nbh = 10) {
+                         testname = "adjWald", nclass = 3, subset_local = FALSE, subpop = NULL, local_nbh = 8) {
   local_context <- localmean_context(local_nbh)
   if (is.null(subset_local)) subset_local <- FALSE
 

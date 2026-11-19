@@ -11,7 +11,7 @@ greg_stat <- function(estimate, covariance, names = base::names(estimate), stati
 }
 
 greg_risk <- function(data, responses, stressors, response_levels, stressor_levels,
-                      subpops, greg, design_names, vartype, conf, kind, local_nbh = 10, local_context = NULL) {
+                      subpops, greg, design_names, vartype, conf, kind, local_nbh = 8, local_context = NULL) {
   rows <- list()
   warn_df <- greg$warn_df
   critical <- stats::qnorm(.5 + conf / 200)

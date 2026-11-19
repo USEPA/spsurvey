@@ -32,7 +32,7 @@
 #' @export
 ################################################################################
 
-localmean_weight <- function(x, y, prb, nbh = 10) {
+localmean_weight <- function(x, y, prb, nbh = 8) {
   if (!is.numeric(nbh) || length(nbh) != 1L || !is.finite(nbh) ||
       nbh < 2 || nbh != floor(nbh)) {
     stop("nbh must be one finite integer of at least 2.", call. = FALSE)

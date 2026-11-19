@@ -171,7 +171,7 @@ cont_analysis <- function(dframe, vars, subpops = NULL, siteID = NULL,
                           jointprob = "overton", conf = 95,
                           pctval = c(5, 10, 25, 50, 75, 90, 95),
                           statistics = c("CDF", "Pct", "Mean", "Total"),
-                          All_Sites = FALSE, subset_local = FALSE, subpop = NULL, local_nbh = 10) {
+                          All_Sites = FALSE, subset_local = FALSE, subpop = NULL, local_nbh = 8) {
   local_context <- localmean_context(local_nbh)
   if (is.null(subset_local)) subset_local <- FALSE
 

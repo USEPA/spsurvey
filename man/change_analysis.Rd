@@ -35,7 +35,7 @@ change_analysis(
   All_Sites = FALSE,
   subset_local = FALSE,
   subpop = NULL,
-  local_nbh = 10
+  local_nbh = 8
 )
 }
 \arguments{
@@ -326,7 +326,7 @@ existing calls that used \code{subpop} as a partial argument name before
 \code{subpopsize} was introduced. Use \code{subpops} in new calls.}
 
 \item{local_nbh}{Size of local neighborhoods used when `vartype = "local"`. The
-default is 10.}
+default is 8.}
 }
 \value{
 List of change estimates composed of four items:

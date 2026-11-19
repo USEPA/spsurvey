@@ -33,7 +33,7 @@ attrisk_analysis(
   subset_local = FALSE,
   subpop = NULL,
   jointprob = "overton",
-  local_nbh = 10
+  local_nbh = 8
 )
 }
 \arguments{
@@ -331,7 +331,7 @@ approximation, \code{"hr"} indicates the Hartley-Rao approximation, and
 \code{"overton"}.}
 
 \item{local_nbh}{Size of local neighborhoods used when `vartype = "local"`. The
-default is 10.}
+default is 8.}
 }
 \value{
 The analysis results. A data frame of population estimates for all combinations of

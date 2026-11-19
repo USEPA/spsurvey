@@ -3,7 +3,7 @@
 # already divided by the FULL calibrated domain size for ratios. Consequently
 # the legacy overlap/full-size multipliers are already incorporated: they
 # should not be applied a second time. Never refit on just the repeat sites.
-greg_revisit_covariance <- function(first, second, z1, z2, context, warn_df, local_nbh = 10, local_context = NULL) {
+greg_revisit_covariance <- function(first, second, z1, z2, context, warn_df, local_nbh = 8, local_context = NULL) {
   ids <- intersect(first$ids, second$ids)
   if (!length(ids)) return(list(covariance = 0, warn_df = warn_df))
   i <- match(ids, first$ids)

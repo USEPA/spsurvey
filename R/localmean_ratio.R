@@ -2,7 +2,7 @@
 # the within-stratum ratio: estimated domain/stratum sizes can be random.
 localmean_ratio <- function(design, response, member, responded, estimate,
                             design_names, warn_df, labels, subset_local = FALSE,
-                            local_nbh = 10, local_context = NULL,
+                            local_nbh = 8, local_context = NULL,
                             type = "diagonal") {
   q <- as.matrix(response)
   v <- as.numeric(member & responded)

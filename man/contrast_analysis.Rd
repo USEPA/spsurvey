@@ -31,7 +31,7 @@ contrast_analysis(
   conf = 95,
   statistics = c("Mean", "Total"),
   subset_local = FALSE,
-  local_nbh = 10,
+  local_nbh = 8,
   return_joint = FALSE
 )
 }
@@ -293,7 +293,7 @@ estimation, contributions outside the subpopulation are set to zero.
 The default is \code{FALSE}.}
 
 \item{local_nbh}{Size of local neighborhoods used when `vartype = "local"`. The
-default is 10.}
+default is 8.}
 
 \item{return_joint}{Logical value indicating whether to return the named
 joint \code{svystat} objects, suitable for subsequent

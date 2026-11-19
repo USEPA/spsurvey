@@ -72,7 +72,7 @@
 
 total_localmean <- function(itype, lev_itype, nlev_itype, levs, ivar, design,
                             design_names, totalest, mult, warn_ind, warn_df,
-                            subset_local = FALSE, local_nbh = 10, local_context = NULL) {
+                            subset_local = FALSE, local_nbh = 8, local_context = NULL) {
   # Parallels mean_localmean(), but calls total_var() (rather than
   # mean_var()) per stratum/subpopulation to combine into an overall
   # variance estimate for a total rather than a mean. Per-stratum variances

@@ -106,7 +106,7 @@ diffrisk_analysis <- function(dframe, vars_response, vars_stressor, response_lev
                               weight1 = NULL, xcoord1 = NULL, ycoord1 = NULL, sizeweight = FALSE,
                               sweight = NULL, sweight1 = NULL, fpc = NULL, formula = NULL, popsize = NULL, subpopsize = NULL,
                               vartype = "local", conf = 95, All_Sites = FALSE,
-                              subset_local = FALSE, subpop = NULL, jointprob = "overton", local_nbh = 10) {
+                              subset_local = FALSE, subpop = NULL, jointprob = "overton", local_nbh = 8) {
   local_context <- localmean_context(local_nbh)
   if (is.null(subset_local)) subset_local <- FALSE
 

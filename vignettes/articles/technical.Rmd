@@ -1010,8 +1010,8 @@ weights $\omega_{ij}$ in three steps.
 
 - Nearest neighbors: For each site $s_i$, the neighborhood begins as $s_i$
   itself together with its `nbh - 1` nearest sampled sites by Euclidean
-  distance in the sample's coordinates. The default `nbh = 10` gives each site
-  nine other neighbors when locations are distinct. If fewer than `nbh`
+  distance in the sample's coordinates. The default `nbh = 8` gives each site
+  seven other neighbors when locations are distinct. If fewer than `nbh`
   sites are available, the initial neighborhood contains every site. The
   `local_nbh` argument to the `*_analysis()` functions changes the requested size.
 - Symmetrization: The neighborhoods are then made mutual. If $s_j$ belongs

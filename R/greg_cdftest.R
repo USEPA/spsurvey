@@ -1,5 +1,5 @@
 greg_cdftest <- function(data, vars, subpops, greg, base, design_names,
-                         vartype, testname, nclass, local_nbh = 10, local_context = NULL) {
+                         vartype, testname, nclass, local_nbh = 8, local_context = NULL) {
   rows <- list()
   warn_df <- greg$warn_df
   for (type in subpops) {

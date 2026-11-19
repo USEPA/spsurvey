@@ -497,7 +497,7 @@ change_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL, test = "m
                             ycoord1 = NULL, sizeweight = FALSE, sweight = NULL, sweight1 = NULL,
                             fpc = NULL, formula = NULL, popsize = NULL, subpopsize = NULL,
                             vartype = "local", jointprob = "overton",
-                            conf = 95, All_Sites = FALSE, subset_local = FALSE, subpop = NULL, local_nbh = 10) {
+                            conf = 95, All_Sites = FALSE, subset_local = FALSE, subpop = NULL, local_nbh = 8) {
   local_context <- localmean_context(local_nbh)
   if (is.null(subset_local)) subset_local <- FALSE
 

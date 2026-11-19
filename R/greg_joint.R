@@ -5,7 +5,7 @@ greg_residual_contributions <- function(context, q) {
   greg_residual(context, q) * context$calibrated_weights
 }
 
-greg_joint_covariance <- function(context, z, vartype, design_names, warn_df = NULL, local_nbh = 10, local_context = NULL) {
+greg_joint_covariance <- function(context, z, vartype, design_names, warn_df = NULL, local_nbh = 8, local_context = NULL) {
   base <- context$base
   # survey supplies every nonlocal design correction, including FPC and PPS.
   covariance <- stats::vcov(survey::svytotal(z / context$original_weights, base))
@@ -42,7 +42,7 @@ greg_joint_covariance <- function(context, z, vartype, design_names, warn_df = N
   list(covariance = covariance, warn_df = warn_df)
 }
 
-greg_joint_total <- function(contexts, responses, vartype, design_names, warn_df = NULL, local_nbh = 10, local_context = NULL) {
+greg_joint_total <- function(contexts, responses, vartype, design_names, warn_df = NULL, local_nbh = 8, local_context = NULL) {
   estimate <- rep(0, ncol(responses[[1]]))
   z <- matrix(0, nrow(responses[[1]]), length(estimate))
   for (j in seq_along(contexts)) {
@@ -59,7 +59,7 @@ greg_joint_total <- function(contexts, responses, vartype, design_names, warn_df
 
 # This internal survey-design adapter lets survey own nonlinear tests while
 # svytotal/svymean supply the appropriate joint calibration covariance.
-greg_as_design <- function(base, contexts, masks, vartype, design_names, local_nbh = 10, local_context = NULL) {
+greg_as_design <- function(base, contexts, masks, vartype, design_names, local_nbh = 8, local_context = NULL) {
   base$prob <- 1 / Reduce(`+`, Map(function(ctx, mask) ctx$calibrated_weights * mask, contexts, masks))
   base$postStrata <- NULL
   base$greg <- list(contexts = contexts, masks = masks, vartype = vartype,

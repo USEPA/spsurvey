@@ -85,7 +85,7 @@ test_that("calibrated weights including negative values preserve the dense estim
     actual <- suppressMessages(suppressWarnings(do.call(cat_analysis, args)))
     reference <- with_mocked_bindings(
       suppressMessages(suppressWarnings(do.call(cat_analysis, args))),
-      localmean_weight = function(x, y, prb, nbh = 10) dense_local_reference(x, y, prb, nbh))
+      localmean_weight = function(x, y, prb, nbh = 8) dense_local_reference(x, y, prb, nbh))
     expect_equal(actual, reference, tolerance = 1e-10)
     expect_true(all(is.finite(actual$Estimate.P)))
     expect_true(all(is.finite(actual$StdError.P)))
@@ -93,13 +93,13 @@ test_that("calibrated weights including negative values preserve the dense estim
 })
 
 test_that("input checks, small groups and failure caching retain their structure", {
-  for (n in 2:10) {
+  for (n in 2:8) {
     ans <- localmean_weight(seq_len(n), rep(0, n), rep(2, n))
     expect_equal(nrow(ans$ij), n * n)
   }
   expect_null(localmean_weight(numeric(), numeric(), numeric()))
   expect_null(localmean_weight(0, 0, 1))
-  expect_gte(nrow(localmean_weight(1:16, rep(0, 16), rep(1, 16))$ij), 16 * 10)
+  expect_gte(nrow(localmean_weight(1:16, rep(0, 16), rep(1, 16))$ij), 16 * 8)
   for (k in list(1, 2.5, NA, Inf, numeric(), c(4, 15), "15")) {
     expect_error(localmean_weight(1:4, 1:4, rep(1, 4), k), "nbh")
   }
@@ -134,7 +134,7 @@ test_that("complete direct and GREG analyses construct one neighborhood per bloc
   d <- local_data()
   original <- localmean_weight
   calls <- list()
-  local_mocked_bindings(localmean_weight = function(x, y, prb, nbh = 10) {
+  local_mocked_bindings(localmean_weight = function(x, y, prb, nbh = 8) {
     calls[[length(calls) + 1L]] <<- c(n = length(x), k = nbh)
     original(x, y, prb, nbh)
   })
@@ -170,7 +170,7 @@ test_that("complete direct and GREG analyses construct one neighborhood per bloc
 test_that("missing response indicators and changed weights cannot reuse incompatible weights", {
   d <- local_data(); d$value2 <- d$value; d$value2[1:5] <- NA
   original <- localmean_weight; sizes <- integer()
-  local_mocked_bindings(localmean_weight = function(x, y, prb, nbh = 10) {
+  local_mocked_bindings(localmean_weight = function(x, y, prb, nbh = 8) {
     sizes <<- c(sizes, length(x)); original(x, y, prb, nbh)
   })
   cont_analysis(d, c("value", "value2"), subpops = "domain", xcoord = "xcoord",
@@ -228,7 +228,7 @@ test_that("single-stratum domains equal independent within-stratum calculations"
 test_that("CDF comparisons retain margins when groups occupy different strata", {
   d <- local_data()
   original <- localmean_weight; sizes <- numeric()
-  local_mocked_bindings(localmean_weight = function(x, y, prb, nbh = 10) {
+  local_mocked_bindings(localmean_weight = function(x, y, prb, nbh = 8) {
     sizes <<- c(sizes, length(x)); original(x, y, prb, nbh)
   })
   for (test in c("adjWald", "RaoScott_First")) {
@@ -294,7 +294,7 @@ test_that("two-stage defaults and uncached calls reflect the requested count", {
     clusterID = "cluster", weight1 = "weight1", xcoord1 = "x1", ycoord1 = "y1",
     statistics = c("Mean", "Total"), local_nbh = 4)
   original <- localmean_weight; calls <- list()
-  local_mocked_bindings(localmean_weight = function(x, y, prb, nbh = 10) {
+  local_mocked_bindings(localmean_weight = function(x, y, prb, nbh = 8) {
     calls[[length(calls) + 1L]] <<- c(n = length(x), k = nbh)
     original(x, y, prb, nbh)
   })
@@ -320,7 +320,7 @@ test_that("change and trend keep occasion context and propagate local_nbh", {
   panel <- rbind(transform(d, occasion = "one"), transform(d, occasion = "two", value = value + .3))
   years <- do.call(rbind, lapply(1:3, function(j) transform(d, year = j, value = value + .1 * j)))
   original <- localmean_weight; counts <- numeric()
-  local_mocked_bindings(localmean_weight = function(x, y, prb, nbh = 10) {
+  local_mocked_bindings(localmean_weight = function(x, y, prb, nbh = 8) {
     counts <<- c(counts, nbh); original(x, y, prb, nbh)
   })
   for (greg in c(FALSE, TRUE)) for (k in c(4, 20)) {
@@ -384,13 +384,14 @@ test_that("time analyses retain strata when the stratum column identifies domain
 })
 
 test_that("public defaults and small-domain fallbacks are independent of neighbor count", {
-  expect_identical(formals(contrast_analysis)$local_nbh, 10)
-  expect_identical(formals(localmean_weight)$nbh, 10)
+  expect_identical(formals(contrast_analysis)$local_nbh, 8)
+  expect_identical(formals(localmean_weight)$nbh, 8)
+  expect_identical(formals(sp_svycontrast)$local_nbh, 8)
   for (name in c("cat_analysis", "cont_analysis", "cont_cdftest", "attrisk_analysis",
                  "relrisk_analysis", "diffrisk_analysis", "change_analysis", "trend_analysis")) {
     args <- formals(get(name))
     expect_identical(tail(names(args), 1), "local_nbh")
-    expect_identical(args$local_nbh, 10)
+    expect_identical(args$local_nbh, 8)
     expect_identical(args$subset_local, FALSE)
   }
   d <- local_data()

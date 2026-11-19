@@ -100,7 +100,7 @@
 category_est <- function(catsum, dframe, itype, lev_itype, nlev_itype, ivar,
                          lev_ivar, nlev_ivar, design, design_names,
                          vartype, conf, mult, warn_ind, warn_df,
-                         subset_local = FALSE, greg = NULL, local_nbh = 10, local_context = NULL) {
+                         subset_local = FALSE, greg = NULL, local_nbh = 8, local_context = NULL) {
   if (!is.null(greg)) {
     ans <- greg_distribution_est(catsum, dframe, itype, lev_itype, ivar, greg,
       design_names, vartype, conf, mult, warn_df, categorical = TRUE, local_nbh = local_nbh, local_context = local_context)

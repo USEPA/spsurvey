@@ -50,7 +50,7 @@ contrast_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL,
                                 formula = NULL, popsize = NULL, subpopsize = NULL,
                                 vartype = "local", jointprob = "overton", conf = 95,
                                 statistics = c("Mean", "Total"),
-                                subset_local = FALSE, local_nbh = 10,
+                                subset_local = FALSE, local_nbh = 8,
                                 return_joint = FALSE) {
   if (missing(subpops) || !is.character(subpops) || !length(subpops) ||
       anyNA(subpops) || any(!nzchar(subpops)) || anyDuplicated(subpops)) {
