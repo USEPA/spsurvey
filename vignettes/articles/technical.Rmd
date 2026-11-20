@@ -2526,11 +2526,7 @@ operates on the site-level data.
   The right-hand side may be replaced through `cont_rhs` and `cat_rhs`.
   `"GLMM"` requires each categorical response to have exactly two levels.
 
-For `"LMM"`, an optional case-resampling bootstrap refits the model on sites
-resampled with replacement and collects the trend coefficient, its standard
-error, the variance components, and AIC from each replicate. This gives a
-resampling-based alternative to the model's own asymptotic approach. The bootstrap is not
-available for `"GLMM"`.
+Currently, `invprboot = TRUE` is not supported. Without an inverse probability bootstrap, the trend estimated is based on an unweighted fit, currently only available when applied to the entire sample (i.e., All Sites).
 
 # Model-Assisted GREG Estimation {#sec:core-greg}
 

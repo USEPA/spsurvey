@@ -11,7 +11,7 @@ trend_analysis(
   subpops = NULL,
   model_cat = "SLR",
   cat_rhs = NULL,
-  model_cont = "LMM",
+  model_cont = "SLR",
   cont_rhs = NULL,
   siteID = "siteID",
   yearID = "year",
@@ -73,18 +73,20 @@ The default value is \code{"SLR"}.}
 \item{cat_rhs}{Character value specifying the right hand side of the formula
 for a generalized linear mixed-effects model.  If a value is not provided,
 the argument is assigned a value that specifies the Piepho and Ogutu (2002)
-model.  The default value is \code{NULL}.}
+model. If a value is provided, the \code{Wyear} fixed
+effect representing year must be included. The default value is \code{NULL} (i.e., not provided).}
 
 \item{model_cont}{Character value identifying the analytical procedure used
 for trend estimation for continuous variables.  The choices are:
 \code{"SLR"} (simple linear regression), \code{"WLR"} (weighted linear
 regression), and \code{"LMM"} (linear mixed-effects model).  The default
-value is \code{"LMM"}.}
+value is \code{"SLR"}.}
 
 \item{cont_rhs}{Character value specifying the right hand side of the
 formula for a linear mixed-effects model.  If a value is not provided, the
 argument is assigned a value that specifies the Piepho and Ogutu (2002)
-model.  The default value is \code{NULL}.}
+model. If a value is provided, the \code{Wyear} fixed
+effect representing year must be included. The default value is \code{NULL} (i.e., not provided).}
 
 \item{siteID}{Character value providing name of the site ID variable in
 \code{dframe}.  If repeat visit sites are present, the site
@@ -304,12 +306,11 @@ When \code{sizeweight = TRUE}, each leaf must contain size-weighted
 totals within that subpopulation, using the same scale as \code{popsize}.
 Requires a non-\code{NULL} \code{formula}.}
 
-\item{invprboot}{Logical value that indicates whether the inverse probability
-bootstrap procedure is used to calculate trend parameter estimates.  This
-bootstrap procedure is only available for the "LMM" option for continuous
-variables.  Inverse probability references the design weights, which
-are the inverse of the sample inclusion probabilities.  The default value
-is \code{TRUE}.}
+\item{invprboot}{Logical value for the inverse-probability bootstrap.
+The bootstrap is currently unavailable for
+mixed-model trends (\code{model_cat = "GLMM"} or
+\code{model_cont = "LMM"}), which require \code{invprboot = FALSE}.
+The default is \code{TRUE}.}
 
 \item{nboot}{Numeric value for the number of bootstrap iterations.  The
 default is \code{1000}.}
@@ -469,19 +470,9 @@ can be used to specify the right hand side of the model formula. Internally,
 a variable named \code{Wyear} is created that is useful for specifying the
 \code{cat_rhs} and \code{cont_rhs} arguments.  The \code{Wyear} variable is
 created by subtracting the minimum value of the \code{yearID} variable from
-all values of the variable.  If argument \code{invprboot} is \code{FALSE},
-parameter estimates are extracted from the object returned by the \code{lmer}
-function. If argument \code{invprboot} is \code{TRUE}, the \code{boot}
-function in the boot package is used to generate bootstrap replicates using a
-function named \code{bootfcn} as the \code{statistic} argument passed to the
-\code{boot} function.  For each bootstrap replicate, \code{bootfcn} calls the
-\code{glmer} or \code{lmer} function, as appropriate, using the specified
-model.  design weights identified by the \code{weight} argument for
-the \code{trend_analysis} function are passed as the \code{weights} argument
-for the \code{boot} function, which specifies importance weights.  Using the
-design weights as the \code{weights} argument ensures that bootstrap
-replicates are representative of the survey population.  Parameter estimates
-are calculated using the object returned by the \code{boot} function.
+the retained year values. The reported trend is the fixed-effect coefficient
+named \code{Wyear} from \code{glmer} or \code{lmer}. Mixed-model trends currently
+require \code{invprboot = FALSE}.
 }
 
 \section{GREG trends}{
@@ -493,8 +484,8 @@ calibration totals and original single-stage or two-stage design.
 SLR ignores the annual variances; WLR uses their
 inverses as regression weights. Neither model propagates covariance
 between years or uses repeat-site covariance. The intercept refers to the
-earliest year. GREG \code{LMM}/\code{GLMM} models are not supported;
-specify \code{model_cont = "SLR"} or \code{"WLR"} explicitly.
+earliest year. Both response types use \code{"SLR"} by default.
+GREG \code{LMM}/\code{GLMM} models are not supported.
 }
 
 \section{GREG estimation}{

@@ -15,6 +15,7 @@ via the `formula`, `popsize`, and `subpopsize` arguments.
 
 ## Minor Updates
 
+* Changed the default `model_cont` argument in `trend_analysis()` to `"SLR"`, matching `model_cat`.
 * Improved computational efficiency of the local neighborhood variance estimator by leveraging sparse matrix results and reusing neighborhoods across subpopulation estimators.
 * Minor documentation updates.
 * Minor internal consistency updates.
@@ -34,6 +35,14 @@ via the `formula`, `popsize`, and `subpopsize` arguments.
 * Fixed a bug in `change_analysis()` that could incorrectly scale repeat-visit covariance for stratified designs and continuous totals.
 * Fixed a bug in percentile estimation that ignored the local neighborhood variance when `vartype = "local"`.
 * Fixed a bug that omitted the covariance term in `diffrisk_analysis()`.
+* Fixed GLMM and LMM trend analysis with current versions of lme4, including
+  calls that fit both models. Previously, mixed-model trends for
+  subpopulations reported the fit to all sites under every subpopulation; a
+  custom formula with a term before `Wyear` reported that term's coefficient
+  as the trend; and variance components could be mislabeled when there were
+  more years than sites. The trend is now the coefficient named `Wyear`, and
+  variance components are matched to their groups and terms.
+* Mixed-model trends now report explicit errors for the inverse-probability bootstrap, whose call has failed since 5.0.0, for domains that cover only part of the analysis data, for stratified designs with the default formula, and for custom formulas that do not yield an estimable `Wyear` coefficient.
 
 # spsurvey 5.7.0
 

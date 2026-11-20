@@ -30,11 +30,12 @@
 #' @importFrom deldir deldir tile.list
 #' @importFrom graphics axis box legend lines mtext par plot points text title
 #' @importFrom grDevices graphics.off pdf rainbow
-#' @importFrom lme4 lmer VarCorr
+#' @importFrom lme4 glmer glmerControl lmer lmerControl VarCorr
 #' @importFrom MASS ginv
-#' @importFrom stats addmargins chisq.test confint dist dnorm extractAIC ftable
-#'             lm model.frame model.matrix na.omit na.pass optimize pchisq pf
-#'             pnorm qnorm rnorm runif terms update var weights
+#' @importFrom stats addmargins binomial chisq.test coef confint dist dnorm
+#'             extractAIC ftable lm model.frame model.matrix na.omit na.pass
+#'             optimize pchisq pf pnorm qnorm rnorm runif setNames terms update
+#'             var weights
 #' @importFrom units set_units
 #' @importFrom sampling UPpivotal
 #' @importFrom utils combn tail

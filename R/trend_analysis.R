@@ -76,18 +76,20 @@
 #' @param cat_rhs Character value specifying the right hand side of the formula
 #'   for a generalized linear mixed-effects model.  If a value is not provided,
 #'   the argument is assigned a value that specifies the Piepho and Ogutu (2002)
-#'   model.  The default value is \code{NULL}.
+#'   model. If a value is provided, the \code{Wyear} fixed
+#'   effect representing year must be included. The default value is \code{NULL} (i.e., not provided).
 #'
 #' @param model_cont Character value identifying the analytical procedure used
 #'   for trend estimation for continuous variables.  The choices are:
 #'   \code{"SLR"} (simple linear regression), \code{"WLR"} (weighted linear
 #'   regression), and \code{"LMM"} (linear mixed-effects model).  The default
-#'   value is \code{"LMM"}.
+#'   value is \code{"SLR"}.
 #'
 #' @param cont_rhs Character value specifying the right hand side of the
 #'   formula for a linear mixed-effects model.  If a value is not provided, the
 #'   argument is assigned a value that specifies the Piepho and Ogutu (2002)
-#'   model.  The default value is \code{NULL}.
+#'   model. If a value is provided, the \code{Wyear} fixed
+#'   effect representing year must be included. The default value is \code{NULL} (i.e., not provided).
 #'
 #' @param siteID Character value providing name of the site ID variable in
 #'   \code{dframe}.  If repeat visit sites are present, the site
@@ -285,12 +287,11 @@
 #'   \verb{popsize <- xtabs(~Ecoregion + Type,
 #'     data = MySurveyFrame)}
 #'
-#' @param invprboot Logical value that indicates whether the inverse probability
-#'   bootstrap procedure is used to calculate trend parameter estimates.  This
-#'   bootstrap procedure is only available for the "LMM" option for continuous
-#'   variables.  Inverse probability references the design weights, which
-#'   are the inverse of the sample inclusion probabilities.  The default value
-#'   is \code{TRUE}.
+#' @param invprboot Logical value for the inverse-probability bootstrap.
+#'   The bootstrap is currently unavailable for
+#'   mixed-model trends (\code{model_cat = "GLMM"} or
+#'   \code{model_cont = "LMM"}), which require \code{invprboot = FALSE}.
+#'   The default is \code{TRUE}.
 #'
 #' @param nboot Numeric value for the number of bootstrap iterations.  The
 #'   default is \code{1000}.
@@ -365,19 +366,9 @@
 #' a variable named \code{Wyear} is created that is useful for specifying the
 #' \code{cat_rhs} and \code{cont_rhs} arguments.  The \code{Wyear} variable is
 #' created by subtracting the minimum value of the \code{yearID} variable from
-#' all values of the variable.  If argument \code{invprboot} is \code{FALSE},
-#' parameter estimates are extracted from the object returned by the \code{lmer}
-#' function. If argument \code{invprboot} is \code{TRUE}, the \code{boot}
-#' function in the boot package is used to generate bootstrap replicates using a
-#' function named \code{bootfcn} as the \code{statistic} argument passed to the
-#' \code{boot} function.  For each bootstrap replicate, \code{bootfcn} calls the
-#' \code{glmer} or \code{lmer} function, as appropriate, using the specified
-#' model.  design weights identified by the \code{weight} argument for
-#' the \code{trend_analysis} function are passed as the \code{weights} argument
-#' for the \code{boot} function, which specifies importance weights.  Using the
-#' design weights as the \code{weights} argument ensures that bootstrap
-#' replicates are representative of the survey population.  Parameter estimates
-#' are calculated using the object returned by the \code{boot} function.
+#' the retained year values. The reported trend is the fixed-effect coefficient
+#' named \code{Wyear} from \code{glmer} or \code{lmer}. Mixed-model trends currently
+#' require \code{invprboot = FALSE}.
 #'
 #' @return The analysis results. A list composed of two data frames containing trend estimates for all
 #'   combinations of population Types, subpopulations within Types, and response
@@ -490,12 +481,12 @@
 #' SLR ignores the annual variances; WLR uses their
 #' inverses as regression weights. Neither model propagates covariance
 #' between years or uses repeat-site covariance. The intercept refers to the
-#' earliest year. GREG \code{LMM}/\code{GLMM} models are not supported;
-#' specify \code{model_cont = "SLR"} or \code{"WLR"} explicitly.
+#' earliest year. Both response types use \code{"SLR"} by default.
+#' GREG \code{LMM}/\code{GLMM} models are not supported.
 ################################################################################
 
 trend_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL, subpops = NULL, model_cat = "SLR",
-                           cat_rhs = NULL, model_cont = "LMM", cont_rhs = NULL, siteID = "siteID",
+                           cat_rhs = NULL, model_cont = "SLR", cont_rhs = NULL, siteID = "siteID",
                            yearID = "year", weight = "weight", xcoord = NULL, ycoord = NULL,
                            stratumID = NULL, clusterID = NULL, weight1 = NULL, xcoord1 = NULL,
                            ycoord1 = NULL, sizeweight = FALSE, sweight = NULL, sweight1 = NULL,
@@ -743,6 +734,38 @@ trend_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL, subpops = 
   error_ind <- temp$error_ind
   error_vec <- temp$error_vec
 
+  mixed_cat_active <- length(vars_cat) > 0L && identical(model_cat, "GLMM")
+  mixed_cont_active <- length(vars_cont) > 0L && identical(model_cont, "LMM")
+  mixed_active <- mixed_cat_active || mixed_cont_active
+  if (mixed_active) {
+    mixed_errors <- character()
+    if (isTRUE(invprboot)) {
+      mixed_errors <- c(mixed_errors,
+        "The inverse-probability bootstrap is unavailable for mixed-model trends. Set invprboot = FALSE.")
+    }
+    if (!is.null(stratumID) &&
+      ((mixed_cat_active && PO_ind_cat) || (mixed_cont_active && PO_ind_cont))) {
+      mixed_errors <- c(mixed_errors,
+        "Stratified mixed-model trends require a custom formula. Supply cat_rhs for GLMM or cont_rhs for LMM.")
+    }
+    if (yearID %in% names(dframe) && is.numeric(dframe[[yearID]])) {
+      validation_data <- dframe
+      validation_data$Wyear <- dframe[[yearID]] - min(dframe[[yearID]])
+      for (response in intersect(if (mixed_cat_active && !PO_ind_cat) vars_cat, names(dframe))) {
+        mixed_errors <- c(mixed_errors, trend_mixed_formula_error(
+          response, cat_rhs, stratumID, validation_data, "cat_rhs", environment()
+        ))
+      }
+      for (response in intersect(if (mixed_cont_active && !PO_ind_cont) vars_cont, names(dframe))) {
+        mixed_errors <- c(mixed_errors, trend_mixed_formula_error(
+          response, cont_rhs, stratumID, validation_data, "cont_rhs", environment()
+        ))
+      }
+    }
+    error_ind <- error_ind || length(mixed_errors) > 0L
+    error_vec <- c(error_vec, mixed_errors)
+  }
+
   # As necessary, ensure that variables identified by the vars_cat argument
   # contain two levels
 
@@ -778,6 +801,9 @@ trend_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL, subpops = 
         message(paste("During execution of the program,", nrow(warn_df), "warning messages were generated.  The warning \nmessages are stored in a data frame named 'warn_df'.  Enter the following \ncommand to view the warning messages: warnprnt() \nTo view a subset of the warning messages (say, messages number 1, 3, and 5), \nenter the following command: warnprnt(m=c(1,3,5))\n"))
       }
     }
+    if (mixed_active && length(mixed_errors)) {
+      stop(paste(c("See the preceding message(s).", mixed_errors), collapse = "\n"), call. = FALSE)
+    }
     stop("See the preceding message(s).")
   }
 
@@ -810,6 +836,20 @@ trend_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL, subpops = 
       dframe[, stratumID] <- factor(dframe[, stratumID])
       stratum_levels <- levels(dframe[, stratumID])
       nstrata <- length(stratum_levels)
+    }
+  }
+
+  if (mixed_active) {
+    complete_domains <- vapply(subpops, function(type) {
+      all(vapply(levels(dframe[[type]]), function(level) {
+        all(dframe[[type]] %in% level)
+      }, logical(1)))
+    }, logical(1))
+    if (!all(complete_domains)) {
+      stop(
+        "Mixed-model trends require every reported domain to contain all retained analysis rows. Use All Sites, or use SLR or WLR for domains.",
+        call. = FALSE
+      )
     }
   }
 
@@ -866,16 +906,6 @@ trend_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL, subpops = 
     }
   }
 
-  # If invprboot equals TRUE, then assign the bootstrap weights
-
-  if (invprboot == TRUE) {
-    if (cluster_ind) {
-      bootwgt <- dframe$wgt1 * dframe$wgt2
-    } else {
-      bootwgt <- dframe$wgt
-    }
-  }
-
   # Create a year variable for use in modelling
 
   Wyear <- "Wyear"
@@ -889,6 +919,7 @@ trend_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL, subpops = 
   # Create the output object
 
   trendsum <- list(catsum = NULL, contsum = NULL)
+  mixed_cat <- mixed_cont <- list()
 
   #
   # Begin the section for categorical response variables
@@ -1077,142 +1108,14 @@ trend_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL, subpops = 
             }
 
             # Section for a generalized linear mixed-effects model
-          } else if (invprboot == TRUE) {
-            # Fit the model
-
-            if (stratum_ind) {
-              eval(parse(text = paste0(
-                "regest <- glmer(", ivar, " ~ ",
-                cat_rhs, " + ", stratumID, ", data = dframe",
-                ", family = binomial",
-                ", control = glmerControl(check.nobs.vs.nRE = 'warning'",
-                ", check.conv.singular = lme4::.makeCC(action = 'warning',",
-                " tol = formals(lme4::isSingular)$tol)))"
-              )))
-            } else {
-              eval(parse(text = paste0(
-                "regest <- glmer(", ivar, " ~ ",
-                cat_rhs, ", data = dframe, family = binomial",
-                ", control = glmerControl(check.nobs.vs.nRE = 'warning'",
-                ", check.conv.singular = lme4::.makeCC(action = 'warning',",
-                " tol = formals(lme4::isSingular)$tol)))"
-              )))
-            }
-
-            # Create objects that are required for assigning names to the output
-            # data frame
-
-            coeff <- summary(regest)$coefficients
-            cint <- confint(regest,
-              parm = "beta_", level = conf / 100,
-              method = "Wald"
-            )
-            pval <- coeff[, "Pr(>|z|)"]
-            fixed <- matrix(0, 5, nrow(coeff))
-            fixed[1, ] <- coeff[, "Estimate"]
-            fixed[2, ] <- coeff[, "Std. Error"]
-            fixed[3, ] <- cint[, 1]
-            fixed[4, ] <- cint[, 2]
-            fixed[5, ] <- pval
-            vcor <- as.data.frame(VarCorr(regest))
-            varcomp <- vector("numeric", nrow(vcor) + sum(!is.na(vcor$vars)))
-            for (i in 1:length(varcomp)) {
-              if (is.na(vcor$var2[i])) {
-                varcomp[i] <- vcor$vcov[i]
-              } else {
-                varcomp[i] <- vcor$sdcor[i]
-              }
-            }
-            varcomp <- c(varcomp, 1.0)
-
-            # Call the bootstrap function
-
-            if (stratum_ind) {
-              bootest <- boot(dframe, bootfcn, nboot,
-                strata = dframe[, stratumID], weights = bootwgt,
-                model = model_cat, ivar = ivar, rhs = cat_rhs, conf = conf
-              )
-            } else {
-              bootest <- boot(dframe, bootfcn, nboot,
-                weights = bootwgt,
-                model = model_cat, ivar = ivar, rhs = cat_rhs, conf = conf
-              )
-            }
-
-            # Calculate bootstrap estimates
-
-            estimates <- apply(bootest$t, 2, mean)
-
-            # Assign estimates for the response variable to a data frame
-
-            trendsum$catsum <- rbind(trendsum$catsum, data.frame(t(c(
-              itype, isubpop, ivar, estimates
-            ))))
           } else {
-            # Fit the model
-
-            if (stratum_ind) {
-              eval(parse(text = paste0(
-                "regest <- glmer(", ivar, " ~ ",
-                cat_rhs, " + ", stratumID, ", data = dframe",
-                ", family = binomial",
-                ", control = glmerControl(check.nobs.vs.nRE = 'warning'",
-                ", check.conv.singular = lme4::.makeCC(action = 'warning',",
-                " tol = formals(lme4::isSingular)$tol)))"
-              )))
-            } else {
-              eval(parse(text = paste0(
-                "regest <- glmer(", ivar, " ~ ",
-                cat_rhs, ", data = dframe, family = binomial",
-                ", control = glmerControl(check.nobs.vs.nRE = 'warning'",
-                ", check.conv.singular = lme4::.makeCC(action = 'warning',",
-                " tol = formals(lme4::isSingular)$tol)))"
-              )))
-            }
-
-            # Calculate estimates
-
-            coeff <- summary(regest)$coefficients
-            cint <- confint(regest,
-              parm = "beta_", level = conf / 100,
-              method = "Wald"
+            model <- trend_mixed_formula(ivar, cat_rhs, stratumID, environment())
+            estimates <- trend_mixed_estimates(
+              model, dframe, conf, TRUE, PO_ind_cat, siteID, yearID
             )
-            pval <- coeff[, "Pr(>|z|)"]
-            fixed <- matrix(0, 5, nrow(coeff))
-            fixed[1, ] <- coeff[, "Estimate"]
-            fixed[2, ] <- coeff[, "Std. Error"]
-            fixed[3, ] <- cint[, 1]
-            fixed[4, ] <- cint[, 2]
-            fixed[5, ] <- pval
-            vcor <- as.data.frame(VarCorr(regest))
-            varcomp <- vector("numeric", nrow(vcor) + sum(!is.na(vcor$vars)))
-            for (i in 1:length(varcomp)) {
-              if (is.na(vcor$var2[i])) {
-                varcomp[i] <- vcor$vcov[i]
-              } else {
-                varcomp[i] <- vcor$sdcor[i]
-              }
-            }
-            varcomp <- c(varcomp, 1.0)
-            AIC <- extractAIC(regest)[2]
-            if (attr(terms(regest), "intercept") == 1) {
-              if (ncol(fixed) > 2) {
-                estimates <- c(
-                  fixed[, 2],
-                  as.vector(fixed[, c(1, 3:ncol(fixed))]), varcomp, AIC
-                )
-              } else {
-                estimates <- c(fixed[, 2], fixed[, 1], varcomp, AIC)
-              }
-            } else {
-              estimates <- c(as.vector(fixed), varcomp, AIC)
-            }
-
-            # Assign estimates for the response variable to a data frame
-
-            trendsum$catsum <- rbind(trendsum$catsum, data.frame(t(c(
-              itype, isubpop, ivar, estimates
-            ))))
+            mixed_cat[[length(mixed_cat) + 1L]] <- c(
+              Type = itype, Subpopulation = isubpop, Indicator = ivar, estimates
+            )
           }
 
           # End of the loop for levels of a subpopulation
@@ -1371,147 +1274,13 @@ trend_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL, subpops = 
             )
 
             # Section for a linear mixed-effects model
-          } else if (invprboot == TRUE) {
-            # Fit the model
-
-            if (stratum_ind) {
-              eval(parse(text = paste0(
-                "regest <- lmer(", ivar, " ~ ",
-                cont_rhs, " + ", stratumID, ", data = dframe",
-                ", control = lmerControl(check.nobs.vs.nRE = 'warning'",
-                ", check.conv.singular = lme4::.makeCC(action = 'warning',",
-                " tol = formals(lme4::isSingular)$tol)))"
-              )))
-            } else {
-              eval(parse(text = paste0(
-                "regest <- lmer(", ivar, " ~ ",
-                cont_rhs, ", data = dframe",
-                ", control = lmerControl(check.nobs.vs.nRE = 'warning'",
-                ", check.conv.singular = lme4::.makeCC(action = 'warning',",
-                " tol = formals(lme4::isSingular)$tol)))"
-              )))
-            }
-
-            # Create objects that are required for assigning names to the output
-            # data frame
-
-            coeff <- summary(regest)$coefficients
-            cint <- confint(regest,
-              parm = "beta_", level = conf / 100,
-              method = "Wald"
-            )
-            dfval <- df.residual(regest)
-            tvalue <- coeff[, "t value"]
-            pval <- 2 * (1 - pt(abs(tvalue), dfval))
-            fixed <- matrix(0, 5, nrow(coeff))
-            fixed[1, ] <- coeff[, "Estimate"]
-            fixed[2, ] <- coeff[, "Std. Error"]
-            fixed[3, ] <- cint[, 1]
-            fixed[4, ] <- cint[, 2]
-            fixed[5, ] <- pval
-            vcor <- as.data.frame(VarCorr(regest))
-            varcomp <- vector("numeric", nrow(vcor))
-            for (i in 1:length(varcomp)) {
-              if (is.na(vcor$var2[i])) {
-                varcomp[i] <- vcor$vcov[i]
-              } else {
-                varcomp[i] <- vcor$sdcor[i]
-              }
-            }
-
-            # Call the bootstrap function
-
-            if (stratum_ind) {
-              bootest <- boot(dframe, bootfcn, nboot,
-                strata = dframe[, stratumID], weights = bootwgt,
-                model = model_cont, ivar = ivar, rhs = cont_rhs, conf = conf
-              )
-            } else {
-              bootest <- boot(dframe, bootfcn, nboot,
-                weights = bootwgt,
-                model = model_cont, ivar = ivar, rhs = cont_rhs, conf = conf
-              )
-            }
-
-            # Calculate bootstrap estimates
-
-            estimates <- apply(bootest$t, 2, mean)
-
-            # Assign estimates for the response variable to a data frame
-
-            trendsum$contsum <- rbind(
-              trendsum$contsum,
-              data.frame(t(c(
-                itype, isubpop, ivar, estimates
-              )))
-            )
           } else {
-            # Fit the model
-
-            if (stratum_ind) {
-              eval(parse(text = paste0(
-                "regest <- lmer(", ivar, " ~ ",
-                cont_rhs, " + ", stratumID, ", data = dframe",
-                ", control = lmerControl(check.nobs.vs.nRE = 'warning'",
-                ", check.conv.singular = lme4::.makeCC(action = 'warning',",
-                " tol = formals(lme4::isSingular)$tol)))"
-              )))
-            } else {
-              eval(parse(text = paste0(
-                "regest <- lmer(", ivar, " ~ ",
-                cont_rhs, ", data = dframe",
-                ", control = lmerControl(check.nobs.vs.nRE = 'warning'",
-                ", check.conv.singular = lme4::.makeCC(action = 'warning',",
-                " tol = formals(lme4::isSingular)$tol)))"
-              )))
-            }
-
-            # Calculate estimates
-
-            coeff <- summary(regest)$coefficients
-            cint <- confint(regest,
-              parm = "beta_", level = conf / 100,
-              method = "Wald"
+            model <- trend_mixed_formula(ivar, cont_rhs, stratumID, environment())
+            estimates <- trend_mixed_estimates(
+              model, dframe, conf, FALSE, PO_ind_cont, siteID, yearID
             )
-            dfval <- df.residual(regest)
-            tvalue <- coeff[, "t value"]
-            pval <- 2 * (1 - pt(abs(tvalue), dfval))
-            fixed <- matrix(0, 5, nrow(coeff))
-            fixed[1, ] <- coeff[, "Estimate"]
-            fixed[2, ] <- coeff[, "Std. Error"]
-            fixed[3, ] <- cint[, 1]
-            fixed[4, ] <- cint[, 2]
-            fixed[5, ] <- pval
-            vcor <- as.data.frame(VarCorr(regest))
-            varcomp <- vector("numeric", nrow(vcor))
-            for (i in 1:length(varcomp)) {
-              if (is.na(vcor$var2[i])) {
-                varcomp[i] <- vcor$vcov[i]
-              } else {
-                varcomp[i] <- vcor$sdcor[i]
-              }
-            }
-            AIC <- extractAIC(regest)[2]
-            if (attr(terms(regest), "intercept") == 1) {
-              if (ncol(fixed) > 2) {
-                estimates <- c(
-                  fixed[, 2],
-                  as.vector(fixed[, c(1, 3:ncol(fixed))]), varcomp, AIC
-                )
-              } else {
-                estimates <- c(fixed[, 2], fixed[, 1], varcomp, AIC)
-              }
-            } else {
-              estimates <- c(as.vector(fixed), varcomp, AIC)
-            }
-
-            # Assign estimates for the response variable to a data frame
-
-            trendsum$contsum <- rbind(
-              trendsum$contsum,
-              data.frame(t(c(
-                itype, isubpop, ivar, estimates
-              )))
+            mixed_cont[[length(mixed_cont) + 1L]] <- c(
+              Type = itype, Subpopulation = isubpop, Indicator = ivar, estimates
             )
           }
 
@@ -1531,274 +1300,36 @@ trend_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL, subpops = 
 
   if (!is.null(trendsum$catsum)) {
     nrows <- nrow(trendsum$catsum)
-    if (model_cat %in% c("SLR", "WLR")) {
-      dimnames(trendsum$catsum) <- list(1:nrows, c(
-        "Type", "Subpopulation",
-        "Indicator", "Category", "Trend_Estimate", "Trend_Std_Error",
-        paste0("Trend_LCB", conf, "Pct"), paste0("Trend_UCB", conf, "Pct"),
-        "Trend_p_Value", "Intercept_Estimate", "Intercept_Std_Error",
-        paste0("Intercept_LCB", conf, "Pct"), paste0(
-          "Intercept_UCB", conf,
-          "Pct"
-        ), "Intercept_p_Value", "R_Squared", "Adj_R_Squared"
-      ))
-    } else {
-      if (PO_ind_cat == TRUE) {
-        dimnames(trendsum$catsum) <- list(1:nrows, c(
-          "Type", "Subpopulation",
-          "Indicator", "Trend_Estimate", "Trend_Std_Error", paste0(
-            "Trend_LCB",
-            conf, "Pct"
-          ), paste0("Trend_UCB", conf, "Pct"), "Trend_p_Value",
-          "Intercept_Estimate", "Intercept_Std_Error", paste0(
-            "Intercept_LCB",
-            conf, "Pct"
-          ), paste0("Intercept_UCB", conf, "Pct"),
-          "Intercept_p_Value", "Var_SiteID_Int", "Var_SiteID_Trend",
-          "Corr_SiteID_Int_Trend", "Var_YearID", "Var_Residual", "AIC"
-        ))
-      } else if (attr(terms(regest), "intercept") == 1) {
-        fixed_names <- NULL
-        if (ncol(fixed) > 2) {
-          fnames <- rownames(coeff)
-          for (i in 3:ncol(fixed)) {
-            temp <- fnames[i]
-            fixed_names <- c(
-              fixed_names, paste0(temp, "_Estimate"),
-              paste0(temp, "_Std_Error"), paste0(temp, "_LCB", conf, "Pct"),
-              paste0(temp, "_UCB", conf, "Pct"), paste0(temp, "_p_Value")
-            )
-          }
-        }
-        varcomp_names <- NULL
-        vnames <- vcor$grp
-        for (i in 1:nrow(vcor)) {
-          if (is.na(vcor$var2[i])) {
-            if (vcor$var1[i] %in% "(Intercept)") {
-              varcomp_names <- c(varcomp_names, paste("Var", vnames[i],
-                "Int",
-                sep = "_"
-              ))
-            } else {
-              varcomp_names <- c(varcomp_names, paste("Var", vnames[i],
-                vcor$var1[i],
-                sep = "_"
-              ))
-            }
-          } else {
-            if (vcor$var1[i] %in% "(Intercept)") {
-              varcomp_names <- c(
-                varcomp_names,
-                paste("Corr", vnames[i], "Int", vcor$var2[i], sep = "_")
-              )
-            } else {
-              varcomp_names <- c(varcomp_names, paste("Corr", vnames[1],
-                vcor$var1[i], vcor$var2[i],
-                sep = "_"
-              ))
-            }
-          }
-        }
-        varcomp_names <- gsub("Wyear", "Trend", varcomp_names)
-        dimnames(trendsum$catsum) <- list(1:nrows, c(
-          "Type", "Subpopulation",
-          "Indicator", "Trend_Estimate", "Trend_Std_Error",
-          paste0("Trend_LCB", conf, "Pct"),
-          paste0("Trend_UCB", conf, "Pct"), "Trend_p_Value",
-          "Intercept_Estimate", "Intercept_Std_Error",
-          paste0("Intercept_LCB", conf, "Pct"),
-          paste0("Intercept_UCB", conf, "Pct"), "Intercept_p_Value",
-          fixed_names, varcomp_names, "Var_Residual", "AIC"
-        ))
-      } else {
-        fixed_names <- NULL
-        if (ncol(fixed) > 1) {
-          fnames <- rownames(coeff)
-          for (i in 2:ncol(fixed)) {
-            temp <- fnames[i]
-            fixed_names <- c(
-              fixed_names, paste0(temp, "_Estimate"),
-              paste0(temp, "_Std_Error"), paste0(temp, "_LCB", conf, "Pct"),
-              paste0(temp, "_UCB", conf, "Pct"), paste0(temp, "_p_Value")
-            )
-          }
-        }
-        varcomp_names <- NULL
-        vnames <- vcor$grp
-        for (i in 1:nrow(vcor)) {
-          if (is.na(vcor$var2[i])) {
-            if (vcor$var1[i] %in% "(Intercept)") {
-              varcomp_names <- c(varcomp_names, paste("Var", vnames[i],
-                "Int",
-                sep = "_"
-              ))
-            } else {
-              varcomp_names <- c(varcomp_names, paste("Var", vnames[i],
-                vcor$var1[i],
-                sep = "_"
-              ))
-            }
-          } else {
-            if (vcor$var1[i] %in% "(Intercept)") {
-              varcomp_names <- c(
-                varcomp_names,
-                paste("Corr", vnames[i], "Int", vcor$var2[i], sep = "_")
-              )
-            } else {
-              varcomp_names <- c(varcomp_names, paste("Corr", vnames[1],
-                vcor$var1[i], vcor$var2[i],
-                sep = "_"
-              ))
-            }
-          }
-        }
-        varcomp_names <- gsub("Wyear", "Trend", varcomp_names)
-        dimnames(trendsum$catsum) <- list(1:nrows, c(
-          "Type", "Subpopulation",
-          "Indicator", "Trend_Estimate", "Trend_Std_Error",
-          paste0("Trend_LCB", conf, "Pct"),
-          paste0("Trend_UCB", conf, "Pct"), "Trend_p_Value",
-          fixed_names, varcomp_names, "Var_Residual", "AIC"
-        ))
-      }
-    }
+    dimnames(trendsum$catsum) <- list(1:nrows, c(
+      "Type", "Subpopulation",
+      "Indicator", "Category", "Trend_Estimate", "Trend_Std_Error",
+      paste0("Trend_LCB", conf, "Pct"), paste0("Trend_UCB", conf, "Pct"),
+      "Trend_p_Value", "Intercept_Estimate", "Intercept_Std_Error",
+      paste0("Intercept_LCB", conf, "Pct"), paste0(
+        "Intercept_UCB", conf,
+        "Pct"
+      ), "Intercept_p_Value", "R_Squared", "Adj_R_Squared"
+    ))
+  } else if (length(mixed_cat)) {
+    trendsum$catsum <- trend_mixed_rows(mixed_cat)
   }
 
   if (!is.null(trendsum$contsum)) {
     nrows <- nrow(trendsum$contsum)
-    if (model_cont %in% c("SLR", "WLR")) {
-      dimnames(trendsum$contsum) <- list(1:nrows, c(
-        "Type", "Subpopulation",
-        "Indicator", "Trend_Estimate", "Trend_Std_Error", paste0(
-          "Trend_LCB",
-          conf, "Pct"
-        ), paste0("Trend_UCB", conf, "Pct"), "Trend_p_Value",
-        "Intercept_Estimate", "Intercept_Std_Error", paste0(
-          "Intercept_LCB",
-          conf, "Pct"
-        ), paste0("Intercept_UCB", conf, "Pct"),
-        "Intercept_p_Value", "R_Squared", "Adj_R_Squared"
-      ))
-    } else {
-      if (PO_ind_cont == TRUE) {
-        dimnames(trendsum$contsum) <- list(1:nrows, c(
-          "Type", "Subpopulation",
-          "Indicator", "Trend_Estimate", "Trend_Std_Error", paste0(
-            "Trend_LCB",
-            conf, "Pct"
-          ), paste0("Trend_UCB", conf, "Pct"), "Trend_p_Value",
-          "Intercept_Estimate", "Intercept_Std_Error", paste0(
-            "Intercept_LCB",
-            conf, "Pct"
-          ), paste0("Intercept_UCB", conf, "Pct"),
-          "Intercept_p_Value", "Var_SiteID_Int", "Var_SiteID_Trend",
-          "Corr_SiteID_Int_Trend", "Var_YearID", "Var_Residual", "AIC"
-        ))
-      } else if (attr(terms(regest), "intercept") == 1) {
-        fixed_names <- NULL
-        if (ncol(fixed) > 2) {
-          fnames <- rownames(coeff)
-          for (i in 3:ncol(fixed)) {
-            temp <- fnames[i]
-            fixed_names <- c(
-              fixed_names, paste0(temp, "_Estimate"),
-              paste0(temp, "_Std_Error"), paste0(temp, "_LCB", conf, "Pct"),
-              paste0(temp, "_UCB", conf, "Pct"), paste0(temp, "_p_Value")
-            )
-          }
-        }
-        varcomp_names <- NULL
-        vnames <- vcor$grp
-        for (i in 1:(nrow(vcor) - 1)) {
-          if (is.na(vcor$var2[i])) {
-            if (vcor$var1[i] %in% "(Intercept)") {
-              varcomp_names <- c(varcomp_names, paste("Var", vnames[i],
-                "Int",
-                sep = "_"
-              ))
-            } else {
-              varcomp_names <- c(varcomp_names, paste("Var", vnames[i],
-                vcor$var1[i],
-                sep = "_"
-              ))
-            }
-          } else {
-            if (vcor$var1[i] %in% "(Intercept)") {
-              varcomp_names <- c(
-                varcomp_names,
-                paste("Corr", vnames[i], "Int", vcor$var2[i], sep = "_")
-              )
-            } else {
-              varcomp_names <- c(varcomp_names, paste("Corr", vnames[1],
-                vcor$var1[i], vcor$var2[i],
-                sep = "_"
-              ))
-            }
-          }
-        }
-        varcomp_names <- gsub("Wyear", "Trend", varcomp_names)
-        dimnames(trendsum$contsum) <- list(1:nrows, c(
-          "Type", "Subpopulation",
-          "Indicator", "Trend_Estimate", "Trend_Std_Error",
-          paste0("Trend_LCB", conf, "Pct"),
-          paste0("Trend_UCB", conf, "Pct"), "Trend_p_Value",
-          "Intercept_Estimate", "Intercept_Std_Error",
-          paste0("Intercept_LCB", conf, "Pct"),
-          paste0("Intercept_UCB", conf, "Pct"), "Intercept_p_Value",
-          fixed_names, varcomp_names, "Var_Residual", "AIC"
-        ))
-      } else {
-        fixed_names <- NULL
-        if (ncol(fixed) > 1) {
-          fnames <- rownames(coeff)
-          for (i in 2:ncol(fixed)) {
-            temp <- fnames[i]
-            fixed_names <- c(
-              fixed_names, paste0(temp, "_Estimate"),
-              paste0(temp, "_Std_Error"), paste0(temp, "_LCB", conf, "Pct"),
-              paste0(temp, "_UCB", conf, "Pct"), paste0(temp, "_p_Value")
-            )
-          }
-        }
-        varcomp_names <- NULL
-        vnames <- vcor$grp
-        for (i in 1:(nrow(vcor) - 1)) {
-          if (is.na(vcor$var2[i])) {
-            if (vcor$var1[i] %in% "(Intercept)") {
-              varcomp_names <- c(varcomp_names, paste("Var", vnames[i],
-                "Int",
-                sep = "_"
-              ))
-            } else {
-              varcomp_names <- c(varcomp_names, paste("Var", vnames[i],
-                vcor$var1[i],
-                sep = "_"
-              ))
-            }
-          } else {
-            if (vcor$var1[i] %in% "(Intercept)") {
-              varcomp_names <- c(
-                varcomp_names,
-                paste("Corr", vnames[i], "Int", vcor$var2[i], sep = "_")
-              )
-            } else {
-              varcomp_names <- c(varcomp_names, paste("Corr", vnames[1],
-                vcor$var1[i], vcor$var2[i],
-                sep = "_"
-              ))
-            }
-          }
-        }
-        varcomp_names <- gsub("Wyear", "Trend", varcomp_names)
-        dimnames(trendsum$contsum) <- list(1:nrows, c(
-          "Type", "Subpopulation",
-          "Indicator", "Trend_Estimate", "Trend_Std_Error",
-          paste0("Trend_LCB", conf, "Pct"),
-          paste0("Trend_UCB", conf, "Pct"), "Trend_p_Value",
-          fixed_names, varcomp_names, "Var_Residual", "AIC"
-        ))
-      }
-    }
+    dimnames(trendsum$contsum) <- list(1:nrows, c(
+      "Type", "Subpopulation",
+      "Indicator", "Trend_Estimate", "Trend_Std_Error", paste0(
+        "Trend_LCB",
+        conf, "Pct"
+      ), paste0("Trend_UCB", conf, "Pct"), "Trend_p_Value",
+      "Intercept_Estimate", "Intercept_Std_Error", paste0(
+        "Intercept_LCB",
+        conf, "Pct"
+      ), paste0("Intercept_UCB", conf, "Pct"),
+      "Intercept_p_Value", "R_Squared", "Adj_R_Squared"
+    ))
+  } else if (length(mixed_cont)) {
+    trendsum$contsum <- trend_mixed_rows(mixed_cont)
   }
 
   # As necessary, output a message indicating that warning messages were
@@ -1816,4 +1347,88 @@ trend_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL, subpops = 
   # Return the output object
 
   trendsum
+}
+
+trend_mixed_formula <- function(response, rhs, stratum, env) {
+  stratum_term <- if (!is.null(stratum)) deparse(as.name(stratum), backtick = TRUE)
+  stats::reformulate(c(rhs, stratum_term), response = as.name(response), env = env)
+}
+
+trend_mixed_formula_error <- function(response, rhs, stratum, data, argument, env) {
+  tryCatch({
+    formula <- trend_mixed_formula(response, rhs, stratum, env)
+    # Newer lme4 versions warn when forwarding nobars() to reformulas.
+    fixed <- suppressWarnings(lme4::nobars(formula))
+    frame <- stats::model.frame(fixed, data, na.action = stats::na.pass)
+    if (!"Wyear" %in% colnames(stats::model.matrix(fixed, frame))) {
+      paste0(argument, " must include Wyear as a fixed effect for ", response, ".")
+    }
+  }, error = function(e) {
+    paste0("Invalid ", argument, " for ", response, ": ", conditionMessage(e))
+  })
+}
+
+trend_mixed_estimates <- function(formula, data, conf, categorical, default, site, year) {
+  singular <- lme4::.makeCC(action = "warning",
+    tol = eval(formals(lme4::isSingular)$tol, asNamespace("lme4")))
+  if (categorical) {
+    fit <- glmer(formula, data = data, family = binomial,
+      control = glmerControl(check.nobs.vs.nRE = "warning", check.conv.singular = singular))
+  } else {
+    fit <- lmer(formula, data = data,
+      control = lmerControl(check.nobs.vs.nRE = "warning", check.conv.singular = singular))
+  }
+  if (!"Wyear" %in% names(lme4::fixef(fit))) {
+    stop("Wyear could not be estimated for ", all.vars(formula[[2L]])[1L], ".", call. = FALSE)
+  }
+
+  coefficients <- coef(summary(fit))
+  terms <- rownames(coefficients)
+  bounds <- confint(fit, parm = "beta_", level = conf / 100, method = "Wald")[terms, , drop = FALSE]
+  p_value <- if (categorical) coefficients[, "Pr(>|z|)"] else {
+    2 * (1 - pt(abs(coefficients[, "t value"]), df.residual(fit)))
+  }
+  statistics <- cbind(coefficients[, c("Estimate", "Std. Error")], bounds, p_value)
+  fixed_order <- c("Wyear", intersect("(Intercept)", terms), setdiff(terms, c("Wyear", "(Intercept)")))
+  fixed_labels <- fixed_order
+  fixed_labels[fixed_order == "Wyear"] <- "Trend"
+  fixed_labels[fixed_order == "(Intercept)"] <- "Intercept"
+  suffix <- c("Estimate", "Std_Error", paste0(c("LCB", "UCB"), conf, "Pct"), "p_Value")
+  fixed <- setNames(as.vector(t(statistics[fixed_order, , drop = FALSE])),
+    as.vector(outer(suffix, fixed_labels, function(s, label) paste(label, s, sep = "_"))))
+
+  components <- as.data.frame(VarCorr(fit))
+  random <- components[components$grp != "Residual", , drop = FALSE]
+  correlation <- !is.na(random$var2)
+  term_label <- function(term) {
+    term[term %in% "(Intercept)"] <- "Int"
+    term[term %in% "Wyear"] <- "Trend"
+    term
+  }
+  group <- random$grp
+  if (default) {
+    group[random$grp == site] <- "SiteID"
+    group[random$grp == year] <- "YearID"
+  }
+  labels <- paste("Var", group, term_label(random$var1), sep = "_")
+  labels[correlation] <- paste("Corr", group[correlation],
+    term_label(random$var1[correlation]), term_label(random$var2[correlation]), sep = "_")
+  values <- setNames(ifelse(correlation, random$sdcor, random$vcov), labels)
+  if (default) {
+    labels[group == "YearID"] <- "Var_YearID"
+    names(values) <- labels
+    values <- values[c("Var_SiteID_Int", "Var_SiteID_Trend", "Corr_SiteID_Int_Trend", "Var_YearID")]
+  }
+  residual <- if (categorical) 1 else components$vcov[components$grp == "Residual"]
+  estimates <- c(fixed, values, Var_Residual = residual, AIC = extractAIC(fit)[2L])
+  names(estimates) <- make.unique(names(estimates))
+  estimates
+}
+
+trend_mixed_rows <- function(rows) {
+  columns <- unique(unlist(lapply(rows, names), use.names = FALSE))
+  aligned <- lapply(rows, function(row) unname(row[columns]))
+  result <- as.data.frame(do.call(rbind, aligned), stringsAsFactors = FALSE)
+  names(result) <- columns
+  result
 }
