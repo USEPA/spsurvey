@@ -38,10 +38,10 @@ cont_analysis(
 \arguments{
 \item{dframe}{Data to be analyzed (analysis data). A data frame or
 \code{sf} object containing survey design
-variables, response variables, and subpopulation (domain) variables.}
+variables, continuous response variables, and subpopulation (domain) variables.}
 
-\item{vars}{Vector composed of character values that identify the
-names of response variables in \code{dframe}.}
+\item{vars}{Character vector naming the continuous response variables in
+\code{dframe}.}
 
 \item{subpops}{Vector composed of character values that identify the
 names of subpopulation (domain) variables in \code{dframe}.

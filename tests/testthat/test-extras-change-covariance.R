@@ -276,3 +276,48 @@ test_that("public change warnings identify totals with either revisit weight set
       expect_false(any(grepl(other, messages, fixed = TRUE)))
     }
 })
+
+test_that("repeat-site covariance follows declared category order in both stages", {
+  for (clustered in c(FALSE, TRUE)) for (stratified in c(FALSE, TRUE)) {
+    for (equal in c(FALSE, TRUE)) for (vt in c("SRS", "Local")) {
+      a <- change_covariance_fixture(clustered, stratified, TRUE, equal, vt)$args
+      expected <- change_covariance_run(a)$catsum
+      a$dframe$category <- factor(a$dframe$category, levels = c("Poor", "Good", "Absent"))
+      actual <- change_covariance_run(a)$catsum
+      expect_identical(as.character(actual$Category), c("Poor", "Good", "Absent"))
+      expect_equal(unname(as.matrix(actual[3L, c("DiffEst.P", "DiffEst.U", "StdError.P", "StdError.U")])),
+        matrix(0, 1L, 4L))
+      matched <- actual[match(expected$Category, actual$Category), ]
+      rownames(matched) <- rownames(expected)
+      expect_equal(matched, expected, tolerance = 1e-12)
+    }
+  }
+})
+
+test_that("repeat-site covariance for a single category is independent of its label", {
+  a <- change_covariance_fixture(vartype = "Local")$args
+  a$dframe$category <- factor("Good")
+  first <- change_covariance_run(a)$catsum
+  a$dframe$category <- factor("Poor")
+  second <- change_covariance_run(a)$catsum
+  expect_equal(first[setdiff(names(first), "Category")],
+    second[setdiff(names(second), "Category")])
+})
+
+test_that("one-level change padding stays internal and real Not Good survives", {
+  for (clustered in c(FALSE, TRUE)) for (stratified in c(FALSE, TRUE)) {
+    for (equal in c(FALSE, TRUE)) for (vt in c("SRS", "Local")) {
+      a <- change_covariance_fixture(clustered, stratified, TRUE, equal, vt)$args
+      a$dframe$single <- factor("Good")
+      a$dframe$real <- factor(ifelse(a$dframe$category == "Good", "Good", "Not Good"))
+      a$vars_cat <- c("single", "real")
+      actual <- change_covariance_run(a)
+      one <- actual$catsum[actual$catsum$Indicator == "single", ]
+      expect_identical(as.character(one$Category), "Good")
+      expect_equal(one$DiffEst.P, 0)
+      expect_true(is.finite(one$StdError.U))
+      expect_true(any(actual$catsum$Indicator == "real" & actual$catsum$Category == "Not Good"))
+      expect_equal(nrow(actual$contsum_median), 2L)
+    }
+  }
+})

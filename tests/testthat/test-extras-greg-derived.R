@@ -338,3 +338,73 @@ test_that("GREG SLR/WLR trends preserve lm inference on annual estimates", {
     expect_error(do.call(trend_analysis, a), "SLR/WLR")
   }
 })
+
+test_that("GREG reporting skips empty domains with population or domain controls", {
+  d <- declared_category_fixture()
+  d$domain <- factor(d$domain, levels = c("West", "Empty", "East"))
+  d$measure <- d$x + d$y
+  d$measure[d$domain == "West"] <- NA_real_
+  for (known_domains in c(FALSE, TRUE)) {
+    common <- list(dframe = d, subpops = "domain", siteID = "site",
+      vartype = "SRS", formula = ~1, popsize = c("(Intercept)" = sum(d$weight)),
+      subpopsize = if (known_domains) list(domain = list(
+        West = c("(Intercept)" = sum(d$weight[d$domain == "West"])),
+        East = c("(Intercept)" = sum(d$weight[d$domain == "East"])))))
+    categorical <- suppressMessages(do.call(cat_analysis, c(common, list(vars = "response"))))
+    expect_identical(unique(categorical$Subpopulation), c("East", "West"))
+    continuous <- suppressMessages(do.call(cont_analysis, c(common,
+      list(vars = "measure", statistics = c("Mean", "Total", "CDF", "Pct"), pctval = 50))))
+    for (table in continuous) {
+      expect_identical(unique(table$Subpopulation), c("East", "West"))
+      field <- if ("Estimate" %in% names(table)) "Estimate" else "Estimate.P"
+      expect_true(all(is.na(table[[field]][table$Subpopulation == "West"])))
+    }
+    for (risk in list(relrisk_analysis, attrisk_analysis, diffrisk_analysis)) {
+      result <- suppressMessages(do.call(risk, c(common,
+        list(vars_response = "response", vars_stressor = "stressor"))))
+      expect_identical(result$Subpopulation, c("West", "East"))
+    }
+  }
+  d$domain[] <- NA
+  status <- cat_analysis(d, "response", subpops = "domain", vartype = "SRS",
+    formula = ~1, popsize = c("(Intercept)" = sum(d$weight)))
+  expect_s3_class(status, "data.frame")
+  expect_equal(nrow(status), 0L)
+})
+
+test_that("GREG time preserves occasion domain behavior and skips domains empty in all years", {
+  d <- declared_category_fixture()
+  d$measure <- d$x + d$y
+  panel <- do.call(rbind, lapply(2000:2002, function(year) {
+    transform(d, measure = measure + .01 * (year - 2000)^2, year = year)
+  }))
+  run <- function(data, change) {
+    if (change) data <- subset(data, year < 2002)
+    common <- list(dframe = data, vars_cont = "measure", siteID = "site",
+      subpops = "domain", vartype = "SRS", formula = ~1,
+      popsize = setNames(rep(list(c("(Intercept)" = sum(d$weight))),
+        length(unique(data$year))), unique(data$year)))
+    suppressMessages(if (change) do.call(change_analysis, c(common, list(surveyID = "year")))
+      else do.call(trend_analysis, c(common, list(yearID = "year"))))
+  }
+  for (empty_year in 2000:2001) {
+    data <- panel
+    member <- as.character(data$domain)
+    member[data$year == empty_year & member == "West"] <- "East"
+    data$domain <- member
+    if (empty_year == 2000L) {
+      expect_identical(run(data, TRUE)$contsum_mean$Subpopulation, "East")
+      expect_identical(run(data, FALSE)$contsum$Subpopulation, "East")
+    } else {
+      for (change in c(FALSE, TRUE)) {
+        expect_error(run(data, change), "Every requested domain must be represented")
+      }
+    }
+    data$domain <- factor(member, levels = c("West", "East", "Empty"))
+    expect_error(run(data, TRUE), "NA/NaN/Inf in foreign function call", fixed = TRUE)
+    expect_identical(run(data, FALSE)$contsum$Subpopulation, "East")
+  }
+  panel$domain <- factor(panel$domain, levels = c("West", "East", "Empty"))
+  expect_identical(run(panel, TRUE)$contsum_mean$Subpopulation, c("West", "East"))
+  expect_identical(run(panel, FALSE)$contsum$Subpopulation, c("West", "East"))
+})

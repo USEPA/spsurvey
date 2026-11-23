@@ -54,7 +54,7 @@
 #'
 #' @param response_levels List providing the category values (levels) for each
 #'   element in the \code{vars_response} argument.  Each element in the list
-#'   must contain two values, where the first value identifies poor condition,
+#'   must contain two category values, where the first identifies poor condition,
 #'   and the second value identifies good condition.  This argument must be
 #'   named and must be the same length as argument \code{vars_response}.  Names
 #'   for this argument must match the values in the \code{vars_response}
@@ -68,7 +68,7 @@
 #'
 #' @param stressor_levels List providing the category values (levels) for each
 #'   element in the \code{vars_stressor} argument.  Each element in the list
-#'   must contain two values, where the first value identifies poor condition,
+#'   must contain two declared category values, where the first identifies poor condition,
 #'   and the second value identifies good condition.  This argument must be
 #'   named and must be the same length as argument \code{vars_stressor}.  Names
 #'   for this argument must match the values in the \code{vars_stressor}
@@ -396,6 +396,9 @@ attrisk_analysis <- function(dframe, vars_response, vars_stressor, response_leve
     subpops <- subpop
   }
   greg_check_call(formula, subpopsize)
+  categories <- declared_categories(dframe,
+    c(if (!missing(vars_response)) vars_response, if (!missing(vars_stressor)) vars_stressor),
+    reject_missing = is.null(formula))
   if (!is.null(formula)) subset_local <- FALSE
   # Create a vector for error messages
 
@@ -578,6 +581,8 @@ attrisk_analysis <- function(dframe, vars_response, vars_stressor, response_leve
   dframe <- temp$dframe
   vars_response <- temp$vars_cat
   vars_stressor <- temp$vars_stressor
+  responses <- category_columns(dframe[intersect(c(vars_response, vars_stressor), names(dframe))],
+    categories)$data
   subpops <- temp$subpops
   if (is.null(formula)) popsize <- temp$popsize
   vartype <- temp$vartype
@@ -585,113 +590,13 @@ attrisk_analysis <- function(dframe, vars_response, vars_stressor, response_leve
   error_ind <- temp$error_ind
   error_vec <- temp$error_vec
 
-  # Check arguments response_levels and stressor_levels
-
-  if (is.null(response_levels)) {
-    response_levels <- rep(list(c("Poor", "Good")), length(vars_response))
-    names(response_levels) <- vars_response
-  } else {
-    if (!is.list(response_levels)) {
-      error_ind <- TRUE
-      msg <- "Argument response_levels must be a list.\n"
-      error_vec <- c(error_vec, msg)
-    } else {
-      if (length(response_levels) != length(vars_response)) {
-        error_ind <- TRUE
-        msg <- "Argument response_levels must be the same length as argument vars_response.\n"
-        error_vec <- c(error_vec, msg)
-      }
-      if (is.null(names(response_levels))) { # set default names if none provided
-        names(response_levels) <- vars_response
-      }
-      if (any(sapply(response_levels, function(x) length(x) != 2))) {
-        error_ind <- TRUE
-        msg <- "Each element of argument response_levels must contain only two values.\n"
-        error_vec <- c(error_vec, msg)
-      }
-      if (any(sapply(response_levels, function(x) !is.character(x)))) {
-        error_ind <- TRUE
-        msg <- "Each element of argument response_levels must contain character values.\n"
-        error_vec <- c(error_vec, msg)
-      }
-      if (all(vars_response %in% names(dframe))) {
-        tst <- logical(length(vars_response))
-        for (i in 1:length(vars_response)) {
-          if (!all(response_levels[[i]] %in% levels(dframe[, vars_response[i]]))) {
-            tst[i] <- TRUE
-          }
-        }
-        if (any(tst)) {
-          temp_str <- vecprint(vars_response[tst])
-          error_ind <- TRUE
-          msg <- paste0("\nCategory names for the following response variables do not match category names \nin the response_levels argument:\n", temp_str)
-          error_vec <- c(error_vec, msg)
-        } else {
-          if (!all(names(response_levels) %in% vars_response)) {
-            error_ind <- TRUE
-            msg <- "Names for the response_levels list do not match the values in the vars_response \nargument."
-            error_vec <- c(error_vec, msg)
-          } else {
-            indx <- match(vars_response, names(response_levels))
-            response_levels <- response_levels[indx]
-          }
-        }
-      }
-    }
-  }
-
-  if (is.null(stressor_levels)) {
-    stressor_levels <- rep(list(c("Poor", "Good")), length(vars_stressor))
-    names(stressor_levels) <- vars_stressor
-  } else {
-    if (!is.list(stressor_levels)) {
-      error_ind <- TRUE
-      msg <- "Argument stressor_levels must be a list.\n"
-      error_vec <- c(error_vec, msg)
-    } else {
-      if (length(stressor_levels) != length(vars_stressor)) {
-        error_ind <- TRUE
-        msg <- "Argument stressor_levels must be the same length as argument vars_stressor.\n"
-        error_vec <- c(error_vec, msg)
-      }
-      if (is.null(names(stressor_levels))) { # set default names if none provided
-        names(stressor_levels) <- vars_stressor
-      }
-      if (any(sapply(stressor_levels, function(x) length(x) != 2))) {
-        error_ind <- TRUE
-        msg <- "Each element of argument stressor_levels must contain only two values.\n"
-        error_vec <- c(error_vec, msg)
-      }
-      if (any(sapply(stressor_levels, function(x) !is.character(x)))) {
-        error_ind <- TRUE
-        msg <- "Each element of argument stressor_levels must contain character values.\n"
-        error_vec <- c(error_vec, msg)
-      }
-      if (all(vars_stressor %in% names(dframe))) {
-        tst <- logical(length(vars_stressor))
-        for (i in 1:length(vars_stressor)) {
-          if (!all(stressor_levels[[i]] %in% levels(dframe[, vars_stressor[i]]))) {
-            tst[i] <- TRUE
-          }
-        }
-        if (any(tst)) {
-          temp_str <- vecprint(vars_stressor[tst])
-          error_ind <- TRUE
-          msg <- paste0("\nCategory names for the following stressor variables do not match category names \nin the stressor_levels argument:\n", temp_str)
-          error_vec <- c(error_vec, msg)
-        } else {
-          if (!all(names(stressor_levels) %in% vars_stressor)) {
-            error_ind <- TRUE
-            msg <- "Names for the stressor_levels list do not match the values in the vars_stressor \nargument."
-            error_vec <- c(error_vec, msg)
-          } else {
-            indx <- match(vars_stressor, names(stressor_levels))
-            stressor_levels <- stressor_levels[indx]
-          }
-        }
-      }
-    }
-  }
+  response_check <- risk_levels(response_levels, vars_response, responses, "response", !is.null(formula))
+  stressor_check <- risk_levels(stressor_levels, vars_stressor, responses, "stressor", !is.null(formula))
+  response_levels <- response_check$levels
+  stressor_levels <- stressor_check$levels
+  level_errors <- c(response_check$errors, stressor_check$errors)
+  error_ind <- error_ind || length(level_errors) > 0L
+  error_vec <- c(error_vec, level_errors)
 
   # As necessary, output a message indicating that error messages were generated
   # during execution of the program
@@ -712,7 +617,7 @@ attrisk_analysis <- function(dframe, vars_response, vars_stressor, response_leve
         message(paste("During execution of the program,", nrow(warn_df), "warning messages were generated.  The warning \nmessages are stored in a data frame named 'warn_df'.  Enter the following \ncommand to view the warning messages: warnprnt() \nTo view a subset of the warning messages (say, messages number 1, 3, and 5), \nenter the following command: warnprnt(m=c(1,3,5))\n"))
       }
     }
-    stop("See the preceding message(s).")
+    stop(paste(c("See the preceding message(s).", level_errors), collapse = "\n"), call. = FALSE)
   }
 
   # Assign a logical value to the indicator variable for a stratified sample
@@ -765,7 +670,7 @@ attrisk_analysis <- function(dframe, vars_response, vars_stressor, response_leve
 
   if (!is.null(formula)) {
     greg <- greg_prepare(design, formula, popsize, subpopsize, subpops, warn_df)
-    return(greg_risk(dframe, vars_response, vars_stressor, response_levels,
+    return(greg_risk(dframe, responses, vars_response, vars_stressor, response_levels,
       stressor_levels, subpops, greg, design_names, vartype, conf, "attrisk", local_nbh = local_nbh, local_context = local_context))
   }
 
@@ -830,6 +735,11 @@ attrisk_analysis <- function(dframe, vars_response, vars_stressor, response_leve
   # Create the arsum (results) data frame
 
   arsum <- NULL
+  responses <- category_columns(dframe[intersect(c(vars_response, vars_stressor), names(dframe))],
+    categories)$data
+  margin_label <- risk_margin_label(responses)
+  response_design <- design
+  response_design$variables[names(responses)] <- responses
 
   # Assign the confidence bound multiplier
 
@@ -875,12 +785,12 @@ attrisk_analysis <- function(dframe, vars_response, vars_stressor, response_leve
 
           # Assign response variable values
 
-          response <- dframe[, ivar_r]
+          response <- responses[[ivar_r]]
           nresp <- length(response)
 
           # Assign stressor variable values
 
-          stressor <- dframe[, ivar_s]
+          stressor <- responses[[ivar_s]]
 
           # Create the warn_vec object
 
@@ -922,7 +832,7 @@ attrisk_analysis <- function(dframe, vars_response, vars_stressor, response_leve
               wgt_total_st <- svytable(make.formula(paste(
                 ivar_r, "+",
                 ivar_s
-              )), design = subset(design, stratum_i))
+              )), design = subset(response_design, stratum_i))
 
               # Calculate the variance-covariance estimate for the cell and
               # marginal totals
@@ -979,7 +889,7 @@ attrisk_analysis <- function(dframe, vars_response, vars_stressor, response_leve
 
             # Add margins to the wgt_total table
 
-            wgt_total <- addmargins(wgt_total)
+            wgt_total <- risk_addmargins(wgt_total, margin_label)
 
             # Assign cell weight totals
 
@@ -1087,10 +997,10 @@ attrisk_analysis <- function(dframe, vars_response, vars_stressor, response_leve
 
             # Compute the 2x2 table of weight totals
 
-            wgt_total <- addmargins(svytable(
+            wgt_total <- risk_addmargins(svytable(
               make.formula(paste(ivar_r, "+", ivar_s)),
-              design = subset(design, tst)
-            ))
+              design = subset(response_design, tst)
+            ), margin_label)
 
             # Assign cell weight totals
 
@@ -1219,14 +1129,14 @@ attrisk_analysis <- function(dframe, vars_response, vars_stressor, response_leve
 
           # Calculate the table of cell and margin counts
 
-          cc <- addmargins(table(list(
+          cc <- risk_addmargins(table(list(
             response = response[tst],
             stressor = stressor[tst]
-          )))
+          )), margin_label)
 
           # Calculate the table of cell proportion estimates
 
-          cp <- wgt_total / wgt_total["Sum", "Sum"]
+          cp <- wgt_total / wgt_total[margin_label, margin_label]
 
           # Append results to the arsum data frame
 
@@ -1235,13 +1145,13 @@ attrisk_analysis <- function(dframe, vars_response, vars_stressor, response_leve
             Subpopulation = isubpop,
             Response = ivar_r,
             Stressor = ivar_s,
-            nResp = cc[3, 3],
+            nResp = as.double(sum(tst)),
             Estimate = ar,
             StdError_log = arlog_se,
             MarginofError_log = mult * arlog_se,
             LCB = cl[1],
             UCB = cl[2],
-            WeightTotal = wgt_total["Sum", "Sum"],
+            WeightTotal = wgt_total[margin_label, margin_label],
             CellCounts_11 = cc[
               response_levels[[ivar_r]][1],
               stressor_levels[[ivar_s]][1]

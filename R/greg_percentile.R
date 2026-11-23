@@ -15,7 +15,7 @@ greg_percentile_est <- function(result, dframe, itype, domains, ivar, greg,
                                 design_names, vartype, conf, pctval, warn_df, local_nbh = 8, local_context = NULL) {
   y <- dframe[[ivar]]
   critical <- stats::qnorm(.5 + conf / 200)
-  for (domain in sort(domains)) {
+  for (domain in greg_observed_domains(sort(domains), dframe[[itype]])) {
     keep <- dframe[[itype]] %in% domain & !is.na(y)
     context <- greg$contexts[[itype]][[domain]]
     a <- context$calibrated_weights[keep]

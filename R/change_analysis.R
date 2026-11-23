@@ -506,6 +506,8 @@ change_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL, test = "m
     subpops <- subpop
   }
   greg_check_call(formula, subpopsize)
+  categories <- declared_categories(dframe, vars_cat, reserve_total = TRUE,
+    reject_missing = if (is.null(formula)) TRUE else "factor")
   if (!is.null(formula)) {
     return(greg_change(greg_time_args(environment()), vars_cat, vars_cont, test, surveyID, survey_names, local_nbh = local_nbh, local_context = local_context))
   }
@@ -917,13 +919,20 @@ change_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL, test = "m
   cluster_ind <- !is.null(clusterID)
 
 
+  will_pad <- names(categories)[lengths(categories) == 1L]
+  responses <- category_columns(dframe, categories,
+    c(unlist(design_names), surveyID, subpops, vars_cont,
+      category_popsize_columns(popsize), "wgt", "wgt1", "wgt2"), will_pad = will_pad)
+  dframe <- responses$data
+  vars_cat <- category_column_names(vars_cat, responses$columns)
+
   # Create the survey design object for each survey
-  ## give factors two levels if they only have one level
-  for (x in vars_cat) {
-    catvar_levels <- levels(dframe[[x]])
-    if (length(catvar_levels) == 1) {
-      levels(dframe[[x]]) <- c(catvar_levels, paste0("Not ", catvar_levels))
-    }
+  # Repeat-site covariance needs an indicator for the one observed category.
+  padded <- category_column_names(will_pad, responses$columns)
+  labels <- unique(unlist(categories, use.names = FALSE))
+  padding <- tail(make.unique(c(labels, ".spsurvey_padding")), 1L)
+  for (variable in padded) {
+    levels(dframe[[variable]]) <- c(levels(dframe[[variable]]), padding)
   }
   design <- survey_design(
     dframe, siteID, weight, stratum_ind, stratumID, cluster_ind, clusterID,
@@ -1014,7 +1023,7 @@ change_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL, test = "m
             nlev_ivar, design_1, design_2, design_names, repeat_1[survey_1],
             repeat_2[survey_2], siteID, revisitwgt, NULL, NULL, vartype, conf,
             mult, warn_ind, warn_df,
-            warn_vec = c(itype, isubpop, ivar), subset_local = subset_local,
+            warn_vec = c(itype, isubpop, category_original_names(ivar, responses$columns)), subset_local = subset_local,
             local_nbh = local_nbh, local_context = local_context)
           changesum <- temp$changesum
           warn_ind <- temp$warn_ind
@@ -1059,7 +1068,7 @@ change_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL, test = "m
             design_1, design_2, design_names, repeat_1[survey_1],
             repeat_2[survey_2], siteID, revisitwgt, test, vars_nondetect[indx],
             vartype, conf, mult, warn_ind, warn_df,
-            warn_vec = c(itype, isubpop, ivar), subset_local = subset_local,
+            warn_vec = c(itype, isubpop, category_original_names(ivar, responses$columns)), subset_local = subset_local,
             local_nbh = local_nbh, local_context = local_context)
           changesum <- temp$changesum
           warn_ind <- temp$warn_ind
@@ -1083,7 +1092,14 @@ change_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL, test = "m
   # As necessary, output a message indicating that warning messages were generated
   # during execution of the program
 
+  if (warn_ind && length(padded)) {
+    synthetic_warning <- warn_df$indicator %in% c(padded, will_pad) &
+      grepl(paste0('"', padding, '"'), warn_df$warning, fixed = TRUE)
+    warn_df <- warn_df[!synthetic_warning, , drop = FALSE]
+    warn_ind <- nrow(warn_df) > 0L
+  }
   if (warn_ind) {
+    warn_df$indicator <- category_original_names(warn_df$indicator, responses$columns)
     warn_df <<- warn_df
     if (nrow(warn_df) == 1) {
       message("During execution of the program, a warning message was generated.  The warning \nmessage is stored in a data frame named 'warn_df'.  Enter the following command \nto view the warning message: warnprnt()\n")
@@ -1112,6 +1128,14 @@ change_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL, test = "m
       "MarginofError.U_2", paste0("LCB", conf, "Pct.U_2"),
       paste0("UCB", conf, "Pct.U_2")
     ))
+    catsum <- changesum$catsum
+    synthetic <- catsum$Indicator %in% padded & catsum$Category == padding
+    if (any(synthetic)) {
+      catsum <- catsum[!synthetic, , drop = FALSE]
+      dimnames(catsum) <- list(seq_len(nrow(catsum)), names(catsum))
+      changesum$catsum <- catsum
+    }
+    changesum$catsum$Indicator <- category_original_names(changesum$catsum$Indicator, responses$columns)
   }
 
   if (!is.null(changesum$contsum_mean)) {

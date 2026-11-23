@@ -101,31 +101,47 @@ contrast_analysis <- function(dframe, vars_cat = NULL, vars_cont = NULL,
     joint[[type]] <- list()
     for (indicator in c(prepared$vars_cont, prepared$vars_cat)) {
       categorical <- indicator %in% prepared$vars_cat
+      column <- category_column_names(indicator, prepared$category_columns)
       joint[[type]][[indicator]] <- list()
       prepared$subset_categories <- NULL
       if (categorical && subset_local && prepared$vartype == "Local" && is.null(prepared$greg)) {
         # Compute the standard categorical marginals together, once. Their
         # fallback rules can depend on the whole set of category variances.
-        domain_counts <- tapply(!is.na(data[[indicator]]), data[[type]], sum)
+        domain_counts <- tapply(!is.na(data[[column]]), data[[type]], sum)
         domains <- names(domain_counts)[domain_counts > 0]
         if (length(domains)) {
           marginal_data <- data
           marginal_data[[type]] <- factor(data[[type]], levels = domains)
+          levels_response <- levels(data[[column]])
+          marginal_column <- column
+          marginal_levels <- levels_response
+          if ("Total" %in% levels_response || column == type) {
+            marginal_column <- tail(make.unique(c(names(data), ".spsurvey_category")), 1)
+            marginal_levels <- paste0("category", seq_along(levels_response))
+            marginal_data[[marginal_column]] <- data[[column]]
+            levels(marginal_data[[marginal_column]]) <- marginal_levels
+          }
           marginal_design <- prepared$design
           marginal_design$variables <- marginal_data
-          levels_response <- levels(data[[indicator]])
           marginal <- category_est(NULL, marginal_data, type, domains,
-            length(domains), indicator, levels_response, length(levels_response),
+            length(domains), marginal_column, marginal_levels, length(marginal_levels),
             marginal_design, prepared$design_names, "Local", conf,
             stats::qnorm(.5 + conf / 200), !is.null(prepared$warn_df),
             prepared$warn_df, TRUE, local_nbh = local_nbh, local_context = local_context)
-          prepared$subset_categories <- marginal$catsum
+          selected <- marginal$catsum$Category != "Total"
+          prepared$subset_categories <- marginal$catsum[selected, , drop = FALSE]
+          prepared$subset_categories$Category <- levels_response[
+            match(prepared$subset_categories$Category, marginal_levels)]
           prepared$warn_df <- marginal$warn_df
+          if (!is.null(prepared$warn_df)) {
+            prepared$warn_df$indicator[!is.na(prepared$warn_df$indicator) &
+              prepared$warn_df$indicator == marginal_column] <- indicator
+          }
         }
       }
-      categories <- if (categorical) levels(data[[indicator]]) else NA_character_
+      categories <- if (categorical) levels(data[[column]]) else NA_character_
       for (category in categories) {
-        response <- if (categorical) as.numeric(data[[indicator]] == category) else data[[indicator]]
+        response <- if (categorical) as.numeric(data[[column]] == category) else data[[column]]
         measures <- if (categorical) c("Proportion", "Total") else statistics
         tables <- list()
         for (statistic in measures) {

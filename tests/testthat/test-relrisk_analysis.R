@@ -281,3 +281,14 @@ test_that("A warning (in message form) is produced", {
     fpc = fpc4a, vartype = "SRS"
   )))
 })
+test_that("risk nResp counts complete domain pairs with extra factor levels", {
+  declared_category_risk_counts(relrisk_analysis)
+})
+
+test_that("risk boundaries use selected declared categories", {
+  declared_category_risk_boundaries(relrisk_analysis)
+})
+
+test_that("risk margins preserve categories named Sum", {
+  declared_category_risk_sum(relrisk_analysis)
+})

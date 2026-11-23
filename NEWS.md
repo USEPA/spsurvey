@@ -15,6 +15,10 @@ via the `formula`, `popsize`, and `subpopsize` arguments.
 
 ## Minor Updates
 
+* Categorical variable analyses with unused factor levels now return an estimate and standard error of zero.
+* Categorical variable analyses now use declared factor level order rather than using alphabetical order.
+* Removed the artifical `"Not X"` level from `change_analysis()` output for categorical variables with a single level.
+* `trend_analysis()` with `"WLR"` now drops years with zero variance.
 * Changed the default `model_cont` argument in `trend_analysis()` to `"SLR"`, matching `model_cat`.
 * Improved computational efficiency of the local neighborhood variance estimator by leveraging sparse matrix results and reusing neighborhoods across subpopulation estimators.
 * Minor documentation updates.
@@ -24,6 +28,10 @@ via the `formula`, `popsize`, and `subpopsize` arguments.
 
 ## Bug Fixes
 
+* Fixed a bug that affected `nResp` in the risk analysis functions when there was an unused, third factor level.
+* Fixed a bug that affected confidence intervals for totals of categorial response variables with only a single group when using `"SRS"`, `"HT"`, and `"YG"` variance estimators.
+* Fixed a bug that affected repeat-visit covariances in `change_analysis()` for categorial response variables with only a single group.
+* Fixed a bug that occurred in the risk analysis functions when a response or stressor category was named `"Sum"`.
 * Fixed a bug that did not account for estimated stratum sizes when estimating means with the local neighborhood variance. 
 * Fixed a bug that prevented `grts()` and `irs()` from accepting auxiliary columns with units from `units`.
 * Fixed a bug in `irs()` that prevented minimum-distance retries from updating the selected sample.

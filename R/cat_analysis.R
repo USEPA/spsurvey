@@ -33,10 +33,10 @@
 #'
 #' @param dframe Data to be analyzed (analysis data). A data frame or
 #'   \code{sf} object containing survey design
-#'   variables, response variables, and subpopulation (domain) variables.
+#'   variables, categorical response variables, and subpopulation (domain) variables.
 #'
 #' @param vars Vector composed of character values that identify the
-#'   names of response variables in \code{dframe}.
+#'   names of categorical response variables in \code{dframe}.
 #'
 #' @param subpops Vector composed of character values that identify the
 #'   names of subpopulation (domain) variables in \code{dframe}.
@@ -384,6 +384,8 @@ cat_analysis <- function(dframe, vars, subpops = NULL, siteID = NULL, weight = "
   fname <- "cat_analysis"
 
   greg_check_call(formula, subpopsize)
+  categories <- declared_categories(dframe, if (!missing(vars)) vars, reserve_total = TRUE,
+    reject_missing = is.null(formula))
   greg <- NULL
   if (!is.null(formula)) {
     if (!missing(subset_local) && isTRUE(subset_local) &&
@@ -672,6 +674,13 @@ cat_analysis <- function(dframe, vars, subpops = NULL, siteID = NULL, weight = "
     }
   }
 
+  responses <- category_columns(dframe, categories,
+    c(unlist(design_names), subpops, category_popsize_columns(popsize),
+      all.vars(formula), "wgt", "wgt1", "wgt2"))
+  dframe <- responses$data
+  for (column in responses$columns) design$variables[[column]] <- dframe[[column]]
+  vars <- category_column_names(vars, responses$columns)
+
   # Assign the confidence bound multiplier
 
   mult <- qnorm(0.5 + (conf / 100) / 2)
@@ -713,6 +722,7 @@ cat_analysis <- function(dframe, vars, subpops = NULL, siteID = NULL, weight = "
   # during execution of the program
 
   if (warn_ind) {
+    warn_df$indicator <- category_original_names(warn_df$indicator, responses$columns)
     warn_df <<- warn_df
     if (nrow(warn_df) == 1) {
       message("During execution of the program, a warning message was generated.  The warning \nmessage is stored in a data frame named 'warn_df'.  Enter the following command \nto view the warning message: warnprnt()\n")
@@ -723,7 +733,12 @@ cat_analysis <- function(dframe, vars, subpops = NULL, siteID = NULL, weight = "
 
   # Assign dimension names to the catsum data frame
 
-  dimnames(catsum) <- list(1:nrow(catsum), c(
+  if (is.null(catsum) && !is.null(formula)) {
+    catsum <- data.frame(Type = character(), Subpopulation = character(),
+      Indicator = character(), Category = character(), nResp = integer(),
+      matrix(numeric(), nrow = 0L, ncol = 10L))
+  }
+  dimnames(catsum) <- list(seq_len(nrow(catsum)), c(
     "Type", "Subpopulation",
     "Indicator", "Category", "nResp", "Estimate.P", "StdError.P",
     "MarginofError.P", paste0("LCB", conf, "Pct.P"),
@@ -731,6 +746,8 @@ cat_analysis <- function(dframe, vars, subpops = NULL, siteID = NULL, weight = "
     "MarginofError.U", paste0("LCB", conf, "Pct.U"),
     paste0("UCB", conf, "Pct.U")
   ))
+
+  catsum$Indicator <- category_original_names(catsum$Indicator, responses$columns)
 
   # Return the catsum data frame
 

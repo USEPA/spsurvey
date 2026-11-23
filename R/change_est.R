@@ -249,7 +249,7 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
 
   if (all(is.na(dframe_1[, ivar])) | all(is.na(dframe_2[, ivar]))) {
     warn_ind <- TRUE
-    warn <- paste0("For subpopulation \"", isubpop, "\" of population type \"", itype, "\", indicator \"", ivar, "\" \ncontains only missing values for one of the surveys.\n")
+    warn <- paste0("For subpopulation \"", isubpop, "\" of population type \"", itype, "\", indicator \"", warn_vec[3], "\" \ncontains only missing values for one of the surveys.\n")
     act <- "A change estimate was not calculated.\n"
     warn_df <- rbind(warn_df, data.frame(
       func = I(fname), subpoptype = I(itype), subpop = I(isubpop),
@@ -273,7 +273,7 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
         repeat_1[ind_1] <- FALSE
         warn_ind <- TRUE
         temp_str <- vecprint(dframe_1[ind_1, siteID])
-        warn <- paste("The following repeat visit site IDs for subpopulation ", isubpop, "\nof population type ", itype, " for indicator ", ivar, "\nin survey one did not have analogous site IDs present in survey two:\n", temp_str, sep = "")
+        warn <- paste("The following repeat visit site IDs for subpopulation ", isubpop, "\nof population type ", itype, " for indicator ", warn_vec[3], "\nin survey one did not have analogous site IDs present in survey two:\n", temp_str, sep = "")
         act <- "The listed repeated visit sites were not used for covariance estimation.\n"
         warn_df <- rbind(warn_df, data.frame(
           func = I(fname), subpoptype = I(itype),
@@ -285,7 +285,7 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
         repeat_2[ind_2] <- FALSE
         warn_ind <- TRUE
         temp_str <- vecprint(dframe_2[ind_2, siteID])
-        warn <- paste("The following repeated visit site IDs for subpopulation ", isubpop, "\nof population type ", itype, " for indicator ", ivar, "\nin survey two did not have analogous site IDs present in survey one:\n", temp_str, sep = "")
+        warn <- paste("The following repeated visit site IDs for subpopulation ", isubpop, "\nof population type ", itype, " for indicator ", warn_vec[3], "\nin survey two did not have analogous site IDs present in survey one:\n", temp_str, sep = "")
         act <- "The listed repeated visit sites were not used for covariance estimation.\n"
         warn_df <- rbind(warn_df, data.frame(
           func = I(fname), subpoptype = I(itype), subpop = I(isubpop),
@@ -585,7 +585,7 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
 
         # Assign levels of the categorical variable
 
-        catvar_levels <- levels(as.factor(results$Category))
+        catvar_levels <- as.character(results$Category)
         nlevels <- length(catvar_levels)
 
         # Calculate population size values
@@ -2100,7 +2100,7 @@ change_est <- function(resp_ind, survey_names, changesum, dframe, survey_1,
 
         if (is.na(pctest_1$pctsum$Estimate) | is.na(pctest_2$pctsum$Estimate)) {
           warn_ind <- TRUE
-          warn <- paste0("For subpopulation \"", isubpop, "\" of population type \"", itype, "\", indicator \"", ivar, "\" \ncontains a single value for at least one of the surveys.\n")
+          warn <- paste0("For subpopulation \"", isubpop, "\" of population type \"", itype, "\", indicator \"", warn_vec[3], "\" \ncontains a single value for at least one of the surveys.\n")
           act <- "A change estimate for the median was not calculated.\n"
           warn_df <- rbind(warn_df, data.frame(
             func = I(fname), subpoptype = I(itype), subpop = I(isubpop),

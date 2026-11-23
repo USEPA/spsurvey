@@ -242,10 +242,14 @@ greg_estimate <- function(context, q, keep, ratio, vartype, design_names, conf,
     covariance = covariance, warn_df = warn_df)
 }
 
+greg_observed_domains <- function(domains, membership) {
+  domains[domains %in% membership]
+}
+
 greg_summary_est <- function(result, dframe, itype, lev_itype, ivar, greg,
                              design_names, vartype, conf, mult, warn_df, ratio, local_nbh = 8, local_context = NULL) {
   y <- dframe[[ivar]]
-  for (domain in sort(lev_itype)) {
+  for (domain in greg_observed_domains(sort(lev_itype), dframe[[itype]])) {
     keep <- dframe[[itype]] %in% domain & !is.na(y)
     est <- greg_estimate(greg$contexts[[itype]][[domain]], y, keep, ratio,
       vartype, design_names, conf, warn_df, c(itype, domain, ivar), local_nbh = local_nbh, local_context = local_context)
@@ -267,7 +271,7 @@ greg_distribution_est <- function(result, dframe, itype, lev_itype, ivar, greg,
   if (categorical) values <- c(values, "Total")
   if (!categorical && vartype == "Local") warn_df <- localmean_cdf_warning(
     nrow(dframe), length(values), warn_df, local_context, c(itype, NA, ivar), greg = TRUE)
-  for (domain in sort(lev_itype)) {
+  for (domain in greg_observed_domains(sort(lev_itype), dframe[[itype]])) {
     keep <- dframe[[itype]] %in% domain & !is.na(y)
     for (j in seq_along(values)) {
       q <- if (categorical) {

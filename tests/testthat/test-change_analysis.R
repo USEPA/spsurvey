@@ -341,3 +341,14 @@ test_that("Change for totals matches cont_analysis()", {
    expect_equal(change$StdError, sqrt(cont2$StdError^2 + cont1$StdError^2))
 })
 
+
+test_that("categorical change validates all-missing responses before either design path", {
+  d <- declared_category_fixture()
+  panel <- rbind(transform(d, occasion = "first"), transform(d, occasion = "second"))
+  panel$response[] <- NA
+  expect_error(change_analysis(panel, vars_cat = "response", surveyID = "occasion",
+    siteID = "site", vartype = "SRS"), '"response" has no non-missing values.', fixed = TRUE)
+  expect_error(change_analysis(panel, vars_cat = "response", surveyID = "occasion",
+    siteID = "site", vartype = "SRS", formula = ~1),
+    '"response" has no non-missing values.', fixed = TRUE)
+})

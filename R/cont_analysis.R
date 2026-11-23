@@ -42,6 +42,13 @@
 #' @inherit cat_analysis params
 #' @inheritSection cat_analysis GREG estimation
 #'
+#' @param dframe Data to be analyzed (analysis data). A data frame or
+#'   \code{sf} object containing survey design
+#'   variables, continuous response variables, and subpopulation (domain) variables.
+#' 
+#' @param vars Character vector naming the continuous response variables in
+#'   \code{dframe}.
+#'
 #' @param subset_local Controls local neighborhood variance estimation for subpopulations.
 #'   The neighbor pool contains all eligible sites in the stratum; for direct
 #'   estimation, contributions outside the subpopulation are set to zero.

@@ -61,7 +61,7 @@ sp_svycontrast <- function(dframe, vars_cat = NULL, vars_cont = NULL,
   prepared <- contrast_prepare(dframe, vars_cat, vars_cont, subpops, siteID,
     weight, xcoord, ycoord, stratumID, clusterID, weight1, xcoord1, ycoord1,
     sizeweight, sweight, sweight1, fpc, formula, popsize, subpopsize,
-    vartype, jointprob, 95, local_nbh)
+    vartype, jointprob, 95, local_nbh, reject_missing = TRUE)
   data <- prepared$design$variables
   variables <- c(prepared$vars_cont, prepared$vars_cat)
   observed <- !is.na(data[[variables[1]]])
@@ -98,9 +98,10 @@ sp_svycontrast <- function(dframe, vars_cat = NULL, vars_cont = NULL,
   terms <- columns <- estimates <- list()
   for (variable in variables) {
     categorical <- variable %in% prepared$vars_cat
-    categories <- if (categorical) levels(data[[variable]]) else NA_character_
+    column <- category_column_names(variable, prepared$category_columns)
+    categories <- if (categorical) levels(data[[column]]) else NA_character_
     for (category in categories) {
-      response <- if (categorical) as.numeric(data[[variable]] == category) else data[[variable]]
+      response <- if (categorical) as.numeric(data[[column]] == category) else data[[column]]
       statistic <- if (categorical && statistics == "Mean") "Proportion" else statistics
       part <- contrast_contributions(prepared, response, subpops, statistic)
       scale <- if (statistic == "Proportion") 100 else 1

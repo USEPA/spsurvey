@@ -35,7 +35,7 @@ sp_svycontrast(
 \arguments{
 \item{dframe}{Data to be analyzed (analysis data). A data frame or
 \code{sf} object containing survey design
-variables, response variables, and subpopulation (domain) variables.}
+variables, continuous response variables, and subpopulation (domain) variables.}
 
 \item{vars_cat}{Vector composed of character values that identify the names
 of categorical response variables in \code{dframe}. If

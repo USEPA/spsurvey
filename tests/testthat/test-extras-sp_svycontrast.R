@@ -402,3 +402,23 @@ test_that("constructor uses represented domains in the supplied factor order", {
   levels <- attr(joint, "terms")$level
   expect_true(all(vcov(joint)[outer(levels, levels, "!=")] == 0))
 })
+
+test_that("joint names and covariance dimensions identify reordered colliding categories", {
+  d <- data.frame(site = seq_len(48), weight = 2,
+    domain = rep(c("B.C", "C"), each = 24),
+    response = factor(c(rep("A", 6), rep("A.B", 18), rep("A", 5), rep("A.B", 19)),
+      levels = c("A.B", "A")))
+  fit <- sp_svycontrast(d, vars_cat = "response", subpops = "domain", vartype = "SRS")
+  terms <- attr(fit, "terms")
+  expect_identical(terms$term, names(coef(fit)))
+  expect_identical(dimnames(vcov(fit)), rep(list(terms$term), 2))
+  expect_identical(terms$category, rep(c("A.B", "A"), each = 2L))
+  expect_identical(terms$level, rep(c("B.C", "C"), 2L))
+  expect_equal(as.numeric(coef(fit)), c(75, 1900 / 24, 25, 500 / 24))
+  d$response[] <- NA
+  for (greg in c(FALSE, TRUE)) {
+    expect_error(sp_svycontrast(d, vars_cat = "response", vartype = "SRS",
+      formula = if (greg) ~1, popsize = if (greg) c("(Intercept)" = 96)),
+      '"response" has no non-missing values.', fixed = TRUE)
+  }
+})

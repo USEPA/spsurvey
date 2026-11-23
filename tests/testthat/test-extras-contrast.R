@@ -487,3 +487,38 @@ test_that("sparse direct domains use a coherent survey fallback", {
   expected <- do.call(contrast_analysis, a)
   expect_equal(actual$joint, expected$joint)
 })
+
+test_that("subset-local Total category agrees with a renamed control", {
+  d <- declared_category_fixture()
+  for (observed in c(FALSE, TRUE)) {
+    data <- d
+    levels(data$response)[if (observed) 1L else 2L] <- "Total"
+    comparison <- data
+    levels(comparison$response)[levels(comparison$response) == "Total"] <- "Tot"
+    for (settings in list(c("Local", TRUE), c("Local", FALSE), c("SRS", FALSE))) {
+      run <- function(data) suppressMessages(contrast_analysis(data, vars_cat = "response",
+        subpops = "domain", contrasts = "difference", siteID = "site", xcoord = "x", ycoord = "y",
+        vartype = settings[1L], subset_local = as.logical(settings[2L]), return_joint = TRUE))
+      ans <- run(data)
+      expected <- run(comparison)
+      ans$catsum$Category[ans$catsum$Category == "Total"] <- "Tot"
+      for (statistic in names(ans$joint$domain$response)) {
+        names(ans$joint$domain$response[[statistic]])[
+          names(ans$joint$domain$response[[statistic]]) == "Total"] <- "Tot"
+      }
+      expect_identical(ans, expected)
+    }
+  }
+})
+
+test_that("subset-local Total fallback warnings use the public response name", {
+  d <- declared_category_fixture()[1:11, ]
+  d$domain <- factor(rep(c("West", "East"), c(3, 8)))
+  d$response <- factor(rep(c("Good", "Total"), length.out = 11))
+  suppressMessages(contrast_analysis(d, vars_cat = "response", subpops = "domain",
+    contrasts = "difference", siteID = "site", xcoord = "x", ycoord = "y",
+    vartype = "Local", subset_local = TRUE))
+  fallback <- warn_df[warn_df$func %in% c("catvar_prop", "catvar_total"), ]
+  expect_gt(nrow(fallback), 0)
+  expect_true(all(fallback$indicator == "response"))
+})

@@ -301,7 +301,7 @@ category_est <- function(catsum, dframe, itype, lev_itype, nlev_itype, ivar,
         temp <- SE(rslt_svy)
         stderr_U <- data.frame(ivar = temp, Total = temp)
         temp <- as.data.frame(confint(rslt_svy, level = conf / 100))
-        confval_U <- rbind(ivar = temp, Total = temp)
+        confval_U <- temp[rep(seq_len(nlev_itype), each = 2L), , drop = FALSE]
       }
     } else {
       rslt_svy <- svyby(make.formula(ivar), make.formula(itype),

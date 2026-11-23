@@ -10,7 +10,7 @@ greg_stat <- function(estimate, covariance, names = base::names(estimate), stati
     statistic = statistic, class = "svystat")
 }
 
-greg_risk <- function(data, responses, stressors, response_levels, stressor_levels,
+greg_risk <- function(data, response_data, responses, stressors, response_levels, stressor_levels,
                       subpops, greg, design_names, vartype, conf, kind, local_nbh = 8, local_context = NULL) {
   rows <- list()
   warn_df <- greg$warn_df
@@ -21,10 +21,10 @@ greg_risk <- function(data, responses, stressors, response_levels, stressor_leve
     relrisk = quote(log(t11 / (t11 + t21)) - log(t12 / (t12 + t22))),
     diffrisk = quote(t11 / (t11 + t21) - t12 / (t12 + t22)),
     attrisk = quote(log((t11 + t12 + t21 + t22) * t12 / ((t11 + t12) * (t12 + t22)))))
-  for (type in subpops) for (domain in levels(data[[type]])) {
+  for (type in subpops) for (domain in greg_observed_domains(levels(data[[type]]), data[[type]])) {
     for (response in responses) for (stressor in stressors) {
-      r <- data[[response]]
-      s <- data[[stressor]]
+      r <- response_data[[response]]
+      s <- response_data[[stressor]]
       rl <- response_levels[[response]]
       sl <- stressor_levels[[stressor]]
       keep <- data[[type]] %in% domain & !is.na(r) & !is.na(s)
@@ -86,5 +86,21 @@ greg_risk <- function(data, responses, stressors, response_levels, stressor_leve
     }
   }
   greg_publish_warnings(warn_df)
+  if (!length(rows)) {
+    row <- data.frame(Type = character(), Subpopulation = character(),
+      Response = character(), Stressor = character(), nResp = numeric(), Estimate = numeric())
+    if (kind == "relrisk") {
+      row$Estimate_num <- numeric()
+      row$Estimate_denom <- numeric()
+    } else if (kind == "diffrisk") {
+      row$Estimate_StressPoor <- numeric()
+      row$Estimate_StressGood <- numeric()
+    }
+    suffix <- if (kind == "diffrisk") "" else "_log"
+    for (name in c(paste0("StdError", suffix), paste0("MarginofError", suffix),
+                   paste0("LCB", conf, "Pct"), paste0("UCB", conf, "Pct"), "WeightTotal",
+                   paste0("Count_", labels), paste0("Prop_", labels))) row[[name]] <- numeric()
+    return(row)
+  }
   do.call(rbind, rows)
 }

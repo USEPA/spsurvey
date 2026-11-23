@@ -442,3 +442,118 @@ test_that("A warning (in message form) is produced", {
     xcoord1 = "xcoord1", ycoord1 = "ycoord1", fpc = fpc4b, vartype = "SRS"
   )))
 })
+
+test_that("categorical trend rejects an all-missing response", {
+  d <- declared_category_fixture()
+  d$response[] <- NA
+  expect_error(trend_analysis(d, vars_cat = "response", yearID = "year", siteID = "site",
+    vartype = "SRS"), '"response" has no non-missing values.', fixed = TRUE)
+})
+
+test_that("GLMM reports declared categories and limits the drop-level hint", {
+  d <- mixed_trend_data()
+  levels(d$y_cat) <- c(levels(d$y_cat), "Unused")
+  expect_error(run_mixed_trend(d, vars_cat = "y_cat", model_cat = "GLMM"),
+    "exactly two declared levels.*Unused.*droplevels")
+  d$y_cat[] <- "yes"
+  err <- tryCatch(run_mixed_trend(d, vars_cat = "y_cat", model_cat = "GLMM"),
+    error = conditionMessage)
+  expect_match(err, "Unused")
+  expect_false(grepl("droplevels", err, fixed = TRUE))
+})
+
+test_that("GLMM constant rows follow the fitted design and placement", {
+  d <- mixed_trend_data()
+  d$Trend <- d$aux
+  d$extra <- as.numeric(d$year == max(d$year))
+  d$second <- d$y_cat
+  d$second[d$extra == 1] <- NA
+  rhs <- "0 + Trend + Wyear + extra + (1 + Wyear | site) + (0 + Trend | site)"
+  for (variables in list(c("second", "y_cat"), c("y_cat", "second"), "second", "y_cat")) {
+    run <- function(data) run_mixed_trend(data, vars_cat = variables, model_cat = "GLMM",
+      cat_rhs = rhs, stratumID = "stratum", conf = 90)$catsum
+    reference <- run(d)
+    for (constant_vars in list(variables[1L], variables[length(variables)], variables)) {
+      modified <- d
+      for (variable in constant_vars) {
+        modified[[variable]][!is.na(modified[[variable]])] <- "no"
+      }
+      actual <- run(modified)
+      expect_identical(names(actual), names(reference))
+      expect_identical(actual$Indicator, variables)
+      expect_true(all(is.na(actual[actual$Indicator %in% constant_vars, -(1:3)])))
+      expect_match(paste(warn_df$warning, collapse = " "), "constant among the complete model rows")
+    }
+  }
+})
+
+test_that("GLMM uses complete fixed and random model rows to diagnose a constant", {
+  d <- mixed_trend_data()
+  d$fixed <- ifelse(d$y_cat == "yes", NA_real_, d$aux)
+  d$group <- d$site
+  d$group[d$y_cat == "no"] <- NA
+  run <- function(rhs) run_mixed_trend(d, vars_cat = "y_cat", model_cat = "GLMM",
+    cat_rhs = rhs)$catsum
+  expect_true(all(is.na(run("Wyear + fixed + (1 | site)")[-(1:3)])))
+  expect_true(all(is.na(run("Wyear + (1 | group)")[-(1:3)])))
+  expect_error(run("Wyear + fixed + (1 | group)"), "Invalid grouping factor specification")
+  reference <- run("Wyear + (1 + Wyear || site)")
+  d$y_cat[] <- "yes"
+  expect_identical(names(run("Wyear + (1 + Wyear || site)")), names(reference))
+  expect_true(all(is.na(run("Wyear + (1 + Wyear || site)")[-(1:3)])))
+})
+
+test_that("categorical trends report absent and insufficient categories", {
+  d <- declared_category_fixture()
+  panel <- do.call(rbind, lapply(2000:2003, function(year) transform(d, year = year)))
+  panel$response[panel$year == 2000] <- "Good"
+  panel$response[panel$year > 2000 & panel$site <= panel$year - 1995] <- "Poor"
+  for (greg in c(FALSE, TRUE)) {
+    run <- function(model, frame = panel) suppressMessages(suppressWarnings(trend_analysis(
+      frame, vars_cat = "response", siteID = "site", yearID = "year", vartype = "SRS",
+      model_cat = model, formula = if (greg) ~1, popsize = if (greg)
+        setNames(rep(list(c("(Intercept)" = sum(d$weight))), length(unique(frame$year))),
+          unique(frame$year))))$catsum)
+    wlr <- run("WLR")
+    expect_true(all(is.finite(wlr$Trend_Estimate[wlr$Category != "Absent"])))
+    expect_true(all(is.na(wlr[wlr$Category == "Absent", -(1:4)])))
+    expect_true(any(grepl('category "Poor".*2000', warn_df$warning)))
+    short <- run("WLR", subset(panel, year < 2003))
+    expect_true(all(is.na(short[-(1:4)])))
+    slr <- run("SLR")
+    absent <- slr[slr$Category == "Absent", ]
+    expect_equal(absent$Trend_Estimate, 0)
+    expect_equal(absent$Trend_Std_Error, 0)
+    expect_true(all(is.na(absent[c("Trend_p_Value", "R_Squared", "Adj_R_Squared")])))
+    if (greg) {
+      missing <- panel
+      missing$response[] <- NA
+      expect_null(run("SLR", missing))
+      expect_null(run("WLR", missing))
+    }
+  }
+})
+
+test_that("GLMM success follows the second declared level", {
+  d <- mixed_trend_data()
+  run <- function(data) run_mixed_trend(data, vars_cat = "y_cat", model_cat = "GLMM",
+    cat_rhs = "Wyear + (1 | site)")$catsum
+  forward <- run(d)
+  d$y_cat <- factor(d$y_cat, levels = rev(levels(d$y_cat)))
+  reversed <- run(d)
+  expect_equal(as.numeric(reversed$Trend_Estimate),
+    -as.numeric(forward$Trend_Estimate), tolerance = 1e-5)
+})
+
+test_that("categorical response preserves the continuous mixed-model predictor", {
+  d <- mixed_trend_data()
+  d$predictor <- factor(d$y_cat, levels = c("yes", "unused", "no"))
+  args <- list(dframe = d, vars_cont = "y", siteID = "site", yearID = "year",
+    weight = "w", vartype = "SRS", model_cont = "LMM", invprboot = FALSE,
+    cont_rhs = "Wyear + predictor + (1 | site)")
+  alone <- suppressMessages(suppressWarnings(do.call(trend_analysis, args)))
+  args$vars_cat <- "predictor"
+  combined <- suppressMessages(suppressWarnings(do.call(trend_analysis, args)))
+  expect_identical(combined$contsum, alone$contsum)
+  expect_identical(unique(as.character(combined$catsum$Category)), levels(d$predictor))
+})

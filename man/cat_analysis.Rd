@@ -36,10 +36,10 @@ cat_analysis(
 \arguments{
 \item{dframe}{Data to be analyzed (analysis data). A data frame or
 \code{sf} object containing survey design
-variables, response variables, and subpopulation (domain) variables.}
+variables, categorical response variables, and subpopulation (domain) variables.}
 
 \item{vars}{Vector composed of character values that identify the
-names of response variables in \code{dframe}.}
+names of categorical response variables in \code{dframe}.}
 
 \item{subpops}{Vector composed of character values that identify the
 names of subpopulation (domain) variables in \code{dframe}.
